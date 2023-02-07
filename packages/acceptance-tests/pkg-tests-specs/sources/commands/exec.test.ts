@@ -28,7 +28,7 @@ describe(`Commands`, () => {
       `it should inject binaries the workspace has access to`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await xfs.mkdirPromise(ppath.join(path, `bin` as Filename));
-        await xfs.writeFilePromise(ppath.join(path, `bin/index.js` as PortablePath), `console.log(42)`);
+        await xfs.writeFilePromise(ppath.join(path, `bin/index.js`), `console.log(42)`);
         await xfs.writeJsonPromise(ppath.join(path, `bin` as Filename, Filename.manifest), {
           name: `bin`,
           bin: `./index.js`,

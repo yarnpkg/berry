@@ -98,10 +98,10 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
     }
   }
 
-  if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
+  if (xfs.existsSync(ppath.join(location, `package-lock.json`)))
     return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
 
-  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
+  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml`)))
     return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
 
   return null;
@@ -277,7 +277,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             await xfs.writeFilePromise(manifestPath, manifestBuffer);
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
-            await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
+            await xfs.appendFilePromise(ppath.join(cwd, `.npmignore`), `/.yarn\n`);
 
             stdout.write(`\n`);
 
@@ -583,7 +583,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
   const stdin = null;
 
   await xfs.mktempPromise(async logDir => {
-    const logFile = ppath.join(logDir, `${lifecycleScriptName}.log` as PortablePath);
+    const logFile = ppath.join(logDir, `${lifecycleScriptName}.log`);
 
     const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${npath.fromPortablePath(workspace.cwd)}")\n`;
 

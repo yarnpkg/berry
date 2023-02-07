@@ -25,7 +25,7 @@ describe(`Project`, () => {
         },
       });
 
-      await xfs.mkdirpPromise(ppath.join(dir, `bar` as PortablePath));
+      await xfs.mkdirpPromise(ppath.join(dir, `bar`));
       await xfs.writeJsonPromise(ppath.join(dir, `bar` as Filename, Filename.manifest), {
         name: `bar`,
       });
@@ -85,7 +85,7 @@ describe(`Project`, () => {
         },
       });
 
-      await xfs.mkdirpPromise(ppath.join(dir, `yyy` as PortablePath));
+      await xfs.mkdirpPromise(ppath.join(dir, `yyy`));
       await xfs.writeJsonPromise(ppath.join(dir, `yyy` as Filename, Filename.manifest), {
         name: `yyy`,
         version: `1.0.0`,
@@ -94,7 +94,7 @@ describe(`Project`, () => {
         },
       });
 
-      await xfs.mkdirpPromise(ppath.join(dir, `zzz` as PortablePath));
+      await xfs.mkdirpPromise(ppath.join(dir, `zzz`));
       await xfs.writeJsonPromise(ppath.join(dir, `zzz` as Filename, Filename.manifest), {
         name: `zzz`,
         version: `1.0.0`,
@@ -144,7 +144,7 @@ describe(`Project`, () => {
         },
       });
 
-      await xfs.mkdirpPromise(ppath.join(dir, `bar` as PortablePath));
+      await xfs.mkdirpPromise(ppath.join(dir, `bar`));
       await xfs.writeJsonPromise(ppath.join(dir, `bar` as Filename, Filename.manifest), {
         name: `bar`,
       });

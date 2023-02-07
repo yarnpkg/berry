@@ -98,16 +98,16 @@ describe(`Commands`, () => {
           `packages/*`,
         ],
       }, async ({path, run, source}) => {
-        await xfs.mkdirpPromise(ppath.join(path, `packages/foo` as PortablePath));
-        await xfs.mkdirpPromise(ppath.join(path, `packages/bar` as PortablePath));
+        await xfs.mkdirpPromise(ppath.join(path, `packages/foo`));
+        await xfs.mkdirpPromise(ppath.join(path, `packages/bar`));
 
-        await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json`), {
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
         });
 
-        await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json`), {
           dependencies: {
             [`no-deps`]: `2.0.0`,
           },
@@ -116,7 +116,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await run(`unplug`, `no-deps`, {
-          cwd: ppath.join(path, `packages/foo` as PortablePath),
+          cwd: ppath.join(path, `packages/foo`),
         });
 
         await expect(readManifest(path, {key: `dependenciesMeta`})).resolves.toEqual({
@@ -124,7 +124,7 @@ describe(`Commands`, () => {
         });
 
         await run(`unplug`, `no-deps`, `--all`, {
-          cwd: ppath.join(path, `packages/foo` as PortablePath),
+          cwd: ppath.join(path, `packages/foo`),
         });
 
         await expect(readManifest(path, {key: `dependenciesMeta`})).resolves.toEqual({
@@ -142,16 +142,16 @@ describe(`Commands`, () => {
           `packages/*`,
         ],
       }, async ({path, run, source}) => {
-        await xfs.mkdirpPromise(ppath.join(path, `packages/foo` as PortablePath));
-        await xfs.mkdirpPromise(ppath.join(path, `packages/bar` as PortablePath));
+        await xfs.mkdirpPromise(ppath.join(path, `packages/foo`));
+        await xfs.mkdirpPromise(ppath.join(path, `packages/bar`));
 
-        await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `packages/foo/package.json`), {
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
         });
 
-        await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `packages/bar/package.json`), {
           dependencies: {
             [`one-fixed-dep`]: `2.0.0`,
           },
@@ -160,7 +160,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await run(`unplug`, `no-deps`, {
-          cwd: ppath.join(path, `packages/foo` as PortablePath),
+          cwd: ppath.join(path, `packages/foo`),
         });
 
         await expect(readManifest(path, {key: `dependenciesMeta`})).resolves.toEqual({
@@ -168,7 +168,7 @@ describe(`Commands`, () => {
         });
 
         await run(`unplug`, `no-deps`, `--recursive`, `--all`, {
-          cwd: ppath.join(path, `packages/foo` as PortablePath),
+          cwd: ppath.join(path, `packages/foo`),
         });
 
         await expect(readManifest(path, {key: `dependenciesMeta`})).resolves.toEqual({

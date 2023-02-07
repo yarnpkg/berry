@@ -68,8 +68,8 @@ describe(`Commands`, () => {
           `workspace`,
         ],
       }, async ({path, run, source}) => {
-        await xfs.mkdirpPromise(ppath.join(path, `workspace` as PortablePath));
-        await xfs.writeJsonPromise(ppath.join(path, `workspace/package.json` as PortablePath), {
+        await xfs.mkdirpPromise(ppath.join(path, `workspace`));
+        await xfs.writeJsonPromise(ppath.join(path, `workspace/package.json`), {
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -88,8 +88,8 @@ describe(`Commands`, () => {
           `workspace`,
         ],
       }, async ({path, run, source}) => {
-        await xfs.mkdirpPromise(ppath.join(path, `workspace` as PortablePath));
-        await xfs.writeJsonPromise(ppath.join(path, `workspace/package.json` as PortablePath), {
+        await xfs.mkdirpPromise(ppath.join(path, `workspace`));
+        await xfs.writeJsonPromise(ppath.join(path, `workspace/package.json`), {
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },

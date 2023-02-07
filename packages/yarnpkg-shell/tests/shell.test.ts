@@ -1313,7 +1313,7 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with globstar`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.mkdirpPromise(ppath.join(tmpDir, `foo/bar` as PortablePath));
+            await xfs.mkdirpPromise(ppath.join(tmpDir, `foo/bar`));
 
             await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `foo/b.txt` as Filename), ``);

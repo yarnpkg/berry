@@ -94,8 +94,8 @@ export class ExecFetcher implements Fetcher {
       return await xfs.mktempPromise(async logDir => {
         const logFile = ppath.join(logDir, `buildfile.log` as Filename);
 
-        const tempDir = ppath.join(cwd, `generator` as PortablePath);
-        const buildDir = ppath.join(cwd, `build` as PortablePath);
+        const tempDir = ppath.join(cwd, `generator`);
+        const buildDir = ppath.join(cwd, `build`);
 
         await xfs.mkdirPromise(tempDir);
         await xfs.mkdirPromise(buildDir);

@@ -188,7 +188,7 @@ describe(`Features`, () => {
 
       await run(`install`);
 
-      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+      const cacheFolder = ppath.join(path, `.yarn/cache`);
       const cacheListing = await xfs.readdirPromise(cacheFolder);
       const nativeFile = cacheListing.find(entry => entry.startsWith(`native-foo-x64-`));
 
@@ -213,7 +213,7 @@ describe(`Features`, () => {
 
       await run(`install`);
 
-      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+      const cacheFolder = ppath.join(path, `.yarn/cache`);
       const cacheListing = await xfs.readdirPromise(cacheFolder);
       const nativeFile = cacheListing.find(entry => entry.startsWith(`native-foo-x64-`));
 
@@ -242,7 +242,7 @@ describe(`Features`, () => {
 
       await run(`install`);
 
-      const cacheFolder = ppath.join(path, `.yarn/cache` as PortablePath);
+      const cacheFolder = ppath.join(path, `.yarn/cache`);
       const cacheListing = await xfs.readdirPromise(cacheFolder);
       const nativeFile = cacheListing.find(entry => entry.startsWith(`native-foo-x64-`));
 

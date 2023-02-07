@@ -142,7 +142,7 @@ describe(`Commands`, () => {
 });
 
 async function check(path: PortablePath, checks: {corepackVersion: string | RegExp, usePath: boolean}) {
-  const releasesPath = ppath.join(path, `.yarn/releases` as PortablePath);
+  const releasesPath = ppath.join(path, `.yarn/releases`);
   const yarnrcPath = ppath.join(path, Filename.rc);
   const manifestPath = ppath.join(path, Filename.manifest);
 

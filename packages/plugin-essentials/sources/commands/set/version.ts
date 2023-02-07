@@ -204,8 +204,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
-  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
-  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
+  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases`);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs`);
   const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
 
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);

@@ -755,7 +755,7 @@ describe(`Plug'n'Play - ESM`, () => {
           await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
           await xfs.mkdirPromise(ppath.join(path, `foo` as Filename));
-          await xfs.writeJsonPromise(ppath.join(path, `foo/package.json` as PortablePath), {
+          await xfs.writeJsonPromise(ppath.join(path, `foo/package.json`), {
             type: `module`,
             imports: {
               "#bar": `./bar.js`,
@@ -765,7 +765,7 @@ describe(`Plug'n'Play - ESM`, () => {
             ppath.join(path, `foo/bar.js` as Filename),
             `export const bar = 42;`,
           );
-          await xfs.writeFilePromise(ppath.join(path, `foo/index.js` as PortablePath), `export * from '#bar';`);
+          await xfs.writeFilePromise(ppath.join(path, `foo/index.js`), `export * from '#bar';`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js` as Filename),

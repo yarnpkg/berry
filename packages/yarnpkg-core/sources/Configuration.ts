@@ -733,7 +733,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
         // singleValue's source should be a single file path, if it exists
         const source = configUtils.getSource(valueBase);
         if (source)
-          cwd = ppath.resolve(source as PortablePath, `..` as PortablePath);
+          cwd = ppath.resolve(source as PortablePath, `..`);
 
         return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
       }
@@ -1507,7 +1507,7 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         const homeFolder = folderUtils.getHomeFolder();
-        const rcFileFolder = ppath.resolve(source as PortablePath, `..` as PortablePath);
+        const rcFileFolder = ppath.resolve(source as PortablePath, `..`);
         const isHomeRcFile = homeFolder === rcFileFolder;
 
         if (strict && !isHomeRcFile) {

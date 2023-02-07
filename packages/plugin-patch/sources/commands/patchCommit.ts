@@ -38,8 +38,8 @@ export default class PatchCommitCommand extends BaseCommand {
     await project.restoreInstallState();
 
     const folderPath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.patchFolder));
-    const sourcePath = ppath.join(folderPath, `../source` as PortablePath);
-    const metaPath = ppath.join(folderPath, `../.yarn-patch.json` as PortablePath);
+    const sourcePath = ppath.join(folderPath, `../source`);
+    const metaPath = ppath.join(folderPath, `../.yarn-patch.json`);
 
     if (!xfs.existsSync(sourcePath))
       throw new UsageError(`The argument folder didn't get created by 'yarn patch'`);

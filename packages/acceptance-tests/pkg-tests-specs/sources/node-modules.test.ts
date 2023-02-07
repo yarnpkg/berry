@@ -910,20 +910,20 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run}) => {
-        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+        await writeJson(ppath.resolve(path, `dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
           os: [`!${process.platform}`],
           bin: `./noop.js`,
         });
-        await xfs.writeFilePromise(ppath.resolve(path, `dep/noop.js` as Filename), ``);
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/noop.js`), ``);
 
-        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+        await writeJson(ppath.resolve(path, `dep2/package.json`), {
           name: `dep2`,
           version: `1.0.0`,
           bin: `./echo.js`,
         });
-        await xfs.writeFilePromise(ppath.resolve(path, `dep2/echo.js` as Filename), `console.log('echo')`);
+        await xfs.writeFilePromise(ppath.resolve(path, `dep2/echo.js`), `console.log('echo')`);
 
         await run(`install`);
 
@@ -1331,19 +1331,19 @@ describe(`Node_Modules`, () => {
         nmMode: `hardlinks-global`,
       },
       async ({path, run}) => {
-        await writeJson(ppath.resolve(path, `dep1/package.json` as Filename), {
+        await writeJson(ppath.resolve(path, `dep1/package.json`), {
           name: `dep1`,
           version: `1.0.0`,
         });
 
         const content = `The same content`;
-        await xfs.writeFilePromise(ppath.resolve(path, `dep1/index.js` as Filename), content);
+        await xfs.writeFilePromise(ppath.resolve(path, `dep1/index.js`), content);
 
-        await writeJson(ppath.resolve(path, `dep2/package.json` as Filename), {
+        await writeJson(ppath.resolve(path, `dep2/package.json`), {
           name: `dep2`,
           version: `1.0.0`,
         });
-        await xfs.writeFilePromise(ppath.resolve(path, `dep2/index.js` as Filename), content);
+        await xfs.writeFilePromise(ppath.resolve(path, `dep2/index.js`), content);
 
         await run(`install`);
 
@@ -1367,21 +1367,21 @@ describe(`Node_Modules`, () => {
         nmMode: `hardlinks-global`,
       },
       async ({path, run}) => {
-        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+        await writeJson(ppath.resolve(path, `dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
         });
 
         const originalContent = `The same content`;
-        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js` as Filename), originalContent);
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js`), originalContent);
 
         await run(`install`);
 
         const modifiedContent = `The modified content`;
-        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js` as Filename);
+        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js`);
         await xfs.writeFilePromise(depNmPath, modifiedContent);
 
-        await xfs.removePromise(ppath.resolve(path, `node_modules` as Filename));
+        await xfs.removePromise(ppath.resolve(path, `node_modules`));
 
         await run(`install`);
 
@@ -1403,23 +1403,23 @@ describe(`Node_Modules`, () => {
         nmMode: `hardlinks-global`,
       },
       async ({path, run}) => {
-        await writeJson(ppath.resolve(path, `dep/package.json` as Filename), {
+        await writeJson(ppath.resolve(path, `dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
         });
 
         const originalContent = `The same content`;
-        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js` as Filename), originalContent);
+        await xfs.writeFilePromise(ppath.resolve(path, `dep/index.js`), originalContent);
 
         await run(`install`);
 
         const modifiedContent = `The modified content`;
-        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js` as Filename);
+        const depNmPath = ppath.resolve(path, `node_modules/dep/index.js`);
         await xfs.writeFilePromise(depNmPath, modifiedContent);
         const timeInThePast = new Date(new Date().getTime() - 10000);
         await xfs.utimesPromise(depNmPath, timeInThePast, timeInThePast);
 
-        await xfs.removePromise(ppath.resolve(path, `node_modules` as Filename));
+        await xfs.removePromise(ppath.resolve(path, `node_modules`));
 
         await run(`install`);
 
@@ -1502,7 +1502,7 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        await expect(xfs.existsPromise(ppath.join(path, `node_modules/no-deps` as PortablePath))).resolves.toEqual(true);
+        await expect(xfs.existsPromise(ppath.join(path, `node_modules/no-deps`))).resolves.toEqual(true);
       },
     ),
   );
@@ -1544,23 +1544,23 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
-        await xfs.mkdirpPromise(ppath.join(path, `ws/nested1/nested2` as PortablePath));
+        await xfs.mkdirpPromise(ppath.join(path, `ws/nested1/nested2`));
 
-        await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}`), {
           name: `ws`,
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
         });
 
-        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/${Filename.manifest}` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/${Filename.manifest}`), {
           name: `nested1`,
           dependencies: {
             [`no-deps`]: `2.0.0`,
           },
         });
 
-        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/nested2/${Filename.manifest}` as PortablePath), {
+        await xfs.writeJsonPromise(ppath.join(path, `ws/nested1/nested2/${Filename.manifest}`), {
           name: `nested2`,
           dependencies: {
             [`no-deps`]: `2.0.0`,
@@ -1591,7 +1591,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.resolve(path, `node_modules` as Filename), ``);
+        await xfs.writeFilePromise(ppath.resolve(path, `node_modules`), ``);
 
         await run(`install`);
 
@@ -1615,8 +1615,8 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run}) => {
-        const nmDir = ppath.resolve(path, `node_modules` as Filename);
-        const trueInstallDir = ppath.resolve(path, `target` as Filename);
+        const nmDir = ppath.resolve(path, `node_modules`);
+        const trueInstallDir = ppath.resolve(path, `target`);
         await xfs.mkdirPromise(trueInstallDir);
         await xfs.symlinkPromise(trueInstallDir, nmDir);
 
@@ -1637,15 +1637,15 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
-        await xfs.mkdirpPromise(ppath.join(path, `ws1` as PortablePath));
-        await xfs.writeJsonPromise(ppath.join(path, `ws1/${Filename.manifest}` as PortablePath), {
+        await xfs.mkdirpPromise(ppath.join(path, `ws1`));
+        await xfs.writeJsonPromise(ppath.join(path, `ws1/${Filename.manifest}`), {
           name: `ws1`,
           devDependencies: {
             [`no-deps`]: `1.0.0`,
           },
         });
-        await xfs.mkdirpPromise(ppath.join(path, `ws2` as PortablePath));
-        await xfs.writeJsonPromise(ppath.join(path, `ws2/${Filename.manifest}` as PortablePath), {
+        await xfs.mkdirpPromise(ppath.join(path, `ws2`));
+        await xfs.writeJsonPromise(ppath.join(path, `ws2/${Filename.manifest}`), {
           name: `ws2`,
           devDependencies: {
             [`ws1`]: `portal:../ws1`,
@@ -1676,7 +1676,7 @@ describe(`Node_Modules`, () => {
       },
       async ({path, run}) => {
         await xfs.mktempPromise(async portalTarget => {
-          await xfs.mkdirpPromise(ppath.join(path, `ws` as PortablePath));
+          await xfs.mkdirpPromise(ppath.join(path, `ws`));
           await xfs.writeJsonPromise(`${path}/ws/package.json` as PortablePath, {
             dependencies: {
               portal: `portal:${portalTarget}`,
@@ -1779,13 +1779,13 @@ describe(`Node_Modules`, () => {
             workspaces: [`ws1`, `ws2`],
           });
 
-          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws1` as PortablePath));
+          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws1`));
           await xfs.writeJsonPromise(`${portalTarget}/ws1/package.json` as PortablePath, {
             name: `ws1`,
             workspaces: [`ws1`],
           });
 
-          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws2` as PortablePath));
+          await xfs.mkdirpPromise(ppath.join(portalTarget, `ws2`));
           await xfs.writeJsonPromise(`${portalTarget}/ws2/package.json` as PortablePath, {
             name: `ws2`,
             workspaces: [`ws2`],

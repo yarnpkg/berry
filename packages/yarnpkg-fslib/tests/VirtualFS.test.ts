@@ -5,7 +5,7 @@ import {CwdFS, xfs}                           from '../sources';
 describe(`VirtualFS`, () => {
   it(`should ignore non-hash virtual components`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), Filename.virtual);
-    const virtualEntry = ppath.join(virtualPath, `package.json` as PortablePath);
+    const virtualEntry = ppath.join(virtualPath, `package.json`);
 
     const expected = virtualEntry;
 
@@ -15,7 +15,7 @@ describe(`VirtualFS`, () => {
 
   it(`shouldn't map non-number virtual components`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), Filename.virtual);
-    const virtualEntry = ppath.join(virtualPath, `12345/invalid` as PortablePath);
+    const virtualEntry = ppath.join(virtualPath, `12345/invalid`);
 
     const expected = virtualEntry;
 
@@ -25,9 +25,9 @@ describe(`VirtualFS`, () => {
 
   it(`should map numbered virtual components (0, no file)`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), Filename.virtual);
-    const virtualEntry = ppath.join(virtualPath, `12345/0` as PortablePath);
+    const virtualEntry = ppath.join(virtualPath, `12345/0`);
 
-    const expected = ppath.join(virtualPath, `..` as PortablePath);
+    const expected = ppath.join(virtualPath, `..`);
 
     const virtualFs = new VirtualFS();
     expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
@@ -35,9 +35,9 @@ describe(`VirtualFS`, () => {
 
   it(`should map numbered virtual components (0, w/ file)`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), Filename.virtual);
-    const virtualEntry = ppath.join(virtualPath, `12345/0/foobar` as PortablePath);
+    const virtualEntry = ppath.join(virtualPath, `12345/0/foobar`);
 
-    const expected = ppath.join(virtualPath, `../foobar` as PortablePath);
+    const expected = ppath.join(virtualPath, `../foobar`);
 
     const virtualFs = new VirtualFS();
     expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
@@ -45,9 +45,9 @@ describe(`VirtualFS`, () => {
 
   it(`should map numbered virtual components (1, no file)`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), Filename.virtual);
-    const virtualEntry = ppath.join(virtualPath, `12345/1` as PortablePath);
+    const virtualEntry = ppath.join(virtualPath, `12345/1`);
 
-    const expected = ppath.join(virtualPath, `../..` as PortablePath);
+    const expected = ppath.join(virtualPath, `../..`);
 
     const virtualFs = new VirtualFS();
     expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);
@@ -55,9 +55,9 @@ describe(`VirtualFS`, () => {
 
   it(`should map numbered virtual components (1, w/ file)`, () => {
     const virtualPath = ppath.join(npath.toPortablePath(__dirname), Filename.virtual);
-    const virtualEntry = ppath.join(virtualPath, `12345/1/foobar` as PortablePath);
+    const virtualEntry = ppath.join(virtualPath, `12345/1/foobar`);
 
-    const expected = ppath.join(virtualPath, `../../foobar` as PortablePath);
+    const expected = ppath.join(virtualPath, `../../foobar`);
 
     const virtualFs = new VirtualFS();
     expect(virtualFs.mapToBase(virtualEntry)).toEqual(expected);

@@ -52,7 +52,7 @@ export class GitFetcher implements Fetcher {
     const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
 
     const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
-    const packagePath = ppath.join(cloneTarget, `package.tgz` as PortablePath);
+    const packagePath = ppath.join(cloneTarget, `package.tgz`);
 
     await scriptUtils.prepareExternalProject(cloneTarget, packagePath, {
       configuration: opts.project.configuration,

@@ -12,7 +12,7 @@ runExit(class extends Command {
     const identifier = `plugin-${this.pluginName}`;
 
     const root = ppath.dirname(npath.toPortablePath(__dirname));
-    const bundleLocation = ppath.join(root, `packages/${identifier}/bundles/@yarnpkg/${identifier}.js` as PortablePath);
+    const bundleLocation = ppath.join(root, `packages/${identifier}/bundles/@yarnpkg/${identifier}.js`);
 
     await xfs.mkdirPromise(ppath.dirname(bundleLocation), {recursive: true});
     await xfs.writeFilePromise(bundleLocation, `module.exports = {name: ${JSON.stringify(`@yarnpkg/${identifier}`)}};`);

@@ -49,7 +49,7 @@ export class GithubFetcher implements Fetcher {
       });
 
       const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
-      const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
+      const packagePath = ppath.join(extractPath, `package.tgz`);
 
       await scriptUtils.prepareExternalProject(extractPath, packagePath, {
         configuration: opts.project.configuration,

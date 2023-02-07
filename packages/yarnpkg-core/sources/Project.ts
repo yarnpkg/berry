@@ -1423,7 +1423,7 @@ export class Project {
             const stdin = null;
 
             const wasBuildSuccessful = await xfs.mktempPromise(async logDir => {
-              const logFile = ppath.join(logDir, `build.log` as PortablePath);
+              const logFile = ppath.join(logDir, `build.log`);
 
               const {stdout, stderr} = this.configuration.getSubprocessStreams(logFile, {
                 header,

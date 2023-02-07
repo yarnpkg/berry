@@ -71,7 +71,7 @@ export default class PackCommand extends BaseCommand {
 
     const target = typeof out !== `undefined`
       ? ppath.resolve(this.context.cwd, interpolateOutputName(out, {workspace}))
-      : ppath.resolve(workspace.cwd, `package.tgz` as Filename);
+      : ppath.resolve(workspace.cwd, `package.tgz`);
 
     const report = await StreamReport.start({
       configuration,
