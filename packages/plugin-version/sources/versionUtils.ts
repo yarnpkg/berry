@@ -1,5 +1,5 @@
 import {AllDependencies, miscUtils, hashUtils, Workspace, structUtils, Project, Manifest, IdentHash, Report, MessageName, WorkspaceResolver} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                                                                                           from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs}                                                                                                     from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                                                            from '@yarnpkg/parsers';
 import {gitUtils}                                                                                                                            from '@yarnpkg/plugin-git';
 import {UsageError}                                                                                                                          from 'clipanion';

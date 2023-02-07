@@ -1,15 +1,15 @@
-import {ZipFS, ZipOpenFS}              from '@yarnpkg/libzip';
-import fs                              from 'fs';
-import {pathToFileURL}                 from 'url';
-import {promisify}                     from 'util';
+import {ZipFS, ZipOpenFS}    from '@yarnpkg/libzip';
+import fs                    from 'fs';
+import {pathToFileURL}       from 'url';
+import {promisify}           from 'util';
 
-import {ZIP_FILE1, ZIP_DIR1}           from '../../yarnpkg-libzip/tests/ZipOpenFS.test';
-import {NodeFS}                        from '../sources/NodeFS';
-import {PosixFS}                       from '../sources/PosixFS';
-import {extendFs}                      from '../sources/patchFs/patchFs';
-import {Filename, npath, PortablePath} from '../sources/path';
-import {xfs}                           from '../sources/xfs';
-import {statUtils}                     from '../sources';
+import {ZIP_FILE1, ZIP_DIR1} from '../../yarnpkg-libzip/tests/ZipOpenFS.test';
+import {NodeFS}              from '../sources/NodeFS';
+import {PosixFS}             from '../sources/PosixFS';
+import {extendFs}            from '../sources/patchFs/patchFs';
+import {npath, PortablePath} from '../sources/path';
+import {xfs}                 from '../sources/xfs';
+import {statUtils}           from '../sources';
 
 const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 

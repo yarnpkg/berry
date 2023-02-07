@@ -1,4 +1,4 @@
-import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Constraints Checks`, () => {

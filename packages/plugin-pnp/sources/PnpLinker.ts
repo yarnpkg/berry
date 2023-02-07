@@ -1,7 +1,7 @@
 import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
-import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
+import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
 import {UsageError}                                                                                             from 'clipanion';
 

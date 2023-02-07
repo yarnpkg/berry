@@ -1,5 +1,5 @@
 import {Configuration, Descriptor, Project, ResolveOptions, ThrowReport, structUtils, Locator, Cache, LocatorHash} from '@yarnpkg/core';
-import {PortablePath, xfs, ppath, Filename}                                                                        from '@yarnpkg/fslib';
+import {PortablePath, xfs, ppath}                                                                                  from '@yarnpkg/fslib';
 import NpmPlugin                                                                                                   from '@yarnpkg/plugin-npm';
 import PatchPlugin                                                                                                 from '@yarnpkg/plugin-patch';
 

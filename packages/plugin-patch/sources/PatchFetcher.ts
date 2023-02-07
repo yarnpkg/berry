@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report} from '@yarnpkg/core';
 import {Locator}                                                                      from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
-import {ppath, xfs, Filename, CwdFS, PortablePath}                                    from '@yarnpkg/fslib';
+import {ppath, xfs, CwdFS, PortablePath}                                              from '@yarnpkg/fslib';
 import {ZipFS}                                                                        from '@yarnpkg/libzip';
 
 import * as patchUtils                                                                from './patchUtils';

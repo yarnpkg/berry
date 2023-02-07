@@ -1,10 +1,10 @@
-import {execUtils, scriptUtils, structUtils, tgzUtils}         from '@yarnpkg/core';
-import {Locator, formatUtils}                                  from '@yarnpkg/core';
-import {Fetcher, FetchOptions, MinimalFetchOptions}            from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs, NativePath} from '@yarnpkg/fslib';
+import {execUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
+import {Locator, formatUtils}                          from '@yarnpkg/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs, NativePath}   from '@yarnpkg/fslib';
 
-import {PROTOCOL}                                              from './constants';
-import {loadGeneratorFile}                                     from './execUtils';
+import {PROTOCOL}                                      from './constants';
+import {loadGeneratorFile}                             from './execUtils';
 
 /**
  * Contains various useful details about the execution context.

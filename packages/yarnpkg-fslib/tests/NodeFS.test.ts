@@ -1,5 +1,5 @@
-import {NodeFS}                             from '../sources/NodeFS';
-import {xfs, PortablePath, ppath, Filename} from '../sources';
+import {NodeFS}                   from '../sources/NodeFS';
+import {xfs, PortablePath, ppath} from '../sources';
 
 const nodeFs = new NodeFS();
 

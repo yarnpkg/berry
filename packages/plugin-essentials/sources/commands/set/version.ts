@@ -1,7 +1,7 @@
 import {BaseCommand}                                                                          from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
 import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                            from '@yarnpkg/fslib';
+import {PortablePath, ppath, xfs, npath}                                                      from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 import semver                                                                                 from 'semver';
 

@@ -1,9 +1,9 @@
-import {Filename, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
+import {xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 
-import {Configuration}                      from './Configuration';
-import * as hashUtils                       from './hashUtils';
-import * as httpUtils                       from './httpUtils';
-import * as miscUtils                       from './miscUtils';
+import {Configuration}            from './Configuration';
+import * as hashUtils             from './hashUtils';
+import * as httpUtils             from './httpUtils';
+import * as miscUtils             from './miscUtils';
 
 export enum MetricName {
   VERSION = `version`,

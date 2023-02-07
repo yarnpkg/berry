@@ -1,4 +1,4 @@
-import {xfs, ppath, Filename} from '@yarnpkg/fslib';
+import {xfs, ppath} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`create`, () => {

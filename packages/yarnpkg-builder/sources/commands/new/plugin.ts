@@ -1,4 +1,4 @@
-import {Filename, npath, ppath, xfs}        from '@yarnpkg/fslib';
+import {npath, ppath, xfs}                  from '@yarnpkg/fslib';
 import chalk                                from 'chalk';
 import {Command, Option, Usage, UsageError} from 'clipanion';
 import path                                 from 'path';

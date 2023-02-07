@@ -1,8 +1,8 @@
-import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
-import {execute, UserOptions}               from '@yarnpkg/shell';
-import {PassThrough}                        from 'stream';
-import stripAnsi                            from 'strip-ansi';
-import {promisify}                          from 'util';
+import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
+import {execute, UserOptions}     from '@yarnpkg/shell';
+import {PassThrough}              from 'stream';
+import stripAnsi                  from 'strip-ansi';
+import {promisify}                from 'util';
 
 const setTimeoutPromise = promisify(setTimeout);
 

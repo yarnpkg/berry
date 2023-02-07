@@ -1,7 +1,7 @@
-import {Manifest}                           from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {merge}                              from 'lodash';
-import {fs, yarn}                           from 'pkg-tests-core';
+import {Manifest}                 from '@yarnpkg/core';
+import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {merge}                    from 'lodash';
+import {fs, yarn}                 from 'pkg-tests-core';
 
 const {unpackToDirectory} = fs;
 const {readManifest} = yarn;

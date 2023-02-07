@@ -1,4 +1,4 @@
-import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {npath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`patch`, () => {
