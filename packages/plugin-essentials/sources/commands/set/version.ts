@@ -1,7 +1,7 @@
 import {BaseCommand}                                                                          from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
 import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs, npath}                                            from '@yarnpkg/fslib';
+import {PortablePath, ppath, xfs, npath}                                                      from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 import semver                                                                                 from 'semver';
 
@@ -187,7 +187,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
     const bundleBuffer = await ensureBuffer();
 
     await xfs.mktempPromise(async tmpDir => {
-      const temporaryPath = ppath.join(tmpDir, `yarn.cjs` as Filename);
+      const temporaryPath = ppath.join(tmpDir, `yarn.cjs`);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer!);
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
@@ -204,8 +204,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
-  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases` as PortablePath);
-  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs` as Filename);
+  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases`);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs`);
   const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
 
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);

@@ -86,7 +86,7 @@ class PnpmInstaller implements Installer {
 
   constructor(private opts: LinkOptions) {
     this.indexFolderPromise = setupCopyIndex(xfs, {
-      indexPath: ppath.join(opts.project.configuration.get(`globalFolder`), `index` as Filename),
+      indexPath: ppath.join(opts.project.configuration.get(`globalFolder`), `index`),
     });
   }
 
@@ -309,14 +309,14 @@ function getNodeModulesLocation(project: Project) {
 }
 
 function getStoreLocation(project: Project) {
-  return ppath.join(getNodeModulesLocation(project), `.store` as Filename);
+  return ppath.join(getNodeModulesLocation(project), `.store`);
 }
 
 function getPackagePaths(locator: Locator, {project}: {project: Project}) {
   const pkgKey = structUtils.slugifyLocator(locator);
   const storeLocation = getStoreLocation(project);
 
-  const packageLocation = ppath.join(storeLocation, pkgKey, `package` as Filename);
+  const packageLocation = ppath.join(storeLocation, pkgKey, `package`);
   const dependenciesLocation = ppath.join(storeLocation, pkgKey, Filename.nodeModules);
 
   return {packageLocation, dependenciesLocation};

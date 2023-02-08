@@ -88,7 +88,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
-      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
+      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources`, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
 
     const report = await StreamReport.start({
       configuration,
@@ -104,7 +104,7 @@ export default class SetVersionSourcesCommand extends BaseCommand {
 
       report.reportSeparator();
 
-      const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js` as PortablePath);
+      const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js`);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
       const {bundleVersion} = await setVersion(configuration, null, async () => bundleBuffer, {
@@ -160,7 +160,7 @@ export type PrepareSpec = {
 export async function prepareRepo(spec: PrepareSpec, {configuration, report, target}: {configuration: Configuration, report: Report, target: PortablePath}) {
   let ready = false;
 
-  if (!spec.force && xfs.existsSync(ppath.join(target, `.git` as Filename))) {
+  if (!spec.force && xfs.existsSync(ppath.join(target, `.git`))) {
     report.reportInfo(MessageName.UNNAMED, `Fetching the latest commits`);
     report.reportSeparator();
 

@@ -98,10 +98,10 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
     }
   }
 
-  if (xfs.existsSync(ppath.join(location, `package-lock.json` as PortablePath)))
+  if (xfs.existsSync(ppath.join(location, `package-lock.json`)))
     return {packageManager: PackageManager.Npm, reason: `found npm's "package-lock.json" lockfile`};
 
-  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml` as PortablePath)))
+  if (xfs.existsSync(ppath.join(location, `pnpm-lock.yaml`)))
     return {packageManager: PackageManager.Pnpm, reason: `found pnpm's "pnpm-lock.yaml" lockfile`};
 
   return null;
@@ -219,7 +219,7 @@ const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
 export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator = null}: {configuration: Configuration, report: Report, workspace?: string | null, locator?: Locator | null}) {
   await prepareLimit(async () => {
     await xfs.mktempPromise(async logDir => {
-      const logFile = ppath.join(logDir, `pack.log` as Filename);
+      const logFile = ppath.join(logDir, `pack.log`);
 
       const stdin = null;
       const {stdout, stderr} = configuration.getSubprocessStreams(logFile, {prefix: npath.fromPortablePath(cwd), report});
@@ -277,7 +277,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             await xfs.writeFilePromise(manifestPath, manifestBuffer);
 
             // Otherwise Yarn 1 will pack the .yarn directory :(
-            await xfs.appendFilePromise(ppath.join(cwd, `.npmignore` as PortablePath), `/.yarn\n`);
+            await xfs.appendFilePromise(ppath.join(cwd, `.npmignore`), `/.yarn\n`);
 
             stdout.write(`\n`);
 
@@ -514,7 +514,7 @@ async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, 
   // for removal or standardization if it ever becomes a problem.
   //
   if (typeof cwd === `undefined`)
-    cwd = ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json` as Filename)));
+    cwd = ppath.dirname(await xfs.realpathPromise(ppath.join(workspace.cwd, `package.json`)));
 
   return {manifest: workspace.manifest, binFolder, env, cwd};
 }
@@ -583,7 +583,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
   const stdin = null;
 
   await xfs.mktempPromise(async logDir => {
-    const logFile = ppath.join(logDir, `${lifecycleScriptName}.log` as PortablePath);
+    const logFile = ppath.join(logDir, `${lifecycleScriptName}.log`);
 
     const header = `# This file contains the result of Yarn calling the "${lifecycleScriptName}" lifecycle script inside a workspace ("${npath.fromPortablePath(workspace.cwd)}")\n`;
 

@@ -1,8 +1,8 @@
-import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
-import {execute, UserOptions}               from '@yarnpkg/shell';
-import {PassThrough}                        from 'stream';
-import stripAnsi                            from 'strip-ansi';
-import {promisify}                          from 'util';
+import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
+import {execute, UserOptions}     from '@yarnpkg/shell';
+import {PassThrough}              from 'stream';
+import stripAnsi                  from 'strip-ansi';
+import {promisify}                from 'util';
 
 const setTimeoutPromise = promisify(setTimeout);
 
@@ -362,7 +362,7 @@ describe(`Shell`, () => {
 
     it(`should support redirections on subshells (one command)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
+        const file = ppath.join(tmpDir, `file`);
 
         await expectResult(bufferResult(
           `(echo "hello world") > "${file}"`,
@@ -376,7 +376,7 @@ describe(`Shell`, () => {
 
     it(`should support redirections on subshells (multiple commands)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
+        const file = ppath.join(tmpDir, `file`);
 
         await expectResult(bufferResult(
           `(echo "hello world"; echo "goodbye world") > "${file}"`,
@@ -390,7 +390,7 @@ describe(`Shell`, () => {
 
     it(`should support redirections on groups (one command)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
+        const file = ppath.join(tmpDir, `file`);
 
         await expectResult(bufferResult(
           `{echo "hello world"} > "${file}"`,
@@ -404,7 +404,7 @@ describe(`Shell`, () => {
 
     it(`should support redirections on groups (multiple commands)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
-        const file = ppath.join(tmpDir, `file` as Filename);
+        const file = ppath.join(tmpDir, `file`);
 
         await expectResult(bufferResult(
           `{echo "hello world"; echo "goodbye world"} > "${file}"`,
@@ -776,7 +776,7 @@ describe(`Shell`, () => {
     describe(`<`, () => {
       it(`should support input redirections (file)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
           await xfs.writeFilePromise(file, `hello world\n`);
 
           await expectResult(bufferResult(
@@ -789,7 +789,7 @@ describe(`Shell`, () => {
 
       it(`should support input redirections to fd (file)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
           await xfs.writeFilePromise(file, `hello world\n`);
 
           await expectResult(bufferResult(
@@ -802,10 +802,10 @@ describe(`Shell`, () => {
 
       it(`should support multiple inputs`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file1 = ppath.join(tmpDir, `file1` as Filename);
+          const file1 = ppath.join(tmpDir, `file1`);
           await xfs.writeFilePromise(file1, `foo bar baz\n`);
 
-          const file2 = ppath.join(tmpDir, `file2` as Filename);
+          const file2 = ppath.join(tmpDir, `file2`);
           await xfs.writeFilePromise(file2, `hello world\n`);
 
           await expectResult(bufferResult(
@@ -818,7 +818,7 @@ describe(`Shell`, () => {
 
       it(`should throw on input redirections to unsupported file descriptors`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
           await xfs.writeFilePromise(file, `hello world\n`);
 
           await expect(bufferResult(
@@ -873,7 +873,7 @@ describe(`Shell`, () => {
     describe(`>`, () => {
       it(`should support output redirections (overwrite)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
 
           await expectResult(bufferResult(
             `echo "hello world" > "${file}"`,
@@ -887,7 +887,7 @@ describe(`Shell`, () => {
 
       it(`shouldn't affect unrelated commands`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
 
           await expectResult(bufferResult(
             `echo "hello world" > "${file}"; echo foo`,
@@ -899,7 +899,7 @@ describe(`Shell`, () => {
         });
 
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
 
           await expectResult(bufferResult(
             `echo "hello world" > "${file}" && echo foo`,
@@ -913,8 +913,8 @@ describe(`Shell`, () => {
 
       it(`shouldn't do weird stuff when piping a builtin redirection`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file1 = ppath.join(tmpDir, `file1` as Filename);
-          const file2 = ppath.join(tmpDir, `file2` as Filename);
+          const file1 = ppath.join(tmpDir, `file1`);
+          const file2 = ppath.join(tmpDir, `file2`);
 
           await expectResult(bufferResult(
             `echo "hello world" > "${file1}" | echo "foo bar" > "${file2}"; echo test`,
@@ -927,7 +927,7 @@ describe(`Shell`, () => {
         });
 
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
 
           await expectResult(bufferResult(
             `echo "hello world" > "${file}" && echo foo`,
@@ -941,7 +941,7 @@ describe(`Shell`, () => {
 
       it(`should support output redirections from fd (stdout)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
 
           await expectResult(bufferResult(
             `node -e "console.log(\`foo\`), console.error(\`bar\`)" 1> "${file}"`,
@@ -955,7 +955,7 @@ describe(`Shell`, () => {
 
       it(`should support output redirections from fd (stderr)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
 
           await expectResult(bufferResult(
             `node -e "console.log(\`foo\`), console.error(\`bar\`)" 2> "${file}"`,
@@ -969,8 +969,8 @@ describe(`Shell`, () => {
 
       it(`should support multiple outputs`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file1 = ppath.join(tmpDir, `file1` as Filename);
-          const file2 = ppath.join(tmpDir, `file2` as Filename);
+          const file1 = ppath.join(tmpDir, `file1`);
+          const file2 = ppath.join(tmpDir, `file2`);
 
           await expectResult(bufferResult(
             `echo "hello world" > "${file1}" > "${file2}"`,
@@ -1009,7 +1009,7 @@ describe(`Shell`, () => {
     describe(`>>`, () => {
       it(`should support output redirections (append)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
           await xfs.writeFilePromise(file, `foo bar baz\n`);
 
           await expectResult(bufferResult(
@@ -1024,7 +1024,7 @@ describe(`Shell`, () => {
 
       it(`should support output redirections from fd (stdout)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
           await xfs.writeFilePromise(file, `foo bar baz\n`);
 
           await expectResult(bufferResult(
@@ -1039,7 +1039,7 @@ describe(`Shell`, () => {
 
       it(`should support output redirections from fd (stderr)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const file = ppath.join(tmpDir, `file` as Filename);
+          const file = ppath.join(tmpDir, `file`);
           await xfs.writeFilePromise(file, `foo bar baz\n`);
 
           await expectResult(bufferResult(
@@ -1289,9 +1289,9 @@ describe(`Shell`, () => {
       describe(`Basic Syntax`, () => {
         it(`should support glob patterns with asterisk`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt`), ``);
 
             await expectResult(bufferResult(
               `echo *`,
@@ -1313,11 +1313,11 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with globstar`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.mkdirpPromise(ppath.join(tmpDir, `foo/bar` as PortablePath));
+            await xfs.mkdirpPromise(ppath.join(tmpDir, `foo/bar`));
 
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo/b.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo/bar/c.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo/b.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo/bar/c.txt`), ``);
 
             await expectResult(bufferResult(
               `echo **`,
@@ -1339,10 +1339,10 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with question mark`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `ax.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `axxa.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txtx` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ax.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `axxa.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txtx`), ``);
 
             await expectResult(bufferResult(
               `echo a?.txt`,
@@ -1372,13 +1372,13 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with sequence`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a1.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a2.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a3.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a1.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a2.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a3.txt`), ``);
 
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.cs` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.cs`), ``);
 
             await expectResult(bufferResult(
               `echo a[23].txt`,
@@ -1450,14 +1450,14 @@ describe(`Shell`, () => {
       describe(`Advanced Syntax`, () => {
         it(`should support glob patterns with posix character classes`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `123.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo123.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `BAR.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `123.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo123.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `BAR.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt`), ``);
 
             await expectResult(bufferResult(
               `echo +([[:alnum:]]).txt`,
@@ -1527,10 +1527,10 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with extglobs`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `f.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fo.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fooo.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `f.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fo.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooo.txt`), ``);
 
             await expectResult(bufferResult(
               `echo f@(o).txt`,
@@ -1576,22 +1576,22 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with braces`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt`), ``);
 
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.vue` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.js`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.ts`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foo.vue`), ``);
 
-            await xfs.writeFilePromise(ppath.join(tmpDir, `cbaxbc.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `cbstbc.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `ftaxwy.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `cbaxbc.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `cbstbc.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ftaxwy.txt`), ``);
 
-            await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `acd.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `ade.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `aef.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abc.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `acd.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ade.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `aef.txt`), ``);
 
             await expectResult(bufferResult(
               `echo {a,b}.txt`,
@@ -1621,11 +1621,11 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with regexp character classes`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `abcd.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `12345.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `0123456789.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz0123456789.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abcd.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `12345.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `0123456789.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `abcdxyz0123456789.txt`), ``);
 
             await expectResult(bufferResult(
               `echo +([a-d]).txt`,
@@ -1655,16 +1655,16 @@ describe(`Shell`, () => {
 
         it(`should support glob patterns with regexp groups`, async () => {
           await xfs.mktempPromise(async tmpDir => {
-            await xfs.writeFilePromise(ppath.join(tmpDir, `ab12.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `pq56.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `xy89.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `ab12.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `pq56.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `xy89.txt`), ``);
 
-            await xfs.writeFilePromise(ppath.join(tmpDir, `foox1.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fooxa1.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fooxb1.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fooy1.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fooya1.txt` as Filename), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `fooyb1.txt` as Filename), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `foox1.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooxa1.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooxb1.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooy1.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooya1.txt`), ``);
+            await xfs.writeFilePromise(ppath.join(tmpDir, `fooyb1.txt`), ``);
 
             await expectResult(bufferResult(
               `echo (ab|xy)(12|89).txt`,
@@ -1733,12 +1733,12 @@ describe(`Shell`, () => {
 
       it(`should include directories`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(tmpDir, `a.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(tmpDir, `b.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(tmpDir, `c.txt`), ``);
 
-          await xfs.mkdirPromise(ppath.join(tmpDir, `d` as Filename));
-          await xfs.mkdirPromise(ppath.join(tmpDir, `e` as Filename));
+          await xfs.mkdirPromise(ppath.join(tmpDir, `d`));
+          await xfs.mkdirPromise(ppath.join(tmpDir, `e`));
 
           await expectResult(bufferResult(
             `echo *`,
@@ -1754,12 +1754,12 @@ describe(`Shell`, () => {
     describe(`Integrations`, () => {
       it(`should work with environment variables`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const subdir = ppath.join(tmpDir, `subdir` as Filename);
+          const subdir = ppath.join(tmpDir, `subdir`);
           await xfs.mkdirPromise(subdir);
 
-          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt`), ``);
 
           await expectResult(bufferResult(
             `echo $DIRNAME/*`,
@@ -1781,12 +1781,12 @@ describe(`Shell`, () => {
 
       it(`should work with subshells`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const subdir = ppath.join(tmpDir, `subdir` as Filename);
+          const subdir = ppath.join(tmpDir, `subdir`);
           await xfs.mkdirPromise(subdir);
 
-          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt`), ``);
 
           await expectResult(bufferResult(
             `echo $(echo subdir)/*`,
@@ -1800,12 +1800,12 @@ describe(`Shell`, () => {
 
       it(`should work with arithmetics`, async () => {
         await xfs.mktempPromise(async tmpDir => {
-          const subdir = ppath.join(tmpDir, `1234` as Filename);
+          const subdir = ppath.join(tmpDir, `1234`);
           await xfs.mkdirPromise(subdir);
 
-          await xfs.writeFilePromise(ppath.join(subdir, `a.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(subdir, `b.txt` as Filename), ``);
-          await xfs.writeFilePromise(ppath.join(subdir, `c.txt` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `a.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `b.txt`), ``);
+          await xfs.writeFilePromise(ppath.join(subdir, `c.txt`), ``);
 
           await expectResult(bufferResult(
             `echo $(( 1000 + 234 ))/*`,

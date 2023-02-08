@@ -207,7 +207,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
   function applyNodeExportsResolution(unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions) {
-    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js` as Filename), {
+    const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       resolveIgnored: true,
       includeDiscardFromLookup: true,
     });
@@ -352,7 +352,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
   function callNativeResolution(request: PortablePath, issuer: PortablePath): NativePath | false {
     if (issuer.endsWith(`/`))
-      issuer = ppath.join(issuer, `internal.js` as Filename);
+      issuer = ppath.join(issuer, `internal.js`);
 
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use

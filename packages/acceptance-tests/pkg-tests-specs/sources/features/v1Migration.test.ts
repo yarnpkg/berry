@@ -13,7 +13,7 @@ describe(`Features`, () => {
 
         await run(`install`);
 
-        await expect(xfs.existsPromise(ppath.join(path, Filename.nodeModules, `no-deps` as Filename))).resolves.toEqual(true);
+        await expect(xfs.existsPromise(ppath.join(path, Filename.nodeModules, `no-deps`))).resolves.toEqual(true);
       }),
     );
   });

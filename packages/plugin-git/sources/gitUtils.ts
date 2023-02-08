@@ -1,5 +1,5 @@
 import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {npath, PortablePath, ppath, xfs}                                                                                                          from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
 import capitalize                                                                                                                                 from 'lodash/capitalize';
@@ -296,7 +296,7 @@ export async function fetchRoot(initialCwd: PortablePath) {
   let nextCwd = initialCwd;
   do {
     cwd = nextCwd;
-    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
+    if (await xfs.existsPromise(ppath.join(cwd, `.git`)))
       return cwd;
     nextCwd = ppath.dirname(cwd);
   } while (nextCwd !== cwd);

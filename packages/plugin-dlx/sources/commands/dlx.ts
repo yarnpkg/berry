@@ -44,13 +44,13 @@ export default class DlxCommand extends BaseCommand {
     Configuration.telemetry = null;
 
     return await xfs.mktempPromise(async baseDir => {
-      const tmpDir = ppath.join(baseDir, `dlx-${process.pid}` as Filename);
+      const tmpDir = ppath.join(baseDir, `dlx-${process.pid}`);
       await xfs.mkdirPromise(tmpDir);
 
-      await xfs.writeFilePromise(ppath.join(tmpDir, `package.json` as Filename), `{}\n`);
-      await xfs.writeFilePromise(ppath.join(tmpDir, `yarn.lock` as Filename), ``);
+      await xfs.writeFilePromise(ppath.join(tmpDir, `package.json`), `{}\n`);
+      await xfs.writeFilePromise(ppath.join(tmpDir, `yarn.lock`), ``);
 
-      const targetYarnrc = ppath.join(tmpDir, `.yarnrc.yml` as Filename);
+      const targetYarnrc = ppath.join(tmpDir, `.yarnrc.yml`);
       const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
 
       // We set enableGlobalCache to true for dlx calls to speed it up but only if the
@@ -72,7 +72,7 @@ export default class DlxCommand extends BaseCommand {
       };
 
       const sourceYarnrc = projectCwd !== null
-        ? ppath.join(projectCwd, `.yarnrc.yml` as Filename)
+        ? ppath.join(projectCwd, `.yarnrc.yml`)
         : null;
 
       if (sourceYarnrc !== null && xfs.existsSync(sourceYarnrc)) {

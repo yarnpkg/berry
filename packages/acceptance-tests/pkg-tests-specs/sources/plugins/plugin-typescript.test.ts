@@ -1,7 +1,7 @@
-import {Manifest}                           from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {merge}                              from 'lodash';
-import {fs, yarn}                           from 'pkg-tests-core';
+import {Manifest}                 from '@yarnpkg/core';
+import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {merge}                    from 'lodash';
+import {fs, yarn}                 from 'pkg-tests-core';
 
 const {unpackToDirectory} = fs;
 const {readManifest} = yarn;
@@ -29,7 +29,7 @@ describe(`Plugins`, () => {
       test(
         `it should automatically enable automatic @types insertion when a tsconfig is detected`,
         makeTemporaryEnv({}, async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `tsconfig.json` as Filename), ``);
+          await xfs.writeFilePromise(ppath.join(path, `tsconfig.json`), ``);
 
           await run(`add`, `is-number`);
 

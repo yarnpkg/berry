@@ -164,7 +164,7 @@ describe(`Commands`, () => {
         },
         async ({path, run, source}) => {
           // Create the primary package.
-          const pkgPrimary = ppath.join(path, `packages/pkg-primary` as PortablePath);
+          const pkgPrimary = ppath.join(path, `packages/pkg-primary`);
           await xfs.mkdirpPromise(pkgPrimary);
           await xfs.writeJsonPromise(ppath.join(pkgPrimary, Filename.manifest), {
             name: `pkg-primary`,
@@ -172,7 +172,7 @@ describe(`Commands`, () => {
           });
 
           // Create the dependant package.
-          const pkgDependant = ppath.join(path, `packages/pkg-dependant` as PortablePath);
+          const pkgDependant = ppath.join(path, `packages/pkg-dependant`);
           await xfs.mkdirpPromise(pkgDependant);
           await xfs.writeJsonPromise(ppath.join(pkgDependant, Filename.manifest), {
             name: `pkg-dependant`,

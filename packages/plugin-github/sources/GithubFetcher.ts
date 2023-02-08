@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
 import {Locator}                                       from '@yarnpkg/core';
 import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {PortablePath, CwdFS, ppath, xfs}               from '@yarnpkg/fslib';
+import {CwdFS, ppath, xfs}                             from '@yarnpkg/fslib';
 import {gitUtils}                                      from '@yarnpkg/plugin-git';
 
 import * as githubUtils                                from './githubUtils';
@@ -49,7 +49,7 @@ export class GithubFetcher implements Fetcher {
       });
 
       const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
-      const packagePath = ppath.join(extractPath, `package.tgz` as PortablePath);
+      const packagePath = ppath.join(extractPath, `package.tgz`);
 
       await scriptUtils.prepareExternalProject(extractPath, packagePath, {
         configuration: opts.project.configuration,

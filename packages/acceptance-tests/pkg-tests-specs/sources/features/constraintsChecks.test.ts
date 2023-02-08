@@ -1,4 +1,4 @@
-import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Constraints Checks`, () => {
@@ -7,7 +7,7 @@ describe(`Features`, () => {
       makeTemporaryEnv({}, {
         enableConstraintsChecks: true,
       }, async ({path, run}) => {
-        await xfs.writeFilePromise(ppath.join(path, `yarn.config.js` as Filename), [
+        await xfs.writeFilePromise(ppath.join(path, `yarn.config.js`), [
           `exports.constraints = ({ Yarn }) => {\n`,
           `  for (const workspace of Yarn.workspaces()) {\n`,
           `    workspace.set('foo', 'bar')\n`,

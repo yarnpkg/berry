@@ -1,5 +1,5 @@
 import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, Report, nodeUtils, structUtils} from '@yarnpkg/core';
-import {Filename, ppath}                                                                                                                                 from '@yarnpkg/fslib';
+import {ppath}                                                                                                                                           from '@yarnpkg/fslib';
 
 export function checkManifestCompatibility(pkg: Package) {
   return structUtils.isPackageCompatible(pkg, nodeUtils.getArchitectureSet());
@@ -73,6 +73,6 @@ export function getExtractHint(fetchResult: FetchResult) {
 }
 
 export function hasBindingGyp(fetchResult: FetchResult) {
-  const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp` as Filename);
+  const bindingFilePath = ppath.join(fetchResult.prefixPath, `binding.gyp`);
   return fetchResult.packageFs.existsSync(bindingFilePath);
 }

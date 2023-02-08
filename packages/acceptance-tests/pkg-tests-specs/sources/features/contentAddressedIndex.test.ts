@@ -1,4 +1,4 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Content-Addressed Index`, () => {
@@ -22,8 +22,8 @@ describe(`Features`, () => {
           await run(`install`, {cwd: path});
           await run(`install`, {cwd: path2});
 
-          const statA = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/package.json` as PortablePath));
-          const statB = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/package.json` as PortablePath));
+          const statA = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/package.json`));
+          const statB = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/package.json`));
 
           expect({
             dev: statA.dev,
@@ -56,8 +56,8 @@ describe(`Features`, () => {
           await run(`install`, {cwd: path});
           await run(`install`, {cwd: path2});
 
-          const statA = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/index.js` as PortablePath));
-          const statB = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/index.js` as PortablePath));
+          const statA = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/index.js`));
+          const statB = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/index.js`));
 
           expect({
             dev: statA.dev,
@@ -82,7 +82,7 @@ describe(`Features`, () => {
         await xfs.mktempPromise(async path2 => {
           await run(`install`);
 
-          const referenceFile = ppath.join(path, `node_modules/no-deps/index.js` as PortablePath);
+          const referenceFile = ppath.join(path, `node_modules/no-deps/index.js`);
 
           const originalContent = await xfs.readFilePromise(referenceFile, `utf8`);
           const newContent = `${originalContent}// oh no, modified\n`;
@@ -116,8 +116,8 @@ describe(`Features`, () => {
           await run(`install`, {cwd: path});
           await run(`install`, {cwd: path2});
 
-          const referenceFileA = ppath.join(path, `node_modules/no-deps/index.js` as PortablePath);
-          const referenceFileB = ppath.join(path, `node_modules/no-deps/index.js` as PortablePath);
+          const referenceFileA = ppath.join(path, `node_modules/no-deps/index.js`);
+          const referenceFileB = ppath.join(path, `node_modules/no-deps/index.js`);
 
           const originalContent = await xfs.readFilePromise(referenceFileA, `utf8`);
           const newContent = `${originalContent}// oh no, modified\n`;

@@ -87,7 +87,7 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspace`, `component-a`, `run`, `printInitCwd`, {cwd: ppath.join(path, `docs` as PortablePath)}));
+            ({code, stdout, stderr} = await run(`workspace`, `component-a`, `run`, `printInitCwd`, {cwd: ppath.join(path, `docs`)}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

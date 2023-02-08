@@ -1,4 +1,4 @@
-import {xfs, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
+import {xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 
 const {
   tests: {getPackageArchivePath},
@@ -46,7 +46,7 @@ describe(`Protocols`, () => {
         const noDeps1 = await getPackageArchivePath(`no-deps`, `1.0.0`);
         const noDeps2 = await getPackageArchivePath(`no-deps`, `2.0.0`);
 
-        const destination = ppath.join(path, `pkg.tgz` as Filename);
+        const destination = ppath.join(path, `pkg.tgz`);
 
         await xfs.copyPromise(destination, noDeps1);
         await run(`install`);

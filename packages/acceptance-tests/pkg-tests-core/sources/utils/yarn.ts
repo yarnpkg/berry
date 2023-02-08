@@ -26,5 +26,5 @@ export async function writePackage(dir: PortablePath, manifest: {[key: string]: 
 }
 
 export function getPluginPath(dir: PortablePath, name: string) {
-  return ppath.join(dir, `.yarn/plugins/${name}.cjs` as PortablePath);
+  return ppath.join(dir, `.yarn/plugins/${name}.cjs`);
 }
