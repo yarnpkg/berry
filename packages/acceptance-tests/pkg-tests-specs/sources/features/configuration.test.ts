@@ -1,12 +1,12 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Configuration`, () => {
     test(`it should let the project configuration override the home configuration`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
 
-      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
         preferInteractive: true,
       });
 
@@ -44,13 +44,13 @@ describe(`Features`, () => {
 
     test(`it should skip the home configuration if onConflict: reset is set in the project configuration`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
 
       // Sanity checks
       await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
       await expect(run(`config`, `get`, `--json`, `preferTruncatedLines`)).resolves.toMatchObject({stdout: `false\n`});
 
-      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
         preferInteractive: true,
         preferTruncatedLines: true,
       });
@@ -76,13 +76,13 @@ describe(`Features`, () => {
 
     test(`it should allow extending values from the home configuration if explicitly requested`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
 
       // Sanity checks
       await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
       await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `[]\n`});
 
-      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
         preferInteractive: true,
         immutablePatterns: [`foo`],
       });

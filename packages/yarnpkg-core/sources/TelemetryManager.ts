@@ -1,9 +1,9 @@
-import {Filename, xfs, PortablePath, ppath} from '@yarnpkg/fslib';
+import {xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 
-import {Configuration}                      from './Configuration';
-import * as hashUtils                       from './hashUtils';
-import * as httpUtils                       from './httpUtils';
-import * as miscUtils                       from './miscUtils';
+import {Configuration}            from './Configuration';
+import * as hashUtils             from './hashUtils';
+import * as httpUtils             from './httpUtils';
+import * as miscUtils             from './miscUtils';
 
 export enum MetricName {
   VERSION = `version`,
@@ -97,7 +97,7 @@ export class TelemetryManager {
 
   private getRegistryPath() {
     const registryFile = this.configuration.get(`globalFolder`);
-    return ppath.join(registryFile, `telemetry.json` as Filename);
+    return ppath.join(registryFile, `telemetry.json`);
   }
 
   private sendReport(accountId: string) {

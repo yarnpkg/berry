@@ -71,7 +71,7 @@ export class Workspace {
     for (const relativeCwd of relativeCwds) {
       const candidateCwd = ppath.resolve(this.cwd, npath.toPortablePath(relativeCwd));
 
-      if (xfs.existsSync(ppath.join(candidateCwd, `package.json` as Filename))) {
+      if (xfs.existsSync(ppath.join(candidateCwd, `package.json`))) {
         this.workspacesCwds.add(candidateCwd);
       }
     }

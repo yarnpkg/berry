@@ -1,4 +1,4 @@
-import {Filename, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`exec`, () => {
@@ -27,9 +27,9 @@ describe(`Commands`, () => {
     test(
       `it should inject binaries the workspace has access to`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `bin` as Filename));
-        await xfs.writeFilePromise(ppath.join(path, `bin/index.js` as PortablePath), `console.log(42)`);
-        await xfs.writeJsonPromise(ppath.join(path, `bin` as Filename, Filename.manifest), {
+        await xfs.mkdirPromise(ppath.join(path, `bin`));
+        await xfs.writeFilePromise(ppath.join(path, `bin/index.js`), `console.log(42)`);
+        await xfs.writeJsonPromise(ppath.join(path, `bin`, Filename.manifest), {
           name: `bin`,
           bin: `./index.js`,
         });

@@ -84,7 +84,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
       const file = ppath.normalize(fileRequest);
 
       const source = ppath.resolve(workspace.cwd, file);
-      const dest = ppath.join(`package` as PortablePath, file);
+      const dest = ppath.join(`package`, file);
 
       const stat = await xfs.lstatPromise(source);
 

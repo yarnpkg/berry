@@ -1,11 +1,11 @@
-import {Filename, FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
-import {ZipCompression, ZipFS}                                                from '@yarnpkg/libzip';
-import {PassThrough, Readable}                                                from 'stream';
-import tar                                                                    from 'tar';
+import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
+import {ZipCompression, ZipFS}                                      from '@yarnpkg/libzip';
+import {PassThrough, Readable}                                      from 'stream';
+import tar                                                          from 'tar';
 
-import {WorkerPool}                                                           from './WorkerPool';
-import * as miscUtils                                                         from './miscUtils';
-import {getContent as getZipWorkerSource, ConvertToZipPayload}                from './worker-zip';
+import {WorkerPool}                                                 from './WorkerPool';
+import * as miscUtils                                               from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}      from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
@@ -20,7 +20,7 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
     zipFs = new ZipFS(null, {level: compressionLevel});
   } else {
     const tmpFolder = await xfs.mktempPromise();
-    const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+    const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
     zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel});
   }
@@ -41,7 +41,7 @@ let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
-  const tmpFile = ppath.join(tmpFolder, `archive.zip` as Filename);
+  const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
   workerPool ||= new WorkerPool(getZipWorkerSource());
 

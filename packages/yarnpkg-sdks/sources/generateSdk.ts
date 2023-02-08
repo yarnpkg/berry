@@ -206,7 +206,7 @@ export class Wrapper {
   }
 
   async writeManifest() {
-    const absWrapperPath = ppath.join(this.target, this.name, `package.json` as Filename);
+    const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
 
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const dependencyReference = topLevelInformation.packageDependencies.get(this.name)!;

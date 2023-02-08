@@ -1,7 +1,7 @@
 import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
-import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
+import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
 import {UsageError}                                                                                             from 'clipanion';
 
@@ -376,7 +376,7 @@ export class PnpInstaller implements Installer {
     const ignoreRegExp = ignorePattern ? new RegExp(ignorePattern) : null;
 
     for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
+      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules`);
       if (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd)) || !xfs.existsSync(nodeModulesPath))
         continue;
 
@@ -437,7 +437,7 @@ export class PnpInstaller implements Installer {
     this.unpluggedPaths.add(unplugPath);
 
     api.holdFetchResult(this.asyncActions.set(locator.locatorHash, async () => {
-      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
+      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready`);
       if (await xfs.existsPromise(readyFile))
         return;
 

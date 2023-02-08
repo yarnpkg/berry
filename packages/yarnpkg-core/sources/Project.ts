@@ -644,7 +644,7 @@ export class Project {
   }
 
   async loadUserConfig() {
-    const configPath = ppath.join(this.cwd, `yarn.config.js` as Filename);
+    const configPath = ppath.join(this.cwd, `yarn.config.js`);
     if (!await xfs.existsPromise(configPath))
       return null;
 
@@ -1423,7 +1423,7 @@ export class Project {
             const stdin = null;
 
             const wasBuildSuccessful = await xfs.mktempPromise(async logDir => {
-              const logFile = ppath.join(logDir, `build.log` as PortablePath);
+              const logFile = ppath.join(logDir, `build.log`);
 
               const {stdout, stderr} = this.configuration.getSubprocessStreams(logFile, {
                 header,
@@ -1982,7 +1982,7 @@ function applyVirtualResolutionMutations({
 
   const reportStackOverflow = (): never => {
     const logDir = xfs.mktempSync();
-    const logFile = ppath.join(logDir, `stacktrace.log` as Filename);
+    const logFile = ppath.join(logDir, `stacktrace.log`);
 
     const maxSize = String(resolutionStack.length + 1).length;
     const content = resolutionStack.map((locator, index) => {

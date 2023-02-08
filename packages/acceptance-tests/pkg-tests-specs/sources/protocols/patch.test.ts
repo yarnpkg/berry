@@ -1,4 +1,4 @@
-import {xfs, ppath, Filename, PortablePath} from '@yarnpkg/fslib';
+import {xfs, ppath, Filename} from '@yarnpkg/fslib';
 
 const {
   tests: {getPackageDirectoryPath},
@@ -53,8 +53,8 @@ describe(`Protocols`, () => {
 
           await run(`install`);
 
-          await xfs.removePromise(ppath.join(path, `.yarn/cache` as PortablePath));
-          await xfs.removePromise(ppath.join(path, `.yarn/global` as PortablePath));
+          await xfs.removePromise(ppath.join(path, `.yarn/cache`));
+          await xfs.removePromise(ppath.join(path, `.yarn/global`));
 
           await run(`install`);
 
@@ -78,8 +78,8 @@ describe(`Protocols`, () => {
 
           await run(`install`);
 
-          await xfs.removePromise(ppath.join(path, `.yarn/cache` as PortablePath));
-          await xfs.removePromise(ppath.join(path, `.yarn/global` as PortablePath));
+          await xfs.removePromise(ppath.join(path, `.yarn/cache`));
+          await xfs.removePromise(ppath.join(path, `.yarn/global`));
 
           // At least three seconds because Zip archives are precise to two
           // seconds, not one. One extra second will ensure that the file
@@ -112,7 +112,7 @@ describe(`Protocols`, () => {
 
           await run(`set`, `resolution`, `no-deps@npm:1.0.0`, `npm:2.0.0`);
 
-          await xfs.writeJsonPromise(ppath.join(path, `package.json` as PortablePath), {
+          await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
             dependencies: {
               [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`,
             },
@@ -126,7 +126,7 @@ describe(`Protocols`, () => {
             hello: `world`,
           });
 
-          await xfs.writeJsonPromise(ppath.join(path, `package.json` as PortablePath), {
+          await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
             dependencies: {
               [`no-deps`]: `1.0.0`,
             },
@@ -153,7 +153,7 @@ describe(`Protocols`, () => {
         async ({path, run, source}) => {
           await xfs.mktempPromise(async fileTarget => {
             await xfs.writeFilePromise(ppath.join(fileTarget, PATCH_NAME), NO_DEPS_PATCH);
-            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js` as Filename), `module.exports = require('no-deps');`);
+            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
             await xfs.writeJsonPromise(ppath.join(fileTarget, Filename.manifest), {
               dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
             });

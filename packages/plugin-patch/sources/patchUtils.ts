@@ -1,5 +1,5 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils, FetchResult, semverUtils, hashUtils} from '@yarnpkg/core';
-import {npath, PortablePath, xfs, ppath, Filename, NativePath, CwdFS}                                                                                           from '@yarnpkg/fslib';
+import {npath, PortablePath, xfs, ppath, NativePath, CwdFS}                                                                                                     from '@yarnpkg/fslib';
 
 import {CACHE_VERSION}                                                                                                                                          from './constants';
 import {Hooks as PatchHooks}                                                                                                                                    from './index';
@@ -230,9 +230,9 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
 
   const temp = await xfs.mktempPromise();
 
-  const sourcePath = ppath.join(temp, `source` as Filename);
-  const userPath = ppath.join(temp, `user` as Filename);
-  const metaPath = ppath.join(temp, `.yarn-patch.json` as Filename);
+  const sourcePath = ppath.join(temp, `source`);
+  const userPath = ppath.join(temp, `user`);
+  const metaPath = ppath.join(temp, `.yarn-patch.json`);
 
   const fetcher = project.configuration.makeFetcher();
 

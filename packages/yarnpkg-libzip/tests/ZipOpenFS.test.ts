@@ -14,9 +14,9 @@ export const ZIP_DIR3 = ppath.join(
   `fixtures/foo.hiddenzip` as Filename,
 );
 
-export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt` as Filename);
-export const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt` as Filename);
-export const ZIP_FILE3 = ppath.join(ZIP_DIR3, `foo.txt` as Filename);
+export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt`);
+export const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt`);
+export const ZIP_FILE3 = ppath.join(ZIP_DIR3, `foo.txt`);
 
 afterEach(() => {
   jest.useRealTimers();

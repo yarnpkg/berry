@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report} from '@yarnpkg/core';
 import {Locator}                                                                      from '@yarnpkg/core';
 import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
-import {ppath, xfs, Filename, CwdFS, PortablePath}                                    from '@yarnpkg/fslib';
+import {ppath, xfs, CwdFS, PortablePath}                                              from '@yarnpkg/fslib';
 import {ZipFS}                                                                        from '@yarnpkg/libzip';
 
 import * as patchUtils                                                                from './patchUtils';
@@ -44,7 +44,7 @@ export class PatchFetcher implements Fetcher {
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts);
 
     const tmpDir = await xfs.mktempPromise();
-    const currentFile = ppath.join(tmpDir, `current.zip` as Filename);
+    const currentFile = ppath.join(tmpDir, `current.zip`);
 
     const sourceFetch = await opts.fetcher.fetch(sourceLocator, opts);
     const prefixPath = structUtils.getIdentVendorPath(locator);

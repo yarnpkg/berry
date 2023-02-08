@@ -63,7 +63,7 @@ export default class PluginImportSourcesCommand extends BaseCommand {
 
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
-      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources` as Filename, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
+      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources`, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
 
     const report = await StreamReport.start({
       configuration,
@@ -110,7 +110,7 @@ export async function buildAndSavePlugin(pluginSpec: string, {context, noMinify}
 
   report.reportSeparator();
 
-  const pluginPath = ppath.resolve(target, `packages/${pluginName}/bundles/${pluginSpec}.js` as PortablePath);
+  const pluginPath = ppath.resolve(target, `packages/${pluginName}/bundles/${pluginSpec}.js`);
   const pluginBuffer = await xfs.readFilePromise(pluginPath);
 
   await savePlugin(pluginSpec, pluginBuffer, {project, report});

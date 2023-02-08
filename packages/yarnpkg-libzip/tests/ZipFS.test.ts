@@ -88,7 +88,7 @@ describe(`ZipFS`, () => {
       }
     };
 
-    const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip` as Filename);
+    const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip`);
     const zipFs = new ZipFS(tmpfile, {create: true});
 
     zipFs.mkdirSync(`/dir` as PortablePath);
@@ -129,7 +129,7 @@ describe(`ZipFS`, () => {
       expect(readFileContents(zipFs, p, null)).toEqual(`file content`);
     };
 
-    const tmpfile = ppath.resolve(xfs.mktempSync(), `test2.zip` as Filename);
+    const tmpfile = ppath.resolve(xfs.mktempSync(), `test2.zip`);
     const zipFs = new ZipFS(tmpfile, {create: true});
     await zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
