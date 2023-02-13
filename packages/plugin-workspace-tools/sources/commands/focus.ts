@@ -11,7 +11,7 @@ export default class WorkspacesFocusCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
-    description: `install a single workspace and its dependencies`,
+    description: `install the specified workspace or workspaces and their dependencies`,
     details: `
       This command will run an install as if the specified workspaces (and all other workspaces they depend on) were the only ones in the project. If no workspaces are explicitly listed, the active one will be assumed.
 
