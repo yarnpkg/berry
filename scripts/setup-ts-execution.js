@@ -55,7 +55,7 @@ const cache = {
 
 const cachePath = path.join(__dirname, `../node_modules/.cache/yarn/esbuild-transpile-cache.bin`);
 try {
-  const cacheData = v8.deserialize(zlib.gunzipSync(fs.readFileSync(cachePath)));
+  const cacheData = v8.deserialize(zlib.brotliDecompressSync(fs.readFileSync(cachePath)));
   if (cacheData.version === cache.version) {
     cache.files = cacheData.files;
   }
@@ -70,12 +70,16 @@ function persistCache() {
   const tmpPath = cachePath + crypto.randomBytes(8).toString(`hex`);
   fs.writeFileSync(
     tmpPath,
-    zlib.gzipSync(
+    zlib.brotliCompressSync(
       v8.serialize({
         version: cache.version,
         files: cache.files,
       }),
-      {level: 1},
+      {
+        params: {
+          [zlib.constants.BROTLI_PARAM_QUALITY]: 4,
+        },
+      },
     ),
   );
   fs.renameSync(tmpPath, cachePath);
