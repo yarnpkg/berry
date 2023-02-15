@@ -3,6 +3,9 @@
   "version": "2.2.2",
   "license": "BSD-2-Clause",
   "sideEffects": false,
+  "files": [
+    "sources"
+  ],
   "peerDependencies": {
     "ink": "^2.3.0",
     "react": "^16.8.4"
@@ -21,8 +24,8 @@
     "tslib": "^1.13.0"
   },
   "scripts": {
-    "postpack": "find sources -name '*.js' -delete",
-    "prepack": "yarn build:compile-inline \"$(pwd)\""
+    "postpack": "find sources -name '*.js' -delete -or -name '*.d.ts' -delete",
+    "prepack": "run build:compile \"$(pwd)\" --inline"
   },
   "engines": {
     "node": ">=12 <14 || 14.2 - 14.9 || >14.10.0"

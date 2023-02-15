@@ -7,7 +7,6 @@
   ],
   "devDependencies": {
     "@arcanis/sherlock": "^2.0.3",
-    "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
@@ -64,7 +63,6 @@
   "scripts": {
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/yarnpkg-cli/sources/pluginCommands.ts",
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' --exclude '*.tsx' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
-    "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
     "test:lint": "eslint --max-warnings 0 \"./**/*.@(tsx|ts|js)\"",
     "test:unit": "jest",
     "typecheck:all": "tsc --noEmit"
