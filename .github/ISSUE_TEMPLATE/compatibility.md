@@ -27,7 +27,7 @@ Some other important notes:
 
 - If the `packageExtensions` entries you have to add are widely relevant, consider opening up a
   PR to add them to our builtin extension list!
-  https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts#L11
+  https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-extensions/sources/index.ts#L11
 
 - The Rulebook is our reference resource, explaining why proper dependency listings are important
   not only for Yarn, but for all package managers. We recommend referencing it in your upstream issues.
