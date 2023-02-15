@@ -10,12 +10,13 @@ const ts = require(`typescript`);
  */
 function compile(tsConfigPath, folder, ...opts) {
   const emitDeclarationOnly = opts.includes(`--emitDeclarationOnly`);
+  const inline = opts.includes(`--inline`);
 
   const parsedConfig = ts.parseJsonConfigFileContent({
     extends: tsConfigPath,
     compilerOptions: {
       rootDir: `sources`,
-      outDir: `lib`,
+      outDir: inline ? `sources` : `lib`,
       emitDeclarationOnly,
     },
     include: [`sources/**/*.ts`, `sources/**/*.tsx`],

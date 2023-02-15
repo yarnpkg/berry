@@ -34,8 +34,9 @@ package.tgz
 # Those folders are meant to contain the prepack build artifacts; we don't commit them
 /packages/*/lib/*
 
-# Those packages are built inline and the JS files must not be checked-in
+# Those packages are built inline and the artifacts must not be checked-in
 /packages/yarnpkg-libui/sources/**/*.js
+/packages/yarnpkg-libui/sources/**/*.d.ts
 
 # Only contains the Webpack cache
 /packages/docusaurus/.yarn
