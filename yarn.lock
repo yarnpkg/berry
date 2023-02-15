@@ -1803,21 +1803,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/register@npm:^7.22.15":
-  version: 7.22.15
-  resolution: "@babel/register@npm:7.22.15"
-  dependencies:
-    clone-deep: ^4.0.1
-    find-cache-dir: ^2.0.0
-    make-dir: ^2.1.0
-    pirates: ^4.0.5
-    source-map-support: ^0.5.16
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 5497be6773608cd2d874210edd14499fce464ddbea170219da55955afe4c9173adb591164193458fd639e43b7d1314088a6186f4abf241476c59b3f0da6afd6f
-  languageName: node
-  linkType: hard
-
 "@babel/regjsgen@npm:^0.8.0":
   version: 0.8.0
   resolution: "@babel/regjsgen@npm:0.8.0"
@@ -5997,7 +5982,6 @@ __metadata:
     "@babel/preset-env": ^7.23.3
     "@babel/preset-react": ^7.23.3
     "@babel/preset-typescript": ^7.23.3
-    "@babel/register": ^7.22.15
     "@types/jest": ^28.1.6
     "@types/node": ^18.7.6
     "@yarnpkg/cli": "workspace:^"
@@ -6005,8 +5989,10 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     clipanion: 3.2.0-rc.4
+    esbuild-wasm: 0.17.5
     eslint: ^8.2.0
     jest: ^28.1.3
+    pirates: ^4.0.5
     tslib: ^1.13.0
     typescript: 5.2.0-beta
   dependenciesMeta:
@@ -11202,6 +11188,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild-wasm@npm:0.17.5":
+  version: 0.17.5
+  resolution: "esbuild-wasm@npm:0.17.5"
+  bin:
+    esbuild: bin/esbuild
+  checksum: b7ed5d29bfb4aaa64374ec70b26fc325f26f80f3192195ac55681abc7ffe49e1844398055ad7c80e7544aa9db3dde5fd3e204ee6f6304ec378678036ddc1fef4
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:esbuild-wasm@^0.15.15":
   version: 0.15.15
   resolution: "esbuild-wasm@npm:0.15.15"
@@ -12409,7 +12404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-cache-dir@npm:^2.0.0, find-cache-dir@npm:^2.1.0":
+"find-cache-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "find-cache-dir@npm:2.1.0"
   dependencies:
@@ -17807,7 +17802,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-dir@npm:^2.0.0, make-dir@npm:^2.1.0":
+"make-dir@npm:^2.0.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
   dependencies:
@@ -23979,7 +23974,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.19, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.20":
+"source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.19, source-map-support@npm:~0.5.12, source-map-support@npm:~0.5.20":
   version: 0.5.20
   resolution: "source-map-support@npm:0.5.20"
   dependencies:

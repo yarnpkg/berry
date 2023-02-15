@@ -253,7 +253,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.23.3"],\
             ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.23.3"],\
             ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.23.3"],\
-            ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.22.15"],\
             ["@types/jest", "npm:28.1.8"],\
             ["@types/node", "npm:18.7.6"],\
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -261,8 +260,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
             ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
+            ["esbuild-wasm", "npm:0.17.5"],\
             ["eslint", "npm:8.2.0"],\
             ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:28.1.3"],\
+            ["pirates", "npm:4.0.6"],\
             ["tslib", "npm:1.13.0"],\
             ["typescript", "patch:typescript@npm%3A5.2.0-beta#~builtin<compat/typescript>::version=5.2.0-beta&hash=14eedb"]\
           ],\
@@ -4923,33 +4924,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/plugin-transform-modules-commonjs", "virtual:9524b69a08cc5952e86eae572668922814543635958a25eeedf017fb5e253d69fdc9fc2e6fdc2e5f4edfb0cfed44ccd49eab3146a262dc65d6b60192e7381ed1#npm:7.23.3"],\
             ["@babel/plugin-transform-typescript", "virtual:e410dd7988fc0b0dc13d494835f0974ca12b5016c53252d10804c38ea35f935ce06dfd6cbe9f4f5c13e2e4d2e629e3ffe4df90f6899cbe6e5ccb3df074b635bb#npm:7.23.4"],\
             ["@types/babel__core", null]\
-          ],\
-          "packagePeers": [\
-            "@babel/core",\
-            "@types/babel__core"\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@babel/register", [\
-        ["npm:7.22.15", {\
-          "packageLocation": "./.yarn/cache/@babel-register-npm-7.22.15-13445da448-5497be6773.zip/node_modules/@babel/register/",\
-          "packageDependencies": [\
-            ["@babel/register", "npm:7.22.15"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.22.15", {\
-          "packageLocation": "./.yarn/__virtual__/@babel-register-virtual-fbeeb65d78/0/cache/@babel-register-npm-7.22.15-13445da448-5497be6773.zip/node_modules/@babel/register/",\
-          "packageDependencies": [\
-            ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.22.15"],\
-            ["@babel/core", "npm:7.23.3"],\
-            ["@types/babel__core", null],\
-            ["clone-deep", "npm:4.0.1"],\
-            ["find-cache-dir", "npm:2.1.0"],\
-            ["make-dir", "npm:2.1.0"],\
-            ["pirates", "npm:4.0.6"],\
-            ["source-map-support", "npm:0.5.20"]\
           ],\
           "packagePeers": [\
             "@babel/core",\
@@ -11278,7 +11252,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.23.3"],\
             ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.23.3"],\
             ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.23.3"],\
-            ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.22.15"],\
             ["@types/jest", "npm:28.1.8"],\
             ["@types/node", "npm:18.7.6"],\
             ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -11286,8 +11259,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
             ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
             ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.4"],\
+            ["esbuild-wasm", "npm:0.17.5"],\
             ["eslint", "npm:8.2.0"],\
             ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:28.1.3"],\
+            ["pirates", "npm:4.0.6"],\
             ["tslib", "npm:1.13.0"],\
             ["typescript", "patch:typescript@npm%3A5.2.0-beta#~builtin<compat/typescript>::version=5.2.0-beta&hash=14eedb"]\
           ],\
@@ -21476,6 +21451,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.15-ddeb55310e-4926ba2eed.zip/node_modules/esbuild-wasm/",\
           "packageDependencies": [\
             ["esbuild-wasm", "npm:0.15.15"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:0.17.5", {\
+          "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.17.5-9d427259bd-b7ed5d29bf.zip/node_modules/esbuild-wasm/",\
+          "packageDependencies": [\
+            ["esbuild-wasm", "npm:0.17.5"]\
           ],\
           "linkType": "HARD"\
         }]\
