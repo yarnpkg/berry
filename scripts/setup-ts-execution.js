@@ -12,7 +12,7 @@ const zlib = require(`zlib`);
  * node esbuild-wasm\bin\esbuild --service=0.17.5 --ping
  * ```
  * uses up to 400% CPU and 3.62 GB RAM for a while when an ESM loader is enabled.
- * 
+ *
  * ```console
  * $ time NODE_OPTIONS="--require ./.pnp.cjs --loader ./.pnp.loader.mjs" node -p "require('esbuild-wasm').transformSync('let foo = 0;')"
  * {
@@ -22,7 +22,7 @@ const zlib = require(`zlib`);
  *   mangleCache: undefined,
  *   legalComments: undefined
  * }
- * 
+ *
  * ________________________________________________________
  * Executed in   54.99 secs      fish           external
  * usr time    0.00 micros    0.00 micros    0.00 micros
@@ -30,7 +30,7 @@ const zlib = require(`zlib`);
  * ```
  *
  * Reported upstream in https://github.com/evanw/esbuild/issues/2888 and seems to boil down to https://github.com/nodejs/node/issues/36616.
- * 
+ *
  * To workaround this issue we remove the loader from the NODE_OPTIONS since it's not needed in this case.
  */
 
@@ -70,7 +70,7 @@ function persistCache() {
     return;
 
   cache.isDirty = false;
-  
+
   const data = v8.serialize({
     version: cache.version,
     files: cache.files,
