@@ -54,17 +54,28 @@ export async function hasPackScripts(workspace: Workspace) {
 }
 
 export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
-  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
+  await xfs.mktempPromise(async tmpDir => {
+    const trueManifestPath = ppath.join(workspace.cwd, Manifest.fileName);
+    const packManifestPath = ppath.join(tmpDir, Manifest.fileName);
 
-  try {
-    const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
-    if (await xfs.existsPromise(manifestPath))
-      await workspace.manifest.loadFile(manifestPath, {baseFs: xfs});
+    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {
+      report,
+      env: {
+        PACK_MANIFEST: packManifestPath,
+      },
+    });
 
-    await cb();
-  } finally {
-    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
-  }
+    try {
+      if (await xfs.existsPromise(trueManifestPath))
+        await workspace.manifest.loadFile(trueManifestPath, {baseFs: xfs});
+      if (await xfs.existsPromise(packManifestPath))
+        await workspace.manifest.loadFile(packManifestPath, {baseFs: xfs});
+
+      await cb();
+    } finally {
+      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
+    }
+  });
 }
 
 export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>) {
