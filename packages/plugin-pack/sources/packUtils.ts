@@ -61,7 +61,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
     await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {
       report,
       env: {
-        PACK_MANIFEST: packManifestPath,
+        PACK_MANIFEST: npath.fromPortablePath(packManifestPath),
       },
     });
 
