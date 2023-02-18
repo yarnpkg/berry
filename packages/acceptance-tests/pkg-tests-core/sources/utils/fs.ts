@@ -100,7 +100,7 @@ export const packToStream = (
 export const packToFile = (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
   const tarballStream = xfs.createWriteStream(target);
 
-  const packStream = exports.packToStream(source, options);
+  const packStream = packToStream(source, options);
   packStream.pipe(tarballStream);
 
   return new Promise((resolve, reject) => {
@@ -150,7 +150,7 @@ export const writeFile = async (target: PortablePath, body: string | Buffer): Pr
 };
 
 export const writeJson = (target: PortablePath, object: any): Promise<void> => {
-  return exports.writeFile(target, JSON.stringify(object));
+  return writeFile(target, JSON.stringify(object));
 };
 
 export const readSyml = async (source: PortablePath): Promise<any> => {
@@ -170,7 +170,7 @@ export const makeFakeBinary = async (
   const realTarget = IS_WIN32 ? `${target}.cmd` as PortablePath : target;
   const header = IS_WIN32 ? `@echo off\n` : `#!/bin/sh\n`;
 
-  await exports.writeFile(realTarget, `${header}printf "%s" "${output}"\nexit ${exitCode}\n`);
+  await writeFile(realTarget, `${header}printf "%s" "${output}"\nexit ${exitCode}\n`);
   await xfs.chmodPromise(realTarget, 0o755);
 };
 
