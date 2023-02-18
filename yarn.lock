@@ -5771,15 +5771,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/klaw@npm:^2.0.0":
-  version: 2.1.1
-  resolution: "@types/klaw@npm:2.1.1"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 6776018ff3d6bb20f60b5f6b69537466222bdd1b8066a1b22690678ca81ad27a2c974a3842c58126e6d150637da686b56abf8650c0fc52a9b3a941f7a5b10542
-  languageName: node
-  linkType: hard
-
 "@types/linkify-it@npm:*":
   version: 3.0.2
   resolution: "@types/linkify-it@npm:3.0.2"
@@ -5870,7 +5861,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/minimatch@npm:*, @types/minimatch@npm:3.0.3, @types/minimatch@npm:^3.0.3":
+"@types/minimatch@npm:*, @types/minimatch@npm:3.0.3":
   version: 3.0.3
   resolution: "@types/minimatch@npm:3.0.3"
   checksum: db528d3558d53f1df29f46f6f94afcbddd7c8dbf90f4b563849d798c595bd09a216285be43610ae7b833fde9b3b0785f55b5ba2f42f00602fcf8d3509a9cdb9b
@@ -19682,15 +19673,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"klaw@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "klaw@npm:2.1.1"
-  dependencies:
-    graceful-fs: "npm:^4.1.9"
-  checksum: e77351d8fd3f88433c68c7de7a00634cf7812e49e544820a2ed929706fdd4ae86a36aa6f93025edfb549146ecb4e4c14a40b328d1cc8aacb144d2937e611bfc9
-  languageName: node
-  linkType: hard
-
 "kleur@npm:^3.0.3":
   version: 3.0.3
   resolution: "kleur@npm:3.0.3"
@@ -23444,8 +23426,6 @@ pem@dexus/pem:
   dependencies:
     "@types/finalhandler": "npm:1.1.0"
     "@types/invariant": "npm:^2.2.30"
-    "@types/klaw": "npm:^2.0.0"
-    "@types/minimatch": "npm:^3.0.3"
     "@types/pem": "npm:^1"
     "@types/semver": "npm:^7.1.0"
     "@types/serve-static": "npm:1.13.3"
@@ -23456,8 +23436,6 @@ pem@dexus/pem:
     "@yarnpkg/parsers": "workspace:^"
     finalhandler: "npm:^1.1.2"
     invariant: "npm:^2.2.4"
-    klaw: "npm:^2.1.1"
-    minimatch: "npm:^3.0.4"
     pem: dexus/pem
     pkg-tests-fixtures: "workspace:^"
     semver: "npm:^7.1.2"

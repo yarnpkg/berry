@@ -1,58 +1,12 @@
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml}                       from '@yarnpkg/parsers';
-import klaw                              from 'klaw';
 import tarFs                             from 'tar-fs';
 import zlib                              from 'zlib';
 import {Gzip}                            from 'zlib';
 
 import {execPromise}                     from './exec';
-import * as miscUtils                    from './misc';
 
 const IS_WIN32 = process.platform === `win32`;
-
-export const walk = (
-  source: PortablePath,
-  {filter, relative = false}: {filter?: Array<string>, relative?: boolean} = {},
-): Promise<Array<PortablePath>> => {
-  return new Promise(resolve => {
-    const paths: Array<PortablePath> = [];
-
-    const walker = klaw(npath.fromPortablePath(source), {
-      filter: (sourcePath: string) => {
-        if (!filter)
-          return true;
-
-        const itemPath = npath.toPortablePath(sourcePath);
-        const stat = xfs.statSync(itemPath);
-
-        if (stat.isDirectory())
-          return true;
-
-        const relativePath = ppath.relative(source, itemPath);
-
-        if (miscUtils.filePatternMatch(relativePath, filter))
-          return true;
-
-        return false;
-      },
-    });
-
-    walker.on(`data`, ({path: sourcePath}) => {
-      const itemPath = npath.toPortablePath(sourcePath);
-      const relativePath = ppath.relative(source, itemPath);
-
-      if (!filter || miscUtils.filePatternMatch(relativePath, filter))
-        paths.push(relative ? relativePath : itemPath);
-
-      // This item has been accepted only because it's a directory; it doesn't match the filter
-      return;
-    });
-
-    walker.on(`end`, () => {
-      resolve(paths);
-    });
-  });
-};
 
 export const packToStream = (
   source: PortablePath,
