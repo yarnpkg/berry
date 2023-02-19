@@ -1,12 +1,16 @@
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml}                       from '@yarnpkg/parsers';
 import klaw                              from 'klaw';
+import stream                            from 'stream';
 import tarFs                             from 'tar-fs';
-import zlib                              from 'zlib';
-import {Gzip}                            from 'zlib';
+import {promisify}                       from 'util';
+import zlib, {Gzip}                      from 'zlib';
 
 import {execPromise}                     from './exec';
 import * as miscUtils                    from './misc';
+
+// TODO: Use stream.promises.pipeline when dropping support for Node.js < 15.0.0
+const pipelinePromise = promisify(stream.pipeline);
 
 const IS_WIN32 = process.platform === `win32`;
 
@@ -66,8 +70,6 @@ export const packToStream = (
     }
   }
 
-  const zipperStream = zlib.createGzip();
-
   const packStream = tarFs.pack(npath.fromPortablePath(source), {
     map: (header: any) => {
       header.name = npath.toPortablePath(header.name);
@@ -88,60 +90,22 @@ export const packToStream = (
     },
   });
 
-  packStream.pipe(zipperStream);
-
-  packStream.on(`error`, error => {
-    zipperStream.emit(`error`, error);
-  });
-
-  return zipperStream;
+  return stream.pipeline(packStream, zlib.createGzip(), () => {});
 };
 
-export const packToFile = (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
-  const tarballStream = xfs.createWriteStream(target);
-
-  const packStream = packToStream(source, options);
-  packStream.pipe(tarballStream);
-
-  return new Promise((resolve, reject) => {
-    tarballStream.on(`error`, (error: Error) => {
-      reject(error);
-    });
-
-    packStream.on(`error`, (error: Error) => {
-      reject(error);
-    });
-
-    tarballStream.on(`close`, () => {
-      resolve();
-    });
-  });
+export const packToFile = async (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
+  await pipelinePromise(
+    packToStream(source, options),
+    xfs.createWriteStream(target),
+  );
 };
 
-export const unpackToDirectory = (target: PortablePath, source: PortablePath): Promise<void> => {
-  const tarballStream = xfs.createReadStream(source);
-  const gunzipStream =  zlib.createUnzip();
-  const extractStream = tarFs.extract(npath.fromPortablePath(target));
-
-  tarballStream.pipe(gunzipStream).pipe(extractStream);
-
-  return new Promise((resolve, reject) => {
-    tarballStream.on(`error`, error => {
-      reject(error);
-    });
-
-    gunzipStream.on(`error`, error => {
-      reject(error);
-    });
-
-    extractStream.on(`error`, error => {
-      reject(error);
-    });
-
-    extractStream.on(`finish`, () => {
-      resolve();
-    });
-  });
+export const unpackToDirectory = async (target: PortablePath, source: PortablePath): Promise<void> => {
+  await pipelinePromise(
+    xfs.createReadStream(source),
+    zlib.createUnzip(),
+    tarFs.extract(npath.fromPortablePath(target)),
+  );
 };
 
 export const writeFile = async (target: PortablePath, body: string | Buffer): Promise<void> => {
