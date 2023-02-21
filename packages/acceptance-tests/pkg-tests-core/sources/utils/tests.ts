@@ -11,6 +11,7 @@ import os                                                      from 'os';
 import pem                                                     from 'pem';
 import semver                                                  from 'semver';
 import serveStatic                                             from 'serve-static';
+import stream                                                  from 'stream';
 import {promisify}                                             from 'util';
 import {v5 as uuidv5}                                          from 'uuid';
 import {Gzip}                                                  from 'zlib';
@@ -20,6 +21,9 @@ import * as fsUtils                                            from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+// TODO: Use stream.promises.pipeline when dropping support for Node.js < 15.0.0
+const pipelinePromise = promisify(stream.pipeline);
 
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
@@ -216,20 +220,11 @@ export const getPackageArchiveHash = async (
   version: string,
 ): Promise<string | Buffer> => {
   const stream = await getPackageArchiveStream(name, version);
+  const hash = crypto.createHash(`sha1`);
 
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash(`sha1`);
-    hash.setEncoding(`hex`);
+  await pipelinePromise(stream, hash);
 
-    // Send the archive to the hash function
-    stream.pipe(hash);
-
-    stream.on(`end`, () => {
-      const finalHash = hash.read();
-      invariant(finalHash, `The hash should have been computated`);
-      resolve(finalHash);
-    });
-  });
+  return hash.digest(`hex`);
 };
 
 export const getPackageHttpArchivePath = async (
@@ -386,8 +381,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         [`Transfer-Encoding`]: `chunked`,
       });
 
-      const packStream = fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)});
-      packStream.pipe(response);
+      await pipelinePromise(
+        fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)}),
+        response,
+      );
     },
 
     async [RequestType.Whoami](parsedRequest, request, response) {
