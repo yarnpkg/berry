@@ -132,7 +132,7 @@ Should you use dependencies or peer dependencies? It depends on the context; as 
 
 ### Use `yarn dlx` instead of `yarn global`
 
-Managing system-wide packages is outside of the scope of Yarn, so [`yarn global` has been removed](https://github.com/yarnpkg/berry/issues/821). We however still provide `yarn dlx` to run one off scripts. 
+Managing system-wide packages is outside of the scope of Yarn, so [`yarn global` has been removed](https://github.com/yarnpkg/berry/issues/821). We however still provide `yarn dlx` to run one off scripts.
 
 ### Call binaries using `yarn run` rather than `node_modules/.bin`
 
@@ -279,4 +279,4 @@ Although rare, some packages don't list all their dependencies. Now that we enfo
 
 The long term fix is to submit a pull request upstream to add the missing dependency to the package listing. Given that it sometimes might take some time before they get merged, we also have a more short-term fix available: create `.yarnrc.yml` in your project, then use the [`packageExtensions` setting](#fix-dependencies-with-packageextensions) to add the missing dependency to the relevant packages. Run `yarn install` to apply your changes, and voilà!
 
-Should you choose to open a PR on the upstream repository, you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.
+Should you choose to open a PR on the upstream repository, you will also be able to contribute your package extension to our [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.

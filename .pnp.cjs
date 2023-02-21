@@ -252,12 +252,10 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["@arcanis/sherlock", "npm:2.0.3"],\
-          ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.10"],\
           ["@babel/core", "npm:7.19.1"],\
           ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.19.1"],\
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
-          ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.9"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/node", "npm:18.11.11"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -267,8 +265,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["esbuild-wasm", "npm:0.17.5"],\
           ["eslint", "npm:8.2.0"],\
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
+          ["pirates", "npm:4.0.5"],\
           ["tslib", "npm:2.4.0"],\
           ["typescript", "patch:typescript@npm%3A5.0.0-beta#optional!builtin<compat/typescript>::version=5.0.0-beta&hash=1f5320"]\
         ],\
@@ -561,37 +561,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@ardatan/aggregate-error", "npm:0.0.6"],\
           ["tslib", "npm:2.0.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@babel/cli", [\
-      ["npm:7.18.10", {\
-        "packageLocation": "./.yarn/cache/@babel-cli-npm-7.18.10-c6a5fb9b3d-9f18daf40c.zip/node_modules/@babel/cli/",\
-        "packageDependencies": [\
-          ["@babel/cli", "npm:7.18.10"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.10", {\
-        "packageLocation": "./.yarn/__virtual__/@babel-cli-virtual-4cfba7e31d/0/cache/@babel-cli-npm-7.18.10-c6a5fb9b3d-9f18daf40c.zip/node_modules/@babel/cli/",\
-        "packageDependencies": [\
-          ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.10"],\
-          ["@babel/core", "npm:7.19.1"],\
-          ["@jridgewell/trace-mapping", "npm:0.3.17"],\
-          ["@nicolo-ribaudo/chokidar-2", "npm:2.1.8-no-fsevents.3"],\
-          ["@types/babel__core", null],\
-          ["chokidar", "npm:3.5.3"],\
-          ["commander", "npm:4.1.1"],\
-          ["convert-source-map", "npm:1.8.0"],\
-          ["fs-readdir-recursive", "npm:1.1.0"],\
-          ["glob", "npm:7.2.3"],\
-          ["make-dir", "npm:2.1.0"],\
-          ["slash", "npm:2.0.0"]\
-        ],\
-        "packagePeers": [\
-          "@babel/core",\
-          "@types/babel__core"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -4659,33 +4628,6 @@ const RAW_RUNTIME_STATE =
           ["@babel/helper-validator-option", "npm:7.18.6"],\
           ["@babel/plugin-transform-typescript", "virtual:d6aba2976380ad92e479d05885f5aaa5c5229f898ac55950b57f10b0aea20def1de1ddc973c9610e452c2080f920d8c9631558c41dc9f02e13739af80111e058#npm:7.18.10"],\
           ["@types/babel__core", null]\
-        ],\
-        "packagePeers": [\
-          "@babel/core",\
-          "@types/babel__core"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@babel/register", [\
-      ["npm:7.18.9", {\
-        "packageLocation": "./.yarn/cache/@babel-register-npm-7.18.9-bcdce8aed1-e66100046d.zip/node_modules/@babel/register/",\
-        "packageDependencies": [\
-          ["@babel/register", "npm:7.18.9"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.9", {\
-        "packageLocation": "./.yarn/__virtual__/@babel-register-virtual-e138932ac7/0/cache/@babel-register-npm-7.18.9-bcdce8aed1-e66100046d.zip/node_modules/@babel/register/",\
-        "packageDependencies": [\
-          ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.9"],\
-          ["@babel/core", "npm:7.19.1"],\
-          ["@types/babel__core", null],\
-          ["clone-deep", "npm:4.0.1"],\
-          ["find-cache-dir", "npm:2.1.0"],\
-          ["make-dir", "npm:2.1.0"],\
-          ["pirates", "npm:4.0.5"],\
-          ["source-map-support", "npm:0.5.20"]\
         ],\
         "packagePeers": [\
           "@babel/core",\
@@ -9007,15 +8949,6 @@ const RAW_RUNTIME_STATE =
           "monaco-editor",\
           "react-dom",\
           "react"\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@nicolo-ribaudo/chokidar-2", [\
-      ["npm:2.1.8-no-fsevents.3", {\
-        "packageLocation": "./.yarn/cache/@nicolo-ribaudo-chokidar-2-npm-2.1.8-no-fsevents.3-79ca8bfcef-4149e0e0b4.zip/node_modules/@nicolo-ribaudo/chokidar-2/",\
-        "packageDependencies": [\
-          ["@nicolo-ribaudo/chokidar-2", "npm:2.1.8-no-fsevents.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -13448,12 +13381,10 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@arcanis/sherlock", "npm:2.0.3"],\
-          ["@babel/cli", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.10"],\
           ["@babel/core", "npm:7.19.1"],\
           ["@babel/preset-env", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.19.1"],\
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
-          ["@babel/register", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.9"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/node", "npm:18.11.11"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -13463,8 +13394,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["esbuild-wasm", "npm:0.17.5"],\
           ["eslint", "npm:8.2.0"],\
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
+          ["pirates", "npm:4.0.5"],\
           ["tslib", "npm:2.4.0"],\
           ["typescript", "patch:typescript@npm%3A5.0.0-beta#optional!builtin<compat/typescript>::version=5.0.0-beta&hash=1f5320"]\
         ],\
@@ -26237,13 +26170,6 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:4.1.1", {\
-        "packageLocation": "./.yarn/cache/commander-npm-4.1.1-22a0fe921b-3be44d4e8e.zip/node_modules/commander/",\
-        "packageDependencies": [\
-          ["commander", "npm:4.1.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:5.1.0", {\
         "packageLocation": "./.yarn/cache/commander-npm-5.1.0-7e939e7832-121debda8e.zip/node_modules/commander/",\
         "packageDependencies": [\
@@ -29133,6 +29059,13 @@ const RAW_RUNTIME_STATE =
           ["esbuild-wasm", "npm:0.15.15"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:0.17.5", {\
+        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.17.5-9d427259bd-84a7e1774d.zip/node_modules/esbuild-wasm/",\
+        "packageDependencies": [\
+          ["esbuild-wasm", "npm:0.17.5"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["esbuild-windows-32", [\
@@ -31261,15 +31194,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/fs-monkey-npm-1.0.3-c1ea1ab781-fc4c994978.zip/node_modules/fs-monkey/",\
         "packageDependencies": [\
           ["fs-monkey", "npm:1.0.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["fs-readdir-recursive", [\
-      ["npm:1.1.0", {\
-        "packageLocation": "./.yarn/cache/fs-readdir-recursive-npm-1.1.0-258e230a4b-23f47d49b3.zip/node_modules/fs-readdir-recursive/",\
-        "packageDependencies": [\
-          ["fs-readdir-recursive", "npm:1.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\

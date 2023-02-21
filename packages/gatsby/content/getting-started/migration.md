@@ -331,4 +331,4 @@ packageExtensions:
         optional: true
 ```
 
-If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.
+If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-extensions/sources/index.ts), helping the whole ecosystem move forward.
