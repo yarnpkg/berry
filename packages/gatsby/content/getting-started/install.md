@@ -42,6 +42,14 @@ Take a look at the [latest Yarn release](https://github.com/yarnpkg/berry/releas
 corepack prepare yarn@<version> --activate
 ```
 
+## Asdf-vm additional instructions
+
+Run the addtional command to make yarn recognized:
+
+```bash
+asdf reshim nodejs
+```
+
 ## Initializing your project
 
 Just run the following command. It will generate some files inside your current directory; add them all to your next commit, and you'll be done!
