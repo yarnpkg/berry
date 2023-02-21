@@ -44,7 +44,7 @@ corepack prepare yarn@<version> --activate
 
 ## Asdf-vm additional instructions
 
-Run the addtional command to make yarn recognized:
+If you use asdf-vm, run the following additional command. It will reshim Node.js and enable yarn on the command prompt.
 
 ```bash
 asdf reshim nodejs
