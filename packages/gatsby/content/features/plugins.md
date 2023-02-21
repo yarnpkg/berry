@@ -107,6 +107,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn-plugin-npm-audit-fix**](https://github.com/sargunv/yarn-plugin-npm-audit-fix) by [**Sargun Vohra**](https://github.com/sargunv) - Attempt to automatically resolve audit advisories reported by `yarn npm audit`.
 
-- [**yarn-scripts-cache**](https://github.com/rgischk/yarn-scripts-cache) by [**Roman Gischkowski**](https://github.com/rgischk) - A Yarn Berry plugin to cache script execution results. Previous build results can be restored, even from a remote cache server. This allows for build result sharing with a team of developers, significantly increasing build times and eliminating downtime.
+- [**yarn-scripts-cache**](https://github.com/rgischk/yarn-scripts-cache) by [**Roman Gischkowski**](https://github.com/rgischk) - A Yarn Berry plugin to cache script execution results. Previous build results can be restored, even from a remote cache server. This allows for build result sharing with a team of developers, significantly decreasing build times and eliminating downtime.
 
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
