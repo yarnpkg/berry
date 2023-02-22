@@ -37,12 +37,17 @@ export class ModernEngine implements constraintUtils.Engine {
         return setFn(path, undefined, {caller: nodeUtils.getCaller()});
       };
 
+      const errorFn = (message: string) => {
+        miscUtils.getArrayWithDefault(result.reportedErrors, workspace.cwd).push(message);
+      };
+
       const workspaceItem = workspaces.insert({
         cwd: workspace.cwd,
         ident,
         manifest,
         set: setFn,
         unset: unsetFn,
+        error: errorFn,
       });
 
       for (const dependencyType of Manifest.allDependencies) {
@@ -55,10 +60,6 @@ export class ModernEngine implements constraintUtils.Engine {
 
           const updateFn = (range: string) => {
             setFn([dependencyType, ident], range, {caller: nodeUtils.getCaller()});
-          };
-
-          const errorFn = (message: string) => {
-            miscUtils.getArrayWithDefault(result.reportedErrors, workspace.cwd).push(message);
           };
 
           dependencies.insert({
