@@ -10520,16 +10520,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@types/klaw", [\
-      ["npm:2.1.1", {\
-        "packageLocation": "./.yarn/cache/@types-klaw-npm-2.1.1-eaac1f658d-6776018ff3.zip/node_modules/@types/klaw/",\
-        "packageDependencies": [\
-          ["@types/klaw", "npm:2.1.1"],\
-          ["@types/node", "npm:18.11.11"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@types/linkify-it", [\
       ["npm:3.0.2", {\
         "packageLocation": "./.yarn/cache/@types-linkify-it-npm-3.0.2-ccb33717e7-2de369c0c1.zip/node_modules/@types/linkify-it/",\
@@ -36931,14 +36921,6 @@ const RAW_RUNTIME_STATE =
           ["graceful-fs", "npm:4.2.10"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:2.1.1", {\
-        "packageLocation": "./.yarn/cache/klaw-npm-2.1.1-94ac527582-e77351d8fd.zip/node_modules/klaw/",\
-        "packageDependencies": [\
-          ["klaw", "npm:2.1.1"],\
-          ["graceful-fs", "npm:4.2.10"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["kleur", [\
@@ -41137,8 +41119,6 @@ const RAW_RUNTIME_STATE =
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],\
           ["@types/finalhandler", "npm:1.1.0"],\
           ["@types/invariant", "npm:2.2.30"],\
-          ["@types/klaw", "npm:2.1.1"],\
-          ["@types/minimatch", "npm:3.0.3"],\
           ["@types/pem", "npm:1.9.5"],\
           ["@types/semver", "npm:7.1.0"],\
           ["@types/serve-static", "npm:1.13.3"],\
@@ -41149,8 +41129,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["finalhandler", "npm:1.2.0"],\
           ["invariant", "npm:2.2.4"],\
-          ["klaw", "npm:2.1.1"],\
-          ["minimatch", "npm:3.1.2"],\
           ["pem", "https://github.com/dexus/pem.git#commit=71dae3346801dafb5a8bcebcd4c7267fd182666f"],\
           ["pkg-tests-fixtures", "workspace:packages/acceptance-tests/pkg-tests-fixtures"],\
           ["semver", "npm:7.3.7"],\
