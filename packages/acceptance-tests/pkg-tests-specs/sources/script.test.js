@@ -2,7 +2,7 @@ const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
 const {isAbsolute, resolve} = require(`path`);
 
 const {
-  fs: {makeFakeBinary, walk, writeJson, writeFile},
+  fs: {makeFakeBinary, writeJson, writeFile},
 } = require(`pkg-tests-core`);
 
 const globalName = makeTemporaryEnv.getPackageManagerName();
@@ -522,12 +522,11 @@ describe(`Scripts tests`, () => {
           async ({path, run, source}) => {
             await run(`install`, {env: {}});
 
-            const [itemPath] = await walk(`${path}/.yarn/unplugged/`, {filter: `/binding-gyp-scripts-*/node_modules/binding-gyp-scripts/build.node`});
+            const listing = await xfs.readdirPromise(ppath.join(path, `.yarn/unplugged`));
+            expect(listing).toHaveLength(1);
+            const itemPath = ppath.join(path, `.yarn/unplugged`, listing[0], `node_modules/binding-gyp-scripts/build.node`);
 
-            expect(itemPath).toBeDefined();
-
-            const content = await xfs.readFilePromise(itemPath, `utf8`);
-            await expect(content).toEqual(npath.fromPortablePath(itemPath));
+            await expect(xfs.readFilePromise(itemPath, `utf8`)).resolves.toEqual(npath.fromPortablePath(itemPath));
           },
         ),
       );

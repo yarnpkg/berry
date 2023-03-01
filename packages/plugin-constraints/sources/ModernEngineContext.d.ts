@@ -16,6 +16,7 @@ export type Workspace = {
   manifest: PartialObject;
   set(path: Array<string> | string, value: any): void;
   unset(path: Array<string> | string): void;
+  error(message: string): void;
 };
 
 export type WorkspaceFilter = {
