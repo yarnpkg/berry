@@ -1,6 +1,6 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
 index 2473792a3..159499703 100644
-semver exclusivity >=5.0.0-beta
+semver exclusivity >=5.0.0-beta <5.0.1-rc
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
 @@ -5148,6 +5148,9 @@ var sys = (() => {
@@ -286,7 +286,7 @@ semver exclusivity >=5.0.0-beta
          synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
 index 53e29897d..4d932b4da 100644
-semver exclusivity >=5.0.0-beta
+semver exclusivity >=5.0.0-beta <5.0.1-rc
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -8686,6 +8686,9 @@ var sys = (() => {
@@ -832,7 +832,7 @@ semver exclusivity >=5.0.0-beta
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
 index 717a22480..2963eef64 100644
-semver exclusivity >=5.0.0-beta
+semver exclusivity >=5.0.0-beta <5.0.1-rc
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
 @@ -6415,6 +6415,9 @@ ${lanes.join("\n")}
@@ -1415,7 +1415,7 @@ semver exclusivity >=5.0.0-beta
            if (!watchers.has(path)) {
 diff --git a/lib/typescript.js b/lib/typescript.js
 index 9977523ac..b7d6f073d 100644
-semver exclusivity >=5.0.0-beta
+semver exclusivity >=5.0.0-beta <5.0.1-rc
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
 @@ -6415,6 +6415,9 @@ ${lanes.join("\n")}
@@ -1896,7 +1896,7 @@ semver exclusivity >=5.0.0-beta
        kindPrecedence = {
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
 index 6314e1db8..32c8eb311 100644
-semver exclusivity >=5.0.0-beta
+semver exclusivity >=5.0.0-beta <5.0.1-rc
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
 @@ -4645,6 +4645,9 @@ var sys = (() => {
