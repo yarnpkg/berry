@@ -6,7 +6,6 @@ import {gitUtils}                                                    from '@yarn
 import {Command, Option, Usage, UsageError}                          from 'clipanion';
 import micromatch                                                    from 'micromatch';
 import pLimit                                                        from 'p-limit';
-import path                                                          from 'path';
 import {Writable}                                                    from 'stream';
 import {WriteStream}                                                 from 'tty';
 import * as t                                                        from 'typanion';
