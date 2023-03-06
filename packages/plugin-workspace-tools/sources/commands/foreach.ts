@@ -6,6 +6,7 @@ import {gitUtils}                                                    from '@yarn
 import {Command, Option, Usage, UsageError}                          from 'clipanion';
 import micromatch                                                    from 'micromatch';
 import pLimit                                                        from 'p-limit';
+import path                                                          from 'path';
 import {Writable}                                                    from 'stream';
 import {WriteStream}                                                 from 'tty';
 import * as t                                                        from 'typanion';
@@ -36,7 +37,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`--since\` is set, Yarn will only run the command on workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
 
-      - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
+      - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them. The \`--include-paths\` and \`--exclude-paths\` flags also exist, but accept path globs rather than globs on the workspace identifier.
 
       Adding the \`-v,--verbose\` flag (automatically enabled in interactive terminal environments) will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
 
@@ -101,6 +102,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
   exclude = Option.Array(`--exclude`, [], {
     description: `An array of glob pattern idents; matching workspaces won't be traversed`,
+  });
+
+  includePaths = Option.Array(`--include-paths`, [], {
+    description: `An array of path globs; only workspaces within the paths will be traversed`,
+  });
+
+  excludePaths = Option.Array(`--exclude-paths`, [], {
+    description: `An array of path globs; workspaces within the paths will be ignored`,
   });
 
   publicOnly = Option.Boolean(`--no-private`, {
@@ -181,10 +190,22 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
-      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include))
+      // Separate this into its own variable so that both include and includePath can be used at the same time
+      let shouldInclude = this.include.length === 0 && this.includePaths.length === 0;
+
+      if (this.include.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include))
+        shouldInclude = true;
+
+      if (this.includePaths.length > 0 && !shouldInclude && this.includePaths.some(testPath => micromatch.contains(path.resolve(project.cwd, workspace.relativeCwd), path.resolve(project.cwd, testPath))))
+        shouldInclude = true;
+
+      if (!shouldInclude)
         continue;
 
       if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
+        continue;
+
+      if (this.excludePaths.length > 0 && this.excludePaths.some(testPath => micromatch.contains(path.resolve(project.cwd, workspace.relativeCwd), path.resolve(project.cwd, testPath))))
         continue;
 
       if (this.publicOnly && workspace.manifest.private === true)
