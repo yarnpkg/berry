@@ -260,6 +260,22 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should only run the scripts on workspaces that match the --include-paths list with globs`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupWorkspaces(path);
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include-paths`, `packages/workspace-c/**`, `run`, `print`)).resolves.toMatchSnapshot();
+        },
+      ),
+    );
+
+    test(
       `should never run the scripts on workspaces that match the --exclude list`,
       makeTemporaryEnv(
         {

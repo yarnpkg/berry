@@ -196,7 +196,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.include.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include))
         shouldInclude = true;
 
-      if (this.includePaths.length > 0 && !shouldInclude && this.includePaths.some(testPath => micromatch.contains(path.resolve(project.cwd, workspace.relativeCwd), path.resolve(project.cwd, testPath))))
+      if (this.includePaths.length > 0 && !shouldInclude && micromatch.isMatch(workspace.relativeCwd, this.includePaths))
         shouldInclude = true;
 
       if (!shouldInclude)
@@ -205,7 +205,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
         continue;
 
-      if (this.excludePaths.length > 0 && this.excludePaths.some(testPath => micromatch.contains(path.resolve(project.cwd, workspace.relativeCwd), path.resolve(project.cwd, testPath))))
+      if (this.excludePaths.length > 0 && micromatch.isMatch(workspace.relativeCwd,  this.excludePaths))
         continue;
 
       if (this.publicOnly && workspace.manifest.private === true)
