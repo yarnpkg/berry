@@ -238,13 +238,13 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
         },
       ),
     );
 
     test(
-      `should only run the scripts on workspaces that match the --include-paths list`,
+      `should only run the scripts on workspaces that match the --include path list with globs`,
       makeTemporaryEnv(
         {
           private: true,
@@ -254,23 +254,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include-paths`, `packages/workspace-a`, `--include-paths`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
-        },
-      ),
-    );
-
-    test(
-      `should only run the scripts on workspaces that match the --include-paths list with globs`,
-      makeTemporaryEnv(
-        {
-          private: true,
-          workspaces: [`packages/*`],
-        },
-        async ({path, run}) => {
-          await setupWorkspaces(path);
-          await run(`install`);
-
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include-paths`, `packages/workspace-c/**`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include`, `packages/workspace-c/**`, `run`, `print`)).resolves.toMatchSnapshot();
         },
       ),
     );
@@ -286,55 +270,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
-        },
-      ),
-    );
-
-    test(
-      `should never run the scripts on workspaces that match the --exclude-paths list`,
-      makeTemporaryEnv(
-        {
-          private: true,
-          workspaces: [`packages/*`],
-        },
-        async ({path, run}) => {
-          await setupWorkspaces(path);
-          await run(`install`);
-
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--exclude-paths`, `packages/workspace-a`, `--exclude-paths`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
-        },
-      ),
-    );
-
-    test(
-      `should support a mix of --include and --include-paths for selecting workspaces`,
-      makeTemporaryEnv(
-        {
-          private: true,
-          workspaces: [`packages/*`],
-        },
-        async ({path, run}) => {
-          await setupWorkspaces(path);
-          await run(`install`);
-
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--include`, `workspace-a`, `--include-paths`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
-        },
-      ),
-    );
-
-    test(
-      `should support a mix of --exclude and --exclude-paths for selecting workspaces`,
-      makeTemporaryEnv(
-        {
-          private: true,
-          workspaces: [`packages/*`],
-        },
-        async ({path, run}) => {
-          await setupWorkspaces(path);
-          await run(`install`);
-
-          await expect(run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude-paths`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--verbose`, `--exclude`, `workspace-a`, `--exclude`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
         },
       ),
     );
