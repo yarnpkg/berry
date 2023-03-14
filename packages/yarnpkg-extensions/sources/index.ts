@@ -858,7 +858,8 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/jdesboeufs/connect-mongo/pull/458
-  [`connect-mongo@*`, {
+  // https://github.com/jdesboeufs/connect-mongo/commit/f462a2598d1dea0722a89e1f101937d427462458
+  [`connect-mongo@<5.0.0`, {
     peerDependencies: {
       'express-session': `^1.17.1`,
     },
