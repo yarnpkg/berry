@@ -371,7 +371,7 @@ describe(`"exports" field`, () => {
     makeTemporaryExportsEnv(`exports-top-level-object`, {
       exports: [
         {import: `./import.mjs`},
-        `default.js`,
+        `./default.js`,
       ],
     }, [
       `index.js`,
@@ -423,7 +423,7 @@ describe(`"exports" field`, () => {
       exports: {
         [`.`]: [
           {import: `./import.mjs`},
-          `default.js`,
+          `./default.js`,
         ],
       },
     }, [
