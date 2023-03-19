@@ -1,7 +1,6 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
 import {Module}                                                                                                                                                                            from 'module';
-import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
 import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
 import {inspect}                                                                                                                                                                           from 'util';
 
