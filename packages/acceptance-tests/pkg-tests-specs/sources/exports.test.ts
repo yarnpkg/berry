@@ -147,7 +147,7 @@ describe(`"exports" field`, () => {
         [`$PKG`, `file.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -167,8 +167,8 @@ describe(`"exports" field`, () => {
         [`$PKG`, `file.js`],
       ],
       fail: [
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/index`,{message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'} ],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -194,10 +194,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -225,11 +225,11 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -257,10 +257,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -290,11 +290,11 @@ describe(`"exports" field`, () => {
         [`$PKG`, `node.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -323,10 +323,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `require.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -357,11 +357,11 @@ describe(`"exports" field`, () => {
         [`$PKG`, `require.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/node`, {message: `Package subpath './node' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -383,9 +383,9 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -409,10 +409,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -436,9 +436,9 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -464,10 +464,10 @@ describe(`"exports" field`, () => {
         [`$PKG`, `default.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/import`, {message: `Package subpath './import' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/default`, {message: `Package subpath './default' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -490,8 +490,8 @@ describe(`"exports" field`, () => {
         [`$PKG/submodule`, `lib/submodule.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -516,9 +516,9 @@ describe(`"exports" field`, () => {
         [`$PKG/submodule`, `lib/submodule.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -544,11 +544,11 @@ describe(`"exports" field`, () => {
         [`$PKG/src/b`, `lib/b.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/src`, {message: `Package subpath './src' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/src/`, {message: `Package subpath './src/' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/lib/c`, {message: `Package subpath './lib/c' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/src`, {message: `Package subpath './src' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/src/`, {message: `Package subpath './src/' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/lib/c`, {message: `Package subpath './lib/c' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
         [`$PKG/src/d`, {
           code: `MODULE_NOT_FOUND`,
           message: `Qualified path resolution failed`,
@@ -581,12 +581,12 @@ describe(`"exports" field`, () => {
         [`$PKG/src/b`, `lib/b.js`],
       ],
       fail: [
-        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/src`, {message: `Package subpath './src' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/src/`, {message: `Package subpath './src/' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
-        [`$PKG/lib/c`, {message: `Package subpath './lib/c' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/index`, {message: `Package subpath './index' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/main`, {message: `Package subpath './main' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/inexistent`, {message: `Package subpath './inexistent' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/src`, {message: `Package subpath './src' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/src/`, {message: `Package subpath './src/' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
+        [`$PKG/lib/c`, {message: `Package subpath './lib/c' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
         [`$PKG/src/d`, {
           code: `MODULE_NOT_FOUND`,
           message: `Qualified path resolution failed`,
@@ -612,7 +612,7 @@ describe(`"exports" field`, () => {
       `node-import.mjs`,
     ], {
       fail: [
-        [`$PKG`, {message: `No "exports" main defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG`, {message: `No "exports" main defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -635,7 +635,7 @@ describe(`"exports" field`, () => {
       `node-import.mjs`,
     ], {
       fail: [
-        [`$PKG`, {message: `No "exports" main defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG`, {message: `No "exports" main defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
@@ -650,7 +650,7 @@ describe(`"exports" field`, () => {
       `file.js`,
     ], {
       fail: [
-        [`$PKG/package.json`, {message: `Package subpath './package.json' is not defined`, code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'}],
+        [`$PKG/package.json`, {message: `Package subpath './package.json' is not defined`, code: `ERR_PACKAGE_PATH_NOT_EXPORTED`}],
       ],
     }),
   );
