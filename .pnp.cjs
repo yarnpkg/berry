@@ -182,6 +182,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/yarnpkg-shell"\
     },\
     {\
+      "name": "@yarnpkg/types",\
+      "reference": "workspace:packages/yarnpkg-types"\
+    },\
+    {\
       "name": "pkg-tests-core",\
       "reference": "workspace:packages/acceptance-tests/pkg-tests-core"\
     },\
@@ -238,6 +242,7 @@ const RAW_RUNTIME_STATE =
     ["@yarnpkg/pnpify", ["workspace:packages/yarnpkg-pnpify"]],\
     ["@yarnpkg/sdks", ["workspace:packages/yarnpkg-sdks"]],\
     ["@yarnpkg/shell", ["workspace:packages/yarnpkg-shell"]],\
+    ["@yarnpkg/types", ["workspace:packages/yarnpkg-types"]],\
     ["acceptance-tests", ["workspace:packages/acceptance-tests"]],\
     ["pkg-tests-core", ["workspace:packages/acceptance-tests/pkg-tests-core"]],\
     ["pkg-tests-fixtures", ["workspace:packages/acceptance-tests/pkg-tests-fixtures"]],\
@@ -265,6 +270,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["dts-bundle-generator", "npm:7.2.0"],\
           ["esbuild-wasm", "npm:0.17.5"],\
           ["eslint", "npm:8.2.0"],\
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
@@ -13384,6 +13390,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:3.2.0-rc.10"],\
+          ["dts-bundle-generator", "npm:7.2.0"],\
           ["esbuild-wasm", "npm:0.17.5"],\
           ["eslint", "npm:8.2.0"],\
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
@@ -22716,6 +22723,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
+    ["@yarnpkg/types", [\
+      ["workspace:packages/yarnpkg-types", {\
+        "packageLocation": "./packages/yarnpkg-types/",\
+        "packageDependencies": [\
+          ["@yarnpkg/types", "workspace:packages/yarnpkg-types"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
     ["@zkochan/cmd-shim", [\
       ["npm:5.1.0", {\
         "packageLocation": "./.yarn/cache/@zkochan-cmd-shim-npm-5.1.0-3bdda00327-76ee9eb632.zip/node_modules/@zkochan/cmd-shim/",\
@@ -25824,6 +25840,16 @@ const RAW_RUNTIME_STATE =
           ["wrap-ansi", "npm:7.0.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:8.0.1", {\
+        "packageLocation": "./.yarn/cache/cliui-npm-8.0.1-3b029092cf-4db0fc81f3.zip/node_modules/cliui/",\
+        "packageDependencies": [\
+          ["cliui", "npm:8.0.1"],\
+          ["string-width", "npm:4.2.3"],\
+          ["strip-ansi", "npm:6.0.1"],\
+          ["wrap-ansi", "npm:7.0.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["clone", [\
@@ -28344,6 +28370,17 @@ const RAW_RUNTIME_STATE =
           ["make-dir", "npm:1.3.0"],\
           ["p-event", "npm:2.3.1"],\
           ["pify", "npm:3.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["dts-bundle-generator", [\
+      ["npm:7.2.0", {\
+        "packageLocation": "./.yarn/cache/dts-bundle-generator-npm-7.2.0-e8a7ec8659-6d019bee7d.zip/node_modules/dts-bundle-generator/",\
+        "packageDependencies": [\
+          ["dts-bundle-generator", "npm:7.2.0"],\
+          ["typescript", "patch:typescript@npm%3A5.0.2#optional!builtin<compat/typescript>::version=5.0.2&hash=85af82"],\
+          ["yargs", "npm:17.7.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -48601,6 +48638,13 @@ const RAW_RUNTIME_STATE =
           ["typescript", "patch:typescript@npm%3A5.0.1-rc#optional!builtin<compat/typescript>::version=5.0.1-rc&hash=85af82"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["patch:typescript@npm%3A5.0.2#optional!builtin<compat/typescript>::version=5.0.2&hash=85af82", {\
+        "packageLocation": "./.yarn/cache/typescript-patch-9c0913fd10-152c6851fd.zip/node_modules/typescript/",\
+        "packageDependencies": [\
+          ["typescript", "patch:typescript@npm%3A5.0.2#optional!builtin<compat/typescript>::version=5.0.2&hash=85af82"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["ua-parser-js", [\
@@ -50891,6 +50935,20 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
+      ["npm:17.7.1", {\
+        "packageLocation": "./.yarn/cache/yargs-npm-17.7.1-0758ec0e50-03a4d8c1ad.zip/node_modules/yargs/",\
+        "packageDependencies": [\
+          ["yargs", "npm:17.7.1"],\
+          ["cliui", "npm:8.0.1"],\
+          ["escalade", "npm:3.1.1"],\
+          ["get-caller-file", "npm:2.0.5"],\
+          ["require-directory", "npm:2.1.1"],\
+          ["string-width", "npm:4.2.3"],\
+          ["y18n", "npm:5.0.8"],\
+          ["yargs-parser", "npm:21.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:6.6.0", {\
         "packageLocation": "./.yarn/cache/yargs-npm-6.6.0-968b254641-59288c4a1f.zip/node_modules/yargs/",\
         "packageDependencies": [\
@@ -50926,6 +50984,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/yargs-parser-npm-21.0.1-b778fd3462-acaedd6c21.zip/node_modules/yargs-parser/",\
         "packageDependencies": [\
           ["yargs-parser", "npm:21.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:21.1.1", {\
+        "packageLocation": "./.yarn/cache/yargs-parser-npm-21.1.1-8fdc003314-fc4457cf1e.zip/node_modules/yargs-parser/",\
+        "packageDependencies": [\
+          ["yargs-parser", "npm:21.1.1"]\
         ],\
         "linkType": "HARD"\
       }],\

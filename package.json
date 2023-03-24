@@ -91,5 +91,8 @@
   },
   "engines": {
     "node": ">=14.15.0"
+  },
+  "dependencies": {
+    "dts-bundle-generator": "^7.2.0"
   }
 }
