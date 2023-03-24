@@ -7351,7 +7351,6 @@ __metadata:
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
-    dts-bundle-generator: "npm:^7.2.0"
     esbuild-wasm: "npm:0.17.5"
     eslint: "npm:^8.2.0"
     jest: "npm:^29.2.1"
@@ -10425,17 +10424,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cliui@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "cliui@npm:8.0.1"
-  dependencies:
-    string-width: "npm:^4.2.0"
-    strip-ansi: "npm:^6.0.1"
-    wrap-ansi: "npm:^7.0.0"
-  checksum: 4db0fc81f3dbd46b65840a739a43ce83a69e58d7da5ae701948fbfc14c25d82a02dd3a3dbed5a20828000e93b4bf2217b181a0a089d580af5daf9452e9c9eab3
-  languageName: node
-  linkType: hard
-
 "clone-buffer@npm:^1.0.0":
   version: 1.0.0
   resolution: "clone-buffer@npm:1.0.0"
@@ -12588,18 +12576,6 @@ __metadata:
     p-event: "npm:^2.1.0"
     pify: "npm:^3.0.0"
   checksum: 1b671a619f1c069514cfc199b3780c05f202a2affa384a8ccdc31cd31fc1c13fb15a1e8872912378681f8b35354dee6ebb16fa67e6cc92a9f1483b250a826f09
-  languageName: node
-  linkType: hard
-
-"dts-bundle-generator@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "dts-bundle-generator@npm:7.2.0"
-  dependencies:
-    typescript: "npm:>=4.5.2"
-    yargs: "npm:^17.6.0"
-  bin:
-    dts-bundle-generator: dist/bin/dts-bundle-generator.js
-  checksum: 6d019bee7da500302b46e91a9928fd0b828593a238c7cf2bc38cc76ff6d8c7763dd8f9cf1756c0ece38b3beb36480f6d66df7f4bd719daf1fe555ea99ccba73d
   languageName: node
   linkType: hard
 
@@ -29259,16 +29235,6 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@npm:>=4.5.2":
-  version: 5.0.2
-  resolution: "typescript@npm:5.0.2"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: a305d149166e376acb51bcd1bab9f2ab55c5bd52d0b43f0e49b58ea5cf085cd7c0a3d38ea58f3991aa7b04c97907b6c17c8611334d7f0e54db3d31d7897d9661
-  languageName: node
-  linkType: hard
-
 "typescript@npm:^3.8.3":
   version: 3.9.10
   resolution: "typescript@npm:3.9.10"
@@ -29286,16 +29252,6 @@ pem@dexus/pem:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 92873efe77ab726e33f2b4f0618576041332e018eb8091db4793a1a6f5369e207f4e9da2e8c23492873cdda9b45acd9f197ad850113ced8e1b21858476f2e63b
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A>=4.5.2#optional!builtin<compat/typescript>":
-  version: 5.0.2
-  resolution: "typescript@patch:typescript@npm%3A5.0.2#optional!builtin<compat/typescript>::version=5.0.2&hash=85af82"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 152c6851fd46cd63988ae112ede3b64aab3b10f9a33f5c8c5bab41af3bc0ec59dd265349da67890c80f1eba156a5beb0fb78ece94b40b3031c1eea3cece1e233
   languageName: node
   linkType: hard
 
@@ -31262,13 +31218,6 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^21.1.1":
-  version: 21.1.1
-  resolution: "yargs-parser@npm:21.1.1"
-  checksum: fc4457cf1e4d7d41e5b3a1d62e86b3934af704dd8777979a3c4c573e08eea437801444622cd68607c0266d53b90d84e8e79fd4f5ff170d1be8860064111bbad6
-  languageName: node
-  linkType: hard
-
 "yargs-parser@npm:^4.2.0":
   version: 4.2.1
   resolution: "yargs-parser@npm:4.2.1"
@@ -31309,21 +31258,6 @@ pem@dexus/pem:
     y18n: "npm:^5.0.5"
     yargs-parser: "npm:^21.0.0"
   checksum: 73e3e3f22a5e278bd335bd2c61bbfdae8181ecb178c304ca8438a3f34065e63885639b81e01c6ffee44dfeee7172f224c857feaec0ac2a940580b93b626f5080
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^17.6.0":
-  version: 17.7.1
-  resolution: "yargs@npm:17.7.1"
-  dependencies:
-    cliui: "npm:^8.0.1"
-    escalade: "npm:^3.1.1"
-    get-caller-file: "npm:^2.0.5"
-    require-directory: "npm:^2.1.1"
-    string-width: "npm:^4.2.3"
-    y18n: "npm:^5.0.5"
-    yargs-parser: "npm:^21.1.1"
-  checksum: 03a4d8c1ad18a855f8ae5e91e3765316e01266394a939ec5e87ad4bcccf55f13c8317ae324801bd67bd45c455ad2cf71cc8733d42a5e74227f18801449c14d3b
   languageName: node
   linkType: hard
 
