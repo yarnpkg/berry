@@ -2,7 +2,6 @@ import {Filename}                from '@yarnpkg/fslib';
 
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
-// @ts-expect-error
 import getTemplate               from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';

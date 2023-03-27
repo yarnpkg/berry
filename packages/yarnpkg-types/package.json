@@ -1,32 +1,17 @@
 {
-  "name": "@yarnpkg/plugin-pnpm",
-  "version": "2.0.0-rc.41",
+  "name": "@yarnpkg/types",
+  "version": "4.0.0-rc.41",
+  "stableVersion": "3.4.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
     "./package.json": "./package.json"
   },
-  "dependencies": {
-    "@yarnpkg/fslib": "workspace:^",
-    "@yarnpkg/plugin-pnp": "workspace:^",
-    "@yarnpkg/plugin-stage": "workspace:^",
-    "clipanion": "^3.2.0-rc.10",
-    "p-limit": "^2.2.0",
-    "tslib": "^2.4.0"
-  },
-  "peerDependencies": {
-    "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
-  },
-  "devDependencies": {
-    "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
-  },
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/yarnpkg/berry.git",
-    "directory": "packages/plugin-pnpm"
+    "directory": "packages/yarnpkg-types"
   },
   "scripts": {
     "postpack": "rm -rf lib",
@@ -44,6 +29,5 @@
   ],
   "engines": {
     "node": ">=14.15.0"
-  },
-  "stableVersion": "1.1.3"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.40",
+  "version": "4.0.0-rc.41",
   "stableVersion": "3.4.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
