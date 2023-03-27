@@ -6304,7 +6304,6 @@ __metadata:
     "@yarnpkg/libzip": "workspace:^"
     arg: ^5.0.2
     esbuild: "npm:esbuild-wasm@^0.15.5"
-    resolve.exports: ^1.1.0
     rollup: ^2.59.0
     rollup-plugin-esbuild: ^3.0.2
     tslib: ^1.13.0
@@ -23232,13 +23231,6 @@ pem@dexus/pem:
   version: 0.2.1
   resolution: "resolve-url@npm:0.2.1"
   checksum: 7b7035b9ed6e7bc7d289e90aef1eab5a43834539695dac6416ca6e91f1a94132ae4796bbd173cdacfdc2ade90b5f38a3fb6186bebc1b221cd157777a23b9ad14
-  languageName: node
-  linkType: hard
-
-"resolve.exports@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "resolve.exports@npm:1.1.0"
-  checksum: 52865af8edb088f6c7759a328584a5de6b226754f004b742523adcfe398cfbc4559515104bc2ae87b8e78b1e4de46c9baec400b3fb1f7d517b86d2d48a098a2d
   languageName: node
   linkType: hard
 
