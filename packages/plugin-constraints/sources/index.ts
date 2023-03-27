@@ -37,7 +37,7 @@ const plugin: Plugin<Hooks> = {
     ConstraintsCheckCommand,
   ],
   hooks: {
-    async validateProject(project, {reportError}) {
+    async validateProjectAfterInstall(project, {reportError}) {
       if (!project.configuration.get(`enableConstraintsChecks`))
         return;
 

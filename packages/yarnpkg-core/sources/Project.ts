@@ -1516,7 +1516,7 @@ export class Project {
     const nodeLinker = this.configuration.get(`nodeLinker`);
     Configuration.telemetry?.reportInstall(nodeLinker);
 
-    let hasErrors = false;
+    let hasPreErrors = false;
     await opts.report.startTimerPromise(`Project validation`, {
       skipIfEmpty: true,
     }, async () => {
@@ -1528,12 +1528,12 @@ export class Project {
         },
         reportError: (name, text) => {
           opts.report.reportError(name, text);
-          hasErrors = true;
+          hasPreErrors = true;
         },
       });
     });
 
-    if (hasErrors)
+    if (hasPreErrors)
       return;
 
     for (const extensionsByIdent of this.configuration.packageExtensions.values())
@@ -1660,6 +1660,26 @@ export class Project {
     });
 
     await this.persistInstallStateFile();
+
+    let hasPostErrors = false;
+    await opts.report.startTimerPromise(`Post-install validation`, {
+      skipIfEmpty: true,
+    }, async () => {
+      await this.configuration.triggerHook(hooks => {
+        return hooks.validateProjectAfterInstall;
+      }, this, {
+        reportWarning: (name, text) => {
+          opts.report.reportWarning(name, text);
+        },
+        reportError: (name, text) => {
+          opts.report.reportError(name, text);
+          hasPostErrors = true;
+        },
+      });
+    });
+
+    if (hasPostErrors)
+      return;
 
     await this.configuration.triggerHook(hooks => {
       return hooks.afterAllInstalled;

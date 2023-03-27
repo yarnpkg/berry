@@ -7912,6 +7912,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/types@workspace:packages/yarnpkg-types":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/types@workspace:packages/yarnpkg-types"
+  languageName: unknown
+  linkType: soft
+
 "@zkochan/cmd-shim@npm:^5.1.0":
   version: 5.1.0
   resolution: "@zkochan/cmd-shim@npm:5.1.0"

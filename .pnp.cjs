@@ -182,6 +182,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/yarnpkg-shell"\
     },\
     {\
+      "name": "@yarnpkg/types",\
+      "reference": "workspace:packages/yarnpkg-types"\
+    },\
+    {\
       "name": "pkg-tests-core",\
       "reference": "workspace:packages/acceptance-tests/pkg-tests-core"\
     },\
@@ -238,6 +242,7 @@ const RAW_RUNTIME_STATE =
     ["@yarnpkg/pnpify", ["workspace:packages/yarnpkg-pnpify"]],\
     ["@yarnpkg/sdks", ["workspace:packages/yarnpkg-sdks"]],\
     ["@yarnpkg/shell", ["workspace:packages/yarnpkg-shell"]],\
+    ["@yarnpkg/types", ["workspace:packages/yarnpkg-types"]],\
     ["acceptance-tests", ["workspace:packages/acceptance-tests"]],\
     ["pkg-tests-core", ["workspace:packages/acceptance-tests/pkg-tests-core"]],\
     ["pkg-tests-fixtures", ["workspace:packages/acceptance-tests/pkg-tests-fixtures"]],\
@@ -22712,6 +22717,15 @@ const RAW_RUNTIME_STATE =
           ["micromatch", "npm:4.0.5"],\
           ["strip-ansi", "npm:6.0.1"],\
           ["tslib", "npm:2.4.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@yarnpkg/types", [\
+      ["workspace:packages/yarnpkg-types", {\
+        "packageLocation": "./packages/yarnpkg-types/",\
+        "packageDependencies": [\
+          ["@yarnpkg/types", "workspace:packages/yarnpkg-types"]\
         ],\
         "linkType": "SOFT"\
       }]\
