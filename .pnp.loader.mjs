@@ -2011,10 +2011,18 @@ async function resolve$1(originalSpecifier, context, nextResolve) {
       }
     }
   }
-  const result = pnpapi.resolveRequest(specifier, issuer, {
-    conditions: new Set(conditions),
-    extensions: allowLegacyResolve ? void 0 : []
-  });
+  let result;
+  try {
+    result = pnpapi.resolveRequest(specifier, issuer, {
+      conditions: new Set(conditions),
+      extensions: allowLegacyResolve ? void 0 : []
+    });
+  } catch (err) {
+    if (err instanceof Error && `code` in err && err.code === `MODULE_NOT_FOUND`) {
+      err.code = `ERR_MODULE_NOT_FOUND`;
+      throw err;
+    }
+  }
   if (!result)
     throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);
   const resultURL = pathToFileURL(result);
