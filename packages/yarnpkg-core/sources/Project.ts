@@ -486,6 +486,13 @@ export class Project {
   }
 
   tryWorkspaceByDescriptor(descriptor: Descriptor) {
+    if (descriptor.range.startsWith(WorkspaceResolver.protocol)) {
+      const specifier = descriptor.range.slice(WorkspaceResolver.protocol.length) as PortablePath;
+      if (specifier !== `^` && specifier !== `~` && specifier !== `*` && !semverUtils.validRange(specifier)) {
+        return this.tryWorkspaceByCwd(specifier);
+      }
+    }
+
     const workspace = this.tryWorkspaceByIdent(descriptor);
     if (workspace === null)
       return null;

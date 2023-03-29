@@ -7432,6 +7432,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/types": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
     lodash: "npm:^4.17.15"
     tau-prolog: "npm:^0.2.66"
@@ -7911,7 +7912,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/types@workspace:packages/yarnpkg-types":
+"@yarnpkg/types@workspace:^, @yarnpkg/types@workspace:packages/yarnpkg-types":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/types@workspace:packages/yarnpkg-types"
   languageName: unknown

@@ -89,5 +89,33 @@ describe(`Protocols`, () => {
         await expect(run(`install`)).resolves.toBeTruthy();
       }),
     );
+
+    test(
+      `it should allow aliasing workspaces using relative paths`,
+      makeTemporaryMonorepoEnv({
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`bar`]: `workspace:packages/foo`,
+        },
+      }, {
+        [`packages/foo`]: {
+          name: `foo`,
+        },
+      }, async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toBeTruthy();
+      }),
+    );
+
+    test(
+      `it should prevent referencing workspaces that don't exist`,
+      makeTemporaryMonorepoEnv({
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`foo`]: `workspace:packages/bar`,
+        },
+      }, {}, async ({path, run, source}) => {
+        await expect(run(`install`)).rejects.toThrow();
+      }),
+    );
   });
 });
