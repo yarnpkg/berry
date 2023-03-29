@@ -1,4 +1,5 @@
 import {Manifest, miscUtils, nodeUtils, Project, structUtils} from '@yarnpkg/core';
+import {Yarn}                                                 from '@yarnpkg/types';
 
 import * as constraintUtils                                   from './constraintUtils';
 
@@ -86,9 +87,9 @@ export class ModernEngine implements constraintUtils.Engine {
 
     const context: Yarn.Constraints.Context = {
       Yarn: {
-        workspace: filter => {
+        workspace: ((filter?: Yarn.Constraints.WorkspaceFilter) => {
           return env.workspaces.find(filter)[0] ?? null;
-        },
+        }) as any,
         workspaces: filter => {
           return env.workspaces.find(filter);
         },
