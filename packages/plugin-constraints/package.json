@@ -28,7 +28,8 @@
     "@types/lodash": "^4.14.136",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/types": "workspace:^"
   },
   "scripts": {
     "postpack": "rm -rf lib",

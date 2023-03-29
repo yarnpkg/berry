@@ -7432,6 +7432,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/types": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
     lodash: "npm:^4.17.15"
     tau-prolog: "npm:^0.2.66"
@@ -7911,7 +7912,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@yarnpkg/types@workspace:packages/yarnpkg-types":
+"@yarnpkg/types@workspace:^, @yarnpkg/types@workspace:packages/yarnpkg-types":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/types@workspace:packages/yarnpkg-types"
   languageName: unknown
@@ -29246,11 +29247,11 @@ pem@dexus/pem:
 
 "typescript@patch:typescript@npm%3A5.0.1-rc#optional!builtin<compat/typescript>":
   version: 5.0.1-rc
-  resolution: "typescript@patch:typescript@npm%3A5.0.1-rc#optional!builtin<compat/typescript>::version=5.0.1-rc&hash=85af82"
+  resolution: "typescript@patch:typescript@npm%3A5.0.1-rc#optional!builtin<compat/typescript>::version=5.0.1-rc&hash=b5f058"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 92873efe77ab726e33f2b4f0618576041332e018eb8091db4793a1a6f5369e207f4e9da2e8c23492873cdda9b45acd9f197ad850113ced8e1b21858476f2e63b
+  checksum: 1568732705e75508c9ea60f66d8f99bf508c4c93e73c81fafb81957ecb1d685520a58fd2d15f5f20f940a7de7f6eef939663797f90700f87ff8dd4d0b2d588dd
   languageName: node
   linkType: hard
 
