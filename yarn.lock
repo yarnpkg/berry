@@ -26155,11 +26155,11 @@ typescript@^3.8.3:
 
 "typescript@patch:typescript@5.0.1-rc#~builtin<compat/typescript>":
   version: 5.0.1-rc
-  resolution: "typescript@patch:typescript@npm%3A5.0.1-rc#~builtin<compat/typescript>::version=5.0.1-rc&hash=85af82"
+  resolution: "typescript@patch:typescript@npm%3A5.0.1-rc#~builtin<compat/typescript>::version=5.0.1-rc&hash=b5f058"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 659e9cf5e04c8f6d90e94fdbe82cb338570c6f81ca6ff1ec4af06d883b6e90eb9ed28b08af2249072af40323368b9e4fb99f21e70cbcde315a38d546b84e237e
+  checksum: 2bb4ad5a7426d30cc1de55ac1399f95491fc485c5c4c65334228cc18c85fbc1950b1ab24149a669030f9601bc857439bb264688b2ed86df7e419e282e9e2d489
   languageName: node
   linkType: hard
 
