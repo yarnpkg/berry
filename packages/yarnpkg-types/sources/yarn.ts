@@ -12,7 +12,7 @@ export type Config = {
    * workspaces' definitions.
    *
    * The constraints engine is declarative, and you don't need to compare
-  * values yourself except in some specific situations. For instance, if
+   * values yourself except in some specific situations. For instance, if
    * you wish to ensure that all workspaces define a specific license, you
    * would write something like this:
    *
