@@ -67,7 +67,7 @@ export async function resolve(
 
   const {parentURL, conditions = []} = context;
 
-  const issuer = parentURL ? fileURLToPath(parentURL) : process.cwd();
+  const issuer = parentURL && loaderUtils.tryParseURL(parentURL).protocol === `file:` ? fileURLToPath(parentURL) : process.cwd();
 
   // Get the pnpapi of either the issuer or the specifier.
   // The latter is required when the specifier is an absolute path to a
