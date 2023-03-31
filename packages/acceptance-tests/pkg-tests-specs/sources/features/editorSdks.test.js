@@ -150,8 +150,7 @@ describe(`Features`, () => {
 
           // Same thing, but this file has virtual instances.
           const yarnpkgCli = npath.normalize(npath.join(__dirname, `../../../../yarnpkg-cli/sources/index.ts`))
-            .replace(/\\/g, `/`)
-            .replace(/^\/?/, `/`);
+            .replace(/\\/g, `/`);
 
           // Some sanity check to make sure everything is A-OK
           expect(lodashTypeDef).toContain(`.zip`);
