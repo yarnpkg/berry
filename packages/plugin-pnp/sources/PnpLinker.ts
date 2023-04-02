@@ -417,11 +417,11 @@ export class PnpInstaller implements Installer {
     if (FORCED_UNPLUG_PACKAGES.has(pkg.identHash))
       return true;
 
-    if (pkg.conditions != null)
-      return true;
-
     if (customPackageData.manifest.preferUnplugged !== null)
       return customPackageData.manifest.preferUnplugged;
+
+    if (pkg.conditions != null)
+      return true;
 
     if (jsInstallUtils.extractBuildScripts(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration}).length > 0 || customPackageData.misc.extractHint)
       return true;
