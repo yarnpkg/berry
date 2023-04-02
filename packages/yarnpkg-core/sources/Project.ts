@@ -1880,11 +1880,11 @@ export class Project {
   }
 
   async persist() {
-    await this.persistLockfile();
-
-    for (const workspace of this.workspacesByCwd.values()) {
-      await workspace.persistManifest();
-    }
+    const limit = pLimit(4);
+    await Promise.all([
+      this.persistLockfile(),
+      Promise.all(this.workspaces.map(workspace => limit(() => workspace.persistManifest()))),
+    ]);
   }
 
   async cacheCleanup({cache, report}: InstallOptions)  {
