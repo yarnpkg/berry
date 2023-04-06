@@ -20,6 +20,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "reference": "workspace:packages/acceptance-tests"\
       },\
       {\
+        "name": "pkg-tests-core",\
+        "reference": "workspace:packages/acceptance-tests/pkg-tests-core"\
+      },\
+      {\
+        "name": "pkg-tests-fixtures",\
+        "reference": "workspace:packages/acceptance-tests/pkg-tests-fixtures"\
+      },\
+      {\
+        "name": "pkg-tests-specs",\
+        "reference": "workspace:packages/acceptance-tests/pkg-tests-specs"\
+      },\
+      {\
         "name": "@yarnpkg/eslint-config",\
         "reference": "workspace:packages/eslint-config"\
       },\
@@ -182,18 +194,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {\
         "name": "@yarnpkg/shell",\
         "reference": "workspace:packages/yarnpkg-shell"\
-      },\
-      {\
-        "name": "pkg-tests-core",\
-        "reference": "workspace:packages/acceptance-tests/pkg-tests-core"\
-      },\
-      {\
-        "name": "pkg-tests-fixtures",\
-        "reference": "workspace:packages/acceptance-tests/pkg-tests-fixtures"\
-      },\
-      {\
-        "name": "pkg-tests-specs",\
-        "reference": "workspace:packages/acceptance-tests/pkg-tests-specs"\
       }\
     ],\
     "enableTopLevelFallback": true,\
