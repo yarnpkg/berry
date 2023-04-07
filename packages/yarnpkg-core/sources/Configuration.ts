@@ -244,6 +244,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  yarn1MutexFilename: {
+    description: `When repositories that use yarn1 are included as dependencies, this file is used as a mutex to avoid concurrency issues.`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: `./.yarn/.yarn-mutex`,
+  },
 
   // Settings related to the output style
   enableColors: {
@@ -586,7 +591,7 @@ export interface ConfigurationValueMap {
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
-
+  yarn1MutexFilename: PortablePath;
   enableColors: boolean;
   enableHyperlinks: boolean;
   enableInlineBuilds: boolean;

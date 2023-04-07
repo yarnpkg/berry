@@ -268,6 +268,10 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             const manifestPath = ppath.join(cwd, Filename.manifest);
             const manifestBuffer = await xfs.readFilePromise(manifestPath);
 
+            // Since yarn1 is not concurrency-safe by default, we pass the mutex parameter with a shared file.
+            const yarn1MutexFilename = ppath.resolve(configuration.projectCwd || cwd, configuration.get(`yarn1MutexFilename`));
+            const mutexPath = `file:${yarn1MutexFilename}`;
+
             // Makes sure that we'll be using Yarn 1.x
             const version = await execUtils.pipevp(process.execPath, [process.argv[1], `set`, `version`, `classic`, `--only-if-needed`, `--yarn-path`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (version.code !== 0)
@@ -287,7 +291,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // Run an install; we can't avoid it unless we inspect the
             // package.json, which I don't want to do to keep the codebase
             // clean (even if it has a slight perf cost when cloning v1 repos)
-            const install = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const install = await execUtils.pipevp(`yarn`, [`install`, `--mutex`, mutexPath], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (install.code !== 0)
               return install.code;
 
