@@ -85,7 +85,7 @@ export async function getGitHead(workingDir: PortablePath) {
   }
 }
 
-export async function getPublishAccess(workspace: Workspace, ident: Ident, access?: string) {
+export function getPublishAccess(workspace: Workspace, ident: Ident, access?: string): string {
   const configuration = workspace.project.configuration;
 
   if (typeof access === `undefined`) {
@@ -99,7 +99,9 @@ export async function getPublishAccess(workspace: Workspace, ident: Ident, acces
       access = `public`;
     }
   }
+  return access;
 }
+
 export async function getReadmeContent(workspace: Workspace): Promise<string>  {
   const currentDir = npath.toPortablePath(`${workspace.cwd}/README.md`);
   const isReadmeExists = await xfs.existsPromise(currentDir);
@@ -108,7 +110,7 @@ export async function getReadmeContent(workspace: Workspace): Promise<string>  {
     return xfs.readFilePromise(currentDir, `utf-8`);
 
   const ident = workspace.manifest.name!;
-  const name = structUtils.stringifyIdent(ident);
+  const packageName = structUtils.stringifyIdent(ident);
 
-  return `# ${name}`;
+  return `# ${packageName}`;
 }
