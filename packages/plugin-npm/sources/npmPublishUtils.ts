@@ -1,4 +1,4 @@
-import {Ident, execUtils}         from '@yarnpkg/core';
+import {execUtils, Ident}         from '@yarnpkg/core';
 import {Workspace, structUtils}   from '@yarnpkg/core';
 import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
 import {packUtils}                from '@yarnpkg/plugin-pack';
@@ -8,13 +8,13 @@ import {URL}                      from 'url';
 
 import {normalizeRegistry}        from './npmConfigUtils';
 
-type AdditionalPublishParams = {
+type PublishAdditionalParams = {
   access: string | undefined;
   tag: string;
   registry: string;
   gitHead?: string;
 };
-export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: AdditionalPublishParams) {
+export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: PublishAdditionalParams) {
   const ident = workspace.manifest.name!;
   const version = workspace.manifest.version!;
 
