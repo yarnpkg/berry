@@ -379,38 +379,37 @@ export class Project {
     this.workspacesByCwd = new Map();
     this.workspacesByIdent = new Map();
 
-    let workspaceCwds = [this.cwd];
-    while (workspaceCwds.length > 0) {
-      const passCwds = workspaceCwds;
-      workspaceCwds = [];
+    const pathsChecked = new Set<PortablePath>();
+    const limitSetup = pLimit(4);
 
-      for (const workspaceCwd of passCwds) {
-        if (this.workspacesByCwd.has(workspaceCwd))
-          continue;
+    const loadWorkspaceReducer = async (previousTask: Promise<void>, workspaceCwd: PortablePath): Promise<void> => {
+      if (pathsChecked.has(workspaceCwd))
+        return previousTask;
 
-        const workspace = await this.addWorkspace(workspaceCwd);
+      pathsChecked.add(workspaceCwd);
 
-        for (const workspaceCwd of workspace.workspacesCwds) {
-          workspaceCwds.push(workspaceCwd);
-        }
-      }
-    }
+      const workspace = new Workspace(workspaceCwd, {project: this});
+      await limitSetup(() => workspace.setup());
+
+      const nextTask = previousTask.then(() => {
+        this.addWorkspace(workspace);
+      });
+
+      return Array.from(workspace.workspacesCwds).reduce(loadWorkspaceReducer, nextTask);
+    };
+
+    await loadWorkspaceReducer(Promise.resolve(), this.cwd);
   }
 
-  private async addWorkspace(workspaceCwd: PortablePath) {
-    const workspace = new Workspace(workspaceCwd, {project: this});
-    await workspace.setup();
-
+  private addWorkspace(workspace: Workspace) {
     const dup = this.workspacesByIdent.get(workspace.locator.identHash);
     if (typeof dup !== `undefined`)
-      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${npath.fromPortablePath(workspaceCwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${npath.fromPortablePath(workspace.cwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
 
     this.workspaces.push(workspace);
 
-    this.workspacesByCwd.set(workspaceCwd, workspace);
+    this.workspacesByCwd.set(workspace.cwd, workspace);
     this.workspacesByIdent.set(workspace.locator.identHash, workspace);
-
-    return workspace;
   }
 
   get topLevelWorkspace() {
