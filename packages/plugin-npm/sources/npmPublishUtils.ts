@@ -101,18 +101,14 @@ export async function getPublishAccess(workspace: Workspace, ident: Ident, acces
   }
 }
 export async function getReadmeContent(workspace: Workspace): Promise<string>  {
-  let readmeContent;
   const currentDir = npath.toPortablePath(`${workspace.cwd}/README.md`);
   const isReadmeExists = await xfs.existsPromise(currentDir);
-  if (isReadmeExists) {
-    readmeContent = await xfs.readFilePromise(currentDir, `utf-8`);
-  } else {
-    const ident = workspace.manifest.name!;
-    const name = structUtils.stringifyIdent(ident);
 
-    readmeContent = `# ${name}`;
-  }
+  if (isReadmeExists)
+    return xfs.readFilePromise(currentDir, `utf-8`);
 
+  const ident = workspace.manifest.name!;
+  const name = structUtils.stringifyIdent(ident);
 
-  return readmeContent;
+  return `# ${name}`;
 }
