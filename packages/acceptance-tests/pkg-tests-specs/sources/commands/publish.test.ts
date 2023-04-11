@@ -1,3 +1,6 @@
+import {httpUtils}  from '@yarnpkg/core';
+import {npath, xfs} from '@yarnpkg/fslib';
+
 export {};
 
 const {
@@ -67,5 +70,24 @@ describe(`publish`, () =>   {
         YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
       },
     })).resolves.toBeTruthy();
+  }));
+
+  test(`should publish package with readme content`, makeTemporaryEnv({
+    name: `otp-required`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    const spy = jest.spyOn(httpUtils, `put`);
+    await run(`install`);
+
+    const readmePath = npath.toPortablePath(`${path}/README.md`);
+    await xfs.writeFilePromise(readmePath, `# title\n`);
+
+    const res = await run(`npm`, `publish`, `--otp`, validLogins.otpUser.npmOtpToken, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
+      },
+    });
+
+    expect(spy).toHaveBeenCalledWith({});
   }));
 });

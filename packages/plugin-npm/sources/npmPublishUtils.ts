@@ -87,19 +87,19 @@ export async function getGitHead(workingDir: PortablePath) {
 
 export function getPublishAccess(workspace: Workspace, ident: Ident, access?: string): string {
   const configuration = workspace.project.configuration;
+  if (typeof access === `string`)
+    return access;
 
-  if (typeof access === `undefined`) {
-    if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`) {
-      access = workspace.manifest.publishConfig.access;
-    } else if (configuration.get(`npmPublishAccess`) !== null) {
-      access = configuration.get(`npmPublishAccess`)!;
-    } else if (ident.scope) {
-      access = `restricted`;
-    } else {
-      access = `public`;
-    }
-  }
-  return access;
+  if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`)
+    return workspace.manifest.publishConfig.access;
+
+  if (configuration.get(`npmPublishAccess`) !== null)
+    return configuration.get(`npmPublishAccess`)!;
+
+  if (ident.scope)
+    access = `restricted`;
+
+  return `public`;
 }
 
 export async function getReadmeContent(workspace: Workspace): Promise<string>  {
