@@ -82,7 +82,7 @@ describe(`publish`, () =>   {
     const readmePath = npath.toPortablePath(`${path}/README.md`);
     await xfs.writeFilePromise(readmePath, `# title\n`);
 
-    const res = await run(`npm`, `publish`, `--otp`, validLogins.otpUser.npmOtpToken, {
+    await run(`npm`, `publish`, `--otp`, validLogins.otpUser.npmOtpToken, {
       env: {
         YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
       },
