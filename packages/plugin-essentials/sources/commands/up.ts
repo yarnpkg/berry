@@ -186,6 +186,7 @@ export default class UpCommand extends BaseCommand {
 
       // The range has to be static
       const pseudoDescriptor = structUtils.parseDescriptor(pattern);
+      const stringifiedPseudoDescriptor = structUtils.stringifyIdent(pseudoDescriptor);
 
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
@@ -194,7 +195,10 @@ export default class UpCommand extends BaseCommand {
             return structUtils.stringifyIdent(descriptor);
           });
 
-          for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoDescriptor))) {
+          for (const stringifiedIdent of micromatch(stringifiedIdents, stringifiedPseudoDescriptor, {
+            // Wildcard targets both scoped and unscoped packages.
+            basename: stringifiedPseudoDescriptor === `*` && interactive,
+          })) {
             const ident = structUtils.parseIdent(stringifiedIdent);
 
             const existingDescriptor = workspace.manifest[target].get(ident.identHash);
