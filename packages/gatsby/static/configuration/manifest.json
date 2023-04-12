@@ -82,6 +82,12 @@
       "format": "uri-reference",
       "examples": ["./sources/index.mjs"]
     },
+    "types": {
+      "description": "The path that will be used to resolve the TypeScript declaration file when accessing the package by its name. Doesn't have any direct effect on Yarn itself.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./sources/index.d.ts"]
+    },
     "languageName": {
       "description": "An enumeration used by the linker plugins to figure which linker should install a specific package. Only some values are allowed, consult the documentation to know more.",
       "type": "string",
@@ -337,6 +343,11 @@
           "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `type` field when generating the workspace tarball.",
           "type": "string",
           "enum": ["commonjs", "module"]
+        },
+        "types": {
+          "$ref": "#/properties/types",
+          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `types` field when generating the workspace tarball.",
+          "examples": ["./build/index.d.ts"]
         }
       },
       "_exampleKeys": [

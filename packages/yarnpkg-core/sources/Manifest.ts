@@ -33,6 +33,7 @@ export interface PublishConfig {
   type?: string;
   browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
   bin?: Map<string, PortablePath>;
+  types?: PortablePath;
   registry?: string;
   executableFiles?: Set<PortablePath>;
 }
@@ -60,6 +61,7 @@ export class Manifest {
   public main: PortablePath | null = null;
   public module: PortablePath | null = null;
   public browser: PortablePath | Map<PortablePath, boolean | PortablePath> | null = null;
+  public types: PortablePath | null = null;
 
   public languageName: string | null = null;
 
@@ -308,6 +310,11 @@ export class Manifest {
         this.bin.set(binaryIdent.name, normalizeSlashes(value));
       }
     }
+
+    if (typeof data.types === `string`)
+      this.types = normalizeSlashes(data.types);
+    else
+      this.types = null;
 
     this.scripts = new Map();
     if (typeof data.scripts === `object` && data.scripts !== null) {
