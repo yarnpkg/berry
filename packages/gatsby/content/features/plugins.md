@@ -109,4 +109,7 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn-scripts-cache**](https://github.com/rgischk/yarn-scripts-cache) by [**Roman Gischkowski**](https://github.com/rgischk) - A Yarn Berry plugin to cache script execution results. Previous build results can be restored, even from a remote cache server. This allows for build result sharing with a team of developers, significantly decreasing build times and eliminating downtime.
 
+- [**yarn-plugin-fetch**](https://github.com/devthejo/yarn-plugin-fetch) by [**DevTheJo**](https://github.com/devthejo) - Optimized yarn workflow for docker build. Don't re-download all your dependencies on each package.json change. Like [pnpm fetch](https://pnpm.io/cli/fetch) but for yarn and better (exta-features like workspace focus support).
+
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
