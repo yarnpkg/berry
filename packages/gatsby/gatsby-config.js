@@ -74,7 +74,7 @@ module.exports = {
         theme_color: `#2188b6`,
         /* eslint-enable @typescript-eslint/naming-convention */
         display: `minimal-ui`,
-        icon: `src/images/yarn-kitten.svg`,
+        icon: `src/images/yarn-kitten.png`,
       },
     },
     {
