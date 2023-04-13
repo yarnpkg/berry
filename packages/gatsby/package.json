@@ -37,7 +37,6 @@
     "gatsby-plugin-catch-links": "^3.7.0",
     "gatsby-plugin-clipanion-cli": "portal:./gatsby-plugin-clipanion-cli",
     "gatsby-plugin-emotion": "^6.7.0",
-    "gatsby-plugin-favicon": "^3.1.6",
     "gatsby-plugin-manifest": "^3.7.0",
     "gatsby-plugin-mdx": "^2.14.0",
     "gatsby-plugin-offline": "^4.7.0",
