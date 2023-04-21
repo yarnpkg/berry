@@ -7915,6 +7915,8 @@ __metadata:
 "@yarnpkg/types@workspace:^, @yarnpkg/types@workspace:packages/yarnpkg-types":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/types@workspace:packages/yarnpkg-types"
+  dependencies:
+    tslib: "npm:^2.4.0"
   languageName: unknown
   linkType: soft
 

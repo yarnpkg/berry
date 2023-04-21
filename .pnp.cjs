@@ -22744,7 +22744,8 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/yarnpkg-types", {\
         "packageLocation": "./packages/yarnpkg-types/",\
         "packageDependencies": [\
-          ["@yarnpkg/types", "workspace:packages/yarnpkg-types"]\
+          ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
+          ["tslib", "npm:2.4.0"]\
         ],\
         "linkType": "SOFT"\
       }]\
