@@ -48,7 +48,7 @@ jobs:
 
         yarn add ts-pnp left-pad @types/left-pad
 
-        echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true}}' > tsconfig.json
+        echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true, "lib": ["es2015"]}}' > tsconfig.json
 
         echo "const foo: number = 42;" | tee file.ts
         yarn tsc --noEmit

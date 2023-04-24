@@ -379,38 +379,37 @@ export class Project {
     this.workspacesByCwd = new Map();
     this.workspacesByIdent = new Map();
 
-    let workspaceCwds = [this.cwd];
-    while (workspaceCwds.length > 0) {
-      const passCwds = workspaceCwds;
-      workspaceCwds = [];
+    const pathsChecked = new Set<PortablePath>();
+    const limitSetup = pLimit(4);
 
-      for (const workspaceCwd of passCwds) {
-        if (this.workspacesByCwd.has(workspaceCwd))
-          continue;
+    const loadWorkspaceReducer = async (previousTask: Promise<void>, workspaceCwd: PortablePath): Promise<void> => {
+      if (pathsChecked.has(workspaceCwd))
+        return previousTask;
 
-        const workspace = await this.addWorkspace(workspaceCwd);
+      pathsChecked.add(workspaceCwd);
 
-        for (const workspaceCwd of workspace.workspacesCwds) {
-          workspaceCwds.push(workspaceCwd);
-        }
-      }
-    }
+      const workspace = new Workspace(workspaceCwd, {project: this});
+      await limitSetup(() => workspace.setup());
+
+      const nextTask = previousTask.then(() => {
+        this.addWorkspace(workspace);
+      });
+
+      return Array.from(workspace.workspacesCwds).reduce(loadWorkspaceReducer, nextTask);
+    };
+
+    await loadWorkspaceReducer(Promise.resolve(), this.cwd);
   }
 
-  private async addWorkspace(workspaceCwd: PortablePath) {
-    const workspace = new Workspace(workspaceCwd, {project: this});
-    await workspace.setup();
-
+  private addWorkspace(workspace: Workspace) {
     const dup = this.workspacesByIdent.get(workspace.locator.identHash);
     if (typeof dup !== `undefined`)
-      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${npath.fromPortablePath(workspaceCwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${npath.fromPortablePath(workspace.cwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
 
     this.workspaces.push(workspace);
 
-    this.workspacesByCwd.set(workspaceCwd, workspace);
+    this.workspacesByCwd.set(workspace.cwd, workspace);
     this.workspacesByIdent.set(workspace.locator.identHash, workspace);
-
-    return workspace;
   }
 
   get topLevelWorkspace() {
@@ -538,39 +537,39 @@ export class Project {
     return workspace;
   }
 
+  private deleteDescriptor(descriptorHash: DescriptorHash) {
+    this.storedResolutions.delete(descriptorHash);
+    this.storedDescriptors.delete(descriptorHash);
+  }
+
+  private deleteLocator(locatorHash: LocatorHash) {
+    this.originalPackages.delete(locatorHash);
+    this.storedPackages.delete(locatorHash);
+    this.accessibleLocators.delete(locatorHash);
+  }
+
   forgetResolution(descriptor: Descriptor): void;
   forgetResolution(locator: Locator): void;
   forgetResolution(dataStructure: Descriptor | Locator): void {
-    const deleteDescriptor = (descriptorHash: DescriptorHash) => {
-      this.storedResolutions.delete(descriptorHash);
-      this.storedDescriptors.delete(descriptorHash);
-    };
-
-    const deleteLocator = (locatorHash: LocatorHash) => {
-      this.originalPackages.delete(locatorHash);
-      this.storedPackages.delete(locatorHash);
-      this.accessibleLocators.delete(locatorHash);
-    };
-
     if (`descriptorHash` in dataStructure) {
       const locatorHash = this.storedResolutions.get(dataStructure.descriptorHash);
 
-      deleteDescriptor(dataStructure.descriptorHash);
+      this.deleteDescriptor(dataStructure.descriptorHash);
 
       // We delete unused locators
       const remainingResolutions = new Set(this.storedResolutions.values());
       if (typeof locatorHash !== `undefined` && !remainingResolutions.has(locatorHash)) {
-        deleteLocator(locatorHash);
+        this.deleteLocator(locatorHash);
       }
     }
 
     if (`locatorHash` in dataStructure) {
-      deleteLocator(dataStructure.locatorHash);
+      this.deleteLocator(dataStructure.locatorHash);
 
       // We delete all of the descriptors that have been resolved to the locator
       for (const [descriptorHash, locatorHash] of this.storedResolutions) {
         if (locatorHash === dataStructure.locatorHash) {
-          deleteDescriptor(descriptorHash);
+          this.deleteDescriptor(descriptorHash);
         }
       }
     }
@@ -578,6 +577,16 @@ export class Project {
 
   forgetTransientResolutions() {
     const resolver = this.configuration.makeResolver();
+
+    const reverseLookup = new Map<LocatorHash, Set<DescriptorHash>>();
+
+    for (const [descriptorHash, locatorHash] of this.storedResolutions.entries()) {
+      let descriptorHashes = reverseLookup.get(locatorHash);
+      if (!descriptorHashes)
+        reverseLookup.set(locatorHash, descriptorHashes = new Set());
+
+      descriptorHashes.add(descriptorHash);
+    }
 
     for (const pkg of this.originalPackages.values()) {
       let shouldPersistResolution: boolean;
@@ -588,7 +597,15 @@ export class Project {
       }
 
       if (!shouldPersistResolution) {
-        this.forgetResolution(pkg);
+        this.deleteLocator(pkg.locatorHash);
+
+        const descriptors = reverseLookup.get(pkg.locatorHash);
+        if (descriptors) {
+          reverseLookup.delete(pkg.locatorHash);
+          for (const descriptorHash of descriptors) {
+            this.deleteDescriptor(descriptorHash);
+          }
+        }
       }
     }
   }
