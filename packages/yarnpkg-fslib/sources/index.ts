@@ -3,8 +3,8 @@ import * as statUtils from './statUtils';
 
 export {constants};
 
-export {LinkStrategy} from './algorithms/copyPromise';
-export {opendir}      from './algorithms/opendir';
+export {LinkStrategy}            from './algorithms/copyPromise';
+export {opendir, CustomDir}      from './algorithms/opendir';
 
 export {statUtils};
 
