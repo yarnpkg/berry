@@ -105,7 +105,7 @@
     },
     "enableColors": {
       "_package": "@yarnpkg/core",
-      "description": "If true (by default detects terminal capabilities), Yarn will format its pretty-print its output by using colors to differentiate important parts of its messages.",
+      "description": "If true (by default detects terminal capabilities), Yarn will format its pretty-print output by using colors to differentiate important parts of its messages.",
       "type": "boolean",
       "examples": [true]
     },
@@ -123,7 +123,7 @@
     },
     "enableImmutableCache": {
       "_package": "@yarnpkg/core",
-      "description": "If true, Yarn will refuse the change the cache in any way (whether it would add files or remove them) when running `yarn install`.",
+      "description": "If true, Yarn will refuse to change the cache in any way (whether it would add files or remove them) when running `yarn install`.",
       "type": "boolean",
       "default": false
     },
@@ -183,7 +183,7 @@
     },
     "enableTelemetry": {
       "_package": "@yarnpkg/core",
-      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependency in your project, how many install you ran, etc. Consult the [Telemetry](/advanced/telemetry) page for more details about it.",
+      "description": "If true (the default outside of CI environments), Yarn will periodically send anonymous data to our servers tracking some usage information such as the number of dependencies in your project, how many installs you ran, etc. Consult the [Telemetry](/advanced/telemetry) page for more details about it.",
       "type": "boolean",
       "examples": [true]
     },
@@ -496,7 +496,7 @@
       "type": "object",
       "patternProperties": {
         "^(?:^[a-zA-Z][a-zA-Z0-9+-.]*:)?[^\\s]*$": {
-          "description": "This key represent the registry that's covered by the settings defined in the nested object. The protocol is optional (using `https://npm.pkg.github.com` would work just as well).",
+          "description": "This key represents the registry that's covered by the settings defined in the nested object. The protocol is optional (using `https://npm.pkg.github.com` would work just as well).",
           "type": "object",
           "properties": {
             "npmAlwaysAuth": {
@@ -716,7 +716,7 @@
     },
     "rcFilename": {
       "_package": "@yarnpkg/core",
-      "description": "This setting defines the name of the files that Yarn looks for when resolving the rc files. For obvious reasons this settings cannot be set within rc files, and must be defined in the environment using the `YARN_RC_FILENAME` variable.",
+      "description": "This setting defines the name of the files that Yarn looks for when resolving the rc files. For obvious reasons, this setting cannot be set within rc files, and must be defined in the environment using the `YARN_RC_FILENAME` variable.",
       "type": "string",
       "pattern": "^[^<>:;,?\"*|/]+$",
       "default": ".yarnrc.yml"

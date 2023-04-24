@@ -25,7 +25,7 @@
     "jest": "^29.2.1",
     "pirates": "^4.0.5",
     "tslib": "^2.4.0",
-    "typescript": "5.0.1-rc"
+    "typescript": "5.1.0-beta"
   },
   "resolutions": {
     "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
