@@ -70,7 +70,7 @@ Run the following command, which will generate a new directory called `.yarn/sdk
 yarn dlx @yarnpkg/sdks vim
 ```
 
-If you are using `coc-tsserver` then you might want to check what version it uses by running `:CocCommand tsserver.chooseVersion` — make sure, that `Local version` is selected, instead of `Bunlded with coc-tsserver` one.
+Note that if you're using `coc-tsserver` then you might want to check what version it uses by running `:CocCommand tsserver.chooseVersion` — make sure that "Local version" is selected, not "Bundled with coc-tsserver".
 
 #### Neovim Native LSP
 
