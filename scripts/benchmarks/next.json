@@ -1,12 +1,7 @@
 {
-  "private": true,
   "dependencies": {
-      "next": "^12",
-      "react": "^18",
-      "react-dom": "^18"
-  },
-  "devDependencies": {
-      "@types/react": "^18",
-      "@types/react-dom": "^18"
+    "next": "^13",
+    "react": "^18",
+    "react-dom": "^18"
   }
 }
