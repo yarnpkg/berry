@@ -36,7 +36,7 @@
     "jest-junit": "^10.0.0",
     "micromatch": "^4.0.2",
     "tslib": "^1.13.0",
-    "typescript": "5.0.1-rc"
+    "typescript": "5.1.0-beta"
   },
   "resolutions": {
     "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
