@@ -42,6 +42,10 @@ export default class NpmLoginCommand extends BaseCommand {
     description: `Login to the publish registry`,
   });
 
+  alwaysAuth = Option.Boolean(`--always-auth`, {
+    description: `Set the npmAlwaysAuth configuration`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
@@ -75,7 +79,7 @@ export default class NpmLoginCommand extends BaseCommand {
         authType: npmHttpUtils.AuthType.NO_AUTH,
       }) as any;
 
-      await setAuthToken(registry, response.token, {configuration, scope: this.scope});
+      await setAuthToken(registry, response.token, {alwaysAuth: this.alwaysAuth, scope: this.scope});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
     });
 
@@ -96,7 +100,7 @@ export async function getRegistry({scope, publish, configuration, cwd}: {scope?:
   return npmConfigUtils.getDefaultRegistry({configuration});
 }
 
-async function setAuthToken(registry: string, npmAuthToken: string, {configuration, scope}: {configuration: Configuration, scope?: string}) {
+async function setAuthToken(registry: string, npmAuthToken: string, {alwaysAuth, scope}: {alwaysAuth?: boolean, scope?: string}) {
   const makeUpdater = (entryName: string) => (unknownStore: unknown) => {
     const store = miscUtils.isIndexableObject(unknownStore)
       ? unknownStore
@@ -111,6 +115,7 @@ async function setAuthToken(registry: string, npmAuthToken: string, {configurati
       ...store,
       [entryName]: {
         ...entry,
+        ...(alwaysAuth !== undefined ? {npmAlwaysAuth: alwaysAuth} : {}),
         npmAuthToken,
       },
     };
