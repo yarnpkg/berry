@@ -1883,7 +1883,9 @@ export class Project {
     const limit = pLimit(4);
     await Promise.all([
       this.persistLockfile(),
-      Promise.all(this.workspaces.map(workspace => limit(() => workspace.persistManifest()))),
+      ...this.workspaces.map(workspace => {
+        return limit(() => workspace.persistManifest());
+      }),
     ]);
   }
 
