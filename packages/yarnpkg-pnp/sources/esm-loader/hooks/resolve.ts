@@ -108,10 +108,10 @@ export async function resolve(
       extensions: allowLegacyResolve ? undefined : [],
     });
   } catch (err) {
-    if (err instanceof Error && `code` in err && err.code === `MODULE_NOT_FOUND`) {
+    if (err instanceof Error && `code` in err && err.code === `MODULE_NOT_FOUND`)
       err.code = `ERR_MODULE_NOT_FOUND`;
-      throw err;
-    }
+
+    throw err;
   }
 
   if (!result)

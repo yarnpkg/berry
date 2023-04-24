@@ -702,6 +702,33 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
+  test(
+    `it should throw ERR_PACKAGE_PATH_NOT_EXPORTED when subpath isn't exported`,
+    makeTemporaryEnv(
+      {
+        name: `foo`,
+        type: `module`,
+        exports: {
+          './package.json': `./package.json`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
+          import('foo/bar').catch(err => {
+            console.log(err.code)
+          });
+        `);
+
+        await expect(run(`node`, `./index.mjs`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ERR_PACKAGE_PATH_NOT_EXPORTED\n`,
+        });
+      },
+    ),
+  );
+
   // Tests /packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
   test(
     `it should support named exports in commonjs files`,
