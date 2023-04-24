@@ -654,6 +654,81 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
+  test(
+    `it should throw ERR_MODULE_NOT_FOUND when statically importing a nonexistent file`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `
+          import("./foo.js").catch((err) => {
+            console.log(err.code)
+          })
+        `);
+
+        await xfs.writeFilePromise(ppath.join(path, `foo.js` as Filename), `import './nonexistent.js'`);
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ERR_MODULE_NOT_FOUND\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should throw ERR_MODULE_NOT_FOUND when dynamically importing a nonexistent file`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), `
+          import("./nonexistent.js").catch((err) => {
+            console.log(err.code)
+          })
+        `);
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ERR_MODULE_NOT_FOUND\n`,
+        });
+      },
+    ),
+  );
+
+  test(
+    `it should throw ERR_PACKAGE_PATH_NOT_EXPORTED when subpath isn't exported`,
+    makeTemporaryEnv(
+      {
+        name: `foo`,
+        type: `module`,
+        exports: {
+          './package.json': `./package.json`,
+        },
+      },
+      async ({path, run, source}) => {
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `
+          import('foo/bar').catch(err => {
+            console.log(err.code)
+          });
+        `);
+
+        await expect(run(`node`, `./index.mjs`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ERR_PACKAGE_PATH_NOT_EXPORTED\n`,
+        });
+      },
+    ),
+  );
+
   // Tests /packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
   test(
     `it should support named exports in commonjs files`,
