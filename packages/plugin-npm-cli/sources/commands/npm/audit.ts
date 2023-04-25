@@ -98,7 +98,7 @@ export default class NpmAuditCommand extends BaseCommand {
     await project.restoreInstallState();
 
     const requires = npmAuditUtils.getRequires(project, workspace, {all: this.all, environment: this.environment});
-    const dependencies = npmAuditUtils.getDependencies(project, workspace, {all: this.all});
+    const dependencies = npmAuditUtils.getDependencies(project, workspace, {all: this.all, recursive: this.recursive, environment: this.environment});
 
     if (!this.recursive) {
       for (const key of Object.keys(dependencies)) {

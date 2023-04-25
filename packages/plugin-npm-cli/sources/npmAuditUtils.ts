@@ -1,4 +1,5 @@
 import {DescriptorHash, Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils} from '@yarnpkg/core';
+import semver                                                                                           from 'semver';
 
 import * as npmAuditTypes                                                                               from './npmAuditTypes';
 
@@ -231,8 +232,9 @@ export function getRequires(project: Project, workspace: Workspace, {all, enviro
   }));
 }
 
-export function getDependencies(project: Project, workspace: Workspace, {all}: {all: boolean}) {
+export function getDependencies(project: Project, workspace: Workspace, {all, recursive, environment}: {all: boolean, recursive: boolean, environment: npmAuditTypes.Environment}) {
   const transitiveDevDependencies = getTransitiveDevDependencies(project, workspace, {all});
+  const requires = getRequires(project, workspace, {all, environment});
 
   const data: {
     [key: string]: {
@@ -244,12 +246,21 @@ export function getDependencies(project: Project, workspace: Workspace, {all}: {
   } = {};
 
   for (const pkg of project.storedPackages.values()) {
-    data[structUtils.stringifyIdent(pkg)] = {
-      version: pkg.version ?? `0.0.0`,
-      integrity: pkg.identHash,
-      requires: transformDescriptorIterableToRequiresObject(pkg.dependencies.values()),
-      dev: transitiveDevDependencies.has(structUtils.convertLocatorToDescriptor(pkg).descriptorHash),
-    };
+    const shouldBeIncluded =
+      recursive ||
+        (pkg.version &&
+          Object.prototype.hasOwnProperty.call(requires, pkg.name) &&
+          semver.intersects(requires[pkg.name], pkg.version)
+        );
+
+    if (shouldBeIncluded) {
+      data[structUtils.stringifyIdent(pkg)] = {
+        version: pkg.version ?? `0.0.0`,
+        integrity: pkg.identHash,
+        requires: transformDescriptorIterableToRequiresObject(pkg.dependencies.values()),
+        dev: transitiveDevDependencies.has(structUtils.convertLocatorToDescriptor(pkg).descriptorHash),
+      };
+    }
   }
 
   return data;
