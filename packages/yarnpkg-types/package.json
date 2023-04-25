@@ -29,5 +29,8 @@
   ],
   "engines": {
     "node": ">=14.15.0"
+  },
+  "dependencies": {
+    "tslib": "^2.4.0"
   }
 }
