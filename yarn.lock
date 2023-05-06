@@ -7310,11 +7310,11 @@ __metadata:
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
     "@types/react": "npm:^16.8.0"
-    ink: "npm:^3.0.8"
+    ink: "npm:3.1.0"
     react: "npm:^16.13.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
-    ink: ^3.0.8
+    ink: 3.1.0
     react: ^16.8.4
   languageName: unknown
   linkType: soft
@@ -7585,8 +7585,8 @@ __metadata:
     algoliasearch: "npm:^4.2.0"
     clipanion: "npm:^3.2.0-rc.10"
     diff: "npm:^5.1.0"
-    ink: "npm:^3.0.8"
-    ink-text-input: "npm:^4.0.1"
+    ink: "npm:3.1.0"
+    ink-text-input: "npm:4.0.1"
     react: "npm:^16.13.1"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
@@ -7803,7 +7803,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
     clipanion: "npm:^3.2.0-rc.10"
-    ink: "npm:^3.0.8"
+    ink: "npm:3.1.0"
     lodash: "npm:^4.17.15"
     react: "npm:^16.13.1"
     semver: "npm:^7.1.2"
@@ -8608,13 +8608,6 @@ __metadata:
   version: 0.0.7
   resolution: "ast-types-flow@npm:0.0.7"
   checksum: f6f0fecb7cd2a31b964582e4a98c494e388041a6925e01e1a2d67a4c450e345d7dbd4ca9e6aaee493018ed03ecf23ce4456e4077b1a52c5c8eae35beb71111ae
-  languageName: node
-  linkType: hard
-
-"astral-regex@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "astral-regex@npm:1.0.0"
-  checksum: 6c63b83bbd8004238bf412b8f59fd3326b9a676cb5f7e523fbfc50b7ab2ba937ac4229fc18a0e01c917de76b0a34669295f80e7859e6ae0e3845ede3f6a79711
   languageName: node
   linkType: hard
 
@@ -17580,7 +17573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ink-text-input@npm:^4.0.1":
+"ink-text-input@npm:4.0.1":
   version: 4.0.1
   resolution: "ink-text-input@npm:4.0.1"
   dependencies:
@@ -17593,9 +17586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ink@npm:3.0.8":
-  version: 3.0.8
-  resolution: "ink@npm:3.0.8"
+"ink@npm:3.1.0":
+  version: 3.1.0
+  resolution: "ink@npm:3.1.0"
   dependencies:
     ansi-escapes: "npm:^4.2.1"
     auto-bind: "npm:4.0.0"
@@ -17614,7 +17607,7 @@ __metadata:
     signal-exit: "npm:^3.0.2"
     slice-ansi: "npm:^3.0.0"
     stack-utils: "npm:^2.0.2"
-    string-length: "npm:^3.1.0"
+    string-width: "npm:^4.2.2"
     type-fest: "npm:^0.12.0"
     widest-line: "npm:^3.1.0"
     wrap-ansi: "npm:^6.2.0"
@@ -17626,13 +17619,13 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: f54dbbc4c4004adb45a730b5d4eabe8fecc764908fd0107982490d435bf63dd00b8496d3c5801bd01db04259bfee78509a1f3a4c4bb17e411fe529e9bdd5d186
+  checksum: 930b34c56c723354a56bcf706d14c5ae8d4a80b1d3604e0fd3051788c9c236949016240fbdf59822bfe597b1bf7ce2ef669a3b44828f600b8b30337b55ad316d
   languageName: node
   linkType: hard
 
-"ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch":
-  version: 3.0.8
-  resolution: "ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"
+"ink@patch:ink@npm%3A3.1.0#~/.yarn/patches/ink-npm-3.1.0-c5c20a4e0d.patch":
+  version: 3.1.0
+  resolution: "ink@patch:ink@npm%3A3.1.0#~/.yarn/patches/ink-npm-3.1.0-c5c20a4e0d.patch::version=3.1.0&hash=b94827"
   dependencies:
     ansi-escapes: "npm:^4.2.1"
     auto-bind: "npm:4.0.0"
@@ -17651,7 +17644,7 @@ __metadata:
     signal-exit: "npm:^3.0.2"
     slice-ansi: "npm:^3.0.0"
     stack-utils: "npm:^2.0.2"
-    string-length: "npm:^3.1.0"
+    string-width: "npm:^4.2.2"
     type-fest: "npm:^0.12.0"
     widest-line: "npm:^3.1.0"
     wrap-ansi: "npm:^6.2.0"
@@ -17663,7 +17656,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 3526d08c45a6456c7f20160775da24b793838dece2af4996a077d0b48c8e5fe41ff07407a9f3e063518c9497cb240148f9af96a7fc102e3f11d76e5b0d96afcf
+  checksum: 10c8976de23affe60c85a91c190666e72f588f5ede11383155f5053cb390e0a98509893c05f9c257b8a42079b6d403b62c5a43a2a4ce7409797877c923874059
   languageName: node
   linkType: hard
 
@@ -27742,16 +27735,6 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"string-length@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "string-length@npm:3.1.0"
-  dependencies:
-    astral-regex: "npm:^1.0.0"
-    strip-ansi: "npm:^5.2.0"
-  checksum: 0718d15287a749831bee7fc98b66dbd6f3854854feb33a09304936d640964972a16955cec1fab58eddde70a41c8762385120b76469bfad2dd3dc5ebfd9ee0f5d
-  languageName: node
-  linkType: hard
-
 "string-length@npm:^4.0.1":
   version: 4.0.1
   resolution: "string-length@npm:4.0.1"
@@ -27793,7 +27776,7 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
+"string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.2, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
   dependencies:
