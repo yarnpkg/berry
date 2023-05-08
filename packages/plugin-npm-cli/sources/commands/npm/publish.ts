@@ -30,6 +30,10 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `The access for the published package (public or restricted)`,
   });
 
+  provenance = Option.Boolean(`--provenance`, false, {
+    description: `Generate provenance statements for the package you publish`,
+  });
+
   tag = Option.String(`--tag`, `latest`, {
     description: `The tag on the registry that the package should be attached to`,
   });

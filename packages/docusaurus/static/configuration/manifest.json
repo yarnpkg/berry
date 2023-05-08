@@ -327,6 +327,11 @@
           "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `module` field when generating the workspace tarball.",
           "examples": ["./build/index.mjs"]
         },
+        "provenance": {
+          "description": "If set to `true`, will generate provenance statements for the package you publish.",
+          "type": "boolean",
+          "examples": [true]
+        },
         "registry": {
           "description": "If present, will replace whatever registry is defined in the configuration when the package is about to be pushed to a remote location.",
           "type": "string",
