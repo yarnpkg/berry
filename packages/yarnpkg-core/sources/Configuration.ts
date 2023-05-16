@@ -1419,16 +1419,8 @@ export class Configuration {
       }
     }
 
-    let writeFile: (() => Promise<void>) | undefined;
-    if (opts?.immutable) {
-      writeFile = async () => {
-        throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
-      };
-    }
-
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
-      writeFile,
     });
 
     return true;
