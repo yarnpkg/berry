@@ -4,6 +4,7 @@ on:
     - master
     - 'cherry-pick/**'
   pull_request:
+  merge_group:
 
 name: 'Integration'
 jobs:
