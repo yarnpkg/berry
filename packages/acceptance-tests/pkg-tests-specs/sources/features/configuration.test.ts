@@ -1,4 +1,4 @@
-import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Configuration`, () => {
