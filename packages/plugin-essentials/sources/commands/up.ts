@@ -195,10 +195,12 @@ export default class UpCommand extends BaseCommand {
             return structUtils.stringifyIdent(descriptor);
           });
 
-          for (const stringifiedIdent of micromatch(stringifiedIdents, stringifiedPseudoDescriptor, {
-            // Wildcard targets both scoped and unscoped packages.
-            basename: stringifiedPseudoDescriptor === `*` && interactive,
-          })) {
+          // As a special case, we support "*" as a pattern to upgrade all packages
+          const matches = stringifiedPseudoDescriptor === `*`
+            ? stringifiedIdents
+            : micromatch(stringifiedIdents, stringifiedPseudoDescriptor);
+
+          for (const stringifiedIdent of matches) {
             const ident = structUtils.parseIdent(stringifiedIdent);
 
             const existingDescriptor = workspace.manifest[target].get(ident.identHash);

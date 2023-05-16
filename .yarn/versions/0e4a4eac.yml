@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/cli": minor
+  "@yarnpkg/cli": major
   "@yarnpkg/plugin-essentials": major
   "@yarnpkg/plugin-interactive-tools": minor
 
