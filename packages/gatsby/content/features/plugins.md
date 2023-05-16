@@ -109,6 +109,8 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn-scripts-cache**](https://github.com/rgischk/yarn-scripts-cache) by [**Roman Gischkowski**](https://github.com/rgischk) - A Yarn Berry plugin to cache script execution results. Previous build results can be restored, even from a remote cache server. This allows for build result sharing with a team of developers, significantly decreasing build times and eliminating downtime.
 
+- [**yarn-plugin-env**](https://github.com/MDReal32/yarn-plugin-env) by [**MDReal Aliyev**](https://github.com/MDReal32) - A Yarn Berry plugin to load environment variables from files to `process.env` on startup any script.
+
 - [**yarn-plugin-env-vars**](https://github.com/scinos/yarn-plugin-env-vars) by [**Sergio Cinos**](https://github.com/scinos) - A Yarn plugin that ensures your environment variables are set before running any npm scripts. 
 
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
