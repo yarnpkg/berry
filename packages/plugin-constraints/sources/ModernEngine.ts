@@ -1,6 +1,6 @@
 import {Manifest, miscUtils, nodeUtils, Project, structUtils} from '@yarnpkg/core';
+import {Yarn}                                                 from '@yarnpkg/types';
 
-import * as context                                           from './ModernEngineContext';
 import * as constraintUtils                                   from './constraintUtils';
 
 export class ModernEngine implements constraintUtils.Engine {
@@ -8,8 +8,8 @@ export class ModernEngine implements constraintUtils.Engine {
   }
 
   private createEnvironment() {
-    const workspaces = new constraintUtils.Index<context.Workspace>([`cwd`, `ident`]);
-    const dependencies = new constraintUtils.Index<context.Dependency>([`type`, `ident`]);
+    const workspaces = new constraintUtils.Index<Yarn.Constraints.Workspace>([`cwd`, `ident`]);
+    const dependencies = new constraintUtils.Index<Yarn.Constraints.Dependency>([`type`, `ident`]);
 
     const result: constraintUtils.ProcessResult = {
       manifestUpdates: new Map(),
@@ -85,11 +85,11 @@ export class ModernEngine implements constraintUtils.Engine {
   async process() {
     const env = this.createEnvironment();
 
-    const context: context.Context = {
+    const context: Yarn.Constraints.Context = {
       Yarn: {
-        workspace: filter => {
+        workspace: ((filter?: Yarn.Constraints.WorkspaceFilter) => {
           return env.workspaces.find(filter)[0] ?? null;
-        },
+        }) as any,
         workspaces: filter => {
           return env.workspaces.find(filter);
         },
@@ -103,7 +103,7 @@ export class ModernEngine implements constraintUtils.Engine {
     if (!userConfig?.constraints)
       return null;
 
-    userConfig.constraints(context);
+    await userConfig.constraints(context);
 
     return env.result;
   }

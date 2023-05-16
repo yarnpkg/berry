@@ -111,4 +111,8 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**git-hooks**](https://github.com/trufflehq/yarn-plugin-git-hooks#readme) by [**TruffleHQ**](https://github.com/trufflehq) - adds support for [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
 
+- [**yarn-plugin-env**](https://github.com/MDReal32/yarn-plugin-env) by [**MDReal Aliyev**](https://github.com/MDReal32) - A Yarn Berry plugin to load environment variables from files to `process.env` on startup any script.
+
+- [**yarn-plugin-env-vars**](https://github.com/scinos/yarn-plugin-env-vars) by [**Sergio Cinos**](https://github.com/scinos) - A Yarn plugin that ensures your environment variables are set before running any npm scripts. 
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!

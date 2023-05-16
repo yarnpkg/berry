@@ -211,5 +211,39 @@ describe(`Commands`, () => {
         expect({code, stdout, stderr}).toMatchSnapshot();
       }),
     );
+
+    test(
+      `it should store npmAlwaysAuth when passed as option`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
+        await xfs.writeFilePromise(rcPath, ``);
+
+        let code;
+        let stdout;
+        let stderr;
+
+        try {
+          ({code, stdout, stderr} = await run(`npm`, `login`, `--always-auth`, {
+            env: {
+              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+              YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
+              YARN_RC_FILENAME: SPEC_RC_FILENAME,
+            },
+          }));
+        } catch (error) {
+          ({code, stdout, stderr} = error);
+        }
+
+        expect({code, stdout, stderr}).toMatchSnapshot();
+
+        const {stdout: npmRegistriesConfig} = await run(`config`, `get`, `--json`, `npmRegistries`, {
+          env: {
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
+
+        expect(JSON.parse(npmRegistriesConfig)[`http://registry.example.org`]?.npmAlwaysAuth).toBe(true);
+      }),
+    );
   });
 });

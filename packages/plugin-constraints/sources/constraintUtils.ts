@@ -1,9 +1,9 @@
-import {Configuration, formatUtils, Manifest, miscUtils, nodeUtils, Project, Workspace} from '@yarnpkg/core';
-import {PortablePath}                                                                   from '@yarnpkg/fslib';
-import get                                                                              from 'lodash/get';
-import set                                                                              from 'lodash/set';
-import toPath                                                                           from 'lodash/toPath';
-import unset                                                                            from 'lodash/unset';
+import {Configuration, formatUtils, Manifest, miscUtils, nodeUtils, Project, treeUtils, Workspace} from '@yarnpkg/core';
+import {PortablePath}                                                                              from '@yarnpkg/fslib';
+import get                                                                                         from 'lodash/get';
+import set                                                                                         from 'lodash/set';
+import toPath                                                                                      from 'lodash/toPath';
+import unset                                                                                       from 'lodash/unset';
 
 export type ProcessResult = {
   manifestUpdates: Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>;
@@ -165,12 +165,12 @@ function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller)
   return parts.join(` `);
 }
 
-export function applyEngineReport(project: Project, {manifestUpdates, reportedErrors}: ProcessResult, {fix}: {fix?: boolean} = {}) {
-  type AnnotatedError = {
-    text: string;
-    fixable: boolean;
-  };
+export type AnnotatedError = {
+  text: string;
+  fixable: boolean;
+};
 
+export function applyEngineReport(project: Project, {manifestUpdates, reportedErrors}: ProcessResult, {fix}: {fix?: boolean} = {}) {
   const changedWorkspaces = new Map<Workspace, Record<string, any>>();
   const remainingErrors = new Map<Workspace, Array<AnnotatedError>>();
 
@@ -236,4 +236,38 @@ export function applyEngineReport(project: Project, {manifestUpdates, reportedEr
     changedWorkspaces,
     remainingErrors,
   };
+}
+
+export function convertReportToRoot(errors: Map<Workspace, Array<AnnotatedError>>, {configuration}: {configuration: Configuration}) {
+  const root: treeUtils.TreeRoot = {children: []};
+
+  for (const [workspace, workspaceErrors] of errors) {
+    const errorNodes: Array<treeUtils.TreeNode> = [];
+    for (const error of workspaceErrors) {
+      const lines = error.text.split(/\n/);
+
+      if (error.fixable)
+        lines[0] = `${formatUtils.pretty(configuration, `⚙`, `gray`)} ${lines[0]}`;
+
+      errorNodes.push({
+        value: formatUtils.tuple(formatUtils.Type.NO_HINT, lines[0]),
+        children: lines.slice(1).map(line => ({
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, line),
+        })),
+      });
+    }
+
+    const workspaceNode: treeUtils.TreeNode = {
+      value: formatUtils.tuple(formatUtils.Type.LOCATOR, workspace.anchoredLocator),
+      children: miscUtils.sortMap(errorNodes, node => node.value![1]),
+    };
+
+    root.children.push(workspaceNode);
+  }
+
+  root.children = miscUtils.sortMap(root.children, node => {
+    return node.value![1];
+  });
+
+  return root;
 }
