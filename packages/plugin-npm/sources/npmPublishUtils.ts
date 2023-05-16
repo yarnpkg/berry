@@ -14,6 +14,7 @@ type PublishAdditionalParams = {
   registry: string;
   gitHead?: string;
 };
+
 export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: PublishAdditionalParams) {
   const ident = workspace.manifest.name!;
   const version = workspace.manifest.version!;
@@ -23,7 +24,7 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   const shasum = createHash(`sha1`).update(buffer).digest(`hex`);
   const integrity = ssri.fromData(buffer).toString();
 
-  const publishAccess = getPublishAccess(workspace, ident, access);
+  const publishAccess = access ?? getPublishAccess(workspace, ident);
   const readmeContent = await getReadmeContent(workspace);
 
   const raw = await packUtils.genPackageManifest(workspace);
@@ -85,10 +86,8 @@ export async function getGitHead(workingDir: PortablePath) {
   }
 }
 
-export function getPublishAccess(workspace: Workspace, ident: Ident, access?: string): string {
+export function getPublishAccess(workspace: Workspace, ident: Ident): string {
   const configuration = workspace.project.configuration;
-  if (typeof access === `string`)
-    return access;
 
   if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`)
     return workspace.manifest.publishConfig.access;
@@ -96,21 +95,29 @@ export function getPublishAccess(workspace: Workspace, ident: Ident, access?: st
   if (configuration.get(`npmPublishAccess`) !== null)
     return configuration.get(`npmPublishAccess`)!;
 
-  if (ident.scope)
-    access = `restricted`;
+  const access = ident.scope
+    ? `restricted`
+    : `public`;
 
-  return `public`;
+  return access;
 }
 
 export async function getReadmeContent(workspace: Workspace): Promise<string>  {
-  const currentDir = npath.toPortablePath(`${workspace.cwd}/README.md`);
-  const isReadmeExists = await xfs.existsPromise(currentDir);
-
-  if (isReadmeExists)
-    return xfs.readFilePromise(currentDir, `utf-8`);
+  const readmePath = npath.toPortablePath(`${workspace.cwd}/README.md`);
 
   const ident = workspace.manifest.name!;
   const packageName = structUtils.stringifyIdent(ident);
 
-  return `# ${packageName}`;
+  let readme = `# ${packageName}\n`;
+  try {
+    readme = await xfs.readFilePromise(readmePath, `utf8`);
+  } catch (err) {
+    if (err.code === `ENOENT`) {
+      return readme;
+    } else {
+      throw err;
+    }
+  }
+
+  return readme;
 }
