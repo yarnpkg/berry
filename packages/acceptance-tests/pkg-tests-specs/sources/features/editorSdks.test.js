@@ -84,7 +84,7 @@ describe(`Features`, () => {
      * Example messages matching '/\.zip\\//' within "send(msg)" - https://hastebin.com/zosibaseki
      * Note that no messages were found matching '/^zip:\\/\\//' were found within "onMessage(message)"
      */
-    test(
+    (process.versions.node.startsWith(`12`) ? test.skip : test)(
       `it should patch message into VSCode typescript language extension for zip schemes`,
       async () => {
         const child = spawn(process.execPath, [require.resolve(`@yarnpkg/monorepo/.yarn/sdks/typescript/lib/tsserver.js`)], {
