@@ -950,6 +950,8 @@ export class Configuration {
 
   public static telemetry: TelemetryManager | null = null;
 
+  public isCI = isCI;
+
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null = null;
 

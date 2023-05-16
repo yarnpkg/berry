@@ -24792,7 +24792,7 @@ const RAW_RUNTIME_STATE =
           ["string-width", "npm:5.1.2"],\
           ["type-fest", "npm:2.19.0"],\
           ["widest-line", "npm:4.0.1"],\
-          ["wrap-ansi", "npm:8.0.1"]\
+          ["wrap-ansi", "npm:8.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -50578,10 +50578,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:8.0.1", {\
-        "packageLocation": "./.yarn/cache/wrap-ansi-npm-8.0.1-b8ba4ced36-6a15d8e2a6.zip/node_modules/wrap-ansi/",\
+      ["npm:8.1.0", {\
+        "packageLocation": "./.yarn/cache/wrap-ansi-npm-8.1.0-26a4e6ae28-f8df96ddee.zip/node_modules/wrap-ansi/",\
         "packageDependencies": [\
-          ["wrap-ansi", "npm:8.0.1"],\
+          ["wrap-ansi", "npm:8.1.0"],\
           ["ansi-styles", "npm:6.1.1"],\
           ["string-width", "npm:5.1.2"],\
           ["strip-ansi", "npm:7.0.1"]\
