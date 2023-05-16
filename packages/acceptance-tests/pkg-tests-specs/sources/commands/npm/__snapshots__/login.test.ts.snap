@@ -108,3 +108,14 @@ exports[`Commands npm login it should print the npm-notice when an OTP is reques
 ",
 }
 `;
+
+exports[`Commands npm login it should store npmAlwaysAuth when passed as option 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
+",
+}
+`;

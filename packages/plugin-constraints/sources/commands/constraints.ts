@@ -53,7 +53,7 @@ export default class ConstraintsCheckCommand extends BaseCommand {
       engine = await Constraints.find(project);
     }
 
-    const root: treeUtils.TreeRoot = {children: []};
+    let root!: treeUtils.TreeRoot;
 
     let hasFixableErrors = false;
     let allFixableErrors = false;
@@ -84,35 +84,19 @@ export default class ConstraintsCheckCommand extends BaseCommand {
       if (changedWorkspaces.size > 0 && t > 1)
         continue;
 
+      root = constraintUtils.convertReportToRoot(remainingErrors, {configuration});
+
       hasFixableErrors = false;
       allFixableErrors = true;
 
-      for (const [workspace, workspaceErrors] of remainingErrors) {
-        const errorNodes: Array<treeUtils.TreeNode> = [];
+      for (const [, workspaceErrors] of remainingErrors) {
         for (const error of workspaceErrors) {
-          const lines = error.text.split(/\n/);
-
           if (error.fixable) {
-            lines[0] = `${formatUtils.pretty(configuration, `⚙`, `gray`)} ${lines[0]}`;
             hasFixableErrors = true;
           } else {
             allFixableErrors = false;
           }
-
-          errorNodes.push({
-            value: formatUtils.tuple(formatUtils.Type.NO_HINT, lines[0]),
-            children: lines.slice(1).map(line => ({
-              value: formatUtils.tuple(formatUtils.Type.NO_HINT, line),
-            })),
-          });
         }
-
-        const workspaceNode: treeUtils.TreeNode = {
-          value: formatUtils.tuple(formatUtils.Type.LOCATOR, workspace.anchoredLocator),
-          children: miscUtils.sortMap(errorNodes, node => node.value![1]),
-        };
-
-        root.children.push(workspaceNode);
       }
     }
 

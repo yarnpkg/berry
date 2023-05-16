@@ -57,7 +57,15 @@ const plugin: Plugin<Hooks> = {
 
       const {remainingErrors} = constraintUtils.applyEngineReport(project, result);
       if (remainingErrors.size !== 0) {
-        reportError(MessageName.CONSTRAINTS_CHECK_FAILED, `Constraint check failed; run ${formatUtils.pretty(project.configuration, `yarn constraints`, formatUtils.Type.CODE)} for more details`);
+        if (project.configuration.isCI) {
+          for (const [workspace, workspaceErrors] of remainingErrors) {
+            for (const error of workspaceErrors) {
+              reportError(MessageName.CONSTRAINTS_CHECK_FAILED, `${formatUtils.pretty(project.configuration, workspace.locator, formatUtils.Type.IDENT)}: ${error.text}`);
+            }
+          }
+        } else {
+          reportError(MessageName.CONSTRAINTS_CHECK_FAILED, `Constraint check failed; run ${formatUtils.pretty(project.configuration, `yarn constraints`, formatUtils.Type.CODE)} for more details`);
+        }
       }
     },
   },
