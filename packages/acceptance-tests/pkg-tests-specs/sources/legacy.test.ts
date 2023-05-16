@@ -119,4 +119,53 @@ describe(`Legacy tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should generate a .gitignore file`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`no-deps`]: `*`},
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/yarn.lock` as PortablePath, lockfile100);
+        await run(`install`);
+
+        await expect(xfs.readFilePromise(`${path}/.gitignore` as PortablePath, `utf-8`)).resolves.toBe(`
+# yarn berry config, more information in https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+`);
+      },
+    ));
+
+  test(
+    `it should modify the .gitignore file if it already exists`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`no-deps`]: `*`},
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/.gitignore` as PortablePath, `foo\nbar`);
+
+        await xfs.writeFilePromise(`${path}/yarn.lock` as PortablePath, lockfile100);
+        await run(`install`);
+
+        await expect(xfs.readFilePromise(`${path}/.gitignore` as PortablePath, `utf-8`)).resolves.toBe(`foo
+bar
+# yarn berry config, more information in https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+`);
+      },
+    ));
 });
