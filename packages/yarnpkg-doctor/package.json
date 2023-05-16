@@ -16,7 +16,7 @@
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^2.4.0",
-    "typescript": "5.1.0-beta"
+    "typescript": "5.1.1-rc"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
