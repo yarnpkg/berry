@@ -236,16 +236,13 @@ describe(`Commands`, () => {
 
         expect({code, stdout, stderr}).toMatchSnapshot();
 
-        const {stdout: npmRegistriesConfig} = await run(
-          `config`, `get`, `--json`, `npmRegistries`,
-          {
-            env: {
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
+        const {stdout: npmRegistriesConfig} = await run(`config`, `get`, `--json`, `npmRegistries`, {
+          env: {
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
           },
-        );
+        });
 
-        expect(JSON.parse(npmRegistriesConfig)['http://registry.example.org']?.npmAlwaysAuth).toBe(true);
+        expect(JSON.parse(npmRegistriesConfig)[`http://registry.example.org`]?.npmAlwaysAuth).toBe(true);
       }),
     );
   });
