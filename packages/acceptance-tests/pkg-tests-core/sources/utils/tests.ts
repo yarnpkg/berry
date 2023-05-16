@@ -458,6 +458,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           return processError(response, 401, `Invalid`);
         }
 
+        if (typeof body.readme !== `string` && name === `readme-required`)
+          return processError(response, 400, `Missing readme`);
+
         const [version] = Object.keys(body.versions);
         if (!body.versions[version].gitHead && name === `githead-required`)
           return processError(response, 400, `Missing gitHead`);
