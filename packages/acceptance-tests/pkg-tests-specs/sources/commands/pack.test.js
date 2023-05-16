@@ -325,7 +325,6 @@ describe(`Commands`, () => {
         browser: `./index.umd.js`,
         exports: `./index.modern.js`,
         imports: {[`#dep`]: `local`},
-        types: `./index.d.ts`,
         publishConfig: {
           type: `module`,
           main: `./published.js`,
@@ -333,7 +332,6 @@ describe(`Commands`, () => {
           browser: `./published.umd.js`,
           exports: `./published.modern.js`,
           imports: {[`#dep`]: `published`},
-          types: `./published.d.ts`,
         },
       }, async ({path, run, source}) => {
         await run(`install`);
@@ -349,7 +347,6 @@ describe(`Commands`, () => {
         expect(packedManifest.browser).toBe(`./published.umd.js`);
         expect(packedManifest.exports).toBe(`./published.modern.js`);
         expect(packedManifest.imports).toEqual({[`#dep`]: `published`});
-        expect(packedManifest.types).toBe(`./published.d.ts`);
 
         const originalManifest = await xfs.readJsonPromise(`${path}/package.json`);
 
@@ -359,7 +356,6 @@ describe(`Commands`, () => {
         expect(originalManifest.browser).toBe(`./index.umd.js`);
         expect(originalManifest.exports).toBe(`./index.modern.js`);
         expect(originalManifest.imports).toEqual({[`#dep`]: `local`});
-        expect(originalManifest.types).toBe(`./index.d.ts`);
       }),
     );
 
