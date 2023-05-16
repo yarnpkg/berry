@@ -160,7 +160,7 @@ export class StreamReport extends Report {
   private lastCacheMiss: Locator | null = null;
 
   private warningCount: number = 0;
-  private errorCount: number = 0;
+  private errors: Array<[MessageName, string]> = [];
 
   private startTime: number = Date.now();
 
@@ -223,7 +223,7 @@ export class StreamReport extends Report {
   }
 
   hasErrors() {
-    return this.errorCount > 0;
+    return this.errors.length > 0;
   }
 
   exitCode() {
@@ -318,8 +318,12 @@ export class StreamReport extends Report {
       reportFooter: elapsedTime => {
         this.indent -= 1;
 
-        if (GROUP !== null && !this.json && this.includeInfos)
+        if (GROUP !== null && !this.json && this.includeInfos) {
           this.stdout.write(GROUP.end(what));
+          for (const [name, text] of this.errors) {
+            this.reportErrorImpl(name, text);
+          }
+        }
 
         if (this.configuration.get(`enableTimers`) && elapsedTime > 200) {
           this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, elapsedTime, formatUtils.Type.DURATION)}`);
@@ -418,8 +422,12 @@ export class StreamReport extends Report {
   }
 
   reportError(name: MessageName, text: string) {
-    this.errorCount += 1;
+    this.errors.push([name, text]);
 
+    this.reportErrorImpl(name, text);
+  }
+
+  reportErrorImpl(name: MessageName, text: string) {
     this.commit();
 
     const formattedName = this.formatNameWithHyperlink(name);
@@ -496,7 +504,7 @@ export class StreamReport extends Report {
 
     let installStatus = ``;
 
-    if (this.errorCount > 0)
+    if (this.errors.length > 0)
       installStatus = `Failed with errors`;
     else if (this.warningCount > 0)
       installStatus = `Done with warnings`;
@@ -508,7 +516,7 @@ export class StreamReport extends Report {
       ? `${installStatus} in ${timing}`
       : installStatus;
 
-    if (this.errorCount > 0) {
+    if (this.errors.length > 0) {
       this.reportError(MessageName.UNNAMED, message);
     } else if (this.warningCount > 0) {
       this.reportWarning(MessageName.UNNAMED, message);
