@@ -1,4 +1,3 @@
-import {httpUtils}  from '@yarnpkg/core';
 import {npath, xfs} from '@yarnpkg/fslib';
 
 export {};
