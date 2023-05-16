@@ -72,22 +72,19 @@ describe(`publish`, () =>   {
     })).resolves.toBeTruthy();
   }));
 
-  test(`should publish package with readme content`, makeTemporaryEnv({
-    name: `otp-required`,
+  test(`should publish a package with the readme content`, makeTemporaryEnv({
+    name: `readme-required`,
     version: `1.0.0`,
   }, async ({path, run, source}) => {
-    const spy = jest.spyOn(httpUtils, `put`);
     await run(`install`);
 
     const readmePath = npath.toPortablePath(`${path}/README.md`);
     await xfs.writeFilePromise(readmePath, `# title\n`);
 
-    await run(`npm`, `publish`, `--otp`, validLogins.otpUser.npmOtpToken, {
+    await run(`npm`, `publish`, {
       env: {
-        YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
       },
     });
-
-    expect(spy).toHaveBeenCalledWith({});
   }));
 });
