@@ -1,5 +1,5 @@
-import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
+import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
 import moduleExports, { Module } from 'module';
 import { createHash } from 'crypto';
@@ -1359,9 +1359,8 @@ class VirtualFS extends ProxiedFS {
 }
 
 const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
-const HAS_CONSOLIDATED_HOOKS = major > 16 || major === 16 && minor >= 12;
-const HAS_UNFLAGGED_JSON_MODULES = major > 17 || major === 17 && minor >= 5 || major === 16 && minor >= 15;
-const HAS_JSON_IMPORT_ASSERTION_REQUIREMENT = major > 17 || major === 17 && minor >= 1 || major === 16 && minor > 14;
+const HAS_UNFLAGGED_JSON_MODULES = major > 17 || major === 17 && minor >= 5;
+const HAS_JSON_IMPORT_ASSERTION_REQUIREMENT = major > 17 || major === 17 && minor >= 1;
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 const HAS_LAZY_LOADED_TRANSLATORS = major > 19 || major === 19 && minor >= 3;
 
@@ -1450,28 +1449,6 @@ function getFileFormat(filepath) {
       return pkg.data.type ?? `commonjs`;
     }
   }
-}
-
-async function getFormat$1(resolved, context, defaultGetFormat) {
-  const url = tryParseURL(resolved);
-  if ((url == null ? void 0 : url.protocol) !== `file:`)
-    return defaultGetFormat(resolved, context, defaultGetFormat);
-  const format = getFileFormat(fileURLToPath(url));
-  if (format) {
-    return {
-      format
-    };
-  }
-  return defaultGetFormat(resolved, context, defaultGetFormat);
-}
-
-async function getSource$1(urlString, context, defaultGetSource) {
-  const url = tryParseURL(urlString);
-  if ((url == null ? void 0 : url.protocol) !== `file:`)
-    return defaultGetSource(urlString, context, defaultGetSource);
-  return {
-    source: await fs.promises.readFile(fileURLToPath(url), `utf8`)
-  };
 }
 
 async function load$1(urlString, context, nextLoad) {
@@ -2068,8 +2045,6 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
 }
 
 const resolve = resolve$1;
-const getFormat = HAS_CONSOLIDATED_HOOKS ? void 0 : getFormat$1;
-const getSource = HAS_CONSOLIDATED_HOOKS ? void 0 : getSource$1;
-const load = HAS_CONSOLIDATED_HOOKS ? load$1 : void 0;
+const load = load$1;
 
-export { getFormat, getSource, load, resolve };
+export { load, resolve };
