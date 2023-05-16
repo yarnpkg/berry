@@ -1,7 +1,10 @@
-import fs from 'fs';
+import fs                            from 'fs';
+
+import {HAS_LAZY_LOADED_TRANSLATORS} from './loaderFlags';
 
 //#region ESM to CJS support
-/*
+if (!HAS_LAZY_LOADED_TRANSLATORS) {
+  /*
   In order to import CJS files from ESM Node does some translating
   internally[1]. This translator calls an unpatched `readFileSync`[2]
   which itself calls an internal `tryStatSync`[3] which calls
@@ -16,34 +19,33 @@ import fs from 'fs';
   5: https://github.com/nodejs/node/pull/39513
 */
 
-const binding = (process as any).binding(`fs`) as {
-  fstat: (fd: number, useBigint: false, req: any, ctx: object) => Float64Array;
-};
-const originalfstat = binding.fstat;
+  const binding = (process as any).binding(`fs`) as {
+    fstat: (fd: number, useBigint: false, req: any, ctx: object) => Float64Array;
+  };
+  const originalfstat = binding.fstat;
 
-// Those values must be synced with packages/yarnpkg-fslib/sources/ZipOpenFS.ts
-//
-const ZIP_MASK  = 0xff000000;
-const ZIP_MAGIC = 0x2a000000;
+  // Those values must be synced with packages/yarnpkg-fslib/sources/ZipOpenFS.ts
+  const ZIP_MASK  = 0xff000000;
+  const ZIP_MAGIC = 0x2a000000;
 
-binding.fstat = function(...args) {
-  const [fd, useBigint, req] = args;
-  if ((fd & ZIP_MASK) === ZIP_MAGIC && useBigint === false && req === undefined) {
-    try {
-      const stats = fs.fstatSync(fd);
-      // The reverse of this internal util
-      // https://github.com/nodejs/node/blob/8886b63cf66c29d453fdc1ece2e489dace97ae9d/lib/internal/fs/utils.js#L542-L551
-      return new Float64Array([
-        stats.dev,
-        stats.mode,
-        stats.nlink,
-        stats.uid,
-        stats.gid,
-        stats.rdev,
-        stats.blksize,
-        stats.ino,
-        stats.size,
-        stats.blocks,
+  binding.fstat = function(...args) {
+    const [fd, useBigint, req] = args;
+    if ((fd & ZIP_MASK) === ZIP_MAGIC && useBigint === false && req === undefined) {
+      try {
+        const stats = fs.fstatSync(fd);
+        // The reverse of this internal util
+        // https://github.com/nodejs/node/blob/8886b63cf66c29d453fdc1ece2e489dace97ae9d/lib/internal/fs/utils.js#L542-L551
+        return new Float64Array([
+          stats.dev,
+          stats.mode,
+          stats.nlink,
+          stats.uid,
+          stats.gid,
+          stats.rdev,
+          stats.blksize,
+          stats.ino,
+          stats.size,
+          stats.blocks,
         // atime sec
         // atime ns
         // mtime sec
@@ -52,10 +54,11 @@ binding.fstat = function(...args) {
         // ctime ns
         // birthtime sec
         // birthtime ns
-      ]);
-    } catch {}
-  }
+        ]);
+      } catch {}
+    }
 
-  return originalfstat.apply(this, args);
-};
+    return originalfstat.apply(this, args);
+  };
+}
 //#endregion

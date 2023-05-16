@@ -48,9 +48,9 @@ exports[`gitUtils should properly normalize git+ssh://git@github.com:yarnpkg/ber
 
 exports[`gitUtils should properly normalize git+ssh://git@github.com:yarnpkg/berry.git#v2.1.1 ({ git: true }) 1`] = `"ssh://git@github.com/yarnpkg/berry.git#v2.1.1"`;
 
-exports[`gitUtils should properly normalize git://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"git://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: false }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
-exports[`gitUtils should properly normalize git://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"git://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
+exports[`gitUtils should properly normalize git://github.com/yarnpkg/util-deprecate.git#v1.0.1 ({ git: true }) 1`] = `"https://github.com/yarnpkg/util-deprecate.git#v1.0.1"`;
 
 exports[`gitUtils should properly normalize github:GitHubOrg/foo-bar.js ({ git: false }) 1`] = `"https://github.com/GitHubOrg/foo-bar.js.git"`;
 
@@ -227,7 +227,7 @@ exports[`gitUtils should properly split git+ssh://git@github.com:yarnpkg/berry.g
 exports[`gitUtils should properly split git://github.com/yarnpkg/util-deprecate.git#v1.0.1 1`] = `
 {
   "extra": {},
-  "repo": "git://github.com/yarnpkg/util-deprecate.git",
+  "repo": "https://github.com/yarnpkg/util-deprecate.git",
   "treeish": {
     "protocol": null,
     "request": "v1.0.1",

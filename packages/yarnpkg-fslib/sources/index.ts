@@ -6,9 +6,9 @@ export {constants};
 export {errors};
 export {statUtils};
 
-export type {LinkStrategy} from './algorithms/copyPromise';
-export {setupCopyIndex}    from './algorithms/copyPromise';
-export {opendir}           from './algorithms/opendir';
+export type {LinkStrategy}                       from './algorithms/copyPromise';
+export {setupCopyIndex}                          from './algorithms/copyPromise';
+export {opendir, CustomDir}                      from './algorithms/opendir';
 export {watchFile, unwatchFile, unwatchAllFiles} from './algorithms/watchFile';
 
 export {normalizeLineEndings}          from './FakeFS';
