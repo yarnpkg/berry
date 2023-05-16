@@ -108,3 +108,14 @@ Object {
 ",
 }
 `;
+
+exports[`Commands npm login it should store npmAlwaysAuth when passed as option 1`] = `
+Object {
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
+",
+}
+`;
