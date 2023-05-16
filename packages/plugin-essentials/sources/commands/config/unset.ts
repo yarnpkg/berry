@@ -51,7 +51,7 @@ export default class ConfigUnsetCommand extends BaseCommand {
     if (typeof setting === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${name}"`);
 
-    const updateConfiguration: (patch: ((current: any) => any)) => Promise<void> =
+    const updateConfiguration: (patch: ((current: any) => any)) => Promise<boolean> =
       this.home
         ? patch => Configuration.updateHomeConfiguration(patch)
         : patch => Configuration.updateConfiguration(assertProjectCwd(), patch);

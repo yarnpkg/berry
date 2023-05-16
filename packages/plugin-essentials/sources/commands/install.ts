@@ -244,7 +244,7 @@ export default class YarnCommand extends BaseCommand {
       }, async report => {
         let changed = false;
 
-        if (await autofixLegacyPlugins(configuration)) {
+        if (await autofixLegacyPlugins(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically removed core plugins that are now builtins 👍`);
           changed = true;
         }
@@ -456,7 +456,7 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   return true;
 }
 
-async function autofixLegacyPlugins(configuration: Configuration) {
+async function autofixLegacyPlugins(configuration: Configuration, immutable: boolean) {
   if (!configuration.projectCwd)
     return false;
 
@@ -468,6 +468,9 @@ async function autofixLegacyPlugins(configuration: Configuration) {
       return current;
 
     const plugins = current.plugins.filter((plugin: {spec: string, path: PortablePath}) => {
+      if (!plugin.path)
+        return true;
+
       const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
       const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
 
@@ -484,6 +487,8 @@ async function autofixLegacyPlugins(configuration: Configuration) {
       ...current,
       plugins,
     };
+  }, {
+    immutable,
   });
 
   if (!changed)

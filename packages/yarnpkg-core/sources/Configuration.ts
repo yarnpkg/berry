@@ -9,10 +9,11 @@ import {PassThrough, Writable}                                                  
 
 import {CorePlugin}                                                                                              from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
+import {MessageName}                                                                                             from './MessageName';
 import {MultiFetcher}                                                                                            from './MultiFetcher';
 import {MultiResolver}                                                                                           from './MultiResolver';
 import {Plugin, Hooks, PluginMeta}                                                                               from './Plugin';
-import {Report}                                                                                                  from './Report';
+import {Report, ReportError}                                                                                     from './Report';
 import {TelemetryManager}                                                                                        from './TelemetryManager';
 import {VirtualFetcher}                                                                                          from './VirtualFetcher';
 import {VirtualResolver}                                                                                         from './VirtualResolver';
@@ -1363,7 +1364,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown}), opts: {immutable?: boolean} = {}) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -1418,8 +1419,16 @@ export class Configuration {
       }
     }
 
+    let writeFile: (() => Promise<void>) | undefined;
+    if (opts?.immutable) {
+      writeFile = async () => {
+        throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
+      };
+    }
+
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
+      writeFile,
     });
 
     return true;
