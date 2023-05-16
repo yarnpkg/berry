@@ -54,10 +54,10 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
   async function exec(cli: Cli<CommandContext>): Promise<void> {
     // Non-exhaustive known requirements:
-    // - 14.15 is the first LTS release
+    // - 18.12 is the first LTS release
 
     const version = process.versions.node;
-    const range = `>=14.15.0`;
+    const range = `>=18.12.0`;
 
     // YARN_IGNORE_NODE is special because this code needs to execute as early as possible.
     // It's not a regular core setting because Configuration.find may use functions not available

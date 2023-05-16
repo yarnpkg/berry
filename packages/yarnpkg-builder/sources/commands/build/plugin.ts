@@ -121,7 +121,7 @@ export default class BuildPluginCommand extends Command {
           plugins: [dynamicLibResolver],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node14`,
+          target: `node18`,
         });
 
         for (const warning of res.warnings) {
