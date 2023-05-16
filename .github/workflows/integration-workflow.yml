@@ -4,6 +4,7 @@ on:
     - master
     - 'cherry-pick/**'
   pull_request:
+  merge_group:
 
 concurrency:
   # group by workflow and ref; the last slightly strange component ensures that for pull
