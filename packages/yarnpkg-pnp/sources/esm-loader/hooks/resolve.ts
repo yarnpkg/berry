@@ -100,11 +100,19 @@ export async function resolve(
     }
   }
 
-  const result = pnpapi.resolveRequest(specifier, issuer, {
-    conditions: new Set(conditions),
-    // TODO: Handle --experimental-specifier-resolution=node
-    extensions: allowLegacyResolve ? undefined : [],
-  });
+  let result;
+  try {
+    result = pnpapi.resolveRequest(specifier, issuer, {
+      conditions: new Set(conditions),
+      // TODO: Handle --experimental-specifier-resolution=node
+      extensions: allowLegacyResolve ? undefined : [],
+    });
+  } catch (err) {
+    if (err instanceof Error && `code` in err && err.code === `MODULE_NOT_FOUND`)
+      err.code = `ERR_MODULE_NOT_FOUND`;
+
+    throw err;
+  }
 
   if (!result)
     throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);

@@ -34,7 +34,7 @@ Note that those commands only need to be run once for the whole project and will
 2. Go into your project directory
 3. Run `yarn set version berry` to enable v2 (cf [Install](/getting-started/install) for more details)
 4. If you used `.npmrc` or `.yarnrc`, you'll need to turn them into the [new format](/configuration/yarnrc) (see also [1](/getting-started/migration#update-your-configuration-to-the-new-settings), [2](https://yarnpkg.com/getting-started/migration#dont-use-npmrc-files))
-5. Add [`nodeLinker: node-modules`](/configuration/yarnrc#nodeLinker) in your `.yarnrc.yml` file
+5. Run [`yarn config set nodeLinker node-modules`](/configuration/yarnrc#nodeLinker)
 6. Commit the changes so far (`yarn-X.Y.Z.js`, `.yarnrc.yml`, ...)
 7. Run `yarn install` to migrate the lockfile
 8. Take a look at [this article](/getting-started/qa#which-files-should-be-gitignored) to see what should be gitignored

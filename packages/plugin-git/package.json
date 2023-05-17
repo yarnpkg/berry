@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "3.0.0-rc.42",
+  "version": "3.0.0-rc.43",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -46,5 +46,5 @@
   "engines": {
     "node": ">=14.15.0"
   },
-  "stableVersion": "2.6.4"
+  "stableVersion": "2.6.5"
 }

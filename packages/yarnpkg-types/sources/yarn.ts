@@ -1,9 +1,6 @@
-// Strangely, the tslib error sometimes disappear in the IDE ... so we use ts-ignore rather than ts-expect-error
-// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
-// @ts-ignore: TS incorrectly thinks it needs tslib for this type export
-import type * as Constraints from './constraints';
+import * as Constraints from './constraints';
 
-export type * as Constraints from './constraints';
+export {Constraints};
 
 export type Config = {
   /**

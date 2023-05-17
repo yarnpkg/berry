@@ -723,7 +723,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
-      throw new Error(`Expected value (${value}) to be a string`);
+      throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
       env: process.env,
@@ -949,6 +949,8 @@ export class Configuration {
   public static deleteProperty = Symbol();
 
   public static telemetry: TelemetryManager | null = null;
+
+  public isCI = isCI;
 
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null = null;

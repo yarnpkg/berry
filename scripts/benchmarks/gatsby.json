@@ -1,18 +1,7 @@
 {
   "dependencies": {
-    "gatsby": "^4",
-    "gatsby-plugin-gatsby-cloud": "^4",
-    "gatsby-plugin-image": "^2",
-    "gatsby-plugin-manifest": "^4",
-    "gatsby-plugin-offline": "^5",
-    "gatsby-plugin-react-helmet": "^5",
-    "gatsby-plugin-sharp": "^4",
-    "gatsby-source-filesystem": "^4",
-    "gatsby-transformer-sharp": "^4",
-    "prettier": "^2",
-    "prop-types": "^15",
+    "gatsby": "^5",
     "react": "^18",
-    "react-dom": "^18",
-    "react-helmet": "^6"
+    "react-dom": "^18"
   }
 }

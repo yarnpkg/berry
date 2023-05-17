@@ -36,7 +36,7 @@ export default class NewPluginCommand extends Command {
     await xfs.mkdirPromise(target, {recursive: true});
     await xfs.mkdirPromise(ppath.join(target, `sources`), {recursive: true});
 
-    await xfs.writeFilePromise(ppath.join(target, `sources/index.ts`), [
+    await xfs.writeFilePromise(ppath.join(target, `sources`, `index.ts`), [
       `import {Plugin} from '@yarnpkg/core';\n`,
       `import {BaseCommand} from '@yarnpkg/cli';\n`,
       `import {Option} from 'clipanion';\n`,
@@ -69,19 +69,27 @@ export default class NewPluginCommand extends Command {
       `export default plugin;\n`,
     ].join(``));
 
+    await xfs.writeFilePromise(ppath.join(target, `.gitignore`), `bundles/\n`);
+
     await xfs.writeJsonPromise(ppath.join(target, `package.json`), {
       name: `yarn-plugin-helloworld`,
+      private: true,
       main: `./sources/index.ts`,
       dependencies: {
-        [`@yarnpkg/core`]: require(`@yarnpkg/builder/package.json`).dependencies[`@yarnpkg/core`],
         [`@yarnpkg/cli`]: require(`@yarnpkg/builder/package.json`).dependencies[`@yarnpkg/cli`],
-        [`@yarnpkg/builder`]: `^${require(`@yarnpkg/builder/package.json`).version}`,
-        [`@types/node`]: `^${process.versions.node.split(`.`)[0]}.0.0`,
+        [`@yarnpkg/core`]: require(`@yarnpkg/builder/package.json`).dependencies[`@yarnpkg/core`],
         [`clipanion`]: require(`@yarnpkg/builder/package.json`).dependencies.clipanion,
+      },
+      devDependencies: {
+        [`@types/node`]: `^${process.versions.node.split(`.`)[0]}.0.0`,
+        [`@yarnpkg/builder`]: `^${require(`@yarnpkg/builder/package.json`).version}`,
+        [`rimraf`]: `5.0.0`,
         [`typescript`]: require(`@yarnpkg/builder/package.json`).devDependencies.typescript,
       },
       scripts: {
-        build: `builder build plugin`,
+        [`build`]: `builder build plugin`,
+        [`build:dev`]: `builder build plugin --no-minify`,
+        [`clean`]: `rimraf bundles`,
       },
     });
 
