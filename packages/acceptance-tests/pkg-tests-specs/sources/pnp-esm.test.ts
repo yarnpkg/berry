@@ -1,5 +1,6 @@
-import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import * as loaderFlags                     from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import * as loaderFlags                            from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                             from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -966,6 +967,62 @@ describe(`Plug'n'Play - ESM`, () => {
             code: 1,
             stdout: ``,
             stderr: expect.stringContaining(`Mapping from one private import to another isn't allowed`),
+          });
+        },
+      ),
+    );
+
+    (loaderFlags.HAS_CONSOLIDATED_HOOKS ? test : test.skip)(
+      `it should allow importing files regardless of parent URL`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `loader.js` as Filename),
+            `
+            export function resolve(specifier, context, next) {
+              if (specifier !== 'custom:foo') {
+                return next(specifier, context);
+              }
+
+              return {
+                shortCircuit: true,
+                url: 'custom:foo',
+              };
+            }
+
+            export function load(url, context, next) {
+              if (url !== 'custom:foo') {
+                return next(url, context);
+              }
+
+              return {
+                format: 'module',
+                source: "import { foo } from '${pathToFileURL(npath.fromPortablePath(ppath.join(path, `foo.js` as Filename)))}'\\nconsole.log(foo);",
+                shortCircuit: true,
+              };
+            }
+            `,
+          );
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `foo.js` as Filename),
+            `export const foo = 42;`,
+          );
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.js` as Filename),
+            `import 'custom:foo'`,
+          );
+
+          await expect(run(`node`, `--loader`, `./loader.js`, `./index.js`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `42\n`,
+            stderr: ``,
           });
         },
       ),
