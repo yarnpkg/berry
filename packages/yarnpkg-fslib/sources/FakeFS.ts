@@ -103,8 +103,9 @@ export type WatchFileCallback = (
 ) => void;
 
 export type StatWatcher = EventEmitter & {
-  ref: () => StatWatcher;
-  unref: () => StatWatcher;
+  // Node 14+
+  ref?: () => StatWatcher;
+  unref?: () => StatWatcher;
 };
 
 export type ExtractHintOptions = {
