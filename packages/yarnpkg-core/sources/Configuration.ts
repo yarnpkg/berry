@@ -1219,7 +1219,7 @@ export class Configuration {
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          if (!ppath.relative(ppath.join(projectCwd!, `.yarn/plugins/@yarnpkg`), pluginPath).startsWith(`../`))
+          if (projectCwd && ppath.contains(ppath.join(projectCwd!, `.yarn/plugins/@yarnpkg`), pluginPath))
             continue;
 
           if (!await xfs.existsPromise(pluginPath)) {
