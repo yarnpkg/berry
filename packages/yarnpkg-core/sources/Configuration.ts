@@ -1218,10 +1218,10 @@ export class Configuration {
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
-          const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          if (projectCwd && ppath.contains(ppath.join(projectCwd!, `.yarn/plugins/@yarnpkg`), pluginPath))
+          if (LEGACY_PLUGINS.has(userProvidedSpec))
             continue;
 
+          const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           if (!await xfs.existsPromise(pluginPath)) {
             if (!userProvidedSpec) {
               const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
