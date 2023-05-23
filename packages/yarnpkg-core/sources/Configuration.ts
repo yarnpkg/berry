@@ -9,11 +9,10 @@ import {PassThrough, Writable}                                                  
 
 import {CorePlugin}                                                                                              from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
-import {MessageName}                                                                                             from './MessageName';
 import {MultiFetcher}                                                                                            from './MultiFetcher';
 import {MultiResolver}                                                                                           from './MultiResolver';
 import {Plugin, Hooks, PluginMeta}                                                                               from './Plugin';
-import {Report, ReportError}                                                                                     from './Report';
+import {Report}                                                                                                  from './Report';
 import {TelemetryManager}                                                                                        from './TelemetryManager';
 import {VirtualFetcher}                                                                                          from './VirtualFetcher';
 import {VirtualResolver}                                                                                         from './VirtualResolver';
