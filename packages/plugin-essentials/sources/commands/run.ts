@@ -10,7 +10,7 @@ export default class RunCommand extends BaseCommand {
   ];
 
   static usage: Usage = Command.Usage({
-    description: `run a script defined in the package.json`,
+    description: `Run a script defined in the package.json or a binary from a locally installed dependency`,
     details: `
       This command will run a tool. The exact tool that will be executed will depend on the current state of your workspace:
 
