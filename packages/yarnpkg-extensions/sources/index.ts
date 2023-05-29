@@ -771,10 +771,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       acorn: `^8.5.0`,
     },
   }],
-  // https://github.com/facebook/create-react-app/pull/11751
-  [`babel-preset-react-app@10.0.x`, {
+  // https://github.com/facebook/create-react-app/pull/12364
+  [`babel-preset-react-app@10.0.x <10.0.2`, {
     dependencies: {
-      '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
+      '@babel/plugin-proposal-private-property-in-object': `^7.16.7`,
     },
   }],
   // https://github.com/facebook/create-react-app/pull/11751
