@@ -1,3 +1,4 @@
+import {semverUtils}                            from '@yarnpkg/core';
 import {PortablePath}                           from '@yarnpkg/fslib';
 import {PnpApi}                                 from '@yarnpkg/pnp';
 
@@ -16,10 +17,13 @@ export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async
 export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
+  const pkg = await wrapper.writeManifest();
 
   await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
   await wrapper.writeFile(`lib/api.js` as PortablePath, {requirePath: `` as PortablePath});
+
+  if (semverUtils.satisfiesWithPrereleases(pkg.version, `>=8`))
+    await wrapper.writeFile(`lib/unsupported-api.js` as PortablePath, {requirePath: `/use-at-your-own-risk` as PortablePath});
 
   return wrapper;
 };

@@ -216,14 +216,16 @@ export class Wrapper {
       throw new Error(`Assertion failed: Package ${this.name} isn't a dependency of the top-level`);
 
     const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
-
-    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeJsonPromise(absWrapperPath, {
+    const data = {
       name: this.name,
       version: `${manifest.version}-sdk`,
       main: manifest.main,
       type: `commonjs`,
-    });
+      exports: manifest.exports,
+    };
+    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
+    await xfs.writeJsonPromise(absWrapperPath, data);
+    return data;
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
