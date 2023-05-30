@@ -1013,7 +1013,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
           continue;
 
         try {
-          if (this.typeCheck !== null && (this.baseFs.lstatSync(filePath).mode & constants.S_IFMT) !== this.typeCheck) {
+          if (this.typeCheck !== null && (this.baseFs.statSync(filePath).mode & constants.S_IFMT) !== this.typeCheck) {
             this.notMount.add(filePath);
             continue;
           }
