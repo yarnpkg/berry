@@ -34,6 +34,9 @@ package.tgz
 # Those packages are built inline and the JS files must not be checked-in
 /packages/yarnpkg-libui/sources/**/*.js
 
+# Used by /scripts/stable-versions-store.js
+/scripts/stable-versions-store.json
+
 /vscode-case-study
 
 .idea
