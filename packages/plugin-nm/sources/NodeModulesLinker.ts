@@ -475,7 +475,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   if (locatorState.__metadata.version > STATE_FILE_VERSION)
     return null;
 
-  const nmMode = locatorState.__metadata.nmMode || NodeModulesMode.HARDLINKS_LOCAL;
+  const nmMode = locatorState.__metadata.nmMode || NodeModulesMode.CLASSIC;
 
   const locatorMap: NodeModulesLocatorMap = new Map();
   const binSymlinks: BinSymlinkMap = new Map();

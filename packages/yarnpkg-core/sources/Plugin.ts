@@ -146,6 +146,18 @@ export interface Hooks {
   ) => void;
 
   /**
+   * Called during the `Post-install validation step` of the `install` method
+   * from the `Project` class.
+   */
+  validateProjectAfterInstall?: (
+    project: Project,
+    report: {
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
+    }
+  ) => void;
+
+  /**
    * Called during the `Validation step` of the `install` method from the
    * `Project` class by the `validateProject` hook.
    */

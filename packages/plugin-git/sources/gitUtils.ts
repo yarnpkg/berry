@@ -1,11 +1,12 @@
 import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {npath, PortablePath, ppath, xfs}                                                                                                          from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
 import capitalize                                                                                                                                 from 'lodash/capitalize';
 import querystring                                                                                                                                from 'querystring';
 import semver                                                                                                                                     from 'semver';
-import urlLib                                                                                                                                     from 'url';
+
+import {tryParseGitURL}                                                                                                                           from './hosted-git-info-parse';
 
 function makeGitEnvironment() {
   return {
@@ -120,33 +121,19 @@ export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {
   url = url.replace(/^git\+https:/, `https:`);
 
   // We support this as an alias to GitHub repositories
-  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
+  url = url.replace(/^(?:github:|https:\/\/github\.com\/|git:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
 
   // We support GitHub `/tarball/` URLs
   url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
 
   if (git) {
-    // The `git+` prefix doesn't mean anything at all for Git
+    // Try to normalize the URL in a way that git accepts.
+    const parsedUrl = tryParseGitURL(url);
+    if (parsedUrl)
+      url = parsedUrl.href;
+
+    // The `git+` prefix doesn't mean anything at all for Git.
     url = url.replace(/^git\+([^:]+):/, `$1:`);
-
-    // The `ssh://` prefix should be removed because so URLs won't work in Git:
-    //   ssh://git@github.com:yarnpkg/berry.git
-    //   git@github.com/yarnpkg/berry.git
-    // Git only allows:
-    //   git@github.com:yarnpkg/berry.git (no ssh)
-    //   ssh://git@github.com/yarnpkg/berry.git (no colon)
-    // So we should cut `ssh://`, but only in URLs that contain colon after the hostname
-
-    let parsedUrl: urlLib.UrlWithStringQuery | null;
-    try {
-      parsedUrl = urlLib.parse(url);
-    } catch {
-      parsedUrl = null;
-    }
-
-    if (parsedUrl && parsedUrl.protocol === `ssh:` && parsedUrl.path?.startsWith(`/:`)) {
-      url = url.replace(/^ssh:\/\//, ``);
-    }
   }
 
   return url;
@@ -309,7 +296,7 @@ export async function fetchRoot(initialCwd: PortablePath) {
   let nextCwd = initialCwd;
   do {
     cwd = nextCwd;
-    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
+    if (await xfs.existsPromise(ppath.join(cwd, `.git`)))
       return cwd;
     nextCwd = ppath.dirname(cwd);
   } while (nextCwd !== cwd);

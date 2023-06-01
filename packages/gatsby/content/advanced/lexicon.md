@@ -103,7 +103,7 @@ A dependency (listed in the [`peerDependencies` field](/configuration/manifest#p
 Contrary to regular dependencies, a package A with a peer dependency on B doesn't guarantee that A will be able to access B - it's up to the package that depends on A to manually provide a version of B compatible with request from A. This drawback has a good side too: the package instance of B that A will access is guaranteed to be the exact same one as the one used by the ancestor of A. This matters a lot when B uses `instanceof` checks or singletons.
 
 See also: [Development Dependencies](#development-dependencies)
-See also: [Peer Dependency](#peer-dependency)
+
 See also: [Singleton Package](#singleton-package)
 
 ### Peer-dependent Package
@@ -117,6 +117,7 @@ See also: [Virtual Packages](#virtual-package)
 Plugins are a new concept introduced in Yarn 2+. Through the use of plugins, Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
 
 See also: [Plugins](/features/plugins)
+
 See also: the [`Plugin` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
 
 ### Plug'n'Play
@@ -158,6 +159,7 @@ See also: [Protocols](/features/protocols)
 Resolvers are the components tasked from converting <abbr>descriptors</abbr> into <abbr>locators</abbr>, and extracting the package <abbr>manifests</abbr> from the package <abbr>locators</abbr>. For example, the npm resolver would check what versions are available on the npm registry and return all the candidates that satisfy the <abbr>semver</abbr> requirements, then would query the npm registry to fetch the full metadata associated with the selected resolution.
 
 See also: [Architecture](/advanced/architecture)
+
 See also: the [`Resolver` interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Resolver.ts#L45)
 
 ### Scope

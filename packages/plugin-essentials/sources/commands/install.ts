@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                                                                                    from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                from '@yarnpkg/parsers';
-import CI                                                                                                                        from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                      from 'clipanion';
-import * as t                                                                                                                    from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                     from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                      from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                from '@yarnpkg/parsers';
+import CI                                                                                                                                        from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                      from 'clipanion';
+import * as t                                                                                                                                    from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -242,8 +242,19 @@ export default class YarnCommand extends BaseCommand {
         stdout: this.context.stdout,
         includeFooter: false,
       }, async report => {
+        let changed = false;
+
+        if (await autofixLegacyPlugins(configuration, immutable)) {
+          report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically removed core plugins that are now builtins 👍`);
+          changed = true;
+        }
+
         if (await autofixMergeConflicts(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
+          changed = true;
+        }
+
+        if (changed) {
           report.reportSeparator();
         }
       });
@@ -360,12 +371,24 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (immutable)
     throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
 
-  const commits = await execUtils.execvp(`git`, [`rev-parse`, `MERGE_HEAD`, `HEAD`], {
+  let commits = await execUtils.execvp(`git`, [`rev-parse`, `MERGE_HEAD`, `HEAD`], {
     cwd: configuration.projectCwd,
   });
 
+  if (commits.code !== 0) {
+    commits = await execUtils.execvp(`git`, [`rev-parse`, `REBASE_HEAD`, `HEAD`], {
+      cwd: configuration.projectCwd,
+    });
+  }
+
+  if (commits.code !== 0) {
+    commits = await execUtils.execvp(`git`, [`rev-parse`, `CHERRY_PICK_HEAD`, `HEAD`], {
+      cwd: configuration.projectCwd,
+    });
+  }
+
   if (commits.code !== 0)
-    throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to find the commits pertaining to the merge conflict`);
+    throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to find the commits pertaining to the conflict`);
 
   let variants = await Promise.all(commits.stdout.trim().split(/\n/).map(async hash => {
     const content = await execUtils.execvp(`git`, [`show`, `${hash}:./${Filename.lockfile}`], {
@@ -429,6 +452,51 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   await xfs.changeFilePromise(lockfilePath, stringifySyml(merged), {
     automaticNewlines: true,
   });
+
+  return true;
+}
+
+async function autofixLegacyPlugins(configuration: Configuration, immutable: boolean) {
+  if (!configuration.projectCwd)
+    return false;
+
+  const legacyPlugins: Array<PortablePath> = [];
+  const yarnPluginDir = ppath.join(configuration.projectCwd, `.yarn/plugins/@yarnpkg`);
+
+  const changed = await Configuration.updateConfiguration(configuration.projectCwd, current => {
+    if (!Array.isArray(current.plugins))
+      return current;
+
+    const plugins = current.plugins.filter((plugin: {spec: string, path: PortablePath}) => {
+      if (!plugin.path)
+        return true;
+
+      const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
+      const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
+
+      if (isLegacy)
+        legacyPlugins.push(resolvedPath);
+
+      return !isLegacy;
+    });
+
+    if (current.plugins.length === plugins.length)
+      return current;
+
+    return {
+      ...current,
+      plugins,
+    };
+  }, {
+    immutable,
+  });
+
+  if (!changed)
+    return false;
+
+  await Promise.all(legacyPlugins.map(async pluginPath => {
+    await xfs.removePromise(pluginPath);
+  }));
 
   return true;
 }

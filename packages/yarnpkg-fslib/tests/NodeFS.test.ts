@@ -1,5 +1,5 @@
-import {NodeFS}                             from '../sources/NodeFS';
-import {xfs, PortablePath, ppath, Filename} from '../sources';
+import {NodeFS}                   from '../sources/NodeFS';
+import {xfs, PortablePath, ppath} from '../sources';
 
 const nodeFs = new NodeFS();
 
@@ -70,7 +70,7 @@ describe(`NodeFS`, () => {
 
   ifNotWin32It(`should support fchmodPromise`, async () => {
     await xfs.mktempPromise(async dir => {
-      const p = ppath.join(dir, `foo.txt` as Filename);
+      const p = ppath.join(dir, `foo.txt`);
       await nodeFs.writeFilePromise(p, ``);
 
       const fd = await nodeFs.openPromise(p, `w`);
@@ -83,7 +83,7 @@ describe(`NodeFS`, () => {
 
   ifNotWin32It(`should support fchmodSync`, () => {
     xfs.mktempSync(dir => {
-      const p = ppath.join(dir, `bar.txt` as Filename);
+      const p = ppath.join(dir, `bar.txt`);
       nodeFs.writeFileSync(p, ``);
 
       const fd = nodeFs.openSync(p, `w`);

@@ -88,7 +88,7 @@ describe(`ZipFS`, () => {
       }
     };
 
-    const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip` as Filename);
+    const tmpfile = ppath.resolve(xfs.mktempSync(), `test.zip`);
     const zipFs = new ZipFS(tmpfile, {create: true});
 
     zipFs.mkdirSync(`/dir` as PortablePath);
@@ -129,7 +129,7 @@ describe(`ZipFS`, () => {
       expect(readFileContents(zipFs, p, null)).toEqual(`file content`);
     };
 
-    const tmpfile = ppath.resolve(xfs.mktempSync(), `test2.zip` as Filename);
+    const tmpfile = ppath.resolve(xfs.mktempSync(), `test2.zip`);
     const zipFs = new ZipFS(tmpfile, {create: true});
     await zipFs.mkdirPromise(`/dir` as PortablePath);
     zipFs.writeFileSync(`/dir/file` as PortablePath, `file content`);
@@ -671,6 +671,19 @@ describe(`ZipFS`, () => {
 
   it(`should support getting the buffer from an empty in-memory zip archive`, () => {
     const zipFs = new ZipFS();
+    const buffer = zipFs.getBufferAndClose();
+
+    expect(buffer).toStrictEqual(makeEmptyArchive());
+
+    expect(new ZipFS(buffer).readdirSync(PortablePath.root)).toHaveLength(0);
+  });
+
+  it(`should support getting the buffer from an empty in-memory zip archive (unlink after write)`, () => {
+    const zipFs = new ZipFS();
+
+    zipFs.writeFileSync(`/foo.txt` as PortablePath, `foo`);
+    zipFs.unlinkSync(`/foo.txt` as PortablePath);
+
     const buffer = zipFs.getBufferAndClose();
 
     expect(buffer).toStrictEqual(makeEmptyArchive());

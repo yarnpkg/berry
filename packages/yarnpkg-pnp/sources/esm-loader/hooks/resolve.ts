@@ -67,7 +67,7 @@ export async function resolve(
 
   const {parentURL, conditions = []} = context;
 
-  const issuer = parentURL ? fileURLToPath(parentURL) : process.cwd();
+  const issuer = parentURL && loaderUtils.tryParseURL(parentURL)?.protocol === `file:` ? fileURLToPath(parentURL) : process.cwd();
 
   // Get the pnpapi of either the issuer or the specifier.
   // The latter is required when the specifier is an absolute path to a
@@ -88,7 +88,7 @@ export async function resolve(
 
     // If the package.json doesn't list an `exports` field, Node will tolerate omitting the extension
     // https://github.com/nodejs/node/blob/0996eb71edbd47d9f9ec6153331255993fd6f0d1/lib/internal/modules/esm/resolve.js#L686-L691
-    if (subPath === ``) {
+    if (subPath === `` && dependencyName !== `pnpapi`) {
       const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, issuer);
       if (resolved) {
         const content = await loaderUtils.tryReadFile(resolved);
@@ -100,11 +100,19 @@ export async function resolve(
     }
   }
 
-  const result = pnpapi.resolveRequest(specifier, issuer, {
-    conditions: new Set(conditions),
-    // TODO: Handle --experimental-specifier-resolution=node
-    extensions: allowLegacyResolve ? undefined : [],
-  });
+  let result;
+  try {
+    result = pnpapi.resolveRequest(specifier, issuer, {
+      conditions: new Set(conditions),
+      // TODO: Handle --experimental-specifier-resolution=node
+      extensions: allowLegacyResolve ? undefined : [],
+    });
+  } catch (err) {
+    if (err instanceof Error && `code` in err && err.code === `MODULE_NOT_FOUND`)
+      err.code = `ERR_MODULE_NOT_FOUND`;
+
+    throw err;
+  }
 
   if (!result)
     throw new Error(`Resolving '${specifier}' from '${issuer}' failed`);

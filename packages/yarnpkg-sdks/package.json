@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/sdks",
-  "version": "3.0.0-rc.28",
+  "version": "3.0.0-rc.44",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "bin": "./sources/boot-cli-dev.js",
@@ -51,5 +51,5 @@
   "engines": {
     "node": ">=14.15.0"
   },
-  "stableVersion": "2.6.0"
+  "stableVersion": "2.7.1"
 }

@@ -1,10 +1,10 @@
-import {execUtils, scriptUtils, structUtils, tgzUtils}         from '@yarnpkg/core';
-import {Locator, formatUtils}                                  from '@yarnpkg/core';
-import {Fetcher, FetchOptions, MinimalFetchOptions}            from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs, NativePath} from '@yarnpkg/fslib';
+import {execUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
+import {Locator, formatUtils}                          from '@yarnpkg/core';
+import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs, NativePath}   from '@yarnpkg/fslib';
 
-import {PROTOCOL}                                              from './constants';
-import {loadGeneratorFile}                                     from './execUtils';
+import {PROTOCOL}                                      from './constants';
+import {loadGeneratorFile}                             from './execUtils';
 
 /**
  * Contains various useful details about the execution context.
@@ -67,7 +67,7 @@ export class ExecFetcher implements Fetcher {
     const generatorFile = await loadGeneratorFile(locator.reference, PROTOCOL, opts);
 
     return xfs.mktempPromise(async generatorDir => {
-      const generatorPath = ppath.join(generatorDir, `generator.js` as Filename);
+      const generatorPath = ppath.join(generatorDir, `generator.js`);
       await xfs.writeFilePromise(generatorPath, generatorFile);
 
       return xfs.mktempPromise(async cwd => {
@@ -75,10 +75,10 @@ export class ExecFetcher implements Fetcher {
         await this.generatePackage(cwd, locator, generatorPath, opts);
 
         // Make sure the script generated the package
-        if (!xfs.existsSync(ppath.join(cwd, `build` as Filename)))
+        if (!xfs.existsSync(ppath.join(cwd, `build`)))
           throw new Error(`The script should have generated a build directory`);
 
-        return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, `build` as Filename), {
+        return await tgzUtils.makeArchiveFromDirectory(ppath.join(cwd, `build`), {
           prefixPath: structUtils.getIdentVendorPath(locator),
           compressionLevel: opts.project.configuration.get(`compressionLevel`),
         });
@@ -89,13 +89,13 @@ export class ExecFetcher implements Fetcher {
   private async generatePackage(cwd: PortablePath, locator: Locator, generatorPath: PortablePath, opts: FetchOptions) {
     return await xfs.mktempPromise(async binFolder => {
       const env = await scriptUtils.makeScriptEnv({project: opts.project, binFolder});
-      const runtimeFile = ppath.join(cwd, `runtime.js` as Filename);
+      const runtimeFile = ppath.join(cwd, `runtime.js`);
 
       return await xfs.mktempPromise(async logDir => {
-        const logFile = ppath.join(logDir, `buildfile.log` as Filename);
+        const logFile = ppath.join(logDir, `buildfile.log`);
 
-        const tempDir = ppath.join(cwd, `generator` as PortablePath);
-        const buildDir = ppath.join(cwd, `build` as PortablePath);
+        const tempDir = ppath.join(cwd, `generator`);
+        const buildDir = ppath.join(cwd, `build`);
 
         await xfs.mkdirPromise(tempDir);
         await xfs.mkdirPromise(buildDir);

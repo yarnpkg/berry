@@ -52,6 +52,10 @@ export function SEO({description, lang = `en`, meta = [], keywords = [], title}:
           content: metaDescription,
         },
         {
+          name: `theme-color`,
+          content: `#25799f`,
+        },
+        {
           property: `og:title`,
           content: title,
         },

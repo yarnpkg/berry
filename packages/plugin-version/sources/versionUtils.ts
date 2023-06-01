@@ -1,5 +1,5 @@
 import {AllDependencies, miscUtils, hashUtils, Workspace, structUtils, Project, Manifest, IdentHash, Report, MessageName, WorkspaceResolver} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                                                                                           from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs}                                                                                                     from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                                                            from '@yarnpkg/parsers';
 import {gitUtils}                                                                                                                            from '@yarnpkg/plugin-git';
 import {UsageError}                                                                                                                          from 'clipanion';
@@ -196,7 +196,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
 
   const versionPath = versionFiles.length === 1
     ? versionFiles[0]
-    : ppath.join(deferredVersionFolder, `${hashUtils.makeHash(Math.random().toString()).slice(0, 8)}.yml` as Filename);
+    : ppath.join(deferredVersionFolder, `${hashUtils.makeHash(Math.random().toString()).slice(0, 8)}.yml`);
 
   const versionContent = xfs.existsSync(versionPath)
     ? await xfs.readFilePromise(versionPath, `utf8`)

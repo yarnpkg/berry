@@ -175,6 +175,7 @@ export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, 
 export type GenerateDefaultWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<void>;
 
 export type SupportedSdk =
+  | '@astrojs/language-server'
   | 'eslint'
   | 'prettier'
   | 'typescript-language-server'
@@ -205,7 +206,7 @@ export class Wrapper {
   }
 
   async writeManifest() {
-    const absWrapperPath = ppath.join(this.target, this.name, `package.json` as Filename);
+    const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
 
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const dependencyReference = topLevelInformation.packageDependencies.get(this.name)!;

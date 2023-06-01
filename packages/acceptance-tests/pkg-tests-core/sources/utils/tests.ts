@@ -11,6 +11,7 @@ import os                                                      from 'os';
 import pem                                                     from 'pem';
 import semver                                                  from 'semver';
 import serveStatic                                             from 'serve-static';
+import stream                                                  from 'stream';
 import {promisify}                                             from 'util';
 import {v5 as uuidv5}                                          from 'uuid';
 import {Gzip}                                                  from 'zlib';
@@ -20,6 +21,9 @@ import * as fsUtils                                            from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+// TODO: Use stream.promises.pipeline when dropping support for Node.js < 15.0.0
+const pipelinePromise = promisify(stream.pipeline);
 
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
@@ -148,9 +152,10 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
 
   return (packageRegistryPromise = (async () => {
     const packageRegistry = new Map();
-    for (const packageFile of await fsUtils.walk(npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`), {
-      filter: [`package.json`],
-    })) {
+    const packagesDir = npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`);
+
+    for (const packageName of (await xfs.readdirPromise(packagesDir))) {
+      const packageFile = ppath.join(packagesDir, packageName, Filename.manifest);
       const packageJson = await xfs.readJsonPromise(packageFile);
 
       const {name, version} = packageJson;
@@ -162,7 +167,7 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
         packageRegistry.set(name, (packageEntry = new Map()));
 
       packageEntry.set(version, {
-        path: require(`path`).posix.dirname(packageFile),
+        path: ppath.dirname(packageFile),
         packageJson,
       });
     }
@@ -191,7 +196,7 @@ export const getPackageArchiveStream = async (name: string, version: string): Pr
   });
 };
 
-export const getPackageArchivePath = async (name: string, version: string): Promise<string> => {
+export const getPackageArchivePath = async (name: string, version: string): Promise<PortablePath> => {
   const packageEntry = await getPackageEntry(name);
   if (!packageEntry)
     throw new Error(`Unknown package "${name}"`);
@@ -215,20 +220,11 @@ export const getPackageArchiveHash = async (
   version: string,
 ): Promise<string | Buffer> => {
   const stream = await getPackageArchiveStream(name, version);
+  const hash = crypto.createHash(`sha1`);
 
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash(`sha1`);
-    hash.setEncoding(`hex`);
+  await pipelinePromise(stream, hash);
 
-    // Send the archive to the hash function
-    stream.pipe(hash);
-
-    stream.on(`end`, () => {
-      const finalHash = hash.read();
-      invariant(finalHash, `The hash should have been computated`);
-      resolve(finalHash);
-    });
-  });
+  return hash.digest(`hex`);
 };
 
 export const getPackageHttpArchivePath = async (
@@ -385,8 +381,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         [`Transfer-Encoding`]: `chunked`,
       });
 
-      const packStream = fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)});
-      packStream.pipe(response);
+      await pipelinePromise(
+        fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)}),
+        response,
+      );
     },
 
     async [RequestType.Whoami](parsedRequest, request, response) {
@@ -459,6 +457,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         } catch (e) {
           return processError(response, 401, `Invalid`);
         }
+
+        if (typeof body.readme !== `string` && name === `readme-required`)
+          return processError(response, 400, `Missing readme`);
 
         const [version] = Object.keys(body.versions);
         if (!body.versions[version].gitHead && name === `githead-required`)
@@ -675,7 +676,7 @@ export const generatePkgDriver = ({
       return Object.assign(async (): Promise<void> => {
         const homePath = await xfs.mktempPromise();
 
-        const path = ppath.join(homePath, `test` as Filename);
+        const path = ppath.join(homePath, `test`);
         await xfs.mkdirPromise(path);
 
         const registryUrl = await startPackageServer();

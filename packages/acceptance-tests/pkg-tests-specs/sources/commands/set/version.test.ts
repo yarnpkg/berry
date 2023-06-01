@@ -66,7 +66,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, {
         env: {COREPACK_ROOT: undefined},
       }, async ({path, run, source}) => {
-        const yarnIndirection = ppath.join(path, `custom-yarn.cjs` as Filename);
+        const yarnIndirection = ppath.join(path, `custom-yarn.cjs`);
         await xfs.writeFilePromise(yarnIndirection, ``);
 
         await expect(run(`set`, `version`, yarnIndirection, `--no-yarn-path`)).rejects.toThrow();
@@ -78,7 +78,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({}, {
         env: {COREPACK_ROOT: undefined},
       }, async ({path, run, source}) => {
-        const yarnIndirection = ppath.join(path, `custom-yarn.cjs` as Filename);
+        const yarnIndirection = ppath.join(path, `custom-yarn.cjs`);
         await xfs.writeFilePromise(yarnIndirection, ``);
 
         await run(`set`, `version`, yarnIndirection);
@@ -94,7 +94,7 @@ describe(`Commands`, () => {
         await run(`set`, `version`, `self`);
         await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
 
-        const projectDir = ppath.join(path, `project` as Filename);
+        const projectDir = ppath.join(path, `project`);
         await xfs.mkdirPromise(projectDir);
         await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
         await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
@@ -112,10 +112,12 @@ describe(`Commands`, () => {
         await run(`set`, `version`, `self`);
 
         const before = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
-        await run(`set`, `version`, `3.0.0`, `--only-if-needed`);
-        const after = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
+        expect(before).not.toEqual(`.yarn/releases/yarn-3.0.0.cjs`);
 
-        expect(before).toEqual(after);
+        await run(`set`, `version`, `3.0.0`, `--only-if-needed`);
+
+        const after = await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`);
+        expect(after).toEqual(before);
       }),
     );
 
@@ -127,7 +129,7 @@ describe(`Commands`, () => {
         await run(`set`, `version`, `self`);
         await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
 
-        const projectDir = ppath.join(path, `project` as Filename);
+        const projectDir = ppath.join(path, `project`);
         await xfs.mkdirPromise(projectDir);
         await xfs.writeJsonPromise(ppath.join(projectDir, Filename.manifest), {});
         await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
@@ -140,7 +142,7 @@ describe(`Commands`, () => {
 });
 
 async function check(path: PortablePath, checks: {corepackVersion: string | RegExp, usePath: boolean}) {
-  const releasesPath = ppath.join(path, `.yarn/releases` as PortablePath);
+  const releasesPath = ppath.join(path, `.yarn/releases`);
   const yarnrcPath = ppath.join(path, Filename.rc);
   const manifestPath = ppath.join(path, Filename.manifest);
 

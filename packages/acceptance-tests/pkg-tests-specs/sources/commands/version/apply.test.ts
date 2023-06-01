@@ -1,4 +1,4 @@
-import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
+import {xfs, ppath, Filename} from '@yarnpkg/fslib';
 
 describe(`Commands`, () => {
   describe(`version apply`, () => {
@@ -34,8 +34,8 @@ describe(`Commands`, () => {
           ],
         },
         async ({path, run}) => {
-          const pkgA = ppath.join(path, `packages/pkg-a` as PortablePath);
-          const pkgB = ppath.join(path, `packages/pkg-b` as PortablePath);
+          const pkgA = ppath.join(path, `packages/pkg-a`);
+          const pkgB = ppath.join(path, `packages/pkg-b`);
 
           await xfs.mkdirpPromise(pkgA);
           await xfs.mkdirpPromise(pkgB);
@@ -77,8 +77,8 @@ describe(`Commands`, () => {
           ],
         },
         async ({path, run}) => {
-          const pkgA = ppath.join(path, `packages/pkg-a` as PortablePath);
-          const pkgB = ppath.join(path, `packages/pkg-b` as PortablePath);
+          const pkgA = ppath.join(path, `packages/pkg-a`);
+          const pkgB = ppath.join(path, `packages/pkg-b`);
 
           await xfs.mkdirpPromise(pkgA);
           await xfs.mkdirpPromise(pkgB);
@@ -176,8 +176,8 @@ describe(`Commands`, () => {
             ],
           },
           async ({path, run}) => {
-            const pkgA = ppath.join(path, `packages/pkg-a` as PortablePath);
-            const pkgB = ppath.join(path, `packages/pkg-b` as PortablePath);
+            const pkgA = ppath.join(path, `packages/pkg-a`);
+            const pkgB = ppath.join(path, `packages/pkg-b`);
 
             await xfs.mkdirpPromise(pkgA);
             await xfs.mkdirpPromise(pkgB);

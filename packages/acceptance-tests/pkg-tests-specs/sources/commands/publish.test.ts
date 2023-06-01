@@ -1,3 +1,5 @@
+import {npath, xfs} from '@yarnpkg/fslib';
+
 export {};
 
 const {
@@ -67,5 +69,21 @@ describe(`publish`, () =>   {
         YARN_NPM_AUTH_TOKEN: validLogins.otpUser.npmAuthToken,
       },
     })).resolves.toBeTruthy();
+  }));
+
+  test(`should publish a package with the readme content`, makeTemporaryEnv({
+    name: `readme-required`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    const readmePath = npath.toPortablePath(`${path}/README.md`);
+    await xfs.writeFilePromise(readmePath, `# title\n`);
+
+    await run(`npm`, `publish`, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
+      },
+    });
   }));
 });

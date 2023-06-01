@@ -18,6 +18,7 @@ import {VirtualFetcher}                                                         
 import {VirtualResolver}                                                                                         from './VirtualResolver';
 import {WorkspaceFetcher}                                                                                        from './WorkspaceFetcher';
 import {WorkspaceResolver}                                                                                       from './WorkspaceResolver';
+import * as configUtils                                                                                          from './configUtils';
 import * as folderUtils                                                                                          from './folderUtils';
 import * as formatUtils                                                                                          from './formatUtils';
 import * as hashUtils                                                                                            from './hashUtils';
@@ -31,6 +32,16 @@ import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, 
 const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
   ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
   : false;
+
+export const LEGACY_PLUGINS = new Set([
+  `@yarnpkg/plugin-constraints`,
+  `@yarnpkg/plugin-exec`,
+  `@yarnpkg/plugin-interactive-tools`,
+  `@yarnpkg/plugin-stage`,
+  `@yarnpkg/plugin-typescript`,
+  `@yarnpkg/plugin-version`,
+  `@yarnpkg/plugin-workspace-tools`,
+]);
 
 const IGNORED_ENV_VARIABLES = new Set([
   // Used by our test environment
@@ -67,6 +78,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   // https://hadoop.apache.org/docs/r0.23.11/hadoop-project-dist/hadoop-common/SingleCluster.html
   `home`,
   `confDir`,
+
+  // "YARN_REGISTRY", read by yarn 1.x, prevents yarn 2+ installations if set
+  `registry`,
 ]);
 
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
@@ -673,7 +687,12 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
   [K in keyof V]: DefinitionForType<V[K]>;
 };
 
-function parseValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
+// There are two types of values
+// 1. ResolvedRcFile from `configUtils.resolveRcFiles`
+// 2. objects passed directly via `configuration.useWithSource` or `configuration.use`
+function parseValue(configuration: Configuration, path: string, valueBase: unknown, definition: SettingsDefinition, folder: PortablePath) {
+  const value = configUtils.getValue(valueBase);
+
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     if (!Array.isArray(value)) {
       return String(value).split(/,/).map(segment => {
@@ -686,19 +705,21 @@ function parseValue(configuration: Configuration, path: string, value: unknown, 
     if (Array.isArray(value)) {
       throw new Error(`Non-array configuration settings "${path}" cannot be an array`);
     } else {
-      return parseSingleValue(configuration, path, value, definition, folder);
+      return parseSingleValue(configuration, path, valueBase, definition, folder);
     }
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, value: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseSingleValue(configuration: Configuration, path: string, valueBase: unknown, definition: SettingsDefinition, folder: PortablePath) {
+  const value = configUtils.getValue(valueBase);
+
   switch (definition.type) {
     case SettingsType.ANY:
-      return value;
+      return configUtils.getValueByTree(value);
     case SettingsType.SHAPE:
-      return parseShape(configuration, path, value, definition, folder);
+      return parseShape(configuration, path, valueBase, definition, folder);
     case SettingsType.MAP:
-      return parseMap(configuration, path, value, definition, folder);
+      return parseMap(configuration, path, valueBase, definition, folder);
   }
 
   if (value === null && !definition.isNullable && definition.default !== null)
@@ -712,15 +733,23 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
-      throw new Error(`Expected value (${value}) to be a string`);
+      throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
       env: process.env,
     });
 
     switch (definition.type) {
-      case SettingsType.ABSOLUTE_PATH:
-        return ppath.resolve(folder, npath.toPortablePath(valueWithReplacedVariables));
+      case SettingsType.ABSOLUTE_PATH:{
+        let cwd = folder;
+
+        // singleValue's source should be a single file path, if it exists
+        const source = configUtils.getSource(valueBase);
+        if (source)
+          cwd = ppath.resolve(source as PortablePath, `..`);
+
+        return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
+      }
       case SettingsType.LOCATOR_LOOSE:
         return structUtils.parseLocator(valueWithReplacedVariables, false);
       case SettingsType.NUMBER:
@@ -742,7 +771,9 @@ function parseSingleValue(configuration: Configuration, path: string, value: unk
   return interpreted;
 }
 
-function parseShape(configuration: Configuration, path: string, value: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
+function parseShape(configuration: Configuration, path: string, valueBase: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
+  const value = configUtils.getValue(valueBase);
+
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Object configuration settings "${path}" must be an object`);
 
@@ -766,7 +797,9 @@ function parseShape(configuration: Configuration, path: string, value: unknown, 
   return result;
 }
 
-function parseMap(configuration: Configuration, path: string, value: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
+function parseMap(configuration: Configuration, path: string, valueBase: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
+  const value = configUtils.getValue(valueBase);
+
   const result = new Map<string, any>();
 
   if (typeof value !== `object` || Array.isArray(value))
@@ -927,6 +960,8 @@ export class Configuration {
 
   public static telemetry: TelemetryManager | null = null;
 
+  public isCI = isCI;
+
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null = null;
 
@@ -1006,14 +1041,15 @@ export class Configuration {
     const homeRcFile = await Configuration.findHomeRcFile();
     if (homeRcFile) {
       const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
-      // The home configuration is never strict because it improves support for
-      // multiple projects using different Yarn versions on the same machine
-      if (rcFile) {
-        rcFile.strict = false;
-      } else {
-        rcFiles.push({...homeRcFile, strict: false});
+      if (!rcFile) {
+        rcFiles.unshift(homeRcFile);
       }
     }
+
+    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
+
+    // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
+    const resolvedRcFileCwd = `.` as PortablePath;
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
     // to not have to load the plugins if there's a `yarn-path` configured.
@@ -1043,11 +1079,14 @@ export class Configuration {
     };
 
     const configuration = new Configuration(startingCwd);
-    configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
 
+    configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
     configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
-    for (const {path, cwd, data} of rcFiles)
-      configuration.useWithSource(path, pickPrimaryCoreFields(data), cwd, {strict: false});
+
+    if (resolvedRcFile) {
+      const [source, data] = resolvedRcFile;
+      configuration.useWithSource(source, pickPrimaryCoreFields(data), resolvedRcFileCwd, {strict: false});
+    }
 
     if (usePath) {
       const yarnPath = configuration.get(`yarnPath`);
@@ -1074,7 +1113,7 @@ export class Configuration {
       } break;
 
       case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json`))) {
           projectCwd = ppath.resolve(startingCwd);
         } else {
           projectCwd = null;
@@ -1091,8 +1130,11 @@ export class Configuration {
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
     configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickSecondaryCoreFields(data), cwd, {strict: isStrict ?? strict});
+
+    if (resolvedRcFile) {
+      const [source, data] = resolvedRcFile;
+      configuration.useWithSource(source, pickSecondaryCoreFields(data), resolvedRcFileCwd, {strict});
+    }
 
     // Now that the configuration object is almost ready, we need to load all
     // the configured plugins
@@ -1176,6 +1218,9 @@ export class Configuration {
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
+          if (LEGACY_PLUGINS.has(userProvidedSpec))
+            continue;
+
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           if (!await xfs.existsPromise(pluginPath)) {
             if (!userProvidedSpec) {
@@ -1217,8 +1262,11 @@ export class Configuration {
 
     // load values of all plugin definitions
     configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
-    for (const {path, cwd, data, strict: isStrict} of rcFiles)
-      configuration.useWithSource(path, pickPluginFields(data), cwd, {strict: isStrict ?? strict});
+
+    if (resolvedRcFile) {
+      const [source, data] = resolvedRcFile;
+      configuration.useWithSource(source, pickPluginFields(data), resolvedRcFileCwd, {strict});
+    }
 
     if (configuration.get(`enableGlobalCache`)) {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
@@ -1236,7 +1284,6 @@ export class Configuration {
       path: PortablePath;
       cwd: PortablePath;
       data: any;
-      strict?: boolean;
     }> = [];
 
     let nextCwd = startingCwd;
@@ -1262,7 +1309,7 @@ export class Configuration {
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }
 
-        rcFiles.push({path: rcPath, cwd: currentCwd, data});
+        rcFiles.unshift({path: rcPath, cwd: currentCwd, data});
       }
 
       nextCwd = ppath.dirname(currentCwd);
@@ -1296,7 +1343,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename)))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json`)))
         projectCwd = currentCwd;
 
       if (lockfileFilename !== null) {
@@ -1316,7 +1363,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown}), opts: {immutable?: boolean} = {}) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -1335,7 +1382,7 @@ export class Configuration {
       }
 
       if (replacement === current) {
-        return;
+        return false;
       }
     } else {
       replacement = current;
@@ -1367,13 +1414,15 @@ export class Configuration {
       }
 
       if (!patched) {
-        return;
+        return false;
       }
     }
 
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
     });
+
+    return true;
   }
 
   static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {
@@ -1455,6 +1504,11 @@ export class Configuration {
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
       const value = data[key];
+
+      const fieldSource = configUtils.getSource(value);
+      if (fieldSource)
+        source = fieldSource;
+
       if (typeof value === `undefined`)
         continue;
 
@@ -1472,7 +1526,11 @@ export class Configuration {
 
       const definition = this.settings.get(key);
       if (!definition) {
-        if (strict) {
+        const homeFolder = folderUtils.getHomeFolder();
+        const rcFileFolder = ppath.resolve(source as PortablePath, `..`);
+        const isHomeRcFile = homeFolder === rcFileFolder;
+
+        if (strict && !isHomeRcFile) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
         } else {
           this.invalid.set(key, source);
@@ -1485,7 +1543,7 @@ export class Configuration {
 
       let parsed;
       try {
-        parsed = parseValue(this, key, data[key], definition, folder);
+        parsed = parseValue(this, key, value, definition, folder);
       } catch (error) {
         error.message += ` in ${formatUtils.pretty(this, source, formatUtils.Type.PATH)}`;
         throw error;

@@ -34,7 +34,7 @@ Note that those commands only need to be run once for the whole project and will
 2. Go into your project directory
 3. Run `yarn set version berry` to enable v2 (cf [Install](/getting-started/install) for more details)
 4. If you used `.npmrc` or `.yarnrc`, you'll need to turn them into the [new format](/configuration/yarnrc) (see also [1](/getting-started/migration#update-your-configuration-to-the-new-settings), [2](https://yarnpkg.com/getting-started/migration#dont-use-npmrc-files))
-5. Add [`nodeLinker: node-modules`](/configuration/yarnrc#nodeLinker) in your `.yarnrc.yml` file
+5. Run [`yarn config set nodeLinker node-modules`](/configuration/yarnrc#nodeLinker)
 6. Commit the changes so far (`yarn-X.Y.Z.js`, `.yarnrc.yml`, ...)
 7. Run `yarn install` to migrate the lockfile
 8. Take a look at [this article](/getting-started/qa#which-files-should-be-gitignored) to see what should be gitignored
@@ -279,6 +279,7 @@ nmHoistingLimits: workspaces
 | `yarn create`   | `yarn dlx create-<name>`   | `yarn create` still works, but prefer using `yarn dlx` |
 | `yarn global`   | `yarn dlx`                 | [Dedicated section](#use-yarn-dlx-instead-of-yarn-global) |
 | `yarn info`     | `yarn npm info`            ||
+| `yarn list`     | `yarn info --recursive`    ||
 | `yarn login`    | `yarn npm login`           ||
 | `yarn logout`   | `yarn npm logout`          ||
 | `yarn outdated` | `yarn upgrade-interactive` | [Read more on GitHub](https://github.com/yarnpkg/berry/issues/749) |
@@ -303,7 +304,6 @@ Those features simply haven't been implemented yet. Help welcome!
 
 | <div style="width:150px">Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn list`     | `yarn why` may provide some information in the meantime |
 | `yarn owner`    | Will eventually be available as `yarn npm owner` |
 | `yarn team`     | Will eventually be available as `yarn npm team` |
 
@@ -331,4 +331,4 @@ packageExtensions:
         optional: true
 ```
 
-If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [compat plugin](https://github.com/yarnpkg/berry/blob/master/packages/plugin-compat/sources/extensions.ts), helping the whole ecosystem move forward.
+If you also open a PR on the upstream repository you will also be able to contribute your package extension to our [`plugin-compat` database](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-extensions/sources/index.ts), helping the whole ecosystem move forward.
