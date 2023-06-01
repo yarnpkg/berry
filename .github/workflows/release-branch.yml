@@ -63,7 +63,6 @@ jobs:
         node ./scripts/stable-versions-restore.js
         HEAD_COMMIT=$(git rev-parse HEAD)
 
-        git format-patch -k --stdout HEAD...$RELEASE_COMMIT -- .yarn/versions | git am -3 -k
         git reset --soft $HEAD_COMMIT
         git checkout $RELEASE_COMMIT -- packages/*/bin/**
         git add .
