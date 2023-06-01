@@ -972,7 +972,7 @@ describe(`Plug'n'Play - ESM`, () => {
       ),
     );
 
-    (loaderFlags.HAS_CONSOLIDATED_HOOKS ? test : test.skip)(
+    (loaderFlags.ALLOWS_NON_FILE_PARENT ? test : test.skip)(
       `it should allow importing files regardless of parent URL`,
       makeTemporaryEnv(
         {
