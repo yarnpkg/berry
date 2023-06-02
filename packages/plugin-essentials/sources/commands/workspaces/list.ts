@@ -17,6 +17,8 @@ export default class WorkspacesListCommand extends BaseCommand {
 
       - If \`--since\` is set, Yarn will only list workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
 
+      - If \`--name\` is set, Yarn will print workspace package names rather than directory location.
+
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
       - If \`--no-private\` is set, Yarn will not list any workspaces that have the \`private\` field set to \`true\`.
@@ -27,6 +29,11 @@ export default class WorkspacesListCommand extends BaseCommand {
 
   since = Option.String(`--since`, {
     description: `Only include workspaces that have been changed since the specified ref.`,
+    tolerateBoolean: true,
+  });
+
+  name = Option.String(`--name`, {
+    description: `List packages by package name.`,
     tolerateBoolean: true,
   });
 
@@ -77,7 +84,7 @@ export default class WorkspacesListCommand extends BaseCommand {
           const mismatchedWorkspaceDependencies = new Set<Descriptor>();
 
           for (const dependencyType of Manifest.hardDependencies) {
-            for (const [identHash, descriptor]  of manifest.getForScope(dependencyType)) {
+            for (const [identHash, descriptor] of manifest.getForScope(dependencyType)) {
               const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
               if (matchingWorkspace === null) {
@@ -101,7 +108,7 @@ export default class WorkspacesListCommand extends BaseCommand {
           };
         }
 
-        report.reportInfo(null, `${workspace.relativeCwd}`);
+        report.reportInfo(null, `${this.name && manifest.name ? structUtils.stringifyIdent(manifest.name) : workspace.relativeCwd}`);
         report.reportJson({
           location: workspace.relativeCwd,
 

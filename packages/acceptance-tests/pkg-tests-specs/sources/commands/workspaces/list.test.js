@@ -361,6 +361,33 @@ describe(`Commands`, () => {
       }),
     );
   });
+
+  describe(`workspace list --name`, () => {
+    test(
+      `list workspaces by package name`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await writeJson(`${path}/packages/workspace-a/package.json`, {
+            name: `workspace-a`,
+            version: `1.0.0`,
+          });
+
+          await writeJson(`${path}/packages/workspace-b/package.json`, {
+            name: `@test/workspace-b`,
+            version: `1.0.0`,
+          });
+
+          const listCommand = await run(`workspaces`, `list`, `--name`);
+          expect(listCommand.stdout).toContain(`workspace-a`);
+          expect(listCommand.stdout).toContain(`@test/workspace-b`);
+        },
+      ),
+    );
+  });
 });
 
 async function setupWorkspaces(path) {
