@@ -72,3 +72,4 @@ jobs:
         git checkout $RELEASE_COMMIT -- packages/*/bin/**
         git add .
         git commit -m 'Sync master with the changes from ${{github.event.inputs.branch}}'
+        git push
