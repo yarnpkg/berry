@@ -59,6 +59,7 @@ jobs:
       run: |
         RELEASE_COMMIT=$(git rev-parse HEAD)
         node ./scripts/stable-versions-store.js
+        git fetch origin master
         git checkout master
         node ./scripts/stable-versions-restore.js
         HEAD_COMMIT=$(git rev-parse HEAD)
