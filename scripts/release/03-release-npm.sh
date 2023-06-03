@@ -28,4 +28,4 @@ cd "$TEMP_DIR"
 export YARN_ENABLE_IMMUTABLE_INSTALLS=0
 
 node "$TEMP_DIR"/bin/yarn.js
-node "$TEMP_DIR"/bin/yarn.js npm publish --access=public
+node "$TEMP_DIR"/bin/yarn.js npm publish --tolerate-republish --access=public
