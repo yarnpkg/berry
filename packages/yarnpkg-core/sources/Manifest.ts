@@ -33,6 +33,7 @@ export interface PublishConfig {
   type?: string;
   browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
   bin?: Map<string, PortablePath>;
+  provenance?: boolean;
   registry?: string;
   executableFiles?: Set<PortablePath>;
 }
@@ -503,6 +504,7 @@ export class Manifest {
       if (typeof data.publishConfig.module === `string`)
         this.publishConfig.module = normalizeSlashes(data.publishConfig.module);
 
+
       if (data.publishConfig.browser != null) {
         if (typeof data.publishConfig.browser === `string`) {
           this.publishConfig.browser = normalizeSlashes(data.publishConfig.browser);
@@ -516,6 +518,9 @@ export class Manifest {
           }
         }
       }
+
+      if (typeof data.publishConfig.provenance === `boolean`)
+        this.publishConfig.provenance = data.publishConfig.provenance;
 
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
