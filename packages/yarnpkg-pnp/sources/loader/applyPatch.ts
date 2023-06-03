@@ -14,11 +14,6 @@ export type ApplyPatchOptions = {
   manager: Manager;
 };
 
-type PatchedModule = Module & {
-  load(path: NativePath): void;
-  isLoading?: boolean;
-};
-
 declare global {
   module NodeJS {
     interface Process {
@@ -28,12 +23,6 @@ declare global {
 }
 
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
-  /**
-   * The cache that will be used for all accesses occurring outside of a PnP context.
-   */
-
-  const defaultCache: NodeJS.Dict<NodeModule> = {};
-
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need
    * a way to "reset" the environment temporarily)
@@ -59,7 +48,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return apiEntry.instance.findPackageLocator(lookupPath) ? apiEntry.instance : null;
   };
 
-  function getRequireStack(parent: Module | null | undefined) {
+  function getRequireStack(parent: NodeModule | null | undefined) {
     const requireStack = [];
 
     for (let cursor = parent; cursor; cursor = cursor.parent)
@@ -68,131 +57,18 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return requireStack;
   }
 
-  // A small note: we don't replace the cache here (and instead use the native one). This is an effort to not
-  // break code similar to "delete require.cache[require.resolve(FOO)]", where FOO is a package located outside
-  // of the Yarn dependency tree. In this case, we defer the load to the native loader. If we were to replace the
-  // cache by our own, the native loader would populate its own cache, which wouldn't be exposed anymore, so the
-  // delete call would be broken.
-
   const originalModuleLoad = Module._load;
-
   Module._load = function(request: string, parent: NodeModule | null | undefined, isMain: boolean) {
-    if (!enableNativeHooks)
-      return originalModuleLoad.call(Module, request, parent, isMain);
+    // The 'pnpapi' name is reserved to return the PnP api currently in use by the program
+    if (request === `pnpapi`) {
+      const parentApiPath = opts.manager.getApiPathFromParent(parent);
 
-    // Builtins are managed by the regular Node loader
-
-    if (nodeUtils.isBuiltinModule(request)) {
-      try {
-        enableNativeHooks = false;
-        return originalModuleLoad.call(Module, request, parent, isMain);
-      } finally {
-        enableNativeHooks = true;
+      if (parentApiPath) {
+        return opts.manager.getApiEntry(parentApiPath, true).instance;
       }
     }
 
-    const parentApiPath = opts.manager.getApiPathFromParent(parent);
-
-    const parentApi = parentApiPath !== null
-      ? opts.manager.getApiEntry(parentApiPath, true).instance
-      : null;
-
-    // Requests that aren't covered by the PnP runtime goes through the
-    // parent `_load` implementation. This is required for VSCode, for example,
-    // which override `_load` to provide additional builtins to its extensions.
-
-    if (parentApi === null)
-      return originalModuleLoad(request, parent, isMain);
-
-    // The 'pnpapi' name is reserved to return the PnP api currently in use
-    // by the program
-
-    if (request === `pnpapi`)
-      return parentApi;
-
-    // Request `Module._resolveFilename` (ie. `resolveRequest`) to tell us
-    // which file we should load
-
-    const modulePath = Module._resolveFilename(request, parent, isMain);
-
-    // We check whether the module is owned by the dependency tree of the
-    // module that required it. If it isn't, then we need to create a new
-    // store and possibly load its sandboxed PnP runtime.
-
-    const isOwnedByRuntime = parentApi !== null
-      ? parentApi.findPackageLocator(modulePath) !== null
-      : false;
-
-    const moduleApiPath = isOwnedByRuntime
-      ? parentApiPath
-      : opts.manager.findApiPathFor(npath.dirname(modulePath));
-
-    const entry = moduleApiPath !== null
-      ? opts.manager.getApiEntry(moduleApiPath)
-      : {instance: null, cache: defaultCache};
-
-    // Check if the module has already been created for the given file
-
-    const cacheEntry = entry.cache[modulePath] as PatchedModule | undefined;
-    if (cacheEntry) {
-      // When the Node ESM loader encounters CJS modules it adds them
-      // to the cache but doesn't load them so we do that here.
-      //
-      // Keep track of and check if the module is already loading to
-      // handle circular requires.
-      //
-      // The explicit checks are required since `@babel/register` et al.
-      // create modules without the `loaded` and `load` properties
-      if (cacheEntry.loaded === false && cacheEntry.isLoading !== true) {
-        try {
-          cacheEntry.isLoading = true;
-
-          // The main module is exposed as a global variable
-          if (isMain) {
-            process.mainModule = cacheEntry;
-            cacheEntry.id = `.`;
-          }
-
-          cacheEntry.load(modulePath);
-        } finally {
-          cacheEntry.isLoading = false;
-        }
-      }
-
-      return cacheEntry.exports;
-    }
-
-    // Create a new module and store it into the cache
-
-    const module = new Module(modulePath, parent ?? undefined) as PatchedModule;
-    module.pnpApiPath = moduleApiPath;
-
-    nodeUtils.reportRequiredFilesToWatchMode([modulePath]);
-
-    entry.cache[modulePath] = module;
-
-    // The main module is exposed as a global variable
-    if (isMain) {
-      process.mainModule = module;
-      module.id = `.`;
-    }
-
-    // Try to load the module, and remove it from the cache if it fails
-
-    let hasThrown = true;
-
-    try {
-      module.isLoading = true;
-      module.load(modulePath);
-      hasThrown = false;
-    } finally {
-      module.isLoading = false;
-      if (hasThrown) {
-        delete Module._cache[modulePath];
-      }
-    }
-
-    return module.exports;
+    return originalModuleLoad.call(Module, request, parent, isMain);
   };
 
   type IssuerSpec = {
@@ -306,8 +182,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
           : null;
 
       if (absoluteRequest !== null) {
-        const apiPath = parentDirectory === npath.dirname(absoluteRequest) && parent?.pnpApiPath
-          ? parent.pnpApiPath
+        const apiPath = parent && parentDirectory === npath.dirname(absoluteRequest)
+          ? opts.manager.getApiPathFromParent(parent)
           : opts.manager.findApiPathFor(absoluteRequest);
 
         if (apiPath !== null) {
@@ -406,8 +282,8 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   };
 
   // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
-  const originalExtensionJSFunction = Module._extensions[`.js`] as (module: Module, filename: string) => void;
-  Module._extensions[`.js`] = function (module: Module, filename: string) {
+  const originalExtensionJSFunction = Module._extensions[`.js`] as (module: NodeModule, filename: string) => void;
+  Module._extensions[`.js`] = function (module: NodeModule, filename: string) {
     if (filename.endsWith(`.js`)) {
       const pkg = nodeUtils.readPackageScope(filename);
       if (pkg && pkg.data?.type === `module`) {
