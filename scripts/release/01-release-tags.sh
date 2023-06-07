@@ -33,9 +33,9 @@ done
 RELEASE_DETAILS=$(yarn version apply --all --json ${APPLY_OPTIONS})
 RELEASE_SIZE=$(wc -l <<< "$RELEASE_DETAILS")
 
-if [[ $RELEASE_SIZE -eq 0 ]]; then
+if [[ -z $RELEASE_DETAILS ]]; then
   echo "No package to release"
-  exit 1
+  exit 0
 elif [[ $RELEASE_SIZE -eq 1 ]]; then
   COMMIT_MESSAGE="Releasing one new package"
 else
@@ -73,7 +73,7 @@ cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js \
    "$REPO_DIR"/packages/berry-cli/bin/berry.js
 
 # In case the PnP hook got updated run an install to update the `.pnp.cjs` file
-YARN_ENABLE_IMMUTABLE_INSTALLS=0 yarn
+YARN_IGNORE_PATH=1 YARN_ENABLE_IMMUTABLE_INSTALLS=0 node "$REPO_DIR/packages/yarnpkg-cli/bin/yarn.js"
 
 git add "$REPO_DIR"
 git commit -m "$COMMIT_MESSAGE"

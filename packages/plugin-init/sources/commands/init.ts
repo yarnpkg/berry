@@ -141,7 +141,7 @@ export default class InitCommand extends BaseCommand {
       manifest.private = true;
 
     if (this.workspace && manifest.workspaceDefinitions.length === 0) {
-      await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages` as Filename), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages`), {recursive: true});
       manifest.workspaceDefinitions = [{
         pattern: `packages/*`,
       }];
@@ -159,7 +159,7 @@ export default class InitCommand extends BaseCommand {
       manifestPath,
     ];
 
-    const readmePath = ppath.join(this.context.cwd, `README.md` as Filename);
+    const readmePath = ppath.join(this.context.cwd, `README.md`);
     if (!xfs.existsSync(readmePath)) {
       await xfs.writeFilePromise(readmePath, `# ${structUtils.stringifyIdent(manifest.name)}\n`);
       changedPaths.push(readmePath);
@@ -192,10 +192,27 @@ export default class InitCommand extends BaseCommand {
         return `${line}\n`;
       }).join(``);
 
-      const gitignorePath = ppath.join(this.context.cwd, `.gitignore` as Filename);
+      const gitignorePath = ppath.join(this.context.cwd, `.gitignore`);
       if (!xfs.existsSync(gitignorePath)) {
         await xfs.writeFilePromise(gitignorePath, gitignoreBody);
         changedPaths.push(gitignorePath);
+      }
+
+      const gitattributesLines = [
+        `/.yarn/**            linguist-vendored`,
+        `/.yarn/releases/*    binary`,
+        `/.yarn/plugins/**/*  binary`,
+        `/.pnp.*              binary linguist-generated`,
+      ];
+
+      const gitattributesBody = gitattributesLines.map(line => {
+        return `${line}\n`;
+      }).join(``);
+
+      const gitattributesPath = ppath.join(this.context.cwd, `.gitattributes`);
+      if (!xfs.existsSync(gitattributesPath)) {
+        await xfs.writeFilePromise(gitattributesPath, gitattributesBody);
+        changedPaths.push(gitattributesPath);
       }
 
       const editorConfigProperties = {
@@ -221,7 +238,7 @@ export default class InitCommand extends BaseCommand {
         }
       }
 
-      const editorConfigPath = ppath.join(this.context.cwd, `.editorconfig` as Filename);
+      const editorConfigPath = ppath.join(this.context.cwd, `.editorconfig`);
       if (!xfs.existsSync(editorConfigPath)) {
         await xfs.writeFilePromise(editorConfigPath, editorConfigBody);
         changedPaths.push(editorConfigPath);
@@ -231,7 +248,7 @@ export default class InitCommand extends BaseCommand {
         quiet: true,
       });
 
-      if (!xfs.existsSync(ppath.join(this.context.cwd, `.git` as Filename))) {
+      if (!xfs.existsSync(ppath.join(this.context.cwd, `.git`))) {
         await execUtils.execvp(`git`, [`init`], {
           cwd: this.context.cwd,
         });

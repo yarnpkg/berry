@@ -3,6 +3,7 @@ releases:
   "@yarnpkg/fslib": major
 
 declined:
+  - "@yarnpkg/builder"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"

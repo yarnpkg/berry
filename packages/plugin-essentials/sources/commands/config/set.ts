@@ -77,7 +77,7 @@ export default class ConfigSetCommand extends BaseCommand {
       ? JSON.parse(this.value)
       : this.value;
 
-    const updateConfiguration: (patch: ((current: any) => any)) => Promise<void> =
+    const updateConfiguration: (patch: ((current: any) => any)) => Promise<boolean> =
       this.home
         ? patch => Configuration.updateHomeConfiguration(patch)
         : patch => Configuration.updateConfiguration(assertProjectCwd(), patch);

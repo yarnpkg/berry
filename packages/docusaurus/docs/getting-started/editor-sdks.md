@@ -29,6 +29,7 @@ import TOCInline from '@theme/TOCInline';
 | [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
 | [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
 | [flow-for-vscode*](https://marketplace.visualstudio.com/items?itemName=flowtype.flow-for-vscode) | [flow-bin](https://flow.org/) |
+| [astro-vscode](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode) | [astro](https://astro.build/) |
 
 > \* Flow is currently [incompatible with PnP](/features/pnp#incompatible).
 

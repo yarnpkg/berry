@@ -1,5 +1,5 @@
 import {Configuration, Descriptor, Project, ResolveOptions, ThrowReport, structUtils, Locator, Cache, LocatorHash} from '@yarnpkg/core';
-import {PortablePath, xfs, ppath, Filename}                                                                        from '@yarnpkg/fslib';
+import {PortablePath, xfs, ppath}                                                                                  from '@yarnpkg/fslib';
 import NpmPlugin                                                                                                   from '@yarnpkg/plugin-npm';
 import PatchPlugin                                                                                                 from '@yarnpkg/plugin-patch';
 
@@ -14,7 +14,7 @@ function getConfiguration(p: PortablePath) {
 }
 
 async function createProject(configuration: Configuration, p: PortablePath, manifest: object = {}) {
-  await xfs.writeFilePromise(ppath.join(p, `package.json` as Filename), JSON.stringify(manifest));
+  await xfs.writeFilePromise(ppath.join(p, `package.json`), JSON.stringify(manifest));
 
   return Project.find(configuration, p);
 }

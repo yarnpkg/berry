@@ -1,11 +1,10 @@
 import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
 import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils}                         from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils, nodeUtils}              from '@yarnpkg/core';
 import {gitUtils}                                                    from '@yarnpkg/plugin-git';
 import {Command, Option, Usage, UsageError}                          from 'clipanion';
 import micromatch                                                    from 'micromatch';
-import {cpus}                                                        from 'os';
 import pLimit                                                        from 'p-limit';
 import {Writable}                                                    from 'stream';
 import {WriteStream}                                                 from 'tty';
@@ -64,7 +63,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   });
 
   from = Option.Array(`--from`, [], {
-    description: `An array of glob pattern idents from which to base any recursion`,
+    description: `An array of glob pattern idents or paths from which to base any recursion`,
   });
 
   all = Option.Boolean(`-A,--all`, false, {
@@ -97,11 +96,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   });
 
   include = Option.Array(`--include`, [], {
-    description: `An array of glob pattern idents; only matching workspaces will be traversed`,
+    description: `An array of glob pattern idents or paths; only matching workspaces will be traversed`,
   });
 
   exclude = Option.Array(`--exclude`, [], {
-    description: `An array of glob pattern idents; matching workspaces won't be traversed`,
+    description: `An array of glob pattern idents or paths; matching workspaces won't be traversed`,
   });
 
   publicOnly = Option.Boolean(`--no-private`, {
@@ -141,7 +140,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
       : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
 
-    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from);
+    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from) || micromatch.isMatch(workspace.relativeCwd, this.from);
     const fromCandidates: Array<Workspace> = this.from.length > 0
       ? rootCandidates.filter(fromPredicate)
       : rootCandidates;
@@ -182,10 +181,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
-      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include))
+      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include))
         continue;
 
-      if (this.exclude.length > 0 && micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude))
+      if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude)))
         continue;
 
       if (this.publicOnly && workspace.manifest.private === true)
@@ -200,7 +199,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const concurrency = this.parallel ?
       (this.jobs === `unlimited`
         ? Infinity
-        : Number(this.jobs) || Math.max(1, cpus().length / 2))
+        : Number(this.jobs) || Math.ceil(nodeUtils.availableParallelism() / 2))
       : 1;
 
     // No need to parallelize if we were explicitly asked for one job
@@ -221,6 +220,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      includePrefix: false,
     }, async report => {
       const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
         if (abortNextCommands)

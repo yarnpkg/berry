@@ -1,5 +1,5 @@
 import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
-import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
+import {npath, PortablePath, ppath, xfs}                                                                                                          from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
 import capitalize                                                                                                                                 from 'lodash/capitalize';
@@ -121,7 +121,7 @@ export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {
   url = url.replace(/^git\+https:/, `https:`);
 
   // We support this as an alias to GitHub repositories
-  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
+  url = url.replace(/^(?:github:|https:\/\/github\.com\/|git:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
 
   // We support GitHub `/tarball/` URLs
   url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
@@ -296,7 +296,7 @@ export async function fetchRoot(initialCwd: PortablePath) {
   let nextCwd = initialCwd;
   do {
     cwd = nextCwd;
-    if (await xfs.existsPromise(ppath.join(cwd, `.git` as Filename)))
+    if (await xfs.existsPromise(ppath.join(cwd, `.git`)))
       return cwd;
     nextCwd = ppath.dirname(cwd);
   } while (nextCwd !== cwd);

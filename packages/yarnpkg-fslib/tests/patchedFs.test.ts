@@ -1,21 +1,21 @@
-import {ZipFS, ZipOpenFS}              from '@yarnpkg/libzip';
-import fs                              from 'fs';
-import {pathToFileURL}                 from 'url';
-import {promisify}                     from 'util';
+import {ZipFS, ZipOpenFS}    from '@yarnpkg/libzip';
+import fs                    from 'fs';
+import {pathToFileURL}       from 'url';
+import {promisify}           from 'util';
 
-import {ZIP_FILE1, ZIP_DIR1}           from '../../yarnpkg-libzip/tests/ZipOpenFS.test';
-import {NodeFS}                        from '../sources/NodeFS';
-import {PosixFS}                       from '../sources/PosixFS';
-import {extendFs}                      from '../sources/patchFs/patchFs';
-import {Filename, npath, PortablePath} from '../sources/path';
-import {xfs}                           from '../sources/xfs';
-import {statUtils}                     from '../sources';
+import {ZIP_FILE1, ZIP_DIR1} from '../../yarnpkg-libzip/tests/ZipOpenFS.test';
+import {NodeFS}              from '../sources/NodeFS';
+import {PosixFS}             from '../sources/PosixFS';
+import {extendFs}            from '../sources/patchFs/patchFs';
+import {npath, PortablePath} from '../sources/path';
+import {xfs}                 from '../sources/xfs';
+import {statUtils}           from '../sources';
 
 const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
 describe(`patchedFs`, () => {
   it(`in case of no error, give null: fs.stat`, done => {
-    const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
+    const file = npath.join(__dirname, `patchedFs.test.ts`);
 
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
@@ -26,7 +26,7 @@ describe(`patchedFs`, () => {
   });
 
   it(`in case of no error, give null: fs.read`, done => {
-    const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
+    const file = npath.join(__dirname, `patchedFs.test.ts`);
 
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
@@ -52,7 +52,7 @@ describe(`patchedFs`, () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
     const patchedFsReadAsync = promisify(patchedFs.read);
 
-    const file = npath.join(__dirname, `patchedFs.test.ts` as Filename);
+    const file = npath.join(__dirname, `patchedFs.test.ts`);
 
     const fd = fs.openSync(file, `r`);
 
@@ -175,7 +175,7 @@ describe(`patchedFs`, () => {
 
       expect(statUtils.areStatsEqual(stat, fdStat)).toEqual(true);
     } finally {
-      patchedFs.closeSync(fd);
+      patchedFs.closeSync(zipFd);
     }
   });
 
@@ -550,6 +550,23 @@ describe(`patchedFs`, () => {
       await fd.close();
 
       await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`f`);
+    });
+  });
+
+  it(`should support FileHandle.readLines`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `1\n\n2\n`);
+
+      const fd = await patchedFs.promises.open(filepath);
+
+      const lines: Array<string> = [];
+      for await (const line of fd.readLines())
+        lines.push(line);
+
+      expect(lines).toStrictEqual([`1`, ``, `2`]);
     });
   });
 

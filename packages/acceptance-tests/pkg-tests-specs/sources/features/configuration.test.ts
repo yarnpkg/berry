@@ -4,9 +4,9 @@ describe(`Features`, () => {
   describe(`Configuration`, () => {
     test(`it should let the project configuration override the home configuration`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
 
-      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
         preferInteractive: true,
       });
 
@@ -44,13 +44,13 @@ describe(`Features`, () => {
 
     test(`it should skip the home configuration if onConflict: reset is set in the project configuration`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
 
       // Sanity checks
       await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
       await expect(run(`config`, `get`, `--json`, `preferTruncatedLines`)).resolves.toMatchObject({stdout: `false\n`});
 
-      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
         preferInteractive: true,
         preferTruncatedLines: true,
       });
@@ -76,13 +76,13 @@ describe(`Features`, () => {
 
     test(`it should allow extending values from the home configuration if explicitly requested`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
-      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
 
       // Sanity checks
       await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
       await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `[]\n`});
 
-      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
         preferInteractive: true,
         immutablePatterns: [`foo`],
       });
@@ -108,6 +108,30 @@ describe(`Features`, () => {
 
       await expect(run(`config`, `get`, `--json`, `preferInteractive`)).resolves.toMatchObject({stdout: `false\n`});
       await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `["foo","bar"]\n`});
+    }));
+
+    test(`it should return a helpful error if the rc file is wrong`, makeTemporaryEnv({
+    }, async ({path, run, source}) => {
+      await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
+
+      await xfs.writeJsonPromise(ppath.join(path, `..` as PortablePath, Filename.rc), {
+        packageExtensions: {
+          "@lezer/html@*": {
+            dependencies: {
+              "@lezer/common": `*`,
+              // Wrong indentation here, will throw an error:
+              "@lezer/javascript@*": {
+                dependencies: {
+                  "@lezer/common": `*`,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // https://github.com/yarnpkg/berry/pull/5213
+      await expect(run(`config`, `get`, `--json`, `packageExtensions`)).rejects.toMatchObject({stdout: expect.stringContaining(`Internal Error: Expected configuration setting "packageExtensions['@lezer/html@*'].dependencies['@lezer/javascript@*']" to be a string, got object`)});
     }));
   });
 });

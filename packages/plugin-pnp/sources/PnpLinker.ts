@@ -1,7 +1,7 @@
 import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
 import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
 import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
-import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs, Filename}                                   from '@yarnpkg/fslib';
+import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
 import {UsageError}                                                                                             from 'clipanion';
 
@@ -10,13 +10,6 @@ import * as jsInstallUtils                                                      
 import * as pnpUtils                                                                                            from './pnpUtils';
 
 const FORCED_UNPLUG_PACKAGES = new Set([
-  // Some packages do weird stuff and MUST be unplugged. I don't like them.
-  structUtils.makeIdent(null, `nan`).identHash,
-  structUtils.makeIdent(null, `node-gyp`).identHash,
-  structUtils.makeIdent(null, `node-pre-gyp`).identHash,
-  structUtils.makeIdent(null, `node-addon-api`).identHash,
-  // Those ones contain native builds (*.node), and Node loads them through dlopen
-  structUtils.makeIdent(null, `fsevents`).identHash,
   // Contains native binaries
   structUtils.makeIdent(null, `open`).identHash,
   structUtils.makeIdent(null, `opn`).identHash,
@@ -383,7 +376,7 @@ export class PnpInstaller implements Installer {
     const ignoreRegExp = ignorePattern ? new RegExp(ignorePattern) : null;
 
     for (const workspace of this.opts.project.workspaces) {
-      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules` as Filename);
+      const nodeModulesPath = ppath.join(workspace.cwd, `node_modules`);
       if (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd)) || !xfs.existsSync(nodeModulesPath))
         continue;
 
@@ -444,7 +437,7 @@ export class PnpInstaller implements Installer {
     this.unpluggedPaths.add(unplugPath);
 
     api.holdFetchResult(this.asyncActions.set(locator.locatorHash, async () => {
-      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready` as Filename);
+      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready`);
       if (await xfs.existsPromise(readyFile))
         return;
 

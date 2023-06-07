@@ -882,4 +882,22 @@ describe(`Configuration`, () => {
       });
     });
   });
+
+  describe(`Ignored environment variables`, () => {
+    beforeAll(() => {
+      process.env.YARN_REGISTRY = `https://registry.custom.domain/`;
+    });
+
+    afterAll(() => {
+      delete process.env.YARN_REGISTRY;
+    });
+
+    it(`should ignore YARN_REGISTRY if set`, async () => {
+      await initializeConfiguration({},
+        async dir => {
+          const configuration = await Configuration.find(dir, null);
+          expect(() => configuration.get(`registry`)).toThrow(`Invalid configuration key "registry"`);
+        });
+    });
+  });
 });

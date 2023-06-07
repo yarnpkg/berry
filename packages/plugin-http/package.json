@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-http",
-  "version": "3.0.0-rc.32",
+  "version": "3.0.0-rc.45",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -38,5 +38,5 @@
   "engines": {
     "node": ">=14.15.0"
   },
-  "stableVersion": "2.2.0"
+  "stableVersion": "2.2.1"
 }

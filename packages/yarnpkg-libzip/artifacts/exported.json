@@ -22,7 +22,6 @@
     "_zip_get_num_entries",
     "_zip_name_locate",
     "_zip_open_from_source",
-    "_zip_open",
     "_zip_set_file_compression",
     "_zip_stat",
     "_zip_stat_index",

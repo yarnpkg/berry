@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
 import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils, ThrowReport} from '@yarnpkg/core';
-import {Filename, npath, ppath, xfs}                                                                                from '@yarnpkg/fslib';
+import {npath, ppath, xfs}                                                                                          from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                                                                     from 'clipanion';
 
 import * as packUtils                                                                                               from '../packUtils';
@@ -71,7 +71,7 @@ export default class PackCommand extends BaseCommand {
 
     const target = typeof out !== `undefined`
       ? ppath.resolve(this.context.cwd, interpolateOutputName(out, {workspace}))
-      : ppath.resolve(workspace.cwd, `package.tgz` as Filename);
+      : ppath.resolve(workspace.cwd, `package.tgz`);
 
     const report = await StreamReport.start({
       configuration,

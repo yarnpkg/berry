@@ -5,7 +5,7 @@ import {NodeFS}                                                                 
 import {opendir}                                                                                                                                     from '@yarnpkg/fslib';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from '@yarnpkg/fslib';
 import {errors, statUtils}                                                                                                                           from '@yarnpkg/fslib';
-import {FSPath, PortablePath, npath, ppath, Filename}                                                                                                from '@yarnpkg/fslib';
+import {FSPath, PortablePath, ppath, Filename}                                                                                                       from '@yarnpkg/fslib';
 import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
 import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
 import {PassThrough}                                                                                                                                 from 'stream';
@@ -76,7 +76,7 @@ export class ZipFS extends BasePortableFakeFS {
 
   private readonly stats: Stats;
   private readonly zip: number;
-  private readonly lzSource: number | null = null;
+  private readonly lzSource: number;
   private readonly level: ZipCompression;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
@@ -149,26 +149,24 @@ export class ZipFS extends BasePortableFakeFS {
     try {
       let flags = 0;
 
-      if (typeof source === `string` && pathOptions.create)
-        flags |= this.libzip.ZIP_CREATE | this.libzip.ZIP_TRUNCATE;
-
       if (opts.readOnly) {
         flags |= this.libzip.ZIP_RDONLY;
         this.readOnly = true;
       }
 
-      if (typeof source === `string`) {
-        this.zip = this.libzip.open(npath.fromPortablePath(source), flags, errPtr);
-      } else {
-        const lzSource = this.allocateUnattachedSource(source);
+      if (typeof source === `string`)
+        source = pathOptions.create
+          ? makeEmptyArchive()
+          : this.baseFs!.readFileSync(source);
 
-        try {
-          this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
-          this.lzSource = lzSource;
-        } catch (error) {
-          this.libzip.source.free(lzSource);
-          throw error;
-        }
+      const lzSource = this.allocateUnattachedSource(source);
+
+      try {
+        this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
+        this.lzSource = lzSource;
+      } catch (error) {
+        this.libzip.source.free(lzSource);
+        throw error;
       }
 
       if (this.zip === 0) {
@@ -241,11 +239,21 @@ export class ZipFS extends BasePortableFakeFS {
     return this.path;
   }
 
+  private prepareClose() {
+    if (!this.ready)
+      throw errors.EBUSY(`archive closed, close`);
+
+    unwatchAllFiles(this);
+  }
+
   getBufferAndClose(): Buffer {
     this.prepareClose();
 
-    if (!this.lzSource)
-      throw new Error(`ZipFS was not created from a Buffer`);
+    // zip_source_open on an unlink-after-write empty archive fails with "Entry has been deleted"
+    if (this.entries.size === 0) {
+      this.discardAndClose();
+      return makeEmptyArchive();
+    }
 
     try {
       // Prevent close from cleaning up the source
@@ -298,18 +306,17 @@ export class ZipFS extends BasePortableFakeFS {
     }
   }
 
-  private prepareClose() {
-    if (!this.ready)
-      throw errors.EBUSY(`archive closed, close`);
+  discardAndClose() {
+    this.prepareClose();
 
-    unwatchAllFiles(this);
+    this.libzip.discard(this.zip);
+
+    this.ready = false;
   }
 
   saveAndClose() {
     if (!this.path || !this.baseFs)
       throw new Error(`ZipFS cannot be saved and must be discarded when loaded from a buffer`);
-
-    this.prepareClose();
 
     if (this.readOnly) {
       this.discardAndClose();
@@ -320,27 +327,7 @@ export class ZipFS extends BasePortableFakeFS {
       ? undefined
       : this.stats.mode;
 
-    // zip_close doesn't persist empty archives
-    if (this.entries.size === 0) {
-      this.discardAndClose();
-      this.baseFs.writeFileSync(this.path, makeEmptyArchive(), {mode: newMode});
-    } else {
-      const rc = this.libzip.close(this.zip);
-      if (rc === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-
-      if (typeof newMode !== `undefined`) {
-        this.baseFs.chmodSync(this.path, newMode);
-      }
-    }
-
-    this.ready = false;
-  }
-
-  discardAndClose() {
-    this.prepareClose();
-
-    this.libzip.discard(this.zip);
+    this.baseFs.writeFileSync(this.path, this.getBufferAndClose(), {mode: newMode});
 
     this.ready = false;
   }

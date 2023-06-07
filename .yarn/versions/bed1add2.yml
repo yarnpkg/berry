@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/plugin-workspace-tools": minor
+
+declined:
+  - "@yarnpkg/cli"

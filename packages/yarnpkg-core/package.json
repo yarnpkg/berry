@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.32",
-  "stableVersion": "3.2.5",
+  "version": "4.0.0-rc.45",
+  "stableVersion": "3.5.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -38,13 +38,14 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^18.7.6",
+    "@types/node": "^18.11.11",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^",

@@ -12,8 +12,11 @@ fi
 
 RELEASE_ARGUMENTS=()
 
+CLOSEST_TAG=$(git describe --tags --abbrev=0)
+RELEASE_COMMIT=$(git rev-list -n 1 "$CLOSEST_TAG")
+
 maybe_release_package() {
-  if git describe --match "$1/*" HEAD >& /dev/null; then
+  if git describe --match "$1/*" $RELEASE_COMMIT >&/dev/null; then
     RELEASE_ARGUMENTS+=(--include "$1")
   fi
 }
