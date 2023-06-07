@@ -1,9 +1,12 @@
 {
   "name": "@yarnpkg/libui",
-  "version": "3.0.0-rc.34",
+  "version": "3.0.0-rc.45",
   "stableVersion": "2.2.2",
   "license": "BSD-2-Clause",
   "sideEffects": false,
+  "files": [
+    "sources"
+  ],
   "peerDependencies": {
     "ink": "^3.0.8",
     "react": "^16.8.4"
@@ -22,8 +25,8 @@
     "tslib": "^2.4.0"
   },
   "scripts": {
-    "postpack": "find sources -name '*.js' -delete",
-    "prepack": "yarn build:compile-inline \"$(pwd)\""
+    "postpack": "find sources -name '*.js' -delete -or -name '*.d.ts' -delete",
+    "prepack": "run build:compile \"$(pwd)\" --inline"
   },
   "engines": {
     "node": ">=14.15.0"

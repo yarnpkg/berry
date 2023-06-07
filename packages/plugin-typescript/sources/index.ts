@@ -1,6 +1,6 @@
 import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, SettingsType} from '@yarnpkg/core';
 import {structUtils, ThrowReport, miscUtils, semverUtils}                                       from '@yarnpkg/core';
-import {Filename, ppath, xfs}                                                                   from '@yarnpkg/fslib';
+import {ppath, xfs}                                                                             from '@yarnpkg/fslib';
 import {Hooks as EssentialsHooks}                                                               from '@yarnpkg/plugin-essentials';
 import {suggestUtils}                                                                           from '@yarnpkg/plugin-essentials';
 import {Hooks as PackHooks}                                                                     from '@yarnpkg/plugin-pack';
@@ -27,7 +27,7 @@ const afterWorkspaceDependencyAddition = async (
   const {configuration} = project;
 
   const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
-    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename));
+    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
   if (!tsEnableAutoTypes)
     return;
@@ -119,7 +119,7 @@ const afterWorkspaceDependencyRemoval = async (
   const {configuration} = project;
 
   const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
-    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json` as Filename));
+    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
   if (!tsEnableAutoTypes)
     return;

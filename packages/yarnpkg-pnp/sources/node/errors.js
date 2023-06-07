@@ -69,3 +69,17 @@ export const ERR_INVALID_PACKAGE_CONFIG = createErrorType(
   },
   Error
 );
+
+export const ERR_PACKAGE_PATH_NOT_EXPORTED = createErrorType(
+  'ERR_PACKAGE_PATH_NOT_EXPORTED',
+  (pkgPath, subpath, base = undefined) => {
+    if (subpath === '.')
+      return `No "exports" main defined in ${pkgPath}package.json${
+        base ? ` imported from ${base}` : ''
+      }`;
+    return `Package subpath '${subpath}' is not defined by "exports" in ${pkgPath}package.json${
+      base ? ` imported from ${base}` : ''
+    }`;
+  },
+  Error
+);

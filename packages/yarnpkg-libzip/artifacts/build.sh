@@ -128,7 +128,7 @@ build() {
     -s SUPPORT_BIG_ENDIAN=1 \
     -s TEXTDECODER=2 \
     -s ENVIRONMENT=node \
-    -s NODERAWFS=1 \
+    -s FILESYSTEM=0 \
     -s SINGLE_FILE=1 \
     -s MODULARIZE=1 \
     -s STRICT=1 \

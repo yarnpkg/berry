@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
@@ -22,6 +23,7 @@
     "packages/*/{lib,bin,bundles}",
     "packages/yarnpkg-doctor/fixtures",
     "packages/gatsby",
+    "packages/docusaurus",
     "packages/yarnpkg-libzip/artifacts"
   ]
 }

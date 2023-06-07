@@ -1,58 +1,16 @@
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml}                       from '@yarnpkg/parsers';
-import klaw                              from 'klaw';
+import stream                            from 'stream';
 import tarFs                             from 'tar-fs';
-import zlib                              from 'zlib';
-import {Gzip}                            from 'zlib';
+import {promisify}                       from 'util';
+import zlib, {Gzip}                      from 'zlib';
 
 import {execPromise}                     from './exec';
-import * as miscUtils                    from './misc';
+
+// TODO: Use stream.promises.pipeline when dropping support for Node.js < 15.0.0
+const pipelinePromise = promisify(stream.pipeline);
 
 const IS_WIN32 = process.platform === `win32`;
-
-export const walk = (
-  source: PortablePath,
-  {filter, relative = false}: {filter?: Array<string>, relative?: boolean} = {},
-): Promise<Array<PortablePath>> => {
-  return new Promise(resolve => {
-    const paths: Array<PortablePath> = [];
-
-    const walker = klaw(npath.fromPortablePath(source), {
-      filter: (sourcePath: string) => {
-        if (!filter)
-          return true;
-
-        const itemPath = npath.toPortablePath(sourcePath);
-        const stat = xfs.statSync(itemPath);
-
-        if (stat.isDirectory())
-          return true;
-
-        const relativePath = ppath.relative(source, itemPath);
-
-        if (miscUtils.filePatternMatch(relativePath, filter))
-          return true;
-
-        return false;
-      },
-    });
-
-    walker.on(`data`, ({path: sourcePath}) => {
-      const itemPath = npath.toPortablePath(sourcePath);
-      const relativePath = ppath.relative(source, itemPath);
-
-      if (!filter || miscUtils.filePatternMatch(relativePath, filter))
-        paths.push(relative ? relativePath : itemPath);
-
-      // This item has been accepted only because it's a directory; it doesn't match the filter
-      return;
-    });
-
-    walker.on(`end`, () => {
-      resolve(paths);
-    });
-  });
-};
 
 export const packToStream = (
   source: PortablePath,
@@ -65,8 +23,6 @@ export const packToStream = (
       virtualPath = ppath.resolve(virtualPath);
     }
   }
-
-  const zipperStream = zlib.createGzip();
 
   const packStream = tarFs.pack(npath.fromPortablePath(source), {
     map: (header: any) => {
@@ -88,60 +44,22 @@ export const packToStream = (
     },
   });
 
-  packStream.pipe(zipperStream);
-
-  packStream.on(`error`, error => {
-    zipperStream.emit(`error`, error);
-  });
-
-  return zipperStream;
+  return stream.pipeline(packStream, zlib.createGzip(), () => {});
 };
 
-export const packToFile = (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
-  const tarballStream = xfs.createWriteStream(target);
-
-  const packStream = exports.packToStream(source, options);
-  packStream.pipe(tarballStream);
-
-  return new Promise((resolve, reject) => {
-    tarballStream.on(`error`, (error: Error) => {
-      reject(error);
-    });
-
-    packStream.on(`error`, (error: Error) => {
-      reject(error);
-    });
-
-    tarballStream.on(`close`, () => {
-      resolve();
-    });
-  });
+export const packToFile = async (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
+  await pipelinePromise(
+    packToStream(source, options),
+    xfs.createWriteStream(target),
+  );
 };
 
-export const unpackToDirectory = (target: PortablePath, source: PortablePath): Promise<void> => {
-  const tarballStream = xfs.createReadStream(source);
-  const gunzipStream =  zlib.createUnzip();
-  const extractStream = tarFs.extract(npath.fromPortablePath(target));
-
-  tarballStream.pipe(gunzipStream).pipe(extractStream);
-
-  return new Promise((resolve, reject) => {
-    tarballStream.on(`error`, error => {
-      reject(error);
-    });
-
-    gunzipStream.on(`error`, error => {
-      reject(error);
-    });
-
-    extractStream.on(`error`, error => {
-      reject(error);
-    });
-
-    extractStream.on(`finish`, () => {
-      resolve();
-    });
-  });
+export const unpackToDirectory = async (target: PortablePath, source: PortablePath): Promise<void> => {
+  await pipelinePromise(
+    xfs.createReadStream(source),
+    zlib.createUnzip(),
+    tarFs.extract(npath.fromPortablePath(target)),
+  );
 };
 
 export const writeFile = async (target: PortablePath, body: string | Buffer): Promise<void> => {
@@ -150,7 +68,7 @@ export const writeFile = async (target: PortablePath, body: string | Buffer): Pr
 };
 
 export const writeJson = (target: PortablePath, object: any): Promise<void> => {
-  return exports.writeFile(target, JSON.stringify(object));
+  return writeFile(target, JSON.stringify(object));
 };
 
 export const readSyml = async (source: PortablePath): Promise<any> => {
@@ -170,7 +88,7 @@ export const makeFakeBinary = async (
   const realTarget = IS_WIN32 ? `${target}.cmd` as PortablePath : target;
   const header = IS_WIN32 ? `@echo off\n` : `#!/bin/sh\n`;
 
-  await exports.writeFile(realTarget, `${header}printf "%s" "${output}"\nexit ${exitCode}\n`);
+  await writeFile(realTarget, `${header}printf "%s" "${output}"\nexit ${exitCode}\n`);
   await xfs.chmodPromise(realTarget, 0o755);
 };
 

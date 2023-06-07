@@ -33,6 +33,16 @@ const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
   ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
   : false;
 
+export const LEGACY_PLUGINS = new Set([
+  `@yarnpkg/plugin-constraints`,
+  `@yarnpkg/plugin-exec`,
+  `@yarnpkg/plugin-interactive-tools`,
+  `@yarnpkg/plugin-stage`,
+  `@yarnpkg/plugin-typescript`,
+  `@yarnpkg/plugin-version`,
+  `@yarnpkg/plugin-workspace-tools`,
+]);
+
 const IGNORED_ENV_VARIABLES = new Set([
   // Used by our test environment
   `isTestEnv`,
@@ -68,6 +78,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   // https://hadoop.apache.org/docs/r0.23.11/hadoop-project-dist/hadoop-common/SingleCluster.html
   `home`,
   `confDir`,
+
+  // "YARN_REGISTRY", read by yarn 1.x, prevents yarn 2+ installations if set
+  `registry`,
 ]);
 
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
@@ -720,7 +733,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
-      throw new Error(`Expected value (${value}) to be a string`);
+      throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
       env: process.env,
@@ -733,7 +746,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
         // singleValue's source should be a single file path, if it exists
         const source = configUtils.getSource(valueBase);
         if (source)
-          cwd = ppath.resolve(source as PortablePath, `..` as PortablePath);
+          cwd = ppath.resolve(source as PortablePath, `..`);
 
         return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
       }
@@ -947,6 +960,8 @@ export class Configuration {
 
   public static telemetry: TelemetryManager | null = null;
 
+  public isCI = isCI;
+
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null = null;
 
@@ -1098,7 +1113,7 @@ export class Configuration {
       } break;
 
       case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json` as Filename))) {
+        if (xfs.existsSync(ppath.join(startingCwd, `package.json`))) {
           projectCwd = ppath.resolve(startingCwd);
         } else {
           projectCwd = null;
@@ -1202,6 +1217,9 @@ export class Configuration {
 
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
+
+          if (LEGACY_PLUGINS.has(userProvidedSpec))
+            continue;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           if (!await xfs.existsPromise(pluginPath)) {
@@ -1325,7 +1343,7 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json` as Filename)))
+      if (xfs.existsSync(ppath.join(currentCwd, `package.json`)))
         projectCwd = currentCwd;
 
       if (lockfileFilename !== null) {
@@ -1345,7 +1363,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown}), opts: {immutable?: boolean} = {}) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -1364,7 +1382,7 @@ export class Configuration {
       }
 
       if (replacement === current) {
-        return;
+        return false;
       }
     } else {
       replacement = current;
@@ -1396,13 +1414,15 @@ export class Configuration {
       }
 
       if (!patched) {
-        return;
+        return false;
       }
     }
 
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
     });
+
+    return true;
   }
 
   static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {
@@ -1507,7 +1527,7 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         const homeFolder = folderUtils.getHomeFolder();
-        const rcFileFolder = ppath.resolve(source as PortablePath, `..` as PortablePath);
+        const rcFileFolder = ppath.resolve(source as PortablePath, `..`);
         const isHomeRcFile = homeFolder === rcFileFolder;
 
         if (strict && !isHomeRcFile) {

@@ -25,6 +25,9 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
 - The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
 - Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
+- Some libzip bindings are no longer needed for `ZipFS` and have been removed:
+  - `open`
+  - `ZIP_CREATE` & `ZIP_TRUNCATE`
 
 ### **API Changes**
 
@@ -78,9 +81,30 @@ The following changes only affect people writing Yarn plugins:
 
 ### Compatibility
 
-- Updates the PnP compatibility layer for TypeScript v4.9.4.
 - The patched filesystem now supports `FileHandle.readLines`.
 - PnP now reports missing files when in watch mode.
+
+## 3.4.1
+
+- Fixes an accidental backport error in `yarn init`.
+
+## 3.4.0
+
+### Node.js parity
+
+- PnP now supports the Node `--conditions` flag.
+- PnP now supports the Node `--watch` flag on Node 18 (it previously only supported it on Node 19).
+
+### Bugfixes
+
+- The PnP API module (`pnpapi`) can now be imported from ESM modules.
+- `ZipFS.prototype.getBufferAndClose` will not error on empty archives resulting from an unlink after write.
+- Fixes various issues around postinstall script inter-dependencies.
+- Removes the message prefixes (`YN0000`) from `yarn workspaces foreach`.
+
+### Compatibility
+
+- Updates the PnP compatibility layer for TypeScript v5.0.0-beta.
 
 ## 3.3.0
 

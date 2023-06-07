@@ -280,4 +280,22 @@ describe(`Workspaces tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should allow aliasing workspaces using relative paths`,
+    makeTemporaryMonorepoEnv({
+      workspaces: [`packages/*`],
+      dependencies: {
+        [`bar`]: `workspace:packages/foo`,
+      },
+    }, {
+      [`packages/foo`]: {
+        name: `foo`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(source(`require('bar/package.json').name`)).resolves.toEqual(`foo`);
+    }),
+  );
 });

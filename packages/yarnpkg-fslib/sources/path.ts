@@ -34,11 +34,26 @@ export const Filename = {
   rc: `.yarnrc.yml` as Filename,
 };
 
+export type TolerateLiterals<T> = {
+  [K in keyof T]: ValidateLiteral<T[K]> | PortablePath | Filename;
+};
+
+export type ValidateLiteral<T> =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  T extends `${infer X}`
+    ? T
+    : never;
+
+export interface PortablePathGenerics {
+  join<T extends Array<string>>(...segments: TolerateLiterals<T>): PortablePath;
+  resolve<T extends string>(...pathSegments: Array<PortablePath | Filename | TolerateLiterals<T>>): PortablePath;
+}
+
 // Some of the FS functions support file descriptors
 export type FSPath<T extends Path> = T | number;
 
 export const npath: PathUtils<NativePath> & ConvertUtils = Object.create(path) as any;
-export const ppath: PathUtils<PortablePath> = Object.create(path.posix) as any;
+export const ppath: PathUtils<PortablePath> & PortablePathGenerics = Object.create(path.posix) as any;
 
 npath.cwd = () => process.cwd();
 ppath.cwd = () => toPortablePath(process.cwd());
@@ -90,12 +105,17 @@ export interface FormatInputPathObject<P extends Path> {
   name?: Filename;
 }
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
 export interface PathUtils<P extends Path> {
   cwd(): P;
 
+  // We use NoInfer because otherwise TS will infer a wrong
+  // type in ppath.contains, due to PortablePathGenerics
+  join(...paths: Array<NoInfer<P> | Filename>): P;
+  resolve(...pathSegments: Array<NoInfer<P> | Filename>): P;
+
   normalize(p: P): P;
-  join(...paths: Array<P | Filename>): P;
-  resolve(...pathSegments: Array<P | Filename>): P;
   isAbsolute(path: P): boolean;
   relative(from: P, to: P): P;
   dirname(p: P): P;

@@ -58,9 +58,7 @@ export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
   SEEK_END: 2,
 
   ZIP_CHECKCONS: 4,
-  ZIP_CREATE: 1,
   ZIP_EXCL: 2,
-  ZIP_TRUNCATE: 8,
   ZIP_RDONLY: 16,
 
   ZIP_FL_OVERWRITE: 8192,
@@ -101,7 +99,6 @@ export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
 
   getValue: emZip.getValue,
 
-  open: emZip.cwrap(`zip_open`, `number`, [`string`, `number`, `number`]),
   openFromSource: emZip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
   close: emZip.cwrap(`zip_close`, `number`, [`number`]),
   discard: emZip.cwrap(`zip_discard`, null, [`number`]),

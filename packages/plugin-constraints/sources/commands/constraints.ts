@@ -1,38 +1,10 @@
-import {BaseCommand}                                                       from '@yarnpkg/cli';
-import {Configuration, Project, Manifest, treeUtils, miscUtils, nodeUtils} from '@yarnpkg/core';
-import {formatUtils}                                                       from '@yarnpkg/core';
-import {Command, Option, Usage}                                            from 'clipanion';
-import get                                                                 from 'lodash/get';
-import set                                                                 from 'lodash/set';
-import unset                                                               from 'lodash/unset';
+import {BaseCommand}                                                                       from '@yarnpkg/cli';
+import {Configuration, Project, Manifest, treeUtils, miscUtils, StreamReport, MessageName} from '@yarnpkg/core';
+import {formatUtils}                                                                       from '@yarnpkg/core';
+import {Command, Option, Usage}                                                            from 'clipanion';
 
-import {ModernEngine}                                                      from '../ModernEngine';
-import * as constraintUtils                                                from '../constraintUtils';
-
-function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller) {
-  // TODO: Should this be in formatUtils? Might not be super useful as a core feature...
-  const parts: Array<string> = [];
-
-  if (caller.methodName !== null)
-    parts.push(formatUtils.pretty(configuration, caller.methodName, formatUtils.Type.CODE));
-
-  if (caller.file !== null) {
-    const fileParts: Array<string> = [];
-    fileParts.push(formatUtils.pretty(configuration, caller.file, formatUtils.Type.PATH));
-
-    if (caller.line !== null) {
-      fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
-
-      if (caller.column !== null) {
-        fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
-      }
-    }
-
-    parts.push(`(${fileParts.join(formatUtils.pretty(configuration, `:`, `grey`))})`);
-  }
-
-  return parts.join(` `);
-}
+import {ModernEngine}                                                                      from '../ModernEngine';
+import * as constraintUtils                                                                from '../constraintUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
@@ -82,116 +54,82 @@ export default class ConstraintsCheckCommand extends BaseCommand {
     }
 
     let root!: treeUtils.TreeRoot;
-    let hasErrors = false;
 
-    for (let t = 0, T = this.fix ? 10 : 1; t < T; ++t) {
-      root = {children: []};
+    let hasFixableErrors = false;
+    let allFixableErrors = false;
 
+    for (let t = this.fix ? 10 : 1; t > 0; --t) {
       const result = await engine.process();
       if (!result)
         break;
 
+      const {
+        changedWorkspaces,
+        remainingErrors,
+      } = constraintUtils.applyEngineReport(project, result, {
+        fix: this.fix,
+      });
+
       const updates: Array<Promise<void>> = [];
-      for (const [workspaceCwd, workspaceUpdates] of result.manifestUpdates) {
-        const workspaceErrors = result.reportedErrors.get(workspaceCwd) ?? [];
+      for (const [workspace, manifest] of changedWorkspaces) {
+        const indent = workspace.manifest.indent;
 
-        const workspace = project.getWorkspaceByCwd(workspaceCwd);
-        const manifest = workspace.manifest.exportTo({});
+        workspace.manifest = new Manifest();
+        workspace.manifest.indent = indent;
+        workspace.manifest.load(manifest);
 
-        let changedWorkspace = false;
-        for (const [fieldPath, newValues] of workspaceUpdates) {
-          if (newValues.size > 1) {
-            const conflictingValuesMessage = [...newValues].map(([value, sources]) => {
-              const prettyValue = formatUtils.pretty(configuration, value, formatUtils.Type.INSPECT);
+        updates.push(workspace.persistManifest());
+      }
 
-              const stackLine = sources.size > 0
-                ? formatStackLine(configuration, sources.values().next().value)
-                : null;
+      if (changedWorkspaces.size > 0 && t > 1)
+        continue;
 
-              return stackLine !== null
-                ? `\n${prettyValue} at ${stackLine}`
-                : `\n${prettyValue}`;
-            }).join(``);
+      root = constraintUtils.convertReportToRoot(remainingErrors, {configuration});
 
-            workspaceErrors.push(`Conflict detected in constraint targeting ${formatUtils.pretty(configuration, fieldPath, formatUtils.Type.CODE)}; conflicting values are:${conflictingValuesMessage}`);
+      hasFixableErrors = false;
+      allFixableErrors = true;
+
+      for (const [, workspaceErrors] of remainingErrors) {
+        for (const error of workspaceErrors) {
+          if (error.fixable) {
+            hasFixableErrors = true;
           } else {
-            const [[newValue]] = newValues;
-
-            const currentValue = get(manifest, fieldPath);
-            if (currentValue === newValue)
-              continue;
-
-            if (!this.fix) {
-              const errorMessage = typeof currentValue === `undefined`
-                ? `Missing field ${formatUtils.pretty(configuration, fieldPath, formatUtils.Type.CODE)}; expected ${formatUtils.pretty(configuration, newValue, formatUtils.Type.INSPECT)}`
-                : typeof newValue === `undefined`
-                  ? `Extraneous field ${formatUtils.pretty(configuration, fieldPath, formatUtils.Type.CODE)} currently set to ${formatUtils.pretty(configuration, currentValue, formatUtils.Type.INSPECT)}`
-                  : `Invalid field ${formatUtils.pretty(configuration, fieldPath, formatUtils.Type.CODE)}; expected ${formatUtils.pretty(configuration, newValue, formatUtils.Type.INSPECT)}, found ${formatUtils.pretty(configuration, currentValue, formatUtils.Type.INSPECT)}`;
-
-              workspaceErrors.push(errorMessage);
-              continue;
-            }
-
-            if (typeof newValue === `undefined`)
-              unset(manifest, fieldPath);
-            else
-              set(manifest, fieldPath, newValue);
-
-            changedWorkspace = true;
+            allFixableErrors = false;
           }
         }
-
-        if (changedWorkspace) {
-          const indent = workspace.manifest.indent;
-
-          workspace.manifest = new Manifest();
-          workspace.manifest.indent = indent;
-          workspace.manifest.load(manifest);
-
-          updates.push(workspace.persistManifest());
-        }
-
-        if (workspaceErrors.length > 0) {
-          const errorNodes: Array<treeUtils.TreeNode> = [];
-          for (const error of workspaceErrors) {
-            const lines = error.split(/\n/);
-
-            errorNodes.push({
-              value: formatUtils.tuple(formatUtils.Type.NO_HINT, lines[0]),
-              children: lines.slice(1).map(line => ({
-                value: formatUtils.tuple(formatUtils.Type.NO_HINT, line),
-              })),
-            });
-          }
-
-          const workspaceNode: treeUtils.TreeNode = {
-            value: formatUtils.tuple(formatUtils.Type.LOCATOR, workspace.anchoredLocator),
-            children: miscUtils.sortMap(errorNodes, node => node.value![1]),
-          };
-
-          root.children.push(workspaceNode);
-          hasErrors = true;
-        }
       }
+    }
 
-      if (updates.length === 0) {
-        break;
-      }
+    if (root.children.length === 0)
+      return 0;
+
+    if (hasFixableErrors) {
+      const message = allFixableErrors
+        ? `Those errors can all be fixed by running ${formatUtils.pretty(configuration, `yarn constraints --fix`, formatUtils.Type.CODE)}`
+        : `Errors prefixed by '⚙' can be fixed by running ${formatUtils.pretty(configuration, `yarn constraints --fix`, formatUtils.Type.CODE)}`;
+
+      await StreamReport.start({
+        configuration,
+        stdout: this.context.stdout,
+        includeNames: false,
+        includeFooter: false,
+      }, async report => {
+        report.reportInfo(MessageName.UNNAMED, message);
+        report.reportSeparator();
+      });
     }
 
     root.children = miscUtils.sortMap(root.children, node => {
       return node.value![1];
     });
 
-    if (hasErrors) {
-      treeUtils.emitTree(root, {
-        configuration,
-        stdout: this.context.stdout,
-        json: this.json,
-        separators: 1,
-      });
-    }
+    treeUtils.emitTree(root, {
+      configuration,
+      stdout: this.context.stdout,
+      json: this.json,
+      separators: 1,
+    });
 
-    return hasErrors ? 1 : 0;
+    return 1;
   }
 }

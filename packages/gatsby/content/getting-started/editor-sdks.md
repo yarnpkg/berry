@@ -29,6 +29,7 @@ Generally speaking:
 | [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
 | [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
 | [flow-for-vscode*](https://marketplace.visualstudio.com/items?itemName=flowtype.flow-for-vscode) | [flow-bin](https://flow.org/) |
+| [astro-vscode](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode) | [astro](https://astro.build/) |
 
 > \* Flow is currently [incompatible with PnP](/features/pnp#incompatible).
 
@@ -68,6 +69,8 @@ Run the following command, which will generate a new directory called `.yarn/sdk
 ```bash
 yarn dlx @yarnpkg/sdks vim
 ```
+
+Note that if you're using `coc-tsserver` then you might want to check what version it uses by running `:CocCommand tsserver.chooseVersion` — make sure that "Local version" is selected, not "Bundled with coc-tsserver".
 
 #### Neovim Native LSP
 

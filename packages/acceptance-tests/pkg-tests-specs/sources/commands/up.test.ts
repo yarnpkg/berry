@@ -75,6 +75,27 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should upgrade all dependencies when the name is *`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `^1.0.0`,
+          [`@types/is-number`]: `1.0.0`,
+          [`@types/no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`up`, `*`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toStrictEqual({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+            [`@types/is-number`]: `^2.0.0`,
+            [`@types/no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should upgrade regular dependencies to the current project (resolved tag)`,
       makeTemporaryEnv({
         dependencies: {

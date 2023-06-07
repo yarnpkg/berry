@@ -133,6 +133,8 @@ export default class BuildBundleCommand extends Command {
             }),
           },
           outfile: output,
+          // Default extensions + .mjs
+          resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,

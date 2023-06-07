@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                  from '@yarnpkg/cli';
 import {Configuration, Descriptor, DescriptorHash, Manifest, Project, structUtils, Workspace} from '@yarnpkg/core';
-import {npath, xfs, ppath, PortablePath, Filename}                                            from '@yarnpkg/fslib';
+import {npath, xfs, ppath, Filename}                                                          from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 
 import * as patchUtils                                                                        from '../patchUtils';
@@ -38,8 +38,8 @@ export default class PatchCommitCommand extends BaseCommand {
     await project.restoreInstallState();
 
     const folderPath = ppath.resolve(this.context.cwd, npath.toPortablePath(this.patchFolder));
-    const sourcePath = ppath.join(folderPath, `../source` as PortablePath);
-    const metaPath = ppath.join(folderPath, `../.yarn-patch.json` as PortablePath);
+    const sourcePath = ppath.join(folderPath, `../source`);
+    const metaPath = ppath.join(folderPath, `../.yarn-patch.json`);
 
     if (!xfs.existsSync(sourcePath))
       throw new UsageError(`The argument folder didn't get created by 'yarn patch'`);
@@ -58,7 +58,7 @@ export default class PatchCommitCommand extends BaseCommand {
     }
 
     const patchFolder = configuration.get(`patchFolder`);
-    const patchPath = ppath.join(patchFolder, `${structUtils.slugifyLocator(locator)}.patch` as Filename);
+    const patchPath = ppath.join(patchFolder, `${structUtils.slugifyLocator(locator)}.patch`);
 
     await xfs.mkdirPromise(patchFolder, {recursive: true});
     await xfs.writeFilePromise(patchPath, diff);
