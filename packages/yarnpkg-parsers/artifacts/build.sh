@@ -1,7 +1,7 @@
 WORKSPACE_DIR="$(dirname "$PWD")"
 
 # TODO: Open a feature request for wasm-pack to support specifying the binaryen version.
-BINARYEN_VERSION="version_111"
+BINARYEN_VERSION="version_113"
 BINARYEN_PATH="$PWD/binaryen-$BINARYEN_VERSION"
 
 if ! [[ -e "$BINARYEN_PATH" ]]; then
