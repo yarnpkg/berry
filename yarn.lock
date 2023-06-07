@@ -7392,7 +7392,7 @@ __metadata:
   dependencies:
     pegjs: "npm:^0.10.0"
     tslib: "npm:^2.4.0"
-    wasm-pack: "npm:^0.10.3"
+    wasm-pack: "npm:^0.11.1"
   languageName: unknown
   linkType: soft
 
@@ -8750,6 +8750,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.26.1":
+  version: 0.26.1
+  resolution: "axios@npm:0.26.1"
+  dependencies:
+    follow-redirects: "npm:^1.14.8"
+  checksum: ac969975b2e196b6e6075353688eeeb540c5cf8447c2914f90323165dfc43cd26cc31e601ed36f5711f5cd7dc76654a7c1b0db142c669152d5d600c9d3516307
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.2.0":
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
@@ -9282,14 +9291,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binary-install@npm:^0.1.0":
-  version: 0.1.1
-  resolution: "binary-install@npm:0.1.1"
+"binary-install@npm:^1.0.1":
+  version: 1.1.0
+  resolution: "binary-install@npm:1.1.0"
   dependencies:
-    axios: "npm:^0.21.1"
+    axios: "npm:^0.26.1"
     rimraf: "npm:^3.0.2"
-    tar: "npm:^6.1.0"
-  checksum: 2c877af7119bc5f1cfa7ab4a7616e05ee70686f7f33b5ad03975012689b1b48e3f0e039ecd757bb4267b483b973be57c3f62cb74f37887e8eaae7a1aafe01edf
+    tar: "npm:^6.1.11"
+  checksum: a0818792dd9c0bd5307133fb9f799e674c340def018f8a36d2901447863617612309e8a6642c9b250cc88dee6a10b5fb2f6a3ab32af6e4a5344c6669a3e24605
   languageName: node
   linkType: hard
 
@@ -14664,7 +14673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.10.0, follow-redirects@npm:^1.14.7":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.10.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.8":
   version: 1.15.2
   resolution: "follow-redirects@npm:1.15.2"
   peerDependenciesMeta:
@@ -28410,7 +28419,7 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.0.5, tar@npm:^6.1.0, tar@npm:^6.1.11, tar@npm:^6.1.2":
+"tar@npm:^6.0.5, tar@npm:^6.1.11, tar@npm:^6.1.2":
   resolution: "tar@npm:6.1.11"
   dependencies:
     chownr: "npm:^2.0.0"
@@ -30302,14 +30311,14 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"wasm-pack@npm:^0.10.3":
-  version: 0.10.3
-  resolution: "wasm-pack@npm:0.10.3"
+"wasm-pack@npm:^0.11.1":
+  version: 0.11.1
+  resolution: "wasm-pack@npm:0.11.1"
   dependencies:
-    binary-install: "npm:^0.1.0"
+    binary-install: "npm:^1.0.1"
   bin:
     wasm-pack: run.js
-  checksum: 58f5c939eca068b4c103e2784590b89db8b1caa3ee02e510a7da71f61b4a2e0c190e8fd705369ff0bbf1eae419810555ee32b7a7c9fa83378639476acad2b5e5
+  checksum: 4b37e4df4c276be6de2746c1695316739a0dc95754501dcb738aa21daea465a2df256b473c2a356f4ca67b1c7e7635434a750a594ce53d2b759cab21dc8f8464
   languageName: node
   linkType: hard
 

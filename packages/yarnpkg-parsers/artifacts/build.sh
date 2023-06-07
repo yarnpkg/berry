@@ -14,7 +14,6 @@ fi
 
 export PATH="$BINARYEN_PATH/bin:$PATH"
 
-# TODO: Pass "--weak-refs" once https://github.com/rustwasm/wasm-pack/pull/937 is merged.
 # TODO: Enable simd after dropping support for Node 14.
 # TODO: Enable support for WASM reference types after it stabilizes.
 RUST_LOG=info yarn wasm-pack build \
@@ -22,6 +21,7 @@ RUST_LOG=info yarn wasm-pack build \
   --target nodejs \
   --out-dir ./pkg \
   --out-name build \
+  --weak-refs \
   . \
   -- \
   -Z build-std=std,panic_abort \

@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "pegjs": "^0.10.0",
-    "wasm-pack": "^0.10.3"
+    "wasm-pack": "^0.11.1"
   },
   "scripts": {
     "grammar:shell": "run pegjs -o sources/grammars/shell.js sources/grammars/shell.pegjs",
