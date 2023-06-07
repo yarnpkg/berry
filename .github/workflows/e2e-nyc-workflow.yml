@@ -9,8 +9,6 @@ on:
     - .github/actions/prepare/action.yml
     - .github/workflows/e2e-nyc-workflow.yml
     - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-pnp/sources/hook.js
-    - packages/yarnpkg-pnp/sources/esm-loader/built-loader.js
 
 name: 'E2E NYC'
 jobs:

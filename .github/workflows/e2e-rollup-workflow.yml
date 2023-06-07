@@ -9,8 +9,6 @@ on:
     - .github/actions/prepare/action.yml
     - .github/workflows/e2e-rollup-workflow.yml
     - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-pnp/sources/hook.js
-    - packages/yarnpkg-pnp/sources/esm-loader/built-loader.js
 
 name: 'E2E Rollup'
 jobs:
@@ -116,3 +114,5 @@ jobs:
         [[ "$(node dist/bundle.js)" = "{ app: 'style_app__3FC6W' }" ]]
 
         rm -rf src dist
+
+

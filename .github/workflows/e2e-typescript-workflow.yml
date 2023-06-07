@@ -10,8 +10,6 @@ on:
     - .github/workflows/e2e-typescript-workflow.yml
     - packages/plugin-compat/sources/patches/typescript.patch.ts
     - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-pnp/sources/hook.js
-    - packages/yarnpkg-pnp/sources/esm-loader/built-loader.js
 
 name: 'E2E TypeScript'
 jobs:
