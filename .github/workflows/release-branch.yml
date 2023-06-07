@@ -9,7 +9,7 @@ on:
 name: 'Release Branch'
 jobs:
   release:
-    name: 'Releasing a Patch Version'
+    name: 'Release a new stable version'
     runs-on: ubuntu-latest
 
     env:
@@ -52,8 +52,16 @@ jobs:
       run: |
         git config user.name "Yarn Bot"
         git config user.email nison.mael+yarnbot@gmail.com
+
+        OLD_VERSION=$(YARN_IGNORE_PATH=1 node ./packages/yarnpkg-cli/bin/yarn.js --version)
         ./scripts/release/01-release-tags.sh
+        NEW_VERSION=$(YARN_IGNORE_PATH=1 node ./packages/yarnpkg-cli/bin/yarn.js --version)
+
         git push --follow-tags
+
+        if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
+          gh release create "@yarnpkg/cli/$NEW_VERSION" --title "v$NEW_VERSION" --verify-tag --generate-notes --notes-start-tag "@yarnpkg/cli/$OLD_VERSION"
+        fi
 
     - name: 'Upload the releases'
       run: |
