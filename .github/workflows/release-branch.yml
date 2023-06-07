@@ -64,6 +64,10 @@ jobs:
 
     - name: 'Updates the stableVersion field'
       run: |
+        # Revert the change from "Build a binary for convenience"
+        git update-index --no-skip-worktree -- .yarnrc.yml
+        git checkout HEAD -- .yarnrc.yml
+
         RELEASE_COMMIT=$(git rev-parse HEAD)
         node ./scripts/stable-versions-store.js
         git fetch origin master
@@ -75,3 +79,4 @@ jobs:
         git checkout $RELEASE_COMMIT -- packages/*/bin/**
         git add .
         git commit -m 'Sync master with the changes from ${{github.event.inputs.branch}}'
+        git push
