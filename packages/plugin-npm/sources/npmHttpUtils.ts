@@ -81,8 +81,24 @@ export type GetPackageMetadataOptions = Omit<Options, 'ident'> /*& {
   version?: string;
 }*/;
 
-export async function getPackageMetadata(ident: Ident, {configuration, registry, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+/**
+ * Used to invalidate the cache when the format changes.
+ */
+export const CACHE_VERSION = 1;
+
+export async function getPackageMetadata(ident: Ident, {configuration, registry, headers, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
   ({registry} = normalizeRegistryOptions(configuration, {ident, registry}));
+
+  const registryFolder = getRegistryFolder(configuration, registry);
+  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json` as Filename);
+
+  let cachedMetadata: CachedMetadata | null = null;
+  try {
+    cachedMetadata = await xfs.readJsonPromise(identPath);
+  } catch {}
+
+  // if (version && typeof cachedMetadata?.metadata.versions[version] !== `undefined`)
+  // return cachedMetadata.metadata;
 
   return await get(getIdentUrl(ident), {
     ...rest,
@@ -90,32 +106,13 @@ export async function getPackageMetadata(ident: Ident, {configuration, registry,
     configuration,
     registry,
     ident,
-    wrapNetworkRequest: async (executor, options) => async () => {
-      // TODO: Use a cache key for the metadata cache.
-      const registryFolder = getRegistryFolder(configuration, registry!);
-      const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json` as Filename);
-
-      let cachedMetadata: CachedMetadata | null = null;
-      try {
-        cachedMetadata = await xfs.readJsonPromise(identPath);
-      } catch {}
-
-      // if (version && typeof cachedMetadata?.metadata.versions[version] !== `undefined`) {
-      //   return {
-      //     body: cachedMetadata.metadata,
-      //     headers: {},
-      //     statusCode: 304,
-      //   };
-      // }
-
-      // TODO: Find a less hacky way to compose headers.
-      options.headers = {
-        ...options.headers,
-        // We set both headers in case a registry doesn't support ETags
-        [`If-None-Match`]: cachedMetadata?.etag,
-        [`If-Modified-Since`]: cachedMetadata?.lastModified,
-      };
-
+    headers: {
+      ...headers,
+      // We set both headers in case a registry doesn't support ETags
+      [`If-None-Match`]: cachedMetadata?.etag,
+      [`If-Modified-Since`]: cachedMetadata?.lastModified,
+    },
+    wrapNetworkRequest: async executor => async () => {
       const response = await executor();
 
       if (response.statusCode === 304) {
@@ -153,11 +150,12 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
+  const versionFilename = `v${CACHE_VERSION}` as Filename;
 
   const parsed = new URL(registry);
   const registryFilename = toFilename(parsed.hostname);
 
-  return ppath.join(metadataFolder, registryFilename);
+  return ppath.join(metadataFolder, versionFilename, registryFilename);
 }
 
 function getMetadataFolder(configuration: Configuration) {
