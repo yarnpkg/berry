@@ -34,6 +34,16 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
   return wrapper;
 };
 
+export const generateRelayCompilerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`relay-compiler` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeManifest();
+
+  await wrapper.writeBinary(`cli.js` as PortablePath);
+
+  return wrapper;
+};
+
 export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`typescript-language-server` as PortablePath, {pnpApi, target});
 
@@ -291,6 +301,7 @@ export const BASE_SDKS: BaseSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerBaseWrapper],
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
+  [`relay-compiler`, generateRelayCompilerBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],
   [`typescript`, generateTypescriptBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],

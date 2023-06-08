@@ -178,6 +178,7 @@ export type SupportedSdk =
   | '@astrojs/language-server'
   | 'eslint'
   | 'prettier'
+  | 'relay-compiler'
   | 'typescript-language-server'
   | 'typescript'
   | 'svelte-language-server'

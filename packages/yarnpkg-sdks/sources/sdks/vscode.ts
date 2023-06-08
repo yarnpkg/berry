@@ -79,6 +79,22 @@ export const generatePrettierWrapper: GenerateIntegrationWrapper = async (pnpApi
   });
 };
 
+export const generateRelayCompilerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`relay.pathToRelay`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `cli.js` as PortablePath,
+      ),
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `meta.relay`,
+    ],
+  });
+};
+
 export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`typescript.tsdk`]: npath.fromPortablePath(
@@ -129,6 +145,7 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerWrapper],
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
+  [`relay-compiler`, generateRelayCompilerWrapper],
   [`typescript-language-server`, null],
   [`typescript`, generateTypescriptWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerWrapper],
