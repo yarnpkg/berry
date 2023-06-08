@@ -191,7 +191,7 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
 /**
  * Used to invalidate the on-disk cache when the format changes.
  */
-export const CACHE_VERSION = 1;
+const CACHE_VERSION = 1;
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
