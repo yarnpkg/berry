@@ -33,9 +33,9 @@ done
 RELEASE_DETAILS=$(yarn version apply --all --json ${APPLY_OPTIONS})
 RELEASE_SIZE=$(wc -l <<< "$RELEASE_DETAILS")
 
-if [[ $RELEASE_SIZE -eq 0 ]]; then
+if [[ -z $RELEASE_DETAILS ]]; then
   echo "No package to release"
-  exit 1
+  exit 0
 elif [[ $RELEASE_SIZE -eq 1 ]]; then
   COMMIT_MESSAGE="Releasing one new package"
 else
