@@ -66,17 +66,6 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-type CachedMetadata = {
-  metadata: PackageMetadata;
-  etag?: string;
-  lastModified?: string;
-};
-
-export type PackageMetadata = {
-  'dist-tags': Record<string, string>;
-  versions: Record<string, any>;
-};
-
 export type GetPackageMetadataOptions = Omit<Options, 'ident'> & {
   /**
    * Warning: This option will return all cached metadata if the version is found, but the rest of the metadata can be stale.
@@ -91,10 +80,12 @@ export type GetPackageMetadataOptions = Omit<Options, 'ident'> & {
 const PACKAGE_METADATA_CACHE = new Map<IdentHash, PackageMetadata>();
 
 /**
- * Used to invalidate the on-disk cache when the format changes.
+ * Caches and returns the package metadata for the given ident.
+ *
+ * Note: This function only caches and returns specific fields from the metadata.
+ * If you need other fields, use the uncached {@link get} or consider whether it would make more sense to extract
+ * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
  */
-export const CACHE_VERSION = 1;
-
 export async function getPackageMetadata(ident: Ident, {configuration, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
   const cachedInMemory = PACKAGE_METADATA_CACHE.get(ident.identHash);
   if (cachedInMemory)
@@ -159,9 +150,48 @@ export async function getPackageMetadata(ident: Ident, {configuration, registry,
   });
 }
 
+type CachedMetadata = {
+  metadata: PackageMetadata;
+  etag?: string;
+  lastModified?: string;
+};
+
+export type PackageMetadata = {
+  'dist-tags': Record<string, string>;
+  versions: Record<string, any>;
+};
+
+// Don't forget to update the cache key when changing fields!
 function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
-  return pick(metadata, [`dist-tags`, `versions`]);
+  return {
+    'dist-tags': metadata[`dist-tags`],
+    versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
+      key,
+      pick(value, [
+        `deprecated`,
+        `dist.tarball`,
+
+        `bin`,
+        `scripts`,
+
+        `os`,
+        `cpu`,
+        `libc`,
+
+        `dependencies`,
+        `dependenciesMeta`,
+        `optionalDependencies`,
+
+        `peerDependencies`,
+        `peerDependenciesMeta`,
+      ])])),
+  };
 }
+
+/**
+ * Used to invalidate the on-disk cache when the format changes.
+ */
+export const CACHE_VERSION = 1;
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
