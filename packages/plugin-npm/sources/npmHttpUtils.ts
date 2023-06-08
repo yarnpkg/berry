@@ -1,13 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                           from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs}                                                   from '@yarnpkg/fslib';
-import {prompt}                                                                             from 'enquirer';
-import pick                                                                                 from 'lodash/pick';
-import {URL}                                                                                from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                      from '@yarnpkg/core';
+import {Filename, ppath, toFilename, xfs}                                                              from '@yarnpkg/fslib';
+import {prompt}                                                                                        from 'enquirer';
+import pick                                                                                            from 'lodash/pick';
+import {URL}                                                                                           from 'url';
 
-import {Hooks}                                                                              from './index';
-import * as npmConfigUtils                                                                  from './npmConfigUtils';
-import {MapLike}                                                                            from './npmConfigUtils';
+import {Hooks}                                                                                         from './index';
+import * as npmConfigUtils                                                                             from './npmConfigUtils';
+import {MapLike}                                                                                       from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -81,20 +81,30 @@ export type GetPackageMetadataOptions = Omit<Options, 'ident'> /*& {
   version?: string;
 }*/;
 
+// We use 2 different caches:
+// - an in-memory cache, to avoid hitting the disk and the network more than once per process for each package
+// - an on-disk cache, for exact version matches and to avoid refetching the metadata if the resource hasn't changed on the server
+
+const PACKAGE_METADATA_CACHE = new Map<IdentHash, PackageMetadata>();
+
 /**
- * Used to invalidate the cache when the format changes.
+ * Used to invalidate the on-disk cache when the format changes.
  */
 export const CACHE_VERSION = 1;
 
 export async function getPackageMetadata(ident: Ident, {configuration, registry, headers, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+  const cachedInMemory = PACKAGE_METADATA_CACHE.get(ident.identHash);
+  if (cachedInMemory)
+    return cachedInMemory;
+
   ({registry} = normalizeRegistryOptions(configuration, {ident, registry}));
 
   const registryFolder = getRegistryFolder(configuration, registry);
   const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json` as Filename);
 
-  let cachedMetadata: CachedMetadata | null = null;
+  let cachedOnDisk: CachedMetadata | null = null;
   try {
-    cachedMetadata = await xfs.readJsonPromise(identPath);
+    cachedOnDisk = await xfs.readJsonPromise(identPath);
   } catch {}
 
   // if (version && typeof cachedMetadata?.metadata.versions[version] !== `undefined`)
@@ -109,23 +119,25 @@ export async function getPackageMetadata(ident: Ident, {configuration, registry,
     headers: {
       ...headers,
       // We set both headers in case a registry doesn't support ETags
-      [`If-None-Match`]: cachedMetadata?.etag,
-      [`If-Modified-Since`]: cachedMetadata?.lastModified,
+      [`If-None-Match`]: cachedOnDisk?.etag,
+      [`If-Modified-Since`]: cachedOnDisk?.lastModified,
     },
     wrapNetworkRequest: async executor => async () => {
       const response = await executor();
 
       if (response.statusCode === 304) {
-        if (cachedMetadata === null)
+        if (cachedOnDisk === null)
           throw new Error(`Assertion failed: cachedMetadata should not be null`);
 
         return {
           ...response,
-          body: cachedMetadata.metadata,
+          body: cachedOnDisk.metadata,
         };
       }
 
       const packageMetadata = pickPackageMetadata(JSON.parse(response.body.toString()));
+
+      PACKAGE_METADATA_CACHE.set(ident.identHash, packageMetadata);
 
       const metadata: CachedMetadata = {
         metadata: packageMetadata,

@@ -201,13 +201,19 @@ export async function request(target: string | URL, body: Body, {configuration, 
   return await executor();
 }
 
-export async function get(target: string, {configuration, jsonResponse, customErrorMessage, ...rest}: Options) {
-  let entry = miscUtils.getFactoryWithDefault(cache, target, () => {
-    return prettyNetworkError(request(target, null, {configuration, ...rest}), {configuration, customErrorMessage}).then(response => {
-      cache.set(target, response.body);
-      return response.body;
+export async function get(target: string, {configuration, jsonResponse, customErrorMessage, wrapNetworkRequest, ...rest}: Options) {
+  const runRequest = () => prettyNetworkError(request(target, null, {configuration, wrapNetworkRequest, ...rest}), {configuration, customErrorMessage})
+    .then(response => response.body);
+
+  // We cannot cache responses when wrapNetworkRequest is used, as it can differ between calls
+  let entry = typeof wrapNetworkRequest !== `undefined`
+    ? runRequest()
+    : miscUtils.getFactoryWithDefault(cache, target, () => {
+      return runRequest().then(body => {
+        cache.set(target, body);
+        return body;
+      });
     });
-  });
 
   if (miscUtils.isThenable(entry))
     entry = await entry;
