@@ -29,3 +29,16 @@ index f292bccdd049835ded848da83a6daac1e4f70416..54c4ebf36dc0c8f7f2580a5e69869848
                  leading: true,
                  trailing: true
              });
+diff --git a/package.json b/package.json
+index d37e67f02be29872156c7d155a960c1e75a99c4a..540950f2a1befe733fb248d3a03d59708603b5a2 100644
+--- a/package.json
++++ b/package.json
+@@ -49,7 +49,7 @@
+ 		"lodash": "^4.17.20",
+ 		"patch-console": "^1.0.0",
+ 		"react-devtools-core": "^4.6.0",
+-		"react-reconciler": "^0.24.0",
++		"react-reconciler": "0.24.0",
+ 		"scheduler": "^0.18.0",
+ 		"signal-exit": "^3.0.2",
+ 		"slice-ansi": "^3.0.0",

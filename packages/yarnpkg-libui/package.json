@@ -8,12 +8,12 @@
     "sources"
   ],
   "peerDependencies": {
-    "ink": "^3.0.8",
+    "ink": "3.1.0",
     "react": "^16.8.4"
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
-    "ink": "^3.0.8",
+    "ink": "3.1.0",
     "react": "^16.13.1"
   },
   "repository": {

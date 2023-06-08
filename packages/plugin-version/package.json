@@ -12,7 +12,7 @@
     "@yarnpkg/libui": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "clipanion": "^3.2.0-rc.10",
-    "ink": "^3.0.8",
+    "ink": "3.1.0",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "semver": "^7.1.2",
