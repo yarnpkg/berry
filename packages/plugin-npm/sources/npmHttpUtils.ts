@@ -77,9 +77,12 @@ export type PackageMetadata = {
   versions: Record<string, any>;
 };
 
-export type GetPackageMetadataOptions = Omit<Options, 'ident'> /*& {
+export type GetPackageMetadataOptions = Omit<Options, 'ident'> & {
+  /**
+   * Warning: This option will return all cached metadata if the version is found, but the rest of the metadata can be stale.
+   */
   version?: string;
-}*/;
+};
 
 // We use 2 different caches:
 // - an in-memory cache, to avoid hitting the disk and the network more than once per process for each package
@@ -92,7 +95,7 @@ const PACKAGE_METADATA_CACHE = new Map<IdentHash, PackageMetadata>();
  */
 export const CACHE_VERSION = 1;
 
-export async function getPackageMetadata(ident: Ident, {configuration, registry, headers, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+export async function getPackageMetadata(ident: Ident, {configuration, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
   const cachedInMemory = PACKAGE_METADATA_CACHE.get(ident.identHash);
   if (cachedInMemory)
     return cachedInMemory;
@@ -107,8 +110,8 @@ export async function getPackageMetadata(ident: Ident, {configuration, registry,
     cachedOnDisk = await xfs.readJsonPromise(identPath);
   } catch {}
 
-  // if (version && typeof cachedMetadata?.metadata.versions[version] !== `undefined`)
-  // return cachedMetadata.metadata;
+  if (version && typeof cachedOnDisk?.metadata.versions[version] !== `undefined`)
+    return cachedOnDisk.metadata;
 
   return await get(getIdentUrl(ident), {
     ...rest,

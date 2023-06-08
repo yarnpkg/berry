@@ -49,7 +49,7 @@ export class NpmSemverResolver implements Resolver {
 
     const registryData = await npmHttpUtils.getPackageMetadata(descriptor, {
       configuration: opts.project.configuration,
-      // version: semver.valid(range.raw) ? range.raw : undefined,
+      version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
     const candidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
@@ -127,7 +127,7 @@ export class NpmSemverResolver implements Resolver {
 
     const registryData = await npmHttpUtils.getPackageMetadata(locator, {
       configuration: opts.project.configuration,
-      // version,
+      version,
     });
 
     if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
