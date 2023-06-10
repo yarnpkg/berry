@@ -195,7 +195,7 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
 /**
  * Used to invalidate the on-disk cache when the format changes.
  */
-const CACHE_VERSION = hashUtils.makeHash(...CACHED_FIELDS);
+const CACHE_KEY = hashUtils.makeHash(...CACHED_FIELDS).slice(0, 6);
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
@@ -203,7 +203,7 @@ function getRegistryFolder(configuration: Configuration, registry: string) {
   const parsed = new URL(registry);
   const registryFilename = toFilename(parsed.hostname);
 
-  return ppath.join(metadataFolder, CACHE_VERSION as Filename, registryFilename);
+  return ppath.join(metadataFolder, CACHE_KEY as Filename, registryFilename);
 }
 
 function getMetadataFolder(configuration: Configuration) {
