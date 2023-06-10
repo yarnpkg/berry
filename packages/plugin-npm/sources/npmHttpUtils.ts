@@ -168,6 +168,8 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
     versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
       key,
       pick(value, [
+        `name`,
+
         `deprecated`,
         `dist.tarball`,
 
