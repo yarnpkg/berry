@@ -1,13 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                                      from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs}                                                              from '@yarnpkg/fslib';
-import {prompt}                                                                                        from 'enquirer';
-import pick                                                                                            from 'lodash/pick';
-import {URL}                                                                                           from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                                 from '@yarnpkg/core';
+import {Filename, ppath, toFilename, xfs}                                                                         from '@yarnpkg/fslib';
+import {prompt}                                                                                                   from 'enquirer';
+import pick                                                                                                       from 'lodash/pick';
+import {URL}                                                                                                      from 'url';
 
-import {Hooks}                                                                                         from './index';
-import * as npmConfigUtils                                                                             from './npmConfigUtils';
-import {MapLike}                                                                                       from './npmConfigUtils';
+import {Hooks}                                                                                                    from './index';
+import * as npmConfigUtils                                                                                        from './npmConfigUtils';
+import {MapLike}                                                                                                  from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -161,48 +161,49 @@ export type PackageMetadata = {
   versions: Record<string, any>;
 };
 
-// Don't forget to update the cache key when changing fields!
+const CACHED_FIELDS = [
+  `name`,
+
+  `deprecated`,
+  `dist.tarball`,
+
+  `bin`,
+  `scripts`,
+
+  `os`,
+  `cpu`,
+  `libc`,
+
+  `dependencies`,
+  `dependenciesMeta`,
+  `optionalDependencies`,
+
+  `peerDependencies`,
+  `peerDependenciesMeta`,
+];
+
 function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
   return {
     'dist-tags': metadata[`dist-tags`],
     versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
       key,
-      pick(value, [
-        `name`,
-
-        `deprecated`,
-        `dist.tarball`,
-
-        `bin`,
-        `scripts`,
-
-        `os`,
-        `cpu`,
-        `libc`,
-
-        `dependencies`,
-        `dependenciesMeta`,
-        `optionalDependencies`,
-
-        `peerDependencies`,
-        `peerDependenciesMeta`,
-      ])])),
+      pick(value, CACHED_FIELDS),
+    ])),
   };
 }
 
 /**
  * Used to invalidate the on-disk cache when the format changes.
  */
-const CACHE_VERSION = 1;
+const CACHE_VERSION = hashUtils.makeHash(...CACHED_FIELDS);
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
-  const versionFilename = `v${CACHE_VERSION}` as Filename;
 
   const parsed = new URL(registry);
   const registryFilename = toFilename(parsed.hostname);
 
-  return ppath.join(metadataFolder, versionFilename, registryFilename);
+  return ppath.join(metadataFolder, CACHE_VERSION as Filename, registryFilename);
 }
 
 function getMetadataFolder(configuration: Configuration) {
