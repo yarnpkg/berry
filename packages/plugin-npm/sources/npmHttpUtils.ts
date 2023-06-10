@@ -94,7 +94,7 @@ export async function getPackageMetadata(ident: Ident, {configuration, registry,
   ({registry} = normalizeRegistryOptions(configuration, {ident, registry}));
 
   const registryFolder = getRegistryFolder(configuration, registry);
-  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json` as Filename);
+  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
 
   let cachedOnDisk: CachedMetadata | null = null;
   try {
@@ -204,7 +204,7 @@ function getRegistryFolder(configuration: Configuration, registry: string) {
 }
 
 function getMetadataFolder(configuration: Configuration) {
-  return ppath.join(configuration.get(`globalFolder`), `npm-metadata` as Filename);
+  return ppath.join(configuration.get(`globalFolder`), `npm-metadata`);
 }
 
 export async function get(path: string, {configuration, headers, authType, ...rest}: Options) {
