@@ -42,6 +42,22 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/gatsby"\
     },\
     {\
+      "name": "gatsby-plugin-algolia-docsearch",\
+      "reference": "workspace:packages/gatsby/gatsby-plugin-algolia-docsearch"\
+    },\
+    {\
+      "name": "gatsby-plugin-clipanion-cli",\
+      "reference": "workspace:packages/gatsby/gatsby-plugin-clipanion-cli"\
+    },\
+    {\
+      "name": "gatsby-plugin-yarn-introspection",\
+      "reference": "workspace:packages/gatsby/gatsby-plugin-yarn-introspection"\
+    },\
+    {\
+      "name": "typedoc-plugin-yarn",\
+      "reference": "workspace:packages/gatsby/typedoc-plugin-yarn"\
+    },\
+    {\
       "name": "@yarnpkg/plugin-compat",\
       "reference": "workspace:packages/plugin-compat"\
     },\
@@ -244,9 +260,13 @@ const RAW_RUNTIME_STATE =
     ["@yarnpkg/shell", ["workspace:packages/yarnpkg-shell"]],\
     ["@yarnpkg/types", ["workspace:packages/yarnpkg-types"]],\
     ["acceptance-tests", ["workspace:packages/acceptance-tests"]],\
+    ["gatsby-plugin-algolia-docsearch", ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-algolia-docsearch", "workspace:packages/gatsby/gatsby-plugin-algolia-docsearch"]],\
+    ["gatsby-plugin-clipanion-cli", ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-clipanion-cli", "workspace:packages/gatsby/gatsby-plugin-clipanion-cli"]],\
+    ["gatsby-plugin-yarn-introspection", ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-yarn-introspection", "workspace:packages/gatsby/gatsby-plugin-yarn-introspection"]],\
     ["pkg-tests-core", ["workspace:packages/acceptance-tests/pkg-tests-core"]],\
     ["pkg-tests-fixtures", ["workspace:packages/acceptance-tests/pkg-tests-fixtures"]],\
     ["pkg-tests-specs", ["workspace:packages/acceptance-tests/pkg-tests-specs"]],\
+    ["typedoc-plugin-yarn", ["workspace:packages/gatsby/typedoc-plugin-yarn"]],\
     ["vscode-zipfs", ["workspace:packages/vscode-zipfs"]]\
   ],\
   "fallbackPool": [\
@@ -13243,9 +13263,9 @@ const RAW_RUNTIME_STATE =
           ["es6-promise", "npm:4.2.6"],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
           ["gatsby-image", "npm:3.7.0"],\
-          ["gatsby-plugin-algolia-docsearch", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-algolia-docsearch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["gatsby-plugin-algolia-docsearch", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-algolia-docsearch"],\
           ["gatsby-plugin-catch-links", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
-          ["gatsby-plugin-clipanion-cli", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["gatsby-plugin-clipanion-cli", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-clipanion-cli"],\
           ["gatsby-plugin-emotion", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.7.0"],\
           ["gatsby-plugin-favicon", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.1.6"],\
           ["gatsby-plugin-manifest", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
@@ -13254,7 +13274,7 @@ const RAW_RUNTIME_STATE =
           ["gatsby-plugin-react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.7.0"],\
           ["gatsby-plugin-remove-trailing-slashes", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
           ["gatsby-plugin-sharp", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.7.0"],\
-          ["gatsby-plugin-yarn-introspection", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-yarn-introspection::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["gatsby-plugin-yarn-introspection", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-yarn-introspection"],\
           ["gatsby-remark-autolink-headers", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:4.4.0"],\
           ["gatsby-remark-prismjs", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:5.4.0"],\
           ["gatsby-remark-table-of-contents", "npm:1.0.0"],\
@@ -13298,7 +13318,7 @@ const RAW_RUNTIME_STATE =
           ["tslib", "npm:2.4.0"],\
           ["typedoc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
           ["typedoc-neo-theme", "npm:1.0.7"],\
-          ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
           ["typescript", "patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>::version=5.1.1-rc&hash=5da071"],\
           ["unescape-html", "npm:1.1.0"],\
           ["unfetch", "npm:4.1.0"],\
@@ -31656,17 +31676,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-plugin-algolia-docsearch", [\
-      ["portal:./gatsby-plugin-algolia-docsearch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
-        "packageLocation": "./packages/gatsby/gatsby-plugin-algolia-docsearch/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-algolia-docsearch", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-algolia-docsearch-virtual-4ac2a63541/1/packages/gatsby/gatsby-plugin-algolia-docsearch/",\
         "packageDependencies": [\
-          ["gatsby-plugin-algolia-docsearch", "portal:./gatsby-plugin-algolia-docsearch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-algolia-docsearch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-algolia-docsearch-virtual-9189790fb1/1/packages/gatsby/gatsby-plugin-algolia-docsearch/",\
-        "packageDependencies": [\
-          ["gatsby-plugin-algolia-docsearch", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-algolia-docsearch::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["gatsby-plugin-algolia-docsearch", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-algolia-docsearch"],\
           ["@types/gatsby", null],\
           ["@types/react", "npm:16.9.2"],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"],\
@@ -31677,6 +31690,13 @@ const RAW_RUNTIME_STATE =
           "@types/react",\
           "gatsby",\
           "react"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["workspace:packages/gatsby/gatsby-plugin-algolia-docsearch", {\
+        "packageLocation": "./packages/gatsby/gatsby-plugin-algolia-docsearch/",\
+        "packageDependencies": [\
+          ["gatsby-plugin-algolia-docsearch", "workspace:packages/gatsby/gatsby-plugin-algolia-docsearch"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -31706,23 +31726,23 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-plugin-clipanion-cli", [\
-      ["portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
-        "packageLocation": "./packages/gatsby/gatsby-plugin-clipanion-cli/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-clipanion-cli", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-clipanion-cli-virtual-bc6f01bf9e/1/packages/gatsby/gatsby-plugin-clipanion-cli/",\
         "packageDependencies": [\
-          ["gatsby-plugin-clipanion-cli", "portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-clipanion-cli-virtual-710c0cb5ac/1/packages/gatsby/gatsby-plugin-clipanion-cli/",\
-        "packageDependencies": [\
-          ["gatsby-plugin-clipanion-cli", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-clipanion-cli::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["gatsby-plugin-clipanion-cli", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-clipanion-cli"],\
           ["@types/gatsby", null],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"]\
         ],\
         "packagePeers": [\
           "@types/gatsby",\
           "gatsby"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["workspace:packages/gatsby/gatsby-plugin-clipanion-cli", {\
+        "packageLocation": "./packages/gatsby/gatsby-plugin-clipanion-cli/",\
+        "packageDependencies": [\
+          ["gatsby-plugin-clipanion-cli", "workspace:packages/gatsby/gatsby-plugin-clipanion-cli"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -32146,17 +32166,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["gatsby-plugin-yarn-introspection", [\
-      ["portal:./gatsby-plugin-yarn-introspection::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
-        "packageLocation": "./packages/gatsby/gatsby-plugin-yarn-introspection/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-yarn-introspection", {\
+        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-yarn-introspection-virtual-35f7d3c284/1/packages/gatsby/gatsby-plugin-yarn-introspection/",\
         "packageDependencies": [\
-          ["gatsby-plugin-yarn-introspection", "portal:./gatsby-plugin-yarn-introspection::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-yarn-introspection::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
-        "packageLocation": "./.yarn/__virtual__/gatsby-plugin-yarn-introspection-virtual-af13fabf4c/1/packages/gatsby/gatsby-plugin-yarn-introspection/",\
-        "packageDependencies": [\
-          ["gatsby-plugin-yarn-introspection", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#portal:./gatsby-plugin-yarn-introspection::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["gatsby-plugin-yarn-introspection", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/gatsby-plugin-yarn-introspection"],\
           ["@types/gatsby", null],\
           ["@yarnpkg/monorepo", "workspace:."],\
           ["gatsby", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.14.0"]\
@@ -32164,6 +32177,14 @@ const RAW_RUNTIME_STATE =
         "packagePeers": [\
           "@types/gatsby",\
           "gatsby"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["workspace:packages/gatsby/gatsby-plugin-yarn-introspection", {\
+        "packageLocation": "./packages/gatsby/gatsby-plugin-yarn-introspection/",\
+        "packageDependencies": [\
+          ["gatsby-plugin-yarn-introspection", "workspace:packages/gatsby/gatsby-plugin-yarn-introspection"],\
+          ["@yarnpkg/monorepo", "workspace:."]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -48501,7 +48522,7 @@ const RAW_RUNTIME_STATE =
           ["shelljs", "npm:0.8.5"],\
           ["typedoc-default-themes", "npm:0.8.0-0"],\
           ["typedoc-neo-theme", "npm:1.0.7"],\
-          ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
           ["typescript", "patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>::version=5.1.1-rc&hash=5da071"]\
         ],\
         "packagePeers": [\
@@ -48516,10 +48537,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669", {\
-        "packageLocation": "./.yarn/__virtual__/typedoc-virtual-33cddb5a93/0/cache/typedoc-patch-5e80420f8a-b9bb937d6c.zip/node_modules/typedoc/",\
+      ["virtual:234c24dab6d8d173022d1e887b5777360fbbfff040147d5c563132a71af9faa4183b1305866b789dcd418b462158a2e2b9300aff731f1498ccca4e41793976bc#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669", {\
+        "packageLocation": "./.yarn/__virtual__/typedoc-virtual-fbc036965e/0/cache/typedoc-patch-5e80420f8a-b9bb937d6c.zip/node_modules/typedoc/",\
         "packageDependencies": [\
-          ["typedoc", "virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
+          ["typedoc", "virtual:234c24dab6d8d173022d1e887b5777360fbbfff040147d5c563132a71af9faa4183b1305866b789dcd418b462158a2e2b9300aff731f1498ccca4e41793976bc#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
           ["@strictsoftware/typedoc-plugin-monorepo", null],\
           ["@types/minimatch", "npm:3.0.3"],\
           ["@types/strictsoftware__typedoc-plugin-monorepo", null],\
@@ -48536,7 +48557,7 @@ const RAW_RUNTIME_STATE =
           ["shelljs", "npm:0.8.5"],\
           ["typedoc-default-themes", "npm:0.8.0-0"],\
           ["typedoc-neo-theme", null],\
-          ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
+          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
           ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=3bd3d3"]\
         ],\
         "packagePeers": [\
@@ -48611,11 +48632,11 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["typedoc-plugin-yarn", [\
-      ["portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby", {\
+      ["workspace:packages/gatsby/typedoc-plugin-yarn", {\
         "packageLocation": "./packages/gatsby/typedoc-plugin-yarn/",\
         "packageDependencies": [\
-          ["typedoc-plugin-yarn", "portal:./typedoc-plugin-yarn::locator=%40yarnpkg%2Fgatsby%40workspace%3Apackages%2Fgatsby"],\
-          ["typedoc", "virtual:258c95d7dd1da51c9c624f238593e0bc1c34b7bd8de0b85fefd9552f2220a4555cad458eb72d96f0c7b341784726b6a8e9c8b4e838a9d27aac3796b29de01981#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
+          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
+          ["typedoc", "virtual:234c24dab6d8d173022d1e887b5777360fbbfff040147d5c563132a71af9faa4183b1305866b789dcd418b462158a2e2b9300aff731f1498ccca4e41793976bc#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
           ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=3bd3d3"]\
         ],\
         "linkType": "SOFT"\
