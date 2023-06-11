@@ -7,5 +7,14 @@
   },
   "dependencies": {
     "@yarnpkg/monorepo": "workspace:^"
+  },
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "license": "BSD-2-Clause",
+  "repository": {
+    "directory": "packages/gatsby/gatsby-plugin-yarn-introspection",
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

@@ -266,7 +266,7 @@ const RAW_RUNTIME_STATE =
     ["pkg-tests-core", ["workspace:packages/acceptance-tests/pkg-tests-core"]],\
     ["pkg-tests-fixtures", ["workspace:packages/acceptance-tests/pkg-tests-fixtures"]],\
     ["pkg-tests-specs", ["workspace:packages/acceptance-tests/pkg-tests-specs"]],\
-    ["typedoc-plugin-yarn", ["workspace:packages/gatsby/typedoc-plugin-yarn"]],\
+    ["typedoc-plugin-yarn", ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"]],\
     ["vscode-zipfs", ["workspace:packages/vscode-zipfs"]]\
   ],\
   "fallbackPool": [\
@@ -13318,7 +13318,7 @@ const RAW_RUNTIME_STATE =
           ["tslib", "npm:2.4.0"],\
           ["typedoc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
           ["typedoc-neo-theme", "npm:1.0.7"],\
-          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
+          ["typedoc-plugin-yarn", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/typedoc-plugin-yarn"],\
           ["typescript", "patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>::version=5.1.1-rc&hash=5da071"],\
           ["unescape-html", "npm:1.1.0"],\
           ["unfetch", "npm:4.1.0"],\
@@ -48522,43 +48522,8 @@ const RAW_RUNTIME_STATE =
           ["shelljs", "npm:0.8.5"],\
           ["typedoc-default-themes", "npm:0.8.0-0"],\
           ["typedoc-neo-theme", "npm:1.0.7"],\
-          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
+          ["typedoc-plugin-yarn", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/typedoc-plugin-yarn"],\
           ["typescript", "patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>::version=5.1.1-rc&hash=5da071"]\
-        ],\
-        "packagePeers": [\
-          "@strictsoftware/typedoc-plugin-monorepo",\
-          "@types/strictsoftware__typedoc-plugin-monorepo",\
-          "@types/typedoc-neo-theme",\
-          "@types/typedoc-plugin-yarn",\
-          "@types/typescript",\
-          "typedoc-neo-theme",\
-          "typedoc-plugin-yarn",\
-          "typescript"\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["virtual:234c24dab6d8d173022d1e887b5777360fbbfff040147d5c563132a71af9faa4183b1305866b789dcd418b462158a2e2b9300aff731f1498ccca4e41793976bc#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669", {\
-        "packageLocation": "./.yarn/__virtual__/typedoc-virtual-fbc036965e/0/cache/typedoc-patch-5e80420f8a-b9bb937d6c.zip/node_modules/typedoc/",\
-        "packageDependencies": [\
-          ["typedoc", "virtual:234c24dab6d8d173022d1e887b5777360fbbfff040147d5c563132a71af9faa4183b1305866b789dcd418b462158a2e2b9300aff731f1498ccca4e41793976bc#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
-          ["@strictsoftware/typedoc-plugin-monorepo", null],\
-          ["@types/minimatch", "npm:3.0.3"],\
-          ["@types/strictsoftware__typedoc-plugin-monorepo", null],\
-          ["@types/typedoc-neo-theme", null],\
-          ["@types/typedoc-plugin-yarn", null],\
-          ["@types/typescript", null],\
-          ["fs-extra", "npm:8.1.0"],\
-          ["handlebars", "npm:4.7.3"],\
-          ["highlight.js", "npm:9.18.1"],\
-          ["lodash", "npm:4.17.21"],\
-          ["marked", "npm:0.8.1"],\
-          ["minimatch", "npm:3.1.2"],\
-          ["progress", "npm:2.0.3"],\
-          ["shelljs", "npm:0.8.5"],\
-          ["typedoc-default-themes", "npm:0.8.0-0"],\
-          ["typedoc-neo-theme", null],\
-          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
-          ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=3bd3d3"]\
         ],\
         "packagePeers": [\
           "@strictsoftware/typedoc-plugin-monorepo",\
@@ -48632,12 +48597,27 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["typedoc-plugin-yarn", [\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/typedoc-plugin-yarn", {\
+        "packageLocation": "./.yarn/__virtual__/typedoc-plugin-yarn-virtual-5bff24a990/1/packages/gatsby/typedoc-plugin-yarn/",\
+        "packageDependencies": [\
+          ["typedoc-plugin-yarn", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#workspace:packages/gatsby/typedoc-plugin-yarn"],\
+          ["@types/typedoc", null],\
+          ["@types/typescript", null],\
+          ["typedoc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
+          ["typescript", "patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>::version=5.1.1-rc&hash=5da071"]\
+        ],\
+        "packagePeers": [\
+          "@types/typedoc",\
+          "@types/typescript",\
+          "typedoc",\
+          "typescript"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
       ["workspace:packages/gatsby/typedoc-plugin-yarn", {\
         "packageLocation": "./packages/gatsby/typedoc-plugin-yarn/",\
         "packageDependencies": [\
-          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"],\
-          ["typedoc", "virtual:234c24dab6d8d173022d1e887b5777360fbbfff040147d5c563132a71af9faa4183b1305866b789dcd418b462158a2e2b9300aff731f1498ccca4e41793976bc#patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch::version=0.17.0-3&hash=803669"],\
-          ["typescript", "patch:typescript@npm%3A3.9.10#optional!builtin<compat/typescript>::version=3.9.10&hash=3bd3d3"]\
+          ["typedoc-plugin-yarn", "workspace:packages/gatsby/typedoc-plugin-yarn"]\
         ],\
         "linkType": "SOFT"\
       }]\

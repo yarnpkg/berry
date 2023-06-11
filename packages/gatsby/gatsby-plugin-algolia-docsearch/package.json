@@ -5,5 +5,14 @@
   "peerDependencies": {
     "gatsby": "*",
     "react": "*"
+  },
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "license": "BSD-2-Clause",
+  "repository": {
+    "directory": "packages/gatsby/gatsby-plugin-algolia-docsearch",
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }
