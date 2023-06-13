@@ -2,24 +2,82 @@ export {};
 
 describe(`Commands`, () => {
   describe(`npm audit`, () => {
-  // TODO
-  // test ignore as flag
-  // test exclude as flag
-  // test ignore as config
-  // test exclude as config
-  // test combinations
-  // test json
-  // test environment
-  // test severity
-  // test recursive
-    test.todo(`it should report vulnerable packages`);
-    test.todo(`it should exclude packages`);
-    test.todo(`it should only exclude excluded packages`);
-    test.todo(`it should ignore advisories`);
-    test.todo(`it should only ignore ignored advisories`);
-    test.todo(`it should return results as JSON`);
-    test.todo(`it should only use the specified environment`);
-    test.todo(`it should only use the specified severity level`);
-    test.todo(`it should recurse packages to audit`);
+    test(
+      `it should return vulnerable packages`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);
+      }),
+    );
+
+    test(
+      `it shouldn't return vulnerable packages if the current version isn't affected`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable`]: `1.1.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`npm`, `audit`);
+      }),
+    );
+
+    test(
+      `it shouldn't detect transitive vulnerable packages by default`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`npm`, `audit`);
+      }),
+    );
+
+    test(
+      `it should detect transitive vulnerable packages when requested`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `-R`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);
+      }),
+    );
+
+    test(
+      `it should allow excluding packages`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`npm`, `audit`, `--exclude`, `vulnerable`);
+      }),
+    );
+
+    test(
+      `it should allow ignoring advisories`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`npm`, `audit`, `--ignore`, `1`);
+      }),
+    );
   });
 });

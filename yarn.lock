@@ -7042,7 +7042,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.3.0"
+    typanion: "npm:^3.12.1"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
   languageName: unknown
@@ -7477,7 +7477,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.3.0"
+    typanion: "npm:^3.12.1"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -7647,7 +7647,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.3.0"
+    typanion: "npm:^3.12.1"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -7829,7 +7829,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.3.0"
+    typanion: "npm:^3.12.1"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -23442,6 +23442,7 @@ pem@dexus/pem:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/plugin-npm-cli": "workspace:^"
     finalhandler: "npm:^1.1.2"
     invariant: "npm:^2.2.4"
     pem: dexus/pem
@@ -23451,6 +23452,7 @@ pem@dexus/pem:
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
     tslib: "npm:^2.4.0"
+    typanion: "npm:^3.12.1"
     uuid: "npm:^8.3.2"
   languageName: unknown
   linkType: soft
@@ -29023,7 +29025,14 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typanion@npm:^3.3.0, typanion@npm:^3.3.1":
+"typanion@npm:^3.12.1":
+  version: 3.12.1
+  resolution: "typanion@npm:3.12.1"
+  checksum: 492540c6ac09c20b1693dd4ca4278f95d3771892c551aad26844faec0bbbdafc28c72b0c0df60ac68252b1fade7e0e664df517d6f0be702c32929368814373c2
+  languageName: node
+  linkType: hard
+
+"typanion@npm:^3.3.1":
   version: 3.3.2
   resolution: "typanion@npm:3.3.2"
   checksum: e67391884ae7db98f588cedb04fe6a94025d3469958950c06a19a1a003ad136ecfc2be37fc82b3262b375c02f9e50394ed6cf89b9a3af30cd608bb13664dec9e
