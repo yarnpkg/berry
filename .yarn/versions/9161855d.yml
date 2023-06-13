@@ -19,7 +19,5 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
-  - "@yarnpkg/doctor"
-
-undecided:
   - "@yarnpkg/core"
+  - "@yarnpkg/doctor"
