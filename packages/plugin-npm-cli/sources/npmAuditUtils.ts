@@ -1,7 +1,7 @@
-import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator} from '@yarnpkg/core';
-import semver                                                                                    from  'semver';
+import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator, LocatorHash} from '@yarnpkg/core';
+import semver                                                                                                 from  'semver';
 
-import * as npmAuditTypes                                                                        from './npmAuditTypes';
+import * as npmAuditTypes                                                                                     from './npmAuditTypes';
 
 export const allSeverities = [
   npmAuditTypes.Severity.Info,
@@ -87,35 +87,40 @@ export function getTopLevelDependencies(project: Project, workspace: Workspace, 
     npmAuditTypes.Environment.Production,
   ].includes(environment);
 
-  if (includeDependencies)
-    for (const workspace of workspaces)
-      for (const dependency of workspace.anchoredPackage.dependencies.values())
-        if (!workspace.manifest.devDependencies.has(dependency.identHash))
-          if (structUtils.parseRange(dependency.range).protocol === `npm:`)
-            topLevelDependencies.push({workspace, dependency});
-
   const includeDevDependencies = [
     npmAuditTypes.Environment.All,
     npmAuditTypes.Environment.Development,
   ].includes(environment);
 
-  if (includeDevDependencies)
-    for (const workspace of workspaces)
-      for (const dependency of workspace.manifest.devDependencies.values())
-        if (workspace.manifest.devDependencies.has(dependency.identHash))
-          if (structUtils.parseRange(dependency.range).protocol === `npm:`)
-            topLevelDependencies.push({workspace, dependency});
+  for (const workspace of workspaces) {
+    for (const dependency of workspace.anchoredPackage.dependencies.values()) {
+      if (structUtils.parseRange(dependency.range).protocol !== `npm:`)
+        continue;
+
+      const isDevDependency = workspace.manifest.devDependencies.has(dependency.identHash);
+      if (isDevDependency ? !includeDevDependencies : !includeDependencies)
+        continue;
+
+      topLevelDependencies.push({workspace, dependency});
+    }
+  }
 
   return topLevelDependencies;
 }
 
 export function getPackages(project: Project, roots: Array<TopLevelDependency>, {recursive}: {recursive: boolean}) {
   const packages = new Map<string, Map<string, Array<Locator>>>();
+  const traversed = new Set<LocatorHash>();
 
   const processDescriptor = (parent: Locator, descriptor: Descriptor) => {
     const resolution = project.storedResolutions.get(descriptor.descriptorHash);
     if (typeof resolution === `undefined`)
       throw new Error(`Assertion failed: The resolution should have been registered`);
+
+    if (!traversed.has(resolution))
+      traversed.add(resolution);
+    else
+      return;
 
     const pkg = project.storedPackages.get(resolution);
     if (typeof pkg === `undefined`)
