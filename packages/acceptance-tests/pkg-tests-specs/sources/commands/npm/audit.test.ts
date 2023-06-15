@@ -1,4 +1,5 @@
-export {};
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {tests}                from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`npm audit`, () => {
@@ -12,6 +13,20 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await expect(run(`npm`, `audit`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);
+      }),
+    );
+
+    test(
+      `it should return vulnerable virtual packages`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable-peer-deps`]: `1.0.0`,
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/2"/);
       }),
     );
 
@@ -87,6 +102,27 @@ describe(`Commands`, () => {
           [`vulnerable-dep`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `-R`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);
+      }),
+    );
+
+    test(
+      `it should follow link:-protocol dependencies`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`foo`]: `portal:./foo`,
+        },
+      }, async ({path, run, source}) => {
+        await xfs.mkdirpPromise(ppath.join(path, `foo`));
+
+        await xfs.writeJsonPromise(ppath.join(path, `foo`, Filename.manifest), {
+          dependencies: {
+            [`vulnerable`]: `1.0.0`,
+          },
+        });
+
         await run(`install`);
 
         await expect(run(`npm`, `audit`, `-R`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);

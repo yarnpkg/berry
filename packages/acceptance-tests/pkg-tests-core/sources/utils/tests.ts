@@ -122,6 +122,13 @@ export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
     severity: npmAuditTypes.Severity.High,
     vulnerable_versions: `<1.1.0`,
   }]],
+  [`vulnerable-peer-deps`, [{
+    id: 2,
+    url: `https://example.com/advisories/2`,
+    title: `Something else is wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }]],
 ]);
 
 export const validLogins = {

@@ -94,9 +94,6 @@ export function getTopLevelDependencies(project: Project, workspace: Workspace, 
 
   for (const workspace of workspaces) {
     for (const dependency of workspace.anchoredPackage.dependencies.values()) {
-      if (structUtils.parseRange(dependency.range).protocol !== `npm:`)
-        continue;
-
       const isDevDependency = workspace.manifest.devDependencies.has(dependency.identHash);
       if (isDevDependency ? !includeDevDependencies : !includeDependencies)
         continue;
@@ -126,7 +123,9 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     if (typeof pkg === `undefined`)
       throw new Error(`Assertion failed: The package should have been registered`);
 
-    if (pkg.version !== null) {
+    const devirtualizedLocator = structUtils.ensureDevirtualizedLocator(pkg);
+
+    if (devirtualizedLocator.reference.startsWith(`npm:`) && pkg.version !== null) {
       const packageName = structUtils.stringifyIdent(pkg);
 
       const versions = miscUtils.getMapWithDefault(packages, packageName);
