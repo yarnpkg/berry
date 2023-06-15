@@ -143,8 +143,6 @@ export default class NpmAuditCommand extends BaseCommand {
         return !micromatch.isMatch(`${advisory.id}`, ignoredAdvisories) && severities.has(advisory.severity);
       });
 
-      console.log(packageName, advisories);
-
       if (filteredAdvisories.length > 0) {
         expandedResult[packageName] = filteredAdvisories.map(advisory => {
           const packageVersions = packages.get(packageName);
