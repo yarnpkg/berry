@@ -16,6 +16,32 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should return all vulnerabilities in a vulnerable package`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable-many`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const test1 = expect(run(`npm`, `audit`, `--json`));
+
+        await test1.rejects.toThrow(/"https:\/\/example\.com\/advisories\/3"/);
+        await test1.rejects.toThrow(/"https:\/\/example\.com\/advisories\/4"/);
+        await test1.rejects.toThrow(/"https:\/\/example\.com\/advisories\/5"/);
+
+        // We got an issue where the treeUtils were overriding advisories rather
+        // than report each of them, so this test is intended to check that the
+        // "pretty" output works as well.
+        const test2 = expect(run(`npm`, `audit`));
+
+        await test2.rejects.toThrow(/https:\/\/example\.com\/advisories\/3/);
+        await test2.rejects.toThrow(/https:\/\/example\.com\/advisories\/4/);
+        await test2.rejects.toThrow(/https:\/\/example\.com\/advisories\/5/);
+      }),
+    );
+
+    test(
       `it should return vulnerable virtual packages`,
       makeTemporaryEnv({
         dependencies: {

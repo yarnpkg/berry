@@ -28,12 +28,8 @@ export function getReportTree(result: npmAuditTypes.AuditExtendedResponse) {
   for (const [packageName, advisories] of miscUtils.sortMap(Object.entries(result), advisory => advisory[0])) {
     for (const advisory of miscUtils.sortMap(advisories, advisory => `${advisory.id}`)) {
       auditTreeChildren[`${packageName}/${advisory.id}`] = {
-        label: packageName,
+        label: `${packageName} - #${advisory.id}`,
         children: {
-          ID: {
-            label: `ID`,
-            value: formatUtils.tuple(formatUtils.Type.NUMBER, advisory.id),
-          },
           Issue: {
             label: `Issue`,
             value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.title),

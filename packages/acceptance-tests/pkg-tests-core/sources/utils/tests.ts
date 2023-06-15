@@ -129,6 +129,25 @@ export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
     severity: npmAuditTypes.Severity.High,
     vulnerable_versions: `<1.1.0`,
   }]],
+  [`vulnerable-many`, [{
+    id: 3,
+    url: `https://example.com/advisories/3`,
+    title: `Something is wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }, {
+    id: 4,
+    url: `https://example.com/advisories/4`,
+    title: `Something is still wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }, {
+    id: 5,
+    url: `https://example.com/advisories/5`,
+    title: `Something is always wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }]],
 ]);
 
 export const validLogins = {
