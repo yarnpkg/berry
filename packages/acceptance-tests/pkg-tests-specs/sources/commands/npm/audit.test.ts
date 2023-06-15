@@ -1,5 +1,4 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
-import {tests}                from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`npm audit`, () => {
