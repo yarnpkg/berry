@@ -42,6 +42,9 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
 
       const finalLabel = finalParts.join(`: `);
 
+      // The library we use, treeify, doesn't support having multiple nodes with
+      // the same label. To work around that, we prefix each label with a unique
+      // string that we strip before output.
       const uniquePrefix = `\0${n++}\0`;
       const createdNode = targetNode[`${uniquePrefix}${finalLabel}`] = {};
 
