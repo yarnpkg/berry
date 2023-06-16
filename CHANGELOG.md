@@ -19,6 +19,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 - `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
+- `yarn npm audit` has been fully rewritten to use the newer `/-/npm/v1/security/advisories/bulk` endpoint. Make sure your registry supports it, and let them know you need it otherwise (in the meantime you can use `npmAuditRegistry` to send your audit queries to the npm registry).
 - The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
 - `yarn init` no longer enables zero-installs by default.
 - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
