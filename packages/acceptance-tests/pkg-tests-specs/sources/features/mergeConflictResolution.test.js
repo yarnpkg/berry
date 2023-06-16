@@ -194,5 +194,50 @@ describe(`Features`, () => {
         },
       ),
     );
+
+    test(
+      `it shouldn't re-fetch the lockfile metadata when performing simple merge conflict resolutions`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await execFile(`git`, [`init`], {cwd: path});
+          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
+          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
+          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+
+          await run(`install`);
+          await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
+
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `my-commit`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`checkout`, `-b`, `1.0.0`], {cwd: path});
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:1.0.0`);
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `commit-1.0.0`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`checkout`, `-b`, `2.0.0`], {cwd: path});
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:2.0.0`);
+          await execFile(`git`, [`add`, `-A`], {cwd: path});
+          await execFile(`git`, [`commit`, `-a`, `-m`, `commit-2.0.0`], {cwd: path});
+
+          await execFile(`git`, [`checkout`, `master`], {cwd: path});
+          await execFile(`git`, [`merge`, `1.0.0`], {cwd: path});
+
+          await expect(execFile(`git`, [`merge`, `2.0.0`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
+
+          let lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+          lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
+
+          expect(lockfile).toMatchSnapshot();
+
+          await expect(run(`install`, {
+            enableNetwork: false,
+          })).resolves.toMatchSnapshot();
+        },
+      ),
+    );
   });
 });
