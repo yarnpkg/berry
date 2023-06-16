@@ -435,13 +435,13 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
 
   // We must keep the lockfile version as small as necessary to force Yarn to
   // refresh the merged-in lockfile metadata that may be missing.
-  merged.__metadata.version = Math.min(0, ...variants.map(variant => {
-    return variant.__metadata.version ?? Infinity;
-  }));
+  merged.__metadata.version = `${Math.min(...variants.map(variant => {
+    return parseInt(variant.__metadata.version ?? 0);
+  }))}`;
 
-  merged.__metadata.cacheKey = Math.min(0, ...variants.map(variant => {
-    return variant.__metadata.cacheKey ?? 0;
-  }));
+  merged.__metadata.cacheKey = `${Math.min(...variants.map(variant => {
+    return parseInt(variant.__metadata.cacheKey ?? 0);
+  }))}`;
 
   // parse as valid YAML except that the objects become strings. We can use
   // that to detect them. Damn, it's really ugly though.
