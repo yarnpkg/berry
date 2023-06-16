@@ -1,13 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                                                 from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs}                                                                         from '@yarnpkg/fslib';
-import {prompt}                                                                                                   from 'enquirer';
-import pick                                                                                                       from 'lodash/pick';
-import {URL}                                                                                                      from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                                          from '@yarnpkg/core';
+import {Filename, ppath, toFilename, xfs}                                                                                  from '@yarnpkg/fslib';
+import {prompt}                                                                                                            from 'enquirer';
+import pick                                                                                                                from 'lodash/pick';
+import {URL}                                                                                                               from 'url';
 
-import {Hooks}                                                                                                    from './index';
-import * as npmConfigUtils                                                                                        from './npmConfigUtils';
-import {MapLike}                                                                                                  from './npmConfigUtils';
+import {Hooks}                                                                                                             from './index';
+import * as npmConfigUtils                                                                                                 from './npmConfigUtils';
+import {MapLike}                                                                                                           from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -66,7 +66,9 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-export type GetPackageMetadataOptions = Omit<Options, 'ident'> & {
+export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'> & {
+  project: Project;
+
   /**
    * Warning: This option will return all cached metadata if the version is found, but the rest of the metadata can be stale.
    */
@@ -86,7 +88,9 @@ const PACKAGE_METADATA_CACHE = new Map<IdentHash, PackageMetadata>();
  * If you need other fields, use the uncached {@link get} or consider whether it would make more sense to extract
  * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
  */
-export async function getPackageMetadata(ident: Ident, {configuration, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+export async function getPackageMetadata(ident: Ident, {project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+  const {configuration} = project;
+
   const cachedInMemory = PACKAGE_METADATA_CACHE.get(ident.identHash);
   if (cachedInMemory)
     return cachedInMemory;
@@ -97,12 +101,18 @@ export async function getPackageMetadata(ident: Ident, {configuration, registry,
   const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
 
   let cachedOnDisk: CachedMetadata | null = null;
-  try {
-    cachedOnDisk = await xfs.readJsonPromise(identPath);
-  } catch {}
 
-  if (version && typeof cachedOnDisk?.metadata.versions[version] !== `undefined`)
-    return cachedOnDisk.metadata;
+  // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
+  // since most likely the user is trying to validate the metadata via hardened mode.
+  if (!project.lockfileNeedsRefresh) {
+    try {
+      cachedOnDisk = await xfs.readJsonPromise(identPath) as CachedMetadata;
+
+      if (typeof version !== `undefined` && typeof cachedOnDisk.metadata.versions[version] !== `undefined`) {
+        return cachedOnDisk.metadata;
+      }
+    } catch {}
+  }
 
   return await get(getIdentUrl(ident), {
     ...rest,
