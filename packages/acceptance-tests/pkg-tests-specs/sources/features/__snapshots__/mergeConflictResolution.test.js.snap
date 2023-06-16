@@ -226,3 +226,21 @@ __metadata:
   linkType: soft
 "
 `;
+
+exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile metadata when performing simple merge conflict resolutions 2`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
+
+➤ YN0000: ┌ Resolution step
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-9c77ddf9a6.zip appears to be unused - removing
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: Done
+",
+}
+`;
