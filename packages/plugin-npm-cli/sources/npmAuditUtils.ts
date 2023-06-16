@@ -107,7 +107,9 @@ export function getTopLevelDependencies(project: Project, workspace: Workspace, 
 
 export function getPackages(project: Project, roots: Array<TopLevelDependency>, {recursive}: {recursive: boolean}) {
   const packages = new Map<string, Map<string, Array<Locator>>>();
+
   const traversed = new Set<LocatorHash>();
+  const queue: Array<[Locator, Descriptor]> = [];
 
   const processDescriptor = (parent: Locator, descriptor: Descriptor) => {
     const resolution = project.storedResolutions.get(descriptor.descriptorHash);
@@ -134,13 +136,18 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
 
     if (recursive) {
       for (const dependency of pkg.dependencies.values()) {
-        processDescriptor(pkg, dependency);
+        queue.push([pkg, dependency]);
       }
     }
   };
 
   for (const {workspace, dependency} of roots)
-    processDescriptor(workspace.anchoredLocator, dependency);
+    queue.push([workspace.anchoredLocator, dependency]);
+
+  while (queue.length > 0) {
+    const [pkg, dependency] = queue.shift()!;
+    processDescriptor(pkg, dependency);
+  }
 
   return packages;
 }
