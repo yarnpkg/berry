@@ -206,7 +206,7 @@ export async function get(target: string, {configuration, jsonResponse, customEr
     .then(response => response.body);
 
   // We cannot cache responses when wrapNetworkRequest is used, as it can differ between calls
-  let entry = typeof wrapNetworkRequest !== `undefined`
+  const entry = await typeof wrapNetworkRequest !== `undefined`
     ? runRequest()
     : miscUtils.getFactoryWithDefault(cache, target, () => {
       return runRequest().then(body => {
@@ -214,9 +214,6 @@ export async function get(target: string, {configuration, jsonResponse, customEr
         return body;
       });
     });
-
-  if (miscUtils.isThenable(entry))
-    entry = await entry;
 
   if (jsonResponse) {
     return JSON.parse(entry.toString());

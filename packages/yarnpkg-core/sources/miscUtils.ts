@@ -572,7 +572,3 @@ export function mergeIntoTarget<T extends object, S extends Array<object>>(targe
 export function toMerged<S extends Array<object>>(...sources: S): MergeObjects<S, {}> {
   return mergeIntoTarget({}, ...sources);
 }
-
-export function isThenable<T>(value: T): value is T & {then: Function} {
-  return typeof (value as any).then === `function`;
-}
