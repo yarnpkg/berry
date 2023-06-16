@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "4.0.0-rc.43",
+  "version": "4.0.0-rc.45",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "exports": {
@@ -11,12 +11,12 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.2.0-rc.10",
+    "clipanion": "^3.2.1",
     "globby": "^11.0.1",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^2.4.0",
-    "typescript": "5.1.0-beta"
+    "typescript": "5.1.1-rc"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",

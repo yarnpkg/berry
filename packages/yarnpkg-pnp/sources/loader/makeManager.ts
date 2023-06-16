@@ -5,7 +5,6 @@ import {Module}                                                              fro
 import {PnpApi}                                                              from '../types';
 
 export type ApiMetadata = {
-  cache: typeof Module._cache;
   instance: PnpApi;
   stats: fs.Stats;
   lastRefreshCheck: number;
@@ -23,7 +22,6 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
 
   const apiMetadata: Map<PortablePath, ApiMetadata> = new Map([
     [initialApiPath, {
-      cache: Module._cache,
       instance: pnpapi,
       stats: initialApiStats,
       lastRefreshCheck: Date.now(),
@@ -67,7 +65,6 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
       }
     } else {
       apiMetadata.set(pnpApiPath, apiEntry = {
-        cache: {},
         instance: loadApiInstance(pnpApiPath),
         stats: opts.fakeFs.statSync(pnpApiPath),
         lastRefreshCheck: Date.now(),
@@ -163,22 +160,19 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
     return addToCacheAndReturn(start, curr, null);
   }
 
-  function getApiPathFromParent(parent: Module | null | undefined): PortablePath | null {
+  const moduleToApiPathCache = new WeakMap<NodeModule, PortablePath | null>();
+  function getApiPathFromParent(parent: NodeModule | null | undefined): PortablePath | null {
     if (parent == null)
       return initialApiPath;
 
-    if (typeof parent.pnpApiPath === `undefined`) {
-      if (parent.filename !== null) {
-        return parent.pnpApiPath = findApiPathFor(parent.filename);
-      } else {
-        return initialApiPath;
-      }
-    }
+    let apiPath = moduleToApiPathCache.get(parent);
+    if (typeof apiPath !== `undefined`)
+      return apiPath;
 
-    if (parent.pnpApiPath !== null)
-      return parent.pnpApiPath;
+    apiPath = parent.filename ? findApiPathFor(parent.filename) : null;
 
-    return null;
+    moduleToApiPathCache.set(parent, apiPath);
+    return apiPath;
   }
 
   return {

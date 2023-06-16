@@ -8,8 +8,4 @@ declare module "module" {
   function _nodeModulePaths(from: string): Array<string>;
   function _resolveFilename(request: string, parent: NodeModule | null | undefined, isMain: boolean, options?: {[key: string]: any}): string;
   function _load(request: string, parent: NodeModule | null | undefined, isMain: boolean): any;
-
-  interface Module extends NodeModule {
-    pnpApiPath?: import('@yarnpkg/fslib').PortablePath | null;
-  }
 }

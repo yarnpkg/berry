@@ -12,3 +12,6 @@ export const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || (major === 19 && min
 // https://github.com/nodejs/node/pull/45659 changed the internal translators to be lazy loaded
 // TODO: Update the version range if https://github.com/nodejs/node/pull/46425 lands.
 export const HAS_LAZY_LOADED_TRANSLATORS = major > 19 || (major === 19 && minor >= 3);
+
+// https://github.com/nodejs/node/pull/42881
+export const ALLOWS_NON_FILE_PARENT = major > 18 || (major === 18 && minor >= 1) || (major === 16 && minor >= 17);

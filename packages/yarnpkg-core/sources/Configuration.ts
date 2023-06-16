@@ -33,6 +33,16 @@ const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
   ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
   : false;
 
+export const LEGACY_PLUGINS = new Set([
+  `@yarnpkg/plugin-constraints`,
+  `@yarnpkg/plugin-exec`,
+  `@yarnpkg/plugin-interactive-tools`,
+  `@yarnpkg/plugin-stage`,
+  `@yarnpkg/plugin-typescript`,
+  `@yarnpkg/plugin-version`,
+  `@yarnpkg/plugin-workspace-tools`,
+]);
+
 const IGNORED_ENV_VARIABLES = new Set([
   // Used by our test environment
   `isTestEnv`,
@@ -723,7 +733,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
       return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
-      throw new Error(`Expected value (${value}) to be a string`);
+      throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
       env: process.env,
@@ -949,6 +959,8 @@ export class Configuration {
   public static deleteProperty = Symbol();
 
   public static telemetry: TelemetryManager | null = null;
+
+  public isCI = isCI;
 
   public startingCwd: PortablePath;
   public projectCwd: PortablePath | null = null;
@@ -1206,6 +1218,9 @@ export class Configuration {
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
+          if (LEGACY_PLUGINS.has(userProvidedSpec))
+            continue;
+
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
           if (!await xfs.existsPromise(pluginPath)) {
             if (!userProvidedSpec) {
@@ -1348,7 +1363,7 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
+  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown}), opts: {immutable?: boolean} = {}) {
     const rcFilename = getRcFilename();
     const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
 
@@ -1367,7 +1382,7 @@ export class Configuration {
       }
 
       if (replacement === current) {
-        return;
+        return false;
       }
     } else {
       replacement = current;
@@ -1399,13 +1414,15 @@ export class Configuration {
       }
 
       if (!patched) {
-        return;
+        return false;
       }
     }
 
     await xfs.changeFilePromise(configurationPath, stringifySyml(replacement), {
       automaticNewlines: true,
     });
+
+    return true;
   }
 
   static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {

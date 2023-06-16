@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-git",
-  "version": "3.0.0-rc.43",
+  "version": "3.0.0-rc.45",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -10,7 +10,7 @@
   "dependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.2.0-rc.10",
+    "clipanion": "^3.2.1",
     "git-url-parse": "^13.1.0",
     "lodash": "^4.17.15",
     "semver": "^7.1.2",
@@ -46,5 +46,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "2.6.5"
+  "stableVersion": "2.6.6"
 }

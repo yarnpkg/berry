@@ -41,6 +41,9 @@ package.tgz
 # Only contains the Webpack cache
 /packages/docusaurus/.yarn
 
+# Used by /scripts/stable-versions-store.js
+/scripts/stable-versions-store.json
+
 /vscode-case-study
 
 .idea

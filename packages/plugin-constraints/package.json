@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "4.0.0-rc.43",
+  "version": "4.0.0-rc.45",
   "stableVersion": "3.1.3",
   "license": "BSD-2-Clause",
   "repository": {
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.2.0-rc.10",
+    "clipanion": "^3.2.1",
     "lodash": "^4.17.15",
     "tau-prolog": "^0.2.66",
     "tslib": "^2.4.0"
