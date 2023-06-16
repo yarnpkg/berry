@@ -1,4 +1,6 @@
+import {semverUtils}                                           from '@yarnpkg/core';
 import {PortablePath, npath, toFilename, xfs, ppath, Filename} from '@yarnpkg/fslib';
+import {npmAuditTypes}                                         from '@yarnpkg/plugin-npm-cli';
 import assert                                                  from 'assert';
 import crypto                                                  from 'crypto';
 import finalhandler                                            from 'finalhandler';
@@ -12,6 +14,7 @@ import pem                                                     from 'pem';
 import semver                                                  from 'semver';
 import serveStatic                                             from 'serve-static';
 import stream                                                  from 'stream';
+import * as t                                                  from 'typanion';
 import {promisify}                                             from 'util';
 import {v5 as uuidv5}                                          from 'uuid';
 import {Gzip}                                                  from 'zlib';
@@ -53,6 +56,7 @@ export enum RequestType {
   Whoami = `whoami`,
   Repository = `repository`,
   Publish = `publish`,
+  BulkAdvisories = `bulkAdvisories`,
 }
 
 export type Request = {
@@ -76,6 +80,8 @@ export type Request = {
   type: RequestType.Publish;
   scope?: string;
   localName: string;
+} | {
+  type: RequestType.BulkAdvisories;
 };
 
 export class Login {
@@ -107,6 +113,42 @@ export class Login {
     };
   }
 }
+
+export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
+  [`vulnerable`, [{
+    id: 1,
+    url: `https://example.com/advisories/1`,
+    title: `Something is wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }]],
+  [`vulnerable-peer-deps`, [{
+    id: 2,
+    url: `https://example.com/advisories/2`,
+    title: `Something else is wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }]],
+  [`vulnerable-many`, [{
+    id: 3,
+    url: `https://example.com/advisories/3`,
+    title: `Something is wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }, {
+    id: 4,
+    url: `https://example.com/advisories/4`,
+    title: `Something is still wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }, {
+    id: 5,
+    url: `https://example.com/advisories/5`,
+    title: `Something is always wrong`,
+    severity: npmAuditTypes.Severity.High,
+    vulnerable_versions: `<1.1.0`,
+  }]],
+]);
 
 export const validLogins = {
   fooUser: new Login(`foo-user`),
@@ -440,6 +482,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));
     },
+
     async [RequestType.Publish](parsedRequest, request, response) {
       if (parsedRequest.type !== RequestType.Publish)
         throw new Error(`Assertion failed: Invalid request type`);
@@ -470,6 +513,41 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
 
         response.writeHead(200, {[`Content-Type`]: `application/json`});
         return response.end(rawData);
+      });
+    },
+
+    async [RequestType.BulkAdvisories](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.BulkAdvisories)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      let rawData = ``;
+
+      request.on(`data`, chunk => rawData += chunk);
+      request.on(`end`, () => {
+        let body;
+        try {
+          body = JSON.parse(rawData);
+        } catch (e) {
+          return processError(response, 401, `Invalid`);
+        }
+
+        t.assertWithErrors(body, t.isRecord(t.isArray(t.isString())));
+
+        const result = Object.create(null);
+        for (const [packageName, versions] of Object.entries(body)) {
+          const advisories = [];
+
+          for (const advisory of ADVISORIES.get(packageName) ?? [])
+            if (versions.some(version => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
+              advisories.push(advisory);
+
+          if (advisories.length > 0) {
+            result[packageName] = advisories;
+          }
+        }
+
+        response.writeHead(200, {[`Content-Type`]: `application/json`});
+        return response.end(JSON.stringify(result));
       });
     },
   };
@@ -507,6 +585,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         type: RequestType.Whoami,
         // Set later when login is parsed
         login: null as any,
+      };
+    } else if (url === `/-/npm/v1/security/advisories/bulk`) {
+      return {
+        type: RequestType.BulkAdvisories,
       };
     } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method == `PUT`) {
       const [, scope, localName] = match;

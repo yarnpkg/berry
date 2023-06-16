@@ -9,8 +9,10 @@ import NpmTagAddCommand       from './commands/npm/tag/add';
 import NpmTagListCommand      from './commands/npm/tag/list';
 import NpmTagRemoveCommand    from './commands/npm/tag/remove';
 import NpmWhoamiCommand       from './commands/npm/whoami';
+import * as npmAuditTypes     from './npmAuditTypes';
 import * as npmAuditUtils     from './npmAuditUtils';
 
+export {npmAuditTypes};
 export {npmAuditUtils};
 export {NpmAuditCommand};
 export {NpmInfoCommand};

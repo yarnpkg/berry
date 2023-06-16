@@ -24,6 +24,7 @@ export type TreeifyNode = {
 
 export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
   const target = {};
+  let n = 0;
 
   const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: TreeifyNode) => {
     const iterator = Array.isArray(printNode)
@@ -40,7 +41,12 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
         finalParts.push(formatUtils.applyStyle(configuration, `${key}`, formatUtils.Style.BOLD));
 
       const finalLabel = finalParts.join(`: `);
-      const createdNode = targetNode[finalLabel] = {};
+
+      // The library we use, treeify, doesn't support having multiple nodes with
+      // the same label. To work around that, we prefix each label with a unique
+      // string that we strip before output.
+      const uniquePrefix = `\0${n++}\0`;
+      const createdNode = targetNode[`${uniquePrefix}${finalLabel}`] = {};
 
       if (typeof children !== `undefined`) {
         copyTree(children, createdNode);
@@ -73,7 +79,7 @@ export function treeNodeToJson(printTree: TreeNode) {
       : {};
 
     for (const [key, child] of iterator)
-      targetChildren[key] = copyTree(child);
+      targetChildren[cleanKey(key)] = copyTree(child);
 
     if (typeof printNode.value === `undefined`)
       return targetChildren;
@@ -106,6 +112,8 @@ export function emitTree(tree: TreeNode, {configuration, stdout, json, separator
 
   let treeOutput = asTree(treeNodeToTreeify(tree, {configuration}) as any, false, false);
 
+  treeOutput = treeOutput.replace(/\0[0-9]+\0/g, ``);
+
   // A slight hack to add line returns between two top-level entries
   if (separators >= 1)
     treeOutput = treeOutput.replace(/^([├└]─)/gm, `│\n$1`).replace(/^│\n/, ``);
@@ -119,4 +127,8 @@ export function emitTree(tree: TreeNode, {configuration, stdout, json, separator
     throw new Error(`Only the first two levels are accepted by treeUtils.emitTree`);
 
   stdout.write(treeOutput);
+}
+
+function cleanKey(key: string | number) {
+  return typeof key === `string` ? key.replace(/^\0[0-9]+\0/, ``) : key;
 }
