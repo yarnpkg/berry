@@ -626,10 +626,16 @@ describe(`Scripts tests`, () => {
       test(
         `it should run native binaries`,
         makeTemporaryEnv({
-          bin: execP(`git`, [`--exec-path`]).then(({stdout}) => ({
-            foo: npath.join(stdout.trim(), `git`),
-          })),
+          bin: {
+            foo: `./foo`,
+          },
         }, async ({path, run, source}) => {
+          const gitPath = await execP(`git`, [`--exec-path`]).then(({stdout}) => {
+            return ppath.join(npath.toPortablePath(stdout.trim()), `git`);
+          });
+
+          await xfs.copyFilePromise(gitPath, ppath.join(path, `foo`));
+
           await run(`install`);
 
           await run(`run`, `foo`, `--version`);
