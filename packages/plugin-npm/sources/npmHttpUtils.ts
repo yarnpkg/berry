@@ -337,7 +337,7 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
 
 function normalizeRegistry(configuration: Configuration, {ident, registry}: Partial<RegistryOptions>): string {
   if (typeof registry === `undefined` && ident)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+    return npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
