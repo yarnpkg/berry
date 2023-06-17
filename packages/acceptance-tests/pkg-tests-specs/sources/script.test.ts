@@ -630,9 +630,10 @@ describe(`Scripts tests`, () => {
             foo: `./foo`,
           },
         }, async ({path, run, source}) => {
-          const gitPath = await execP(`git`, [`--exec-path`]).then(({stdout}) => {
-            return ppath.join(npath.toPortablePath(stdout.trim()), `git`);
-          });
+          const gitProcess = await execP(`git`, [`--exec-path`]);
+
+          const gitExt = process.platform === `win32` ? `.exe` : ``;
+          const gitPath = ppath.join(npath.toPortablePath(gitProcess.stdout.trim()), `git${gitExt}`);
 
           await xfs.copyFilePromise(gitPath, ppath.join(path, `foo`));
 
