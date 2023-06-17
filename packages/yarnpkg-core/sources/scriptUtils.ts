@@ -639,10 +639,10 @@ export function isNodeScript(p: PortablePath) {
 
   const magic = buf.readUint32BE();
   if (
-    magic === 0xcafebabe ||         // OSX Universal Binary
-    magic === 0xcffaedfe ||         // Mach-O
-    magic === 0x7f454c46 ||         // ELF
-    (magic & 0xffff0000) === 0x4d5a // DOS MZ Executable
+    magic === 0xcafebabe ||             // OSX Universal Binary
+    magic === 0xcffaedfe ||             // Mach-O
+    magic === 0x7f454c46 ||             // ELF
+    (magic & 0xffff0000) === 0x4d5a0000 // DOS MZ Executable
   )
     return false;
 
