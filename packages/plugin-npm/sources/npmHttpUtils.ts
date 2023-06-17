@@ -95,7 +95,7 @@ export async function getPackageMetadata(ident: Ident, {project, registry, heade
   if (cachedInMemory)
     return cachedInMemory;
 
-  ({registry} = normalizeRegistryOptions(configuration, {ident, registry}));
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const registryFolder = getRegistryFolder(configuration, registry);
   const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
@@ -103,7 +103,7 @@ export async function getPackageMetadata(ident: Ident, {project, registry, heade
   let cachedOnDisk: CachedMetadata | null = null;
 
   // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
-  // since most likely the user is trying to validate the metadata via hardened mode.
+  // since most likely the user is trying to validate the metadata using hardened mode.
   if (!project.lockfileNeedsRefresh) {
     try {
       cachedOnDisk = await xfs.readJsonPromise(identPath) as CachedMetadata;
@@ -220,8 +220,8 @@ function getMetadataFolder(configuration: Configuration) {
   return ppath.join(configuration.get(`globalFolder`), `npm-metadata`);
 }
 
-export async function get(path: string, {configuration, headers, authType, ...rest}: Options) {
-  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
+export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   if (ident && ident.scope && typeof authType === `undefined`)
     authType = AuthType.BEST_EFFORT;
@@ -239,8 +239,8 @@ export async function get(path: string, {configuration, headers, authType, ...re
   }
 }
 
-export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, authType = AuthType.ALWAYS_AUTH, otp, ...rest}: Options & {attemptedAs?: string}) {
-  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -271,8 +271,8 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, authType = AuthType.ALWAYS_AUTH, otp, ...rest}: Options & {attemptedAs?: string}) {
-  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -303,8 +303,8 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-export async function del(path: string, {attemptedAs, configuration, headers, authType = AuthType.ALWAYS_AUTH, otp, ...rest}: Options & {attemptedAs?: string}) {
-  const {ident, registry} = normalizeRegistryOptions(configuration, rest);
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -335,16 +335,14 @@ export async function del(path: string, {attemptedAs, configuration, headers, au
   }
 }
 
-type WithRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
-
-function normalizeRegistryOptions(configuration: Configuration, {ident, registry}: RegistryOptions): WithRequired<RegistryOptions, 'registry'> {
+function normalizeRegistry(configuration: Configuration, {ident, registry}: Partial<RegistryOptions>): string {
   if (typeof registry === `undefined` && ident)
     registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
 
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  return {ident, registry};
+  return registry;
 }
 
 async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
