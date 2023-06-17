@@ -614,6 +614,36 @@ export async function maybeExecuteWorkspaceLifecycleScript(workspace: Workspace,
   }
 }
 
+export function isNodeScript(p: PortablePath) {
+  const ext = ppath.extname(p);
+  if (ext.match(/\.[cm]?[jt]sx?$/))
+    return true;
+
+  if (ext === `.exe` || ext === `.bin`)
+    return false;
+
+  const buf = Buffer.alloc(4);
+
+  let fd: number;
+  try {
+    fd = xfs.openSync(p, `r`);
+  } catch {
+    return true;
+  }
+
+  try {
+    xfs.readSync(fd, buf, 0, buf.length, 0);
+  } finally {
+    xfs.closeSync(fd);
+  }
+
+  const magic = buf.readUint32BE();
+  if (magic === 0xcafebabe || magic === 0xcffaedfe || magic === 0x7f454c46)
+    return false;
+
+  return true;
+}
+
 type GetPackageAccessibleBinariesOptions = {
   project: Project;
 };
@@ -627,7 +657,6 @@ type PackageAccessibleBinaries = Map<string, Binary>;
  * @param locator The queried package
  * @param project The project owning the package
  */
-
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions): Promise<PackageAccessibleBinaries> {
   const configuration = project.configuration;
   const binaries: PackageAccessibleBinaries = new Map();
@@ -699,7 +728,6 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
  *
  * @param workspace The queried workspace
  */
-
 export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
   return await getPackageAccessibleBinaries(workspace.anchoredLocator, {project: workspace.project});
 }
@@ -726,7 +754,6 @@ type ExecutePackageAccessibleBinaryOptions = {
  * @param binaryName The name of the binary file to execute
  * @param args The arguments to pass to the file
  */
-
 export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = [], packageAccessibleBinaries}: ExecutePackageAccessibleBinaryOptions) {
   packageAccessibleBinaries ??= await getPackageAccessibleBinaries(locator, {project});
 
@@ -744,9 +771,13 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
       ),
     );
 
+    const promise = isNodeScript(npath.toPortablePath(binaryPath))
+      ? execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr})
+      : execUtils.pipevp(binaryPath, args, {cwd, env, stdin, stdout, stderr});
+
     let result;
     try {
-      result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
+      result = await promise;
     } finally {
       await xfs.removePromise(env.BERRY_BIN_FOLDER as PortablePath);
     }
@@ -771,7 +802,6 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  * @param binaryName The name of the binary file to execute
  * @param args The arguments to pass to the file
  */
-
 export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr, packageAccessibleBinaries}: ExecuteWorkspaceAccessibleBinaryOptions) {
   return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr, packageAccessibleBinaries});
 }

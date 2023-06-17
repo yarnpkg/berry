@@ -1,9 +1,10 @@
-const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
-const {isAbsolute, resolve} = require(`path`);
+import {npath, ppath, xfs, Filename, PortablePath} from '@yarnpkg/fslib';
+import {execFile}                                  from 'child_process';
+import {isAbsolute, resolve}                       from 'path';
+import {fs}                                        from 'pkg-tests-core';
+import util                                        from 'util';
 
-const {
-  fs: {makeFakeBinary, writeJson, writeFile},
-} = require(`pkg-tests-core`);
+const execP = util.promisify(execFile);
 
 const globalName = makeTemporaryEnv.getPackageManagerName();
 
@@ -21,7 +22,7 @@ describe(`Scripts tests`, () => {
     makeTemporaryEnv({scripts: {myScript: `node --version`}}, async ({path, run, source}) => {
       await run(`install`);
 
-      await makeFakeBinary(`${path}/bin/node`, {exitCode: 0});
+      await fs.makeFakeBinary(ppath.join(path, `/bin/node`) as PortablePath, {exitCode: 0});
 
       await expect(run(`run`, `myScript`)).resolves.not.toMatchObject({stdout: `Fake binary`});
     }),
@@ -32,7 +33,7 @@ describe(`Scripts tests`, () => {
     makeTemporaryEnv({scripts: {myScript: `${globalName} --version`}}, async ({path, run, source}) => {
       await run(`install`);
 
-      await makeFakeBinary(`${path}/bin/${globalName}`, {exitCode: 0});
+      await fs.makeFakeBinary(ppath.join(path, `/bin/${globalName}`) as PortablePath, {exitCode: 0});
 
       await expect(run(`run`, `myScript`)).resolves.not.toMatchObject({stdout: `Fake binary`});
     }),
@@ -69,9 +70,9 @@ describe(`Scripts tests`, () => {
       private: true,
       workspaces: [`packages/*`],
     }, async ({path, run, source}) => {
-      await xfs.mkdirpPromise(`${path}/packages/test`);
+      await xfs.mkdirpPromise(ppath.join(path, `/packages/test`));
 
-      await xfs.writeJsonPromise(`${path}/packages/test/package.json`, {
+      await xfs.writeJsonPromise(ppath.join(path, `/packages/test/package.json`), {
         scripts: {
           [`test:script`]: `echo "$INIT_CWD"`,
         },
@@ -84,9 +85,9 @@ describe(`Scripts tests`, () => {
       });
 
       await expect(run(`run`, `test:script`, {
-        cwd: `${path}/packages`,
+        cwd: ppath.join(path, `/packages`),
       })).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
+        stdout: `${npath.fromPortablePath(ppath.join(path, `/packages`))}\n`,
       });
     }),
   );
@@ -97,9 +98,9 @@ describe(`Scripts tests`, () => {
       private: true,
       workspaces: [`packages/*`],
     }, async ({path, run, source}) => {
-      await xfs.mkdirpPromise(`${path}/packages/test`);
+      await xfs.mkdirpPromise(ppath.join(path, `/packages/test`));
 
-      await xfs.writeJsonPromise(`${path}/packages/test/package.json`, {
+      await xfs.writeJsonPromise(ppath.join(path, `/packages/test/package.json`), {
         scripts: {
           [`test:script`]: `echo "$PROJECT_CWD"`,
         },
@@ -112,7 +113,7 @@ describe(`Scripts tests`, () => {
       });
 
       await expect(run(`run`, `test:script`, {
-        cwd: `${path}/packages`,
+        cwd: ppath.join(path, `/packages`),
       })).resolves.toMatchObject({
         stdout: `${npath.fromPortablePath(path)}\n`,
       });
@@ -125,7 +126,8 @@ describe(`Scripts tests`, () => {
       private: true,
       workspaces: [`packages/*`],
     }, async ({path, run, source}) => {
-      await writeJson(`${path}/packages/test 1/package.json`, {
+      await xfs.mkdirpPromise(ppath.join(path, `/packages/test 1`));
+      await xfs.writeJsonPromise(ppath.join(path, `/packages/test 1/package.json`), {
         scripts: {
           [`ws:foo2`]: `yarn run ws:foo`,
           [`ws:foo`]: `node -e 'console.log(1)'`,
@@ -174,22 +176,22 @@ describe(`Scripts tests`, () => {
     }, async ({path, run, source}) => {
       await run(`install`);
 
-      await writeFile(`${path}/test.js`, `
-      const {existsSync} = require('fs');
-      const {join} = require('path');
+      await xfs.writeFilePromise(ppath.join(path, `/test.js`), `
+        const {existsSync} = require('fs');
+        const {join} = require('path');
 
-      const files = ['has-bin-entries'];
-      if (process.platform === 'win32')
-        files.push('has-bin-entries.cmd');
+        const files = ['has-bin-entries'];
+        if (process.platform === 'win32')
+          files.push('has-bin-entries.cmd');
 
-      for (const file of files) {
-        if (!existsSync(join(process.env.BERRY_BIN_FOLDER, file))) {
-          console.error('Expected ' + file + ' to exist');
-          process.exit(1);
+        for (const file of files) {
+          if (!existsSync(join(process.env.BERRY_BIN_FOLDER, file))) {
+            console.error('Expected ' + file + ' to exist');
+            process.exit(1);
+          }
         }
-      }
 
-      console.log('ok');
+        console.log('ok');
       `);
 
       await expect(run(`test`)).resolves.toMatchObject({
@@ -209,7 +211,7 @@ describe(`Scripts tests`, () => {
         },
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(`${path}/å.js`, `console.log('ok')`);
+        await xfs.writeFilePromise(ppath.join(path, `/å.js`), `console.log('ok')`);
         await run(`install`);
 
         await expect(run(`test`)).resolves.toMatchObject({
@@ -230,11 +232,11 @@ describe(`Scripts tests`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        await xfs.mkdirpPromise(`${path}/foo/bar`);
+        await xfs.mkdirpPromise(ppath.join(path, `/foo/bar`));
 
         await expect(
           run(`run`, `has-bin-entries`, `success`, {
-            cwd: `${path}/foo/bar`,
+            cwd: ppath.join(path, `/foo/bar`),
           }),
         ).resolves.toMatchObject({
           stdout: `success\n`,
@@ -602,13 +604,13 @@ describe(`Scripts tests`, () => {
           },
           config,
           async ({path, run, source}) => {
-            await xfs.mkdirPromise(`${path}/soft-link`);
-            await xfs.writeJsonPromise(`${path}/soft-link/package.json`, {
+            await xfs.mkdirPromise(ppath.join(path, `/soft-link`));
+            await xfs.writeJsonPromise(ppath.join(path, `/soft-link/package.json`), {
               name: `soft-link`,
               version: `1.0.0`,
               bin: `./bin`,
             });
-            await xfs.writeFilePromise(`${path}/soft-link/bin.js`, `console.log(42);\n`);
+            await xfs.writeFilePromise(ppath.join(path, `/soft-link/bin.js`), `console.log(42);\n`);
 
             await run(`install`);
 
@@ -619,6 +621,19 @@ describe(`Scripts tests`, () => {
             });
           },
         ),
+      );
+
+      test(
+        `it should run native binaries`,
+        makeTemporaryEnv({
+          bin: execP(`git`, [`--exec-path`]).then(({stdout}) => ({
+            foo: npath.join(stdout.trim(), `git`),
+          })),
+        }, async ({path, run, source}) => {
+          await run(`install`);
+
+          await run(`run`, `foo`, `--version`);
+        }),
       );
     });
   }

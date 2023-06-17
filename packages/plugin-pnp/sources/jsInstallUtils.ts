@@ -58,6 +58,7 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
 }
 
 const FORCED_EXTRACT_FILETYPES = new Set([
+  `.bin`,
   // Windows can't execute exe files inside zip archives
   `.exe`,
   // The c/c++ compiler can't read files from zip archives
