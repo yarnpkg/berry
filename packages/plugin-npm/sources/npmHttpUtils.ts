@@ -147,13 +147,13 @@ export async function getPackageMetadata(ident: Ident, {project, registry, heade
         };
 
         // We append the PID because it is guaranteed that this code is only run once per process for a given ident
-        const identPathTmp = `${identPath}-${process.pid}.tmp` as PortablePath;
+        const identPathTemp = `${identPath}-${process.pid}.tmp` as PortablePath;
 
         await xfs.mkdirPromise(registryFolder, {recursive: true});
-        await xfs.writeJsonPromise(identPathTmp, metadata, {compact: true});
+        await xfs.writeJsonPromise(identPathTemp, metadata, {compact: true});
 
         // Doing a rename is important to ensure the cache is atomic
-        await xfs.renamePromise(identPathTmp, identPath);
+        await xfs.renamePromise(identPathTemp, identPath);
 
         return {
           ...response,
