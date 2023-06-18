@@ -631,7 +631,7 @@ describe(`Scripts tests`, () => {
           const gitExt = process.platform === `win32` ? `.exe` : ``;
           const gitPath = ppath.join(npath.toPortablePath(gitProcess.stdout.trim()), `git${gitExt}`);
 
-          await xfs.copyFilePromise(gitPath, ppath.join(path, `foo`));
+          await xfs.copyFilePromise(gitPath, ppath.join(path, `foo${gitExt}`));
 
           await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
             bin: {
@@ -653,7 +653,7 @@ describe(`Scripts tests`, () => {
           const gitExt = process.platform === `win32` ? `.exe` : ``;
           const gitPath = ppath.join(npath.toPortablePath(gitProcess.stdout.trim()), `git${gitExt}`);
 
-          await xfs.copyFilePromise(gitPath, ppath.join(path, `foo`));
+          await xfs.copyFilePromise(gitPath, ppath.join(path, `foo${gitExt}`));
 
           await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
             bin: {
