@@ -625,11 +625,7 @@ describe(`Scripts tests`, () => {
 
       test(
         `it should run native binaries`,
-        makeTemporaryEnv({
-          bin: {
-            foo: `./foo`,
-          },
-        }, async ({path, run, source}) => {
+        makeTemporaryEnv({}, async ({path, run, source}) => {
           const gitProcess = await execP(`git`, [`--exec-path`]);
 
           const gitExt = process.platform === `win32` ? `.exe` : ``;
@@ -637,9 +633,40 @@ describe(`Scripts tests`, () => {
 
           await xfs.copyFilePromise(gitPath, ppath.join(path, `foo`));
 
+          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
+            bin: {
+              foo: `./foo${gitExt}`,
+            },
+          });
+
           await run(`install`);
 
           await run(`run`, `foo`, `--version`);
+        }),
+      );
+
+      test(
+        `it should add native binaries to the PATH`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          const gitProcess = await execP(`git`, [`--exec-path`]);
+
+          const gitExt = process.platform === `win32` ? `.exe` : ``;
+          const gitPath = ppath.join(npath.toPortablePath(gitProcess.stdout.trim()), `git${gitExt}`);
+
+          await xfs.copyFilePromise(gitPath, ppath.join(path, `foo`));
+
+          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
+            bin: {
+              foo: `./foo${gitExt}`,
+            },
+            scripts: {
+              bar: `foo`,
+            },
+          });
+
+          await run(`install`);
+
+          console.log(await run(`run`, `bar`, `--version`));
         }),
       );
     });
