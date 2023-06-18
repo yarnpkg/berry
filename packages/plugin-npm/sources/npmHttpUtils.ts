@@ -1,13 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                                                          from '@yarnpkg/core';
-import {Filename, ppath, toFilename, xfs}                                                                                  from '@yarnpkg/fslib';
-import {prompt}                                                                                                            from 'enquirer';
-import pick                                                                                                                from 'lodash/pick';
-import {URL}                                                                                                               from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project, miscUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                                                     from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, toFilename, xfs}                                                                               from '@yarnpkg/fslib';
+import {prompt}                                                                                                                       from 'enquirer';
+import pick                                                                                                                           from 'lodash/pick';
+import {URL}                                                                                                                          from 'url';
 
-import {Hooks}                                                                                                             from './index';
-import * as npmConfigUtils                                                                                                 from './npmConfigUtils';
-import {MapLike}                                                                                                           from './npmConfigUtils';
+import {Hooks}                                                                                                                        from './index';
+import * as npmConfigUtils                                                                                                            from './npmConfigUtils';
+import {MapLike}                                                                                                                      from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -79,7 +79,7 @@ export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'>
 // - an in-memory cache, to avoid hitting the disk and the network more than once per process for each package
 // - an on-disk cache, for exact version matches and to avoid refetching the metadata if the resource hasn't changed on the server
 
-const PACKAGE_METADATA_CACHE = new Map<IdentHash, PackageMetadata>();
+const PACKAGE_METADATA_CACHE = new Map<IdentHash, Promise<PackageMetadata> | PackageMetadata>();
 
 /**
  * Caches and returns the package metadata for the given ident.
@@ -89,74 +89,78 @@ const PACKAGE_METADATA_CACHE = new Map<IdentHash, PackageMetadata>();
  * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
  */
 export async function getPackageMetadata(ident: Ident, {project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
-  const {configuration} = project;
+  return await miscUtils.getFactoryWithDefault(PACKAGE_METADATA_CACHE, ident.identHash, async () => {
+    const {configuration} = project;
 
-  const cachedInMemory = PACKAGE_METADATA_CACHE.get(ident.identHash);
-  if (cachedInMemory)
-    return cachedInMemory;
+    registry = normalizeRegistry(configuration, {ident, registry});
 
-  registry = normalizeRegistry(configuration, {ident, registry});
+    const registryFolder = getRegistryFolder(configuration, registry);
+    const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
 
-  const registryFolder = getRegistryFolder(configuration, registry);
-  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
+    let cached: CachedMetadata | null = null;
 
-  let cachedOnDisk: CachedMetadata | null = null;
+    // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
+    // since most likely the user is trying to validate the metadata using hardened mode.
+    if (!project.lockfileNeedsRefresh) {
+      try {
+        cached = await xfs.readJsonPromise(identPath) as CachedMetadata;
 
-  // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
-  // since most likely the user is trying to validate the metadata using hardened mode.
-  if (!project.lockfileNeedsRefresh) {
-    try {
-      cachedOnDisk = await xfs.readJsonPromise(identPath) as CachedMetadata;
+        if (typeof version !== `undefined` && typeof cached.metadata.versions[version] !== `undefined`) {
+          return cached.metadata;
+        }
+      } catch {}
+    }
 
-      if (typeof version !== `undefined` && typeof cachedOnDisk.metadata.versions[version] !== `undefined`) {
-        return cachedOnDisk.metadata;
-      }
-    } catch {}
-  }
+    return await get(getIdentUrl(ident), {
+      ...rest,
+      customErrorMessage: customPackageError,
+      configuration,
+      registry,
+      ident,
+      headers: {
+        ...headers,
+        // We set both headers in case a registry doesn't support ETags
+        [`If-None-Match`]: cached?.etag,
+        [`If-Modified-Since`]: cached?.lastModified,
+      },
+      wrapNetworkRequest: async executor => async () => {
+        const response = await executor();
 
-  return await get(getIdentUrl(ident), {
-    ...rest,
-    customErrorMessage: customPackageError,
-    configuration,
-    registry,
-    ident,
-    headers: {
-      ...headers,
-      // We set both headers in case a registry doesn't support ETags
-      [`If-None-Match`]: cachedOnDisk?.etag,
-      [`If-Modified-Since`]: cachedOnDisk?.lastModified,
-    },
-    wrapNetworkRequest: async executor => async () => {
-      const response = await executor();
+        if (response.statusCode === 304) {
+          if (cached === null)
+            throw new Error(`Assertion failed: cachedMetadata should not be null`);
 
-      if (response.statusCode === 304) {
-        if (cachedOnDisk === null)
-          throw new Error(`Assertion failed: cachedMetadata should not be null`);
+          return {
+            ...response,
+            body: cached.metadata,
+          };
+        }
+
+        const packageMetadata = pickPackageMetadata(JSON.parse(response.body.toString()));
+
+        PACKAGE_METADATA_CACHE.set(ident.identHash, packageMetadata);
+
+        const metadata: CachedMetadata = {
+          metadata: packageMetadata,
+          etag: response.headers.etag,
+          lastModified: response.headers[`last-modified`],
+        };
+
+        // We append the PID because it is guaranteed that this code is only run once per process for a given ident
+        const identPathTmp = `${identPath}-${process.pid}.tmp` as PortablePath;
+
+        await xfs.mkdirPromise(registryFolder, {recursive: true});
+        await xfs.writeJsonPromise(identPathTmp, metadata, {compact: true});
+
+        // Doing a rename is important to ensure the cache is atomic
+        await xfs.renamePromise(identPathTmp, identPath);
 
         return {
           ...response,
-          body: cachedOnDisk.metadata,
+          body: packageMetadata,
         };
-      }
-
-      const packageMetadata = pickPackageMetadata(JSON.parse(response.body.toString()));
-
-      PACKAGE_METADATA_CACHE.set(ident.identHash, packageMetadata);
-
-      const metadata: CachedMetadata = {
-        metadata: packageMetadata,
-        etag: response.headers.etag,
-        lastModified: response.headers[`last-modified`],
-      };
-
-      await xfs.mkdirPromise(registryFolder, {recursive: true});
-      await xfs.writeJsonPromise(identPath, metadata, {compact: true});
-
-      return {
-        ...response,
-        body: packageMetadata,
-      };
-    },
+      },
+    });
   });
 }
 
