@@ -62,14 +62,11 @@ export default class RebuildCommand extends BaseCommand {
       project.skippedBuilds.clear();
     }
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-      includeLogs: !this.context.quiet,
-    }, async report => {
-      await project.install({cache, report});
+      quiet: this.context.quiet,
+    }, {
+      cache,
     });
-
-    return installReport.exitCode();
   }
 }

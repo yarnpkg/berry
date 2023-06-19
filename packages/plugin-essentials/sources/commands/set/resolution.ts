@@ -51,13 +51,10 @@ export default class SetResolutionCommand extends BaseCommand {
 
     project.resolutionAliases.set(fromDescriptor.descriptorHash, toDescriptor.descriptorHash);
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report});
+    }, {
+      cache,
     });
-
-    return report.exitCode();
   }
 }

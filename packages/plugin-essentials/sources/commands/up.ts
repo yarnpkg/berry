@@ -141,14 +141,11 @@ export default class UpCommand extends BaseCommand {
       project.storedResolutions.delete(descriptor.descriptorHash);
     }
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async report => {
-      await project.install({cache, report});
+    }, {
+      cache,
     });
-
-    return installReport.exitCode();
   }
 
   async executeUpClassic() {
@@ -348,13 +345,11 @@ export default class UpCommand extends BaseCommand {
     if (askedQuestions)
       this.context.stdout.write(`\n`);
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async report => {
-      await project.install({cache, report, mode: this.mode});
+    }, {
+      cache,
+      mode: this.mode,
     });
-
-    return installReport.exitCode();
   }
 }

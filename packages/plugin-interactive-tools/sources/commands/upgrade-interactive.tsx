@@ -369,14 +369,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     if (!hasChanged)
       return 0;
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
+      quiet: this.context.quiet,
       stdout: this.context.stdout,
-      includeLogs: !this.context.quiet,
-    }, async report => {
-      await project.install({cache, report});
+    }, {
+      cache,
     });
-
-    return installReport.exitCode();
   }
 }

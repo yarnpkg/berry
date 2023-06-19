@@ -99,13 +99,12 @@ export default class WorkspacesFocusCommand extends BaseCommand {
     // persist the project state on the disk (otherwise all workspaces would
     // lose their dependencies!).
 
-    const report = await StreamReport.start({
-      configuration,
+    const report = await project.installWithNewReport({
       json: this.json,
       stdout: this.context.stdout,
-      includeLogs: true,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report, persistProject: false});
+    }, {
+      cache,
+      persistProject: false,
     });
 
     return report.exitCode();

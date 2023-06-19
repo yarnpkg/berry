@@ -7,6 +7,7 @@ import {structuredPatch}                                                from 'di
 import pick                                                             from 'lodash/pick';
 import pLimit                                                           from 'p-limit';
 import semver                                                           from 'semver';
+import internal                                                         from 'stream';
 import {promisify}                                                      from 'util';
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
@@ -24,6 +25,7 @@ import {MultiResolver}                                                  from './
 import {Report, ReportError}                                            from './Report';
 import {ResolveOptions, Resolver}                                       from './Resolver';
 import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
+import {StreamReport}                                                   from './StreamReport';
 import {ThrowReport}                                                    from './ThrowReport';
 import {WorkspaceResolver}                                              from './WorkspaceResolver';
 import {Workspace}                                                      from './Workspace';
@@ -1607,6 +1609,21 @@ export class Project {
 
     this.storedBuildState = nextBState;
     this.skippedBuilds = nextSkippedBuilds;
+  }
+
+  async installWithNewReport(reportOpts: {json?: boolean, quiet?: boolean, stdout: internal.Writable}, installOpts: Omit<InstallOptions, `report`>) {
+    const report = await StreamReport.start({
+      configuration: this.configuration,
+      json: reportOpts.json,
+      stdout: reportOpts.stdout,
+      forceSectionAlignment: true,
+      includeLogs: !reportOpts.quiet,
+      includeVersion: true,
+    }, async report => {
+      await this.install({...installOpts, report});
+    });
+
+    return report.exitCode();
   }
 
   async install(opts: InstallOptions) {

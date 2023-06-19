@@ -92,13 +92,11 @@ export default class UnlinkCommand extends BaseCommand {
       return !workspacesToUnlink.has(pattern.descriptor.fullName);
     });
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report});
+      quiet: this.context.quiet,
+    }, {
+      cache,
     });
-
-    return report.exitCode();
   }
 }

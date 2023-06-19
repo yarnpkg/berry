@@ -157,14 +157,12 @@ export default class RemoveCommand extends BaseCommand {
         afterWorkspaceDependencyRemovalList,
       );
 
-      const report = await StreamReport.start({
-        configuration,
+      return await project.installWithNewReport({
         stdout: this.context.stdout,
-      }, async report => {
-        await project.install({cache, report, mode: this.mode});
+      }, {
+        cache,
+        mode: this.mode,
       });
-
-      return report.exitCode();
     }
 
     return 0;

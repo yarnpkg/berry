@@ -99,13 +99,10 @@ export default class LinkCommand extends BaseCommand {
       });
     }
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report});
+    }, {
+      cache,
     });
-
-    return report.exitCode();
   }
 }

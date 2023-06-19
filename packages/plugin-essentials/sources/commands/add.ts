@@ -317,16 +317,14 @@ export default class AddCommand extends BaseCommand {
     if (askedQuestions)
       this.context.stdout.write(`\n`);
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       json: this.json,
       stdout: this.context.stdout,
-      includeLogs: !this.context.quiet,
-    }, async report => {
-      await project.install({cache, report, mode: this.mode});
+      quiet: this.context.quiet,
+    }, {
+      cache,
+      mode: this.mode,
     });
-
-    return installReport.exitCode();
   }
 }
 
