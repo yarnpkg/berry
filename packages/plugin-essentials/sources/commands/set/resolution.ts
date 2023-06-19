@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}         from '@yarnpkg/cli';
-import {Configuration, Cache, Project, StreamReport} from '@yarnpkg/core';
-import {structUtils}                                 from '@yarnpkg/core';
-import {Command, Option, Usage}                      from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, Cache, Project}       from '@yarnpkg/core';
+import {structUtils}                         from '@yarnpkg/core';
+import {Command, Option, Usage}              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetResolutionCommand extends BaseCommand {

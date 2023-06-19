@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                     from '@yarnpkg/cli';
 import {Cache, Configuration, Descriptor, formatUtils, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, Ident, InstallMode}                    from '@yarnpkg/core';
+import {Project, Workspace, Ident, InstallMode}                                  from '@yarnpkg/core';
 import {structUtils}                                                             from '@yarnpkg/core';
 import {PortablePath}                                                            from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                      from 'clipanion';

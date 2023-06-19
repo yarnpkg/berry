@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
 import {IdentHash, structUtils}                                                                         from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, InstallMode}                                                  from '@yarnpkg/core';
+import {Project, Workspace, InstallMode}                                                                from '@yarnpkg/core';
 import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                                                             from 'clipanion';
 import {prompt}                                                                                         from 'enquirer';

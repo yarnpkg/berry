@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                 from '@yarnpkg/cli';
-import {Cache, Configuration, miscUtils, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                  from 'clipanion';
-import micromatch                                                            from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
+import {Cache, Configuration, miscUtils, Project, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                                          from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                    from 'clipanion';
+import micromatch                                              from 'micromatch';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnlinkCommand extends BaseCommand {

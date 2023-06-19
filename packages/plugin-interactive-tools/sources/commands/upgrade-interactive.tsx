@@ -1,12 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                            from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, StreamReport} from '@yarnpkg/core';
-import * as libuiUtils                                                                                                                  from '@yarnpkg/libui/sources/libuiUtils';
-import type {SubmitInjectedComponent}                                                                                                   from '@yarnpkg/libui/sources/misc/renderForm';
-import {suggestUtils}                                                                                                                   from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                                 from 'clipanion';
-import {diffWords}                                                                                                                      from 'diff';
-import semver                                                                                                                           from 'semver';
-import {WriteStream}                                                                                                                    from 'tty';
+import {BaseCommand, WorkspaceRequiredError}                                                                              from '@yarnpkg/cli';
+import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash} from '@yarnpkg/core';
+import * as libuiUtils                                                                                                    from '@yarnpkg/libui/sources/libuiUtils';
+import type {SubmitInjectedComponent}                                                                                     from '@yarnpkg/libui/sources/misc/renderForm';
+import {suggestUtils}                                                                                                     from '@yarnpkg/plugin-essentials';
+import {Command, Usage}                                                                                                   from 'clipanion';
+import {diffWords}                                                                                                        from 'diff';
+import semver                                                                                                             from 'semver';
+import {WriteStream}                                                                                                      from 'tty';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 

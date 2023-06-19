@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                             from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}        from '@yarnpkg/cli';
+import {Cache, Configuration, Project, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                               from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {

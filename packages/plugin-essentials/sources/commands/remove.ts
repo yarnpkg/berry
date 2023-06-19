@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                    from '@yarnpkg/cli';
 import {Configuration, Cache, Descriptor, Project, formatUtils} from '@yarnpkg/core';
-import {StreamReport, Workspace, InstallMode}                   from '@yarnpkg/core';
+import {Workspace, InstallMode}                                 from '@yarnpkg/core';
 import {structUtils}                                            from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                     from 'clipanion';
 import micromatch                                               from 'micromatch';
