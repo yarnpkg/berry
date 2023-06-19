@@ -1124,8 +1124,10 @@ export class Project {
       return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
     })));
 
-    const buildLogs: Array<[Locator, (report: Report) => void]> = [];
     const pendingPromises: Array<Promise<void>> = [];
+
+    const nextSkippedBuilds = new Set<LocatorHash>();
+    const skippedBuildLogs: Array<[Locator, (report: Report) => void]> = [];
 
     // Step 1: Installing the packages on the disk
 
@@ -1208,9 +1210,9 @@ export class Project {
 
         if (installStatus.buildRequest && installStatus.packageLocation) {
           if (installStatus.buildRequest.skipped) {
+            nextSkippedBuilds.add(pkg.locatorHash);
             if (!this.skippedBuilds.has(pkg.locatorHash)) {
-              buildLogs.push([pkg, installStatus.buildRequest.explain]);
-              this.skippedBuilds.add(pkg.locatorHash);
+              skippedBuildLogs.push([pkg, installStatus.buildRequest.explain]);
             }
           } else {
             packageBuildDirectives.set(pkg.locatorHash, {
@@ -1317,9 +1319,9 @@ export class Project {
 
       for (const installStatus of finalizeInstallData?.records ?? []) {
         if (installStatus.buildRequest.skipped) {
+          nextSkippedBuilds.add(installStatus.locator.locatorHash);
           if (!this.skippedBuilds.has(installStatus.locator.locatorHash)) {
-            buildLogs.push([installStatus.locator, installStatus.buildRequest.explain]);
-            this.skippedBuilds.add(installStatus.locator.locatorHash);
+            skippedBuildLogs.push([installStatus.locator, installStatus.buildRequest.explain]);
           }
         } else {
           packageBuildDirectives.set(installStatus.locator.locatorHash, {
@@ -1343,7 +1345,7 @@ export class Project {
     if (mode === InstallMode.SkipBuild)
       return;
 
-    for (const [, explain] of miscUtils.sortMap(buildLogs, ([locator]) => structUtils.stringifyLocator(locator)))
+    for (const [, explain] of miscUtils.sortMap(skippedBuildLogs, ([locator]) => structUtils.stringifyLocator(locator)))
       explain(report);
 
     const readyPackages = new Set(this.storedPackages.keys());
@@ -1604,6 +1606,7 @@ export class Project {
     // package (and avoid rebuilding it later if it didn't change).
 
     this.storedBuildState = nextBState;
+    this.skippedBuilds = nextSkippedBuilds;
   }
 
   async install(opts: InstallOptions) {
