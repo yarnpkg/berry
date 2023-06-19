@@ -346,6 +346,7 @@ export default class YarnCommand extends BaseCommand {
       json: this.json,
       stdout: this.context.stdout,
       includeLogs: true,
+      includeVersion: true,
     }, async (report: StreamReport) => {
       await project.install({cache, report, immutable, checkResolutions, mode: this.mode});
     });

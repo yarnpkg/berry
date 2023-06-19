@@ -6,6 +6,7 @@ import {WriteStream}                                                            
 import {Configuration}                                                              from './Configuration';
 import {MessageName, stringifyMessageName}                                          from './MessageName';
 import {ProgressDefinition, Report, SectionOptions, TimerOptions, ProgressIterable} from './Report';
+import {YarnVersion}                                                                from './YarnVersion';
 import * as formatUtils                                                             from './formatUtils';
 import * as structUtils                                                             from './structUtils';
 import {Locator}                                                                    from './types';
@@ -18,11 +19,14 @@ export type StreamReportOptions = {
   includeInfos?: boolean;
   includeLogs?: boolean;
   includeNames?: boolean;
+  includeVersion?: boolean;
   includeWarnings?: boolean;
   includePrefix?: boolean;
   json?: boolean;
   stdout: Writable;
 };
+
+export const SINGLE_LINE_CHAR = `·`;
 
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
@@ -130,6 +134,9 @@ export class StreamReport extends Report {
 
       report.reportWarning(MessageName.UNNAMED, fullMessage);
     };
+
+    if (opts.includeVersion)
+      report.reportInfo(MessageName.UNNAMED, `${SINGLE_LINE_CHAR} ${formatUtils.applyStyle(opts.configuration, `Yarn ${YarnVersion}`, formatUtils.Style.BOLD)}`);
 
     try {
       await cb(report);
@@ -514,8 +521,8 @@ export class StreamReport extends Report {
 
     const timing = formatUtils.pretty(this.configuration, Date.now() - this.startTime, formatUtils.Type.DURATION);
     const message = this.configuration.get(`enableTimers`)
-      ? `${installStatus} in ${timing}`
-      : installStatus;
+      ? `${SINGLE_LINE_CHAR} ${installStatus} in ${timing}`
+      : `${SINGLE_LINE_CHAR} ${installStatus}`;
 
     if (this.errors.length > 0) {
       this.reportError(MessageName.UNNAMED, message);
