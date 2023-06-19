@@ -345,6 +345,7 @@ export default class YarnCommand extends BaseCommand {
       configuration,
       json: this.json,
       stdout: this.context.stdout,
+      forceSectionAlignment: true,
       includeLogs: true,
       includeVersion: true,
     }, async (report: StreamReport) => {

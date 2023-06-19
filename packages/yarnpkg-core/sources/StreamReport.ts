@@ -13,6 +13,7 @@ import {Locator}                                                                
 
 export type StreamReportOptions = {
   configuration: Configuration;
+  forceSectionAlignment?: boolean;
   forgettableBufferSize?: number;
   forgettableNames?: Set<MessageName | null>;
   includeFooter?: boolean;
@@ -136,7 +137,7 @@ export class StreamReport extends Report {
     };
 
     if (opts.includeVersion)
-      report.reportInfo(MessageName.UNNAMED, `${SINGLE_LINE_CHAR} ${formatUtils.applyStyle(opts.configuration, `Yarn ${YarnVersion}`, formatUtils.Style.BOLD)}`);
+      report.reportInfo(MessageName.UNNAMED, formatUtils.applyStyle(opts.configuration, `Yarn ${YarnVersion}`, formatUtils.Style.BOLD));
 
     try {
       await cb(report);
@@ -151,6 +152,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private forceSectionAlignment: boolean;
   private includeNames: boolean;
   private includePrefix: boolean;
   private includeFooter: boolean;
@@ -174,6 +176,7 @@ export class StreamReport extends Report {
   private startTime: number = Date.now();
 
   private indent: number = 0;
+  private level: number = 0;
 
   private progress: Map<ProgressIterable, {
     definition: ProgressDefinition;
@@ -195,6 +198,7 @@ export class StreamReport extends Report {
     configuration,
     stdout,
     json = false,
+    forceSectionAlignment = false,
     includeNames = true,
     includePrefix = true,
     includeFooter = true,
@@ -209,6 +213,7 @@ export class StreamReport extends Report {
     formatUtils.addLogFilterSupport(this, {configuration});
 
     this.configuration = configuration;
+    this.forceSectionAlignment = forceSectionAlignment;
     this.forgettableBufferSize = forgettableBufferSize;
     this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
     this.includeNames = includeNames;
@@ -315,6 +320,8 @@ export class StreamReport extends Report {
     return {
       cb: realCb,
       reportHeader: () => {
+        this.level += 1;
+
         this.reportInfo(null, `┌ ${what}`);
         this.indent += 1;
 
@@ -332,11 +339,12 @@ export class StreamReport extends Report {
           }
         }
 
-        if (this.configuration.get(`enableTimers`) && elapsedTime > 200) {
+        if (this.configuration.get(`enableTimers`) && elapsedTime > 200)
           this.reportInfo(null, `└ Completed in ${formatUtils.pretty(this.configuration, elapsedTime, formatUtils.Type.DURATION)}`);
-        } else {
+        else
           this.reportInfo(null, `└ Completed`);
-        }
+
+        this.level -= 1;
       },
       skipIfEmpty: realOpts.skipIfEmpty,
     } as SectionOptions & {cb: Callback};
@@ -521,8 +529,8 @@ export class StreamReport extends Report {
 
     const timing = formatUtils.pretty(this.configuration, Date.now() - this.startTime, formatUtils.Type.DURATION);
     const message = this.configuration.get(`enableTimers`)
-      ? `${SINGLE_LINE_CHAR} ${installStatus} in ${timing}`
-      : `${SINGLE_LINE_CHAR} ${installStatus}`;
+      ? `${installStatus} in ${timing}`
+      : installStatus;
 
     if (this.errors.length > 0) {
       this.reportError(MessageName.UNNAMED, message);
@@ -698,7 +706,9 @@ export class StreamReport extends Report {
   }
 
   private formatPrefix(prefix: string, caretColor: string) {
-    return this.includePrefix ? `${formatUtils.pretty(this.configuration, `➤`, caretColor)} ${prefix}${this.formatIndent()}` : ``;
+    return this.includePrefix
+      ? `${formatUtils.pretty(this.configuration, `➤`, caretColor)} ${prefix}${this.formatIndent()}`
+      : ``;
   }
 
   private formatNameWithHyperlink(name: MessageName | null) {
@@ -712,6 +722,8 @@ export class StreamReport extends Report {
   }
 
   private formatIndent() {
-    return `│ `.repeat(this.indent);
+    return this.level > 0 || !this.forceSectionAlignment
+      ? `│ `.repeat(this.indent)
+      : `${SINGLE_LINE_CHAR} `;
   }
 }
