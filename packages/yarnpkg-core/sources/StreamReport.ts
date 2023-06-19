@@ -548,9 +548,9 @@ export class StreamReport extends Report {
       fetchStatus += `No packages were cached`;
 
     if (this.cacheMissCount > 1)
-      fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
+      fetchStatus += `, ${this.cacheMissCount} had to be fetched.`;
     else if (this.cacheMissCount === 1)
-      fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
+      fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)}).`;
 
     this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
