@@ -1,12 +1,16 @@
 releases:
+  "@yarnpkg/builder": major
   "@yarnpkg/cli": major
   "@yarnpkg/core": major
   "@yarnpkg/plugin-essentials": major
+  "@yarnpkg/plugin-interactive-tools": major
   "@yarnpkg/plugin-nm": major
   "@yarnpkg/plugin-npm": major
   "@yarnpkg/plugin-npm-cli": major
   "@yarnpkg/plugin-pnp": major
   "@yarnpkg/plugin-pnpm": major
+  "@yarnpkg/plugin-version": major
+  "@yarnpkg/plugin-workspace-tools": major
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -18,15 +22,11 @@ declined:
   - "@yarnpkg/plugin-github"
   - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-init"
-  - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
-  - "@yarnpkg/plugin-version"
-  - "@yarnpkg/plugin-workspace-tools"
-  - "@yarnpkg/builder"
   - "@yarnpkg/doctor"
   - "@yarnpkg/extensions"
   - "@yarnpkg/nm"
