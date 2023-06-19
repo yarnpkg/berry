@@ -75,6 +75,10 @@ export default class NpmAuditCommand extends BaseCommand {
     description: `Format the output as an NDJSON stream`,
   });
 
+  noDeprecations = Option.Boolean(`--no-deprecations`, false, {
+    description: `Don't warn about deprecated packages`,
+  });
+
   severity = Option.String(`--severity`, npmAuditTypes.Severity.Info, {
     description: `Minimal severity requested for packages to be displayed`,
     validator: t.isEnum(npmAuditTypes.Severity),
@@ -118,12 +122,52 @@ export default class NpmAuditCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async () => {
-      result = ((await npmHttpUtils.post(`/-/npm/v1/security/advisories/bulk`, payload, {
+      // Note: No `await` there, so that the request is sent in parallel with the deprecation checks
+      const auditRequest = npmHttpUtils.post(`/-/npm/v1/security/advisories/bulk`, payload, {
         authType: npmHttpUtils.AuthType.BEST_EFFORT,
         configuration,
         jsonResponse: true,
         registry,
-      })) as unknown) as npmAuditTypes.AuditResponse;
+      }) as unknown as Promise<npmAuditTypes.AuditResponse>;
+
+      const deprecations = await Promise.all(this.noDeprecations ? [] : [...packages.entries()].map(async ([packageName, versions]) => {
+        const registryData = await npmHttpUtils.get(`/${packageName}`, {
+          configuration,
+          jsonResponse: true,
+          registry,
+          headers: {
+            [`Accept`]: `application/vnd.npm.install-v1+json`,
+          },
+        }) as any;
+
+        if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+          return [];
+
+        return [...versions.keys()].map(version => {
+          return [packageName, version, registryData.versions[version].deprecated] as const;
+        }).filter(([, , message]) => {
+          return !!message;
+        });
+      }));
+
+      const auditResult = await auditRequest;
+
+      for (const [packageName, version, message] of deprecations.flat(1)) {
+        // No need to report the deprecation audit message if the package is already reported as vulnerable
+        if (Object.prototype.hasOwnProperty.call(auditResult, packageName))
+          if (auditResult[packageName].some(advisory => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
+            continue;
+
+        auditResult[packageName] ??= [];
+        auditResult[packageName].push({
+          id: `${packageName} (deprecation)`,
+          title: message,
+          severity: npmAuditTypes.Severity.Moderate,
+          vulnerable_versions: version,
+        });
+      }
+
+      result = auditResult;
     });
 
     if (httpReport.hasErrors())

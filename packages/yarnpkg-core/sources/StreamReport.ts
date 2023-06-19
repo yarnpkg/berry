@@ -241,10 +241,6 @@ export class StreamReport extends Report {
   reportCacheMiss(locator: Locator, message?: string) {
     this.lastCacheMiss = locator;
     this.cacheMissCount += 1;
-
-    if (typeof message !== `undefined` && !this.configuration.get(`preferAggregateCacheInfo`)) {
-      this.reportInfo(MessageName.FETCH_NOT_CACHED, message);
-    }
   }
 
   startSectionSync<T>({reportHeader, reportFooter, skipIfEmpty}: SectionOptions, cb: () => T) {
@@ -354,9 +350,10 @@ export class StreamReport extends Report {
   }
 
   async startCacheReport<T>(cb: () => Promise<T>) {
-    const cacheInfo = this.configuration.get(`preferAggregateCacheInfo`)
-      ? {cacheHitCount: this.cacheHitCount, cacheMissCount: this.cacheMissCount}
-      : null;
+    const cacheInfo = {
+      cacheHitCount: this.cacheHitCount,
+      cacheMissCount: this.cacheMissCount,
+    };
 
     try {
       return await cb();
@@ -561,23 +558,14 @@ export class StreamReport extends Report {
     if (this.cacheHitCount > 1)
       fetchStatus += `${this.cacheHitCount} packages were already cached`;
     else if (this.cacheHitCount === 1)
-      fetchStatus += ` - one package was already cached`;
+      fetchStatus += `One package was already cached`;
     else
       fetchStatus += `No packages were cached`;
 
-    if (this.cacheHitCount > 0) {
-      if (this.cacheMissCount > 1) {
-        fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
-      } else if (this.cacheMissCount === 1) {
-        fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
-      }
-    } else {
-      if (this.cacheMissCount > 1) {
-        fetchStatus += ` - ${this.cacheMissCount} packages had to be fetched`;
-      } else if (this.cacheMissCount === 1) {
-        fetchStatus += ` - one package had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
-      }
-    }
+    if (this.cacheMissCount > 1)
+      fetchStatus += `, ${this.cacheMissCount} had to be fetched`;
+    else if (this.cacheMissCount === 1)
+      fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)})`;
 
     this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }

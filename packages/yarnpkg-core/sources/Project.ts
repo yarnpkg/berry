@@ -1,43 +1,43 @@
-import {npath}                                                          from '@yarnpkg/fslib';
-import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}       from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                       from '@yarnpkg/parsers';
-import {UsageError}                                                     from 'clipanion';
-import {createHash}                                                     from 'crypto';
-import {structuredPatch}                                                from 'diff';
-import pick                                                             from 'lodash/pick';
-import pLimit                                                           from 'p-limit';
-import semver                                                           from 'semver';
-import {promisify}                                                      from 'util';
-import v8                                                               from 'v8';
-import zlib                                                             from 'zlib';
+import {npath}                                                                      from '@yarnpkg/fslib';
+import {PortablePath, ppath, xfs, normalizeLineEndings, Filename}                   from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                   from '@yarnpkg/parsers';
+import {UsageError}                                                                 from 'clipanion';
+import {createHash}                                                                 from 'crypto';
+import {structuredPatch}                                                            from 'diff';
+import pick                                                                         from 'lodash/pick';
+import pLimit                                                                       from 'p-limit';
+import semver                                                                       from 'semver';
+import {promisify}                                                                  from 'util';
+import v8                                                                           from 'v8';
+import zlib                                                                         from 'zlib';
 
-import {Cache, CacheOptions}                                            from './Cache';
-import {Configuration}                                                  from './Configuration';
-import {Fetcher, FetchOptions}                                          from './Fetcher';
-import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
-import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
-import {Linker, LinkOptions}                                            from './Linker';
-import {LockfileResolver}                                               from './LockfileResolver';
-import {DependencyMeta, Manifest}                                       from './Manifest';
-import {MessageName}                                                    from './MessageName';
-import {MultiResolver}                                                  from './MultiResolver';
-import {Report, ReportError}                                            from './Report';
-import {ResolveOptions, Resolver}                                       from './Resolver';
-import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
-import {ThrowReport}                                                    from './ThrowReport';
-import {WorkspaceResolver}                                              from './WorkspaceResolver';
-import {Workspace}                                                      from './Workspace';
-import {isFolderInside}                                                 from './folderUtils';
-import * as formatUtils                                                 from './formatUtils';
-import * as hashUtils                                                   from './hashUtils';
-import * as miscUtils                                                   from './miscUtils';
-import * as nodeUtils                                                   from './nodeUtils';
-import * as scriptUtils                                                 from './scriptUtils';
-import * as semverUtils                                                 from './semverUtils';
-import * as structUtils                                                 from './structUtils';
-import {LinkType}                                                       from './types';
-import {Descriptor, Ident, Locator, Package}                            from './types';
-import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './types';
+import {Cache, CacheOptions}                                                        from './Cache';
+import {Configuration}                                                              from './Configuration';
+import {Fetcher, FetchOptions}                                                      from './Fetcher';
+import {Installer, BuildDirective, BuildDirectiveType, InstallStatus, BuildRequest} from './Installer';
+import {LegacyMigrationResolver}                                                    from './LegacyMigrationResolver';
+import {Linker, LinkOptions}                                                        from './Linker';
+import {LockfileResolver}                                                           from './LockfileResolver';
+import {DependencyMeta, Manifest}                                                   from './Manifest';
+import {MessageName}                                                                from './MessageName';
+import {MultiResolver}                                                              from './MultiResolver';
+import {Report, ReportError}                                                        from './Report';
+import {ResolveOptions, Resolver}                                                   from './Resolver';
+import {RunInstallPleaseResolver}                                                   from './RunInstallPleaseResolver';
+import {ThrowReport}                                                                from './ThrowReport';
+import {WorkspaceResolver}                                                          from './WorkspaceResolver';
+import {Workspace}                                                                  from './Workspace';
+import {isFolderInside}                                                             from './folderUtils';
+import * as formatUtils                                                             from './formatUtils';
+import * as hashUtils                                                               from './hashUtils';
+import * as miscUtils                                                               from './miscUtils';
+import * as nodeUtils                                                               from './nodeUtils';
+import * as scriptUtils                                                             from './scriptUtils';
+import * as semverUtils                                                             from './semverUtils';
+import * as structUtils                                                             from './structUtils';
+import {LinkType}                                                                   from './types';
+import {Descriptor, Ident, Locator, Package}                                        from './types';
+import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus}             from './types';
 
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
@@ -47,7 +47,7 @@ const LOCKFILE_VERSION = 7;
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
 // between patch or minor releases).
-const INSTALL_STATE_VERSION = 2;
+const INSTALL_STATE_VERSION = 3;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
@@ -149,6 +149,7 @@ const INSTALL_STATE_FIELDS = {
   ] as const,
 
   restoreBuildState: [
+    `skippedBuilds`,
     `storedBuildState`,
   ] as const,
 };
@@ -165,6 +166,27 @@ export type PeerRequirement = {
   requested: Ident;
   rootRequester: LocatorHash;
   allRequesters: Array<LocatorHash>;
+};
+
+export enum PeerWarningType {
+  NotProvided,
+  NotCompatible,
+}
+
+export type PeerWarning = {
+  type: PeerWarningType.NotProvided;
+  subject: Locator;
+  requested: Ident;
+  requester: Ident;
+  hash: string;
+} | {
+  type: PeerWarningType.NotCompatible;
+  subject: Locator;
+  requested: Ident;
+  requester: Ident;
+  version: string;
+  hash: string;
+  requirementCount: number;
 };
 
 const makeLockfileChecksum = (normalizedContent: string) =>
@@ -202,6 +224,7 @@ export class Project {
   public disabledLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+  public skippedBuilds: Set<LocatorHash> = new Set();
 
   /**
    * If true, the data contained within `originalPackages` are from a different
@@ -216,6 +239,7 @@ export class Project {
    * The map keys are 6 hexadecimal characters except the first one, always `p`.
    */
   public peerRequirements: Map<string, PeerRequirement> = new Map();
+  public peerWarnings: Array<PeerWarning> = [];
 
   /**
    * Contains whatever data the linkers (cf `Linker.ts`) want to persist
@@ -704,6 +728,8 @@ export class Project {
     this.forgetVirtualResolutions();
 
     // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
+    // Keep a copy of the original packages so that we can figure out what was added / removed later
+    const initialPackages = new Map(this.originalPackages);
     if (!opts.lockfileOnly)
       this.forgetTransientResolutions();
 
@@ -884,6 +910,26 @@ export class Project {
       }
     });
 
+    const addedPackages: Array<string> = [];
+    const removedPackages: Array<string> = [];
+
+    for (const [locatorHash, pkg] of originalPackages)
+      if (!initialPackages.has(locatorHash))
+        addedPackages.push(structUtils.prettyLocator(this.configuration, pkg));
+
+    for (const [locatorHash, pkg] of initialPackages)
+      if (!originalPackages.has(locatorHash))
+        removedPackages.push(structUtils.prettyLocator(this.configuration, pkg));
+
+    addedPackages.sort();
+    removedPackages.sort();
+
+    if (addedPackages.length > 0)
+      opts.report.reportInfo(MessageName.RESOLUTION_NOT_CACHED, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${addedPackages.join(`, `)}`);
+
+    if (removedPackages.length > 0)
+      opts.report.reportInfo(MessageName.RESOLUTION_NOT_CACHED, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${removedPackages.join(`, `)}`);
+
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
     // descriptors that aren't depended upon by anything and can be safely
@@ -893,15 +939,16 @@ export class Project {
     const optionalBuilds = new Set(allPackages.keys());
     const accessibleLocators = new Set<LocatorHash>();
     const peerRequirements: Project['peerRequirements'] = new Map();
+    const peerWarnings: Project['peerWarnings'] = [];
 
     applyVirtualResolutionMutations({
       project: this,
-      report: opts.report,
 
       accessibleLocators,
       volatileDescriptors,
       optionalBuilds,
       peerRequirements,
+      peerWarnings,
 
       allDescriptors,
       allResolutions,
@@ -961,6 +1008,7 @@ export class Project {
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
     this.peerRequirements = peerRequirements;
+    this.peerWarnings = peerWarnings;
   }
 
   async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
@@ -1062,7 +1110,11 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
+
+    const packageBuildDirectives: Map<LocatorHash, {
+      buildDirectives: Array<BuildDirective>;
+      buildLocations: Array<PortablePath>;
+    }> = new Map();
 
     const fetchResultsPerPackage = new Map(await miscUtils.allSettledSafe([...this.accessibleLocators].map(async locatorHash => {
       const pkg = this.storedPackages.get(locatorHash);
@@ -1072,6 +1124,7 @@ export class Project {
       return [locatorHash, await fetcher.fetch(pkg, fetcherOptions)] as const;
     })));
 
+    const buildLogs: Array<[Locator, (report: Report) => void]> = [];
     const pendingPromises: Array<Promise<void>> = [];
 
     // Step 1: Installing the packages on the disk
@@ -1092,18 +1145,18 @@ export class Project {
 
       const workspace = this.tryWorkspaceByLocator(pkg);
       if (workspace !== null) {
-        const buildScripts: Array<BuildDirective> = [];
+        const buildDirectives: Array<BuildDirective> = [];
         const {scripts} = workspace.manifest;
 
         for (const scriptName of [`preinstall`, `install`, `postinstall`])
           if (scripts.has(scriptName))
-            buildScripts.push([BuildType.SCRIPT, scriptName]);
+            buildDirectives.push({type: BuildDirectiveType.SCRIPT, script: scriptName});
 
         try {
           for (const [linker, installer] of installers) {
             if (linker.supportsPackage(pkg, linkerOptions)) {
               const result = await installer.installPackage(pkg, fetchResult, {holdFetchResult});
-              if (result.buildDirective !== null) {
+              if (result.buildRequest !== null) {
                 throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
               }
             }
@@ -1122,9 +1175,9 @@ export class Project {
         packageLocations.set(pkg.locatorHash, location);
 
         // Virtual workspaces shouldn't be built as they don't really exist
-        if (!structUtils.isVirtualLocator(pkg) && buildScripts.length > 0) {
+        if (!structUtils.isVirtualLocator(pkg) && buildDirectives.length > 0) {
           packageBuildDirectives.set(pkg.locatorHash, {
-            directives: buildScripts,
+            buildDirectives,
             buildLocations: [location],
           });
         }
@@ -1153,11 +1206,18 @@ export class Project {
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.buildDirective && installStatus.buildDirective.length > 0 && installStatus.packageLocation) {
-          packageBuildDirectives.set(pkg.locatorHash, {
-            directives: installStatus.buildDirective,
-            buildLocations: [installStatus.packageLocation],
-          });
+        if (installStatus.buildRequest && installStatus.packageLocation) {
+          if (installStatus.buildRequest.skipped) {
+            if (!this.skippedBuilds.has(pkg.locatorHash)) {
+              buildLogs.push([pkg, installStatus.buildRequest.explain]);
+              this.skippedBuilds.add(pkg.locatorHash);
+            }
+          } else {
+            packageBuildDirectives.set(pkg.locatorHash, {
+              buildDirectives: installStatus.buildRequest.directives,
+              buildLocations: [installStatus.packageLocation],
+            });
+          }
         }
       }
     }
@@ -1256,10 +1316,17 @@ export class Project {
       const finalizeInstallData = await installer.finalizeInstall();
 
       for (const installStatus of finalizeInstallData?.records ?? []) {
-        packageBuildDirectives.set(installStatus.locatorHash, {
-          directives: installStatus.buildDirective,
-          buildLocations: installStatus.buildLocations,
-        });
+        if (installStatus.buildRequest.skipped) {
+          if (!this.skippedBuilds.has(installStatus.locator.locatorHash)) {
+            buildLogs.push([installStatus.locator, installStatus.buildRequest.explain]);
+            this.skippedBuilds.add(installStatus.locator.locatorHash);
+          }
+        } else {
+          packageBuildDirectives.set(installStatus.locator.locatorHash, {
+            buildDirectives: installStatus.buildRequest.directives,
+            buildLocations: installStatus.buildLocations,
+          });
+        }
       }
 
       if (typeof finalizeInstallData?.customData !== `undefined`) {
@@ -1275,6 +1342,9 @@ export class Project {
 
     if (mode === InstallMode.SkipBuild)
       return;
+
+    for (const [, explain] of miscUtils.sortMap(buildLogs, ([locator]) => structUtils.stringifyLocator(locator)))
+      explain(report);
 
     const readyPackages = new Set(this.storedPackages.keys());
     const buildablePackages = new Set(packageBuildDirectives.keys());
@@ -1433,14 +1503,14 @@ export class Project {
           if (!ppath.isAbsolute(location))
             throw new Error(`Assertion failed: Expected the build location to be absolute (not ${location})`);
 
-          for (const [buildType, scriptName] of buildInfo.directives) {
+          for (const directive of buildInfo.buildDirectives) {
             let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
-            switch (buildType) {
-              case BuildType.SCRIPT: {
-                header += `# Script name: ${scriptName}\n`;
+            switch (directive.type) {
+              case BuildDirectiveType.SCRIPT: {
+                header += `# Script name: ${directive.script}\n`;
               } break;
-              case BuildType.SHELLCODE: {
-                header += `# Script code: ${scriptName}\n`;
+              case BuildDirectiveType.SHELLCODE: {
+                header += `# Script code: ${directive.script}\n`;
               } break;
             }
 
@@ -1457,12 +1527,12 @@ export class Project {
 
               let exitCode;
               try {
-                switch (buildType) {
-                  case BuildType.SCRIPT: {
-                    exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                switch (directive.type) {
+                  case BuildDirectiveType.SCRIPT: {
+                    exitCode = await scriptUtils.executePackageScript(pkg, directive.script, [], {cwd: location, project: this, stdin, stdout, stderr});
                   } break;
-                  case BuildType.SHELLCODE: {
-                    exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                  case BuildDirectiveType.SHELLCODE: {
+                    exitCode = await scriptUtils.executePackageShellcode(pkg, directive.script, [], {cwd: location, project: this, stdin, stdout, stderr});
                   } break;
                 }
               } catch (error) {
@@ -1588,6 +1658,8 @@ export class Project {
     await opts.report.startTimerPromise(`Post-resolution validation`, {
       skipIfEmpty: true,
     }, async () => {
+      emitPeerDependencyWarnings(this, opts.report);
+
       for (const [, extensionsPerRange] of this.configuration.packageExtensions) {
         for (const [, extensions] of extensionsPerRange) {
           for (const extension of extensions) {
@@ -1920,7 +1992,7 @@ export class Project {
     if (!(await xfs.existsPromise(cache.cwd)))
       return;
 
-    const preferAggregateCacheInfo = this.configuration.get(`preferAggregateCacheInfo`);
+    const cleanupPromises: Array<Promise<void>> = [];
 
     let entriesRemoved = 0;
     let lastEntryRemoved = null;
@@ -1938,16 +2010,14 @@ export class Project {
       if (cache.immutable) {
         report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would be marked for deletion, but the cache is immutable`);
       } else {
-        if (preferAggregateCacheInfo)
-          entriesRemoved += 1;
-        else
-          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
-
-        await xfs.removePromise(entryPath);
+        entriesRemoved += 1;
+        cleanupPromises.push(xfs.removePromise(entryPath));
       }
     }
 
-    if (preferAggregateCacheInfo && entriesRemoved !== 0) {
+    await Promise.all(cleanupPromises);
+
+    if (entriesRemoved !== 0) {
       report.reportInfo(
         MessageName.UNUSED_CACHE_ENTRY,
         entriesRemoved > 1
@@ -1978,9 +2048,8 @@ function applyVirtualResolutionMutations({
   accessibleLocators = new Set(),
   optionalBuilds = new Set(),
   peerRequirements = new Map(),
+  peerWarnings = [],
   volatileDescriptors = new Set(),
-
-  report,
 }: {
   project: Project;
 
@@ -1991,9 +2060,8 @@ function applyVirtualResolutionMutations({
   accessibleLocators?: Set<LocatorHash>;
   optionalBuilds?: Set<LocatorHash>;
   peerRequirements?: Project['peerRequirements'];
+  peerWarnings?: Project['peerWarnings'];
   volatileDescriptors?: Set<DescriptorHash>;
-
-  report: Report | null;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -2342,29 +2410,6 @@ function applyVirtualResolutionMutations({
     resolvePeerDependencies(workspace.anchoredDescriptor, locator, new Map(), {top: locator.locatorHash, optional: false});
   }
 
-  enum WarningType {
-    NotProvided,
-    NotCompatible,
-  }
-
-  type Warning = {
-    type: WarningType.NotProvided;
-    subject: Locator;
-    requested: Ident;
-    requester: Ident;
-    hash: string;
-  } | {
-    type: WarningType.NotCompatible;
-    subject: Locator;
-    requested: Ident;
-    requester: Ident;
-    version: string;
-    hash: string;
-    requirementCount: number;
-  };
-
-  const warnings: Array<Warning> = [];
-
   for (const [rootHash, dependents] of peerDependencyDependents) {
     const root = allPackages.get(rootHash);
     if (typeof root === `undefined`)
@@ -2388,6 +2433,11 @@ function applyVirtualResolutionMutations({
 
       // The package may have been pruned during a deduplication
       if (typeof dependent === `undefined`)
+        continue;
+
+      // We don't care about warning about incomplete transitive peer
+      // dependencies; in practice, there are just too many of them.
+      if (!project.tryWorkspaceByLocator(dependent))
         continue;
 
       for (const [identStr, linkHashes] of rootLinks) {
@@ -2442,8 +2492,8 @@ function applyVirtualResolutionMutations({
           });
 
           if (!satisfiesAll) {
-            warnings.push({
-              type: WarningType.NotCompatible,
+            peerWarnings.push({
+              type: PeerWarningType.NotCompatible,
               subject: dependent,
               requested: ident,
               requester: root,
@@ -2456,8 +2506,8 @@ function applyVirtualResolutionMutations({
           const peerDependencyMeta = root.peerDependenciesMeta.get(identStr);
 
           if (!peerDependencyMeta?.optional) {
-            warnings.push({
-              type: WarningType.NotProvided,
+            peerWarnings.push({
+              type: PeerWarningType.NotProvided,
               subject: dependent,
               requested: ident,
               requester: root,
@@ -2468,51 +2518,50 @@ function applyVirtualResolutionMutations({
       }
     }
   }
+}
 
-  const warningSortCriterias: Array<((warning: Warning) => string)> = [
+function emitPeerDependencyWarnings(project: Project, report: Report) {
+  const warningSortCriterias: Array<((warning: PeerWarning) => string)> = [
     warning => structUtils.prettyLocatorNoColors(warning.subject),
     warning => structUtils.stringifyIdent(warning.requested),
     warning => `${warning.type}`,
   ];
 
-  report?.startSectionSync({
-    reportFooter: () => {
-      report.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code`);
-    },
-    skipIfEmpty: true,
-  }, () => {
-    for (const warning of miscUtils.sortMap(warnings, warningSortCriterias)) {
-      switch (warning.type) {
-        case WarningType.NotProvided: {
-          report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
-            structUtils.prettyLocator(project.configuration, warning.subject)
-          } doesn't provide ${
-            structUtils.prettyIdent(project.configuration, warning.requested)
-          } (${
-            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-          }), requested by ${
-            structUtils.prettyIdent(project.configuration, warning.requester)
-          }`);
-        } break;
+  for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
+    switch (warning.type) {
+      case PeerWarningType.NotProvided: {
+        report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
+          structUtils.prettyLocator(project.configuration, warning.subject)
+        } doesn't provide ${
+          structUtils.prettyIdent(project.configuration, warning.requested)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }), requested by ${
+          structUtils.prettyIdent(project.configuration, warning.requester)
+        }`);
+      } break;
 
-        case WarningType.NotCompatible: {
-          const andDescendants = warning.requirementCount > 1
-            ? `and some of its descendants request`
-            : `requests`;
+      case PeerWarningType.NotCompatible: {
+        const andDescendants = warning.requirementCount > 1
+          ? `and some of its descendants request`
+          : `requests`;
 
-          report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
-            structUtils.prettyLocator(project.configuration, warning.subject)
-          } provides ${
-            structUtils.prettyIdent(project.configuration, warning.requested)
-          } (${
-            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-          }) with version ${
-            structUtils.prettyReference(project.configuration, warning.version)
-          }, which doesn't satisfy what ${
-            structUtils.prettyIdent(project.configuration, warning.requester)
-          } ${andDescendants}`);
-        } break;
-      }
+        report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
+          structUtils.prettyLocator(project.configuration, warning.subject)
+        } provides ${
+          structUtils.prettyIdent(project.configuration, warning.requested)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }) with version ${
+          structUtils.prettyReference(project.configuration, warning.version)
+        }, which doesn't satisfy what ${
+          structUtils.prettyIdent(project.configuration, warning.requester)
+        } ${andDescendants}`);
+      } break;
     }
-  });
+  }
+
+  if (project.peerWarnings.length > 0) {
+    report.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code`);
+  }
 }

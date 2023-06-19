@@ -30,15 +30,15 @@ export function getReportTree(result: npmAuditTypes.AuditExtendedResponse) {
       auditTreeChildren[`${packageName}/${advisory.id}`] = {
         value: formatUtils.tuple(formatUtils.Type.IDENT, structUtils.parseIdent(packageName)),
         children: {
-          ID: {
+          ID: typeof advisory.id !== `undefined` && {
             label: `ID`,
-            value: formatUtils.tuple(formatUtils.Type.NUMBER, advisory.id),
+            value: formatUtils.tuple(formatUtils.Type.ID, advisory.id),
           },
           Issue: {
             label: `Issue`,
             value: formatUtils.tuple(formatUtils.Type.NO_HINT, advisory.title),
           },
-          URL: {
+          URL: typeof advisory.url !== `undefined` && {
             label: `URL`,
             value: formatUtils.tuple(formatUtils.Type.URL, advisory.url),
           },

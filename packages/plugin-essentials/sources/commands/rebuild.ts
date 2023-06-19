@@ -54,10 +54,12 @@ export default class RebuildCommand extends BaseCommand {
       for (const pkg of project.storedPackages.values()) {
         if (filteredIdents.has(pkg.identHash)) {
           project.storedBuildState.delete(pkg.locatorHash);
+          project.skippedBuilds.delete(pkg.locatorHash);
         }
       }
     } else {
       project.storedBuildState.clear();
+      project.skippedBuilds.clear();
     }
 
     const installReport = await StreamReport.start({

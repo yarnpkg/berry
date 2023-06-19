@@ -22,6 +22,8 @@ import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from
 export const Type = {
   NO_HINT: `NO_HINT`,
 
+  ID: `ID`,
+
   NULL: `NULL`,
 
   SCOPE: `SCOPE`,
@@ -104,6 +106,19 @@ const validateTransform = <T>(spec: {
 } => spec;
 
 const transforms = {
+  [Type.ID]: validateTransform({
+    pretty: (configuration: Configuration, value: number | string) => {
+      if (typeof value === `number`) {
+        return applyColor(configuration, `${value}`, Type.NUMBER);
+      } else {
+        return applyColor(configuration, `${value}`, Type.SETTING);
+      }
+    },
+    json: (id: number | string) => {
+      return id;
+    },
+  }),
+
   [Type.INSPECT]: validateTransform({
     pretty: (configuration: Configuration, value: any) => {
       return inspect(value, {depth: Infinity, colors: configuration.get(`enableColors`), compact: true, breakLength: Infinity});

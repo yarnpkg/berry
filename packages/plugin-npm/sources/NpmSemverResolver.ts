@@ -151,7 +151,6 @@ export class NpmSemverResolver implements Resolver {
       for (const value of manifest.scripts.values()) {
         if (value.match(NODE_GYP_MATCH)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
-          opts.report.reportWarningOnce(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
           break;
         }
       }

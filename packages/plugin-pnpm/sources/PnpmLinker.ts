@@ -123,7 +123,7 @@ class PnpmInstaller implements Installer {
 
     return {
       packageLocation,
-      buildDirective: null,
+      buildRequest: null,
     };
   }
 
@@ -161,11 +161,11 @@ class PnpmInstaller implements Installer {
     };
 
     const dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
-    const buildScripts = jsInstallUtils.extractBuildScripts(pkg, buildConfig, dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
+    const buildRequest = jsInstallUtils.extractBuildRequest(pkg, buildConfig, dependencyMeta, {configuration: this.opts.project.configuration});
 
     return {
       packageLocation,
-      buildDirective: buildScripts,
+      buildRequest,
     };
   }
 
