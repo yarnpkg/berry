@@ -14,8 +14,6 @@ import {Locator}                                                                
 export type StreamReportOptions = {
   configuration: Configuration;
   forceSectionAlignment?: boolean;
-  forgettableBufferSize?: number;
-  forgettableNames?: Set<MessageName | null>;
   includeFooter?: boolean;
   includeInfos?: boolean;
   includeLogs?: boolean;
@@ -31,9 +29,6 @@ export const SINGLE_LINE_CHAR = `·`;
 
 const PROGRESS_FRAMES = [`⠋`, `⠙`, `⠹`, `⠸`, `⠼`, `⠴`, `⠦`, `⠧`, `⠇`, `⠏`];
 const PROGRESS_INTERVAL = 80;
-
-const BASE_FORGETTABLE_NAMES = new Set<MessageName | null>([MessageName.FETCH_NOT_CACHED, MessageName.UNUSED_CACHE_ENTRY]);
-const BASE_FORGETTABLE_BUFFER_SIZE = 5;
 
 const GROUP = CI.GITHUB_ACTIONS
   ? {start: (what: string) => `::group::${what}\n`, end: (what: string) => `::endgroup::\n`}
@@ -190,10 +185,6 @@ export class StreamReport extends Report {
   private progressStyle: {date?: Array<number>, chars: Array<string>, size: number} | null = null;
   private progressMaxScaledSize: number | null = null;
 
-  private forgettableBufferSize: number;
-  private forgettableNames: Set<MessageName | null>;
-  private forgettableLines: Array<string> = [];
-
   constructor({
     configuration,
     stdout,
@@ -205,8 +196,6 @@ export class StreamReport extends Report {
     includeLogs = !json,
     includeInfos = includeLogs,
     includeWarnings = includeLogs,
-    forgettableBufferSize = BASE_FORGETTABLE_BUFFER_SIZE,
-    forgettableNames = new Set(),
   }: StreamReportOptions) {
     super();
 
@@ -214,8 +203,6 @@ export class StreamReport extends Report {
 
     this.configuration = configuration;
     this.forceSectionAlignment = forceSectionAlignment;
-    this.forgettableBufferSize = forgettableBufferSize;
-    this.forgettableNames = new Set([...forgettableNames, ...BASE_FORGETTABLE_NAMES]);
     this.includeNames = includeNames;
     this.includePrefix = includePrefix;
     this.includeFooter = includeFooter;
@@ -384,7 +371,7 @@ export class StreamReport extends Report {
 
   reportSeparator() {
     if (this.indent === 0) {
-      this.writeLineWithForgettableReset(``);
+      this.writeLine(``);
     } else {
       this.reportInfo(null, ``);
     }
@@ -401,19 +388,7 @@ export class StreamReport extends Report {
     const message = `${this.formatPrefix(prefix, `blueBright`)}${text}`;
 
     if (!this.json) {
-      if (this.forgettableNames.has(name)) {
-        this.forgettableLines.push(message);
-        if (this.forgettableLines.length > this.forgettableBufferSize) {
-          while (this.forgettableLines.length > this.forgettableBufferSize)
-            this.forgettableLines.shift();
-
-          this.writeLines(this.forgettableLines, {truncate: true});
-        } else {
-          this.writeLine(message, {truncate: true});
-        }
-      } else {
-        this.writeLineWithForgettableReset(message);
-      }
+      this.writeLine(message);
     } else {
       this.reportJson({type: `info`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -431,7 +406,7 @@ export class StreamReport extends Report {
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.formatPrefix(prefix, `yellowBright`)}${text}`);
+      this.writeLine(`${this.formatPrefix(prefix, `yellowBright`)}${text}`);
     } else {
       this.reportJson({type: `warning`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -450,7 +425,7 @@ export class StreamReport extends Report {
     const prefix = formattedName ? `${formattedName}: ` : ``;
 
     if (!this.json) {
-      this.writeLineWithForgettableReset(`${this.formatPrefix(prefix, `redBright`)}${text}`, {truncate: false});
+      this.writeLine(`${this.formatPrefix(prefix, `redBright`)}${text}`, {truncate: false});
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
@@ -510,7 +485,7 @@ export class StreamReport extends Report {
 
   reportJson(data: any) {
     if (this.json) {
-      this.writeLineWithForgettableReset(`${JSON.stringify(data)}`);
+      this.writeLine(`${JSON.stringify(data)}`);
     }
   }
 
@@ -545,11 +520,6 @@ export class StreamReport extends Report {
     this.clearProgress({clear: true});
     this.stdout.write(`${this.truncate(str, {truncate})}\n`);
     this.writeProgress();
-  }
-
-  private writeLineWithForgettableReset(str: string, {truncate}: {truncate?: boolean} = {}) {
-    this.forgettableLines = [];
-    this.writeLine(str, {truncate});
   }
 
   private writeLines(lines: Array<string>, {truncate}: {truncate?: boolean} = {}) {
