@@ -46,8 +46,8 @@ jobs:
 
         hyperfine --min-runs=10 --warmup=1 \
           --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
+          'BENCH_FETCHER_CONCURRENCY=01 yarn install' \
+          'BENCH_FETCHER_CONCURRENCY=02 yarn install' \
+          'BENCH_FETCHER_CONCURRENCY=04 yarn install' \
           'BENCH_FETCHER_CONCURRENCY=08 yarn install' \
-          'BENCH_FETCHER_CONCURRENCY=16 yarn install' \
-          'BENCH_FETCHER_CONCURRENCY=24 yarn install' \
-          'BENCH_FETCHER_CONCURRENCY=32 yarn install' \
-          'BENCH_FETCHER_CONCURRENCY=64 yarn install'
+          'BENCH_FETCHER_CONCURRENCY=16 yarn install'
