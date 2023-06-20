@@ -1,0 +1,49 @@
+on:
+  - push
+
+name: 'Temporary Performance Test'
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        benchmark:
+          - [Next.js, next]
+          - [Gatsby, gatsby]
+
+    name: 'Temporary Performance Test (${{matrix.benchmark[0]}})'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
+      with:
+        minify-bundle: true
+
+    - name: 'Install Hyperfine'
+      run: |
+        wget https://github.com/sharkdp/hyperfine/releases/download/v1.10.0/hyperfine_1.10.0_amd64.deb
+        sudo dpkg -i hyperfine_1.10.0_amd64.deb
+
+    - name: 'Creates a temporary directory'
+      run: |
+        BENCH_DIR=$(mktemp -d)
+        echo "BENCH_DIR=$BENCH_DIR" >> "$GITHUB_ENV"
+
+    - name: 'Run the performance test'
+      run: |
+        >> "$BENCH_DIR/.yarnrc.yml" echo \
+          "globalFolder: '${BENCH_DIR}/.yarn-global'"
+        >> "$BENCH_DIR/.yarnrc.yml" echo \
+          "yarnPath: '${GITHUB_WORKSPACE}/packages/yarnpkg-cli/bundles/yarn.js'"
+        >> "$BENCH_DIR/.yarnrc.yml" echo \
+          "enableImmutableInstalls: false"
+
+        hyperfine --min-runs=10 --warmup=1 \
+          --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
+          'BENCH_FETCHER_CONCURRENCY=08 yarn install' \
+          'BENCH_FETCHER_CONCURRENCY=16 yarn install' \
+          'BENCH_FETCHER_CONCURRENCY=24 yarn install' \
+          'BENCH_FETCHER_CONCURRENCY=32 yarn install' \
+          'BENCH_FETCHER_CONCURRENCY=64 yarn install'

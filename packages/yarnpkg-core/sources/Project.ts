@@ -52,7 +52,7 @@ const INSTALL_STATE_VERSION = 2;
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
 
-const FETCHER_CONCURRENCY = 32;
+const FETCHER_CONCURRENCY = parseInt(process.env.BENCH_FETCHER_CONCURRENCY ?? `32`, 10);
 
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
