@@ -113,6 +113,10 @@ export class LightReport extends Report {
     // Just ignore the json output
   }
 
+  reportFold(title: string, text: string) {
+    // Just ignore the fold output
+  }
+
   async finalize() {
     if (this.errorCount > 0) {
       this.stdout.write(`\n`);

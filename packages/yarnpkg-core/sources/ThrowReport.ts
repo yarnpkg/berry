@@ -62,6 +62,10 @@ export class ThrowReport extends Report {
     // Just ignore the json output
   }
 
+  reportFold(title: string, text: string) {
+    // Just ignore the fold output
+  }
+
   async finalize() {
   }
 }

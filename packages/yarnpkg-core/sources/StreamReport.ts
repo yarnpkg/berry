@@ -37,6 +37,8 @@ const GROUP = CI.GITHUB_ACTIONS
       ? {start: (what: string) => `section_start:${Math.floor(Date.now() / 1000)}:${what.toLowerCase().replace(/\W+/g, `_`)}[collapsed=true]\r\x1b[0K${what}\n`, end: (what: string) => `section_end:${Math.floor(Date.now() / 1000)}:${what.toLowerCase().replace(/\W+/g, `_`)}\r\x1b[0K`}
       : null;
 
+export const SUPPORTS_GROUPS = GROUP !== null;
+
 const now = new Date();
 
 // We only want to support environments that will out-of-the-box accept the
@@ -405,6 +407,13 @@ export class StreamReport extends Report {
     } else {
       this.reportJson({type: `error`, name, displayName: this.formatName(name), indent: this.formatIndent(), data: text});
     }
+  }
+
+  reportFold(title: string, text: string) {
+    if (!GROUP)
+      return;
+
+    this.stdout.write(`${GROUP.start(title)}${text}${GROUP.end(title)}`);
   }
 
   reportProgress(progressIt: ProgressIterable) {

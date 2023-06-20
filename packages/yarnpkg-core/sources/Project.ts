@@ -25,7 +25,7 @@ import {MultiResolver}                                                  from './
 import {Report, ReportError}                                            from './Report';
 import {ResolveOptions, Resolver}                                       from './Resolver';
 import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
-import {StreamReport}                                                   from './StreamReport';
+import {SUPPORTS_GROUPS, StreamReport}                                  from './StreamReport';
 import {ThrowReport}                                                    from './ThrowReport';
 import {WorkspaceResolver}                                              from './WorkspaceResolver';
 import {Workspace}                                                      from './Workspace';
@@ -1493,6 +1493,8 @@ export class Project {
       return true;
     };
 
+    const errorLogs: Array<PortablePath> = [];
+
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
       const buildPromises: Array<Promise<unknown>> = [];
@@ -1584,6 +1586,7 @@ export class Project {
               xfs.detachTemp(logDir);
 
               const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
+              errorLogs.push(logFile);
 
               if (this.optionalBuilds.has(pkg.locatorHash)) {
                 report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
@@ -1633,6 +1636,10 @@ export class Project {
         break;
       }
     }
+
+    if (SUPPORTS_GROUPS)
+      for (const errorLog of errorLogs)
+        report.reportFold(npath.fromPortablePath(errorLog), xfs.readFileSync(errorLog, `utf8`));
 
     // We can now update the storedBuildState, which will allow us to "remember"
     // what's the dependency tree subset that we used to build a specific

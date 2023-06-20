@@ -66,6 +66,7 @@ export abstract class Report {
   abstract reportError(name: MessageName, text: string): void;
   abstract reportProgress(progress: AsyncIterable<ProgressDefinition>): Promise<void> & {stop: () => void};
   abstract reportJson(data: any): void;
+  abstract reportFold(title: string, text: string): void;
 
   abstract finalize(): void;
 
