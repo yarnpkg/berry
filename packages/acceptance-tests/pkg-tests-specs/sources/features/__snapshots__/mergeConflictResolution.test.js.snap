@@ -40,7 +40,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-9c77ddf9a6.zip appears to be unused - removing
+➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-3f9f69fc5f.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -138,7 +138,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-9c77ddf9a6.zip appears to be unused - removing
+➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-3f9f69fc5f.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -187,7 +187,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-8bd88a447c.zip appears to be unused - removing
+➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-e0e60294c2.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -236,7 +236,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-9c77ddf9a6.zip appears to be unused - removing
+➤ YN0019: │ no-deps-npm-2.0.0-8c4f3f8395-3f9f69fc5f.zip appears to be unused - removing
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
