@@ -80,10 +80,6 @@ export class LightReport extends Report {
     return await realCb();
   }
 
-  async startCacheReport<T>(cb: () => Promise<T>) {
-    return await cb();
-  }
-
   reportSeparator() {
   }
 

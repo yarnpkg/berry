@@ -8,7 +8,6 @@ import {MessageName, stringifyMessageName}                                      
 import {ProgressDefinition, Report, SectionOptions, TimerOptions, ProgressIterable} from './Report';
 import {YarnVersion}                                                                from './YarnVersion';
 import * as formatUtils                                                             from './formatUtils';
-import * as structUtils                                                             from './structUtils';
 import {Locator}                                                                    from './types';
 
 export type StreamReportOptions = {
@@ -161,10 +160,6 @@ export class StreamReport extends Report {
     action: () => void;
   }>();
 
-  private cacheHitCount: number = 0;
-  private cacheMissCount: number = 0;
-  private lastCacheMiss: Locator | null = null;
-
   private warningCount: number = 0;
   private errors: Array<[MessageName, string]> = [];
 
@@ -234,12 +229,11 @@ export class StreamReport extends Report {
   }
 
   reportCacheHit(locator: Locator) {
-    this.cacheHitCount += 1;
+    this.cacheHits.add(locator.locatorHash);
   }
 
   reportCacheMiss(locator: Locator, message?: string) {
-    this.lastCacheMiss = locator;
-    this.cacheMissCount += 1;
+    this.cacheMisses.add(locator.locatorHash);
   }
 
   startSectionSync<T>({reportHeader, reportFooter, skipIfEmpty}: SectionOptions, cb: () => T) {
@@ -349,24 +343,6 @@ export class StreamReport extends Report {
   async startTimerPromise<T>(what: string, opts: TimerOptions | (() => Promise<T>), cb?: () => Promise<T>) {
     const {cb: realCb, ...sectionOps} = this.startTimerImpl(what, opts, cb);
     return this.startSectionPromise(sectionOps, realCb);
-  }
-
-  async startCacheReport<T>(cb: () => Promise<T>) {
-    const cacheInfo = {
-      cacheHitCount: this.cacheHitCount,
-      cacheMissCount: this.cacheMissCount,
-    };
-
-    try {
-      return await cb();
-    } catch (error) {
-      this.reportExceptionOnce(error);
-      throw error;
-    } finally {
-      if (cacheInfo !== null) {
-        this.reportCacheChanges(cacheInfo);
-      }
-    }
   }
 
   reportSeparator() {
@@ -529,30 +505,6 @@ export class StreamReport extends Report {
       this.stdout.write(`${this.truncate(line, {truncate})}\n`);
 
     this.writeProgress();
-  }
-
-  private reportCacheChanges({cacheHitCount, cacheMissCount}: {cacheHitCount: number, cacheMissCount: number}) {
-    const cacheHitDelta = this.cacheHitCount - cacheHitCount;
-    const cacheMissDelta = this.cacheMissCount - cacheMissCount;
-
-    if (cacheHitDelta === 0 && cacheMissDelta === 0)
-      return;
-
-    let fetchStatus = ``;
-
-    if (this.cacheHitCount > 1)
-      fetchStatus += `${this.cacheHitCount} packages were already cached`;
-    else if (this.cacheHitCount === 1)
-      fetchStatus += `One package was already cached`;
-    else
-      fetchStatus += `No packages were cached`;
-
-    if (this.cacheMissCount > 1)
-      fetchStatus += `, ${this.cacheMissCount} had to be fetched.`;
-    else if (this.cacheMissCount === 1)
-      fetchStatus += `, one had to be fetched (${structUtils.prettyLocator(this.configuration, this.lastCacheMiss!)}).`;
-
-    this.reportInfo(MessageName.FETCH_NOT_CACHED, fetchStatus);
   }
 
   private commit() {

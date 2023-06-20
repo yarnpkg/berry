@@ -41,6 +41,7 @@ export const Type = {
 
   DURATION: `DURATION`,
   SIZE: `SIZE`,
+  SIZE_DIFF: `SIZE_DIFF`,
 
   IDENT: `IDENT`,
   DESCRIPTOR: `DESCRIPTOR`,
@@ -84,7 +85,7 @@ const colors = new Map<Type, [string, number] | null>([
   [Type.PATH, [`#d75fd7`, 170]],
   [Type.URL, [`#d75fd7`, 170]],
   [Type.ADDED, [`#5faf00`, 70]],
-  [Type.REMOVED, [`#d70000`, 160]],
+  [Type.REMOVED, [`#FF3131`, 160]],
   [Type.CODE, [`#87afff`, 111]],
 
   [Type.SIZE, [`#ffd700`, 220]],
@@ -258,6 +259,28 @@ const transforms = {
       const value = Math.floor(size * 100 / factor) / 100;
 
       return applyColor(configuration, `${value} ${thresholds[power - 1]}`, Type.NUMBER);
+    },
+    json: (size: number) => {
+      return size;
+    },
+  }),
+
+  [Type.SIZE_DIFF]: validateTransform({
+    pretty: (configuration: Configuration, size: number) => {
+      const absSize = Math.abs(size);
+      const thresholds = [`KB`, `MB`, `GB`, `TB`];
+
+      let power = thresholds.length;
+      while (power > 1 && absSize < 1024 ** power)
+        power -= 1;
+
+      const factor = 1024 ** power;
+      const value = Math.floor(absSize * 100 / factor) / 100;
+
+      const sign = size >= 0 ? `+` : `-`;
+      const type = sign === `+` ? Type.ADDED : Type.REMOVED;
+
+      return applyColor(configuration, `${sign} ${value} ${thresholds[power - 1]}`, type);
     },
     json: (size: number) => {
       return size;

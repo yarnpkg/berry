@@ -4,7 +4,7 @@ exports[`Commands plugin check it should run successfully and do nothing 1`] = `
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: Done
+  "stdout": "➤ YN0000: · Done
 ",
 }
 `;

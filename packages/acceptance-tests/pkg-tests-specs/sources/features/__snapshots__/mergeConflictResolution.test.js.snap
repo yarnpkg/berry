@@ -37,6 +37,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
 
+➤ YN0000: · Yarn X.Y.Z
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
@@ -44,7 +45,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -87,13 +88,14 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
 
+➤ YN0000: · Yarn X.Y.Z
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -135,6 +137,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
 
+➤ YN0000: · Yarn X.Y.Z
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
@@ -142,7 +145,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -184,6 +187,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
 
+➤ YN0000: · Yarn X.Y.Z
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
@@ -191,7 +195,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -233,6 +237,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
   "stderr": "",
   "stdout": "➤ YN0048: Automatically fixed merge conflicts 👍
 
+➤ YN0000: · Yarn X.Y.Z
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
@@ -240,7 +245,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;

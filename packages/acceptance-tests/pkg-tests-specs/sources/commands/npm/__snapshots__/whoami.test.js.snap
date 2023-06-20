@@ -5,7 +5,7 @@ exports[`Commands npm whoami it should print the npm registry username for a giv
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: bar-user
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -15,7 +15,7 @@ exports[`Commands npm whoami it should print the npm registry username when conf
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: foo-user
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -25,7 +25,7 @@ exports[`Commands npm whoami it should print the npm registry username when conf
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: foo-user
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;

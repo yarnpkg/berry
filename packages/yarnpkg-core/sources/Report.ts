@@ -1,9 +1,9 @@
-import throttle        from 'lodash/throttle';
-import {PassThrough}   from 'stream';
-import {StringDecoder} from 'string_decoder';
+import throttle               from 'lodash/throttle';
+import {PassThrough}          from 'stream';
+import {StringDecoder}        from 'string_decoder';
 
-import {MessageName}   from './MessageName';
-import {Locator}       from './types';
+import {MessageName}          from './MessageName';
+import {Locator, LocatorHash} from './types';
 
 const TITLE_PROGRESS_FPS = 15;
 
@@ -41,6 +41,9 @@ export type SectionOptions = {
 export type TimerOptions = Pick<SectionOptions, 'skipIfEmpty'>;
 
 export abstract class Report {
+  cacheHits = new Set<LocatorHash>();
+  cacheMisses = new Set<LocatorHash>();
+
   private reportedInfos: Set<any> = new Set();
   private reportedWarnings: Set<any> = new Set();
   private reportedErrors: Set<any> = new Set();
@@ -56,8 +59,6 @@ export abstract class Report {
 
   abstract startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
-
-  abstract startCacheReport<T>(cb: () => Promise<T>): Promise<T>;
 
   abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName | null, text: string): void;

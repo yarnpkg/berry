@@ -4,7 +4,8 @@ exports[`Commands add it should clean the cache when cache lives inside the proj
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn X.Y.Z
+➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
@@ -12,7 +13,7 @@ exports[`Commands add it should clean the cache when cache lives inside the proj
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -21,14 +22,15 @@ exports[`Commands add it should not clean the cache when cache lives inside the 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn X.Y.Z
+➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -37,14 +39,15 @@ exports[`Commands add it should not clean the cache when cache lives inside the 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn X.Y.Z
+➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
 ➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;

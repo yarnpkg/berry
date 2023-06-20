@@ -1013,7 +1013,7 @@ export class Project {
     this.peerWarnings = peerWarnings;
   }
 
-  async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
+  async fetchEverything({cache, report, fetcher: userFetcher, mode, persistProject}: InstallOptions) {
     const cacheOptions = {
       mockedPackages: this.disabledLocators,
       unstablePackages: this.conditionalLocators,
@@ -1049,40 +1049,71 @@ export class Project {
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
-    await report.startCacheReport(async () => {
-      await miscUtils.allSettledSafe(locatorHashes.map(locatorHash => limit(async () => {
-        const pkg = this.storedPackages.get(locatorHash);
-        if (!pkg)
-          throw new Error(`Assertion failed: The locator should have been registered`);
+    await miscUtils.allSettledSafe(locatorHashes.map(locatorHash => limit(async () => {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The locator should have been registered`);
 
-        if (structUtils.isVirtualLocator(pkg))
-          return;
+      if (structUtils.isVirtualLocator(pkg))
+        return;
 
-        let fetchResult;
-        try {
-          fetchResult = await fetcher.fetch(pkg, fetcherOptions);
-        } catch (error) {
-          error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
-          report.reportExceptionOnce(error);
-          firstError = error;
-          return;
-        }
+      let fetchResult;
+      try {
+        fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      } catch (error) {
+        error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
+        report.reportExceptionOnce(error);
+        firstError = error;
+        return;
+      }
 
-        if (fetchResult.checksum != null)
-          this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
-        else
-          this.storedChecksums.delete(pkg.locatorHash);
+      if (fetchResult.checksum != null)
+        this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
+      else
+        this.storedChecksums.delete(pkg.locatorHash);
 
-        if (fetchResult.releaseFs) {
-          fetchResult.releaseFs();
-        }
-      }).finally(() => {
-        progress.tick();
-      })));
-    });
+      if (fetchResult.releaseFs) {
+        fetchResult.releaseFs();
+      }
+    }).finally(() => {
+      progress.tick();
+    })));
 
-    if (firstError) {
+    if (firstError)
       throw firstError;
+
+    const cleanInfo = (typeof persistProject === `undefined` || persistProject) && mode !== InstallMode.UpdateLockfile
+      ? await this.cacheCleanup({cache, report})
+      : null;
+
+    if (report.cacheMisses.size > 0 || cleanInfo) {
+      const addedSizes = [...report.cacheMisses].map(locatorHash => {
+        const locator = this.storedPackages.get(locatorHash);
+        const checksum = this.storedChecksums.get(locatorHash) ?? null;
+
+        const p = cache.getLocatorPath(locator!, checksum, cacheOptions);
+        return p ? xfs.statSync(p).size : 0;
+      });
+
+      const finalSizeChange = addedSizes.reduce((sum, size) => sum + size, 0) - (cleanInfo?.size ?? 0);
+
+      const addedCount = report.cacheMisses.size;
+      const removedCount = cleanInfo?.count ?? 0;
+
+      const addedLine = `${miscUtils.plural(addedCount, `No new packages`, `A package was`, `${formatUtils.pretty(this.configuration, addedCount, formatUtils.Type.NUMBER)} packages were`)} added to the cache`;
+      const removedLine = `${miscUtils.plural(removedCount, `none were`, `one was`, `${formatUtils.pretty(this.configuration, removedCount, formatUtils.Type.NUMBER)} were`)} removed`;
+
+      const sizeLine = finalSizeChange !== 0
+        ? ` (${formatUtils.pretty(this.configuration, finalSizeChange, formatUtils.Type.SIZE_DIFF)})`
+        : ``;
+
+      const message = removedCount > 0
+        ? addedCount > 0
+          ? `${addedLine}, and ${removedLine}${sizeLine}.`
+          : `${addedLine}, but ${removedLine}${sizeLine}.`
+        : `${addedLine}${sizeLine}.`;
+
+      report.reportInfo(MessageName.FETCH_NOT_CACHED, message);
     }
   }
 
@@ -1739,10 +1770,6 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
-
-      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile) {
-        await this.cacheCleanup(opts);
-      }
     });
 
     const immutablePatterns = opts.immutable
@@ -1998,25 +2025,21 @@ export class Project {
     ]);
   }
 
-  async cacheCleanup({cache, report}: InstallOptions)  {
+  async cacheCleanup({cache, report}: Pick<InstallOptions, `cache` | `report`>)  {
     if (this.configuration.get(`enableGlobalCache`))
-      return;
+      return null;
 
     const PRESERVED_FILES = new Set([
       `.gitignore`,
     ]);
 
     if (!isFolderInside(cache.cwd, this.cwd))
-      return;
+      return null;
 
     if (!(await xfs.existsPromise(cache.cwd)))
-      return;
+      return null;
 
-    const cleanupPromises: Array<Promise<void>> = [];
-
-    let entriesRemoved = 0;
-    let lastEntryRemoved = null;
-
+    const cleanupPromises: Array<Promise<number>> = [];
     for (const entry of await xfs.readdirPromise(cache.cwd)) {
       if (PRESERVED_FILES.has(entry))
         continue;
@@ -2025,26 +2048,25 @@ export class Project {
       if (cache.markedFiles.has(entryPath))
         continue;
 
-      lastEntryRemoved = entry;
-
       if (cache.immutable) {
         report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would be marked for deletion, but the cache is immutable`);
       } else {
-        entriesRemoved += 1;
-        cleanupPromises.push(xfs.removePromise(entryPath));
+        cleanupPromises.push(xfs.lstatPromise(entryPath).then(async stat => {
+          await xfs.removePromise(entryPath);
+          return stat.size;
+        }));
       }
     }
 
-    await Promise.all(cleanupPromises);
+    if (cleanupPromises.length === 0)
+      return null;
 
-    if (entriesRemoved !== 0) {
-      report.reportInfo(
-        MessageName.UNUSED_CACHE_ENTRY,
-        entriesRemoved > 1
-          ? `${entriesRemoved} packages appeared to be unused and were removed`
-          : `${lastEntryRemoved} appeared to be unused and was removed`,
-      );
-    }
+    const sizes = await Promise.all(cleanupPromises);
+
+    return {
+      count: cleanupPromises.length,
+      size: sizes.reduce((sum, size) => sum + size, 0),
+    };
   }
 }
 
