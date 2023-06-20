@@ -196,7 +196,9 @@ export default class UnplugCommand extends BaseCommand {
 
       await project.topLevelWorkspace.persistManifest();
 
-      report.reportSeparator();
+      if (!this.json) {
+        report.reportSeparator();
+      }
     });
 
     if (unplugReport.hasErrors())

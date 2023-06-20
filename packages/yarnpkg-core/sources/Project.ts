@@ -1648,7 +1648,7 @@ export class Project {
       json: reportOpts.json,
       stdout: reportOpts.stdout,
       forceSectionAlignment: true,
-      includeLogs: !reportOpts.quiet,
+      includeLogs: !reportOpts.json && !reportOpts.quiet,
       includeVersion: true,
     }, async report => {
       await this.install({...installOpts, report});
