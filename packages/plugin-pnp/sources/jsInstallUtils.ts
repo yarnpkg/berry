@@ -60,6 +60,8 @@ export function extractBuildScripts(pkg: Package, requirements: ExtractBuildScri
 const FORCED_EXTRACT_FILETYPES = new Set([
   // Windows can't execute exe files inside zip archives
   `.exe`,
+  // May be used for some binaries on Linux; https://askubuntu.com/a/174356
+  `.bin`,
   // The c/c++ compiler can't read files from zip archives
   `.h`, `.hh`, `.hpp`, `.c`, `.cc`, `.cpp`,
   // The java runtime can't read files from zip archives
