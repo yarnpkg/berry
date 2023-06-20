@@ -163,7 +163,9 @@ export class StreamReport extends Report {
   }>();
 
   private warningCount: number = 0;
-  private errors: Array<[MessageName, string]> = [];
+  private errorCount: number = 0;
+
+  private sectionFooter: Array<() => void> = [];
 
   private startTime: number = Date.now();
 
@@ -223,7 +225,7 @@ export class StreamReport extends Report {
   }
 
   hasErrors() {
-    return this.errors.length > 0;
+    return this.errorCount > 0;
   }
 
   exitCode() {
@@ -317,8 +319,8 @@ export class StreamReport extends Report {
 
         if (GROUP !== null && !this.json && this.includeInfos) {
           this.stdout.write(GROUP.end(what));
-          for (const [name, text] of this.errors) {
-            this.reportErrorImpl(name, text);
+          for (const cb of this.sectionFooter) {
+            cb();
           }
         }
 
@@ -391,7 +393,8 @@ export class StreamReport extends Report {
   }
 
   reportError(name: MessageName, text: string) {
-    this.errors.push([name, text]);
+    this.errorCount += 1;
+    this.sectionFooter.push(() => this.reportErrorImpl(name, text));
 
     this.reportErrorImpl(name, text);
   }
@@ -413,7 +416,8 @@ export class StreamReport extends Report {
     if (!GROUP)
       return;
 
-    this.stdout.write(`${GROUP.start(title)}${text}${GROUP.end(title)}`);
+    const message = `${GROUP.start(title)}${text}${GROUP.end(title)}`;
+    this.sectionFooter.push(() => this.stdout.write(message));
   }
 
   reportProgress(progressIt: ProgressIterable) {
@@ -480,7 +484,7 @@ export class StreamReport extends Report {
 
     let installStatus = ``;
 
-    if (this.errors.length > 0)
+    if (this.errorCount > 0)
       installStatus = `Failed with errors`;
     else if (this.warningCount > 0)
       installStatus = `Done with warnings`;
@@ -492,7 +496,7 @@ export class StreamReport extends Report {
       ? `${installStatus} in ${timing}`
       : installStatus;
 
-    if (this.errors.length > 0) {
+    if (this.errorCount > 0) {
       this.reportError(MessageName.UNNAMED, message);
     } else if (this.warningCount > 0) {
       this.reportWarning(MessageName.UNNAMED, message);

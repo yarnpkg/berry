@@ -1493,8 +1493,6 @@ export class Project {
       return true;
     };
 
-    const errorLogs: Array<PortablePath> = [];
-
     while (buildablePackages.size > 0) {
       const savedSize = buildablePackages.size;
       const buildPromises: Array<Promise<unknown>> = [];
@@ -1586,15 +1584,17 @@ export class Project {
               xfs.detachTemp(logDir);
 
               const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
-              errorLogs.push(logFile);
+              const isOptional = this.optionalBuilds.has(pkg.locatorHash);
 
-              if (this.optionalBuilds.has(pkg.locatorHash)) {
+              if (isOptional)
                 report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
-                return true;
-              } else {
+              else
                 report.reportError(MessageName.BUILD_FAILED, buildMessage);
-                return false;
-              }
+
+              if (SUPPORTS_GROUPS)
+                report.reportFold(npath.fromPortablePath(logFile), xfs.readFileSync(logFile, `utf8`));
+
+              return isOptional;
             });
 
             if (!wasBuildSuccessful) {
@@ -1636,10 +1636,6 @@ export class Project {
         break;
       }
     }
-
-    if (SUPPORTS_GROUPS)
-      for (const errorLog of errorLogs)
-        report.reportFold(npath.fromPortablePath(errorLog), xfs.readFileSync(errorLog, `utf8`));
 
     // We can now update the storedBuildState, which will allow us to "remember"
     // what's the dependency tree subset that we used to build a specific
