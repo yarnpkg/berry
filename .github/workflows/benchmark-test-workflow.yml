@@ -35,6 +35,8 @@ jobs:
       run: |
         cd "$BENCH_DIR"
 
+        cp "$GITHUB_WORKSPACE"/benchmarks/"$TEST_NAME".json package.json
+
         >> "$BENCH_DIR/.yarnrc.yml" echo \
           "globalFolder: '${BENCH_DIR}/.yarn-global'"
         >> "$BENCH_DIR/.yarnrc.yml" echo \
@@ -42,7 +44,7 @@ jobs:
         >> "$BENCH_DIR/.yarnrc.yml" echo \
           "enableImmutableInstalls: false"
 
-        hyperfine --min-runs=10 --warmup=1 --show-output \
+        hyperfine --min-runs=10 --warmup=1 \
           --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
           'BENCH_FETCHER_CONCURRENCY=08 yarn install' \
           'BENCH_FETCHER_CONCURRENCY=16 yarn install' \
