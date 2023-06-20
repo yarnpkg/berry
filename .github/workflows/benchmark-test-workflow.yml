@@ -35,7 +35,7 @@ jobs:
       run: |
         cd "$BENCH_DIR"
 
-        cp "${GITHUB_WORKSPACE}"/benchmarks/${{matrix.benchmark[0]}}.json package.json
+        cp "${GITHUB_WORKSPACE}"/benchmarks/${{matrix.benchmark[1]}}.json package.json
 
         >> "$BENCH_DIR/.yarnrc.yml" echo \
           "globalFolder: '${BENCH_DIR}/.yarn-global'"
