@@ -6,7 +6,7 @@ exports[`Commands npm logout should logout a user from all registries and all sc
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged out from everything
 ➤ YN0000: Successfully logged out from http://yarn.test.registry
-➤ YN0000: · Done
+➤ YN0000: Done
 ",
 }
 `;
@@ -16,7 +16,7 @@ exports[`Commands npm logout should logout a user from the default registry when
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged out from http://yarn.test.registry
-➤ YN0000: · Done
+➤ YN0000: Done
 ",
 }
 `;
@@ -26,7 +26,7 @@ exports[`Commands npm logout should logout a user from the publish registry when
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged out from https://npm.pkg.github.com
-➤ YN0000: · Done
+➤ YN0000: Done
 ",
 }
 `;
@@ -36,7 +36,7 @@ exports[`Commands npm logout should logout a user from the scope registry when t
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: Successfully logged out from first
-➤ YN0000: · Done
+➤ YN0000: Done
 ",
 }
 `;
