@@ -42,7 +42,7 @@ jobs:
         >> "$BENCH_DIR/.yarnrc.yml" echo \
           "enableImmutableInstalls: false"
 
-        hyperfine --min-runs=10 --warmup=1 \
+        hyperfine --min-runs=10 --warmup=1 --show-output \
           --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
           'BENCH_FETCHER_CONCURRENCY=08 yarn install' \
           'BENCH_FETCHER_CONCURRENCY=16 yarn install' \
