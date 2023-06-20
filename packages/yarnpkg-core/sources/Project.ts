@@ -916,11 +916,11 @@ export class Project {
     const removedPackages: Array<string> = [];
 
     for (const [locatorHash, pkg] of originalPackages)
-      if (!initialPackages.has(locatorHash))
+      if (!initialPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
         addedPackages.push(structUtils.prettyLocator(this.configuration, pkg));
 
     for (const [locatorHash, pkg] of initialPackages)
-      if (!originalPackages.has(locatorHash))
+      if (!originalPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
         removedPackages.push(structUtils.prettyLocator(this.configuration, pkg));
 
     addedPackages.sort();
@@ -2569,41 +2569,76 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
     warning => `${warning.type}`,
   ];
 
-  for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
-    switch (warning.type) {
-      case PeerWarningType.NotProvided: {
-        report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
-          structUtils.prettyLocator(project.configuration, warning.subject)
-        } doesn't provide ${
-          structUtils.prettyIdent(project.configuration, warning.requested)
-        } (${
-          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-        }), requested by ${
-          structUtils.prettyIdent(project.configuration, warning.requester)
-        }`);
-      } break;
+  report.startSectionSync({
+    reportFooter: () => {
+      report.reportWarning(MessageName.EXPLAIN_PEER_DEPENDENCIES_CTA, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code.`);
+    },
+    skipIfEmpty: true,
+  }, () => {
+    for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
+      switch (warning.type) {
+        case PeerWarningType.NotProvided: {
+          report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
+            structUtils.prettyLocator(project.configuration, warning.subject)
+          } doesn't provide ${
+            structUtils.prettyIdent(project.configuration, warning.requested)
+          } (${
+            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+          }), requested by ${
+            structUtils.prettyIdent(project.configuration, warning.requester)
+          }`);
+        } break;
 
-      case PeerWarningType.NotCompatible: {
-        const andDescendants = warning.requirementCount > 1
-          ? `and some of its descendants request`
-          : `requests`;
+        case PeerWarningType.NotCompatible: {
+          const andDescendants = warning.requirementCount > 1
+            ? `and some of its descendants request`
+            : `requests`;
 
-        report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
-          structUtils.prettyLocator(project.configuration, warning.subject)
-        } provides ${
-          structUtils.prettyIdent(project.configuration, warning.requested)
-        } (${
-          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-        }) with version ${
-          structUtils.prettyReference(project.configuration, warning.version)
-        }, which doesn't satisfy what ${
-          structUtils.prettyIdent(project.configuration, warning.requester)
-        } ${andDescendants}`);
-      } break;
+          report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
+            structUtils.prettyLocator(project.configuration, warning.subject)
+          } provides ${
+            structUtils.prettyIdent(project.configuration, warning.requested)
+          } (${
+            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+          }) with version ${
+            structUtils.prettyReference(project.configuration, warning.version)
+          }, which doesn't satisfy what ${
+            structUtils.prettyIdent(project.configuration, warning.requester)
+          } ${andDescendants}.`);
+        } break;
+      }
+    }  for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
+      switch (warning.type) {
+        case PeerWarningType.NotProvided: {
+          report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
+            structUtils.prettyLocator(project.configuration, warning.subject)
+          } doesn't provide ${
+            structUtils.prettyIdent(project.configuration, warning.requested)
+          } (${
+            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+          }), requested by ${
+            structUtils.prettyIdent(project.configuration, warning.requester)
+          }`);
+        } break;
+
+        case PeerWarningType.NotCompatible: {
+          const andDescendants = warning.requirementCount > 1
+            ? `and some of its descendants request`
+            : `requests`;
+
+          report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
+            structUtils.prettyLocator(project.configuration, warning.subject)
+          } provides ${
+            structUtils.prettyIdent(project.configuration, warning.requested)
+          } (${
+            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+          }) with version ${
+            structUtils.prettyReference(project.configuration, warning.version)
+          }, which doesn't satisfy what ${
+            structUtils.prettyIdent(project.configuration, warning.requester)
+          } ${andDescendants}.`);
+        } break;
+      }
     }
-  }
-
-  if (project.peerWarnings.length > 0) {
-    report.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code`);
-  }
+  });
 }

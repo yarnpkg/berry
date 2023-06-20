@@ -1,4 +1,4 @@
-const semver = require(`semver`);
+export {};
 
 describe(`Entry`, () => {
   describe(`version option`, () => {
@@ -6,7 +6,7 @@ describe(`Entry`, () => {
       `it should print the version from the package.json when given --version`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const {stdout} = await run(`--version`);
-        expect(semver.valid(stdout.trim())).toBeTruthy();
+        expect(stdout.trim()).toEqual(`X.Y.Z`);
       }),
     );
 
@@ -14,7 +14,7 @@ describe(`Entry`, () => {
       `it should print the version from the package.json when given -v`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const {stdout} = await run(`-v`);
-        expect(semver.valid(stdout.trim())).toBeTruthy();
+        expect(stdout.trim()).toEqual(`X.Y.Z`);
       }),
     );
   });
