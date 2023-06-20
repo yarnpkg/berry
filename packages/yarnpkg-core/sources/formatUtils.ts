@@ -249,7 +249,7 @@ const transforms = {
 
   [Type.SIZE]: validateTransform({
     pretty: (configuration: Configuration, size: number) => {
-      const thresholds = [`KB`, `MB`, `GB`, `TB`];
+      const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
 
       let power = thresholds.length;
       while (power > 1 && size < 1024 ** power)
@@ -268,7 +268,7 @@ const transforms = {
   [Type.SIZE_DIFF]: validateTransform({
     pretty: (configuration: Configuration, size: number) => {
       const absSize = Math.abs(size);
-      const thresholds = [`KB`, `MB`, `GB`, `TB`];
+      const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
 
       let power = thresholds.length;
       while (power > 1 && absSize < 1024 ** power)
@@ -278,7 +278,10 @@ const transforms = {
       const value = Math.floor(absSize * 100 / factor) / 100;
 
       const sign = size >= 0 ? `+` : `-`;
-      const type = sign === `+` ? Type.ADDED : Type.REMOVED;
+
+      // We're reversing the color logic here because, in general, an increase
+      // in size is typically seen as a bad thing, so it should be red
+      const type = sign === `+` ? Type.REMOVED : Type.ADDED;
 
       return applyColor(configuration, `${sign} ${value} ${thresholds[power - 1]}`, type);
     },
