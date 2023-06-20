@@ -10,7 +10,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### **Major Changes**
 
-- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for both Node.js 14 and 16, with Node.js 18 being the recommended LTS version.
+- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
 - The `yarn set version` command will now skip generating the `yarnPath` configuration on new projects if it detects you're using [Corepack](https://nodejs.org/api/corepack.html)
 - All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
   - This doesn't change anything to the plugin API we provide, which will keep being maintained (Yarn still has a modular architecture and uses the exact same APIs as contrib plugins; all that changes is how we distribute our own features).
