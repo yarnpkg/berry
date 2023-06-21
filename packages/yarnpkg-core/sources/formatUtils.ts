@@ -85,7 +85,7 @@ const colors = new Map<Type, [string, number] | null>([
   [Type.PATH, [`#d75fd7`, 170]],
   [Type.URL, [`#d75fd7`, 170]],
   [Type.ADDED, [`#5faf00`, 70]],
-  [Type.REMOVED, [`#FF3131`, 160]],
+  [Type.REMOVED, [`#ff3131`, 160]],
   [Type.CODE, [`#87afff`, 111]],
 
   [Type.SIZE, [`#ffd700`, 220]],
@@ -106,13 +106,26 @@ const validateTransform = <T>(spec: {
   json: (val: T) => any;
 } => spec;
 
+function sizeToText(size: number) {
+  const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
+
+  let power = thresholds.length;
+  while (power > 1 && size < 1024 ** power)
+    power -= 1;
+
+  const factor = 1024 ** power;
+  const value = Math.floor(size * 100 / factor) / 100;
+
+  return `${value} ${thresholds[power - 1]}`;
+}
+
 const transforms = {
   [Type.ID]: validateTransform({
     pretty: (configuration: Configuration, value: number | string) => {
       if (typeof value === `number`) {
         return applyColor(configuration, `${value}`, Type.NUMBER);
       } else {
-        return applyColor(configuration, `${value}`, Type.SETTING);
+        return applyColor(configuration, value, Type.CODE);
       }
     },
     json: (id: number | string) => {
@@ -249,16 +262,7 @@ const transforms = {
 
   [Type.SIZE]: validateTransform({
     pretty: (configuration: Configuration, size: number) => {
-      const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
-
-      let power = thresholds.length;
-      while (power > 1 && size < 1024 ** power)
-        power -= 1;
-
-      const factor = 1024 ** power;
-      const value = Math.floor(size * 100 / factor) / 100;
-
-      return applyColor(configuration, `${value} ${thresholds[power - 1]}`, Type.NUMBER);
+      return applyColor(configuration, sizeToText(size), Type.NUMBER);
     },
     json: (size: number) => {
       return size;
@@ -267,23 +271,13 @@ const transforms = {
 
   [Type.SIZE_DIFF]: validateTransform({
     pretty: (configuration: Configuration, size: number) => {
-      const absSize = Math.abs(size);
-      const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
-
-      let power = thresholds.length;
-      while (power > 1 && absSize < 1024 ** power)
-        power -= 1;
-
-      const factor = 1024 ** power;
-      const value = Math.floor(absSize * 100 / factor) / 100;
-
       const sign = size >= 0 ? `+` : `-`;
 
       // We're reversing the color logic here because, in general, an increase
       // in size is typically seen as a bad thing, so it should be red
       const type = sign === `+` ? Type.REMOVED : Type.ADDED;
 
-      return applyColor(configuration, `${sign} ${value} ${thresholds[power - 1]}`, type);
+      return applyColor(configuration, `${sign} ${sizeToText(Math.abs(size))}`, type);
     },
     json: (size: number) => {
       return size;

@@ -1,5 +1,5 @@
-import {BuildDirective, BuildType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, BuildRequest, nodeUtils, structUtils} from '@yarnpkg/core';
-import {ppath}                                                                                                                                                 from '@yarnpkg/fslib';
+import {BuildDirective, BuildDirectiveType, Configuration, DependencyMeta, FetchResult, LinkType, Manifest, MessageName, Package, BuildRequest, nodeUtils, structUtils} from '@yarnpkg/core';
+import {ppath}                                                                                                                                                          from '@yarnpkg/fslib';
 
 export function checkManifestCompatibility(pkg: Package) {
   return structUtils.isPackageCompatible(pkg, nodeUtils.getArchitectureSet());
@@ -17,11 +17,11 @@ export function extractBuildRequest(pkg: Package, requirements: ExtractBuildScri
 
   for (const scriptName of [`preinstall`, `install`, `postinstall`])
     if (requirements.manifest.scripts.has(scriptName))
-      directives.push({type: BuildType.SCRIPT, script: scriptName});
+      directives.push({type: BuildDirectiveType.SCRIPT, script: scriptName});
 
   // Detect cases where a package has a binding.gyp but no install script
   if (!requirements.manifest.scripts.has(`install`) && requirements.misc.hasBindingGyp)
-    directives.push({type: BuildType.SHELLCODE, script: `node-gyp rebuild`});
+    directives.push({type: BuildDirectiveType.SHELLCODE, script: `node-gyp rebuild`});
 
   if (directives.length === 0)
     return null;
@@ -36,7 +36,7 @@ export function extractBuildRequest(pkg: Package, requirements: ExtractBuildScri
     return {skipped: true, explain: report => report.reportWarningOnce(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(configuration, pkg)} lists build scripts, but all build scripts have been disabled.`)};
 
   if (!checkManifestCompatibility(pkg))
-    return {skipped: true, explain: report => report?.reportWarningOnce(MessageName.INCOMPATIBLE_ARCHITECTURE, `${structUtils.prettyLocator(configuration, pkg)} The ${nodeUtils.getArchitectureName()} architecture is incompatible with this package, build skipped.`)};
+    return {skipped: true, explain: report => report.reportWarningOnce(MessageName.INCOMPATIBLE_ARCHITECTURE, `${structUtils.prettyLocator(configuration, pkg)} The ${nodeUtils.getArchitectureName()} architecture is incompatible with this package, build skipped.`)};
 
   return {skipped: false, directives};
 }

@@ -165,7 +165,7 @@ export class StreamReport extends Report {
   private warningCount: number = 0;
   private errorCount: number = 0;
 
-  private sectionFooter: Array<() => void> = [];
+  private timerFooter: Array<() => void> = [];
 
   private startTime: number = Date.now();
 
@@ -319,7 +319,7 @@ export class StreamReport extends Report {
 
         if (GROUP !== null && !this.json && this.includeInfos) {
           this.stdout.write(GROUP.end(what));
-          for (const cb of this.sectionFooter) {
+          for (const cb of this.timerFooter) {
             cb();
           }
         }
@@ -394,7 +394,7 @@ export class StreamReport extends Report {
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
-    this.sectionFooter.push(() => this.reportErrorImpl(name, text));
+    this.timerFooter.push(() => this.reportErrorImpl(name, text));
 
     this.reportErrorImpl(name, text);
   }
@@ -417,7 +417,7 @@ export class StreamReport extends Report {
       return;
 
     const message = `${GROUP.start(title)}${text}${GROUP.end(title)}`;
-    this.sectionFooter.push(() => this.stdout.write(message));
+    this.timerFooter.push(() => this.stdout.write(message));
   }
 
   reportProgress(progressIt: ProgressIterable) {

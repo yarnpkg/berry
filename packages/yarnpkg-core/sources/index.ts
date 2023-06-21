@@ -17,7 +17,7 @@ export {Configuration, FormatType, ProjectLookup, SettingsType, WindowsLinkType}
 export type {PluginConfiguration, SettingsDefinition, PackageExtensionData}                                         from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                                     from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                               from './Fetcher';
-export {BuildDirectiveType as BuildType}                                                                            from './Installer';
+export {BuildDirectiveType}                                                                            from './Installer';
 export type {Installer, BuildDirective, BuildRequest, InstallStatus, InstallPackageExtraApi, FinalizeInstallStatus} from './Installer';
 export {LegacyMigrationResolver}                                                                                    from './LegacyMigrationResolver';
 export {LightReport}                                                                                                from './LightReport';

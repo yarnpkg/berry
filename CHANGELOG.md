@@ -29,6 +29,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 - Some libzip bindings are no longer needed for `ZipFS` and have been removed:
   - `open`
   - `ZIP_CREATE` & `ZIP_TRUNCATE`
+- The `preferAggregateCacheInfo` setting has been removed, as the output now automatically aggregate cache info anyway.
 
 ### **API Changes**
 

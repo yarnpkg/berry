@@ -14,7 +14,7 @@ export function isTaggedYarnVersion(version: string | null) {
   return !!(semver.valid(version) && version!.match(/^[^-]+(-rc\.[0-9]+)?$/));
 }
 
-export function plural(n: number, zero: string, one: string, more: string) {
+export function plural(n: number, {one, more, zero = more}: {zero?: string, one: string, more: string}) {
   return n === 0 ? zero : n === 1 ? one : more;
 }
 

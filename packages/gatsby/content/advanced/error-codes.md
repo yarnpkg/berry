@@ -411,3 +411,16 @@ When autofixing merge conflicts, Yarn needs to know what are the two lockfile ve
 
 This may happen if someone accidentally committed the lockfile without first resolving the merge conflicts - should that happen, you'll need to revert the lockfile to an earlier working version and run `yarn install`.
 
+## YN0085 - `UPDATED_RESOLUTION_RECORD`
+
+This message is printed when a lockfile entry is added or removed from a project.
+
+## YN0086 - `EXPLAIN_PEER_DEPENDENCIES_CTA`
+
+Peer dependencies are a little complex, and debugging them may require a lot of information. Since Yarn tries its best to keep messages on a single line, we provide a `yarn explain peer-requirements` command that goes into much more details than what we show on regular installs.
+
+To use it, simply pass it the `p`-prefixed code provided in the original peer resolution error message:
+
+```
+yarn explain peer-requirements pf649cd
+```

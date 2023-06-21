@@ -1,12 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                          from '@yarnpkg/cli';
-import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport, semverUtils, LocatorHash, Locator} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                                                 from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage}                                                                                       from 'clipanion';
-import micromatch                                                                                                     from 'micromatch';
-import * as t                                                                                                         from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
+import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport, semverUtils, LocatorHash, Locator, miscUtils} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                                                                                  from 'clipanion';
+import micromatch                                                                                                                from 'micromatch';
+import * as t                                                                                                                    from 'typanion';
 
-import * as npmAuditTypes                                                                                             from '../../npmAuditTypes';
-import * as npmAuditUtils                                                                                             from '../../npmAuditUtils';
+import * as npmAuditTypes                                                                                                        from '../../npmAuditTypes';
+import * as npmAuditUtils                                                                                                        from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmAuditCommand extends BaseCommand {
@@ -130,7 +130,7 @@ export default class NpmAuditCommand extends BaseCommand {
         registry,
       }) as unknown as Promise<npmAuditTypes.AuditResponse>;
 
-      const deprecations = await Promise.all(this.noDeprecations ? [] : [...packages.entries()].map(async ([packageName, versions]) => {
+      const deprecations = await Promise.all(this.noDeprecations ? [] : Array.from(packages, async ([packageName, versions]) => {
         const registryData = await npmHttpUtils.get(`/${packageName}`, {
           configuration,
           jsonResponse: true,
@@ -143,10 +143,17 @@ export default class NpmAuditCommand extends BaseCommand {
         if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
           return [];
 
-        return [...versions.keys()].map(version => {
-          return [packageName, version, registryData.versions[version].deprecated] as const;
-        }).filter(([, , message]) => {
-          return !!message;
+        return miscUtils.mapAndFilter(versions.keys(), version => {
+          const {deprecated} = registryData.versions[version];
+
+          // Apparently some packages have a `deprecated` field set to an empty string
+          // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
+          // the package, completely removing the `deprecated` field). Both the npm website
+          // and all other package managers skip showing deprecation warnings in this case.
+          if (!deprecated)
+            return miscUtils.mapAndFilter.skip;
+
+          return [packageName, version, deprecated] as const;
         });
       }));
 

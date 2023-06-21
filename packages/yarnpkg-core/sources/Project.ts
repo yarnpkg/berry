@@ -730,8 +730,9 @@ export class Project {
     this.forgetVirtualResolutions();
 
     // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
-    // Keep a copy of the original packages so that we can figure out what was added / removed later
     const initialPackages = new Map(this.originalPackages);
+
+    // Keep a copy of the original packages so that we can figure out what was added / removed later
     if (!opts.lockfileOnly)
       this.forgetTransientResolutions();
 
@@ -927,10 +928,10 @@ export class Project {
     removedPackages.sort();
 
     if (addedPackages.length > 0)
-      opts.report.reportInfo(MessageName.RESOLUTION_NOT_CACHED, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${addedPackages.join(`, `)}`);
+      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${addedPackages.join(`, `)}`);
 
     if (removedPackages.length > 0)
-      opts.report.reportInfo(MessageName.RESOLUTION_NOT_CACHED, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${removedPackages.join(`, `)}`);
+      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${removedPackages.join(`, `)}`);
 
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
@@ -1013,7 +1014,7 @@ export class Project {
     this.peerWarnings = peerWarnings;
   }
 
-  async fetchEverything({cache, report, fetcher: userFetcher, mode, persistProject}: InstallOptions) {
+  async fetchEverything({cache, report, fetcher: userFetcher, mode, persistProject = true}: InstallOptions) {
     const cacheOptions = {
       mockedPackages: this.disabledLocators,
       unstablePackages: this.conditionalLocators,
@@ -1082,26 +1083,37 @@ export class Project {
     if (firstError)
       throw firstError;
 
-    const cleanInfo = (typeof persistProject === `undefined` || persistProject) && mode !== InstallMode.UpdateLockfile
+    const cleanInfo = persistProject && mode !== InstallMode.UpdateLockfile
       ? await this.cacheCleanup({cache, report})
       : null;
 
     if (report.cacheMisses.size > 0 || cleanInfo) {
-      const addedSizes = [...report.cacheMisses].map(locatorHash => {
+      const addedSizes = await Promise.all([...report.cacheMisses].map(async locatorHash => {
         const locator = this.storedPackages.get(locatorHash);
         const checksum = this.storedChecksums.get(locatorHash) ?? null;
 
         const p = cache.getLocatorPath(locator!, checksum, cacheOptions);
-        return p ? xfs.statSync(p).size : 0;
-      });
+        const stat = p ? await xfs.statPromise(p) : null;
+
+        return stat?.size ?? 0;
+      }));
 
       const finalSizeChange = addedSizes.reduce((sum, size) => sum + size, 0) - (cleanInfo?.size ?? 0);
 
       const addedCount = report.cacheMisses.size;
       const removedCount = cleanInfo?.count ?? 0;
 
-      const addedLine = `${miscUtils.plural(addedCount, `No new packages`, `A package was`, `${formatUtils.pretty(this.configuration, addedCount, formatUtils.Type.NUMBER)} packages were`)} added to the cache`;
-      const removedLine = `${miscUtils.plural(removedCount, `none were`, `one was`, `${formatUtils.pretty(this.configuration, removedCount, formatUtils.Type.NUMBER)} were`)} removed`;
+      const addedLine = `${miscUtils.plural(addedCount, {
+        zero: `No new packages`,
+        one: `A package was`,
+        more: `${formatUtils.pretty(this.configuration, addedCount, formatUtils.Type.NUMBER)} packages were`,
+      })} added to the cache`;
+
+      const removedLine = `${miscUtils.plural(removedCount, {
+        zero: `none were`,
+        one: `one was`,
+        more: `${formatUtils.pretty(this.configuration, removedCount, formatUtils.Type.NUMBER)} were`,
+      })} removed`;
 
       const sizeLine = finalSizeChange !== 0
         ? ` (${formatUtils.pretty(this.configuration, finalSizeChange, formatUtils.Type.SIZE_DIFF)})`
@@ -1591,8 +1603,11 @@ export class Project {
               else
                 report.reportError(MessageName.BUILD_FAILED, buildMessage);
 
+              // Sync, because the rendering would end up messed up if other
+              // builds were processed before the file read succeeded.
               if (SUPPORTS_GROUPS)
                 report.reportFold(npath.fromPortablePath(logFile), xfs.readFileSync(logFile, `utf8`));
+
 
               return isOptional;
             });
@@ -2579,38 +2594,6 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
     skipIfEmpty: true,
   }, () => {
     for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
-      switch (warning.type) {
-        case PeerWarningType.NotProvided: {
-          report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
-            structUtils.prettyLocator(project.configuration, warning.subject)
-          } doesn't provide ${
-            structUtils.prettyIdent(project.configuration, warning.requested)
-          } (${
-            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-          }), requested by ${
-            structUtils.prettyIdent(project.configuration, warning.requester)
-          }`);
-        } break;
-
-        case PeerWarningType.NotCompatible: {
-          const andDescendants = warning.requirementCount > 1
-            ? `and some of its descendants request`
-            : `requests`;
-
-          report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
-            structUtils.prettyLocator(project.configuration, warning.subject)
-          } provides ${
-            structUtils.prettyIdent(project.configuration, warning.requested)
-          } (${
-            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-          }) with version ${
-            structUtils.prettyReference(project.configuration, warning.version)
-          }, which doesn't satisfy what ${
-            structUtils.prettyIdent(project.configuration, warning.requester)
-          } ${andDescendants}.`);
-        } break;
-      }
-    }  for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
       switch (warning.type) {
         case PeerWarningType.NotProvided: {
           report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
