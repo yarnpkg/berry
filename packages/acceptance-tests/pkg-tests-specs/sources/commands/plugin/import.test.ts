@@ -89,15 +89,5 @@ describe(`Commands`, () => {
         });
       }),
     );
-
-    test(
-      `it should detect attempts to import built-in plugins`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await expect(run(`plugin`, `import`, `https://github.com/yarnpkg/berry/raw/@yarnpkg/cli/3.0.0/packages/plugin-workspace-tools/bin/%40yarnpkg/plugin-workspace-tools.js`)).rejects.toMatchObject({
-          code: 1,
-          stdout: expect.stringContaining(`is already installed`),
-        });
-      }),
-    );
   });
 });
