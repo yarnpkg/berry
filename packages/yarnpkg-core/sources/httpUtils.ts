@@ -178,7 +178,7 @@ export enum Method {
 export type Options = {
   configuration: Configuration;
   customErrorMessage?: (err: RequestError, configuration: Configuration) => string | null;
-  headers?: {[headerName: string]?: string};
+  headers?: {[headerName: string]: string | undefined};
   jsonRequest?: boolean;
   jsonResponse?: boolean;
   method?: Method;
