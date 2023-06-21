@@ -397,7 +397,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
   }
 }
 
-async function whoami(registry: string, headers: {[key: string]: string | undefined} | undefined, {configuration}: {configuration: Configuration}) {
+async function whoami(registry: string, headers: {[key: string]?: string} | undefined, {configuration}: {configuration: Configuration}) {
   if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
     return `an anonymous user`;
 
