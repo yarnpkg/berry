@@ -4,7 +4,7 @@ exports[`Commands add it should clean the cache when cache lives inside the proj
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: · Yarn X.Y.Z
+  "stdout": "➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0085: │ - no-deps@npm:1.0.0
@@ -23,7 +23,7 @@ exports[`Commands add it should not clean the cache when cache lives inside the 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: · Yarn X.Y.Z
+  "stdout": "➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0085: │ - no-deps@npm:1.0.0

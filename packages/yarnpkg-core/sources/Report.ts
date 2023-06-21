@@ -48,6 +48,10 @@ export abstract class Report {
   private reportedWarnings: Set<any> = new Set();
   private reportedErrors: Set<any> = new Set();
 
+  getRecommendedLength() {
+    return 180;
+  }
+
   abstract reportCacheHit(locator: Locator): void;
   abstract reportCacheMiss(locator: Locator, message?: string): void;
 

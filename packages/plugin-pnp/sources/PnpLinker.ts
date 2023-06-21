@@ -423,7 +423,8 @@ export class PnpInstaller implements Installer {
     if (customPackageData.manifest.preferUnplugged !== null)
       return customPackageData.manifest.preferUnplugged;
 
-    if (jsInstallUtils.extractBuildRequest(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration}) || customPackageData.misc.extractHint)
+    const buildRequest = jsInstallUtils.extractBuildRequest(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration});
+    if (buildRequest?.skipped === false || customPackageData.misc.extractHint)
       return true;
 
     return false;

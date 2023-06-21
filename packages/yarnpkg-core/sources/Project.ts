@@ -913,25 +913,27 @@ export class Project {
       }
     });
 
-    const addedPackages: Array<string> = [];
-    const removedPackages: Array<string> = [];
+    const addedPackages: Array<Locator> = [];
+    const removedPackages: Array<Locator> = [];
 
     for (const [locatorHash, pkg] of originalPackages)
       if (!initialPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
-        addedPackages.push(structUtils.prettyLocator(this.configuration, pkg));
+        addedPackages.push(pkg);
 
     for (const [locatorHash, pkg] of initialPackages)
       if (!originalPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
-        removedPackages.push(structUtils.prettyLocator(this.configuration, pkg));
+        removedPackages.push(pkg);
 
     addedPackages.sort();
     removedPackages.sort();
 
+    const recommendedLength = opts.report.getRecommendedLength();
+
     if (addedPackages.length > 0)
-      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${addedPackages.join(`, `)}`);
+      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, addedPackages, recommendedLength)}`);
 
     if (removedPackages.length > 0)
-      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${removedPackages.join(`, `)}`);
+      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, removedPackages, recommendedLength)}`);
 
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias

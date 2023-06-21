@@ -217,9 +217,8 @@ export class StreamReport extends Report {
         throw new Error(`Assertion failed: Invalid progress bar style`);
 
       this.progressStyle = PROGRESS_STYLES[styleName];
-      const PAD_LEFT = `➤ YN0000: ┌ `.length;
 
-      const maxWidth = Math.max(0, Math.min((stdout as WriteStream).columns - PAD_LEFT, 80));
+      const maxWidth = Math.min(this.getRecommendedLength(), 80);
       this.progressMaxScaledSize = Math.floor(this.progressStyle.size * maxWidth / 80);
     }
   }
@@ -230,6 +229,18 @@ export class StreamReport extends Report {
 
   exitCode() {
     return this.hasErrors() ? 1 : 0;
+  }
+
+  getRecommendedLength() {
+    const PREFIX_SIZE = `➤ YN0000: `.length;
+
+    // The -1 is to account for terminals that would wrap after
+    // the last column rather before the first overwrite
+    const recommendedLength = this.progressStyle !== null
+      ? (this.stdout as WriteStream).columns - 1
+      : super.getRecommendedLength();
+
+    return Math.max(40, recommendedLength - PREFIX_SIZE - this.indent * 2);
   }
 
   reportCacheHit(locator: Locator) {

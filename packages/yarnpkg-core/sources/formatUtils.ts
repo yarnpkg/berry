@@ -277,7 +277,7 @@ const transforms = {
       // in size is typically seen as a bad thing, so it should be red
       const type = sign === `+` ? Type.REMOVED : Type.ADDED;
 
-      return applyColor(configuration, `${sign} ${sizeToText(Math.abs(size))}`, type);
+      return applyColor(configuration, `${sign} ${sizeToText(Math.max(Math.abs(size), 1))}`, type);
     },
     json: (size: number) => {
       return size;
@@ -426,6 +426,48 @@ export function mark(configuration: Configuration) {
 
 export function prettyField(configuration: Configuration, {label, value: [value, formatType]}: Field) {
   return `${pretty(configuration, label, Type.CODE)}: ${pretty(configuration, value, formatType)}`;
+}
+
+export function prettyTruncatedLocatorList(configuration: Configuration, locators: Array<Locator>, recommendedLength: number) {
+  const named: Array<[string, number]> = [];
+  const locatorsCopy = [...locators];
+
+  let remainingLength = recommendedLength;
+  while (locatorsCopy.length > 0) {
+    const locator = locatorsCopy[0]!;
+
+    const asString = `${structUtils.prettyLocator(configuration, locator)}, `;
+    const asLength = structUtils.prettyLocatorNoColors(locator).length + 2;
+
+    if (named.length > 0 && remainingLength < asLength)
+      break;
+
+    named.push([asString, asLength]);
+    remainingLength -= asLength;
+
+    locatorsCopy.shift();
+  }
+
+  if (locatorsCopy.length === 0)
+    return named.map(([str]) => str).join(``)
+      // Don't forget the trailing ", "
+      .slice(0, -2);
+
+  const mark = `X`.repeat(locatorsCopy.length.toString().length);
+  const suffix = `and ${mark} more`;
+
+  let otherCount = locatorsCopy.length;
+  while (named.length > 1 && remainingLength < suffix.length) {
+    remainingLength += named[named.length - 1][1];
+
+    otherCount += 1;
+    named.pop();
+  }
+
+  return [
+    named.map(([str]) => str).join(``),
+    suffix.replace(mark, pretty(configuration, otherCount, Type.NUMBER)),
+  ].join(``);
 }
 
 export enum LogLevel {

@@ -1345,6 +1345,25 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it shouldn't automatically unplug packages with skipped postinstall scripts`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps-scripted`]: {built: false},
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+      },
+    ),
+  );
+
+  test(
     `it should allow packages to define whether they should be unplugged (true)`,
     makeTemporaryEnv(
       {

@@ -4,7 +4,7 @@ exports[`Commands install displays validation issues of nested workspaces 1`] = 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: · Yarn X.Y.Z
+  "stdout": "➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Project validation
 ➤ YN0057: │ package-a-ddd35d: String bin field, but no attached package name
 ➤ YN0000: └ Completed
@@ -23,7 +23,7 @@ exports[`Commands install it should fetch only required packages when using \`--
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: · Yarn X.Y.Z
+  "stdout": "➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0000: └ Completed
@@ -39,7 +39,7 @@ exports[`Commands install it should fetch only required packages when using \`--
 `;
 
 exports[`Commands install it should print the logs to the standard output when using --inline-builds 1`] = `
-"➤ YN0000: · Yarn X.Y.Z
+"➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + no-deps-scripted@npm:1.0.0
 ➤ YN0000: └ Completed
@@ -60,7 +60,7 @@ exports[`Commands install it should print the logs to the standard output when u
 `;
 
 exports[`Commands install it should skip build scripts when using --mode=skip-build 1`] = `
-"➤ YN0000: · Yarn X.Y.Z
+"➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + no-deps-scripted@npm:1.0.0
 ➤ YN0000: └ Completed
@@ -77,7 +77,7 @@ exports[`Commands install reports warning if published binary field is a path bu
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: · Yarn X.Y.Z
+  "stdout": "➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Project validation
 ➤ YN0057: │ root-workspace-0b6124: String bin field, but no attached package name
 ➤ YN0000: └ Completed
@@ -96,7 +96,7 @@ exports[`Commands install should not build virtual workspaces 1`] = `
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: · Yarn X.Y.Z
+  "stdout": "➤ YN0000: · Yarn 0.0.0
 ➤ YN0000: ┌ Resolution step
 ➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0000: └ Completed

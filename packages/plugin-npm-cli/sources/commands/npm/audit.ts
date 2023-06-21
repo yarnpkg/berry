@@ -168,7 +168,7 @@ export default class NpmAuditCommand extends BaseCommand {
         auditResult[packageName] ??= [];
         auditResult[packageName].push({
           id: `${packageName} (deprecation)`,
-          title: message,
+          title: message.trim() || `This package has been deprecated.`,
           severity: npmAuditTypes.Severity.Moderate,
           vulnerable_versions: version,
         });
