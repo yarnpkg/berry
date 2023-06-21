@@ -52,8 +52,13 @@ export abstract class Report {
     return 180;
   }
 
-  abstract reportCacheHit(locator: Locator): void;
-  abstract reportCacheMiss(locator: Locator, message?: string): void;
+  reportCacheHit(locator: Locator) {
+    this.cacheHits.add(locator.locatorHash);
+  }
+
+  reportCacheMiss(locator: Locator, message?: string) {
+    this.cacheMisses.add(locator.locatorHash);
+  }
 
   abstract startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>): Promise<T>;
   abstract startSectionSync<T>(opts: SectionOptions, cb: () => T): T;

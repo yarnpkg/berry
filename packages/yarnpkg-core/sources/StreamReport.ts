@@ -243,14 +243,6 @@ export class StreamReport extends Report {
     return Math.max(40, recommendedLength - PREFIX_SIZE - this.indent * 2);
   }
 
-  reportCacheHit(locator: Locator) {
-    this.cacheHits.add(locator.locatorHash);
-  }
-
-  reportCacheMiss(locator: Locator, message?: string) {
-    this.cacheMisses.add(locator.locatorHash);
-  }
-
   startSectionSync<T>({reportHeader, reportFooter, skipIfEmpty}: SectionOptions, cb: () => T) {
     const mark = {committed: false, action: () => {
       reportHeader?.();
