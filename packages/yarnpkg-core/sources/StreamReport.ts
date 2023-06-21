@@ -8,7 +8,6 @@ import {MessageName, stringifyMessageName}                                      
 import {ProgressDefinition, Report, SectionOptions, TimerOptions, ProgressIterable} from './Report';
 import {YarnVersion}                                                                from './YarnVersion';
 import * as formatUtils                                                             from './formatUtils';
-import {Locator}                                                                    from './types';
 
 export type StreamReportOptions = {
   configuration: Configuration;
