@@ -939,8 +939,11 @@ export class Project {
         });
       }));
 
-      const sortedAddedPackages = miscUtils.sortMap(addedPackages, pkg => topLevelResolutions.has(pkg.locatorHash) ? `0` : `1`, pkg => structUtils.stringifyLocator(pkg));
-      const sortedRemovedPackages = miscUtils.sortMap(removedPackages, pkg => topLevelResolutions.has(pkg.locatorHash) ? `0` : `1`, pkg => structUtils.stringifyLocator(pkg));
+      const sortTopLevelFirst = (locator: Locator) => topLevelResolutions.has(locator.locatorHash) ? `0` : `1`;
+      const sortByLocatorString = (locator: Locator) => structUtils.stringifyLocator(locator);
+
+      const sortedAddedPackages = miscUtils.sortMap(addedPackages, [sortTopLevelFirst, sortByLocatorString]);
+      const sortedRemovedPackages = miscUtils.sortMap(removedPackages, [sortTopLevelFirst, sortByLocatorString]);
 
       const recommendedLength = opts.report.getRecommendedLength();
 
