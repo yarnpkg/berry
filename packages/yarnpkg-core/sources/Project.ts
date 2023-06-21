@@ -924,16 +924,33 @@ export class Project {
       if (!originalPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
         removedPackages.push(pkg);
 
-    addedPackages.sort();
-    removedPackages.sort();
+    if (addedPackages.length > 0 || removedPackages.length > 0) {
+      const topLevelResolutions = new Set(this.workspaces.flatMap(workspace => {
+        const workspacePkg = allPackages.get(workspace.anchoredLocator.locatorHash);
+        if (!workspacePkg)
+          throw new Error(`Assertion failed: The workspace should have been resolved`);
 
-    const recommendedLength = opts.report.getRecommendedLength();
+        return Array.from(workspacePkg.dependencies.values(), descriptor => {
+          const resolution = allResolutions.get(descriptor.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution should have been registered`);
 
-    if (addedPackages.length > 0)
-      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, addedPackages, recommendedLength)}`);
+          return resolution;
+        });
+      }));
 
-    if (removedPackages.length > 0)
-      opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, removedPackages, recommendedLength)}`);
+      const sortedAddedPackages = miscUtils.sortMap(addedPackages, pkg => topLevelResolutions.has(pkg.locatorHash) ? `0` : `1`, pkg => structUtils.stringifyLocator(pkg));
+      const sortedRemovedPackages = miscUtils.sortMap(removedPackages, pkg => topLevelResolutions.has(pkg.locatorHash) ? `0` : `1`, pkg => structUtils.stringifyLocator(pkg));
+
+      const recommendedLength = opts.report.getRecommendedLength();
+
+      if (sortedAddedPackages.length > 0)
+        opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, sortedAddedPackages, recommendedLength)}`);
+
+      if (sortedRemovedPackages.length > 0) {
+        opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, sortedRemovedPackages, recommendedLength)}`);
+      }
+    }
 
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
