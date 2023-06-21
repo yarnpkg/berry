@@ -91,7 +91,7 @@ describe(`Features`, () => {
 
           await execFile(`git`, [`checkout`, `master`], {cwd: path});
           await execFile(`git`, [`checkout`, `-b`, `yarn2`], {cwd: path});
-          await run(`install`);
+          await run(`set`, `resolution`, `no-deps@npm:*`, `npm:2.0.0`);
           await execFile(`git`, [`add`, `-A`], {cwd: path});
           await execFile(`git`, [`commit`, `-a`, `-m`, `commit-yarn2`], {cwd: path});
 

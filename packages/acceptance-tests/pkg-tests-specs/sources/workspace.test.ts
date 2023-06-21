@@ -195,7 +195,7 @@ describe(`Workspaces tests`, () => {
           name: `workspace`,
           version: `1.0.0`,
           dependencies: {
-            [`no-deps`]: `*`,
+            [`no-deps`]: `2.0.0`,
           },
         });
 

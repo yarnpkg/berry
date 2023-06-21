@@ -399,7 +399,7 @@ describe(`Commands`, () => {
           workspaces: [`workspace`],
           dependencies: {
             foo: `workspace:*`,
-            'no-deps': `*`,
+            'no-deps': `2.0.0`,
           },
         },
         async ({path, run, source}) => {

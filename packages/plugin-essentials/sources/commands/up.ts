@@ -105,6 +105,10 @@ export default class UpCommand extends BaseCommand {
 
   async executeUpRecursive() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+    // The `yarn up -R` command always pull the highest compatible versions, even in stable resolution mode
+    configuration.use(`<internal>`, {resolutionMode: `highest`}, configuration.startingCwd, {overwrite: true});
+
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
