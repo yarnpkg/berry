@@ -18,8 +18,9 @@ export type BigIntStats = NodeBigIntStats & {
   crc?: number;
 };
 
-export type Dirent = Exclude<NodeDirent, 'name'> & {
+export type Dirent<T = undefined> = Exclude<NodeDirent, 'name'> & {
   name: Filename;
+  path: T;
 };
 
 export type Dir<P extends Path> = {
@@ -40,6 +41,12 @@ export type Dir<P extends Path> = {
 
 export type OpendirOptions = Partial<{
   bufferSize: number;
+  recursive: boolean;
+}>;
+
+export type ReaddirOptions = Partial<{
+  recursive: boolean;
+  withFileTypes: boolean;
 }>;
 
 export type CreateReadStreamOptions = Partial<{
@@ -161,15 +168,29 @@ export abstract class FakeFS<P extends Path> {
   abstract realpathPromise(p: P): Promise<P>;
   abstract realpathSync(p: P): P;
 
-  abstract readdirPromise(p: P): Promise<Array<Filename>>;
-  abstract readdirPromise(p: P, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
-  abstract readdirPromise(p: P, opts: {withFileTypes: true}): Promise<Array<Dirent>>;
-  abstract readdirPromise(p: P, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<Dirent>>;
+  abstract readdirPromise(p: P, opts?: null): Promise<Array<Filename>>;
+  abstract readdirPromise(p: P, opts: {recursive?: false, withFileTypes: true}): Promise<Array<Dirent>>;
+  abstract readdirPromise(p: P, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
+  abstract readdirPromise(p: P, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<Dirent | Filename>>;
+  abstract readdirPromise(p: P, opts: {recursive: true, withFileTypes: true}): Promise<Array<Dirent<P>>>;
+  abstract readdirPromise(p: P, opts: {recursive: true, withFileTypes?: false}): Promise<Array<P>>;
+  abstract readdirPromise(p: P, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent | P>>;
+  abstract readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<P>>>;
+  abstract readdirPromise(p: P, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<P>>;
+  abstract readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<P> | P>>;
+  abstract readdirPromise(p: P, opts?: ReaddirOptions | null): Promise<Array<Dirent<P> | Dirent | P>>;
 
-  abstract readdirSync(p: P): Array<Filename>;
-  abstract readdirSync(p: P, opts: {withFileTypes: false} | null): Array<Filename>;
-  abstract readdirSync(p: P, opts: {withFileTypes: true}): Array<Dirent>;
-  abstract readdirSync(p: P, opts: {withFileTypes: boolean}): Array<Filename> | Array<Dirent>;
+  abstract readdirSync(p: P, opts?: null): Array<Filename>;
+  abstract readdirSync(p: P, opts: {recursive?: false, withFileTypes: true}): Array<Dirent>;
+  abstract readdirSync(p: P, opts: {recursive?: false, withFileTypes?: false}): Array<Filename>;
+  abstract readdirSync(p: P, opts: {recursive?: false, withFileTypes: boolean}): Array<Dirent | Filename>;
+  abstract readdirSync(p: P, opts: {recursive: true, withFileTypes: true}): Array<Dirent<P>>;
+  abstract readdirSync(p: P, opts: {recursive: true, withFileTypes?: false}): Array<P>;
+  abstract readdirSync(p: P, opts: {recursive: true, withFileTypes: boolean}): Array<Dirent | P>;
+  abstract readdirSync(p: P, opts: {recursive: boolean, withFileTypes: true}): Array<Dirent<P>>;
+  abstract readdirSync(p: P, opts: {recursive: boolean, withFileTypes?: false}): Array<P>;
+  abstract readdirSync(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<P> | P>;
+  abstract readdirSync(p: P, opts?: ReaddirOptions | null): Array<Dirent<P> | Dirent | P>;
 
   abstract existsPromise(p: P): Promise<boolean>;
   abstract existsSync(p: P): boolean;
