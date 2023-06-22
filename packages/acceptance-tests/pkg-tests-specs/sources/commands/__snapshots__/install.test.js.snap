@@ -28,7 +28,7 @@ exports[`Commands install it should fetch only required packages when using \`--
 ➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ A package was added to the cache (+ 0.69 KiB).
+➤ YN0013: │ A package was added to the cache (+ 0.68 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0073: │ Skipped due to mode=update-lockfile
@@ -101,7 +101,7 @@ exports[`Commands install should not build virtual workspaces 1`] = `
 ➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ A package was added to the cache (+ 0.69 KiB).
+➤ YN0013: │ A package was added to the cache (+ 0.68 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0007: │ foo@workspace:workspace must be built because it never has been before or the last one failed
