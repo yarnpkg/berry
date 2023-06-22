@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.0.0-rc.45",
+  "version": "4.0.0-rc.46",
   "stableVersion": "3.3.0",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
