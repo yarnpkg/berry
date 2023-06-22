@@ -1,3 +1,4 @@
+import buffer               from 'buffer';
 import {URL, fileURLToPath} from 'url';
 import {inspect}            from 'util';
 
@@ -36,7 +37,7 @@ export class NodePathFS extends ProxiedFS<NativePath, NativePath> {
 
     if (Buffer.isBuffer(path)) {
       const str = path.toString();
-      if (Buffer.byteLength(str) !== path.byteLength)
+      if (!isUtf8(path, str))
         throw new Error(`Non-utf8 buffers are not supported at the moment. Please upvote the following issue if you encounter this error: https://github.com/yarnpkg/berry/issues/4942`);
 
       return str;
@@ -44,4 +45,12 @@ export class NodePathFS extends ProxiedFS<NativePath, NativePath> {
 
     throw new Error(`Unsupported path type: ${inspect(path)}`);
   }
+}
+
+// TODO: remove the fallback when dropping support for Node.js < 18.14.0
+function isUtf8(buf: Buffer, str: string) {
+  if (typeof buffer.isUtf8 !== `undefined`)
+    return buffer.isUtf8(buf);
+
+  return Buffer.byteLength(str) === buf.byteLength;
 }
