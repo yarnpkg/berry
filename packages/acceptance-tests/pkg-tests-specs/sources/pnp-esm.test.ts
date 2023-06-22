@@ -1,5 +1,4 @@
 import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
-import * as loaderFlags              from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
 import {pathToFileURL}               from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
@@ -219,30 +218,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  (loaderFlags.HAS_UNFLAGGED_JSON_MODULES === false ? test : test.skip)(
-    `it should not resolve JSON modules without --experimental-json-modules`,
-    makeTemporaryEnv(
-      {
-        type: `module`,
-      },
-      async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
-
-        await xfs.writeFilePromise(
-          ppath.join(path, `index.js`),
-          `import './foo.json';`,
-        );
-        await xfs.writeFilePromise(ppath.join(path, `foo.json`), `{"name": "foo"}`);
-
-        await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
-          code: 1,
-          stderr: expect.stringContaining(`Unknown file extension`),
-        });
-      },
-    ),
-  );
-
-  (loaderFlags.HAS_UNFLAGGED_JSON_MODULES ? test : test.skip)(
+  test(
     `it should not resolve JSON modules without an import assertion`,
     makeTemporaryEnv(
       {
@@ -265,7 +241,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  (loaderFlags.HAS_UNFLAGGED_JSON_MODULES ? test : test.skip)(
+  test(
     `it should resolve JSON modules with an import assertion`,
     makeTemporaryEnv(
       {
@@ -972,7 +948,7 @@ describe(`Plug'n'Play - ESM`, () => {
       ),
     );
 
-    (loaderFlags.ALLOWS_NON_FILE_PARENT ? test : test.skip)(
+    test(
       `it should allow importing files regardless of parent URL`,
       makeTemporaryEnv(
         {
