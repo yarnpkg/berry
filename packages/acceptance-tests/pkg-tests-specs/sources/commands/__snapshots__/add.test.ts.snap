@@ -29,7 +29,7 @@ exports[`Commands add it should not clean the cache when cache lives inside the 
 ➤ YN0085: │ - no-deps@npm:1.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ A package was added to the cache (+ 0.69 KiB).
+➤ YN0013: │ A package was added to the cache (+ 0.68 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
