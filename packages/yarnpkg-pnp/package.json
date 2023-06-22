@@ -10,7 +10,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.15.11",
     "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {

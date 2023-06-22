@@ -140,8 +140,7 @@ export function getCaller() {
 
 export function availableParallelism() {
   // TODO: Use os.availableParallelism directly when dropping support for Node.js < 19.4.0
-  if (`availableParallelism` in os)
-    // @ts-expect-error - No types yet
+  if (typeof os.availableParallelism !== `undefined`)
     return os.availableParallelism();
 
   return Math.max(1, os.cpus().length);
