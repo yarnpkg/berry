@@ -119,15 +119,13 @@ export default class DedupeCommand extends BaseCommand {
     if (this.check) {
       return dedupedPackageCount ? 1 : 0;
     } else {
-      const installReport = await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
+      return await project.installWithNewReport({
         json: this.json,
-      }, async report => {
-        await project.install({cache, report, mode: this.mode});
+        stdout: this.context.stdout,
+      }, {
+        cache,
+        mode: this.mode,
       });
-
-      return installReport.exitCode();
     }
   }
 }

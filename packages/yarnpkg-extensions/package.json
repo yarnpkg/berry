@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/extensions",
-  "version": "2.0.0-rc.27",
+  "version": "2.0.0-rc.28",
   "stableVersion": "1.1.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",

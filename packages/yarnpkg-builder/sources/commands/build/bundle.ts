@@ -95,7 +95,6 @@ export default class BuildBundleCommand extends Command {
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
-      forgettableNames: new Set([MessageName.UNNAMED]),
     }, async report => {
       await report.startTimerPromise(`Building the CLI`, async () => {
         const valLoad = (p: string, values: any) => {

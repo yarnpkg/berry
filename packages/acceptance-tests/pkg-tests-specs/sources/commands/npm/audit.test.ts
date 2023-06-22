@@ -179,5 +179,44 @@ describe(`Commands`, () => {
         await run(`npm`, `audit`, `--ignore`, `1`);
       }),
     );
+
+    test(
+      `it should report deprecations as audit issues`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-deprecated`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`)).rejects.toThrow(/no-deps-deprecated \(deprecation\)/);
+      }),
+    );
+
+    test(
+      `it shouldn't report deprecations when they're set to empty strings`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-deprecated-empty`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`npm`, `audit`);
+      }),
+    );
+
+    test(
+      `it should report deprecations as audit issues even when they're set to whitespaces`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-deprecated-whitespace`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`)).rejects.toThrow(/no-deps-deprecated-whitespace \(deprecation\)/);
+      }),
+    );
   });
 });

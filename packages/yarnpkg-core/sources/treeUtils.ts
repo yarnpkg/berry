@@ -15,7 +15,7 @@ export type TreeRoot = TreeNode & {
 };
 
 export type TreeMap = {
-  [key: string]: TreeNode;
+  [key: string]: TreeNode | false;
 };
 
 export type TreeifyNode = {
@@ -31,7 +31,12 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
       ? printNode.entries()
       : Object.entries(printNode);
 
-    for (const [key, {label, value, children}] of iterator) {
+    for (const [key, child] of iterator) {
+      if (!child)
+        continue;
+
+      const {label, value, children} = child;
+
       const finalParts = [];
       if (typeof label !== `undefined`)
         finalParts.push(formatUtils.applyStyle(configuration, label, formatUtils.Style.BOLD));
@@ -79,7 +84,8 @@ export function treeNodeToJson(printTree: TreeNode) {
       : {};
 
     for (const [key, child] of iterator)
-      targetChildren[cleanKey(key)] = copyTree(child);
+      if (child)
+        targetChildren[cleanKey(key)] = copyTree(child);
 
     if (typeof printNode.value === `undefined`)
       return targetChildren;
@@ -105,7 +111,8 @@ export function emitTree(tree: TreeNode, {configuration, stdout, json, separator
       : Object.values(tree.children ?? {});
 
     for (const child of iterator)
-      stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
+      if (child)
+        stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
 
     return;
   }

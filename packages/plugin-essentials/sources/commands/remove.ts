@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                    from '@yarnpkg/cli';
 import {Configuration, Cache, Descriptor, Project, formatUtils} from '@yarnpkg/core';
-import {StreamReport, Workspace, InstallMode}                   from '@yarnpkg/core';
+import {Workspace, InstallMode}                                 from '@yarnpkg/core';
 import {structUtils}                                            from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                     from 'clipanion';
 import micromatch                                               from 'micromatch';
@@ -157,14 +157,12 @@ export default class RemoveCommand extends BaseCommand {
         afterWorkspaceDependencyRemovalList,
       );
 
-      const report = await StreamReport.start({
-        configuration,
+      return await project.installWithNewReport({
         stdout: this.context.stdout,
-      }, async report => {
-        await project.install({cache, report, mode: this.mode});
+      }, {
+        cache,
+        mode: this.mode,
       });
-
-      return report.exitCode();
     }
 
     return 0;

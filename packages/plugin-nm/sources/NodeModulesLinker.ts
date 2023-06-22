@@ -153,7 +153,7 @@ class NodeModulesInstaller implements Installer {
 
     // We don't link the package at all if it's for an unsupported platform
     if (!structUtils.isPackageCompatible(pkg, this.opts.project.configuration.getSupportedArchitectures()))
-      return {packageLocation: null, buildDirective: null};
+      return {packageLocation: null, buildRequest: null};
 
     const packageDependencies = new Map<string, string | [string, string] | null>();
     const packagePeers = new Set<string>();
@@ -195,7 +195,7 @@ class NodeModulesInstaller implements Installer {
 
     return {
       packageLocation,
-      buildDirective: null,
+      buildRequest: null,
     };
   }
 
@@ -350,14 +350,14 @@ class NodeModulesInstaller implements Installer {
       if (this.opts.project.tryWorkspaceByLocator(slot.pkg))
         continue;
 
-      const buildScripts = jsInstallUtils.extractBuildScripts(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration, report: this.opts.report});
-      if (buildScripts.length === 0)
+      const buildRequest = jsInstallUtils.extractBuildRequest(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration});
+      if (!buildRequest)
         continue;
 
       installStatuses.push({
         buildLocations: installRecord.locations,
-        locatorHash: locator.locatorHash,
-        buildDirective: buildScripts,
+        locator,
+        buildRequest,
       });
     }
 
