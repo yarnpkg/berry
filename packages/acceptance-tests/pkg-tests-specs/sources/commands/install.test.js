@@ -28,7 +28,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         const {stdout} = await run(`install`, `--inline-builds`, `--mode=skip-build`);
 
-        await expect(stdout).toMatchSnapshot();
+        expect(stdout).toMatchSnapshot();
       }),
     );
 

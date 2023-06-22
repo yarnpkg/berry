@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands up it should skip build scripts when using --mode=skip-build (recursive) 1`] = `
+"➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps-scripted@npm:1.0.0
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ A package was added to the cache (+ 2.07 KiB).
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: · Done
+"
+`;
+
+exports[`Commands up it should skip build scripts when using --mode=skip-build 1`] = `
+"➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps-scripted@npm:1.0.0
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ A package was added to the cache (+ 2.07 KiB).
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: · Done
+"
+`;
