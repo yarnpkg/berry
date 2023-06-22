@@ -151,6 +151,18 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
         if (iAmHere !== iShouldBeHere) {
           process.chdir(cwd);
+
+          // clear all cwd options
+          for (let i = process.argv.length - 1; i >= 0 ; i--) {
+            if (process.argv[i].includes(`--cwd=`)) {
+              process.argv.splice(i, 1);
+              break;
+            } else if (process.argv[i] === `--cwd`) {
+              process.argv.splice(i, 2);
+              break;
+            }
+          }
+
           await run();
           return;
         }
