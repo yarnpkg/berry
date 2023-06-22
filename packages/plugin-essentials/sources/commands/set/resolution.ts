@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}         from '@yarnpkg/cli';
-import {Configuration, Cache, Project, StreamReport} from '@yarnpkg/core';
-import {structUtils}                                 from '@yarnpkg/core';
-import {Command, Option, Usage}                      from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Configuration, Cache, Project}       from '@yarnpkg/core';
+import {structUtils}                         from '@yarnpkg/core';
+import {Command, Option, Usage}              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetResolutionCommand extends BaseCommand {
@@ -51,13 +51,10 @@ export default class SetResolutionCommand extends BaseCommand {
 
     project.resolutionAliases.set(fromDescriptor.descriptorHash, toDescriptor.descriptorHash);
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report});
+    }, {
+      cache,
     });
-
-    return report.exitCode();
   }
 }

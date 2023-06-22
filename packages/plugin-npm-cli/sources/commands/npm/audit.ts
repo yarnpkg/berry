@@ -1,12 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                          from '@yarnpkg/cli';
-import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport, semverUtils, LocatorHash, Locator} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                                                                 from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage}                                                                                       from 'clipanion';
-import micromatch                                                                                                     from 'micromatch';
-import * as t                                                                                                         from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
+import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport, semverUtils, LocatorHash, Locator, miscUtils} from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                                                                                  from 'clipanion';
+import micromatch                                                                                                                from 'micromatch';
+import * as t                                                                                                                    from 'typanion';
 
-import * as npmAuditTypes                                                                                             from '../../npmAuditTypes';
-import * as npmAuditUtils                                                                                             from '../../npmAuditUtils';
+import * as npmAuditTypes                                                                                                        from '../../npmAuditTypes';
+import * as npmAuditUtils                                                                                                        from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmAuditCommand extends BaseCommand {
@@ -75,6 +75,10 @@ export default class NpmAuditCommand extends BaseCommand {
     description: `Format the output as an NDJSON stream`,
   });
 
+  noDeprecations = Option.Boolean(`--no-deprecations`, false, {
+    description: `Don't warn about deprecated packages`,
+  });
+
   severity = Option.String(`--severity`, npmAuditTypes.Severity.Info, {
     description: `Minimal severity requested for packages to be displayed`,
     validator: t.isEnum(npmAuditTypes.Severity),
@@ -118,12 +122,59 @@ export default class NpmAuditCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async () => {
-      result = ((await npmHttpUtils.post(`/-/npm/v1/security/advisories/bulk`, payload, {
+      // Note: No `await` there, so that the request is sent in parallel with the deprecation checks
+      const auditRequest = npmHttpUtils.post(`/-/npm/v1/security/advisories/bulk`, payload, {
         authType: npmHttpUtils.AuthType.BEST_EFFORT,
         configuration,
         jsonResponse: true,
         registry,
-      })) as unknown) as npmAuditTypes.AuditResponse;
+      }) as unknown as Promise<npmAuditTypes.AuditResponse>;
+
+      const deprecations = await Promise.all(this.noDeprecations ? [] : Array.from(packages, async ([packageName, versions]) => {
+        const registryData = await npmHttpUtils.get(`/${packageName}`, {
+          configuration,
+          jsonResponse: true,
+          registry,
+          headers: {
+            [`Accept`]: `application/vnd.npm.install-v1+json`,
+          },
+        }) as any;
+
+        if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+          return [];
+
+        return miscUtils.mapAndFilter(versions.keys(), version => {
+          const {deprecated} = registryData.versions[version];
+
+          // Apparently some packages have a `deprecated` field set to an empty string
+          // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
+          // the package, completely removing the `deprecated` field). Both the npm website
+          // and all other package managers skip showing deprecation warnings in this case.
+          if (!deprecated)
+            return miscUtils.mapAndFilter.skip;
+
+          return [packageName, version, deprecated] as const;
+        });
+      }));
+
+      const auditResult = await auditRequest;
+
+      for (const [packageName, version, message] of deprecations.flat(1)) {
+        // No need to report the deprecation audit message if the package is already reported as vulnerable
+        if (Object.prototype.hasOwnProperty.call(auditResult, packageName))
+          if (auditResult[packageName].some(advisory => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
+            continue;
+
+        auditResult[packageName] ??= [];
+        auditResult[packageName].push({
+          id: `${packageName} (deprecation)`,
+          title: message.trim() || `This package has been deprecated.`,
+          severity: npmAuditTypes.Severity.Moderate,
+          vulnerable_versions: version,
+        });
+      }
+
+      result = auditResult;
     });
 
     if (httpReport.hasErrors())

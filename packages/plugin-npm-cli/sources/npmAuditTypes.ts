@@ -17,8 +17,8 @@ export enum Severity {
 }
 
 export interface AuditMetadata {
-  id: number;
-  url: string;
+  id: number | string;
+  url?: string;
   title: string;
   severity: Severity;
   vulnerable_versions: string;

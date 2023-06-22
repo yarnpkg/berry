@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}           from '@yarnpkg/cli';
-import {Cache, Configuration, IdentHash, StreamReport} from '@yarnpkg/core';
-import {ThrowReport, structUtils, Project}             from '@yarnpkg/core';
-import {Command, Option, Usage}                        from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Cache, Configuration, IdentHash}     from '@yarnpkg/core';
+import {ThrowReport, structUtils, Project}   from '@yarnpkg/core';
+import {Command, Option, Usage}              from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RebuildCommand extends BaseCommand {
@@ -54,20 +54,19 @@ export default class RebuildCommand extends BaseCommand {
       for (const pkg of project.storedPackages.values()) {
         if (filteredIdents.has(pkg.identHash)) {
           project.storedBuildState.delete(pkg.locatorHash);
+          project.skippedBuilds.delete(pkg.locatorHash);
         }
       }
     } else {
       project.storedBuildState.clear();
+      project.skippedBuilds.clear();
     }
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-      includeLogs: !this.context.quiet,
-    }, async report => {
-      await project.install({cache, report});
+      quiet: this.context.quiet,
+    }, {
+      cache,
     });
-
-    return installReport.exitCode();
   }
 }

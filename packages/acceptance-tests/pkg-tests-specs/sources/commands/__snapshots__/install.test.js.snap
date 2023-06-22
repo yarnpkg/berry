@@ -4,7 +4,8 @@ exports[`Commands install displays validation issues of nested workspaces 1`] = 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Project validation
+  "stdout": "➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Project validation
 ➤ YN0057: │ package-a-ddd35d: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
@@ -13,7 +14,7 @@ exports[`Commands install displays validation issues of nested workspaces 1`] = 
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done with warnings
+➤ YN0000: · Done with warnings
 ",
 }
 `;
@@ -22,24 +23,28 @@ exports[`Commands install it should fetch only required packages when using \`--
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0013: │ A package was added to the cache (+ 0.68 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0073: │ Skipped due to mode=update-lockfile
 ➤ YN0000: └ Completed
-➤ YN0000: Done with warnings
+➤ YN0000: · Done with warnings
 ",
 }
 `;
 
 exports[`Commands install it should print the logs to the standard output when using --inline-builds 1`] = `
-"➤ YN0000: ┌ Resolution step
+"➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps-scripted@npm:1.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ no-deps-scripted@npm:1.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0013: │ A package was added to the cache (+ 2.07 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0007: │ no-deps-scripted@npm:1.0.0 must be built because it never has been before or the last one failed
@@ -50,19 +55,21 @@ exports[`Commands install it should print the logs to the standard output when u
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDOUT postinstall out
 ➤ YN0000: │ no-deps-scripted@npm:1.0.0 STDERR postinstall err
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 "
 `;
 
 exports[`Commands install it should skip build scripts when using --mode=skip-build 1`] = `
-"➤ YN0000: ┌ Resolution step
+"➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps-scripted@npm:1.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ no-deps-scripted@npm:1.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0013: │ A package was added to the cache (+ 2.07 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 "
 `;
 
@@ -70,7 +77,8 @@ exports[`Commands install reports warning if published binary field is a path bu
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Project validation
+  "stdout": "➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Project validation
 ➤ YN0057: │ root-workspace-0b6124: String bin field, but no attached package name
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Resolution step
@@ -79,7 +87,7 @@ exports[`Commands install reports warning if published binary field is a path bu
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done with warnings
+➤ YN0000: · Done with warnings
 ",
 }
 `;
@@ -88,15 +96,17 @@ exports[`Commands install should not build virtual workspaces 1`] = `
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps@npm:2.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0013: │ A package was added to the cache (+ 0.68 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0007: │ foo@workspace:workspace must be built because it never has been before or the last one failed
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;

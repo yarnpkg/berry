@@ -69,7 +69,6 @@ export default class BuildPluginCommand extends Command {
       configuration,
       includeFooter: false,
       stdout: this.context.stdout,
-      forgettableNames: new Set([MessageName.UNNAMED]),
     }, async report => {
       await report.startTimerPromise(`Building ${prettyName}`, async () => {
         const dynamicLibResolver: Plugin = {

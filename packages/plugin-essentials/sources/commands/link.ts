@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                             from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}        from '@yarnpkg/cli';
+import {Cache, Configuration, Project, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                               from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
@@ -99,13 +99,10 @@ export default class LinkCommand extends BaseCommand {
       });
     }
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report});
+    }, {
+      cache,
     });
-
-    return report.exitCode();
   }
 }

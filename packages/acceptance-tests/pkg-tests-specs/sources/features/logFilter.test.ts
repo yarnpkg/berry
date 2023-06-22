@@ -30,19 +30,19 @@ describe(`Features`, () => {
 
       await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`discard`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).not.toMatch(/lists build scripts/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`info`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makeCodeFilter(`warning`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).toMatch(/Done with warnings/);
@@ -51,7 +51,7 @@ describe(`Features`, () => {
 
       let hadError = false;
       try {
-        await run(`install`);
+        await run(`rebuild`);
       } catch (err) {
         ({stdout} = err);
         hadError = true;
@@ -75,21 +75,21 @@ describe(`Features`, () => {
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`discard`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`info`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`warning`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).toMatch(/Done with warnings/);
@@ -98,7 +98,7 @@ describe(`Features`, () => {
 
       let hadError = false;
       try {
-        await run(`install`);
+        await run(`rebuild`);
       } catch (err) {
         ({stdout} = err);
         hadError = true;
@@ -123,14 +123,14 @@ describe(`Features`, () => {
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`info`));
 
-      ({stdout} = await run(`install`, {env: {FORCE_COLOR: `1`}}));
+      ({stdout} = await run(`rebuild`, {env: {FORCE_COLOR: `1`}}));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makeTextFilter(`discard`));
 
-      ({stdout} = await run(`install`, {env: {FORCE_COLOR: `1`}}));
+      ({stdout} = await run(`rebuild`, {env: {FORCE_COLOR: `1`}}));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
@@ -149,21 +149,21 @@ describe(`Features`, () => {
 
       await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`discard`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).not.toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`info`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).not.toMatch(/Done with warnings/);
 
       await run(`config`, `set`, `logFilters`, `--json`, makePatternFilter(`warning`));
 
-      ({stdout} = await run(`install`));
+      ({stdout} = await run(`rebuild`));
       expect(stdout).toMatch(/lists build scripts/);
       expect(stdout).not.toMatch(/Failed with errors/);
       expect(stdout).toMatch(/Done with warnings/);
@@ -172,7 +172,7 @@ describe(`Features`, () => {
 
       let hadError = false;
       try {
-        await run(`install`);
+        await run(`rebuild`);
       } catch (err) {
         ({stdout} = err);
         hadError = true;

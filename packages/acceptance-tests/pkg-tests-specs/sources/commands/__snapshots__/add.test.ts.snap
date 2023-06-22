@@ -4,15 +4,17 @@ exports[`Commands add it should clean the cache when cache lives inside the proj
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps@npm:2.0.0
+➤ YN0085: │ - no-deps@npm:1.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
-➤ YN0019: │ no-deps-npm-1.0.0-cf533b267a-e0e60294c2.zip appears to be unused - removing
+➤ YN0013: │ A package was added to the cache, and one was removed.
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
@@ -21,14 +23,17 @@ exports[`Commands add it should not clean the cache when cache lives inside the 
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: ┌ Resolution step
+  "stdout": "➤ YN0000: · Yarn 0.0.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps@npm:2.0.0
+➤ YN0085: │ - no-deps@npm:1.0.0
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ no-deps@npm:2.0.0 can't be found in the cache and will be fetched from the remote registry
+➤ YN0013: │ A package was added to the cache (+ 0.68 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
-➤ YN0000: Done
+➤ YN0000: · Done
 ",
 }
 `;
