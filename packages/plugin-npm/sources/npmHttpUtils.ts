@@ -220,7 +220,7 @@ function getRegistryFolder(configuration: Configuration, registry: string) {
 }
 
 function getMetadataFolder(configuration: Configuration) {
-  return ppath.join(configuration.get(`globalFolder`), `metadata`, `npm`);
+  return ppath.join(configuration.get(`globalFolder`), `metadata/npm`);
 }
 
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
