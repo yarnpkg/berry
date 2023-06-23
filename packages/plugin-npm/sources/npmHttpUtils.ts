@@ -178,7 +178,6 @@ export type PackageMetadata = {
 const CACHED_FIELDS = [
   `name`,
 
-  `deprecated`,
   `dist.tarball`,
 
   `bin`,
