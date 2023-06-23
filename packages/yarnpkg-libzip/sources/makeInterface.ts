@@ -133,6 +133,7 @@ export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
 
   ext: {
     countSymlinks: emZip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`]),
+    importTar: emZip.cwrap(`zip_ext_import_tar`, `number`, [`number`, `number`, ...number64, `number`, `string`]),
   },
 
   error: {

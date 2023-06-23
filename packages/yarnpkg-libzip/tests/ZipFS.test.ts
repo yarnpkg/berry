@@ -1,7 +1,8 @@
-import {Filename, PortablePath, constants, ppath, statUtils, xfs} from '@yarnpkg/fslib';
-import {makeEmptyArchive, ZipFS}                                  from '@yarnpkg/libzip';
-import {S_IFREG}                                                  from 'constants';
-import fs                                                         from 'fs';
+import {Filename, PortablePath, constants, npath, ppath, statUtils, xfs} from '@yarnpkg/fslib';
+import {makeEmptyArchive, ZipBufferFormat, ZipFS}                        from '@yarnpkg/libzip';
+import {S_IFREG}                                                         from 'constants';
+import fs                                                                from 'fs';
+import {gunzipSync}                                                      from 'zlib';
 
 const isNotWin32 = process.platform !== `win32`;
 
@@ -952,5 +953,20 @@ describe(`ZipFS`, () => {
     expect(zipFs.statSync(`/foo.txt` as PortablePath).mtimeMs).toEqual(constants.SAFE_TIME * 1000);
 
     zipFs.discardAndClose();
+  });
+
+  it(`should be able to open a tar file`, async () => {
+    const isNumberBuffer = await xfs.readFilePromise(ppath.join(npath.toPortablePath(__dirname), `fixtures/is-number-7.0.0.tgz`));
+
+    const zipFs = new ZipFS({
+      type: `tar`,
+      buffer: gunzipSync(isNumberBuffer),
+      skipComponents: 1,
+      prefixPath: `node_modules/is-number/` as PortablePath,
+    });
+
+    expect(zipFs.readdirSync(`/` as PortablePath)).toEqual([
+      `foo`,
+    ]);
   });
 });

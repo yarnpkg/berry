@@ -50,5 +50,6 @@
     "_zipstruct_stat_comp_size",
     "_zipstruct_stat_comp_method",
 
-    "_zip_ext_count_symlinks"
+    "_zip_ext_count_symlinks",
+    "_zip_ext_import_tar"
 ]

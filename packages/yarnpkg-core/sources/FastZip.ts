@@ -1,34 +1,44 @@
 import {PortablePath} from '@yarnpkg/fslib';
 import fs             from 'fs';
-import zlib           from 'zlib';
 
-import {crc32}        from './crc32';
-import {convertToZip} from './tgzUtils';
+import * as tgzUtils  from './tgzUtils';
 
-const DEFAULT_TIME = 0x0000;
+export const TarFileTypeMap = {
+  0: `File`,
+  5: `Directory`,
+} as const;
+
+export type TarFileType = (typeof TarFileTypeMap)[keyof typeof TarFileTypeMap];
 
 export function parseTarEntries(source: Buffer) {
   const entries: Array<{
+    type: TarFileType;
     path: PortablePath;
     offset: number;
     size: number;
+    mode: number;
   }> = [];
 
   let offset = 0;
 
   while (offset < source.byteLength) {
-    const path = source.toString(`utf8`, offset, offset + 100).toString().replace(/\0.*$/, ``);
+    const path = source.toString(`utf8`, offset, offset + 100).replace(/\0.*$/, ``);
     if (!path) {
       offset += 512;
       continue;
     }
 
-    const size = parseInt(source.toString(`utf8`, offset + 124, offset + 136).toString().replace(/\0.*$/, ``), 8);
+    const mode = parseInt(source.toString(`utf8`, offset + 100, offset + 108), 8);
+    const size = parseInt(source.toString(`utf8`, offset + 124, offset + 136), 8);
+    const type = (source[offset + 156] || `0`);
+    const prefix = source.toString(`utf8`, offset + 345, offset + 500).toString().replace(/\0.*$/, ``);
 
     entries.push({
-      path: path as PortablePath,
+      path: `${prefix}${path}` as PortablePath,
+      type: (TarFileTypeMap as any)[type] ?? `Unknown`,
       offset: offset + 512,
       size,
+      mode,
     });
 
     offset += 512 + Math.ceil(size / 512) * 512;
@@ -37,105 +47,62 @@ export function parseTarEntries(source: Buffer) {
   return entries;
 }
 
-export function genZipArchive(source: Buffer, files: Array<{path: PortablePath, offset: number, size: number}>) {
-  const records: Array<{
-    position: number;
-    path: PortablePath;
-    offset: number;
-    size: number;
-    crc32: number;
-  }> = [];
+async function testConvertToZip3rdParty(tgz: Buffer) {
+  const start2 = Date.now();
 
-  let currentPosition = 0;
+  await tgzUtils.convertToZip3rdParty(tgz, {
+    compressionLevel: 0,
+  });
 
-  for (const file of files) {
-    records.push({
-      position: currentPosition,
-      path: file.path,
-      offset: file.offset,
-      size: file.size,
-      crc32: 0, //crc32(source, file.offset, file.offset + file.size),
-    });
+  console.log(`convertToZip3rdParty: ${Date.now() - start2}ms`);
+}
 
-    currentPosition += 30 + file.path.length + file.size;
-  }
+async function testConvertToZipCustomJs(tgz: Buffer) {
+  const start2 = Date.now();
 
-  const dataSize = files.reduce((sum, {size}) => sum + size, 0);
-  const localFileHeaderSize = 30 * files.length + files.reduce((sum, {path}) => sum + path.length, 0);
-  const centralDirectorySize = 46 * files.length + files.reduce((sum, {path}) => sum + path.length, 0);
-  const zipSize = dataSize + localFileHeaderSize + centralDirectorySize + 22;
+  await tgzUtils.convertToZipCustomJs(tgz, {
+    compressionLevel: 0,
+  });
 
-  const zip = Buffer.alloc(zipSize);
+  console.log(`testConvertToZipCustomJs: ${Date.now() - start2}ms`);
+}
 
-  let idx = 0;
+function testConvertToZipWasm(tgz: Buffer) {
+  const start2 = Date.now();
 
-  for (let t = 0; t < files.length; ++t)
-    genLocalFileHeader(t);
-  for (let t = 0; t < files.length; ++t)
-    genCentralDirectoryFileHeader(t);
+  tgzUtils.convertToZipWasm(tgz, {
+    compressionLevel: 0,
+  });
 
-  genEndOfCentralDirectoryRecord();
+  console.log(`testConvertToZipWasm: ${Date.now() - start2}ms`);
+}
 
-  if (idx !== zip.byteLength)
-    throw new Error(`Assertion failed: The generated zip archive size (${idx}) doesn't match the expected size (${zip.byteLength})`);
+async function test() {
+  console.log(`Let's test the performance of the various tgz -> zip converters!`);
 
-  return zip;
+  const files = fs.readdirSync(`.`).filter(name => name.endsWith(`.tgz`));
+  for (const f of files) {
+    const tgz = fs.readFileSync(f);
 
-  function genEndOfCentralDirectoryRecord() {
-    zip.writeUInt32LE(0x06054b50, idx); // end of central dir signature
-    zip.writeUInt16LE(files.length, idx + 8); // total number of entries in the central directory on this disk
-    zip.writeUInt16LE(files.length, idx + 10); // total number of entries in the central directory
-    zip.writeUInt32LE(centralDirectorySize, idx + 12); // size of the central directory
-    zip.writeUInt32LE(currentPosition, idx + 16); // offset of start of central directory with respect to the starting disk number
+    console.log();
+    console.log(`=== ${f} ${tgz.byteLength / 1024} KiB ===`);
+    console.log();
 
-    idx += 22;
-  }
+    for (let t = 0; t < 10; ++t)
+      await testConvertToZip3rdParty(tgz);
 
-  function genCentralDirectoryFileHeader(n: number) {
-    zip.writeUInt32LE(0x02014b50, idx); // central file header signature
-    zip.writeUInt16LE(DEFAULT_TIME, idx + 12); // last mod file time
-    zip.writeUInt16LE(DEFAULT_TIME, idx + 14); // last mod file date
-    zip.writeUInt32LE(records[n].crc32, idx + 16); // crc-32
-    zip.writeUInt32LE(records[n].size, idx + 20); // compressed size
-    zip.writeUInt32LE(records[n].size, idx + 24); // uncompressed size
-    zip.writeUInt16LE(records[n].path.length, idx + 28); // file name length
-    zip.writeUInt32LE(records[n].position, idx + 42); // relative offset of local header
-    zip.write(records[n].path, idx + 46, records[n].path.length, `utf-8`); // file name
+    console.log();
 
-    idx += 46 + records[n].path.length;
-  }
+    for (let t = 0; t < 10; ++t)
+      await testConvertToZipCustomJs(tgz);
 
-  function genLocalFileHeader(n: number) {
-    zip.writeUInt32LE(0x04034b50, idx); // local file header signature
-    zip.writeUInt16LE(0x0014, idx + 4); // version needed to extract (minimum)
-    zip.writeUInt16LE(DEFAULT_TIME, idx + 10); // last mod file time
-    zip.writeUInt16LE(DEFAULT_TIME, idx + 12); // last mod file date
-    zip.writeUInt32LE(records[n].crc32, idx + 14); // crc-32
-    zip.writeUInt32LE(records[n].size, idx + 18); // compressed size
-    zip.writeUInt32LE(records[n].size, idx + 22); // uncompressed size
-    zip.writeUInt16LE(records[n].path.length, idx + 26); // file name length
-    zip.write(records[n].path, idx + 30, records[n].path.length, `utf-8`); // file name
-    source.copy(zip, idx + 30 + records[n].path.length, records[n].offset, records[n].offset + records[n].size);
+    console.log();
 
-    idx += 30 + records[n].path.length + records[n].size;
+    for (let t = 0; t < 10; ++t) {
+      testConvertToZipWasm(tgz);
+    }
   }
 }
 
-const tgz = fs.readFileSync(`lodash-4.17.21.tgz`);
-
-const start = Date.now();
-const tar = zlib.gunzipSync(tgz);
-console.log(`Manual Gunzip: ${Date.now() - start}ms`);
-const entries = parseTarEntries(tar);
-console.log(`Manual parse: ${Date.now() - start}ms`);
-const zip = genZipArchive(tar, entries);
-console.log(`Manual zip: ${Date.now() - start}ms`);
-
-console.log();
-
-const start2 = Date.now();
-const x = convertToZip(tgz, {
-  compressionLevel: 0,
-}).then(() => {
-  console.log(`convertToZip: ${Date.now() - start2}ms`);
-});
+if (require.main === module)
+  test();

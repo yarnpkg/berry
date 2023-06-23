@@ -28,6 +28,16 @@ export type ZipPathOptions = ZipBufferOptions & {
   create?: boolean;
 };
 
+export type ZipSource = {
+  type?: `zip`;
+  buffer: Buffer;
+} | {
+  type: `tar`;
+  buffer: Buffer;
+  skipComponents?: number;
+  prefixPath?: PortablePath;
+};
+
 function toUnixTimestamp(time: Date | string | number): number {
   if (typeof time === `string` && String(+time) === time)
     return +time;
@@ -77,6 +87,7 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly stats: Stats;
   private readonly zip: number;
   private readonly lzSource: number;
+  private readonly backingBuffer?: number;
   private readonly level: ZipCompression;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
@@ -103,9 +114,9 @@ export class ZipFS extends BasePortableFakeFS {
    * Create a ZipFS in memory
    * @param data If null; an empty zip file will be created
    */
-  constructor(data: Buffer | null, opts?: ZipBufferOptions);
+  constructor(data: Buffer | ZipSource | null, opts?: ZipBufferOptions);
 
-  constructor(source?: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions = {}) {
+  constructor(source?: PortablePath | Buffer | ZipSource | null, opts: ZipPathOptions | ZipBufferOptions = {}) {
     super();
 
     const pathOptions = opts as ZipPathOptions;
@@ -113,7 +124,7 @@ export class ZipFS extends BasePortableFakeFS {
       ? pathOptions.level
       : DEFAULT_COMPRESSION_LEVEL;
 
-    source ??= makeEmptyArchive();
+    source ??= {type: `zip`, buffer: makeEmptyArchive()};
 
     if (typeof source === `string`) {
       const {baseFs = new NodeFS()} = pathOptions;
@@ -159,8 +170,14 @@ export class ZipFS extends BasePortableFakeFS {
           ? makeEmptyArchive()
           : this.baseFs!.readFileSync(source);
 
-      const lzSource = this.allocateUnattachedSource(source);
+      if (Buffer.isBuffer(source))
+        source = {type: `zip`, buffer: source};
 
+      const initialBuffer = source.type !== `zip`
+        ? makeEmptyArchive()
+        : source.buffer;
+
+      const lzSource = this.allocateUnattachedSource(initialBuffer);
       try {
         this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
         this.lzSource = lzSource;
@@ -177,6 +194,17 @@ export class ZipFS extends BasePortableFakeFS {
       }
     } finally {
       this.libzip.free(errPtr);
+    }
+
+    if (source.type === `tar`) {
+      const tarBuffer = this.allocateBuffer(source.buffer);
+      this.backingBuffer = tarBuffer.buffer;
+
+      const res = this.libzip.ext.importTar(this.zip, this.backingBuffer, tarBuffer.byteLength, 0, source.skipComponents ?? 0, source.prefixPath ?? ``);
+      // TODO: There's a memory leak here if we throw
+      if (res < 0) {
+        throw this.makeLibzipError(this.libzip.getError(this.zip));
+      }
     }
 
     this.listings.set(PortablePath.root, new Set<Filename>());
@@ -197,6 +225,7 @@ export class ZipFS extends BasePortableFakeFS {
       }
     }
 
+    // TODO: There's a memory leak here if we throw
     this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
     if (this.symlinkCount === -1)
       throw this.makeLibzipError(this.libzip.getError(this.zip));

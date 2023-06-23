@@ -1,11 +1,13 @@
-import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
-import {ZipCompression, ZipFS}                                      from '@yarnpkg/libzip';
-import {PassThrough, Readable}                                      from 'stream';
-import tar                                                          from 'tar';
+import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils} from '@yarnpkg/fslib';
+import {ZipCompression, ZipFS}                                                 from '@yarnpkg/libzip';
+import {PassThrough, Readable}                                                 from 'stream';
+import tar                                                                     from 'tar';
+import {gunzipSync}                                                            from 'zlib';
 
-import {WorkerPool}                                                 from './WorkerPool';
-import * as miscUtils                                               from './miscUtils';
-import {getContent as getZipWorkerSource, ConvertToZipPayload}      from './worker-zip';
+import {parseTarEntries}                                                       from './FastZip';
+import {WorkerPool}                                                            from './WorkerPool';
+import * as miscUtils                                                          from './miscUtils';
+import {getContent as getZipWorkerSource, ConvertToZipPayload}                 from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
@@ -32,22 +34,92 @@ export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = n
 }
 
 export interface ExtractBufferOptions {
+  algorithm?: `3rdParty` | `CustomJs` | `Wasm`;
   compressionLevel?: ZipCompression;
+  destination?: PortablePath;
+  enableWorkerPool?: boolean;
   prefixPath?: PortablePath;
   stripComponents?: number;
 }
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
+const defaultEnableWorkers = process.env.CONVERT_TO_ZIP_WORKERS === `0`;
+const defaultConvertAlgorithm = process.env.CONVERT_TO_ZIP_ALGORITHM ?? `3rdParty`;
+
+const convertAlgorithms: Record<string, (tgz: Buffer, opts: ExtractBufferOptions) => Promise<ZipFS>> = {
+  [`3rdParty`]: convertToZip3rdParty,
+  [`CustomJs`]: convertToZipCustomJs,
+  [`Wasm`]: convertToZipWasm,
+};
+
 export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
-  const tmpFolder = await xfs.mktempPromise();
-  const tmpFile = ppath.join(tmpFolder, `archive.zip`);
+  if (opts.enableWorkerPool ?? defaultEnableWorkers) {
+    return convertToZipWorker(tgz, opts);
+  } else {
+    return convertToZipNoWorker(tgz, opts);
+  }
+}
+
+export async function convertToZipWorker(tgz: Buffer, opts: ExtractBufferOptions) {
+  const destination = opts.destination ?? ppath.join(await xfs.mktempPromise(), `archive.zip`);
 
   workerPool ||= new WorkerPool(getZipWorkerSource());
 
-  await workerPool.run({tmpFile, tgz, opts});
+  await workerPool.run({tgz, opts: {...opts, destination}});
 
-  return new ZipFS(tmpFile, {level: opts.compressionLevel});
+  return new ZipFS(destination, {level: opts.compressionLevel});
+}
+
+export async function convertToZipNoWorker(tgz: Buffer, opts: ExtractBufferOptions) {
+  const algorithm = opts.algorithm ?? defaultConvertAlgorithm;
+
+  return await convertAlgorithms[algorithm](tgz, opts);
+}
+
+export async function convertToZip3rdParty(tgz: Buffer, opts: ExtractBufferOptions) {
+  const destination = opts.destination ?? ppath.join(await xfs.mktempPromise(), `archive.zip`);
+
+  const zipFs = new ZipFS(destination, {create: true, level: opts.compressionLevel, stats: statUtils.makeDefaultStats()});
+
+  // Buffers sent through Node are turned into regular Uint8Arrays
+  const tgzBuffer = Buffer.from(tgz.buffer, tgz.byteOffset, tgz.byteLength);
+  await extractArchiveTo(0, tgzBuffer, zipFs, opts);
+
+  zipFs.saveAndClose();
+
+  return new ZipFS(destination, {level: opts.compressionLevel});
+}
+
+export async function convertToZipCustomJs(tgz: Buffer, opts: ExtractBufferOptions) {
+  const destination = opts.destination ?? ppath.join(await xfs.mktempPromise(), `archive.zip`);
+
+  const zipFs = new ZipFS(destination, {create: true, level: opts.compressionLevel, stats: statUtils.makeDefaultStats()});
+
+  // Buffers sent through Node are turned into regular Uint8Arrays
+  const tgzBuffer = Buffer.from(tgz.buffer, tgz.byteOffset, tgz.byteLength);
+  await extractArchiveTo(1, tgzBuffer, zipFs, opts);
+
+  zipFs.saveAndClose();
+
+  return new ZipFS(destination, {level: opts.compressionLevel});
+}
+
+export async function convertToZipWasm(tgz: Buffer, opts: ExtractBufferOptions) {
+  const zip = new ZipFS({
+    type: `tar`,
+    buffer: gunzipSync(tgz),
+    skipComponents: opts.stripComponents,
+    prefixPath: opts.prefixPath,
+  }, {
+    level: opts.compressionLevel,
+    stats: statUtils.makeDefaultStats(),
+  });
+
+  const destination = opts.destination ?? ppath.join(await xfs.mktempPromise(), `archive.zip`);
+  xfs.writeFilePromise(destination, zip.getBufferAndClose());
+
+  return new ZipFS(destination, {level: opts.compressionLevel});
 }
 
 async function * parseTar(tgz: Buffer) {
@@ -79,8 +151,8 @@ async function * parseTar(tgz: Buffer) {
   }
 }
 
-export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
-  function ignore(entry: tar.ReadEntry) {
+export async function extractArchiveTo<T extends FakeFS<PortablePath>>(v: number, tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
+  function ignore(entry: {path: string}) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
     if (entry.path[0] === `/`)
       return true;
@@ -97,7 +169,11 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     return false;
   }
 
-  for await (const entry of parseTar(tgz)) {
+  const entries = v === 0
+    ? parseTar(tgz)
+    : parseTarEntries(gunzipSync(tgz));
+
+  for await (const entry of entries) {
     if (ignore(entry))
       continue;
 
