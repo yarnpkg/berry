@@ -85,7 +85,7 @@ class PnpmInstaller implements Installer {
   private readonly indexFolderPromise: Promise<PortablePath>;
 
   constructor(private opts: LinkOptions) {
-    this.indexFolderPromise = setupCopyIndex(xfs, {
+    this.indexFolderPromise = setupCopyIndex<PortablePath>(xfs, {
       indexPath: ppath.join(opts.project.configuration.get(`globalFolder`), `index`),
     });
   }

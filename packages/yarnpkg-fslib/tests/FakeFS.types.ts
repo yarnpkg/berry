@@ -1,7 +1,6 @@
 import {Dirent, FakeFS, Filename, PortablePath} from '../sources';
 
 declare const fakeFs: FakeFS<PortablePath>;
-declare const unknown: unknown;
 
 type AssertEqual<T, Expected> = [T, Expected] extends [Expected, T] ? true : false;
 

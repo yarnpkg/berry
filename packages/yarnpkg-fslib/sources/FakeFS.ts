@@ -178,7 +178,7 @@ export abstract class FakeFS<P extends Path> {
   abstract readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<P>>>;
   abstract readdirPromise(p: P, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<P>>;
   abstract readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<P> | P>>;
-  abstract readdirPromise(p: P, opts?: ReaddirOptions | null): Promise<Array<Dirent<P> | Dirent | P>>;
+  abstract readdirPromise(p: P, opts?: ReaddirOptions | null): Promise<Array<Dirent<P> | Dirent | P | Filename>>;
 
   abstract readdirSync(p: P, opts?: null): Array<Filename>;
   abstract readdirSync(p: P, opts: {recursive?: false, withFileTypes: true}): Array<Dirent>;
@@ -190,7 +190,7 @@ export abstract class FakeFS<P extends Path> {
   abstract readdirSync(p: P, opts: {recursive: boolean, withFileTypes: true}): Array<Dirent<P>>;
   abstract readdirSync(p: P, opts: {recursive: boolean, withFileTypes?: false}): Array<P>;
   abstract readdirSync(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<P> | P>;
-  abstract readdirSync(p: P, opts?: ReaddirOptions | null): Array<Dirent<P> | Dirent | P>;
+  abstract readdirSync(p: P, opts?: ReaddirOptions | null): Array<Dirent<P> | Dirent | P | Filename>;
 
   abstract existsPromise(p: P): Promise<boolean>;
   abstract existsSync(p: P): boolean;
