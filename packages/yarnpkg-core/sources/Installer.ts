@@ -1,25 +1,37 @@
-import {PortablePath}                              from '@yarnpkg/fslib';
+import {PortablePath}                 from '@yarnpkg/fslib';
 
-import {FetchResult}                               from './Fetcher';
-import {Descriptor, Locator, Package, LocatorHash} from './types';
+import {FetchResult}                  from './Fetcher';
+import {Report}                       from './Report';
+import {Descriptor, Locator, Package} from './types';
 
-export enum BuildType {
+export enum BuildDirectiveType {
   SCRIPT = 0,
   SHELLCODE = 1,
 }
 
-export type BuildDirective = [BuildType, string];
+export type BuildDirective = {
+  type: BuildDirectiveType;
+  script: string;
+};
+
+export type BuildRequest = {
+  skipped: false;
+  directives: Array<BuildDirective>;
+} | {
+  skipped: true;
+  explain: (report: Report) => void;
+};
 
 export type InstallStatus = {
   packageLocation: PortablePath | null;
-  buildDirective: Array<BuildDirective> | null;
+  buildRequest: BuildRequest | null;
   installPromise?: Promise<void>;
 };
 
 export type FinalizeInstallStatus = {
-  locatorHash: LocatorHash;
+  locator: Locator;
   buildLocations: Array<PortablePath>;
-  buildDirective: Array<BuildDirective>;
+  buildRequest: BuildRequest;
 };
 
 export type FinalizeInstallData = {

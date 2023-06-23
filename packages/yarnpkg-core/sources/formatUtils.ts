@@ -22,6 +22,8 @@ import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from
 export const Type = {
   NO_HINT: `NO_HINT`,
 
+  ID: `ID`,
+
   NULL: `NULL`,
 
   SCOPE: `SCOPE`,
@@ -39,6 +41,7 @@ export const Type = {
 
   DURATION: `DURATION`,
   SIZE: `SIZE`,
+  SIZE_DIFF: `SIZE_DIFF`,
 
   IDENT: `IDENT`,
   DESCRIPTOR: `DESCRIPTOR`,
@@ -82,7 +85,7 @@ const colors = new Map<Type, [string, number] | null>([
   [Type.PATH, [`#d75fd7`, 170]],
   [Type.URL, [`#d75fd7`, 170]],
   [Type.ADDED, [`#5faf00`, 70]],
-  [Type.REMOVED, [`#d70000`, 160]],
+  [Type.REMOVED, [`#ff3131`, 160]],
   [Type.CODE, [`#87afff`, 111]],
 
   [Type.SIZE, [`#ffd700`, 220]],
@@ -103,7 +106,33 @@ const validateTransform = <T>(spec: {
   json: (val: T) => any;
 } => spec;
 
+function sizeToText(size: number) {
+  const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
+
+  let power = thresholds.length;
+  while (power > 1 && size < 1024 ** power)
+    power -= 1;
+
+  const factor = 1024 ** power;
+  const value = Math.floor(size * 100 / factor) / 100;
+
+  return `${value} ${thresholds[power - 1]}`;
+}
+
 const transforms = {
+  [Type.ID]: validateTransform({
+    pretty: (configuration: Configuration, value: number | string) => {
+      if (typeof value === `number`) {
+        return applyColor(configuration, `${value}`, Type.NUMBER);
+      } else {
+        return applyColor(configuration, value, Type.CODE);
+      }
+    },
+    json: (id: number | string) => {
+      return id;
+    },
+  }),
+
   [Type.INSPECT]: validateTransform({
     pretty: (configuration: Configuration, value: any) => {
       return inspect(value, {depth: Infinity, colors: configuration.get(`enableColors`), compact: true, breakLength: Infinity});
@@ -233,16 +262,22 @@ const transforms = {
 
   [Type.SIZE]: validateTransform({
     pretty: (configuration: Configuration, size: number) => {
-      const thresholds = [`KB`, `MB`, `GB`, `TB`];
+      return applyColor(configuration, sizeToText(size), Type.NUMBER);
+    },
+    json: (size: number) => {
+      return size;
+    },
+  }),
 
-      let power = thresholds.length;
-      while (power > 1 && size < 1024 ** power)
-        power -= 1;
+  [Type.SIZE_DIFF]: validateTransform({
+    pretty: (configuration: Configuration, size: number) => {
+      const sign = size >= 0 ? `+` : `-`;
 
-      const factor = 1024 ** power;
-      const value = Math.floor(size * 100 / factor) / 100;
+      // We're reversing the color logic here because, in general, an increase
+      // in size is typically seen as a bad thing, so it should be red
+      const type = sign === `+` ? Type.REMOVED : Type.ADDED;
 
-      return applyColor(configuration, `${value} ${thresholds[power - 1]}`, Type.NUMBER);
+      return applyColor(configuration, `${sign} ${sizeToText(Math.max(Math.abs(size), 1))}`, type);
     },
     json: (size: number) => {
       return size;
@@ -391,6 +426,48 @@ export function mark(configuration: Configuration) {
 
 export function prettyField(configuration: Configuration, {label, value: [value, formatType]}: Field) {
   return `${pretty(configuration, label, Type.CODE)}: ${pretty(configuration, value, formatType)}`;
+}
+
+export function prettyTruncatedLocatorList(configuration: Configuration, locators: Array<Locator>, recommendedLength: number) {
+  const named: Array<[string, number]> = [];
+  const locatorsCopy = [...locators];
+
+  let remainingLength = recommendedLength;
+  while (locatorsCopy.length > 0) {
+    const locator = locatorsCopy[0]!;
+
+    const asString = `${structUtils.prettyLocator(configuration, locator)}, `;
+    const asLength = structUtils.prettyLocatorNoColors(locator).length + 2;
+
+    if (named.length > 0 && remainingLength < asLength)
+      break;
+
+    named.push([asString, asLength]);
+    remainingLength -= asLength;
+
+    locatorsCopy.shift();
+  }
+
+  if (locatorsCopy.length === 0)
+    return named.map(([str]) => str).join(``)
+      // Don't forget the trailing ", "
+      .slice(0, -2);
+
+  const mark = `X`.repeat(locatorsCopy.length.toString().length);
+  const suffix = `and ${mark} more`;
+
+  let otherCount = locatorsCopy.length;
+  while (named.length > 1 && remainingLength < suffix.length) {
+    remainingLength += named[named.length - 1][1];
+
+    otherCount += 1;
+    named.pop();
+  }
+
+  return [
+    named.map(([str]) => str).join(``),
+    suffix.replace(mark, pretty(configuration, otherCount, Type.NUMBER)),
+  ].join(``);
 }
 
 export enum LogLevel {

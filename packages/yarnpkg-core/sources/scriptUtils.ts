@@ -487,12 +487,7 @@ export async function executePackageShellcode(locator: Locator, command: string,
 
 async function initializeWorkspaceEnvironment(workspace: Workspace, {binFolder, cwd, lifecycleScript}: {binFolder: PortablePath, cwd?: PortablePath | undefined, lifecycleScript?: string}) {
   const env = await makeScriptEnv({project: workspace.project, locator: workspace.anchoredLocator, binFolder, lifecycleScript});
-
-  await Promise.all(
-    Array.from(await getWorkspaceAccessibleBinaries(workspace), ([binaryName, [, binaryPath]]) =>
-      makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
-    ),
-  );
+  await installBinaries(binFolder, await getWorkspaceAccessibleBinaries(workspace));
 
   // When operating under PnP, `initializePackageEnvironment`
   // yields package location to the linker, which goes into
@@ -540,12 +535,7 @@ async function initializePackageEnvironment(locator: Locator, {project, binFolde
       throw new Error(`The package ${structUtils.prettyLocator(project.configuration, pkg)} isn't supported by any of the available linkers`);
 
     const env = await makeScriptEnv({project, locator, binFolder, lifecycleScript});
-
-    await Promise.all(
-      Array.from(await getPackageAccessibleBinaries(locator, {project}), ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(binFolder, toFilename(binaryName), process.execPath, [binaryPath]),
-      ),
-    );
+    await installBinaries(binFolder, await getPackageAccessibleBinaries(locator, {project}));
 
     const packageLocation = await linker.findPackageLocation(pkg, linkerOptions);
     const packageFs = new CwdFS(packageLocation, {baseFs: zipOpenFs});
@@ -614,11 +604,46 @@ export async function maybeExecuteWorkspaceLifecycleScript(workspace: Workspace,
   }
 }
 
+export function isNodeScript(p: PortablePath) {
+  const ext = ppath.extname(p);
+  if (ext.match(/\.[cm]?[jt]sx?$/))
+    return true;
+
+  if (ext === `.exe` || ext === `.bin`)
+    return false;
+
+  const buf = Buffer.alloc(4);
+
+  let fd: number;
+  try {
+    fd = xfs.openSync(p, `r`);
+  } catch {
+    return true;
+  }
+
+  try {
+    xfs.readSync(fd, buf, 0, buf.length, 0);
+  } finally {
+    xfs.closeSync(fd);
+  }
+
+  const magic = buf.readUint32BE();
+  if (
+    magic === 0xcafebabe ||             // OSX Universal Binary
+    magic === 0xcffaedfe ||             // Mach-O
+    magic === 0x7f454c46 ||             // ELF
+    (magic & 0xffff0000) === 0x4d5a0000 // DOS MZ Executable
+  )
+    return false;
+
+  return true;
+}
+
 type GetPackageAccessibleBinariesOptions = {
   project: Project;
 };
 
-type Binary = [Locator, NativePath];
+type Binary = [Locator, NativePath, boolean];
 type PackageAccessibleBinaries = Map<string, Binary>;
 
 /**
@@ -627,7 +652,6 @@ type PackageAccessibleBinaries = Map<string, Binary>;
  * @param locator The queried package
  * @param project The project owning the package
  */
-
 export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions): Promise<PackageAccessibleBinaries> {
   const configuration = project.configuration;
   const binaries: PackageAccessibleBinaries = new Map();
@@ -687,7 +711,8 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
     const {dependency, packageLocation} = candidate;
 
     for (const [name, target] of dependency.bin) {
-      binaries.set(name, [dependency, npath.fromPortablePath(ppath.resolve(packageLocation, target))]);
+      const binaryPath = ppath.resolve(packageLocation, target);
+      binaries.set(name, [dependency, npath.fromPortablePath(binaryPath), isNodeScript(binaryPath)]);
     }
   }
 
@@ -699,9 +724,18 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
  *
  * @param workspace The queried workspace
  */
-
 export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
   return await getPackageAccessibleBinaries(workspace.anchoredLocator, {project: workspace.project});
+}
+
+async function installBinaries(target: PortablePath, binaries: PackageAccessibleBinaries) {
+  await Promise.all(
+    Array.from(binaries, ([binaryName, [, binaryPath, isScript]]) => {
+      return isScript
+        ? makePathWrapper(target, toFilename(binaryName), process.execPath, [binaryPath])
+        : makePathWrapper(target, toFilename(binaryName), binaryPath, []);
+    }),
+  );
 }
 
 type ExecutePackageAccessibleBinaryOptions = {
@@ -726,7 +760,6 @@ type ExecutePackageAccessibleBinaryOptions = {
  * @param binaryName The name of the binary file to execute
  * @param args The arguments to pass to the file
  */
-
 export async function executePackageAccessibleBinary(locator: Locator, binaryName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, nodeArgs = [], packageAccessibleBinaries}: ExecutePackageAccessibleBinaryOptions) {
   packageAccessibleBinaries ??= await getPackageAccessibleBinaries(locator, {project});
 
@@ -736,17 +769,17 @@ export async function executePackageAccessibleBinary(locator: Locator, binaryNam
 
   return await xfs.mktempPromise(async binFolder => {
     const [, binaryPath] = binary;
-    const env = await makeScriptEnv({project, locator, binFolder});
 
-    await Promise.all(
-      Array.from(packageAccessibleBinaries!, ([binaryName, [, binaryPath]]) =>
-        makePathWrapper(env.BERRY_BIN_FOLDER as PortablePath, toFilename(binaryName), process.execPath, [binaryPath]),
-      ),
-    );
+    const env = await makeScriptEnv({project, locator, binFolder});
+    await installBinaries(env.BERRY_BIN_FOLDER as PortablePath, packageAccessibleBinaries!);
+
+    const promise = isNodeScript(npath.toPortablePath(binaryPath))
+      ? execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr})
+      : execUtils.pipevp(binaryPath, args, {cwd, env, stdin, stdout, stderr});
 
     let result;
     try {
-      result = await execUtils.pipevp(process.execPath, [...nodeArgs, binaryPath, ...args], {cwd, env, stdin, stdout, stderr});
+      result = await promise;
     } finally {
       await xfs.removePromise(env.BERRY_BIN_FOLDER as PortablePath);
     }
@@ -771,7 +804,6 @@ type ExecuteWorkspaceAccessibleBinaryOptions = {
  * @param binaryName The name of the binary file to execute
  * @param args The arguments to pass to the file
  */
-
 export async function executeWorkspaceAccessibleBinary(workspace: Workspace, binaryName: string, args: Array<string>, {cwd, stdin, stdout, stderr, packageAccessibleBinaries}: ExecuteWorkspaceAccessibleBinaryOptions) {
   return await executePackageAccessibleBinary(workspace.anchoredLocator, binaryName, args, {project: workspace.project, cwd, stdin, stdout, stderr, packageAccessibleBinaries});
 }

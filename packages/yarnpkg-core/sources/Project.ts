@@ -7,6 +7,7 @@ import {structuredPatch}                                                from 'di
 import pick                                                             from 'lodash/pick';
 import pLimit                                                           from 'p-limit';
 import semver                                                           from 'semver';
+import internal                                                         from 'stream';
 import {promisify}                                                      from 'util';
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
@@ -14,7 +15,7 @@ import zlib                                                             from 'zl
 import {Cache, CacheOptions}                                            from './Cache';
 import {Configuration}                                                  from './Configuration';
 import {Fetcher, FetchOptions}                                          from './Fetcher';
-import {Installer, BuildDirective, BuildType, InstallStatus}            from './Installer';
+import {Installer, BuildDirective, BuildDirectiveType, InstallStatus}   from './Installer';
 import {LegacyMigrationResolver}                                        from './LegacyMigrationResolver';
 import {Linker, LinkOptions}                                            from './Linker';
 import {LockfileResolver}                                               from './LockfileResolver';
@@ -24,6 +25,7 @@ import {MultiResolver}                                                  from './
 import {Report, ReportError}                                            from './Report';
 import {ResolveOptions, Resolver}                                       from './Resolver';
 import {RunInstallPleaseResolver}                                       from './RunInstallPleaseResolver';
+import {SUPPORTS_GROUPS, StreamReport}                                  from './StreamReport';
 import {ThrowReport}                                                    from './ThrowReport';
 import {WorkspaceResolver}                                              from './WorkspaceResolver';
 import {Workspace}                                                      from './Workspace';
@@ -47,7 +49,7 @@ const LOCKFILE_VERSION = 7;
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
 // between patch or minor releases).
-const INSTALL_STATE_VERSION = 2;
+const INSTALL_STATE_VERSION = 3;
 
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
@@ -149,6 +151,7 @@ const INSTALL_STATE_FIELDS = {
   ] as const,
 
   restoreBuildState: [
+    `skippedBuilds`,
     `storedBuildState`,
   ] as const,
 };
@@ -165,6 +168,27 @@ export type PeerRequirement = {
   requested: Ident;
   rootRequester: LocatorHash;
   allRequesters: Array<LocatorHash>;
+};
+
+export enum PeerWarningType {
+  NotProvided,
+  NotCompatible,
+}
+
+export type PeerWarning = {
+  type: PeerWarningType.NotProvided;
+  subject: Locator;
+  requested: Ident;
+  requester: Ident;
+  hash: string;
+} | {
+  type: PeerWarningType.NotCompatible;
+  subject: Locator;
+  requested: Ident;
+  requester: Ident;
+  version: string;
+  hash: string;
+  requirementCount: number;
 };
 
 const makeLockfileChecksum = (normalizedContent: string) =>
@@ -202,6 +226,7 @@ export class Project {
   public disabledLocators: Set<LocatorHash> = new Set();
   public originalPackages: Map<LocatorHash, Package> = new Map();
   public optionalBuilds: Set<LocatorHash> = new Set();
+  public skippedBuilds: Set<LocatorHash> = new Set();
 
   /**
    * If true, the data contained within `originalPackages` are from a different
@@ -216,6 +241,7 @@ export class Project {
    * The map keys are 6 hexadecimal characters except the first one, always `p`.
    */
   public peerRequirements: Map<string, PeerRequirement> = new Map();
+  public peerWarnings: Array<PeerWarning> = [];
 
   /**
    * Contains whatever data the linkers (cf `Linker.ts`) want to persist
@@ -704,6 +730,9 @@ export class Project {
     this.forgetVirtualResolutions();
 
     // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
+    const initialPackages = new Map(this.originalPackages);
+
+    // Keep a copy of the original packages so that we can figure out what was added / removed later
     if (!opts.lockfileOnly)
       this.forgetTransientResolutions();
 
@@ -884,6 +913,48 @@ export class Project {
       }
     });
 
+    const addedPackages: Array<Locator> = [];
+    const removedPackages: Array<Locator> = [];
+
+    for (const [locatorHash, pkg] of originalPackages)
+      if (!initialPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
+        addedPackages.push(pkg);
+
+    for (const [locatorHash, pkg] of initialPackages)
+      if (!originalPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
+        removedPackages.push(pkg);
+
+    if (addedPackages.length > 0 || removedPackages.length > 0) {
+      const topLevelResolutions = new Set(this.workspaces.flatMap(workspace => {
+        const workspacePkg = allPackages.get(workspace.anchoredLocator.locatorHash);
+        if (!workspacePkg)
+          throw new Error(`Assertion failed: The workspace should have been resolved`);
+
+        return Array.from(workspacePkg.dependencies.values(), descriptor => {
+          const resolution = allResolutions.get(descriptor.descriptorHash);
+          if (!resolution)
+            throw new Error(`Assertion failed: The resolution should have been registered`);
+
+          return resolution;
+        });
+      }));
+
+      const sortTopLevelFirst = (locator: Locator) => topLevelResolutions.has(locator.locatorHash) ? `0` : `1`;
+      const sortByLocatorString = (locator: Locator) => structUtils.stringifyLocator(locator);
+
+      const sortedAddedPackages = miscUtils.sortMap(addedPackages, [sortTopLevelFirst, sortByLocatorString]);
+      const sortedRemovedPackages = miscUtils.sortMap(removedPackages, [sortTopLevelFirst, sortByLocatorString]);
+
+      const recommendedLength = opts.report.getRecommendedLength();
+
+      if (sortedAddedPackages.length > 0)
+        opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `+`, formatUtils.Type.ADDED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, sortedAddedPackages, recommendedLength)}`);
+
+      if (sortedRemovedPackages.length > 0) {
+        opts.report.reportInfo(MessageName.UPDATED_RESOLUTION_RECORD, `${formatUtils.pretty(this.configuration, `-`, formatUtils.Type.REMOVED)} ${formatUtils.prettyTruncatedLocatorList(this.configuration, sortedRemovedPackages, recommendedLength)}`);
+      }
+    }
+
     // In this step we now create virtual packages for each package with at
     // least one peer dependency. We also use it to search for the alias
     // descriptors that aren't depended upon by anything and can be safely
@@ -893,15 +964,16 @@ export class Project {
     const optionalBuilds = new Set(allPackages.keys());
     const accessibleLocators = new Set<LocatorHash>();
     const peerRequirements: Project['peerRequirements'] = new Map();
+    const peerWarnings: Project['peerWarnings'] = [];
 
     applyVirtualResolutionMutations({
       project: this,
-      report: opts.report,
 
       accessibleLocators,
       volatileDescriptors,
       optionalBuilds,
       peerRequirements,
+      peerWarnings,
 
       allDescriptors,
       allResolutions,
@@ -961,9 +1033,10 @@ export class Project {
     this.originalPackages = originalPackages;
     this.optionalBuilds = optionalBuilds;
     this.peerRequirements = peerRequirements;
+    this.peerWarnings = peerWarnings;
   }
 
-  async fetchEverything({cache, report, fetcher: userFetcher, mode}: InstallOptions) {
+  async fetchEverything({cache, report, fetcher: userFetcher, mode, persistProject = true}: InstallOptions) {
     const cacheOptions = {
       mockedPackages: this.disabledLocators,
       unstablePackages: this.conditionalLocators,
@@ -999,40 +1072,82 @@ export class Project {
 
     const limit = pLimit(FETCHER_CONCURRENCY);
 
-    await report.startCacheReport(async () => {
-      await miscUtils.allSettledSafe(locatorHashes.map(locatorHash => limit(async () => {
-        const pkg = this.storedPackages.get(locatorHash);
-        if (!pkg)
-          throw new Error(`Assertion failed: The locator should have been registered`);
+    await miscUtils.allSettledSafe(locatorHashes.map(locatorHash => limit(async () => {
+      const pkg = this.storedPackages.get(locatorHash);
+      if (!pkg)
+        throw new Error(`Assertion failed: The locator should have been registered`);
 
-        if (structUtils.isVirtualLocator(pkg))
-          return;
+      if (structUtils.isVirtualLocator(pkg))
+        return;
 
-        let fetchResult;
-        try {
-          fetchResult = await fetcher.fetch(pkg, fetcherOptions);
-        } catch (error) {
-          error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
-          report.reportExceptionOnce(error);
-          firstError = error;
-          return;
-        }
+      let fetchResult;
+      try {
+        fetchResult = await fetcher.fetch(pkg, fetcherOptions);
+      } catch (error) {
+        error.message = `${structUtils.prettyLocator(this.configuration, pkg)}: ${error.message}`;
+        report.reportExceptionOnce(error);
+        firstError = error;
+        return;
+      }
 
-        if (fetchResult.checksum != null)
-          this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
-        else
-          this.storedChecksums.delete(pkg.locatorHash);
+      if (fetchResult.checksum != null)
+        this.storedChecksums.set(pkg.locatorHash, fetchResult.checksum);
+      else
+        this.storedChecksums.delete(pkg.locatorHash);
 
-        if (fetchResult.releaseFs) {
-          fetchResult.releaseFs();
-        }
-      }).finally(() => {
-        progress.tick();
-      })));
-    });
+      if (fetchResult.releaseFs) {
+        fetchResult.releaseFs();
+      }
+    }).finally(() => {
+      progress.tick();
+    })));
 
-    if (firstError) {
+    if (firstError)
       throw firstError;
+
+    const cleanInfo = persistProject && mode !== InstallMode.UpdateLockfile
+      ? await this.cacheCleanup({cache, report})
+      : null;
+
+    if (report.cacheMisses.size > 0 || cleanInfo) {
+      const addedSizes = await Promise.all([...report.cacheMisses].map(async locatorHash => {
+        const locator = this.storedPackages.get(locatorHash);
+        const checksum = this.storedChecksums.get(locatorHash) ?? null;
+
+        const p = cache.getLocatorPath(locator!, checksum, cacheOptions);
+        const stat = p ? await xfs.statPromise(p) : null;
+
+        return stat?.size ?? 0;
+      }));
+
+      const finalSizeChange = addedSizes.reduce((sum, size) => sum + size, 0) - (cleanInfo?.size ?? 0);
+
+      const addedCount = report.cacheMisses.size;
+      const removedCount = cleanInfo?.count ?? 0;
+
+      const addedLine = `${miscUtils.plural(addedCount, {
+        zero: `No new packages`,
+        one: `A package was`,
+        more: `${formatUtils.pretty(this.configuration, addedCount, formatUtils.Type.NUMBER)} packages were`,
+      })} added to the cache`;
+
+      const removedLine = `${miscUtils.plural(removedCount, {
+        zero: `none were`,
+        one: `one was`,
+        more: `${formatUtils.pretty(this.configuration, removedCount, formatUtils.Type.NUMBER)} were`,
+      })} removed`;
+
+      const sizeLine = finalSizeChange !== 0
+        ? ` (${formatUtils.pretty(this.configuration, finalSizeChange, formatUtils.Type.SIZE_DIFF)})`
+        : ``;
+
+      const message = removedCount > 0
+        ? addedCount > 0
+          ? `${addedLine}, and ${removedLine}${sizeLine}.`
+          : `${addedLine}, but ${removedLine}${sizeLine}.`
+        : `${addedLine}${sizeLine}.`;
+
+      report.reportInfo(MessageName.FETCH_NOT_CACHED, message);
     }
   }
 
@@ -1062,7 +1177,11 @@ export class Project {
 
     const packageLinkers: Map<LocatorHash, Linker> = new Map();
     const packageLocations: Map<LocatorHash, PortablePath | null> = new Map();
-    const packageBuildDirectives: Map<LocatorHash, { directives: Array<BuildDirective>, buildLocations: Array<PortablePath> }> = new Map();
+
+    const packageBuildDirectives: Map<LocatorHash, {
+      buildDirectives: Array<BuildDirective>;
+      buildLocations: Array<PortablePath>;
+    }> = new Map();
 
     const fetchResultsPerPackage = new Map(await miscUtils.allSettledSafe([...this.accessibleLocators].map(async locatorHash => {
       const pkg = this.storedPackages.get(locatorHash);
@@ -1073,6 +1192,9 @@ export class Project {
     })));
 
     const pendingPromises: Array<Promise<void>> = [];
+
+    const nextSkippedBuilds = new Set<LocatorHash>();
+    const skippedBuildLogs: Array<[Locator, (report: Report) => void]> = [];
 
     // Step 1: Installing the packages on the disk
 
@@ -1092,18 +1214,18 @@ export class Project {
 
       const workspace = this.tryWorkspaceByLocator(pkg);
       if (workspace !== null) {
-        const buildScripts: Array<BuildDirective> = [];
+        const buildDirectives: Array<BuildDirective> = [];
         const {scripts} = workspace.manifest;
 
         for (const scriptName of [`preinstall`, `install`, `postinstall`])
           if (scripts.has(scriptName))
-            buildScripts.push([BuildType.SCRIPT, scriptName]);
+            buildDirectives.push({type: BuildDirectiveType.SCRIPT, script: scriptName});
 
         try {
           for (const [linker, installer] of installers) {
             if (linker.supportsPackage(pkg, linkerOptions)) {
               const result = await installer.installPackage(pkg, fetchResult, {holdFetchResult});
-              if (result.buildDirective !== null) {
+              if (result.buildRequest !== null) {
                 throw new Error(`Assertion failed: Linkers can't return build directives for workspaces; this responsibility befalls to the Yarn core`);
               }
             }
@@ -1122,9 +1244,9 @@ export class Project {
         packageLocations.set(pkg.locatorHash, location);
 
         // Virtual workspaces shouldn't be built as they don't really exist
-        if (!structUtils.isVirtualLocator(pkg) && buildScripts.length > 0) {
+        if (!structUtils.isVirtualLocator(pkg) && buildDirectives.length > 0) {
           packageBuildDirectives.set(pkg.locatorHash, {
-            directives: buildScripts,
+            buildDirectives,
             buildLocations: [location],
           });
         }
@@ -1153,11 +1275,18 @@ export class Project {
         packageLinkers.set(pkg.locatorHash, linker);
         packageLocations.set(pkg.locatorHash, installStatus.packageLocation);
 
-        if (installStatus.buildDirective && installStatus.buildDirective.length > 0 && installStatus.packageLocation) {
-          packageBuildDirectives.set(pkg.locatorHash, {
-            directives: installStatus.buildDirective,
-            buildLocations: [installStatus.packageLocation],
-          });
+        if (installStatus.buildRequest && installStatus.packageLocation) {
+          if (installStatus.buildRequest.skipped) {
+            nextSkippedBuilds.add(pkg.locatorHash);
+            if (!this.skippedBuilds.has(pkg.locatorHash)) {
+              skippedBuildLogs.push([pkg, installStatus.buildRequest.explain]);
+            }
+          } else {
+            packageBuildDirectives.set(pkg.locatorHash, {
+              buildDirectives: installStatus.buildRequest.directives,
+              buildLocations: [installStatus.packageLocation],
+            });
+          }
         }
       }
     }
@@ -1256,10 +1385,17 @@ export class Project {
       const finalizeInstallData = await installer.finalizeInstall();
 
       for (const installStatus of finalizeInstallData?.records ?? []) {
-        packageBuildDirectives.set(installStatus.locatorHash, {
-          directives: installStatus.buildDirective,
-          buildLocations: installStatus.buildLocations,
-        });
+        if (installStatus.buildRequest.skipped) {
+          nextSkippedBuilds.add(installStatus.locator.locatorHash);
+          if (!this.skippedBuilds.has(installStatus.locator.locatorHash)) {
+            skippedBuildLogs.push([installStatus.locator, installStatus.buildRequest.explain]);
+          }
+        } else {
+          packageBuildDirectives.set(installStatus.locator.locatorHash, {
+            buildDirectives: installStatus.buildRequest.directives,
+            buildLocations: installStatus.buildLocations,
+          });
+        }
       }
 
       if (typeof finalizeInstallData?.customData !== `undefined`) {
@@ -1275,6 +1411,9 @@ export class Project {
 
     if (mode === InstallMode.SkipBuild)
       return;
+
+    for (const [, explain] of miscUtils.sortMap(skippedBuildLogs, ([locator]) => structUtils.stringifyLocator(locator)))
+      explain(report);
 
     const readyPackages = new Set(this.storedPackages.keys());
     const buildablePackages = new Set(packageBuildDirectives.keys());
@@ -1433,14 +1572,14 @@ export class Project {
           if (!ppath.isAbsolute(location))
             throw new Error(`Assertion failed: Expected the build location to be absolute (not ${location})`);
 
-          for (const [buildType, scriptName] of buildInfo.directives) {
+          for (const directive of buildInfo.buildDirectives) {
             let header = `# This file contains the result of Yarn building a package (${structUtils.stringifyLocator(pkg)})\n`;
-            switch (buildType) {
-              case BuildType.SCRIPT: {
-                header += `# Script name: ${scriptName}\n`;
+            switch (directive.type) {
+              case BuildDirectiveType.SCRIPT: {
+                header += `# Script name: ${directive.script}\n`;
               } break;
-              case BuildType.SHELLCODE: {
-                header += `# Script code: ${scriptName}\n`;
+              case BuildDirectiveType.SHELLCODE: {
+                header += `# Script code: ${directive.script}\n`;
               } break;
             }
 
@@ -1457,12 +1596,12 @@ export class Project {
 
               let exitCode;
               try {
-                switch (buildType) {
-                  case BuildType.SCRIPT: {
-                    exitCode = await scriptUtils.executePackageScript(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                switch (directive.type) {
+                  case BuildDirectiveType.SCRIPT: {
+                    exitCode = await scriptUtils.executePackageScript(pkg, directive.script, [], {cwd: location, project: this, stdin, stdout, stderr});
                   } break;
-                  case BuildType.SHELLCODE: {
-                    exitCode = await scriptUtils.executePackageShellcode(pkg, scriptName, [], {cwd: location, project: this, stdin, stdout, stderr});
+                  case BuildDirectiveType.SHELLCODE: {
+                    exitCode = await scriptUtils.executePackageShellcode(pkg, directive.script, [], {cwd: location, project: this, stdin, stdout, stderr});
                   } break;
                 }
               } catch (error) {
@@ -1479,14 +1618,20 @@ export class Project {
               xfs.detachTemp(logDir);
 
               const buildMessage = `${structUtils.prettyLocator(this.configuration, pkg)} couldn't be built successfully (exit code ${formatUtils.pretty(this.configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(this.configuration, logFile, formatUtils.Type.PATH)})`;
+              const isOptional = this.optionalBuilds.has(pkg.locatorHash);
 
-              if (this.optionalBuilds.has(pkg.locatorHash)) {
+              if (isOptional)
                 report.reportInfo(MessageName.BUILD_FAILED, buildMessage);
-                return true;
-              } else {
+              else
                 report.reportError(MessageName.BUILD_FAILED, buildMessage);
-                return false;
-              }
+
+              // Sync, because the rendering would end up messed up if other
+              // builds were processed before the file read succeeded.
+              if (SUPPORTS_GROUPS)
+                report.reportFold(npath.fromPortablePath(logFile), xfs.readFileSync(logFile, `utf8`));
+
+
+              return isOptional;
             });
 
             if (!wasBuildSuccessful) {
@@ -1534,6 +1679,22 @@ export class Project {
     // package (and avoid rebuilding it later if it didn't change).
 
     this.storedBuildState = nextBState;
+    this.skippedBuilds = nextSkippedBuilds;
+  }
+
+  async installWithNewReport(reportOpts: {json?: boolean, quiet?: boolean, stdout: internal.Writable}, installOpts: Omit<InstallOptions, `report`>) {
+    const report = await StreamReport.start({
+      configuration: this.configuration,
+      json: reportOpts.json,
+      stdout: reportOpts.stdout,
+      forceSectionAlignment: true,
+      includeLogs: !reportOpts.json && !reportOpts.quiet,
+      includeVersion: true,
+    }, async report => {
+      await this.install({...installOpts, report});
+    });
+
+    return report.exitCode();
   }
 
   async install(opts: InstallOptions) {
@@ -1588,6 +1749,8 @@ export class Project {
     await opts.report.startTimerPromise(`Post-resolution validation`, {
       skipIfEmpty: true,
     }, async () => {
+      emitPeerDependencyWarnings(this, opts.report);
+
       for (const [, extensionsPerRange] of this.configuration.packageExtensions) {
         for (const [, extensions] of extensionsPerRange) {
           for (const extension of extensions) {
@@ -1647,10 +1810,6 @@ export class Project {
 
     await opts.report.startTimerPromise(`Fetch step`, async () => {
       await this.fetchEverything(opts);
-
-      if ((typeof opts.persistProject === `undefined` || opts.persistProject) && opts.mode !== InstallMode.UpdateLockfile) {
-        await this.cacheCleanup(opts);
-      }
     });
 
     const immutablePatterns = opts.immutable
@@ -1906,25 +2065,21 @@ export class Project {
     ]);
   }
 
-  async cacheCleanup({cache, report}: InstallOptions)  {
+  async cacheCleanup({cache, report}: Pick<InstallOptions, `cache` | `report`>)  {
     if (this.configuration.get(`enableGlobalCache`))
-      return;
+      return null;
 
     const PRESERVED_FILES = new Set([
       `.gitignore`,
     ]);
 
     if (!isFolderInside(cache.cwd, this.cwd))
-      return;
+      return null;
 
     if (!(await xfs.existsPromise(cache.cwd)))
-      return;
+      return null;
 
-    const preferAggregateCacheInfo = this.configuration.get(`preferAggregateCacheInfo`);
-
-    let entriesRemoved = 0;
-    let lastEntryRemoved = null;
-
+    const cleanupPromises: Array<Promise<number>> = [];
     for (const entry of await xfs.readdirPromise(cache.cwd)) {
       if (PRESERVED_FILES.has(entry))
         continue;
@@ -1933,28 +2088,25 @@ export class Project {
       if (cache.markedFiles.has(entryPath))
         continue;
 
-      lastEntryRemoved = entry;
-
       if (cache.immutable) {
         report.reportError(MessageName.IMMUTABLE_CACHE, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused and would be marked for deletion, but the cache is immutable`);
       } else {
-        if (preferAggregateCacheInfo)
-          entriesRemoved += 1;
-        else
-          report.reportInfo(MessageName.UNUSED_CACHE_ENTRY, `${formatUtils.pretty(this.configuration, ppath.basename(entryPath), `magenta`)} appears to be unused - removing`);
-
-        await xfs.removePromise(entryPath);
+        cleanupPromises.push(xfs.lstatPromise(entryPath).then(async stat => {
+          await xfs.removePromise(entryPath);
+          return stat.size;
+        }));
       }
     }
 
-    if (preferAggregateCacheInfo && entriesRemoved !== 0) {
-      report.reportInfo(
-        MessageName.UNUSED_CACHE_ENTRY,
-        entriesRemoved > 1
-          ? `${entriesRemoved} packages appeared to be unused and were removed`
-          : `${lastEntryRemoved} appeared to be unused and was removed`,
-      );
-    }
+    if (cleanupPromises.length === 0)
+      return null;
+
+    const sizes = await Promise.all(cleanupPromises);
+
+    return {
+      count: cleanupPromises.length,
+      size: sizes.reduce((sum, size) => sum + size, 0),
+    };
   }
 }
 
@@ -1978,9 +2130,8 @@ function applyVirtualResolutionMutations({
   accessibleLocators = new Set(),
   optionalBuilds = new Set(),
   peerRequirements = new Map(),
+  peerWarnings = [],
   volatileDescriptors = new Set(),
-
-  report,
 }: {
   project: Project;
 
@@ -1991,9 +2142,8 @@ function applyVirtualResolutionMutations({
   accessibleLocators?: Set<LocatorHash>;
   optionalBuilds?: Set<LocatorHash>;
   peerRequirements?: Project['peerRequirements'];
+  peerWarnings?: Project['peerWarnings'];
   volatileDescriptors?: Set<DescriptorHash>;
-
-  report: Report | null;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
   const resolutionStack: Array<Locator> = [];
@@ -2342,29 +2492,6 @@ function applyVirtualResolutionMutations({
     resolvePeerDependencies(workspace.anchoredDescriptor, locator, new Map(), {top: locator.locatorHash, optional: false});
   }
 
-  enum WarningType {
-    NotProvided,
-    NotCompatible,
-  }
-
-  type Warning = {
-    type: WarningType.NotProvided;
-    subject: Locator;
-    requested: Ident;
-    requester: Ident;
-    hash: string;
-  } | {
-    type: WarningType.NotCompatible;
-    subject: Locator;
-    requested: Ident;
-    requester: Ident;
-    version: string;
-    hash: string;
-    requirementCount: number;
-  };
-
-  const warnings: Array<Warning> = [];
-
   for (const [rootHash, dependents] of peerDependencyDependents) {
     const root = allPackages.get(rootHash);
     if (typeof root === `undefined`)
@@ -2388,6 +2515,11 @@ function applyVirtualResolutionMutations({
 
       // The package may have been pruned during a deduplication
       if (typeof dependent === `undefined`)
+        continue;
+
+      // We don't care about warning about incomplete transitive peer
+      // dependencies; in practice, there are just too many of them.
+      if (!project.tryWorkspaceByLocator(dependent))
         continue;
 
       for (const [identStr, linkHashes] of rootLinks) {
@@ -2442,8 +2574,8 @@ function applyVirtualResolutionMutations({
           });
 
           if (!satisfiesAll) {
-            warnings.push({
-              type: WarningType.NotCompatible,
+            peerWarnings.push({
+              type: PeerWarningType.NotCompatible,
               subject: dependent,
               requested: ident,
               requester: root,
@@ -2456,8 +2588,8 @@ function applyVirtualResolutionMutations({
           const peerDependencyMeta = root.peerDependenciesMeta.get(identStr);
 
           if (!peerDependencyMeta?.optional) {
-            warnings.push({
-              type: WarningType.NotProvided,
+            peerWarnings.push({
+              type: PeerWarningType.NotProvided,
               subject: dependent,
               requested: ident,
               requester: root,
@@ -2468,22 +2600,24 @@ function applyVirtualResolutionMutations({
       }
     }
   }
+}
 
-  const warningSortCriterias: Array<((warning: Warning) => string)> = [
+function emitPeerDependencyWarnings(project: Project, report: Report) {
+  const warningSortCriterias: Array<((warning: PeerWarning) => string)> = [
     warning => structUtils.prettyLocatorNoColors(warning.subject),
     warning => structUtils.stringifyIdent(warning.requested),
     warning => `${warning.type}`,
   ];
 
-  report?.startSectionSync({
+  report.startSectionSync({
     reportFooter: () => {
-      report.reportWarning(MessageName.UNNAMED, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code`);
+      report.reportWarning(MessageName.EXPLAIN_PEER_DEPENDENCIES_CTA, `Some peer dependencies are incorrectly met; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements <hash>`, formatUtils.Type.CODE)} for details, where ${formatUtils.pretty(project.configuration, `<hash>`, formatUtils.Type.CODE)} is the six-letter p-prefixed code.`);
     },
     skipIfEmpty: true,
   }, () => {
-    for (const warning of miscUtils.sortMap(warnings, warningSortCriterias)) {
+    for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
       switch (warning.type) {
-        case WarningType.NotProvided: {
+        case PeerWarningType.NotProvided: {
           report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
             structUtils.prettyLocator(project.configuration, warning.subject)
           } doesn't provide ${
@@ -2495,7 +2629,7 @@ function applyVirtualResolutionMutations({
           }`);
         } break;
 
-        case WarningType.NotCompatible: {
+        case PeerWarningType.NotCompatible: {
           const andDescendants = warning.requirementCount > 1
             ? `and some of its descendants request`
             : `requests`;
@@ -2510,7 +2644,7 @@ function applyVirtualResolutionMutations({
             structUtils.prettyReference(project.configuration, warning.version)
           }, which doesn't satisfy what ${
             structUtils.prettyIdent(project.configuration, warning.requester)
-          } ${andDescendants}`);
+          } ${andDescendants}.`);
         } break;
       }
     }

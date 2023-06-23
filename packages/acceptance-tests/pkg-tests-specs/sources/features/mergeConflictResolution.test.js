@@ -1,6 +1,6 @@
 const {xfs} = require(`@yarnpkg/fslib`);
 const {
-  exec: {execFile},
+  exec: {execFile, execGitInit},
   fs: {writeFile},
 } = require(`pkg-tests-core`);
 
@@ -31,10 +31,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await execFile(`git`, [`init`], {cwd: path});
-          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
-          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
-          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+          await execGitInit({cwd: path});
 
           await run(`install`);
           await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
@@ -73,9 +70,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await execFile(`git`, [`init`], {cwd: path});
-          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
-          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
+          await execGitInit({cwd: path});
 
           await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
           await writeFile(`${path}/yarn.lock`, LOCKFILE_1_0_0);
@@ -114,10 +109,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await execFile(`git`, [`init`], {cwd: path});
-          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
-          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
-          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+          await execGitInit({cwd: path});
 
           await run(`install`);
           await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
@@ -157,10 +149,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await execFile(`git`, [`init`], {cwd: path});
-          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
-          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
-          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+          await execGitInit({cwd: path});
 
           await run(`install`);
           await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});
@@ -200,10 +189,7 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {},
         async ({path, run, source}) => {
-          await execFile(`git`, [`init`], {cwd: path});
-          await execFile(`git`, [`config`, `user.email`, `you@example.com`], {cwd: path});
-          await execFile(`git`, [`config`, `user.name`, `Your Name`], {cwd: path});
-          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
+          await execGitInit({cwd: path});
 
           await run(`install`);
           await xfs.writeJsonPromise(`${path}/package.json`, {dependencies: {[`no-deps`]: `*`}});

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.45",
+  "version": "4.0.0-rc.46",
   "stableVersion": "3.5.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
@@ -45,7 +45,7 @@
     "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^18.11.11",
+    "@types/node": "^18.15.11",
     "@types/tar": "^4.0.4",
     "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^",

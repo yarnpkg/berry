@@ -677,12 +677,6 @@
       "format": "uri-reference",
       "default": "./.yarn/unplugged"
     },
-    "preferAggregateCacheInfo": {
-      "_package": "@yarnpkg/core",
-      "description": "If true, Yarn will only print a one-line report of any cache changes.",
-      "type": "boolean",
-      "examples": [false]
-    },
     "preferDeferredVersions": {
       "_package": "@yarnpkg/plugin-version",
       "description": "If true, Yarn will use the deferred versioning (`--deferred`) by default when running the `yarn version` family of commands. This can be overruled on a by-command basis by manually setting the `--immediate` flag.",

@@ -1,9 +1,9 @@
-import throttle        from 'lodash/throttle';
-import {PassThrough}   from 'stream';
-import {StringDecoder} from 'string_decoder';
+import throttle               from 'lodash/throttle';
+import {PassThrough}          from 'stream';
+import {StringDecoder}        from 'string_decoder';
 
-import {MessageName}   from './MessageName';
-import {Locator}       from './types';
+import {MessageName}          from './MessageName';
+import {Locator, LocatorHash} from './types';
 
 const TITLE_PROGRESS_FPS = 15;
 
@@ -41,12 +41,24 @@ export type SectionOptions = {
 export type TimerOptions = Pick<SectionOptions, 'skipIfEmpty'>;
 
 export abstract class Report {
+  cacheHits = new Set<LocatorHash>();
+  cacheMisses = new Set<LocatorHash>();
+
   private reportedInfos: Set<any> = new Set();
   private reportedWarnings: Set<any> = new Set();
   private reportedErrors: Set<any> = new Set();
 
-  abstract reportCacheHit(locator: Locator): void;
-  abstract reportCacheMiss(locator: Locator, message?: string): void;
+  getRecommendedLength() {
+    return 180;
+  }
+
+  reportCacheHit(locator: Locator) {
+    this.cacheHits.add(locator.locatorHash);
+  }
+
+  reportCacheMiss(locator: Locator, message?: string) {
+    this.cacheMisses.add(locator.locatorHash);
+  }
 
   abstract startSectionPromise<T>(opts: SectionOptions, cb: () => Promise<T>): Promise<T>;
   abstract startSectionSync<T>(opts: SectionOptions, cb: () => T): T;
@@ -57,14 +69,13 @@ export abstract class Report {
   abstract startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
-  abstract startCacheReport<T>(cb: () => Promise<T>): Promise<T>;
-
   abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName | null, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;
   abstract reportProgress(progress: AsyncIterable<ProgressDefinition>): Promise<void> & {stop: () => void};
   abstract reportJson(data: any): void;
+  abstract reportFold(title: string, text: string): void;
 
   abstract finalize(): void;
 
