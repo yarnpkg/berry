@@ -740,12 +740,20 @@ export abstract class FakeFS<P extends Path> {
     }
   }
 
-  async writeJsonPromise(p: P, data: any) {
-    return await this.writeFilePromise(p, `${JSON.stringify(data, null, 2)}\n`);
+  async writeJsonPromise(p: P, data: any, {compact = false}: {compact?: boolean} = {}) {
+    const space = compact
+      ? 0
+      : 2;
+
+    return await this.writeFilePromise(p, `${JSON.stringify(data, null, space)}\n`);
   }
 
-  writeJsonSync(p: P, data: any) {
-    return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}\n`);
+  writeJsonSync(p: P, data: any, {compact = false}: {compact?: boolean} = {}) {
+    const space = compact
+      ? 0
+      : 2;
+
+    return this.writeFileSync(p, `${JSON.stringify(data, null, space)}\n`);
   }
 
   async preserveTimePromise(p: P, cb: () => Promise<P | void>) {
