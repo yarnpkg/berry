@@ -19,7 +19,10 @@ export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   await wrapper.writeManifest();
 
   await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
-  await wrapper.writeFile(`lib/api.js` as PortablePath, {requirePath: `` as PortablePath});
+  await wrapper.writeFile(`lib/api.js` as PortablePath, {
+    // Empty path to use the entrypoint and let Node.js resolve the correct path itself
+    requirePath: `` as PortablePath,
+  });
 
   return wrapper;
 };
@@ -31,7 +34,10 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
     main: `./index.js`,
   });
 
-  await wrapper.writeBinary(`index.js` as PortablePath, {requirePath: `` as PortablePath});
+  await wrapper.writeBinary(`index.js` as PortablePath, {
+    // Empty path to use the entrypoint and let Node.js resolve the correct path itself
+    requirePath: `` as PortablePath,
+  });
 
   return wrapper;
 };
