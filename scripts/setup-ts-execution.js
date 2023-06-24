@@ -6,39 +6,6 @@ const pirates = require(`pirates`);
 const v8 = require(`v8`);
 const zlib = require(`zlib`);
 
-/**
- * There is an issue on Windows with Node.js v14 (tested v14.19.2 and v14.21.2) where
- * ```sh
- * node esbuild-wasm\bin\esbuild --service=0.17.5 --ping
- * ```
- * uses up to 400% CPU and 3.62 GB RAM for a while when an ESM loader is enabled.
- *
- * ```console
- * $ time NODE_OPTIONS="--require ./.pnp.cjs --loader ./.pnp.loader.mjs" node -p "require('esbuild-wasm').transformSync('let foo = 0;')"
- * {
- *   warnings: [],
- *   code: 'let foo = 0;\n',
- *   map: '',
- *   mangleCache: undefined,
- *   legalComments: undefined
- * }
- *
- * ________________________________________________________
- * Executed in   54.99 secs      fish           external
- * usr time    0.00 micros    0.00 micros    0.00 micros
- * sys time    0.00 micros    0.00 micros    0.00 micros
- * ```
- *
- * Reported upstream in https://github.com/evanw/esbuild/issues/2888 and seems to boil down to https://github.com/nodejs/node/issues/36616.
- *
- * To workaround this issue we remove the loader from the NODE_OPTIONS since it's not needed in this case.
- */
-
-if (process.env.NODE_OPTIONS) {
-  const esmLoaderExpression = /\s*--experimental-loader\s+\S*\.pnp\.loader\.mjs\s*/;
-  process.env.NODE_OPTIONS = process.env.NODE_OPTIONS.replace(esmLoaderExpression, ` `);
-}
-
 // Needed by the worker spawned by esbuild
 if (process.versions.pnp)
   process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ``} -r ${JSON.stringify(require.resolve(`pnpapi`))}`;

@@ -1,6 +1,6 @@
 module.exports = {
   targets: {
-    node: `14.15.0`,
+    node: `18.12.0`,
   },
   presets: [
     [`@babel/preset-env`, {modules: `commonjs`}],

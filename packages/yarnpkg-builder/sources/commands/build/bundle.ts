@@ -140,7 +140,7 @@ export default class BuildBundleCommand extends Command {
           plugins: [valLoader],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node14`,
+          target: `node18`,
         });
 
         for (const warning of res.warnings) {

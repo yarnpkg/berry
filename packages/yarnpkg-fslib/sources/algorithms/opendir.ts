@@ -1,8 +1,8 @@
-import {NoParamCallback}     from 'fs';
+import {NoParamCallback}           from 'fs';
 
-import {Dir, Dirent, FakeFS} from '../FakeFS';
-import * as errors           from '../errors';
-import {Filename, Path}      from '../path';
+import {Dir, DirentNoPath, FakeFS} from '../FakeFS';
+import * as errors                 from '../errors';
+import {Filename, Path}            from '../path';
 
 export type CustomDirOptions = {
   onClose?: () => void;
@@ -11,7 +11,7 @@ export type CustomDirOptions = {
 export class CustomDir<P extends Path> implements Dir<P> {
   constructor(
     public readonly path: P,
-    private readonly nextDirent: () => Dirent | null,
+    private readonly nextDirent: () => DirentNoPath | null,
     private readonly opts: CustomDirOptions = {},
   ) {}
 
@@ -25,7 +25,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
 
   async * [Symbol.asyncIterator]() {
     try {
-      let dirent: Dirent | null;
+      let dirent: DirentNoPath | null;
       // eslint-disable-next-line no-cond-assign
       while ((dirent = await this.read()) !== null) {
         yield dirent;
@@ -35,9 +35,9 @@ export class CustomDir<P extends Path> implements Dir<P> {
     }
   }
 
-  read(): Promise<Dirent>;
-  read(cb: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void): void;
-  read(cb?: (err: NodeJS.ErrnoException | null, dirent: Dirent | null) => void) {
+  read(): Promise<DirentNoPath>;
+  read(cb: (err: NodeJS.ErrnoException | null, dirent: DirentNoPath | null) => void): void;
+  read(cb?: (err: NodeJS.ErrnoException | null, dirent: DirentNoPath | null) => void) {
     const dirent = this.readSync();
 
     if (typeof cb !== `undefined`)
@@ -79,6 +79,7 @@ export function opendir<P extends Path>(fakeFs: FakeFS<P>, path: P, entries: Arr
 
     return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
       name: filename,
+      path: undefined,
     });
   };
 

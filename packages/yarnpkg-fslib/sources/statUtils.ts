@@ -6,8 +6,10 @@ import {Filename}                          from './path';
 
 export const DEFAULT_MODE = S_IFREG | 0o644;
 
-export class DirEntry {
+export class DirEntry<T = undefined> {
   public name: Filename = `` as Filename;
+  public path: T = `` as T;
+
   public mode: number = 0;
 
   isBlockDevice() {
