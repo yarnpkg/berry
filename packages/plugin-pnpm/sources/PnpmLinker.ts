@@ -1,5 +1,5 @@
 import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils, WindowsLinkType} from '@yarnpkg/core';
-import {Dirent, Filename, PortablePath, setupCopyIndex, ppath, xfs}                                                                                                                                                                         from '@yarnpkg/fslib';
+import {Filename, PortablePath, setupCopyIndex, ppath, xfs, DirentNoPath}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {jsInstallUtils}                                                                                                                                                                                                                     from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                                                                         from 'clipanion';
 
@@ -85,7 +85,7 @@ class PnpmInstaller implements Installer {
   private readonly indexFolderPromise: Promise<PortablePath>;
 
   constructor(private opts: LinkOptions) {
-    this.indexFolderPromise = setupCopyIndex<PortablePath>(xfs, {
+    this.indexFolderPromise = setupCopyIndex(xfs, {
       indexPath: ppath.join(opts.project.configuration.get(`globalFolder`), `index`),
     });
   }
@@ -339,9 +339,9 @@ function isPnpmVirtualCompatible(locator: Locator, {project}: {project: Project}
 }
 
 async function getNodeModulesListing(nmPath: PortablePath) {
-  const listing = new Map<PortablePath, Dirent>();
+  const listing = new Map<PortablePath, DirentNoPath>();
 
-  let fsListing: Array<Dirent> = [];
+  let fsListing: Array<DirentNoPath> = [];
   try {
     fsListing = await xfs.readdirPromise(nmPath, {withFileTypes: true});
   } catch (err) {
@@ -377,7 +377,7 @@ async function getNodeModulesListing(nmPath: PortablePath) {
   return listing;
 }
 
-async function cleanNodeModules(nmPath: PortablePath, extraneous: Map<PortablePath, Dirent>) {
+async function cleanNodeModules(nmPath: PortablePath, extraneous: Map<PortablePath, DirentNoPath>) {
   const removeNamePromises = [];
   const scopesToRemove = new Set<Filename>();
 

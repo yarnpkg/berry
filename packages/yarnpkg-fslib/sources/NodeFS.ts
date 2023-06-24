@@ -1,10 +1,10 @@
-import fs, {BigIntStats, Stats}                                                                                                                   from 'fs';
+import fs, {BigIntStats, Stats}                                                                                                                                 from 'fs';
 
-import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions, ReaddirOptions} from './FakeFS';
-import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                        from './FakeFS';
-import {BasePortableFakeFS, WriteFileOptions}                                                                                                     from './FakeFS';
-import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                                         from './FakeFS';
-import {FSPath, PortablePath, Filename, ppath, npath}                                                                                             from './path';
+import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions, ReaddirOptions, DirentNoPath} from './FakeFS';
+import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                      from './FakeFS';
+import {BasePortableFakeFS, WriteFileOptions}                                                                                                                   from './FakeFS';
+import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                                                       from './FakeFS';
+import {FSPath, PortablePath, Filename, ppath, npath}                                                                                                           from './path';
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -423,17 +423,17 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath, opts?: null): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Promise<Array<Dirent>>;
+  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Promise<Array<DirentNoPath>>;
   async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | Filename>>;
+  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<DirentNoPath | Filename>>;
   async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: true}): Promise<Array<Dirent<PortablePath>>>;
   async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes?: false}): Promise<Array<PortablePath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent | PortablePath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<PortablePath>>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<PortablePath> | DirentNoPath>>;
   async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<PortablePath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | PortablePath>>;
-  async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | Dirent | PortablePath>> {
-    return await new Promise<Array<Filename> | Array<Dirent>>((resolve, reject) => {
+  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>>;
+  async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
+    return await new Promise<any>((resolve, reject) => {
       if (opts?.withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject) as any);
       } else {
@@ -443,16 +443,16 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   readdirSync(p: PortablePath, opts?: null): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Array<Dirent>;
+  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Array<DirentNoPath>;
   readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Array<Dirent | Filename>;
+  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Array<DirentNoPath | Filename>;
   readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: true}): Array<Dirent<PortablePath>>;
   readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes?: false}): Array<PortablePath>;
-  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Array<Dirent | PortablePath>;
-  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Array<Dirent<PortablePath>>;
+  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Array<Dirent<PortablePath> | PortablePath>;
+  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Array<Dirent<PortablePath> | DirentNoPath>;
   readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Array<PortablePath>;
-  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | PortablePath>;
-  readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | Dirent | PortablePath> {
+  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
+  readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
     if (opts?.withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true} as any) as Array<any>;
     } else {

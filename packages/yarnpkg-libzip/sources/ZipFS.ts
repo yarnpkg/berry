@@ -1,4 +1,4 @@
-import {ReaddirOptions}                                                                                                                              from '@yarnpkg/fslib/sources/FakeFS';
+import {ReaddirOptions}                                                                                                                              from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from '@yarnpkg/fslib';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
