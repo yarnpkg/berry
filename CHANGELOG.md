@@ -10,6 +10,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### **Major Changes**
 
+- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
 - Some important defaults have changed:
   - `yarn set version` will now skip generating the `yarnPath` configuration on new projects if it detects you're using [Corepack](https://nodejs.org/api/corepack.html).
   - `yarn init` will no longer use zero-install by default.

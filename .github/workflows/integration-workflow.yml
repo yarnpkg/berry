@@ -201,19 +201,20 @@ jobs:
       fail-fast: false
       matrix:
         # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
-        node: [14, 16, 18, 19]
+        # https://github.com/nodejs/node/issues/48444
+        node: [18, 19, 20.2]
         platform: [ubuntu-latest]
         shard: ['1/2', '2/2']
         # We run the rest of the tests on the minimum Node version we support with 3 shards.
         include:
           # Windows tests
-          - {node: 14, platform: windows-latest, shard: 1/3}
-          - {node: 14, platform: windows-latest, shard: 2/3}
-          - {node: 14, platform: windows-latest, shard: 3/3}
+          - {node: 18, platform: windows-latest, shard: 1/3}
+          - {node: 18, platform: windows-latest, shard: 2/3}
+          - {node: 18, platform: windows-latest, shard: 3/3}
           # macOS tests
-          - {node: 14, platform: macos-latest, shard: 1/3}
-          - {node: 14, platform: macos-latest, shard: 2/3}
-          - {node: 14, platform: macos-latest, shard: 3/3}
+          - {node: 18, platform: macos-latest, shard: 1/3}
+          - {node: 18, platform: macos-latest, shard: 2/3}
+          - {node: 18, platform: macos-latest, shard: 3/3}
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}

@@ -7,7 +7,7 @@
     "react": "*"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   },
   "license": "BSD-2-Clause",
   "repository": {
