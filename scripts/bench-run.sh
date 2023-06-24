@@ -79,9 +79,8 @@ case $PACKAGE_MANAGER in
     ;;
   yarn)
     setup-yarn2
-    # TODO: Use `yarn cache clean` instead of manually removing the npm metadata once the feature is implemented
     bench install-full-cold \
-      --prepare 'rm -rf .yarn .pnp.* yarn.lock "$(yarn config get globalFolder)/npm-metadata" && yarn cache clean --all' \
+      --prepare 'rm -rf .yarn .pnp.* yarn.lock .yarn-global' \
       'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn .pnp.* yarn.lock' \
@@ -96,9 +95,8 @@ case $PACKAGE_MANAGER in
   yarn-nm)
     setup-yarn2
     setup-yarn2-nm
-    # TODO: Use `yarn cache clean` instead of manually removing the npm metadata once the feature is implemented
     bench install-full-cold \
-      --prepare 'rm -rf .yarn node_modules yarn.lock "$(yarn config get globalFolder)/npm-metadata" && yarn cache clean --all' \
+      --prepare 'rm -rf .yarn node_modules yarn.lock .yarn-global' \
       'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn node_modules yarn.lock' \
@@ -113,9 +111,8 @@ case $PACKAGE_MANAGER in
   yarn-pnpm)
     setup-yarn2
     setup-yarn2-pnpm
-    # TODO: Use `yarn cache clean` instead of manually removing the npm metadata once the feature is implemented
     bench install-full-cold \
-      --prepare 'rm -rf .yarn node_modules yarn.lock "$(yarn config get globalFolder)/npm-metadata" && yarn cache clean --all' \
+      --prepare 'rm -rf .yarn node_modules yarn.lock .yarn-global' \
       'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn node_modules yarn.lock' \
