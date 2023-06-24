@@ -15,7 +15,7 @@ const LOCKFILE_MIGRATION_RULES: Array<{
   name: `nodeLinker`,
   value: `node-modules`,
 }, {
-  selector: v => v < 8,
+  selector: v => v !== 0 && v < 8,
   name: `enableGlobalCache`,
   value: false,
 }, {
@@ -303,31 +303,35 @@ export default class YarnCommand extends BaseCommand {
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
-    const compatReport = await StreamReport.start({
-      configuration,
-      json: this.json,
-      stdout: this.context.stdout,
-      includeFooter: false,
-    }, async report => {
-      const newSettings: Record<string, any> = {};
+    const lockfileLastVersion = project.lockfileLastVersion;
+    if (lockfileLastVersion !== null) {
+      const compatReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        const newSettings: Record<string, any> = {};
 
-      for (const rule of LOCKFILE_MIGRATION_RULES) {
-        if (rule.selector(project.lockfileLastVersion) && typeof configuration.sources.get(rule.name) === `undefined`) {
-          configuration.use(`<compat>`, {[rule.name]: rule.value}, project.cwd, {overwrite: true});
-          newSettings[rule.name] = rule.value;
+        for (const rule of LOCKFILE_MIGRATION_RULES) {
+          if (rule.selector(lockfileLastVersion) && typeof configuration.sources.get(rule.name) === `undefined`) {
+            configuration.use(`<compat>`, {[rule.name]: rule.value}, project.cwd, {overwrite: true});
+            newSettings[rule.name] = rule.value;
+          }
         }
+
+        if (Object.keys(newSettings).length > 0) {
+          await Configuration.updateConfiguration(project.cwd, newSettings);
+
+          report.reportInfo(MessageName.MIGRATION_SUCCESS, `Migrated your project to the latest Yarn version 🚀`);
+          report.reportSeparator();
+        }
+      });
+
+      if (compatReport.hasErrors()) {
+        return compatReport.exitCode();
       }
-
-      if (Object.keys(newSettings).length > 0) {
-        await Configuration.updateConfiguration(project.cwd, newSettings);
-
-        report.reportInfo(MessageName.MIGRATION_SUCCESS, `Migrated your project to the latest Yarn version 🚀`);
-        report.reportSeparator();
-      }
-    });
-
-    if (compatReport.hasErrors())
-      return compatReport.exitCode();
+    }
 
     const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 

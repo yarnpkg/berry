@@ -232,7 +232,7 @@ export class Project {
    * If true, the data contained within `originalPackages` are from a different
    * lockfile version and need to be refreshed.
    */
-  public lockfileLastVersion: number = 0;
+  public lockfileLastVersion: number | null = null;
   public lockfileNeedsRefresh: boolean = false;
 
   /**
