@@ -48,6 +48,7 @@ describe(`Commands`, () => {
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
             `${npath.fromPortablePath(`${path}/.pnp.cjs`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/global/metadata/npm/b98544/localhost/no-deps.json`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-0.zip`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-af041f19ff.zip`)}\n`,

@@ -84,6 +84,7 @@ The following changes only affect people writing Yarn plugins:
 
 ### Installs
 
+- Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
 
