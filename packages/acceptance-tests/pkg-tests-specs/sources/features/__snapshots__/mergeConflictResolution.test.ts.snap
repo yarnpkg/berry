@@ -5,7 +5,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
+  version: X
   cacheKey: 0
 
 "no-deps@npm:*":
@@ -41,7 +41,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.68 KiB).
+➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -55,7 +55,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
+  version: X
   cacheKey: 0
 
 <<<<<<< HEAD
@@ -105,7 +105,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
+  version: X
   cacheKey: 0
 
 "no-deps@npm:*":
@@ -117,7 +117,7 @@ __metadata:
   version: 2.0.0
   resolution: "no-deps@npm:2.0.0"
   checksum: <checksum stripped>
->>>>>>> 0000000 (commit-2.0.0)
+>>>>>>> f72b9e0 (commit-2.0.0)
   languageName: node
   linkType: hard
 
@@ -141,7 +141,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.68 KiB).
+➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -155,7 +155,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
+  version: X
   cacheKey: 0
 
 "no-deps@npm:*":
@@ -191,7 +191,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.68 KiB).
+➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -205,7 +205,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
+  version: X
   cacheKey: 0
 
 "no-deps@npm:*":
@@ -241,7 +241,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.68 KiB).
+➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed

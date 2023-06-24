@@ -1,8 +1,5 @@
 import {Filename, xfs, ppath, npath} from '@yarnpkg/fslib';
-
-const {
-  fs: {writeJson, writeFile},
-} = require(`pkg-tests-core`);
+import {tests}                       from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`install`, () => {
@@ -15,7 +12,8 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         const {stdout} = await run(`install`, `--inline-builds`);
 
-        await expect(stdout).toMatchSnapshot();
+        expect(stdout).toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
+        expect(stdout).toContain(`STDOUT preinstall out`);
       }),
     );
 
@@ -28,7 +26,8 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         const {stdout} = await run(`install`, `--inline-builds`, `--mode=skip-build`);
 
-        await expect(stdout).toMatchSnapshot();
+        expect(stdout).not.toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
+        expect(stdout).not.toContain(`STDOUT preinstall out`);
       }),
     );
 
@@ -231,7 +230,7 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await xfs.removePromise(`${path}/.yarn/cache`);
+        await xfs.removePromise(ppath.join(path, `.yarn/cache`));
 
         await run(`install`, `--immutable`);
       }),
@@ -254,7 +253,7 @@ describe(`Commands`, () => {
         },
       }, async ({path, run, source}) => {
         // Ensure the cache directory exists
-        await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
+        await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`), {recursive: true});
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
       }),
     );
@@ -269,8 +268,8 @@ describe(`Commands`, () => {
         await run(`install`);
 
         // Empty, rather than remove the cache
-        await xfs.removePromise(`${path}/.yarn/cache`);
-        await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
+        await xfs.removePromise(ppath.join(path, `.yarn/cache`));
+        await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`), {recursive: true});
 
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
       }),
@@ -285,9 +284,9 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await xfs.writeFilePromise(`${path}/package.json`, JSON.stringify({
+        await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
           dependencies: {},
-        }, null, 2));
+        });
 
         await expect(run(`install`, `--immutable-cache`)).rejects.toThrow(/YN0056/);
       }),
@@ -300,8 +299,8 @@ describe(`Commands`, () => {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        let archiveName1;
-        let archiveName2;
+        let archiveName1: Filename;
+        let archiveName2: Filename;
 
         // First we need to detect the name that the true cache archive would have
         {
@@ -315,7 +314,7 @@ describe(`Commands`, () => {
           archiveName1 = zipFiles1[0];
         }
 
-        await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
           dependencies: {
             [`no-deps`]: `2.0.0`,
           },
@@ -325,7 +324,7 @@ describe(`Commands`, () => {
         {
           await run(`install`);
 
-          const allFiles2 = await xfs.readdirPromise(`${path}/.yarn/cache`);
+          const allFiles2 = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
           const zipFiles2 = allFiles2.filter(file => file.endsWith(`.zip`));
 
           // Just a sanity check, since this test is quite complex
@@ -334,9 +333,9 @@ describe(`Commands`, () => {
         }
 
         // We need to replace the hash in the cache filename, otherwise the cache just won't find the archive
-        archiveName1 = archiveName1.replace(/[^-]+$/, archiveName2.match(/[^-]+$/)[0]);
+        archiveName1 = archiveName1.replace(/[^-]+$/, archiveName2.match(/[^-]+$/)![0]) as Filename;
 
-        await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -344,13 +343,13 @@ describe(`Commands`, () => {
 
         // Then we disguise 2.0.0 as 1.0.0. The stored checksum will stay the same.
         {
-          const lockfile = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+          const lockfile = await xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`);
 
           // Moves from "2.0.0" to "1.0.0"
-          await xfs.writeFilePromise(`${path}/yarn.lock`, lockfile.replace(/2\.0\.0/g, `1.0.0`));
+          await xfs.writeFilePromise(ppath.join(path, Filename.lockfile), lockfile.replace(/2\.0\.0/g, `1.0.0`));
 
           // Don't forget to rename the archive to match the name the real 1.0.0 would have
-          await xfs.movePromise(`${path}/.yarn/cache/${archiveName2}`, `${path}/.yarn/cache/${archiveName1}`);
+          await xfs.movePromise(ppath.join(path, `.yarn/cache`, archiveName2), ppath.join(path, `.yarn/cache`, archiveName1));
         }
 
         // Just checking that the test is properly written: it should pass, because the lockfile checksum will match the tarballs
@@ -368,7 +367,9 @@ describe(`Commands`, () => {
           bin: `./bin/cli.js`,
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchSnapshot();
+          const {stdout} = await run(`install`);
+
+          expect(stdout).toContain(`root-workspace-0b6124: String bin field, but no attached package name`);
         },
       ),
     );
@@ -380,14 +381,20 @@ describe(`Commands`, () => {
           workspaces: [`packages`],
         },
         async ({path, run, source}) => {
-          await writeJson(`${path}/packages/package.json`, {
+          await xfs.mkdirPromise(ppath.join(path, `packages`), {recursive: true});
+          await xfs.mkdirPromise(ppath.join(path, `packages/package-a`), {recursive: true});
+
+          await xfs.writeJsonPromise(ppath.join(path, `packages`, Filename.manifest), {
             workspaces: [`package-a`],
           });
-          await writeJson(`${path}/packages/package-a/package.json`, {
+
+          await xfs.writeJsonPromise(ppath.join(path, `packages/package-a`, Filename.manifest), {
             bin: `./bin/cli.js`,
           });
 
-          await expect(run(`install`)).resolves.toMatchSnapshot();
+          await expect(run(`install`)).resolves.toMatchObject({
+            stdout: expect.stringContaining(`package-a-ddd35d: String bin field, but no attached package name`),
+          });
         },
       ),
     );
@@ -403,8 +410,9 @@ describe(`Commands`, () => {
           },
         },
         async ({path, run, source}) => {
-          await xfs.mkdirPromise(`${path}/workspace`);
-          await xfs.writeJsonPromise(`${path}/workspace/package.json`, {
+          await xfs.mkdirPromise(ppath.join(path, `workspace`));
+
+          await xfs.writeJsonPromise(ppath.join(path, `workspace`, Filename.manifest), {
             name: `foo`,
             scripts: {
               postinstall: `echo "foo"`,
@@ -414,7 +422,10 @@ describe(`Commands`, () => {
             },
           });
 
-          await expect(run(`install`)).resolves.toMatchSnapshot();
+          const {stdout} = await run(`install`);
+
+          expect(stdout).toContain(`foo@workspace:workspace must be built`);
+          expect(stdout).not.toMatch(/foo@virtual:.* must be built/);
         },
       ),
     );
@@ -658,7 +669,10 @@ describe(`Commands`, () => {
           [`no-deps-scripted`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `enableScripts: false`);
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          enableScripts: false,
+        });
+
         const {stdout} = await run(`install`, `--inline-builds`);
         expect(stdout).toMatch(/YN0004/g);
       }),
@@ -676,7 +690,10 @@ describe(`Commands`, () => {
           },
         },
       }, async ({path, run, source}) => {
-        await writeFile(`${path}/.yarnrc.yml`, `enableScripts: false`);
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          enableScripts: false,
+        });
+
         const {stdout} = await run(`install`, `--inline-builds`);
         expect(stdout).toMatch(/YN0005/g);
         expect(stdout).not.toMatch(/YN0004/g);
@@ -686,12 +703,13 @@ describe(`Commands`, () => {
     test(
       `it should throw a proper error if not find any locator`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mkdirPromise(`${path}/non-workspace`);
-        await xfs.writeJsonPromise(`${path}/non-workspace/package.json`, {
+        await xfs.mkdirPromise(ppath.join(path, `non-workspace`));
+
+        await xfs.writeJsonPromise(ppath.join(path, `non-workspace`, Filename.manifest), {
           name: `non-workspace`,
         });
 
-        await expect(run(`install`, {cwd: `${path}/non-workspace`})).rejects.toMatchObject({
+        await expect(run(`install`, {cwd: ppath.join(path, `non-workspace`)})).rejects.toMatchObject({
           code: 1,
           stdout: expect.stringMatching(/The nearest package directory \(.+\) doesn't seem to be part of the project declared in .+\./g),
         });
@@ -706,25 +724,32 @@ describe(`Commands`, () => {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        await run(`install`, `--mode=update-lockfile`);
+        await run(`install`);
 
-        const cacheBefore = await xfs.readdirPromise(`${path}/.yarn/cache`);
-        expect(cacheBefore.find(entry => entry.includes(`one-fixed-dep-npm-1.0.0`))).toBeDefined();
-        expect(cacheBefore.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
-
-        await xfs.writeJsonPromise(`${path}/package.json`, {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
           dependencies: {
             [`one-fixed-dep`]: `1.0.0`,
             [`no-deps`]: `2.0.0`,
           },
         });
-        await xfs.removePromise(`${path}/.yarn/cache`);
-        await xfs.mkdirPromise(`${path}/.yarn/cache`, {recursive: true});
 
-        const {code, stdout, stderr} = await run(`install`, `--mode=update-lockfile`);
-        await expect({code, stdout, stderr}).toMatchSnapshot();
+        await xfs.removePromise(ppath.join(path, `.yarn/cache`));
+        await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`), {recursive: true});
 
-        const cacheAfter = await xfs.readdirPromise(`${path}/.yarn/cache`);
+        await expect(tests.startRegistryRecording(async () => {
+          await run(`install`, `--mode=update-lockfile`);
+        })).resolves.toEqual([{
+          type: `packageInfo`,
+          scope: undefined,
+          localName: `no-deps`,
+        }, {
+          type: `packageTarball`,
+          scope: undefined,
+          localName: `no-deps`,
+          version: `2.0.0`,
+        }]);
+
+        const cacheAfter = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
         expect(cacheAfter.find(entry => entry.includes(`one-fixed-dep-npm-1.0.0`))).toBeUndefined();
         expect(cacheAfter.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeUndefined();
         expect(cacheAfter.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
@@ -738,7 +763,9 @@ describe(`Commands`, () => {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run}) => {
-        await xfs.writeFilePromise(`${path}/${Filename.rc}`, `enableImmutableInstalls: true`);
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          enableImmutableInstalls: true,
+        });
 
         const {stdout} = await run(`install`, `--mode=update-lockfile`);
         expect(stdout).not.toMatch(/YN0028/g);
