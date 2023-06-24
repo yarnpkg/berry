@@ -15,11 +15,11 @@ const LOCKFILE_MIGRATION_RULES: Array<{
   name: `nodeLinker`,
   value: `node-modules`,
 }, {
-  selector: v => v !== 0 && v < 8,
+  selector: v => v !== -1 && v < 8,
   name: `enableGlobalCache`,
   value: false,
 }, {
-  selector: v => v < 8,
+  selector: v => v !== -1 && v < 8,
   name: `compressionLevel`,
   value: `mixed`,
 }];
