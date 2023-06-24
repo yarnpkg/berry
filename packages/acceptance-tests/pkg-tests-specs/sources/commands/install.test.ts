@@ -736,6 +736,8 @@ describe(`Commands`, () => {
         await xfs.removePromise(ppath.join(path, `.yarn/cache`));
         await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`), {recursive: true});
 
+        await xfs.removePromise(ppath.join(path, `.yarn/global/metadata`));
+
         await expect(tests.startRegistryRecording(async () => {
           await run(`install`, `--mode=update-lockfile`);
         })).resolves.toEqual([{
