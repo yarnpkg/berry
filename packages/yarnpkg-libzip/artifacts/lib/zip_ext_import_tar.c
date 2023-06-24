@@ -107,8 +107,16 @@ static zip_int16_t process_name_segment(
       } break;
 
       default: {
-        if (*skip_depth == 0)
+        if (*skip_depth == 0) {
+          if (*state == 2) {
+            destination[index++] = '.';
+          } else if (*state == 3) {
+            destination[index++] = '.';
+            destination[index++] = '.';
+          }
+
           destination[index++] = c;
+        }
 
         *state = 0;
       } break;
@@ -163,7 +171,7 @@ static char normalize_name(
   if (name_len < 0)
     return -1;
 
-  // "/." or "/.." detected
+  // Trailing "/." or "/.." detected
   if (state == 2 || state == 3) {
     LOG("Unexpected end state (%d)\n", state);
     return -1;
