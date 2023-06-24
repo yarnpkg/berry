@@ -21,7 +21,7 @@ const LOCKFILE_MIGRATION_RULES: Array<{
 }, {
   selector: v => v < 8,
   name: `compressionLevel`,
-  value: 0,
+  value: `mixed`,
 }];
 
 // eslint-disable-next-line arca/no-default-export
