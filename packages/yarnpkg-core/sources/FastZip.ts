@@ -104,5 +104,5 @@ async function test() {
   }
 }
 
-if (require.main === module)
-  test();
+//if (require.main === module)
+//  test();

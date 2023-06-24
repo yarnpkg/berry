@@ -381,7 +381,7 @@ export class Cache {
       ? () => makeMockPackage()
       : () => new ZipFS(cachePath, {baseFs, readOnly: true});
 
-    const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
+    const lazyFs = new LazyFS(() => miscUtils.prettifySyncErrors(() => {
       return zipFs = zipFsBuilder();
     }, message => {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;

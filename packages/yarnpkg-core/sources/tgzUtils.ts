@@ -2,12 +2,15 @@ import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils} f
 import {ZipCompression, ZipFS}                                                 from '@yarnpkg/libzip';
 import {PassThrough, Readable}                                                 from 'stream';
 import tar                                                                     from 'tar';
-import {gunzipSync}                                                            from 'zlib';
+import {promisify}                                                             from 'util';
+import {gunzip, gunzipSync}                                                    from 'zlib';
 
 import {parseTarEntries}                                                       from './FastZip';
 import {WorkerPool}                                                            from './WorkerPool';
 import * as miscUtils                                                          from './miscUtils';
 import {getContent as getZipWorkerSource, ConvertToZipPayload}                 from './worker-zip';
+
+const gunzipP = promisify(gunzip);
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
@@ -44,7 +47,7 @@ export interface ExtractBufferOptions {
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
-const defaultEnableWorkers = process.env.CONVERT_TO_ZIP_WORKERS === `0`;
+const defaultEnableWorkers = process.env.CONVERT_TO_ZIP_WORKERS === `1`;
 const defaultConvertAlgorithm = process.env.CONVERT_TO_ZIP_ALGORITHM ?? `3rdParty`;
 
 const convertAlgorithms: Record<string, (tgz: Buffer, opts: ExtractBufferOptions) => Promise<ZipFS>> = {
@@ -108,7 +111,7 @@ export async function convertToZipCustomJs(tgz: Buffer, opts: ExtractBufferOptio
 export async function convertToZipWasm(tgz: Buffer, opts: ExtractBufferOptions) {
   const zip = new ZipFS({
     type: `tar`,
-    buffer: gunzipSync(tgz),
+    buffer: await gunzipP(tgz),
     skipComponents: opts.stripComponents,
     prefixPath: opts.prefixPath,
   }, {
@@ -117,7 +120,7 @@ export async function convertToZipWasm(tgz: Buffer, opts: ExtractBufferOptions) 
   });
 
   const destination = opts.destination ?? ppath.join(await xfs.mktempPromise(), `archive.zip`);
-  xfs.writeFilePromise(destination, zip.getBufferAndClose());
+  await xfs.writeFilePromise(destination, zip.getBufferAndClose());
 
   return new ZipFS(destination, {level: opts.compressionLevel});
 }

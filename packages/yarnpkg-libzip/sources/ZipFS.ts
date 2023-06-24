@@ -1,3 +1,4 @@
+import {Dirent, DirentNoPath, ReaddirOptions}                                                                                                        from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from '@yarnpkg/fslib';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
@@ -200,7 +201,17 @@ export class ZipFS extends BasePortableFakeFS {
       const tarBuffer = this.allocateBuffer(source.buffer);
       this.backingBuffer = tarBuffer.buffer;
 
-      const res = this.libzip.ext.importTar(this.zip, this.backingBuffer, tarBuffer.byteLength, 0, source.skipComponents ?? 0, source.prefixPath ?? ``);
+      const method = this.level === `mixed`
+        ? this.libzip.ZIP_CM_DEFAULT
+        : this.level === 0
+          ? this.libzip.ZIP_CM_STORE
+          : this.libzip.ZIP_CM_DEFLATE;
+
+      const level = this.level === `mixed`
+        ? 0
+        : this.level;
+
+      const res = this.libzip.ext.importTar(this.zip, this.backingBuffer, tarBuffer.byteLength, 0, method, level, source.skipComponents ?? 0, source.prefixPath ?? ``);
       // TODO: There's a memory leak here if we throw
       if (res < 0) {
         throw this.makeLibzipError(this.libzip.getError(this.zip));
@@ -906,18 +917,17 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
   private allocateBuffer(content: string | Buffer | ArrayBuffer | DataView) {
-    if (!Buffer.isBuffer(content))
-      content = Buffer.from(content as any);
+    const dataBuf = !Buffer.isBuffer(content)
+      ? Buffer.from(content as any)
+      : content;
 
-    const buffer = this.libzip.malloc(content.byteLength);
-    if (!buffer)
+    const wasmPtr = this.libzip.malloc(dataBuf.byteLength);
+    if (!wasmPtr)
       throw new Error(`Couldn't allocate enough memory`);
 
-    // Copy the file into the Emscripten heap
-    const heap = new Uint8Array(this.libzip.HEAPU8.buffer, buffer, content.byteLength);
-    heap.set(content as any);
+    dataBuf.copy(this.libzip.HEAPU8, wasmPtr, 0, dataBuf.byteLength);
 
-    return {buffer, byteLength: content.byteLength};
+    return {buffer: wasmPtr, byteLength: dataBuf.byteLength};
   }
 
   private allocateUnattachedSource(content: string | Buffer | ArrayBuffer | DataView) {
@@ -1476,19 +1486,31 @@ export class ZipFS extends BasePortableFakeFS {
     return this.getFileSource(entry, opts);
   }
 
-  async readdirPromise(p: PortablePath): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: false} | null): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: true}): Promise<Array<statUtils.DirEntry>>;
-  async readdirPromise(p: PortablePath, opts: {withFileTypes: boolean}): Promise<Array<Filename> | Array<statUtils.DirEntry>>;
-  async readdirPromise(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Promise<Array<string> | Array<statUtils.DirEntry>> {
+  async readdirPromise(p: PortablePath, opts?: null): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Promise<Array<DirentNoPath>>;
+  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<DirentNoPath | Filename>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: true}): Promise<Array<Dirent<PortablePath>>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes?: false}): Promise<Array<PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<PortablePath> | DirentNoPath>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>>;
+  async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
     return this.readdirSync(p, opts as any);
   }
 
-  readdirSync(p: PortablePath): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: false} | null): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: true}): Array<statUtils.DirEntry>;
-  readdirSync(p: PortablePath, opts: {withFileTypes: boolean}): Array<Filename> | Array<statUtils.DirEntry>;
-  readdirSync(p: PortablePath, opts?: {withFileTypes?: boolean} | null): Array<string> | Array<statUtils.DirEntry> {
+  readdirSync(p: PortablePath, opts?: null): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Array<DirentNoPath>;
+  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Array<Filename>;
+  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Array<DirentNoPath | Filename>;
+  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: true}): Array<Dirent<PortablePath>>;
+  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes?: false}): Array<PortablePath>;
+  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Array<Dirent<PortablePath> | PortablePath>;
+  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Array<Dirent<PortablePath> | DirentNoPath>;
+  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Array<PortablePath>;
+  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
+  readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
       throw errors.ENOENT(`scandir '${p}'`);
@@ -1497,15 +1519,56 @@ export class ZipFS extends BasePortableFakeFS {
     if (!directoryListing)
       throw errors.ENOTDIR(`scandir '${p}'`);
 
-    const entries = [...directoryListing];
-    if (!opts?.withFileTypes)
-      return entries;
+    if (opts?.recursive) {
+      if (opts?.withFileTypes) {
+        const entries = Array.from(directoryListing, name => {
+          return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+            name,
+            path: PortablePath.dot,
+          });
+        });
 
-    return entries.map(name => {
-      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
-        name,
+        for (const entry of entries) {
+          if (!entry.isDirectory())
+            continue;
+
+          const subPath = ppath.join(entry.path, entry.name);
+          const subListing = this.listings.get(ppath.join(resolvedP, subPath))!;
+
+          for (const child of subListing) {
+            entries.push(Object.assign(this.statImpl(`lstat`, ppath.join(p, subPath, child)), {
+              name: child,
+              path: subPath,
+            }));
+          }
+        }
+
+        return entries;
+      } else {
+        const entries: Array<PortablePath> = [...directoryListing];
+
+        for (const subPath of entries) {
+          const subListing = this.listings.get(ppath.join(resolvedP, subPath));
+          if (typeof subListing === `undefined`)
+            continue;
+
+          for (const child of subListing) {
+            entries.push(ppath.join(subPath, child));
+          }
+        }
+
+        return entries;
+      }
+    } else if (opts?.withFileTypes) {
+      return Array.from(directoryListing, name => {
+        return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+          name,
+          path: undefined,
+        });
       });
-    });
+    } else {
+      return [...directoryListing];
+    }
   }
 
   async readlinkPromise(p: PortablePath) {

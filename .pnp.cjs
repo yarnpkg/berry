@@ -282,7 +282,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@types/jest", "npm:28.1.6"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
@@ -6929,7 +6929,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@jest/console", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["chalk", "npm:4.1.2"],\
           ["jest-message-util", "npm:29.2.1"],\
           ["jest-util", "npm:29.2.1"],\
@@ -6955,7 +6955,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/node-notifier", null],\
           ["ansi-escapes", "npm:4.3.1"],\
           ["chalk", "npm:4.1.2"],\
@@ -6995,7 +6995,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/environment", "npm:29.2.1"],\
           ["@jest/fake-timers", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["jest-mock", "npm:29.2.1"]\
         ],\
         "linkType": "HARD"\
@@ -7029,7 +7029,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/fake-timers", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
           ["@sinonjs/fake-timers", "npm:9.1.2"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["jest-message-util", "npm:29.2.1"],\
           ["jest-mock", "npm:29.2.1"],\
           ["jest-util", "npm:29.2.1"]\
@@ -7068,7 +7068,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
           ["@jridgewell/trace-mapping", "npm:0.3.17"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/node-notifier", null],\
           ["chalk", "npm:4.1.2"],\
           ["collect-v8-coverage", "npm:1.0.1"],\
@@ -7225,7 +7225,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/schemas", "npm:29.0.0"],\
           ["@types/istanbul-lib-coverage", "npm:2.0.1"],\
           ["@types/istanbul-reports", "npm:3.0.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/yargs", "npm:17.0.10"],\
           ["chalk", "npm:4.1.2"]\
         ],\
@@ -10040,7 +10040,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/body-parser", "npm:1.19.2"],\
           ["@types/connect", "npm:3.4.35"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10050,7 +10050,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-bonjour-npm-3.5.10-2862bada55-bfcadb042a.zip/node_modules/@types/bonjour/",\
         "packageDependencies": [\
           ["@types/bonjour", "npm:3.5.10"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10080,7 +10080,7 @@ const RAW_RUNTIME_STATE =
           ["@types/cacheable-request", "npm:6.0.1"],\
           ["@types/http-cache-semantics", "npm:4.0.0"],\
           ["@types/keyv", "npm:3.1.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/responselike", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -10136,7 +10136,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-connect-npm-3.4.35-7337eee0a3-fe81351470.zip/node_modules/@types/connect/",\
         "packageDependencies": [\
           ["@types/connect", "npm:3.4.35"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10147,7 +10147,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/connect-history-api-fallback", "npm:1.3.5"],\
           ["@types/express-serve-static-core", "npm:4.17.31"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10175,7 +10175,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-cross-spawn-npm-6.0.0-daaecbda8f-785e4e1474.zip/node_modules/@types/cross-spawn/",\
         "packageDependencies": [\
           ["@types/cross-spawn", "npm:6.0.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10288,7 +10288,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-express-serve-static-core-npm-4.17.31-846873f446-020210f32d.zip/node_modules/@types/express-serve-static-core/",\
         "packageDependencies": [\
           ["@types/express-serve-static-core", "npm:4.17.31"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/qs", "npm:6.9.7"],\
           ["@types/range-parser", "npm:1.2.3"]\
         ],\
@@ -10300,7 +10300,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-finalhandler-npm-1.1.0-bb15aba0e7-716a57242b.zip/node_modules/@types/finalhandler/",\
         "packageDependencies": [\
           ["@types/finalhandler", "npm:1.1.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10330,7 +10330,7 @@ const RAW_RUNTIME_STATE =
           ["@types/glob", "npm:5.0.36"],\
           ["@types/events", "npm:1.2.0"],\
           ["@types/minimatch", "npm:3.0.3"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -10340,7 +10340,7 @@ const RAW_RUNTIME_STATE =
           ["@types/glob", "npm:7.1.1"],\
           ["@types/events", "npm:1.2.0"],\
           ["@types/minimatch", "npm:3.0.3"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10359,7 +10359,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-graceful-fs-npm-4.1.5-91d62e1050-d076bb61f4.zip/node_modules/@types/graceful-fs/",\
         "packageDependencies": [\
           ["@types/graceful-fs", "npm:4.1.5"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10426,7 +10426,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-http-proxy-npm-1.17.9-fa2f5ce316-48075c535a.zip/node_modules/@types/http-proxy/",\
         "packageDependencies": [\
           ["@types/http-proxy", "npm:1.17.9"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10540,7 +10540,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-keyv-npm-3.1.1-779a80f2c7-ee0d098693.zip/node_modules/@types/keyv/",\
         "packageDependencies": [\
           ["@types/keyv", "npm:3.1.1"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10665,7 +10665,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-minipass-npm-2.2.0-78f6142b4d-1e97dab81c.zip/node_modules/@types/minipass/",\
         "packageDependencies": [\
           ["@types/minipass", "npm:2.2.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10675,7 +10675,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-mkdirp-npm-0.5.2-8180a91a82-c3c2c244ec.zip/node_modules/@types/mkdirp/",\
         "packageDependencies": [\
           ["@types/mkdirp", "npm:0.5.2"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10695,10 +10695,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:18.11.11", {\
-        "packageLocation": "./.yarn/cache/@types-node-npm-18.11.11-e5325451ab-514ba7f9e2.zip/node_modules/@types/node/",\
+      ["npm:18.16.18", {\
+        "packageLocation": "./.yarn/cache/@types-node-npm-18.16.18-d20a21c8b6-4692b4c927.zip/node_modules/@types/node/",\
         "packageDependencies": [\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -10715,7 +10715,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-node-fetch-npm-2.5.10-86e5199acc-1d921aa355.zip/node_modules/@types/node-fetch/",\
         "packageDependencies": [\
           ["@types/node-fetch", "npm:2.5.10"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["form-data", "npm:3.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -10753,7 +10753,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-pem-npm-1.9.5-02fd573aee-106fd1fffd.zip/node_modules/@types/pem/",\
         "packageDependencies": [\
           ["@types/pem", "npm:1.9.5"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10957,7 +10957,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-readable-stream-npm-2.3.10-87b127a5f1-d2c0e15c8e.zip/node_modules/@types/readable-stream/",\
         "packageDependencies": [\
           ["@types/readable-stream", "npm:2.3.10"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["safe-buffer", "npm:5.2.1"]\
         ],\
         "linkType": "HARD"\
@@ -10968,7 +10968,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-resolve-npm-1.17.1-9a8396bef2-dc6a6df507.zip/node_modules/@types/resolve/",\
         "packageDependencies": [\
           ["@types/resolve", "npm:1.17.1"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10978,7 +10978,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-responselike-npm-1.0.0-85dd08af42-e497238945.zip/node_modules/@types/responselike/",\
         "packageDependencies": [\
           ["@types/responselike", "npm:1.0.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10998,7 +10998,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/rimraf", "npm:2.0.4"],\
           ["@types/glob", "npm:7.1.1"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11008,7 +11008,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-sax-npm-1.2.4-559564fa4f-2aa50cbf1d.zip/node_modules/@types/sax/",\
         "packageDependencies": [\
           ["@types/sax", "npm:1.2.4"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11018,7 +11018,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-semver-npm-7.1.0-ce58bbc3b4-71ab463c11.zip/node_modules/@types/semver/",\
         "packageDependencies": [\
           ["@types/semver", "npm:7.1.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11048,7 +11048,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/serve-static", "npm:1.15.0"],\
           ["@types/mime", "npm:2.0.1"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11067,7 +11067,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-sockjs-npm-0.3.33-07d624a8b3-b9bbb2b5c5.zip/node_modules/@types/sockjs/",\
         "packageDependencies": [\
           ["@types/sockjs", "npm:0.3.33"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11103,7 +11103,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/minipass", "npm:2.2.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11113,7 +11113,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-tar-fs-npm-1.16.1-d84562705d-1bf6df36e9.zip/node_modules/@types/tar-fs/",\
         "packageDependencies": [\
           ["@types/tar-fs", "npm:1.16.1"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11123,7 +11123,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-tar-stream-npm-1.6.0-442fee9fb0-a52d38caac.zip/node_modules/@types/tar-stream/",\
         "packageDependencies": [\
           ["@types/tar-stream", "npm:1.6.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11170,7 +11170,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-tunnel-npm-0.0.0-60b0691686-bd3a79bd7b.zip/node_modules/@types/tunnel/",\
         "packageDependencies": [\
           ["@types/tunnel", "npm:0.0.0"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11198,7 +11198,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-vfile-npm-3.0.2-5a6f4624c4-a720d3efb6.zip/node_modules/@types/vfile/",\
         "packageDependencies": [\
           ["@types/vfile", "npm:3.0.2"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/unist", "npm:2.0.3"],\
           ["@types/vfile-message", "npm:1.0.1"]\
         ],\
@@ -11210,7 +11210,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-vfile-message-npm-1.0.1-94f6b0361a-a5fd80df8d.zip/node_modules/@types/vfile-message/",\
         "packageDependencies": [\
           ["@types/vfile-message", "npm:1.0.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/unist", "npm:2.0.3"]\
         ],\
         "linkType": "HARD"\
@@ -11230,7 +11230,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-websocket-npm-1.0.2-6f6a12e472-c6d8470dc3.zip/node_modules/@types/websocket/",\
         "packageDependencies": [\
           ["@types/websocket", "npm:1.0.2"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11249,7 +11249,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-ws-npm-8.5.3-ae52c483f1-08aac698ce.zip/node_modules/@types/ws/",\
         "packageDependencies": [\
           ["@types/ws", "npm:8.5.3"],\
-          ["@types/node", "npm:18.11.11"]\
+          ["@types/node", "npm:18.16.18"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -13043,7 +13043,7 @@ const RAW_RUNTIME_STATE =
           ["@types/diff", "npm:5.0.2"],\
           ["@types/lodash", "npm:4.14.172"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/semver", "npm:7.1.0"],\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/treeify", "npm:1.0.0"],\
@@ -13401,7 +13401,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/preset-react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@babel/preset-typescript", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:7.18.6"],\
           ["@types/jest", "npm:28.1.6"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
@@ -22719,7 +22719,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["arg", "npm:5.0.2"],\
@@ -29939,7 +29939,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/eval-npm-0.1.8-0cd081d9ca-27366ad289.zip/node_modules/eval/",\
         "packageDependencies": [\
           ["eval", "npm:0.1.8"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["require-like", "npm:0.1.2"]\
         ],\
         "linkType": "HARD"\
@@ -35923,7 +35923,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/expect", "npm:29.2.1"],\
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["chalk", "npm:4.1.2"],\
           ["co", "npm:4.6.0"],\
           ["dedent", "npm:0.7.0"],\
@@ -35991,7 +35991,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/core", "npm:7.19.1"],\
           ["@jest/test-sequencer", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["@types/ts-node", null],\
           ["babel-jest", "virtual:f5aa59943e1ce45358c81e393ba30c0f3a656ae824d66fbad98d525a0034f13dada2474551f5f06d6311a970c92cc873c0cd8d0e9ac763ec4964d8e95d8a8f79#npm:29.2.1"],\
           ["chalk", "npm:4.1.2"],\
@@ -36137,7 +36137,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/environment", "npm:29.2.1"],\
           ["@jest/fake-timers", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["jest-mock", "npm:29.2.1"],\
           ["jest-util", "npm:29.2.1"]\
         ],\
@@ -36181,7 +36181,7 @@ const RAW_RUNTIME_STATE =
           ["jest-haste-map", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
           ["@types/graceful-fs", "npm:4.1.5"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["anymatch", "npm:3.1.2"],\
           ["fb-watchman", "npm:2.0.0"],\
           ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
@@ -36302,7 +36302,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["jest-mock", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["jest-util", "npm:29.2.1"]\
         ],\
         "linkType": "HARD"\
@@ -36385,7 +36385,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["chalk", "npm:4.1.2"],\
           ["emittery", "npm:0.10.2"],\
           ["graceful-fs", "npm:4.2.10"],\
@@ -36417,7 +36417,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["chalk", "npm:4.1.2"],\
           ["cjs-module-lexer", "npm:1.2.2"],\
           ["collect-v8-coverage", "npm:1.0.1"],\
@@ -36475,7 +36475,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["jest-util", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["chalk", "npm:4.1.2"],\
           ["ci-info", "npm:3.2.0"],\
           ["graceful-fs", "npm:4.2.10"],\
@@ -36506,7 +36506,7 @@ const RAW_RUNTIME_STATE =
           ["jest-watcher", "npm:29.2.1"],\
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["ansi-escapes", "npm:4.3.1"],\
           ["chalk", "npm:4.1.2"],\
           ["emittery", "npm:0.10.2"],\
@@ -36521,7 +36521,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-worker-npm-26.6.2-46cbcd449f-5f6b94cf0e.zip/node_modules/jest-worker/",\
         "packageDependencies": [\
           ["jest-worker", "npm:26.6.2"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["merge-stream", "npm:2.0.0"],\
           ["supports-color", "npm:7.1.0"]\
         ],\
@@ -36531,7 +36531,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-worker-npm-27.5.1-1c110b5894-06c6e2a845.zip/node_modules/jest-worker/",\
         "packageDependencies": [\
           ["jest-worker", "npm:27.5.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["merge-stream", "npm:2.0.0"],\
           ["supports-color", "npm:8.1.1"]\
         ],\
@@ -36541,7 +36541,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-worker-npm-29.2.1-f152a67b79-5180d65ea9.zip/node_modules/jest-worker/",\
         "packageDependencies": [\
           ["jest-worker", "npm:29.2.1"],\
-          ["@types/node", "npm:18.11.11"],\
+          ["@types/node", "npm:18.16.18"],\
           ["jest-util", "npm:29.2.1"],\
           ["merge-stream", "npm:2.0.0"],\
           ["supports-color", "npm:8.1.1"]\
@@ -51129,6 +51129,7 @@ const zlib = require('zlib');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
+const buffer = require('buffer');
 const readline = require('readline');
 const assert = require('assert');
 
@@ -51158,6 +51159,7 @@ const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
 const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
+const buffer__default = /*#__PURE__*/_interopDefaultLegacy(buffer);
 const assert__default = /*#__PURE__*/_interopDefaultLegacy(assert);
 
 const S_IFMT = 61440;
@@ -51482,7 +51484,6 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   }));
 }
 async function copyImpl(prelayout, postlayout, destinationFs, destination, sourceFs, source, opts) {
-  var _a, _b, _c;
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
   const { atime, mtime } = opts.stableTime ? { atime: defaultTime, mtime: defaultTime } : sourceStat;
@@ -51508,8 +51509,8 @@ async function copyImpl(prelayout, postlayout, destinationFs, destination, sourc
         throw new Error(`Unsupported file type (${sourceStat.mode})`);
       }
   }
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) !== `HardlinkFromIndex` || !sourceStat.isFile()) {
-    if (updated || ((_b = destinationStat == null ? void 0 : destinationStat.mtime) == null ? void 0 : _b.getTime()) !== mtime.getTime() || ((_c = destinationStat == null ? void 0 : destinationStat.atime) == null ? void 0 : _c.getTime()) !== atime.getTime()) {
+  if (opts.linkStrategy?.type !== `HardlinkFromIndex` || !sourceStat.isFile()) {
+    if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
       postlayout.push(() => destinationFs.lutimesPromise(destination, atime, mtime));
       updated = true;
     }
@@ -51579,7 +51580,7 @@ async function copyFileViaIndex(prelayout, postlayout, destinationFs, destinatio
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
-    const isIndexModified = (indexStat == null ? void 0 : indexStat.mtimeMs) !== defaultTimeMs;
+    const isIndexModified = indexStat?.mtimeMs !== defaultTimeMs;
     if (isDestinationHardlinkedFromIndex) {
       if (isIndexModified && linkStrategy.autoRepair) {
         atomicBehavior = 0 /* Lock */;
@@ -51649,8 +51650,7 @@ async function copyFileDirect(prelayout, postlayout, destinationFs, destination,
   return true;
 }
 async function copyFile(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
-  var _a;
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) === `HardlinkFromIndex`) {
+  if (opts.linkStrategy?.type === `HardlinkFromIndex`) {
     return copyFileViaIndex(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, opts.linkStrategy);
   } else {
     return copyFileDirect(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
@@ -51710,9 +51710,8 @@ class CustomDir {
     return Promise.resolve();
   }
   closeSync() {
-    var _a, _b;
     this.throwIfClosed();
-    (_b = (_a = this.opts).onClose) == null ? void 0 : _b.call(_a);
+    this.opts.onClose?.();
     this.closed = true;
   }
 }
@@ -51989,7 +51988,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory ?? (createdDirectory = subPath);
+        createdDirectory ??= subPath;
         if (chmod != null)
           await this.chmodPromise(subPath, chmod);
         if (utimes != null) {
@@ -52020,7 +52019,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory ?? (createdDirectory = subPath);
+        createdDirectory ??= subPath;
         if (chmod != null)
           this.chmodSync(subPath, chmod);
         if (utimes != null) {
@@ -52817,7 +52816,7 @@ class NodeFS extends BasePortableFakeFS {
   }
   async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      if (opts == null ? void 0 : opts.withFileTypes) {
+      if (opts?.withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), { withFileTypes: true }, this.makeCallback(resolve, reject));
       } else {
         this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback((value) => resolve(value), reject));
@@ -52825,7 +52824,7 @@ class NodeFS extends BasePortableFakeFS {
     });
   }
   readdirSync(p, opts) {
-    if (opts == null ? void 0 : opts.withFileTypes) {
+    if (opts?.withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), { withFileTypes: true });
     } else {
       return this.realFs.readdirSync(npath.fromPortablePath(p));
@@ -52915,21 +52914,19 @@ class MountFS extends BasePortableFakeFS {
     return this.baseFs.getRealPath();
   }
   saveAndClose() {
-    var _a;
     unwatchAllFiles(this);
     if (this.mountInstances) {
       for (const [path, { childFs }] of this.mountInstances.entries()) {
-        (_a = childFs.saveAndClose) == null ? void 0 : _a.call(childFs);
+        childFs.saveAndClose?.();
         this.mountInstances.delete(path);
       }
     }
   }
   discardAndClose() {
-    var _a;
     unwatchAllFiles(this);
     if (this.mountInstances) {
       for (const [path, { childFs }] of this.mountInstances.entries()) {
-        (_a = childFs.discardAndClose) == null ? void 0 : _a.call(childFs);
+        childFs.discardAndClose?.();
         this.mountInstances.delete(path);
       }
     }
@@ -53621,17 +53618,16 @@ class MountFS extends BasePortableFakeFS {
     }
   }
   limitOpenFiles(max) {
-    var _a, _b, _c;
     if (this.mountInstances === null)
       return;
     const now = Date.now();
     let nextExpiresAt = now + this.maxAge;
     let closeCount = max === null ? 0 : this.mountInstances.size - max;
     for (const [path, { childFs, expiresAt, refCount }] of this.mountInstances.entries()) {
-      if (refCount !== 0 || ((_a = childFs.hasOpenFileHandles) == null ? void 0 : _a.call(childFs))) {
+      if (refCount !== 0 || childFs.hasOpenFileHandles?.()) {
         continue;
       } else if (now >= expiresAt) {
-        (_b = childFs.saveAndClose) == null ? void 0 : _b.call(childFs);
+        childFs.saveAndClose?.();
         this.mountInstances.delete(path);
         closeCount -= 1;
         continue;
@@ -53639,7 +53635,7 @@ class MountFS extends BasePortableFakeFS {
         nextExpiresAt = expiresAt;
         break;
       }
-      (_c = childFs.saveAndClose) == null ? void 0 : _c.call(childFs);
+      childFs.saveAndClose?.();
       this.mountInstances.delete(path);
       closeCount -= 1;
     }
@@ -53651,7 +53647,6 @@ class MountFS extends BasePortableFakeFS {
     }
   }
   async getMountPromise(p, accept) {
-    var _a;
     if (this.mountInstances) {
       let cachedMountFs = this.mountInstances.get(p);
       if (!cachedMountFs) {
@@ -53680,12 +53675,11 @@ class MountFS extends BasePortableFakeFS {
       try {
         return await accept(mountFs);
       } finally {
-        (_a = mountFs.saveAndClose) == null ? void 0 : _a.call(mountFs);
+        mountFs.saveAndClose?.();
       }
     }
   }
   getMountSync(p, accept) {
-    var _a;
     if (this.mountInstances) {
       let cachedMountFs = this.mountInstances.get(p);
       if (!cachedMountFs) {
@@ -53705,7 +53699,7 @@ class MountFS extends BasePortableFakeFS {
       try {
         return accept(childFs);
       } finally {
-        (_a = childFs.saveAndClose) == null ? void 0 : _a.call(childFs);
+        childFs.saveAndClose?.();
       }
     }
   }
@@ -53814,12 +53808,17 @@ class NodePathFS extends ProxiedFS {
       return url.fileURLToPath(path);
     if (Buffer.isBuffer(path)) {
       const str = path.toString();
-      if (Buffer.byteLength(str) !== path.byteLength)
+      if (!isUtf8(path, str))
         throw new Error(`Non-utf8 buffers are not supported at the moment. Please upvote the following issue if you encounter this error: https://github.com/yarnpkg/berry/issues/4942`);
       return str;
     }
     throw new Error(`Unsupported path type: ${nodeUtils.inspect(path)}`);
   }
+}
+function isUtf8(buf, str) {
+  if (typeof buffer__default.default.isUtf8 !== `undefined`)
+    return buffer__default.default.isUtf8(buf);
+  return Buffer.byteLength(str) === buf.byteLength;
 }
 
 var _a, _b, _c, _d;
@@ -53846,7 +53845,7 @@ class FileHandle {
   async appendFile(data, options) {
     try {
       this[kRef](this.appendFile);
-      const encoding = (typeof options === `string` ? options : options == null ? void 0 : options.encoding) ?? void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? { encoding } : void 0);
     } finally {
       this[kUnref]();
@@ -53885,7 +53884,7 @@ class FileHandle {
       this[kRef](this.read);
       let buffer;
       if (!Buffer.isBuffer(bufferOrOptions)) {
-        bufferOrOptions ?? (bufferOrOptions = {});
+        bufferOrOptions ??= {};
         buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
         offset = bufferOrOptions.offset || 0;
         length = bufferOrOptions.length ?? buffer.byteLength;
@@ -53893,8 +53892,8 @@ class FileHandle {
       } else {
         buffer = bufferOrOptions;
       }
-      offset ?? (offset = 0);
-      length ?? (length = 0);
+      offset ??= 0;
+      length ??= 0;
       if (length === 0) {
         return {
           bytesRead: length,
@@ -53913,7 +53912,7 @@ class FileHandle {
   async readFile(options) {
     try {
       this[kRef](this.readFile);
-      const encoding = (typeof options === `string` ? options : options == null ? void 0 : options.encoding) ?? void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       return await this[kBaseFs].readFilePromise(this.fd, encoding);
     } finally {
       this[kUnref]();
@@ -53947,7 +53946,7 @@ class FileHandle {
   async writeFile(data, options) {
     try {
       this[kRef](this.writeFile);
-      const encoding = (typeof options === `string` ? options : options == null ? void 0 : options.encoding) ?? void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       await this[kBaseFs].writeFilePromise(this.fd, data, encoding);
     } finally {
       this[kUnref]();
@@ -54113,7 +54112,7 @@ function patchFs(patchedFs, fakeFs) {
   const setupFn = (target, name, replacement) => {
     const orig = target[name];
     target[name] = replacement;
-    if (typeof (orig == null ? void 0 : orig[nodeUtils.promisify.custom]) !== `undefined`) {
+    if (typeof orig?.[nodeUtils.promisify.custom] !== `undefined`) {
       replacement[nodeUtils.promisify.custom] = orig[nodeUtils.promisify.custom];
     }
   };
@@ -55261,7 +55260,7 @@ class ZipFS extends BasePortableFakeFS {
     this.readOnly = false;
     const pathOptions = opts;
     this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
-    source ?? (source = makeEmptyArchive());
+    source ??= makeEmptyArchive();
     if (typeof source === `string`) {
       const { baseFs = new NodeFS() } = pathOptions;
       this.baseFs = baseFs;
@@ -55727,7 +55726,7 @@ class ZipFS extends BasePortableFakeFS {
   unregisterListing(p) {
     this.listings.delete(p);
     const parentListing = this.listings.get(ppath.dirname(p));
-    parentListing == null ? void 0 : parentListing.delete(ppath.basename(p));
+    parentListing?.delete(ppath.basename(p));
   }
   unregisterEntry(p) {
     this.unregisterListing(p);
@@ -56004,8 +56003,7 @@ class ZipFS extends BasePortableFakeFS {
     return this.writeFileSync(p, content, opts);
   }
   fdToPath(fd, reason) {
-    var _a;
-    const path = (_a = this.fds.get(fd)) == null ? void 0 : _a.p;
+    const path = this.fds.get(fd)?.p;
     if (typeof path === `undefined`)
       throw EBADF(reason);
     return path;
@@ -56212,7 +56210,7 @@ class ZipFS extends BasePortableFakeFS {
     if (!directoryListing)
       throw ENOTDIR(`scandir '${p}'`);
     const entries = [...directoryListing];
-    if (!(opts == null ? void 0 : opts.withFileTypes))
+    if (!opts?.withFileTypes)
       return entries;
     return entries.map((name) => {
       return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
@@ -56331,7 +56329,7 @@ const MODULE_NOT_FOUND_ERRORS = /* @__PURE__ */ new Set([
   "UNDECLARED_DEPENDENCY" /* UNDECLARED_DEPENDENCY */
 ]);
 function makeError(pnpCode, message, data = {}, code) {
-  code ?? (code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode);
+  code ??= MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
   const propertySpec = {
     configurable: true,
     writable: true,
@@ -56502,7 +56500,7 @@ function applyPatch(pnpapi, opts) {
     }
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = (parent == null ? void 0 : parent.filename) != null ? npath.dirname(parent.filename) : null;
+      const parentDirectory = parent?.filename != null ? npath.dirname(parent.filename) : null;
       const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
       if (absoluteRequest !== null) {
         const apiPath = parent && parentDirectory === npath.dirname(absoluteRequest) ? opts.manager.getApiPathFromParent(parent) : opts.manager.findApiPathFor(absoluteRequest);
@@ -56583,11 +56581,10 @@ Require stack:
   };
   const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
   require$$0.Module._extensions[`.js`] = function(module, filename) {
-    var _a, _b;
     if (filename.endsWith(`.js`)) {
       const pkg = readPackageScope(filename);
-      if (pkg && ((_a = pkg.data) == null ? void 0 : _a.type) === `module`) {
-        const err = ERR_REQUIRE_ESM(filename, (_b = module.parent) == null ? void 0 : _b.filename);
+      if (pkg && pkg.data?.type === `module`) {
+        const err = ERR_REQUIRE_ESM(filename, module.parent?.filename);
         Error.captureStackTrace(err);
         throw err;
       }
@@ -57559,12 +57556,11 @@ function makeApi(runtimeState, opts) {
     };
   }
   function trace(entry) {
-    var _a, _b, _c, _d;
-    const colors = ((_b = (_a = process.stderr) == null ? void 0 : _a.hasColors) == null ? void 0 : _b.call(_a)) ?? process.stdout.isTTY;
+    const colors = process.stderr?.hasColors?.() ?? process.stdout.isTTY;
     const c = (n, str) => `\x1B[${n}m${str}\x1B[0m`;
     const error = entry.error;
     if (error)
-      console.error(c(`31;1`, `\u2716 ${(_c = entry.error) == null ? void 0 : _c.message.replace(/\n.*/s, ``)}`));
+      console.error(c(`31;1`, `\u2716 ${entry.error?.message.replace(/\n.*/s, ``)}`));
     else
       console.error(c(`33;1`, `\u203C Resolution`));
     if (entry.args.length > 0)
@@ -57575,7 +57571,7 @@ function makeApi(runtimeState, opts) {
       console.error();
       console.error(`  ${c(`37;1`, `Out \u2192`)} ${nodeUtils.inspect(entry.result, { colors, compact: true })}`);
     }
-    const stack = ((_d = new Error().stack.match(/(?<=^ +)at.*/gm)) == null ? void 0 : _d.slice(2)) ?? [];
+    const stack = new Error().stack.match(/(?<=^ +)at.*/gm)?.slice(2) ?? [];
     if (stack.length > 0) {
       console.error();
       for (const line of stack) {
@@ -58082,10 +58078,10 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
         try {
           opts.fakeFs.accessSync(packageLocation);
         } catch (err) {
-          if ((err == null ? void 0 : err.code) === `ENOENT`) {
+          if (err?.code === `ENOENT`) {
             exists = false;
           } else {
-            const readableError = ((err == null ? void 0 : err.message) ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
+            const readableError = (err?.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).
 
 Missing package: ${containingPackage.name}@${containingPackage.reference}
