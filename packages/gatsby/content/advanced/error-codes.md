@@ -424,3 +424,9 @@ To use it, simply pass it the `p`-prefixed code provided in the original peer re
 ```
 yarn explain peer-requirements pf649cd
 ```
+
+## YN0087 - `MIGRATION_SUCCESS`
+
+When migrating from a major version to the next, some default values may change. When that's the case, Yarn will attempt to temporarily keep the old default by pinning their values in your configuration settings.
+
+To see the exact changes applied when this message appears, check the content of the `.yarnrc.yml` file and any other file that may appear modified in your repository checkout.
