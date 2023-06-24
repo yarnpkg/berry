@@ -24,7 +24,7 @@ no-deps@*:
 function cleanLockfile(lockfile: string) {
   lockfile = lockfile.replace(/(\n__metadata:\n {2}version: )[0-9]+\n/, `$1X\n`);
   lockfile = lockfile.replace(/(checksum: ).*/g, `$1<checksum stripped>`);
-  lockfile = lockfile.replace(/(>>>>>>>).*(\(commit-1.0.0\))/g, `$1 0000000 $2`);
+  lockfile = lockfile.replace(/(>>>>>>>).*(\(commit-[0-9].0.0\))/g, `$1 0000000 $2`);
 
   return lockfile;
 }
