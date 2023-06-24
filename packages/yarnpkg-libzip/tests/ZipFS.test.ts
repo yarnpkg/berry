@@ -911,6 +911,78 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should support the recursive flag in readdir`, () => {
+    const zipFs = new ZipFS();
+
+    zipFs.mkdirSync(`/foo` as PortablePath);
+    zipFs.mkdirSync(`/foo/bar` as PortablePath);
+    zipFs.mkdirSync(`/bar` as PortablePath);
+
+    zipFs.writeFileSync(`/foo/file.txt` as PortablePath, `Test`);
+    zipFs.writeFileSync(`/foo/bar/file.txt` as PortablePath, `Test`);
+    zipFs.writeFileSync(`/bar/file.txt` as PortablePath, `Test`);
+    zipFs.writeFileSync(`/file.txt` as PortablePath, `Test`);
+
+    const zipContent = zipFs.getBufferAndClose();
+
+    const zipFs2 = new ZipFS(zipContent);
+    expect(zipFs2.readdirSync(`/` as PortablePath, {recursive: true}).sort()).toEqual([
+      `bar`,
+      `bar/file.txt`,
+      `file.txt`,
+      `foo`,
+      `foo/bar`,
+      `foo/bar/file.txt`,
+      `foo/file.txt`,
+    ]);
+
+    expect(zipFs2.readdirSync(`/foo` as PortablePath, {recursive: true}).sort()).toEqual([
+      `bar`,
+      `bar/file.txt`,
+      `file.txt`,
+    ]);
+  });
+
+  it(`should support the combination of recursive and withFileTypes in readdir`, () => {
+    const zipFs = new ZipFS();
+
+    zipFs.mkdirSync(`/foo` as PortablePath);
+    zipFs.mkdirSync(`/foo/bar` as PortablePath);
+    zipFs.mkdirSync(`/bar` as PortablePath);
+
+    zipFs.writeFileSync(`/foo/file.txt` as PortablePath, `Test`);
+    zipFs.writeFileSync(`/foo/bar/file.txt` as PortablePath, `Test`);
+    zipFs.writeFileSync(`/bar/file.txt` as PortablePath, `Test`);
+    zipFs.writeFileSync(`/file.txt` as PortablePath, `Test`);
+
+    const zipContent = zipFs.getBufferAndClose();
+
+    const readdir = (p: PortablePath) => {
+      return zipFs2.readdirSync(p, {recursive: true, withFileTypes: true}).sort((a, b) => {
+        return a.path.localeCompare(b.path) || a.name.localeCompare(b.name);
+      }).map(({name, path}) => {
+        return {name, path};
+      });
+    };
+
+    const zipFs2 = new ZipFS(zipContent);
+    expect(readdir(PortablePath.root)).toEqual([
+      {name: `bar`, path: `.`},
+      {name: `file.txt`, path: `.`},
+      {name: `foo`, path: `.`},
+      {name: `file.txt`, path: `bar`},
+      {name: `bar`, path: `foo`},
+      {name: `file.txt`, path: `foo`},
+      {name: `file.txt`, path: `foo/bar`},
+    ]);
+
+    expect(readdir(ppath.join(PortablePath.root, `foo`))).toEqual([
+      {name: `bar`, path: `.`},
+      {name: `file.txt`, path: `.`},
+      {name: `file.txt`, path: `bar`},
+    ]);
+  });
+
   it(`should support throwIfNoEntry`, async () => {
     const zipFs = new ZipFS();
 

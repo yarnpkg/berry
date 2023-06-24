@@ -51173,6 +51173,7 @@ const zlib = require('zlib');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
+const buffer = require('buffer');
 const readline = require('readline');
 const assert = require('assert');
 
@@ -51202,6 +51203,7 @@ const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
 const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
 const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
+const buffer__default = /*#__PURE__*/_interopDefaultLegacy(buffer);
 const assert__default = /*#__PURE__*/_interopDefaultLegacy(assert);
 
 const S_IFMT = 61440;
@@ -51526,7 +51528,6 @@ async function copyPromise(destinationFs, destination, sourceFs, source, opts) {
   }));
 }
 async function copyImpl(prelayout, postlayout, destinationFs, destination, sourceFs, source, opts) {
-  var _a, _b, _c;
   const destinationStat = opts.didParentExist ? await maybeLStat(destinationFs, destination) : null;
   const sourceStat = await sourceFs.lstatPromise(source);
   const { atime, mtime } = opts.stableTime ? { atime: defaultTime, mtime: defaultTime } : sourceStat;
@@ -51552,8 +51553,8 @@ async function copyImpl(prelayout, postlayout, destinationFs, destination, sourc
         throw new Error(`Unsupported file type (${sourceStat.mode})`);
       }
   }
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) !== `HardlinkFromIndex` || !sourceStat.isFile()) {
-    if (updated || ((_b = destinationStat == null ? void 0 : destinationStat.mtime) == null ? void 0 : _b.getTime()) !== mtime.getTime() || ((_c = destinationStat == null ? void 0 : destinationStat.atime) == null ? void 0 : _c.getTime()) !== atime.getTime()) {
+  if (opts.linkStrategy?.type !== `HardlinkFromIndex` || !sourceStat.isFile()) {
+    if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
       postlayout.push(() => destinationFs.lutimesPromise(destination, atime, mtime));
       updated = true;
     }
@@ -51623,7 +51624,7 @@ async function copyFileViaIndex(prelayout, postlayout, destinationFs, destinatio
   let indexStat = await maybeLStat(destinationFs, indexPath);
   if (destinationStat) {
     const isDestinationHardlinkedFromIndex = indexStat && destinationStat.dev === indexStat.dev && destinationStat.ino === indexStat.ino;
-    const isIndexModified = (indexStat == null ? void 0 : indexStat.mtimeMs) !== defaultTimeMs;
+    const isIndexModified = indexStat?.mtimeMs !== defaultTimeMs;
     if (isDestinationHardlinkedFromIndex) {
       if (isIndexModified && linkStrategy.autoRepair) {
         atomicBehavior = 0 /* Lock */;
@@ -51693,8 +51694,7 @@ async function copyFileDirect(prelayout, postlayout, destinationFs, destination,
   return true;
 }
 async function copyFile(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts) {
-  var _a;
-  if (((_a = opts.linkStrategy) == null ? void 0 : _a.type) === `HardlinkFromIndex`) {
+  if (opts.linkStrategy?.type === `HardlinkFromIndex`) {
     return copyFileViaIndex(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, opts.linkStrategy);
   } else {
     return copyFileDirect(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
@@ -51754,9 +51754,8 @@ class CustomDir {
     return Promise.resolve();
   }
   closeSync() {
-    var _a, _b;
     this.throwIfClosed();
-    (_b = (_a = this.opts).onClose) == null ? void 0 : _b.call(_a);
+    this.opts.onClose?.();
     this.closed = true;
   }
 }
@@ -52033,7 +52032,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory ?? (createdDirectory = subPath);
+        createdDirectory ??= subPath;
         if (chmod != null)
           await this.chmodPromise(subPath, chmod);
         if (utimes != null) {
@@ -52064,7 +52063,7 @@ class FakeFS {
             throw error;
           }
         }
-        createdDirectory ?? (createdDirectory = subPath);
+        createdDirectory ??= subPath;
         if (chmod != null)
           this.chmodSync(subPath, chmod);
         if (utimes != null) {
@@ -52861,7 +52860,7 @@ class NodeFS extends BasePortableFakeFS {
   }
   async readdirPromise(p, opts) {
     return await new Promise((resolve, reject) => {
-      if (opts == null ? void 0 : opts.withFileTypes) {
+      if (opts?.withFileTypes) {
         this.realFs.readdir(npath.fromPortablePath(p), { withFileTypes: true }, this.makeCallback(resolve, reject));
       } else {
         this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback((value) => resolve(value), reject));
@@ -52869,7 +52868,7 @@ class NodeFS extends BasePortableFakeFS {
     });
   }
   readdirSync(p, opts) {
-    if (opts == null ? void 0 : opts.withFileTypes) {
+    if (opts?.withFileTypes) {
       return this.realFs.readdirSync(npath.fromPortablePath(p), { withFileTypes: true });
     } else {
       return this.realFs.readdirSync(npath.fromPortablePath(p));
@@ -52959,21 +52958,19 @@ class MountFS extends BasePortableFakeFS {
     return this.baseFs.getRealPath();
   }
   saveAndClose() {
-    var _a;
     unwatchAllFiles(this);
     if (this.mountInstances) {
       for (const [path, { childFs }] of this.mountInstances.entries()) {
-        (_a = childFs.saveAndClose) == null ? void 0 : _a.call(childFs);
+        childFs.saveAndClose?.();
         this.mountInstances.delete(path);
       }
     }
   }
   discardAndClose() {
-    var _a;
     unwatchAllFiles(this);
     if (this.mountInstances) {
       for (const [path, { childFs }] of this.mountInstances.entries()) {
-        (_a = childFs.discardAndClose) == null ? void 0 : _a.call(childFs);
+        childFs.discardAndClose?.();
         this.mountInstances.delete(path);
       }
     }
@@ -53665,17 +53662,16 @@ class MountFS extends BasePortableFakeFS {
     }
   }
   limitOpenFiles(max) {
-    var _a, _b, _c;
     if (this.mountInstances === null)
       return;
     const now = Date.now();
     let nextExpiresAt = now + this.maxAge;
     let closeCount = max === null ? 0 : this.mountInstances.size - max;
     for (const [path, { childFs, expiresAt, refCount }] of this.mountInstances.entries()) {
-      if (refCount !== 0 || ((_a = childFs.hasOpenFileHandles) == null ? void 0 : _a.call(childFs))) {
+      if (refCount !== 0 || childFs.hasOpenFileHandles?.()) {
         continue;
       } else if (now >= expiresAt) {
-        (_b = childFs.saveAndClose) == null ? void 0 : _b.call(childFs);
+        childFs.saveAndClose?.();
         this.mountInstances.delete(path);
         closeCount -= 1;
         continue;
@@ -53683,7 +53679,7 @@ class MountFS extends BasePortableFakeFS {
         nextExpiresAt = expiresAt;
         break;
       }
-      (_c = childFs.saveAndClose) == null ? void 0 : _c.call(childFs);
+      childFs.saveAndClose?.();
       this.mountInstances.delete(path);
       closeCount -= 1;
     }
@@ -53695,7 +53691,6 @@ class MountFS extends BasePortableFakeFS {
     }
   }
   async getMountPromise(p, accept) {
-    var _a;
     if (this.mountInstances) {
       let cachedMountFs = this.mountInstances.get(p);
       if (!cachedMountFs) {
@@ -53724,12 +53719,11 @@ class MountFS extends BasePortableFakeFS {
       try {
         return await accept(mountFs);
       } finally {
-        (_a = mountFs.saveAndClose) == null ? void 0 : _a.call(mountFs);
+        mountFs.saveAndClose?.();
       }
     }
   }
   getMountSync(p, accept) {
-    var _a;
     if (this.mountInstances) {
       let cachedMountFs = this.mountInstances.get(p);
       if (!cachedMountFs) {
@@ -53749,7 +53743,7 @@ class MountFS extends BasePortableFakeFS {
       try {
         return accept(childFs);
       } finally {
-        (_a = childFs.saveAndClose) == null ? void 0 : _a.call(childFs);
+        childFs.saveAndClose?.();
       }
     }
   }
@@ -53858,12 +53852,17 @@ class NodePathFS extends ProxiedFS {
       return url.fileURLToPath(path);
     if (Buffer.isBuffer(path)) {
       const str = path.toString();
-      if (Buffer.byteLength(str) !== path.byteLength)
+      if (!isUtf8(path, str))
         throw new Error(`Non-utf8 buffers are not supported at the moment. Please upvote the following issue if you encounter this error: https://github.com/yarnpkg/berry/issues/4942`);
       return str;
     }
     throw new Error(`Unsupported path type: ${nodeUtils.inspect(path)}`);
   }
+}
+function isUtf8(buf, str) {
+  if (typeof buffer__default.default.isUtf8 !== `undefined`)
+    return buffer__default.default.isUtf8(buf);
+  return Buffer.byteLength(str) === buf.byteLength;
 }
 
 var _a, _b, _c, _d;
@@ -53890,7 +53889,7 @@ class FileHandle {
   async appendFile(data, options) {
     try {
       this[kRef](this.appendFile);
-      const encoding = (typeof options === `string` ? options : options == null ? void 0 : options.encoding) ?? void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? { encoding } : void 0);
     } finally {
       this[kUnref]();
@@ -53929,7 +53928,7 @@ class FileHandle {
       this[kRef](this.read);
       let buffer;
       if (!Buffer.isBuffer(bufferOrOptions)) {
-        bufferOrOptions ?? (bufferOrOptions = {});
+        bufferOrOptions ??= {};
         buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
         offset = bufferOrOptions.offset || 0;
         length = bufferOrOptions.length ?? buffer.byteLength;
@@ -53937,8 +53936,8 @@ class FileHandle {
       } else {
         buffer = bufferOrOptions;
       }
-      offset ?? (offset = 0);
-      length ?? (length = 0);
+      offset ??= 0;
+      length ??= 0;
       if (length === 0) {
         return {
           bytesRead: length,
@@ -53957,7 +53956,7 @@ class FileHandle {
   async readFile(options) {
     try {
       this[kRef](this.readFile);
-      const encoding = (typeof options === `string` ? options : options == null ? void 0 : options.encoding) ?? void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       return await this[kBaseFs].readFilePromise(this.fd, encoding);
     } finally {
       this[kUnref]();
@@ -53991,7 +53990,7 @@ class FileHandle {
   async writeFile(data, options) {
     try {
       this[kRef](this.writeFile);
-      const encoding = (typeof options === `string` ? options : options == null ? void 0 : options.encoding) ?? void 0;
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
       await this[kBaseFs].writeFilePromise(this.fd, data, encoding);
     } finally {
       this[kUnref]();
@@ -54157,7 +54156,7 @@ function patchFs(patchedFs, fakeFs) {
   const setupFn = (target, name, replacement) => {
     const orig = target[name];
     target[name] = replacement;
-    if (typeof (orig == null ? void 0 : orig[nodeUtils.promisify.custom]) !== `undefined`) {
+    if (typeof orig?.[nodeUtils.promisify.custom] !== `undefined`) {
       replacement[nodeUtils.promisify.custom] = orig[nodeUtils.promisify.custom];
     }
   };
@@ -55305,7 +55304,7 @@ class ZipFS extends BasePortableFakeFS {
     this.readOnly = false;
     const pathOptions = opts;
     this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
-    source ?? (source = makeEmptyArchive());
+    source ??= makeEmptyArchive();
     if (typeof source === `string`) {
       const { baseFs = new NodeFS() } = pathOptions;
       this.baseFs = baseFs;
@@ -55771,7 +55770,7 @@ class ZipFS extends BasePortableFakeFS {
   unregisterListing(p) {
     this.listings.delete(p);
     const parentListing = this.listings.get(ppath.dirname(p));
-    parentListing == null ? void 0 : parentListing.delete(ppath.basename(p));
+    parentListing?.delete(ppath.basename(p));
   }
   unregisterEntry(p) {
     this.unregisterListing(p);
@@ -56048,8 +56047,7 @@ class ZipFS extends BasePortableFakeFS {
     return this.writeFileSync(p, content, opts);
   }
   fdToPath(fd, reason) {
-    var _a;
-    const path = (_a = this.fds.get(fd)) == null ? void 0 : _a.p;
+    const path = this.fds.get(fd)?.p;
     if (typeof path === `undefined`)
       throw EBADF(reason);
     return path;
@@ -56256,7 +56254,7 @@ class ZipFS extends BasePortableFakeFS {
     if (!directoryListing)
       throw ENOTDIR(`scandir '${p}'`);
     const entries = [...directoryListing];
-    if (!(opts == null ? void 0 : opts.withFileTypes))
+    if (!opts?.withFileTypes)
       return entries;
     return entries.map((name) => {
       return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
@@ -56375,7 +56373,7 @@ const MODULE_NOT_FOUND_ERRORS = /* @__PURE__ */ new Set([
   "UNDECLARED_DEPENDENCY" /* UNDECLARED_DEPENDENCY */
 ]);
 function makeError(pnpCode, message, data = {}, code) {
-  code ?? (code = MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode);
+  code ??= MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
   const propertySpec = {
     configurable: true,
     writable: true,
@@ -56546,7 +56544,7 @@ function applyPatch(pnpapi, opts) {
     }
     const issuerSpecs = options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = (parent == null ? void 0 : parent.filename) != null ? npath.dirname(parent.filename) : null;
+      const parentDirectory = parent?.filename != null ? npath.dirname(parent.filename) : null;
       const absoluteRequest = npath.isAbsolute(request) ? request : parentDirectory !== null ? npath.resolve(parentDirectory, request) : null;
       if (absoluteRequest !== null) {
         const apiPath = parent && parentDirectory === npath.dirname(absoluteRequest) ? opts.manager.getApiPathFromParent(parent) : opts.manager.findApiPathFor(absoluteRequest);
@@ -56627,11 +56625,10 @@ Require stack:
   };
   const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
   require$$0.Module._extensions[`.js`] = function(module, filename) {
-    var _a, _b;
     if (filename.endsWith(`.js`)) {
       const pkg = readPackageScope(filename);
-      if (pkg && ((_a = pkg.data) == null ? void 0 : _a.type) === `module`) {
-        const err = ERR_REQUIRE_ESM(filename, (_b = module.parent) == null ? void 0 : _b.filename);
+      if (pkg && pkg.data?.type === `module`) {
+        const err = ERR_REQUIRE_ESM(filename, module.parent?.filename);
         Error.captureStackTrace(err);
         throw err;
       }
@@ -57603,12 +57600,11 @@ function makeApi(runtimeState, opts) {
     };
   }
   function trace(entry) {
-    var _a, _b, _c, _d;
-    const colors = ((_b = (_a = process.stderr) == null ? void 0 : _a.hasColors) == null ? void 0 : _b.call(_a)) ?? process.stdout.isTTY;
+    const colors = process.stderr?.hasColors?.() ?? process.stdout.isTTY;
     const c = (n, str) => `\x1B[${n}m${str}\x1B[0m`;
     const error = entry.error;
     if (error)
-      console.error(c(`31;1`, `\u2716 ${(_c = entry.error) == null ? void 0 : _c.message.replace(/\n.*/s, ``)}`));
+      console.error(c(`31;1`, `\u2716 ${entry.error?.message.replace(/\n.*/s, ``)}`));
     else
       console.error(c(`33;1`, `\u203C Resolution`));
     if (entry.args.length > 0)
@@ -57619,7 +57615,7 @@ function makeApi(runtimeState, opts) {
       console.error();
       console.error(`  ${c(`37;1`, `Out \u2192`)} ${nodeUtils.inspect(entry.result, { colors, compact: true })}`);
     }
-    const stack = ((_d = new Error().stack.match(/(?<=^ +)at.*/gm)) == null ? void 0 : _d.slice(2)) ?? [];
+    const stack = new Error().stack.match(/(?<=^ +)at.*/gm)?.slice(2) ?? [];
     if (stack.length > 0) {
       console.error();
       for (const line of stack) {
@@ -58126,10 +58122,10 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
         try {
           opts.fakeFs.accessSync(packageLocation);
         } catch (err) {
-          if ((err == null ? void 0 : err.code) === `ENOENT`) {
+          if (err?.code === `ENOENT`) {
             exists = false;
           } else {
-            const readableError = ((err == null ? void 0 : err.message) ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
+            const readableError = (err?.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0) => $0.toLowerCase());
             throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).
 
 Missing package: ${containingPackage.name}@${containingPackage.reference}
