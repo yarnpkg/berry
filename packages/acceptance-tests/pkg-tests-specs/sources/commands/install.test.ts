@@ -736,16 +736,10 @@ describe(`Commands`, () => {
         await xfs.removePromise(ppath.join(path, `.yarn/cache`));
         await xfs.mkdirPromise(ppath.join(path, `.yarn/cache`), {recursive: true});
 
-        await xfs.removePromise(ppath.join(path, `.yarn/global/metadata`));
-
         await expect(tests.startRegistryRecording(async () => {
           await run(`install`, `--mode=update-lockfile`);
         })).resolves.toEqual([{
           type: `packageInfo`,
-          scope: undefined,
-          localName: `no-deps`,
-        }, {
-          type: `packageTarball`,
           scope: undefined,
           localName: `no-deps`,
           version: `2.0.0`,
