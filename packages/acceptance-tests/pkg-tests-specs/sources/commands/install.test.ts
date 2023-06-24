@@ -739,7 +739,7 @@ describe(`Commands`, () => {
         await expect(tests.startRegistryRecording(async () => {
           await run(`install`, `--mode=update-lockfile`);
         })).resolves.toEqual([{
-          type: `packageInfo`,
+          type: `packageTarball`,
           scope: undefined,
           localName: `no-deps`,
           version: `2.0.0`,
