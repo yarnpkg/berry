@@ -729,10 +729,12 @@ export class Project {
     // Reverts the changes that have been applied to the tree because of any previous virtual resolution pass
     this.forgetVirtualResolutions();
 
-    // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
+    // Keep a copy of the original packages so that we can figure out what was added / removed later
     const initialPackages = new Map(this.originalPackages);
 
-    // Keep a copy of the original packages so that we can figure out what was added / removed later
+    const addedPackages: Array<Locator> = [];
+
+    // Ensures that we notice it when dependencies are added / removed from all sources coming from the filesystem
     if (!opts.lockfileOnly)
       this.forgetTransientResolutions();
 
@@ -804,6 +806,12 @@ export class Project {
           throw new Error(`Assertion failed: The locator cannot be changed by the resolver (went from ${structUtils.prettyLocator(this.configuration, locator)} to ${structUtils.prettyLocator(this.configuration, originalPkg)})`);
 
         originalPackages.set(originalPkg.locatorHash, originalPkg);
+
+        // What didn't exist before is an added package
+        const existedBefore = initialPackages.delete(originalPkg.locatorHash);
+        if (!existedBefore && !this.tryWorkspaceByLocator(originalPkg))
+          addedPackages.push(originalPkg);
+
         const pkg = await this.preparePackage(originalPkg, {resolver, resolveOptions});
 
         const dependencyResolutions = miscUtils.allSettledSafe([...pkg.dependencies.values()].map(descriptor => {
@@ -913,16 +921,13 @@ export class Project {
       }
     });
 
-    const addedPackages: Array<Locator> = [];
-    const removedPackages: Array<Locator> = [];
+    // What remains is a removed package
+    const removedPackages: Array<Locator> = miscUtils.mapAndFilter(initialPackages.values(), pkg => {
+      if (this.tryWorkspaceByLocator(pkg))
+        return miscUtils.mapAndFilter.skip;
 
-    for (const [locatorHash, pkg] of originalPackages)
-      if (!initialPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
-        addedPackages.push(pkg);
-
-    for (const [locatorHash, pkg] of initialPackages)
-      if (!originalPackages.has(locatorHash) && !this.tryWorkspaceByLocator(pkg))
-        removedPackages.push(pkg);
+      return pkg;
+    });
 
     if (addedPackages.length > 0 || removedPackages.length > 0) {
       const topLevelResolutions = new Set(this.workspaces.flatMap(workspace => {
