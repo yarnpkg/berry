@@ -44,6 +44,8 @@ export abstract class Report {
   cacheHits = new Set<LocatorHash>();
   cacheMisses = new Set<LocatorHash>();
 
+  protected buffered: Array<() => void> = [];
+
   private reportedInfos: Set<any> = new Set();
   private reportedWarnings: Set<any> = new Set();
   private reportedErrors: Set<any> = new Set();
@@ -68,6 +70,10 @@ export abstract class Report {
 
   abstract startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
+
+  pauseReporting(timeout: number, fn: (report: Report) => Promise<void>) {
+
+  }
 
   abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName | null, text: string): void;

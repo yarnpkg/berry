@@ -279,6 +279,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  enableMotd: {
+    description: `If true, installs will print an helpful message every day of the week`,
+    type: SettingsType.BOOLEAN,
+    default: !isCI,
+    defaultText: `<dynamic>`,
+  },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
@@ -595,6 +601,8 @@ export interface ConfigurationValueMap {
   enableColors: boolean;
   enableHyperlinks: boolean;
   enableInlineBuilds: boolean;
+  enableMessageNames: boolean;
+  enableMotd: boolean;
   enableProgressBars: boolean;
   enableTimers: boolean;
   preferInteractive: boolean;

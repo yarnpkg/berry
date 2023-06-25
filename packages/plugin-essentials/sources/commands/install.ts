@@ -4,6 +4,7 @@ import {xfs, ppath, Filename, PortablePath}                                     
 import {parseSyml, stringifySyml}                                                                                                                from '@yarnpkg/parsers';
 import CI                                                                                                                                        from 'ci-info';
 import {Command, Option, Usage, UsageError}                                                                                                      from 'clipanion';
+import semver                                                                                                                                    from 'semver';
 import * as t                                                                                                                                    from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -305,9 +306,49 @@ export default class YarnCommand extends BaseCommand {
         includeFooter: false,
       }, async report => {
         if (Configuration.telemetry?.isNew) {
+          Configuration.telemetry.commitMotd();
+
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
+        } else if (Configuration.telemetry?.isMotd && configuration.get(`enableMotd`)) {
+          const data = await fetch(`https://repo.yarnpkg.com/tags`).then(res => res.json()).catch(() => null) as {
+            latest: {stable: string, canary: string};
+            motd: Array<{message: string, url?: string}>;
+          } | null;
+
+          if (data !== null) {
+            let newVersion: [string, string] | null = null;
+            const YarnVersion = `3.0.0`;
+            if (YarnVersion !== null) {
+              const isRcBinary = semver.prerelease(YarnVersion);
+              const releaseType = isRcBinary ? `canary` : `stable`;
+              const candidate = data.latest[releaseType];
+
+              if (semver.gt(candidate, YarnVersion)) {
+                newVersion = [releaseType, candidate];
+              }
+            }
+
+            if (newVersion) {
+              Configuration.telemetry.commitMotd();
+
+              report.reportInfo(MessageName.VERSION_NOTICE, `${formatUtils.applyStyle(configuration, `A new ${newVersion[0]} version of Yarn is available:`, formatUtils.Style.BOLD)} ${structUtils.prettyReference(configuration, newVersion[1])}!`);
+              report.reportInfo(MessageName.VERSION_NOTICE, `Upgrade now by running ${formatUtils.pretty(configuration, `yarn set version ${newVersion[1]}`, formatUtils.Type.CODE)}`);
+              report.reportSeparator();
+            } else {
+              const motd = Configuration.telemetry.selectMotd(data.motd);
+
+              if (motd) {
+                report.reportInfo(MessageName.MOTD_NOTICE, formatUtils.pretty(configuration, motd.message, formatUtils.Type.MARKDOWN_INLINE));
+
+                if (motd.url)
+                  report.reportInfo(MessageName.MOTD_NOTICE, `Learn more at ${motd.url}`);
+
+                report.reportSeparator();
+              }
+            }
+          }
         }
       });
 
