@@ -32,6 +32,7 @@ export const Filename = {
   pnpData: `.pnp.data.json` as Filename,
   pnpEsmLoader: `.pnp.loader.mjs` as Filename,
   rc: `.yarnrc.yml` as Filename,
+  env: `.env` as Filename,
 };
 
 export type TolerateLiterals<T> = {
