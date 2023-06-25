@@ -71,10 +71,6 @@ export abstract class Report {
   abstract startTimerSync<T>(what: string, opts: TimerOptions, cb: () => T): T;
   abstract startTimerSync<T>(what: string, cb: () => T): T;
 
-  pauseReporting(timeout: number, fn: (report: Report) => Promise<void>) {
-
-  }
-
   abstract reportSeparator(): void;
   abstract reportInfo(name: MessageName | null, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
