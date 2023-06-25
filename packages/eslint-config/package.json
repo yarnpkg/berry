@@ -29,6 +29,6 @@
     "directory": "packages/eslint-config"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   }
 }

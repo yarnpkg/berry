@@ -46,6 +46,6 @@
     "directory": "packages/yarnpkg-builder"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   }
 }

@@ -10,6 +10,7 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### **Major Changes**
 
+- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
 - Some important defaults have changed:
   - `yarn set version` will now skip generating the `yarnPath` configuration on new projects if it detects you're using [Corepack](https://nodejs.org/api/corepack.html).
   - `yarn init` will no longer use zero-install by default.
@@ -83,6 +84,7 @@ The following changes only affect people writing Yarn plugins:
 
 ### Installs
 
+- Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
 
