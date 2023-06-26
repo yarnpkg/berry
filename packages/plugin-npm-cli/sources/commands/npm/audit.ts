@@ -1,5 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
 import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport, semverUtils, LocatorHash, Locator, miscUtils} from '@yarnpkg/core';
+import {structUtils}                                                                                                             from '@yarnpkg/core';
 import {npmConfigUtils, npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage}                                                                                                  from 'clipanion';
 import micromatch                                                                                                                from 'micromatch';
@@ -131,17 +132,9 @@ export default class NpmAuditCommand extends BaseCommand {
       }) as unknown as Promise<npmAuditTypes.AuditResponse>;
 
       const deprecations = await Promise.all(this.noDeprecations ? [] : Array.from(packages, async ([packageName, versions]) => {
-        const registryData = await npmHttpUtils.get(`/${packageName}`, {
-          configuration,
-          jsonResponse: true,
-          registry,
-          headers: {
-            [`Accept`]: `application/vnd.npm.install-v1+json`,
-          },
-        }) as any;
-
-        if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
-          return [];
+        const registryData = await npmHttpUtils.getPackageMetadata(structUtils.parseIdent(packageName), {
+          project,
+        });
 
         return miscUtils.mapAndFilter(versions.keys(), version => {
           const {deprecated} = registryData.versions[version];
