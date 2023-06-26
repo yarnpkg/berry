@@ -68,7 +68,7 @@ export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owne
       }}
     />
     <WarnBox href={`https://github.com/npm/feedback/discussions/937`} target={`_blank`}>
-      New packages and version may not be shown in this interface due to an <span style={{color: `#26799f`, textDecoration: `underline`}}>npm incident</span>. Only search is affected, installs work as usual.
+      New packages and versions may not show up in this interface due to an <span style={{color: `#26799f`, textDecoration: `underline`}}>ongoing npm incident</span>. Only search is affected, installs work as usual.
     </WarnBox>
     <VirtualRefinementList
       attribute={`keywords`}
