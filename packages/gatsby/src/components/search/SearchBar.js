@@ -15,6 +15,14 @@ const SearchContainer = styled.div`
   position: relative;
 `;
 
+const WarnBox = styled.div`
+  background: white;
+  padding: 0.4em;
+  font-size: .8em;
+  border-radius: 0.2em;
+  margin-top: 1.4em;
+`;
+
 // home page (/:lang/)
 const shouldFocus = path =>
   path.endsWith(`/`) ||
@@ -54,6 +62,9 @@ export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owne
         placeholder: `Search packages (i.e. babel, webpack, react…)`,
       }}
     />
+    <WarnBox>
+      New packages and version may not show up due to an npm incident. Only search is affected, installs work as usual.
+    </WarnBox>
     <VirtualRefinementList
       attribute={`keywords`}
       defaultRefinement={tags}
