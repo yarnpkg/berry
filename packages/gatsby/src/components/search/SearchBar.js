@@ -15,7 +15,10 @@ const SearchContainer = styled.div`
   position: relative;
 `;
 
-const WarnBox = styled.div`
+const WarnBox = styled.a`
+  display: block;
+  text-decoration: none;
+  color: black;
   background: white;
   padding: 0.4em;
   font-size: .8em;
@@ -62,7 +65,7 @@ export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owne
         placeholder: `Search packages (i.e. babel, webpack, react…)`,
       }}
     />
-    <WarnBox>
+    <WarnBox href={`https://github.com/npm/feedback/discussions/937`} target={`_blank`}>
       New packages and version may not show up due to an npm incident. Only search is affected, installs work as usual.
     </WarnBox>
     <VirtualRefinementList
