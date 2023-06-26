@@ -90,6 +90,8 @@ The following changes only affect people writing Yarn plugins:
 
 ### Features
 
+- Yarn now supports `.env` files out of the box. This can be controlled via the `injectEnvironmentFiles` setting.
+- `yarn install` will display a new tip the first time it runs each day.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 
 ### Bugfixes
@@ -99,7 +101,7 @@ The following changes only affect people writing Yarn plugins:
 
 ### Shell
 
-- The builtin shell now supports whitespace-only commands.
+- The builtin shell now supports commands composed exclusively of whitespaces.
 
 ### Compatibility
 
