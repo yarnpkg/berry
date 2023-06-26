@@ -61,6 +61,7 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
+    /*
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -75,6 +76,7 @@ module.exports = {
         icon: `src/images/yarn-kitten.svg`,
       },
     },
+    */
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
