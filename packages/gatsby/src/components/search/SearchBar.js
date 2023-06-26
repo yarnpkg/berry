@@ -19,7 +19,7 @@ const WarnBox = styled.a`
   display: block;
   text-decoration: none;
   color: black;
-  background: ##ffefd1;
+  background: #ffefd1;
   padding: 0.4em 0.8em;
   font-size: .8em;
   border-radius: 0.2em;
