@@ -13063,6 +13063,7 @@ const RAW_RUNTIME_STATE =
           ["comment-json", "npm:2.2.0"],\
           ["cross-spawn", "npm:7.0.3"],\
           ["diff", "npm:5.1.0"],\
+          ["dotenv", "npm:16.3.1"],\
           ["esbuild", [\
             "esbuild-wasm",\
             "npm:0.15.15"\
@@ -28431,6 +28432,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["dotenv", [\
+      ["npm:16.3.1", {\
+        "packageLocation": "./.yarn/cache/dotenv-npm-16.3.1-e6d380a398-dbb778237e.zip/node_modules/dotenv/",\
+        "packageDependencies": [\
+          ["dotenv", "npm:16.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:8.2.0", {\
         "packageLocation": "./.yarn/cache/dotenv-npm-8.2.0-6b21df4d37-994ca227e1.zip/node_modules/dotenv/",\
         "packageDependencies": [\

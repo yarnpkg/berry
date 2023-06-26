@@ -3,6 +3,7 @@ import {parseSyml, stringifySyml}                                               
 import camelcase                                                                                                 from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
 import {UsageError}                                                                                              from 'clipanion';
+import {parse as parseDotEnv}                                                                                    from 'dotenv';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
 
@@ -529,6 +530,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `throw`,
   },
 
+  // Miscellaneous settings
+  injectEnvironmentFiles: {
+    description: `List of all the environment files that Yarn should inject inside the process when it starts`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: [`.env?`],
+    isArray: true,
+  },
+
   // Package patching - to fix incorrect definitions
   packageExtensions: {
     description: `Map of package corrections to apply on the dependency tree`,
@@ -639,6 +648,9 @@ export interface ConfigurationValueMap {
   enableStrictSettings: boolean;
   enableImmutableCache: boolean;
   checksumBehavior: string;
+
+  // Miscellaneous settings
+  injectEnvironmentFiles: Array<PortablePath>;
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
@@ -841,7 +853,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return null;
 
       if (configuration.projectCwd === null) {
-        if (ppath.isAbsolute(definition.default)) {
+        if (Array.isArray(definition.default)) {
+          return definition.default.map((entry: string) => ppath.normalize(entry as PortablePath));
+        } else if (ppath.isAbsolute(definition.default)) {
           return ppath.normalize(definition.default);
         } else if (definition.isNullable) {
           return null;
@@ -966,6 +980,7 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
+  public env: Record<string, string | undefined> = {};
   public packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> = new Map();
 
   public limits: Map<string, Limit> = new Map();
@@ -1052,8 +1067,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
@@ -1119,6 +1134,22 @@ export class Configuration {
 
     configuration.startingCwd = startingCwd;
     configuration.projectCwd = projectCwd;
+
+    const env = Object.assign(Object.create(null), process.env);
+    configuration.env = env;
+
+    // load the environment files
+    const environmentFiles = await Promise.all(configuration.get(`injectEnvironmentFiles`).map(async p => {
+      const content = p.endsWith(`?`)
+        ? await xfs.readFilePromise(p.slice(0, -1) as PortablePath, `utf8`).catch(() => ``)
+        : await xfs.readFilePromise(p as PortablePath, `utf8`);
+
+      return parseDotEnv(content);
+    }));
+
+    for (const environmentEntries of environmentFiles)
+      for (const [key, value] of Object.entries(environmentEntries))
+        configuration.env[key] = miscUtils.replaceEnvVariables(value, {env});
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));

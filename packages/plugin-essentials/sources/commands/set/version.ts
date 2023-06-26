@@ -192,7 +192,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
         cwd: tmpDir,
-        env: {...process.env, YARN_IGNORE_PATH: `1`},
+        env: {...configuration.env, YARN_IGNORE_PATH: `1`},
       });
 
       bundleVersion = stdout.trim();
