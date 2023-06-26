@@ -9,8 +9,7 @@ import * as t                                                                   
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
-  name: keyof 
-  ;
+  name: keyof ConfigurationValueMap;
   value: any;
 }> = [{
   selector: v => v === -1,
