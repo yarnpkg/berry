@@ -44,7 +44,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 7;
+const LOCKFILE_VERSION = 8;
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -232,6 +232,7 @@ export class Project {
    * If true, the data contained within `originalPackages` are from a different
    * lockfile version and need to be refreshed.
    */
+  public lockfileLastVersion: number | null = null;
   public lockfileNeedsRefresh: boolean = false;
 
   /**
@@ -340,6 +341,7 @@ export class Project {
         const lockfileVersion = parsed.__metadata.version;
         const cacheKey = parsed.__metadata.cacheKey;
 
+        this.lockfileLastVersion = lockfileVersion;
         this.lockfileNeedsRefresh = lockfileVersion < LOCKFILE_VERSION;
 
         for (const key of Object.keys(parsed)) {
@@ -395,6 +397,8 @@ export class Project {
             this.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
           }
         }
+      } else if (content.includes(`yarn lockfile v1`)) {
+        this.lockfileLastVersion = -1;
       }
     }
   }
