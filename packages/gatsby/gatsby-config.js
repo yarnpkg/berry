@@ -61,22 +61,20 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
+    /*
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Yarn`,
-        /* eslint-disable @typescript-eslint/naming-convention */
         short_name: `yarn`,
         start_url: `/`,
         background_color: `#2188b6`,
         theme_color: `#2188b6`,
-        /* eslint-enable @typescript-eslint/naming-convention */
         display: `minimal-ui`,
         icon: `src/images/yarn-kitten.svg`,
       },
     },
+    */
     {
       resolve: `gatsby-plugin-mdx`,
       options: {

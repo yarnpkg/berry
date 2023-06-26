@@ -15,6 +15,19 @@ const SearchContainer = styled.div`
   position: relative;
 `;
 
+const WarnBox = styled.a`
+  display: block;
+  text-decoration: none;
+  color: black;
+  background: #ffefd1;
+  padding: 0.4em 0.8em;
+  font-size: .8em;
+  border-radius: 0.2em;
+  max-width: 1140px;
+  margin: auto;
+  margin-top: 1.4em;
+`;
+
 // home page (/:lang/)
 const shouldFocus = path =>
   path.endsWith(`/`) ||
@@ -54,6 +67,9 @@ export const SearchBar = ({searchState, onSearchStateChange, tags, setTags, owne
         placeholder: `Search packages (i.e. babel, webpack, react…)`,
       }}
     />
+    <WarnBox href={`https://github.com/npm/feedback/discussions/937`} target={`_blank`}>
+      New packages and versions may not show up in this interface due to an <span style={{color: `#26799f`, textDecoration: `underline`}}>ongoing npm incident</span>. Only search is affected, installs work as usual.
+    </WarnBox>
     <VirtualRefinementList
       attribute={`keywords`}
       defaultRefinement={tags}
