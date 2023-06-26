@@ -1,11 +1,30 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                     from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                      from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                from '@yarnpkg/parsers';
-import CI                                                                                                                                        from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                      from 'clipanion';
-import semver                                                                                                                                    from 'semver';
-import * as t                                                                                                                                    from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                            from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                             from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                       from '@yarnpkg/parsers';
+import CI                                                                                                                                                               from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                             from 'clipanion';
+import semver                                                                                                                                                           from 'semver';
+import * as t                                                                                                                                                           from 'typanion';
+
+const LOCKFILE_MIGRATION_RULES: Array<{
+  selector: (version: number) => boolean;
+  name: keyof 
+  ;
+  value: any;
+}> = [{
+  selector: v => v === -1,
+  name: `nodeLinker`,
+  value: `node-modules`,
+}, {
+  selector: v => v !== -1 && v < 8,
+  name: `enableGlobalCache`,
+  value: false,
+}, {
+  selector: v => v !== -1 && v < 8,
+  name: `compressionLevel`,
+  value: `mixed`,
+}];
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -265,39 +284,6 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    if (configuration.projectCwd !== null && typeof configuration.sources.get(`nodeLinker`) === `undefined`) {
-      const projectCwd = configuration.projectCwd;
-
-      let content;
-      try {
-        content = await xfs.readFilePromise(ppath.join(projectCwd, Filename.lockfile), `utf8`);
-      } catch {}
-
-      // If migrating from a v1 install, we automatically enable the node-modules linker,
-      // since that's likely what the author intended to do.
-      if (content?.includes(`yarn lockfile v1`)) {
-        const nmReport = await StreamReport.start({
-          configuration,
-          json: this.json,
-          stdout: this.context.stdout,
-          includeFooter: false,
-        }, async report => {
-          report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
-          report.reportSeparator();
-
-          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
-
-          await Configuration.updateConfiguration(projectCwd, {
-            nodeLinker: `node-modules`,
-          });
-        });
-
-        if (nmReport.hasErrors()) {
-          return nmReport.exitCode();
-        }
-      }
-    }
-
     if (configuration.projectCwd !== null) {
       const telemetryReport = await StreamReport.start({
         configuration,
@@ -358,6 +344,37 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
+
+    const lockfileLastVersion = project.lockfileLastVersion;
+    if (lockfileLastVersion !== null) {
+      const compatReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        const newSettings: Record<string, any> = {};
+
+        for (const rule of LOCKFILE_MIGRATION_RULES) {
+          if (rule.selector(lockfileLastVersion) && typeof configuration.sources.get(rule.name) === `undefined`) {
+            configuration.use(`<compat>`, {[rule.name]: rule.value}, project.cwd, {overwrite: true});
+            newSettings[rule.name] = rule.value;
+          }
+        }
+
+        if (Object.keys(newSettings).length > 0) {
+          await Configuration.updateConfiguration(project.cwd, newSettings);
+
+          report.reportInfo(MessageName.MIGRATION_SUCCESS, `Migrated your project to the latest Yarn version 🚀`);
+          report.reportSeparator();
+        }
+      });
+
+      if (compatReport.hasErrors()) {
+        return compatReport.exitCode();
+      }
+    }
+
     const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 
     if (!workspace)
