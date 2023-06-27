@@ -198,7 +198,7 @@ describe(`Commands`, () => {
           await expect(run(`npm`, `audit`)).rejects.toThrow(/no-deps-deprecated \(deprecation\)/);
         });
 
-        expect(requests.toSorted()).toEqual([{
+        expect(tests.sortJson(requests)).toEqual([{
           registry: `audit`,
           type: `bulkAdvisories`,
         }, {

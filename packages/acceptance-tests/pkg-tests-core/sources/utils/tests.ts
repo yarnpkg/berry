@@ -166,6 +166,12 @@ export const validLogins = {
 let whitelist = new Map();
 let recording: Array<Request> | null = null;
 
+export function sortJson<T>(data: Iterable<T>): Array<T> {
+  return miscUtils.sortMap(data, request => {
+    return JSON.stringify(request);
+  });
+}
+
 export const startRegistryRecording = async (
   fn: () => Promise<void>,
 ) => {
@@ -174,11 +180,7 @@ export const startRegistryRecording = async (
 
   try {
     await fn();
-    return Object.assign(currentRecording, {
-      toSorted: () => miscUtils.sortMap(currentRecording, request => {
-        return JSON.stringify(request);
-      }),
-    });
+    return currentRecording;
   } finally {
     recording = null;
   }
