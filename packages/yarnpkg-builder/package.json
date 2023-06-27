@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/monorepo": "workspace:^",
-    "typescript": "5.1.1-rc"
+    "typescript": "5.2.0-beta"
   },
   "scripts": {
     "postpack": "rm -rf lib",
