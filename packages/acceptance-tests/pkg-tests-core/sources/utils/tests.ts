@@ -584,37 +584,37 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         type: RequestType.Repository,
       };
     } else {
-      let registry: string | undefined;
+      let registry: {registry: string} | undefined;
       if ((match = url.match(/^\/registry\/([a-z]+)\//))) {
         url = url.slice(match[0].length - 1);
-        registry = match[1];
+        registry = {registry: match[1]};
       }
 
       if ((match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/))) {
         const [, username] = match;
 
         return {
-          registry,
+          ...registry,
           type: RequestType.Login,
           username,
         };
       } else if (url === `/-/whoami`) {
         return {
-          registry,
+          ...registry,
           type: RequestType.Whoami,
           // Set later when login is parsed
           login: null as any,
         };
       } else if (url === `/-/npm/v1/security/advisories/bulk`) {
         return {
-          registry,
+          ...registry,
           type: RequestType.BulkAdvisories,
         };
       } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method == `PUT`) {
         const [, scope, localName] = match;
 
         return {
-          registry,
+          ...registry,
           type: RequestType.Publish,
           scope,
           localName,
@@ -623,7 +623,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         const [, scope, localName] = match;
 
         return {
-          registry,
+          ...registry,
           type: RequestType.PackageInfo,
           scope,
           localName,
@@ -635,7 +635,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           return null;
 
         return {
-          registry,
+          ...registry,
           type: RequestType.PackageTarball,
           scope,
           localName,
