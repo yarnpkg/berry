@@ -66,6 +66,7 @@
     }
   },
   "scripts": {
+    "bench": "yarn node -r ./scripts/setup-ts-execution ./scripts/bench-folder.ts",
     "build:plugin-constraints": "yarn node -r ./scripts/setup-ts-execution ./scripts/create-mock-plugin.ts constraints",
     "build:plugin-exec": "yarn node -r ./scripts/setup-ts-execution ./scripts/create-mock-plugin.ts exec",
     "build:plugin-interactive-tools": "yarn node -r ./scripts/setup-ts-execution ./scripts/create-mock-plugin.ts interactive-tools",
@@ -91,5 +92,8 @@
   },
   "engines": {
     "node": ">=18.12.0"
+  },
+  "dependencies": {
+    "chalk": "^3.0.0"
   }
 }
