@@ -1,4 +1,4 @@
-import {semverUtils}                                           from '@yarnpkg/core';
+import {miscUtils, semverUtils}                                from '@yarnpkg/core';
 import {PortablePath, npath, toFilename, xfs, ppath, Filename} from '@yarnpkg/fslib';
 import {npmAuditTypes}                                         from '@yarnpkg/plugin-npm-cli';
 import assert                                                  from 'assert';
@@ -60,27 +60,33 @@ export enum RequestType {
 }
 
 export type Request = {
+  registry?: string;
   type: RequestType.Login;
   username: string;
 } | {
+  registry?: string;
   type: RequestType.PackageInfo;
   scope?: string;
   localName: string;
 } | {
+  registry?: string;
   type: RequestType.PackageTarball;
   scope?: string;
   localName: string;
   version?: string;
 } | {
+  registry?: string;
   type: RequestType.Whoami;
   login: Login;
 } | {
   type: RequestType.Repository;
 } | {
+  registry?: string;
   type: RequestType.Publish;
   scope?: string;
   localName: string;
 } | {
+  registry?: string;
   type: RequestType.BulkAdvisories;
 };
 
@@ -168,7 +174,11 @@ export const startRegistryRecording = async (
 
   try {
     await fn();
-    return currentRecording;
+    return Object.assign(currentRecording, {
+      toSorted: () => miscUtils.sortMap(currentRecording, request => {
+        return JSON.stringify(request);
+      }),
+    });
   } finally {
     recording = null;
   }
@@ -573,51 +583,65 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       return {
         type: RequestType.Repository,
       };
-    } else if ((match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/))) {
-      const [, username] = match;
+    } else {
+      let registry: string | undefined;
+      if ((match = url.match(/^\/registry\/([a-z]+)\//))) {
+        url = url.slice(match[0].length - 1);
+        registry = match[1];
+      }
 
-      return {
-        type: RequestType.Login,
-        username,
-      };
-    } else if (url === `/-/whoami`) {
-      return {
-        type: RequestType.Whoami,
-        // Set later when login is parsed
-        login: null as any,
-      };
-    } else if (url === `/-/npm/v1/security/advisories/bulk`) {
-      return {
-        type: RequestType.BulkAdvisories,
-      };
-    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method == `PUT`) {
-      const [, scope, localName] = match;
+      if ((match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/))) {
+        const [, username] = match;
 
-      return {
-        type: RequestType.Publish,
-        scope,
-        localName,
-      };
-    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
-      const [, scope, localName] = match;
+        return {
+          registry,
+          type: RequestType.Login,
+          username,
+        };
+      } else if (url === `/-/whoami`) {
+        return {
+          registry,
+          type: RequestType.Whoami,
+          // Set later when login is parsed
+          login: null as any,
+        };
+      } else if (url === `/-/npm/v1/security/advisories/bulk`) {
+        return {
+          registry,
+          type: RequestType.BulkAdvisories,
+        };
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method == `PUT`) {
+        const [, scope, localName] = match;
 
-      return {
-        type: RequestType.PackageInfo,
-        scope,
-        localName,
-      };
-    } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/))) {
-      const [, scope, localName, split, version] = match;
+        return {
+          registry,
+          type: RequestType.Publish,
+          scope,
+          localName,
+        };
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/))) {
+        const [, scope, localName] = match;
 
-      if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)
-        return null;
+        return {
+          registry,
+          type: RequestType.PackageInfo,
+          scope,
+          localName,
+        };
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/))) {
+        const [, scope, localName, split, version] = match;
 
-      return {
-        type: RequestType.PackageTarball,
-        scope,
-        localName,
-        version,
-      };
+        if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)
+          return null;
+
+        return {
+          registry,
+          type: RequestType.PackageTarball,
+          scope,
+          localName,
+          version,
+        };
+      }
     }
 
     return null;
