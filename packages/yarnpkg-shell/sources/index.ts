@@ -179,7 +179,6 @@ const BUILTINS = new Map<string, ShellBuiltin>([
 
     return exitCode;
   }],
-
   [`__ysh_set_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     let stdin = state.stdin;
     let stdout = state.stdout;
@@ -311,6 +310,9 @@ const BUILTINS = new Map<string, ShellBuiltin>([
         pipe.pipe(error);
       }
     }
+    if (args.length <= t + 1)
+      throw new Error(`Unsupported command syntax. No input for redirection`);
+
 
     const exitCode = await start(makeCommandAction(args.slice(t + 1), opts, state), {
       stdin: new ProtectedStream<Readable>(stdin),
