@@ -3,11 +3,12 @@ import {xfs, PortablePath, ppath} from '../sources';
 
 const nodeFs = new NodeFS();
 
+const ifAtLeastNode20It = !process.version.match(/^v1[89]\./) ? it : it.skip;
 const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
 describe(`NodeFS`, () => {
   describe(`readdir`, () => {
-    it(`should support recursive directory listing`, async () => {
+    ifAtLeastNode20It(`should support recursive directory listing`, async () => {
       const tmpdir = await xfs.mktempPromise();
 
       await xfs.mkdirPromise(ppath.join(tmpdir, `foo`));
