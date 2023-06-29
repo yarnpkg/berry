@@ -170,11 +170,6 @@ type CachedMetadata = {
   lastModified?: string;
 };
 
-export type PackageMetadata = {
-  'dist-tags': Record<string, string>;
-  versions: Record<string, any>;
-};
-
 const CACHED_FIELDS = [
   `name`,
 
@@ -193,14 +188,27 @@ const CACHED_FIELDS = [
 
   `peerDependencies`,
   `peerDependenciesMeta`,
-];
+
+  `deprecated`,
+] as const;
+
+export type PackageMetadata = {
+  'dist-tags': Record<string, string>;
+  versions: Record<string, {
+    [key in typeof CACHED_FIELDS[number]]: any;
+  } & {
+    dist: {
+      tarball: string;
+    };
+  }>;
+};
 
 function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
   return {
     'dist-tags': metadata[`dist-tags`],
     versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
       key,
-      pick(value, CACHED_FIELDS),
+      pick(value, CACHED_FIELDS) as any,
     ])),
   };
 }

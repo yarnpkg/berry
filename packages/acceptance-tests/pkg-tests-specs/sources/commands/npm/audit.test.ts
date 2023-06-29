@@ -1,4 +1,5 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {tests}                from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`npm audit`, () => {
@@ -181,15 +182,31 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should report deprecations as audit issues`,
+      `it should perform the deprecation checks against the package registry, not the audit registry`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps-deprecated`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          npmAuditRegistry: `${await tests.startPackageServer()}/registry/audit`,
+        });
+
         await run(`install`);
 
-        await expect(run(`npm`, `audit`)).rejects.toThrow(/no-deps-deprecated \(deprecation\)/);
+        const requests = await tests.startRegistryRecording(async () => {
+          await expect(run(`npm`, `audit`)).rejects.toThrow(/no-deps-deprecated \(deprecation\)/);
+        });
+
+        expect(tests.sortJson(requests)).toEqual([{
+          registry: `audit`,
+          type: `bulkAdvisories`,
+        }, {
+          registry: undefined,
+          scope: undefined,
+          localName: `no-deps-deprecated`,
+          type: `packageInfo`,
+        }]);
       }),
     );
 
