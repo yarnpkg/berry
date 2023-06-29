@@ -611,12 +611,14 @@ class FakeFS {
       throw error;
     }
   }
-  async writeJsonPromise(p, data) {
-    return await this.writeFilePromise(p, `${JSON.stringify(data, null, 2)}
+  async writeJsonPromise(p, data, { compact = false } = {}) {
+    const space = compact ? 0 : 2;
+    return await this.writeFilePromise(p, `${JSON.stringify(data, null, space)}
 `);
   }
-  writeJsonSync(p, data) {
-    return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}
+  writeJsonSync(p, data, { compact = false } = {}) {
+    const space = compact ? 0 : 2;
+    return this.writeFileSync(p, `${JSON.stringify(data, null, space)}
 `);
   }
   async preserveTimePromise(p, cb) {
@@ -850,7 +852,7 @@ class ProxiedFS extends FakeFS {
   readFileSync(p, encoding) {
     return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
-  async readdirPromise(p, opts) {
+  readdirPromise(p, opts) {
     return this.baseFs.readdirPromise(this.mapToBase(p), opts);
   }
   readdirSync(p, opts) {

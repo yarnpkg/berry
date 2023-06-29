@@ -51458,7 +51458,8 @@ const Filename = {
   pnpCjs: `.pnp.cjs`,
   pnpData: `.pnp.data.json`,
   pnpEsmLoader: `.pnp.loader.mjs`,
-  rc: `.yarnrc.yml`
+  rc: `.yarnrc.yml`,
+  env: `.env`
 };
 const npath = Object.create(path__default.default);
 const ppath = Object.create(path__default.default.posix);
@@ -51773,7 +51774,8 @@ function opendir(fakeFs, path, entries, opts) {
     if (typeof filename === `undefined`)
       return null;
     return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
-      name: filename
+      name: filename,
+      path: void 0
     });
   };
   return new CustomDir(path, nextDirent, opts);
@@ -52266,12 +52268,14 @@ class FakeFS {
       throw error;
     }
   }
-  async writeJsonPromise(p, data) {
-    return await this.writeFilePromise(p, `${JSON.stringify(data, null, 2)}
+  async writeJsonPromise(p, data, { compact = false } = {}) {
+    const space = compact ? 0 : 2;
+    return await this.writeFilePromise(p, `${JSON.stringify(data, null, space)}
 `);
   }
-  writeJsonSync(p, data) {
-    return this.writeFileSync(p, `${JSON.stringify(data, null, 2)}
+  writeJsonSync(p, data, { compact = false } = {}) {
+    const space = compact ? 0 : 2;
+    return this.writeFileSync(p, `${JSON.stringify(data, null, space)}
 `);
   }
   async preserveTimePromise(p, cb) {
@@ -52505,7 +52509,7 @@ class ProxiedFS extends FakeFS {
   readFileSync(p, encoding) {
     return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
-  async readdirPromise(p, opts) {
+  readdirPromise(p, opts) {
     return this.baseFs.readdirPromise(this.mapToBase(p), opts);
   }
   readdirSync(p, opts) {
@@ -56261,14 +56265,49 @@ class ZipFS extends BasePortableFakeFS {
     const directoryListing = this.listings.get(resolvedP);
     if (!directoryListing)
       throw ENOTDIR(`scandir '${p}'`);
-    const entries = [...directoryListing];
-    if (!opts?.withFileTypes)
-      return entries;
-    return entries.map((name) => {
-      return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
-        name
+    if (opts?.recursive) {
+      if (opts?.withFileTypes) {
+        const entries = Array.from(directoryListing, (name) => {
+          return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+            name,
+            path: PortablePath.dot
+          });
+        });
+        for (const entry of entries) {
+          if (!entry.isDirectory())
+            continue;
+          const subPath = ppath.join(entry.path, entry.name);
+          const subListing = this.listings.get(ppath.join(resolvedP, subPath));
+          for (const child of subListing) {
+            entries.push(Object.assign(this.statImpl(`lstat`, ppath.join(p, subPath, child)), {
+              name: child,
+              path: subPath
+            }));
+          }
+        }
+        return entries;
+      } else {
+        const entries = [...directoryListing];
+        for (const subPath of entries) {
+          const subListing = this.listings.get(ppath.join(resolvedP, subPath));
+          if (typeof subListing === `undefined`)
+            continue;
+          for (const child of subListing) {
+            entries.push(ppath.join(subPath, child));
+          }
+        }
+        return entries;
+      }
+    } else if (opts?.withFileTypes) {
+      return Array.from(directoryListing, (name) => {
+        return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
+          name,
+          path: void 0
+        });
       });
-    });
+    } else {
+      return [...directoryListing];
+    }
   }
   async readlinkPromise(p) {
     const entry = this.prepareReadlink(p);
