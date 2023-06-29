@@ -33,10 +33,18 @@ xfs.mktempSync(temp => {
   xfs.symlinkSync(ppath.join(binaryDir, `yarn-after`), ppath.join(binaryDir, `after`, `yarn`));
 
   // We create a few helper scripts to make the benchmarking easier
+  xfs.writeFileSync(ppath.join(binaryDir, `yarn-repo`), [
+    `#!/bin/bash\n`,
+    `cd ${npath.fromPortablePath(repoDir)}\n`,
+    `unset YARN_IGNORE_PATH\n`,
+    `export PATH="${process.env.PATH}"\n`,
+    `exec yarn $@\n`,
+  ].join(``));
+
   xfs.writeFileSync(ppath.join(binaryDir, `bench-commit`), [
     `#!/bin/bash\n`,
     `cd ${npath.fromPortablePath(temp)}\n`,
-    `git add . && (git diff-index --quiet HEAD || git commit -m "Commit")\n`,
+    `git add . && (git diff-index --quiet HEAD || git commit -m Commit > /dev/null)\n`,
   ].join(``));
 
   xfs.writeFileSync(ppath.join(binaryDir, `bench-reset`), [
@@ -48,10 +56,16 @@ xfs.mktempSync(temp => {
   xfs.writeFileSync(ppath.join(binaryDir, `bench-run`), [
     `#!/bin/bash\n`,
     `cd ${npath.fromPortablePath(temp)}\n`,
-    `hyperfine --warmup 1 \\\n`,
-    `  --prepare 'bench-reset && bash "${npath.fromPortablePath(temp)}"/bench-prepare.sh'\\\n`,
-    `  'PATH="${npath.fromPortablePath(binaryDir)}/before:$PATH" bash "${npath.fromPortablePath(temp)}"/bench-script.sh'\\\n`,
-    `  'PATH="${npath.fromPortablePath(binaryDir)}/after:$PATH" bash "${npath.fromPortablePath(temp)}"/bench-script.sh'\\\n`,
+    `\n`,
+    `PATH="$(pwd)/bin/hyperfine:$PATH" hyperfine --warmup 1 \\\n`,
+    `  --export-markdown=.git/yarn-bench \\\n`,
+    `  --prepare 'bench-reset && bash "${npath.fromPortablePath(temp)}"/bench-prepare.sh' \\\n`,
+    `  'before' \\\n`,
+    `  'after'\n`,
+    `\n`,
+    `if which pbcopy >/dev/null 2>&1; then\n`,
+    `  pbcopy < .git/yarn-bench\n`,
+    `fi\n`,
   ].join(``));
 
   // We don't want Yarn to be called directly, since it'd be a global copy we don't control
@@ -62,6 +76,21 @@ xfs.mktempSync(temp => {
     `echo "  - if the output is the same between both versions, use yarn-before or yarn-after instead"\n`,
     `echo "  - otherwise, add the call to the bench-prepare.sh script"\n`,
     `exit 1\n`,
+  ].join(``));
+
+  // We also create another binary dir, just to clean up the command line we show in Hyperfine
+  xfs.mkdirSync(ppath.join(binaryDir, `hyperfine`));
+
+  xfs.writeFileSync(ppath.join(binaryDir, `hyperfine/before`), [
+    `#!/bin/bash\n`,
+    `cd ${npath.fromPortablePath(temp)}\n`,
+    `PATH="$(pwd)/bin/before:$PATH" bash bench-script.sh\n`,
+  ].join(``));
+
+  xfs.writeFileSync(ppath.join(binaryDir, `hyperfine/after`), [
+    `#!/bin/bash\n`,
+    `cd ${npath.fromPortablePath(temp)}\n`,
+    `PATH="$(pwd)/bin/after:$PATH" bash bench-script.sh\n`,
   ].join(``));
 
   // Those two scripts are meant to be written by the user (but not run directly, so not executable and no shebang)
@@ -82,13 +111,16 @@ xfs.mktempSync(temp => {
   exec(`yarn-after`, [`set`, `version`, `from`, `sources`], {stdio: `inherit`});
 
   const releaseFolder = ppath.join(temp, `.yarn/releases`);
-  xfs.symlinkSync(ppath.join(releaseFolder, xfs.readdirSync(releaseFolder)[0]), ppath.join(binaryDir, `yarn-before`));
+  xfs.moveSync(ppath.join(releaseFolder, xfs.readdirSync(releaseFolder)[0]), ppath.join(binaryDir, `yarn-before`));
 
   // All binaries should be executable
-  for (const name of xfs.readdirSync(binaryDir))
+  for (const name of xfs.readdirSync(binaryDir, {recursive: true}))
     xfs.chmodSync(ppath.join(binaryDir, name), 0o755);
 
   exec(`git`, [`init`], {stdio: `ignore`});
+  exec(`git`, [`config`, `core.hooksPath`, npath.fromPortablePath(temp)], {stdio: `ignore`});
+  exec(`git`, [`add`, `.`], {stdio: `ignore`});
+  exec(`git`, [`commit`, `-m`, `First commit`, `--allow-empty`], {stdio: `ignore`});
   exec(`bench-commit`, [], {stdio: `ignore`});
 
   process.stdout.write(`\x1bc`);
@@ -100,11 +132,12 @@ xfs.mktempSync(temp => {
   console.log(`  - If you want to run some code before the benchmark, add it to the ${chalk.yellow(`bench-prepare.sh`)} script in this folder.`);
   console.log(`  - By default the benchmark will run ${chalk.magenta(`yarn install`)}; you can change that by editing ${chalk.yellow(`bench-script.sh`)}.`);
   console.log(`  - When you want to run the benchmark, run ${chalk.magenta(`bench-run`)}. The repository will be reset between each run.`);
+  console.log(`  - If using OSX, the results will be automatically copied to your clipboard. Otherwise, they'll be available in ${chalk.yellow(`.git/yarn-bench`)}.`);
   console.log();
   console.log(`Once you're done, exit the shell and the temporary environment will be removed.`);
-  console.log();
 
-  nextEnv.PS1 = `(Yarn benchmarking tool) $ `;
+  nextEnv.PS1 = `\\[\x1b[94m\\](Yarn benchmarking tool)\\[\x1b[39m\\] \\[\x1b[1m\\]$\\[\x1b[22m\\] `;
+  nextEnv.PROMPT_COMMAND = `echo; trap 'echo; trap - DEBUG' DEBUG`;
 
   exec(`bash`, [], {stdio: `inherit`});
 });
