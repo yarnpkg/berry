@@ -3,9 +3,24 @@ import {xfs, PortablePath, ppath} from '../sources';
 
 const nodeFs = new NodeFS();
 
+const ifAtLeastNode20It = !process.version.match(/^v1[89]\./) ? it : it.skip;
 const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
 describe(`NodeFS`, () => {
+  describe(`readdir`, () => {
+    ifAtLeastNode20It(`should support recursive directory listing`, async () => {
+      const tmpdir = await xfs.mktempPromise();
+
+      await xfs.mkdirPromise(ppath.join(tmpdir, `foo`));
+
+      await xfs.writeFilePromise(ppath.join(tmpdir, `foo/hello`), ``);
+      await xfs.writeFilePromise(ppath.join(tmpdir, `foo/world`), ``);
+
+      expect((await nodeFs.readdirPromise(tmpdir, {recursive: true})).sort()).toEqual([`foo`, `foo/hello`, `foo/world`]);
+      expect((nodeFs.readdirSync(tmpdir, {recursive: true})).sort()).toEqual([`foo`, `foo/hello`, `foo/world`]);
+    });
+  });
+
   describe(`copyPromise`, () => {
     it(`should support copying files`, async () => {
       const tmpdir = await xfs.mktempPromise();
