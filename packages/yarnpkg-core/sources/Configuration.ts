@@ -749,7 +749,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
       throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
-      env: process.env,
+      env: configuration.env,
     });
 
     switch (definition.type) {

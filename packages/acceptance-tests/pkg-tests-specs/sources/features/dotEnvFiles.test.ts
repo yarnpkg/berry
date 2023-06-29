@@ -110,4 +110,20 @@ describe(`DotEnv files`, () => {
 
     await run(`install`);
   }));
+
+  it(`should allow values from environment files to be reused in other configuration settings`, makeTemporaryEnv({}, async ({path, run, source}) => {
+    await run(`install`);
+
+    await xfs.writeFilePromise(ppath.join(path, `.env`), [
+      `INJECTED_FROM_ENV_FILE=hello\n`,
+    ].join(``));
+
+    await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+      initScope: `\${INJECTED_FROM_ENV_FILE}`,
+    });
+
+    await expect(run(`config`, `get`, `initScope`)).resolves.toMatchObject({
+      stdout: `hello\n`,
+    });
+  }));
 });
