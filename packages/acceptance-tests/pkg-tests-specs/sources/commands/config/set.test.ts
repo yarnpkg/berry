@@ -1,5 +1,5 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
-import { parseSyml } from '@yarnpkg/parsers';
+import {parseSyml}            from '@yarnpkg/parsers';
 import {EOL}                  from 'os';
 
 describe(`Commands`, () => {
