@@ -519,30 +519,32 @@ async function autofixLegacyPlugins(configuration: Configuration, immutable: boo
   const legacyPlugins: Array<PortablePath> = [];
   const yarnPluginDir = ppath.join(configuration.projectCwd, `.yarn/plugins/@yarnpkg`);
 
-  const changed = await Configuration.updateConfiguration(configuration.projectCwd, current => {
-    if (!Array.isArray(current.plugins))
-      return current;
+  const changed = await Configuration.updateConfiguration(configuration.projectCwd, {
+    plugins: plugins => {
+      if (!Array.isArray(plugins))
+        return plugins;
 
-    const plugins = current.plugins.filter((plugin: {spec: string, path: PortablePath}) => {
-      if (!plugin.path)
-        return true;
+      const filteredPlugins = plugins.filter((plugin: {spec: string, path: PortablePath}) => {
+        if (!plugin.path)
+          return true;
 
-      const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
-      const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
+        const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
+        const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
 
-      if (isLegacy)
-        legacyPlugins.push(resolvedPath);
+        if (isLegacy)
+          legacyPlugins.push(resolvedPath);
 
-      return !isLegacy;
-    });
+        return !isLegacy;
+      });
 
-    if (current.plugins.length === plugins.length)
-      return current;
+      if (filteredPlugins.length === 0)
+        return Configuration.deleteProperty;
 
-    return {
-      ...current,
-      plugins,
-    };
+      if (filteredPlugins.length === plugins.length)
+        return plugins;
+
+      return filteredPlugins;
+    },
   }, {
     immutable,
   });
