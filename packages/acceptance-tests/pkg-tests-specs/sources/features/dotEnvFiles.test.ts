@@ -1,10 +1,10 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`DotEnv files`, () => {
-  it(`should automatically inject a .env file in the environment`, makeTemporaryEnv({}, async ({path, run, source}) => {
+  it(`should automatically inject a .env.yarn file in the environment`, makeTemporaryEnv({}, async ({path, run, source}) => {
     await run(`install`);
 
-    await xfs.writeFilePromise(ppath.join(path, `.env`), [
+    await xfs.writeFilePromise(ppath.join(path, `.env.yarn`), [
       `INJECTED_FROM_ENV_FILE=hello\n`,
     ].join(``));
 
@@ -16,7 +16,7 @@ describe(`DotEnv files`, () => {
   it(`should allow .env variables to be interpolated`, makeTemporaryEnv({}, async ({path, run, source}) => {
     await run(`install`);
 
-    await xfs.writeFilePromise(ppath.join(path, `.env`), [
+    await xfs.writeFilePromise(ppath.join(path, `.env.yarn`), [
       `INJECTED_FROM_ENV_FILE=\${FOO}\n`,
     ].join(``));
 
@@ -28,7 +28,7 @@ describe(`DotEnv files`, () => {
   it(`should allow .env variables to be used in the next ones`, makeTemporaryEnv({}, async ({path, run, source}) => {
     await run(`install`);
 
-    await xfs.writeFilePromise(ppath.join(path, `.env`), [
+    await xfs.writeFilePromise(ppath.join(path, `.env.yarn`), [
       `INJECTED_FROM_ENV_FILE_1=hello\n`,
       `INJECTED_FROM_ENV_FILE_2=\${INJECTED_FROM_ENV_FILE_1} world\n`,
     ].join(``));
@@ -38,7 +38,7 @@ describe(`DotEnv files`, () => {
     });
   }));
 
-  it(`shouldn't read the .env if the injectEnvironmentFiles setting is defined`, makeTemporaryEnv({}, async ({path, run, source}) => {
+  it(`shouldn't read the .env.yarn file if the injectEnvironmentFiles setting is defined`, makeTemporaryEnv({}, async ({path, run, source}) => {
     await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
       injectEnvironmentFiles: [],
     });
@@ -114,7 +114,7 @@ describe(`DotEnv files`, () => {
   it(`should allow values from environment files to be reused in other configuration settings`, makeTemporaryEnv({}, async ({path, run, source}) => {
     await run(`install`);
 
-    await xfs.writeFilePromise(ppath.join(path, `.env`), [
+    await xfs.writeFilePromise(ppath.join(path, `.env.yarn`), [
       `INJECTED_FROM_ENV_FILE=hello\n`,
     ].join(``));
 
