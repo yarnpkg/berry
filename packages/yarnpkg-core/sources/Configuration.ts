@@ -540,7 +540,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   injectEnvironmentFiles: {
     description: `List of all the environment files that Yarn should inject inside the process when it starts`,
     type: SettingsType.ABSOLUTE_PATH,
-    default: [`.env?`],
+    default: [`.env.yarn?`],
     isArray: true,
   },
 
