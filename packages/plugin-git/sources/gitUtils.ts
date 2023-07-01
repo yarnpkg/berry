@@ -266,7 +266,7 @@ export async function resolveUrl(url: string, configuration: Configuration) {
     }
   };
 
-  return `${repo}#${resolve(protocol, request)}`;
+  return normalizeRepoUrl(`${repo}#${resolve(protocol, request)}`);
 }
 
 export async function clone(url: string, configuration: Configuration) {

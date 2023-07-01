@@ -13,6 +13,8 @@ import * as miscUtils                                                       from
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
 
+export {stripAnsi};
+
 // We have to workaround a TS bug:
 // https://github.com/microsoft/TypeScript/issues/35329
 //
