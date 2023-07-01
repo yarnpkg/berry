@@ -5,7 +5,10 @@ import path                 from 'path';
 import esbuild              from 'rollup-plugin-esbuild';
 import {terser}             from 'rollup-plugin-terser';
 import {defineConfig}       from 'rollup';
+import semver               from 'semver';
 import {brotliCompressSync} from 'zlib';
+
+import pkg                  from './package.json';
 
 function wrapOutput() {
   return {
@@ -43,7 +46,7 @@ export default defineConfig({
     }),
     esbuild({
       tsconfig: false,
-      target: `node18`,
+      target: `node${semver.minVersion(pkg.engines.node).version}`,
       define: {
         document: `undefined`,
         XMLHttpRequest: `undefined`,

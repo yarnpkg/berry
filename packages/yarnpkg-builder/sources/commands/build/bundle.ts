@@ -11,6 +11,7 @@ import path                                                                 from
 import semver                                                               from 'semver';
 import {promisify}                                                          from 'util';
 
+import pkg                                                                  from '../../../package.json';
 import {findPlugins}                                                        from '../../tools/findPlugins';
 
 const execFile = promisify(cp.execFile);
@@ -140,7 +141,7 @@ export default class BuildBundleCommand extends Command {
           plugins: [valLoader],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node18`,
+          target: `node${semver.minVersion(pkg.engines.node)!.version}`,
         });
 
         for (const warning of res.warnings) {
