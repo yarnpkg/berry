@@ -210,6 +210,11 @@ module.exports = defineConfig({
     enforcePeerDependencyPresence(ctx);
     enforceFieldsOnAllWorkspaces(ctx, {
       license: `BSD-2-Clause`,
+      // When changing the engines.node value check https://node.green/ for
+      // which ECMAScript version is fully supported and update the following files as needed:
+      // - tsconfig.json
+      // - packages/eslint-config/index.js
+      // - packages/yarnpkg-builder/sources/commands/new/plugin.ts
       [`engines.node`]: `>=18.12.0`,
       [`repository.type`]: `git`,
       [`repository.url`]: `ssh://git@github.com/yarnpkg/berry.git`,
