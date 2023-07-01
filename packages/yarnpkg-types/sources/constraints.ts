@@ -67,7 +67,7 @@ export type Workspace = {
   /**
    * Raw manifest object for the workspace.
    */
-  manifest: PartialObject;
+  manifest: any;
 
   /**
    * Report an error unless the workspace lists the specified property
@@ -114,6 +114,11 @@ export type WorkspaceFilter = {
 
 export type DependencyFilter = {
   /**
+   * Only return dependencies from the given workspace.
+   */
+  workspace?: Workspace;
+
+  /**
    * Only return dependencies with the given name.
    */
   ident?: string;
@@ -134,6 +139,14 @@ export type Yarn = {
    * @param filter
    */
   workspaces(filter?: WorkspaceFilter): Array<Workspace>;
+
+  /**
+   * Select a unique workspace according to the provided filter.
+   *
+   * @param filter
+   */
+  dependency(): Dependency;
+  dependency(filter?: DependencyFilter): Dependency | null;
 
   /**
    * Select all dependencies according to the provided filter.

@@ -7351,6 +7351,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
+    "@yarnpkg/types": "workspace:^"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^3.2.1"
     esbuild-wasm: "npm:0.17.5"
