@@ -1,6 +1,4 @@
-import semver         from 'semver';
-
-import * as miscUtils from './miscUtils';
+import semver from 'semver';
 
 export {SemVer} from 'semver';
 

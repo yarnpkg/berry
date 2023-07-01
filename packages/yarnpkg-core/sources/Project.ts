@@ -196,6 +196,7 @@ export type PeerWarning = {
   requested: Ident;
   dependents: Map<LocatorHash, Locator>;
   requesters: Map<LocatorHash, Locator>;
+  links: Map<LocatorHash, Locator>;
   version: string;
   hash: string;
 };
@@ -2569,6 +2570,7 @@ function applyVirtualResolutionMutations({
           const peerVersion = peerResolution.version ?? `0.0.0`;
 
           const ranges = new Set<string>();
+
           for (const linkHash of linkHashes) {
             const link = allPackages.get(linkHash);
             if (typeof link === `undefined`)
@@ -2602,12 +2604,16 @@ function applyVirtualResolutionMutations({
               subject: peerResolution,
               dependents: new Map(),
               requesters: new Map(),
+              links: new Map(),
               version: peerVersion,
               hash: `p${hashUtils.makeHash(identStr).slice(0, 5)}`,
             }));
 
             aggregatedWarning.dependents.set(dependent.locatorHash, dependent);
             aggregatedWarning.requesters.set(root.locatorHash, root);
+
+            for (const linkHash of linkHashes)
+              aggregatedWarning.links.set(linkHash, allPackages.get(linkHash)!);
 
             peerWarnings.push({
               type: PeerWarningType.NotCompatible,
@@ -2643,7 +2649,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
   const warningsByType = miscUtils.groupBy(project.peerWarnings, `type`);
 
   const notCompatibleAggregateWarnings = warningsByType[PeerWarningType.NotCompatibleAggregate]?.map(warning => {
-    const allRanges = Array.from(warning.requesters.values(), locator => {
+    const allRanges = Array.from(warning.links.values(), locator => {
       const pkg = project.storedPackages.get(locator.locatorHash);
       if (typeof pkg === `undefined`)
         throw new Error(`Assertion failed: Expected the package to be registered`);
