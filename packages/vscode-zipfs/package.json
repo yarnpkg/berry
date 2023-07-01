@@ -91,6 +91,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^11.0.1",
+    "@types/semver": "^7.1.0",
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
@@ -98,6 +99,7 @@
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2",
+    "semver": "^7.1.2",
     "vsce": "^2.9.2"
   },
   "scripts": {
