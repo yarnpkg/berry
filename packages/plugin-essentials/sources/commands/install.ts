@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                            from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                             from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                       from '@yarnpkg/parsers';
-import CI                                                                                                                                                               from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                             from 'clipanion';
-import semver                                                                                                                                                           from 'semver';
-import * as t                                                                                                                                                           from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                         from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                          from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                    from '@yarnpkg/parsers';
+import CI                                                                                                                                                                            from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                          from 'clipanion';
+import semver                                                                                                                                                                        from 'semver';
+import * as t                                                                                                                                                                        from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
@@ -304,7 +304,6 @@ export default class YarnCommand extends BaseCommand {
 
           if (data !== null) {
             let newVersion: [string, string] | null = null;
-            const YarnVersion = `3.0.0`;
             if (YarnVersion !== null) {
               const isRcBinary = semver.prerelease(YarnVersion);
               const releaseType = isRcBinary ? `canary` : `stable`;
