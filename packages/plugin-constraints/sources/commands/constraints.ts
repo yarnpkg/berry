@@ -43,6 +43,8 @@ export default class ConstraintsCheckCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
 
+    await project.restoreInstallState();
+
     const userConfig = await project.loadUserConfig();
 
     let engine: constraintUtils.Engine;
