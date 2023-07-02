@@ -44,8 +44,6 @@ export abstract class Report {
   cacheHits = new Set<LocatorHash>();
   cacheMisses = new Set<LocatorHash>();
 
-  protected buffered: Array<() => void> = [];
-
   private reportedInfos: Set<any> = new Set();
   private reportedWarnings: Set<any> = new Set();
   private reportedErrors: Set<any> = new Set();
