@@ -9,7 +9,7 @@ export class ModernEngine implements constraintUtils.Engine {
 
   private createEnvironment() {
     const workspaces = new constraintUtils.Index<Yarn.Constraints.Workspace>([`cwd`, `ident`]);
-    const dependencies = new constraintUtils.Index<Yarn.Constraints.Dependency>([`type`, `ident`]);
+    const dependencies = new constraintUtils.Index<Yarn.Constraints.Dependency>([`workspace`, `type`, `ident`]);
 
     const result: constraintUtils.ProcessResult = {
       manifestUpdates: new Map(),
@@ -42,7 +42,7 @@ export class ModernEngine implements constraintUtils.Engine {
       };
 
       const workspaceItem = workspaces.insert({
-        cwd: workspace.cwd,
+        cwd: workspace.relativeCwd,
         ident,
         manifest,
         set: setFn,
@@ -93,6 +93,9 @@ export class ModernEngine implements constraintUtils.Engine {
         workspaces: filter => {
           return env.workspaces.find(filter);
         },
+        dependency: ((filter?: Yarn.Constraints.DependencyFilter) => {
+          return env.dependencies.find(filter)[0] ?? null;
+        }) as any,
         dependencies: filter => {
           return env.dependencies.find(filter);
         },
