@@ -95,25 +95,25 @@ exports[`Commands constraints query test (multiple workspaces / combined predica
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = dependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = dependencies
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = dependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: Done
 ",
@@ -300,7 +300,7 @@ exports[`Commands constraints query test (two development dependencies / combine
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: Done
 ",
@@ -393,7 +393,7 @@ exports[`Commands constraints query test (two regular dependencies / combined pr
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = dependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: Done
 ",
@@ -486,13 +486,13 @@ exports[`Commands constraints query test (two regular dependencies, two developm
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = dependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
 ➤ YN0000: │ DependencIdent  = 'no-deps'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: ┌ DependencyType  = devDependencies
-➤ YN0000: │ DependencIdent  = 'no-deps-bin'
+➤ YN0000: │ DependencIdent  = 'no-deps-bins'
 ➤ YN0000: └ DependencyRange = '1.0.0'
 ➤ YN0000: Done
 ",
