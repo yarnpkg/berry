@@ -7848,12 +7848,14 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
     "@types/node": "npm:^18.15.11"
+    "@types/semver": "npm:^7.1.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     arg: "npm:^5.0.2"
     esbuild: "npm:esbuild-wasm@^0.15.15"
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
+    semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
   languageName: unknown
   linkType: soft
@@ -30250,6 +30252,7 @@ pem@dexus/pem:
   dependencies:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
+    "@types/semver": "npm:^7.1.0"
     "@types/vscode": "npm:^1.54.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
@@ -30257,6 +30260,7 @@ pem@dexus/pem:
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
+    semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
     vsce: "npm:^2.9.2"
   languageName: unknown

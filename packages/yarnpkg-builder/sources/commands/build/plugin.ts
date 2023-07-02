@@ -4,7 +4,9 @@ import {Command, Option, Usage, UsageError}                                 from
 import {build, Plugin}                                                      from 'esbuild';
 import fs                                                                   from 'fs';
 import path                                                                 from 'path';
+import semver                                                               from 'semver';
 
+import pkg                                                                  from '../../../package.json';
 import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
 
 const matchAll = /()/;
@@ -120,7 +122,7 @@ export default class BuildPluginCommand extends Command {
           plugins: [dynamicLibResolver],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node18`,
+          target: `node${semver.minVersion(pkg.engines.node)!.version}`,
         });
 
         for (const warning of res.warnings) {
