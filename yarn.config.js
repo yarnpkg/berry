@@ -149,6 +149,56 @@ function enforceDependencyRelationship({Yarn}, ident, otherIdent, mustExist) {
   }
 }
 
+/**
+ * Validate that all peer dependencies are provided. If one isn't, the
+ * constraint will try to fix it by looking at what's used in the other
+ * workspaces of the project. If it doesn't find any way to satisfy the
+ * dependency, it will generate an error.
+ *
+ * @param {Context} context
+ */
+function enforcePeerDependencyPresence({Yarn}) {
+  for (const workspace of Yarn.workspaces()) {
+    // The Gatsby website is pretty much deprecated anyway
+    if (workspace.cwd === `packages/gatsby`)
+      continue;
+
+    for (const dependency of Yarn.dependencies({workspace})) {
+      if (dependency.type === `peerDependencies`)
+        continue;
+
+      if (!dependency.resolution)
+        continue;
+
+      for (const peerName of dependency.resolution.peerDependencies.keys()) {
+        // Webpack plugins have peer dependencies but don't often need it; weird
+        if (peerName === `webpack`)
+          continue;
+
+        if (dependency.resolution.dependencies.has(peerName))
+          continue;
+
+        const otherDeps = Yarn.dependencies({ident: peerName})
+          .filter(otherDep => otherDep.type !== `peerDependencies`);
+
+        if (otherDeps.length === 0)
+          workspace.error(`Missing dependency on ${peerName} (required by ${dependency.ident})`);
+
+        // If the workspace has itself a peer dependency of the same name, then
+        // we assume that it'll be fulfilled by its ancestors in the dependency
+        // tree, so we only need to add the dependency to devDependencies.
+        const autofixTarget = Yarn.dependency({workspace, ident: peerName, type: `peerDependencies`})
+          ? `devDependencies`
+          : `dependencies`;
+
+        for (const otherDep of otherDeps) {
+          workspace.set([autofixTarget, peerName], otherDep.range);
+        }
+      }
+    }
+  }
+}
+
 module.exports = defineConfig({
   constraints: async ctx => {
     enforceConsistentDependenciesAcrossTheProject(ctx);
@@ -157,6 +207,7 @@ module.exports = defineConfig({
     enforceDependencyRelationship(ctx, `typescript`, `tslib`, true);
     enforceUpdateLocalScripts(ctx);
     enforcePrepackScripts(ctx);
+    enforcePeerDependencyPresence(ctx);
     enforceFieldsOnAllWorkspaces(ctx, {
       license: `BSD-2-Clause`,
       [`engines.node`]: `>=18.12.0`,

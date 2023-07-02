@@ -20,9 +20,10 @@ describe(`Commands`, () => {
   describe(`constraints --fix`, () => {
     test(`test apply fix to dependencies`, makeTemporaryEnv(manifest, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
+        gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -33,9 +34,10 @@ describe(`Commands`, () => {
 
     test(`test apply fix to fields`, makeTemporaryEnv(manifest, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_field('.', 'license', 'BSD-2-Clause').
+        gen_enforced_field('.', 'license', 'BSD-2-Clause').
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -46,10 +48,11 @@ describe(`Commands`, () => {
 
     test(`test apply fix to fields and manifests`, makeTemporaryEnv(manifest, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
-      gen_enforced_field('.', 'license', 'BSD-2-Clause').
+        gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
+        gen_enforced_field('.', 'license', 'BSD-2-Clause').
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -60,10 +63,11 @@ describe(`Commands`, () => {
 
     test(`test applying fix shouldn't duplicate workspaces`, makeTemporaryEnv(manifest, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
-      gen_enforced_field('.', 'license', 'BSD-2-Clause').
+        gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).
+        gen_enforced_field('.', 'license', 'BSD-2-Clause').
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -73,9 +77,10 @@ describe(`Commands`, () => {
 
     it(`should preserve the raw manifest data when applying a fix`, makeTemporaryEnv(manifest, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_dependency('.', 'is-number', null, dependencies).
+        gen_enforced_dependency('.', 'is-number', null, dependencies).
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -88,9 +93,10 @@ describe(`Commands`, () => {
       await environments[`various field types`](path);
 
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_field(WorkspaceCwd, '_name', FieldValue) :- workspace_field(WorkspaceCwd, 'name', FieldValue).
+        gen_enforced_field(WorkspaceCwd, '_name', FieldValue) :- workspace_field(WorkspaceCwd, 'name', FieldValue).
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -102,9 +108,10 @@ describe(`Commands`, () => {
       await environments[`various field types`](path);
 
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_field(WorkspaceCwd, '_repository', FieldValue) :- workspace_field(WorkspaceCwd, 'repository', FieldValue).
+        gen_enforced_field(WorkspaceCwd, '_repository', FieldValue) :- workspace_field(WorkspaceCwd, 'repository', FieldValue).
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
@@ -120,9 +127,10 @@ describe(`Commands`, () => {
       await environments[`various field types`](path);
 
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
-      gen_enforced_field(WorkspaceCwd, '_files', FieldValue) :- workspace_field(WorkspaceCwd, 'files', FieldValue).
+        gen_enforced_field(WorkspaceCwd, '_files', FieldValue) :- workspace_field(WorkspaceCwd, 'files', FieldValue).
       `);
 
+      await run(`install`);
       await run(`constraints`, `--fix`);
 
       const fixedManifest = await xfs.readJsonPromise(`${path}/package.json`);
