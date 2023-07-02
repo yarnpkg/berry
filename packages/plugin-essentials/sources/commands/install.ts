@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                         from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                                          from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                                    from '@yarnpkg/parsers';
-import CI                                                                                                                                                                            from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                                          from 'clipanion';
-import semver                                                                                                                                                                        from 'semver';
-import * as t                                                                                                                                                                        from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                    from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                                     from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                               from '@yarnpkg/parsers';
+import CI                                                                                                                                                                                       from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                                     from 'clipanion';
+import semver                                                                                                                                                                                   from 'semver';
+import * as t                                                                                                                                                                                   from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
@@ -297,7 +297,7 @@ export default class YarnCommand extends BaseCommand {
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
         } else if (Configuration.telemetry?.isMotd) {
-          const data = await fetch(`https://repo.yarnpkg.com/tags`).then(res => res.json()).catch(() => null) as {
+          const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
             latest: {stable: string, canary: string};
             motd: Array<{message: string, url?: string}>;
           } | null;
