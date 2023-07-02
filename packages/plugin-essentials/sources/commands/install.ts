@@ -296,7 +296,7 @@ export default class YarnCommand extends BaseCommand {
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
-        } else if (Configuration.telemetry?.isMotd && configuration.get(`enableMotd`)) {
+        } else if (Configuration.telemetry?.isMotd) {
           const data = await fetch(`https://repo.yarnpkg.com/tags`).then(res => res.json()).catch(() => null) as {
             latest: {stable: string, canary: string};
             motd: Array<{message: string, url?: string}>;
