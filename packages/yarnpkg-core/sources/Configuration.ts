@@ -6,6 +6,7 @@ import {UsageError}                                                             
 import {parse as parseDotEnv}                                                                                    from 'dotenv';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
+import {WriteStream}                                                                                             from 'tty';
 
 import {CorePlugin}                                                                                              from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
@@ -299,7 +300,8 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,
-    default: false,
+    default: !isCI,
+    defaultText: `<dynamic>`,
   },
   preferTruncatedLines: {
     description: `If true, the CLI will truncate lines that would go beyond the size of the terminal`,
@@ -613,6 +615,9 @@ export interface ConfigurationValueMap {
   enableMotd: boolean;
   enableProgressBars: boolean;
   enableTimers: boolean;
+  /**
+   * @internal Prefer using `Configuration#isInteractive`.
+   */
   preferInteractive: boolean;
   preferTruncatedLines: boolean;
   progressBarStyle: string | undefined;
@@ -1717,6 +1722,13 @@ export class Configuration {
       libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
 
     return {os, cpu, libc};
+  }
+
+  isInteractive({interactive, stdout}: {interactive?: boolean, stdout: Writable}): boolean {
+    if (!(stdout as WriteStream).isTTY)
+      return false;
+
+    return interactive ?? this.get(`preferInteractive`);
   }
 
   async refreshPackageExtensions() {
