@@ -1,3 +1,5 @@
+#![feature(lint_reasons)]
+
 mod combinators;
 mod parser;
 mod utils;

@@ -76,6 +76,7 @@ where
     let mut index = 0;
     let mut res = Cow::default();
 
+    #[allow(clippy::redundant_clone, reason = "False positive")]
     let i = input.clone();
 
     while index < i.input_len() {
