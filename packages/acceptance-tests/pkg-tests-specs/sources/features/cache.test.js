@@ -95,7 +95,7 @@ describe(`Cache`, () => {
       },
     }, async ({path, run, source}) => {
       await run(`install`, {
-        cacheKeyOverride: `1`,
+        cacheVersionOverride: `1`,
       });
 
       const cacheFiles = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
@@ -104,7 +104,7 @@ describe(`Cache`, () => {
       await xfs.writeFilePromise(cacheFile, `corrupted archive`);
 
       await run(`install`, {
-        cacheKeyOverride: `2`,
+        cacheVersionOverride: `2`,
       });
     }),
   );

@@ -49,6 +49,8 @@ const IGNORED_ENV_VARIABLES = new Set([
   `injectNpmUser`,
   `injectNpmPassword`,
   `injectNpm2FaToken`,
+  `cacheCheckpointOverride`,
+  `cacheVersionOverride`,
 
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
@@ -202,11 +204,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to the package manager internal names
-  cacheKeyOverride: {
-    description: `A global cache key override; used only for test purposes`,
-    type: SettingsType.STRING,
-    default: null,
-  },
   globalFolder: {
     description: `Folder where all system-global files are stored`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -595,7 +592,6 @@ export interface ConfigurationValueMap {
   ignorePath: boolean;
   ignoreCwd: boolean;
 
-  cacheKeyOverride: string | null;
   globalFolder: PortablePath;
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;

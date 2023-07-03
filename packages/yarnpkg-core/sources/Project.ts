@@ -1910,6 +1910,8 @@ export class Project {
       cacheKey: CACHE_VERSION,
     };
 
+    const cacheVersionStr = `${CACHE_VERSION}`;
+
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
       const pkg = this.originalPackages.get(locatorHash);
 
@@ -1959,10 +1961,7 @@ export class Project {
         const cacheKey = checksum.slice(0, cacheKeyIndex);
         const hash = checksum.slice(cacheKeyIndex + 1);
 
-        if (typeof optimizedLockfile.__metadata.cacheKey === `undefined`)
-          optimizedLockfile.__metadata.cacheKey = cacheKey;
-
-        if (cacheKey === optimizedLockfile.__metadata.cacheKey) {
+        if (cacheKey === cacheVersionStr) {
           entryChecksum = hash;
         } else {
           entryChecksum = checksum;

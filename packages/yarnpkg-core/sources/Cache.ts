@@ -17,7 +17,11 @@ import {LocatorHash, Locator}                                    from './types';
  * to bump this value every time we fix a bug in the cache implementation that
  * causes the archived content to change.
  */
-const CACHE_CHECKPOINT = 9;
+export const CACHE_CHECKPOINT = miscUtils.parseInt(
+  process.env.YARN_CACHE_CHECKPOINT_OVERRIDE ??
+  process.env.YARN_CACHE_VERSION_OVERRIDE ??
+  9,
+);
 
 /**
  * The cache version, on the other hand, is meant to be bumped every time we
@@ -26,7 +30,10 @@ const CACHE_CHECKPOINT = 9;
  * avoid refetching the archives when their content hasn't actually changed in
  * a significant way.
  */
-export const CACHE_VERSION = 10;
+export const CACHE_VERSION = miscUtils.parseInt(
+  process.env.YARN_CACHE_VERSION_OVERRIDE ??
+  10,
+);
 
 export type CacheOptions = {
   mockedPackages?: Set<LocatorHash>;
@@ -83,19 +90,14 @@ export class Cache {
     this.immutable = immutable;
     this.check = check;
 
-    const cacheKeyOverride = configuration.get(`cacheKeyOverride`);
-    if (cacheKeyOverride !== null) {
-      this.cacheKey = `${cacheKeyOverride}`;
-    } else {
-      const compressionLevel = configuration.get(`compressionLevel`);
-      const compressionKey = compressionLevel !== `mixed`
-        ? `c${compressionLevel}` : ``;
+    const compressionLevel = configuration.get(`compressionLevel`);
+    const compressionKey = compressionLevel !== `mixed`
+      ? `c${compressionLevel}` : ``;
 
-      this.cacheKey = [
-        CACHE_VERSION,
-        compressionKey,
-      ].join(``);
-    }
+    this.cacheKey = [
+      CACHE_VERSION,
+      compressionKey,
+    ].join(``);
   }
 
   get mirrorCwd() {
@@ -140,8 +142,10 @@ export class Cache {
     if (!cacheKey)
       return null;
 
-    // The cache entries must always be at least as old as the last checkpoint
-    if (cacheKey !== this.cacheKey && getCacheKeyVersion(cacheKey) < CACHE_CHECKPOINT)
+    // The cache keys must always be at least as old as the last checkpoint. If
+    // they're up-to-date but the key is different, it means that the configuration
+    // changed and the cache archive must be refreshed.
+    if (cacheKey !== this.cacheKey && getCacheKeyVersion(cacheKey) <= CACHE_CHECKPOINT)
       return null;
 
     // If the global cache is used, then the lockfile must always be up-to-date,
