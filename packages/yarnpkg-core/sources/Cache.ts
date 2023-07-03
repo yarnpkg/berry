@@ -12,7 +12,21 @@ import * as miscUtils                                            from './miscUti
 import * as structUtils                                          from './structUtils';
 import {LocatorHash, Locator}                                    from './types';
 
-const CACHE_VERSION = 10;
+/**
+ * If value defines the minimal cache version we can read files from. We need
+ * to bump this value every time we fix a bug in the cache implementation that
+ * causes the archived content to change.
+ */
+const CACHE_CHECKPOINT = 9;
+
+/**
+ * The cache version, on the other hand, is meant to be bumped every time we
+ * change the archives in any way (for example when upgrading the libzip or zlib
+ * implementations in ways that would change the exact bytes). This way we can
+ * avoid refetching the archives when their content hasn't actually changed in
+ * a significant way.
+ */
+export const CACHE_VERSION = 10;
 
 export type CacheOptions = {
   mockedPackages?: Set<LocatorHash>;
@@ -122,10 +136,17 @@ export class Cache {
     if (expectedChecksum === null)
       return null;
 
-    // If the cache key changed then we assume that the content probably got
-    // altered as well and thus the existing path won't be good enough anymore.
     const cacheKey = getCacheKeyComponent(expectedChecksum);
-    if (cacheKey !== this.cacheKey)
+    if (!cacheKey)
+      return null;
+
+    // The cache entries must always be at least as old as the last checkpoint
+    if (cacheKey !== this.cacheKey && getCacheKeyVersion(cacheKey) < CACHE_CHECKPOINT)
+      return null;
+
+    // If the global cache is used, then the lockfile must always be up-to-date,
+    // so the archives must be regenerated each time the version changes.
+    if (cacheKey !== this.cacheKey && this.configuration.get(`enableGlobalCache`))
       return null;
 
     return ppath.resolve(this.cwd, this.getChecksumFilename(locator, expectedChecksum));
@@ -184,19 +205,39 @@ export class Cache {
       return zipFs;
     };
 
-    const validateFile = async (path: PortablePath, refetchPath: PortablePath | null = null): Promise<{isValid: boolean, hash: string | null}> => {
+    type ValidateFileOptions = {
+      /**
+       * True if the file was generated from scratch. Useful to persist
+       * potentially outdated cache key.
+       */
+      isColdHit: boolean;
+
+      /**
+       * Path to a file who will also be checksumed and compared to the
+       * expected checksum. We use this when pulling a value from the remote
+       * registry and comparing that what we have (including the checksum)
+       * matches what we just pulled.
+       */
+      controlPath?: PortablePath | null;
+    };
+
+    const validateFile = async (path: PortablePath, {isColdHit, controlPath = null}: ValidateFileOptions): Promise<{isValid: boolean, hash: string | null}> => {
       // We hide the checksum if the package presence is conditional, because it becomes unreliable
       // so there is no point in computing it unless we're checking the cache
-      if (refetchPath === null && opts.unstablePackages?.has(locator.locatorHash))
+      if (controlPath === null && opts.unstablePackages?.has(locator.locatorHash))
         return {isValid: true, hash: null};
 
+      const actualCacheKey = expectedChecksum && !isColdHit
+        ? getCacheKeyComponent(expectedChecksum)
+        : this.cacheKey;
+
       const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
-        ? `${this.cacheKey}/${await hashUtils.checksumFile(path)}`
+        ? `${actualCacheKey}/${await hashUtils.checksumFile(path)}`
         : expectedChecksum;
 
-      if (refetchPath !== null) {
+      if (controlPath !== null) {
         const previousChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
-          ? `${this.cacheKey}/${await hashUtils.checksumFile(refetchPath)}`
+          ? `${this.cacheKey}/${await hashUtils.checksumFile(controlPath)}`
           : expectedChecksum;
 
         if (actualChecksum !== previousChecksum) {
@@ -204,36 +245,36 @@ export class Cache {
         }
       }
 
-      if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
-        let checksumBehavior;
+      let checksumBehavior: string | null = null;
 
+      if (expectedChecksum !== null && actualChecksum !== expectedChecksum) {
         // Using --check-cache overrides any preconfigured checksum behavior
-        if (this.check)
+        if (this.check) {
           checksumBehavior = `throw`;
         // If the lockfile references an old cache format, we tolerate different checksums
-        else if (getCacheKeyComponent(expectedChecksum) !== getCacheKeyComponent(actualChecksum))
+        } else if (getCacheKeyComponent(expectedChecksum) !== getCacheKeyComponent(actualChecksum)) {
           checksumBehavior = `update`;
-        else
+        } else {
           checksumBehavior = this.configuration.get(`checksumBehavior`);
-
-        switch (checksumBehavior) {
-          case `ignore`:
-            return {isValid: true, hash: expectedChecksum};
-
-          case `update`:
-            return {isValid: true, hash: actualChecksum};
-
-          case `reset`:
-            return {isValid: false, hash: expectedChecksum};
-
-          default:
-          case `throw`: {
-            throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the expected checksum`);
-          }
         }
       }
 
-      return {isValid: true, hash: actualChecksum};
+      switch (checksumBehavior) {
+        case null:
+        case `update`:
+          return {isValid: true, hash: actualChecksum};
+
+        case `ignore`:
+          return {isValid: true, hash: expectedChecksum};
+
+        case `reset`:
+          return {isValid: false, hash: expectedChecksum};
+
+        default:
+        case `throw`: {
+          throw new ReportError(MessageName.CACHE_CHECKSUM_MISMATCH, `The remote archive doesn't match the expected checksum`);
+        }
+      }
     };
 
     const validateFileAgainstRemote = async (cachePath: PortablePath) => {
@@ -241,13 +282,16 @@ export class Cache {
         throw new Error(`Cache check required but no loader configured for ${structUtils.prettyLocator(this.configuration, locator)}`);
 
       const zipFs = await loader();
-      const refetchPath = zipFs.getRealPath();
+      const controlPath = zipFs.getRealPath();
 
       zipFs.saveAndClose();
 
-      await xfs.chmodPromise(refetchPath, 0o644);
+      await xfs.chmodPromise(controlPath, 0o644);
 
-      const result = await validateFile(cachePath, refetchPath);
+      const result = await validateFile(cachePath, {
+        isColdHit: false,
+      });
+
       if (!result.isValid)
         throw new Error(`Assertion failed: Expected a valid checksum`);
 
@@ -275,7 +319,9 @@ export class Cache {
       const {path: packagePath, source: packageSource} = await loadPackageThroughMirror();
 
       // Do this before moving the file so that we don't pollute the cache with corrupted archives
-      const checksum = (await validateFile(packagePath)).hash;
+      const checksum = (await validateFile(packagePath, {
+        isColdHit: true,
+      })).hash;
 
       const cachePath = this.getLocatorPath(locator, checksum, opts);
       if (!cachePath)
@@ -344,7 +390,10 @@ export class Cache {
             if (this.check) {
               checksum = await validateFileAgainstRemote(cachePath);
             } else {
-              const maybeChecksum = await validateFile(cachePath);
+              const maybeChecksum = await validateFile(cachePath, {
+                isColdHit: false,
+              });
+
               if (maybeChecksum.isValid) {
                 checksum = maybeChecksum.hash;
               } else {
@@ -412,4 +461,8 @@ function getCacheKeyComponent(checksum: string) {
 function getHashComponent(checksum: string) {
   const split = checksum.indexOf(`/`);
   return split !== -1 ? checksum.slice(split + 1) : checksum;
+}
+
+function getCacheKeyVersion(cacheKey: string) {
+  return parseInt(cacheKey, 10);
 }

@@ -12,7 +12,7 @@ import {promisify}                                                      from 'ut
 import v8                                                               from 'v8';
 import zlib                                                             from 'zlib';
 
-import {Cache, CacheOptions}                                            from './Cache';
+import {CACHE_VERSION, Cache, CacheOptions}                             from './Cache';
 import {Configuration}                                                  from './Configuration';
 import {Fetcher, FetchOptions}                                          from './Fetcher';
 import {Installer, BuildDirective, BuildDirectiveType, InstallStatus}   from './Installer';
@@ -1907,7 +1907,7 @@ export class Project {
 
     optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
-      cacheKey: undefined,
+      cacheKey: CACHE_VERSION,
     };
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {

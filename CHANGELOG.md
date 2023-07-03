@@ -92,6 +92,7 @@ The following changes only affect people writing Yarn plugins:
 
 - `yarn run` now injects the environment variables defined in `.env.yarn` when spawning a process. The list of files thus injected can be controlled using the `injectEnvironmentFiles` variable.
 - `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
+- Constraints can now be written in JavaScript.
 
 ### Bugfixes
 
