@@ -245,6 +245,7 @@ async function getPackageInfo(name: string | null, version: string | null, getUr
   if (name === null || version === null)
     throw new Error(`Missing mandatory search parameters`);
 
+  // eslint-disable-next-line no-restricted-globals
   const req = await fetch(`https://registry.yarnpkg.com/${name}/-/${name.replace(/^@[^/]+\//, ``)}-${version}.tgz`);
   const res = await req.arrayBuffer();
 
