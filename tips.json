@@ -1,5 +1,5 @@
 [{
-  "message": "**Did you know?** Yarn will display a useful tip each day, but they can be disabled via `enableMotd: false`."
+  "message": "**Did you know?** Yarn will display a useful tip each day, but they can be disabled via `enableTips: false`."
 }, {
   "message": "**Did you know?** All `scripts` entries are run by a Posix-like JS interpreter. Even on Windows!"
 }, {

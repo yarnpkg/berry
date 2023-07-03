@@ -17,19 +17,19 @@ describe(`TelemetryManager`, () => {
       randomInitialInterval: 0,
       updateInterval: 7,
     })).toEqual({
-      nextState: {lastUpdate: TEST_TIME + 12 * hour + 7 * day, lastMotd: TEST_TIME},
+      nextState: {lastUpdate: TEST_TIME + 12 * hour + 7 * day, lastTips: TEST_TIME},
 
       triggerUpdate: false,
-      triggerMotd: false,
+      triggerTips: false,
 
-      nextMotd: TEST_TIME,
+      nextTips: TEST_TIME,
     });
   });
 
-  it(`shouldn't detect a MOTD display until 8am`, () => {
+  it(`shouldn't detect a tips display until 8am`, () => {
     expect(derive({
       state: {
-        lastMotd: TEST_TIME,
+        lastTips: TEST_TIME,
       },
 
       timeNow: TEST_TIME + (24 + 7) * hour,
@@ -39,20 +39,20 @@ describe(`TelemetryManager`, () => {
       updateInterval: 7,
     })).toEqual({
       nextState: expect.objectContaining({
-        lastMotd: TEST_TIME,
+        lastTips: TEST_TIME,
       }),
 
       triggerUpdate: false,
-      triggerMotd: false,
+      triggerTips: false,
 
-      nextMotd: TEST_TIME,
+      nextTips: TEST_TIME,
     });
   });
 
-  it(`should detect a MOTD display after 8am`, () => {
+  it(`should detect a tips display after 8am`, () => {
     expect(derive({
       state: {
-        lastMotd: TEST_TIME,
+        lastTips: TEST_TIME,
       },
 
       timeNow: TEST_TIME + (24 + 9) * hour,
@@ -62,20 +62,20 @@ describe(`TelemetryManager`, () => {
       updateInterval: 7,
     })).toEqual({
       nextState: expect.objectContaining({
-        lastMotd: TEST_TIME,
+        lastTips: TEST_TIME,
       }),
 
       triggerUpdate: false,
-      triggerMotd: true,
+      triggerTips: true,
 
-      nextMotd: TEST_TIME + 24 * hour,
+      nextTips: TEST_TIME + 24 * hour,
     });
   });
 
-  it(`should use the local timezone when checking the MOTD display`, () => {
+  it(`should use the local timezone when checking the tips display`, () => {
     expect(derive({
       state: {
-        lastMotd: TEST_TIME,
+        lastTips: TEST_TIME,
       },
 
       timeNow: TEST_TIME + (24 + 7) * hour,
@@ -85,13 +85,13 @@ describe(`TelemetryManager`, () => {
       updateInterval: 7,
     })).toEqual({
       nextState: expect.objectContaining({
-        lastMotd: TEST_TIME,
+        lastTips: TEST_TIME,
       }),
 
       triggerUpdate: false,
-      triggerMotd: true,
+      triggerTips: true,
 
-      nextMotd: TEST_TIME + 24 * hour,
+      nextTips: TEST_TIME + 24 * hour,
     });
   });
 });
