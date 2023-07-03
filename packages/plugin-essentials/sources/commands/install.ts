@@ -291,15 +291,15 @@ export default class YarnCommand extends BaseCommand {
         includeFooter: false,
       }, async report => {
         if (Configuration.telemetry?.isNew) {
-          Configuration.telemetry.commitMotd();
+          Configuration.telemetry.commitTips();
 
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
-        } else if (Configuration.telemetry?.isMotd) {
+        } else if (Configuration.telemetry?.shouldShowTips) {
           const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
             latest: {stable: string, canary: string};
-            motd: Array<{message: string, url?: string}>;
+            tips: Array<{message: string, url?: string}>;
           } | null;
 
           if (data !== null) {
@@ -315,19 +315,19 @@ export default class YarnCommand extends BaseCommand {
             }
 
             if (newVersion) {
-              Configuration.telemetry.commitMotd();
+              Configuration.telemetry.commitTips();
 
               report.reportInfo(MessageName.VERSION_NOTICE, `${formatUtils.applyStyle(configuration, `A new ${newVersion[0]} version of Yarn is available:`, formatUtils.Style.BOLD)} ${structUtils.prettyReference(configuration, newVersion[1])}!`);
               report.reportInfo(MessageName.VERSION_NOTICE, `Upgrade now by running ${formatUtils.pretty(configuration, `yarn set version ${newVersion[1]}`, formatUtils.Type.CODE)}`);
               report.reportSeparator();
             } else {
-              const motd = Configuration.telemetry.selectMotd(data.motd);
+              const tip = Configuration.telemetry.selectTip(data.tips);
 
-              if (motd) {
-                report.reportInfo(MessageName.MOTD_NOTICE, formatUtils.pretty(configuration, motd.message, formatUtils.Type.MARKDOWN_INLINE));
+              if (tip) {
+                report.reportInfo(MessageName.TIPS_NOTICE, formatUtils.pretty(configuration, tip.message, formatUtils.Type.MARKDOWN_INLINE));
 
-                if (motd.url)
-                  report.reportInfo(MessageName.MOTD_NOTICE, `Learn more at ${motd.url}`);
+                if (tip.url)
+                  report.reportInfo(MessageName.TIPS_NOTICE, `Learn more at ${tip.url}`);
 
                 report.reportSeparator();
               }

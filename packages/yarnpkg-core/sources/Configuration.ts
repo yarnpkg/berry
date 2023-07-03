@@ -279,12 +279,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
-  enableMotd: {
-    description: `If true, installs will print an helpful message every day of the week`,
-    type: SettingsType.BOOLEAN,
-    default: !isCI,
-    defaultText: `<dynamic>`,
-  },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
@@ -295,6 +289,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the CLI is allowed to print the time spent executing commands`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  enableTips: {
+    description: `If true, installs will print a helpful message every day of the week`,
+    type: SettingsType.BOOLEAN,
+    default: !isCI,
+    defaultText: `<dynamic>`,
   },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
@@ -610,9 +610,9 @@ export interface ConfigurationValueMap {
   enableHyperlinks: boolean;
   enableInlineBuilds: boolean;
   enableMessageNames: boolean;
-  enableMotd: boolean;
   enableProgressBars: boolean;
   enableTimers: boolean;
+  enableTips: boolean;
   preferInteractive: boolean;
   preferTruncatedLines: boolean;
   progressBarStyle: string | undefined;
