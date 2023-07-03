@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 7
+  version: 8
   cacheKey: 10
 
 "@actions/core@npm:^1.2.6":
@@ -6995,7 +6995,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.15"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.1.1-rc"
+    typescript: "npm:5.2.0-beta"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -7081,6 +7081,7 @@ __metadata:
     comment-json: "npm:^2.2.0"
     cross-spawn: "npm:7.0.3"
     diff: "npm:^5.1.0"
+    dotenv: "npm:^16.3.1"
     esbuild: "npm:esbuild-wasm@^0.15.15"
     globby: "npm:^11.0.1"
     got: "npm:^11.7.0"
@@ -7114,7 +7115,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.1.1-rc"
+    typescript: "npm:5.2.0-beta"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -7148,6 +7149,7 @@ __metadata:
     github-markdown-css: "npm:^5.1.0"
     js-untar: "npm:^2.0.0"
     markdown-it: "npm:^13.0.1"
+    monaco-editor: "npm:^0.24.0"
     pako: "npm:^2.0.4"
     prism-react-renderer: "npm:^1.3.5"
     react: "npm:^17.0.2"
@@ -7167,6 +7169,7 @@ __metadata:
     "@rushstack/eslint-patch": "npm:^1.1.0"
     "@typescript-eslint/eslint-plugin": "npm:^5.3.1"
     "@typescript-eslint/parser": "npm:^5.3.1"
+    eslint: "npm:^8.2.0"
     eslint-plugin-arca: "npm:^0.12.1"
     eslint-plugin-react: "npm:^7.31.8"
   peerDependencies:
@@ -7297,7 +7300,7 @@ __metadata:
     typedoc: "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch"
     typedoc-neo-theme: "npm:^1.0.7"
     typedoc-plugin-yarn: "workspace:^"
-    typescript: "npm:5.1.1-rc"
+    typescript: "npm:5.2.0-beta"
     unescape-html: "npm:^1.1.0"
     unfetch: "npm:^4.1.0"
     unified: "npm:^7.1.0"
@@ -7350,13 +7353,15 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
+    "@yarnpkg/types": "workspace:^"
+    chalk: "npm:^3.0.0"
     clipanion: "npm:^3.2.1"
     esbuild-wasm: "npm:0.17.5"
     eslint: "npm:^8.2.0"
     jest: "npm:^29.2.1"
     pirates: "npm:^4.0.5"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.1.1-rc"
+    typescript: "npm:5.2.0-beta"
   dependenciesMeta:
     core-js:
       built: false
@@ -7846,12 +7851,14 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
     "@types/node": "npm:^18.15.11"
+    "@types/semver": "npm:^7.1.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     arg: "npm:^5.0.2"
     esbuild: "npm:esbuild-wasm@^0.15.15"
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
+    semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
   languageName: unknown
   linkType: soft
@@ -12534,6 +12541,13 @@ __metadata:
   dependencies:
     is-obj: "npm:^2.0.0"
   checksum: d0a4cfbbb2ed2622f9af821429b8bc12ecbdbf4e0a6b7b32fff8d588dd5cb0c63ec4d58f81b679483bcc9e3717ad681132c4641925d7e7b0b7a9b36204a52fea
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.3.1":
+  version: 16.3.1
+  resolution: "dotenv@npm:16.3.1"
+  checksum: dbb778237ef8750e9e3cd1473d3c8eaa9cc3600e33a75c0e36415d0fa0848197f56c3800f77924c70e7828f0b03896818cd52f785b07b9ad4d88dba73fbba83f
   languageName: node
   linkType: hard
 
@@ -29231,13 +29245,13 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.1.1-rc":
-  version: 5.1.1-rc
-  resolution: "typescript@npm:5.1.1-rc"
+"typescript@npm:5.2.0-beta":
+  version: 5.2.0-beta
+  resolution: "typescript@npm:5.2.0-beta"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 40733496aff34ad96a14bb48bf361f8edefb4c66022fa42a5fe2d20f3e61a639b9f1950191cb1d83c0e70b0fc0225bb8183f05c2b17ee0870802065ddd039281
+  checksum: e149cd705091c39d741ee0c08414a75c4edcaab0e183413344b5450d3133fe9a449d86759e9a8749893879b225b2f7d8857ecac88d400608e2e840b1c0376651
   languageName: node
   linkType: hard
 
@@ -29251,13 +29265,13 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>":
-  version: 5.1.1-rc
-  resolution: "typescript@patch:typescript@npm%3A5.1.1-rc#optional!builtin<compat/typescript>::version=5.1.1-rc&hash=5da071"
+"typescript@patch:typescript@npm%3A5.2.0-beta#optional!builtin<compat/typescript>":
+  version: 5.2.0-beta
+  resolution: "typescript@patch:typescript@npm%3A5.2.0-beta#optional!builtin<compat/typescript>::version=5.2.0-beta&hash=14eedb"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 6ef62b06f1f0425e44a7181c225ff806521e8016445b4507a829686e74207fffa7daf7c9e3726bff98b3a3291eb920a9cd2fdb1b9a9e19266730ee2379c2d3fd
+  checksum: 13f5a4dada79d035888531db3f52188b9fabb0507bc5f462365aa62bed53a08fd7acc66373e2016ee5b741dd5a5cca4c24eee97ba917a7e3e521873a4ebc6646
   languageName: node
   linkType: hard
 
@@ -30241,6 +30255,7 @@ pem@dexus/pem:
   dependencies:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
+    "@types/semver": "npm:^7.1.0"
     "@types/vscode": "npm:^1.54.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
@@ -30248,6 +30263,7 @@ pem@dexus/pem:
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
+    semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
     vsce: "npm:^2.9.2"
   languageName: unknown

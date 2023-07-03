@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.0.0-rc.46",
+  "version": "4.0.0-rc.48",
   "stableVersion": "3.5.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
@@ -23,6 +23,7 @@
     "clipanion": "^3.2.1",
     "cross-spawn": "7.0.3",
     "diff": "^5.1.0",
+    "dotenv": "^16.3.1",
     "globby": "^11.0.1",
     "got": "^11.7.0",
     "lodash": "^4.17.15",

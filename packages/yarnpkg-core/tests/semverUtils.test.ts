@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-properties */
 import semver           from 'semver';
 
 import * as semverUtils from '../sources/semverUtils';
@@ -87,5 +88,28 @@ describe(`semverUtils`, () => {
         expect(semverUtils.clean(input)).toEqual(output);
       });
     }
+  });
+
+  describe(`simplifyRanges`, () => {
+    it.each([
+      [[`^1.0.0`], `^1.0.0`],
+      [[`^1.0.0`, `^1.5.0`], `^1.5.0`],
+      [[`^1.0.0`, `^1.5.3`, `^1.5.0`], `^1.5.3`],
+      [[`>=1.0.0`, `<2.0.0-0`], `^1.0.0`],
+      [[`>=1.0.0`, `>=1.5.0`, `<2.0.0-0`], `^1.5.0`],
+      [[`^1.0.0 || ^2.0.0`, `^1.5.0`], `^1.5.0`],
+      [[`^1.0.0 || ^2.0.0`, `^2.5.0`], `^2.5.0`],
+      [[`^1.0.0 || ^2.0.0`, `^1.5.0 || ^2.0.0`, `^1.3.0 || ^2.6.0`], `^1.5.0 || ^2.6.0`],
+      [[`^1.0.0`, `1.5.3`], `1.5.3`],
+      [[`>1.6.0`, `1.5.3`], null],
+      [[`>1.5.3`, `1.5.3`], null],
+      [[`>=1.5.3`, `1.5.3`], `1.5.3`],
+      [[`<1.5.3`, `1.5.3`], null],
+      [[`<=1.5.3`, `1.5.3`], `1.5.3`],
+      [[`1.5.3`, `1.5.3`], `1.5.3`],
+      [[`1.5.0`, `1.5.3`], null],
+    ])(`should simplify %s into %s`, (ranges, expected) => {
+      expect(semverUtils.simplifyRanges(ranges)).toEqual(expected);
+    });
   });
 });

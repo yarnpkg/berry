@@ -434,8 +434,8 @@ export class NodeFS extends BasePortableFakeFS {
   async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>>;
   async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
     return await new Promise<any>((resolve, reject) => {
-      if (opts?.withFileTypes) {
-        this.realFs.readdir(npath.fromPortablePath(p), {withFileTypes: true}, this.makeCallback(resolve, reject) as any);
+      if (opts) {
+        this.realFs.readdir(npath.fromPortablePath(p), opts as any, this.makeCallback(resolve, reject) as any);
       } else {
         this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Array<Filename>), reject));
       }
@@ -453,8 +453,8 @@ export class NodeFS extends BasePortableFakeFS {
   readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Array<PortablePath>;
   readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
   readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
-    if (opts?.withFileTypes) {
-      return this.realFs.readdirSync(npath.fromPortablePath(p), {withFileTypes: true} as any) as Array<any>;
+    if (opts) {
+      return this.realFs.readdirSync(npath.fromPortablePath(p), opts as any) as Array<any>;
     } else {
       return this.realFs.readdirSync(npath.fromPortablePath(p)) as Array<any>;
     }

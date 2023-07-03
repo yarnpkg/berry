@@ -424,3 +424,19 @@ To use it, simply pass it the `p`-prefixed code provided in the original peer re
 ```
 yarn explain peer-requirements pf649cd
 ```
+
+## YN0087 - `MIGRATION_SUCCESS`
+
+When migrating from a major version to the next, some default values may change. When that's the case, Yarn will attempt to temporarily keep the old default by pinning their values in your configuration settings.
+
+To see the exact changes applied when this message appears, check the content of the `.yarnrc.yml` file and any other file that may appear modified in your repository checkout.
+
+## YN0088 - `VERSION_NOTICE`
+
+On local machines, Yarn will periodically check whether new versions are available. Should one be, an informational message will be printed once, then silenced until the next day.
+
+You don't have to upgrade if you don't wish to - but keeping Yarn up-to-date is generally a good idea, as they tend to often come with a significant amount of performance improvements, bugfixes, and new features.
+
+## YN0089 - `MOTD_NOTICE`
+
+Our research showed that even our power users aren't always aware of some of the less obvious features in Yarn. To improve discoverability, on local machines, Yarn will display every day a tip about some of the nuggets it contains. Perhaps one of them will help you improve your infrastructure someday?

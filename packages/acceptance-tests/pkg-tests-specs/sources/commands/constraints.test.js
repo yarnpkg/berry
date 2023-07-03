@@ -99,6 +99,8 @@ describe(`Commands`, () => {
           test(`test (${environmentDescription} / ${scriptDescription} / ${scriptType})`,
             makeTemporaryEnv({}, async ({path, run, source}) => {
               await environment(path);
+              await run(`install`);
+
               await writeFile(`${path}/${scriptNames[scriptType]}`, script);
 
               let code;

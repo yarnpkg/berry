@@ -13,6 +13,8 @@ import * as miscUtils                                                       from
 import * as structUtils                                                     from './structUtils';
 import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
 
+export {stripAnsi};
+
 // We have to workaround a TS bug:
 // https://github.com/microsoft/TypeScript/issues/35329
 //
@@ -52,6 +54,7 @@ export const Type = {
   SETTING: `SETTING`,
 
   MARKDOWN: `MARKDOWN`,
+  MARKDOWN_INLINE: `MARKDOWN_INLINE`,
 } as const;
 
 export type Type = keyof typeof Type;
@@ -298,6 +301,25 @@ const transforms = {
       return formatMarkdownish(text, {format, paragraphs});
     },
     json: ({text}: {text: string, format: ColorFormat, paragraphs: boolean}) => {
+      return text;
+    },
+  }),
+
+  [Type.MARKDOWN_INLINE]: validateTransform({
+    pretty: (configuration: Configuration, text: string) => {
+      // Highlight the code segments
+      text = text.replace(/(`+)((?:.|[\n])*?)\1/g, ($0, $1, $2) => {
+        return pretty(configuration, $1 + $2 + $1, Type.CODE);
+      });
+
+      // Highlight the bold segments
+      text = text.replace(/(\*\*)((?:.|[\n])*?)\1/g, ($0, $1, $2) => {
+        return applyStyle(configuration, $2, Style.BOLD);
+      });
+
+      return text;
+    },
+    json: (text: string) => {
       return text;
     },
   }),

@@ -44,7 +44,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 7;
+const LOCKFILE_VERSION = 8;
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -173,6 +173,7 @@ export type PeerRequirement = {
 export enum PeerWarningType {
   NotProvided,
   NotCompatible,
+  NotCompatibleAggregate,
 }
 
 export type PeerWarning = {
@@ -189,6 +190,15 @@ export type PeerWarning = {
   version: string;
   hash: string;
   requirementCount: number;
+} | {
+  type: PeerWarningType.NotCompatibleAggregate;
+  subject: Locator;
+  requested: Ident;
+  dependents: Map<LocatorHash, Locator>;
+  requesters: Map<LocatorHash, Locator>;
+  links: Map<LocatorHash, Locator>;
+  version: string;
+  hash: string;
 };
 
 const makeLockfileChecksum = (normalizedContent: string) =>
@@ -232,6 +242,7 @@ export class Project {
    * If true, the data contained within `originalPackages` are from a different
    * lockfile version and need to be refreshed.
    */
+  public lockfileLastVersion: number | null = null;
   public lockfileNeedsRefresh: boolean = false;
 
   /**
@@ -340,6 +351,7 @@ export class Project {
         const lockfileVersion = parsed.__metadata.version;
         const cacheKey = parsed.__metadata.cacheKey;
 
+        this.lockfileLastVersion = lockfileVersion;
         this.lockfileNeedsRefresh = lockfileVersion < LOCKFILE_VERSION;
 
         for (const key of Object.keys(parsed)) {
@@ -395,6 +407,8 @@ export class Project {
             this.storedResolutions.set(descriptor.descriptorHash, locator.locatorHash);
           }
         }
+      } else if (content.includes(`yarn lockfile v1`)) {
+        this.lockfileLastVersion = -1;
       }
     }
   }
@@ -2497,6 +2511,10 @@ function applyVirtualResolutionMutations({
     resolvePeerDependencies(workspace.anchoredDescriptor, locator, new Map(), {top: locator.locatorHash, optional: false});
   }
 
+  const aggregatedInvalidPeerDependencyWarnings = new Map<LocatorHash, Extract<PeerWarning, {
+    type: PeerWarningType.NotCompatibleAggregate;
+  }>>();
+
   for (const [rootHash, dependents] of peerDependencyDependents) {
     const root = allPackages.get(rootHash);
     if (typeof root === `undefined`)
@@ -2552,6 +2570,7 @@ function applyVirtualResolutionMutations({
           const peerVersion = peerResolution.version ?? `0.0.0`;
 
           const ranges = new Set<string>();
+
           for (const linkHash of linkHashes) {
             const link = allPackages.get(linkHash);
             if (typeof link === `undefined`)
@@ -2579,6 +2598,23 @@ function applyVirtualResolutionMutations({
           });
 
           if (!satisfiesAll) {
+            const aggregatedWarning = miscUtils.getFactoryWithDefault(aggregatedInvalidPeerDependencyWarnings, peerResolution.locatorHash, () => ({
+              type: PeerWarningType.NotCompatibleAggregate as const,
+              requested: ident,
+              subject: peerResolution,
+              dependents: new Map(),
+              requesters: new Map(),
+              links: new Map(),
+              version: peerVersion,
+              hash: `p${hashUtils.makeHash(identStr).slice(0, 5)}`,
+            }));
+
+            aggregatedWarning.dependents.set(dependent.locatorHash, dependent);
+            aggregatedWarning.requesters.set(root.locatorHash, root);
+
+            for (const linkHash of linkHashes)
+              aggregatedWarning.links.set(linkHash, allPackages.get(linkHash)!);
+
             peerWarnings.push({
               type: PeerWarningType.NotCompatible,
               subject: dependent,
@@ -2605,14 +2641,55 @@ function applyVirtualResolutionMutations({
       }
     }
   }
+
+  peerWarnings.push(...aggregatedInvalidPeerDependencyWarnings.values());
 }
 
 function emitPeerDependencyWarnings(project: Project, report: Report) {
-  const warningSortCriterias: Array<((warning: PeerWarning) => string)> = [
-    warning => structUtils.prettyLocatorNoColors(warning.subject),
-    warning => structUtils.stringifyIdent(warning.requested),
-    warning => `${warning.type}`,
-  ];
+  const warningsByType = miscUtils.groupBy(project.peerWarnings, `type`);
+
+  const notCompatibleAggregateWarnings = warningsByType[PeerWarningType.NotCompatibleAggregate]?.map(warning => {
+    const allRanges = Array.from(warning.links.values(), locator => {
+      const pkg = project.storedPackages.get(locator.locatorHash);
+      if (typeof pkg === `undefined`)
+        throw new Error(`Assertion failed: Expected the package to be registered`);
+
+      const peerDependency = pkg.peerDependencies.get(warning.requested.identHash);
+      if (typeof peerDependency === `undefined`)
+        throw new Error(`Assertion failed: Expected the ident to be registered`);
+
+      return peerDependency.range;
+    });
+
+    const andDescendants = warning.dependents.size > 1
+      ? `and other dependencies request`
+      : `requests`;
+
+    const resolvedRange = semverUtils.simplifyRanges(allRanges);
+    const rangeDescription = resolvedRange
+      ? structUtils.prettyRange(project.configuration, resolvedRange)
+      : formatUtils.pretty(project.configuration, `but they have non-overlapping ranges!`, `redBright`);
+
+    return `${
+      structUtils.prettyIdent(project.configuration, warning.requested)
+    } is listed by your project with version ${
+      structUtils.prettyReference(project.configuration, warning.version)
+    }, which doesn't satisfy what ${
+      structUtils.prettyIdent(project.configuration, warning.requesters.values().next().value)
+    } ${andDescendants} (${rangeDescription}).`;
+  }) ?? [];
+
+  const omittedWarnings = warningsByType[PeerWarningType.NotProvided]?.map(warning => {
+    return `${
+      structUtils.prettyLocator(project.configuration, warning.subject)
+    } doesn't provide ${
+      structUtils.prettyIdent(project.configuration, warning.requested)
+    } (${
+      formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+    }), requested by ${
+      structUtils.prettyIdent(project.configuration, warning.requester)
+    }`;
+  }) ?? [];
 
   report.startSectionSync({
     reportFooter: () => {
@@ -2620,38 +2697,11 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
     },
     skipIfEmpty: true,
   }, () => {
-    for (const warning of miscUtils.sortMap(project.peerWarnings, warningSortCriterias)) {
-      switch (warning.type) {
-        case PeerWarningType.NotProvided: {
-          report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, `${
-            structUtils.prettyLocator(project.configuration, warning.subject)
-          } doesn't provide ${
-            structUtils.prettyIdent(project.configuration, warning.requested)
-          } (${
-            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-          }), requested by ${
-            structUtils.prettyIdent(project.configuration, warning.requester)
-          }`);
-        } break;
+    for (const warning of miscUtils.sortMap(notCompatibleAggregateWarnings, line => formatUtils.stripAnsi(line)))
+      report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, warning);
 
-        case PeerWarningType.NotCompatible: {
-          const andDescendants = warning.requirementCount > 1
-            ? `and some of its descendants request`
-            : `requests`;
-
-          report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, `${
-            structUtils.prettyLocator(project.configuration, warning.subject)
-          } provides ${
-            structUtils.prettyIdent(project.configuration, warning.requested)
-          } (${
-            formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-          }) with version ${
-            structUtils.prettyReference(project.configuration, warning.version)
-          }, which doesn't satisfy what ${
-            structUtils.prettyIdent(project.configuration, warning.requester)
-          } ${andDescendants}.`);
-        } break;
-      }
+    for (const warning of miscUtils.sortMap(omittedWarnings, line => formatUtils.stripAnsi(line))) {
+      report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, warning);
     }
   });
 }

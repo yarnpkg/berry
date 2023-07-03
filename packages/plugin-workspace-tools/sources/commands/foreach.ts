@@ -178,7 +178,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       // Prevents infinite loop in the case of configuring a script as such:
       // "lint": "yarn workspaces foreach --all lint"
-      if (scriptName === process.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
+      if (scriptName === configuration.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
       if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include))

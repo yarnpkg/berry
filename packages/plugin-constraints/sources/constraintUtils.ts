@@ -14,7 +14,7 @@ export interface Engine {
   process(): Promise<ProcessResult | null>;
 }
 
-export class Index<T extends Record<keyof T, any>> {
+export class Index<T extends {[key: string]: any}> {
   private items: Array<T> = [];
 
   private indexes: {
@@ -155,7 +155,7 @@ function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller)
       fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
 
       if (caller.column !== null) {
-        fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
+        fileParts.push(formatUtils.pretty(configuration, caller.column, formatUtils.Type.NUMBER));
       }
     }
 

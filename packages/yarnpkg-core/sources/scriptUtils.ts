@@ -107,9 +107,11 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
   return null;
 }
 
-export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack, lifecycleScript}: {project?: Project, locator?: Locator, binFolder: PortablePath, ignoreCorepack?: boolean, lifecycleScript?: string}) {
+export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack, lifecycleScript, baseEnv = project?.configuration.env ?? process.env}: {project?: Project, locator?: Locator, binFolder: PortablePath, ignoreCorepack?: boolean, lifecycleScript?: string, baseEnv?: Record<string, string | undefined>}) {
   const scriptEnv: {[key: string]: string} = {};
-  for (const [key, value] of Object.entries(process.env))
+
+  // Ensure that the PATH environment variable is properly capitalized (Windows)
+  for (const [key, value] of Object.entries(baseEnv))
     if (typeof value !== `undefined`)
       scriptEnv[key.toLowerCase() !== `path` ? key : `PATH`] = value;
 
@@ -375,7 +377,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // We can't use `npm ci` because some projects don't have npm
             // lockfiles that are up-to-date. Hopefully npm won't decide
             // to change the versions randomly.
-            const install = await execUtils.pipevp(`npm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const install = await execUtils.pipevp(`npm`, [`install`, `--legacy-peer-deps`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (install.code !== 0)
               return install.code;
 
