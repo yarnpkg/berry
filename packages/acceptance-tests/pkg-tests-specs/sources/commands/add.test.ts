@@ -1,9 +1,6 @@
 import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-
-const {
-  tests: {getPackageDirectoryPath},
-} = require(`pkg-tests-core`);
-const {parseSyml} = require(`@yarnpkg/parsers`);
+import {parseSyml}                          from '@yarnpkg/parsers';
+import {tests}                              from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`add`, () => {
@@ -104,7 +101,7 @@ describe(`Commands`, () => {
     test(
       `it should add a new regular dependency to the current project (unnamed path)`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        const packagePath = await getPackageDirectoryPath(`no-deps`, `1.0.0`);
+        const packagePath = await tests.getPackageDirectoryPath(`no-deps`, `1.0.0`);
 
         await run(`add`, packagePath);
 
@@ -570,9 +567,7 @@ describe(`Commands`, () => {
 
       expect(preUpgradeCache.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
 
-      const {code, stdout, stderr} = await run(`add`, `no-deps@2.0.0`);
-
-      await expect({code, stdout, stderr}).toMatchSnapshot();
+      await run(`add`, `no-deps@2.0.0`);
 
       const postUpgradeCache = await xfs.readdirPromise(`${path}/.yarn/cache` as PortablePath);
 
@@ -589,15 +584,14 @@ describe(`Commands`, () => {
         YARN_ENABLE_GLOBAL_CACHE: `true`,
         YARN_GLOBAL_FOLDER: `${path}/global`,
       };
+
       await run(`install`, {env});
 
       const preUpgradeCache = await xfs.readdirPromise(`${path}/global/cache` as PortablePath);
 
       expect(preUpgradeCache.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
 
-      const {code, stdout, stderr} = await run(`add`, `no-deps@2.0.0`, {env});
-
-      await expect({code, stdout, stderr}).toMatchSnapshot();
+      await run(`add`, `no-deps@2.0.0`, {env});
 
       const postUpgradeCache = await xfs.readdirPromise(`${path}/global/cache` as PortablePath);
 
@@ -630,59 +624,5 @@ describe(`Commands`, () => {
       expect(cacheContent.find(entry => entry.includes(`no-deps-npm-1.0.0`))).toBeDefined();
       expect(cacheContent.find(entry => entry.includes(`no-deps-npm-2.0.0`))).toBeDefined();
     }));
-
-    test(
-      `it shouldn't show deprecation warnings for non-deprecated packages`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const {stdout} = await run(`add`, `no-deps@1.0.0`);
-
-        // Check if the deprecation warning is shown
-        expect(stdout).not.toContain(`no-deps@npm:1.0.0 is deprecated`);
-      }),
-    );
-
-    test(
-      `it shouldn't show deprecation warnings for deprecated packages when the deprecation warning is an empty string`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const {stdout} = await run(`add`, `no-deps-deprecated-empty@1.0.0`);
-
-        // Check if the deprecation warning is shown
-        expect(stdout).not.toContain(`no-deps-deprecated-empty@npm:1.0.0 is deprecated`);
-      }),
-    );
-
-    test(
-      `it should show deprecation warnings for deprecated packages`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const {stdout} = await run(`add`, `no-deps-deprecated@1.0.0`);
-
-        // Check if the deprecation warning is shown
-        expect(stdout).toContain(`no-deps-deprecated@npm:1.0.0 is deprecated: ¯\\_(ツ)_/¯\n`);
-
-        // Check if the package is installed successfully
-        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-          dependencies: {
-            [`no-deps-deprecated`]: `1.0.0`,
-          },
-        });
-      }),
-    );
-
-    test(
-      `it should show deprecation warnings for deprecated packages (deprecation warning only includes whitespace)`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const {stdout} = await run(`add`, `no-deps-deprecated-whitespace@1.0.0`);
-
-        // Check if the deprecation warning is shown
-        expect(stdout).toContain(`no-deps-deprecated-whitespace@npm:1.0.0 is deprecated\n`);
-
-        // Check if the package is installed successfully
-        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-          dependencies: {
-            [`no-deps-deprecated-whitespace`]: `1.0.0`,
-          },
-        });
-      }),
-    );
   });
 });

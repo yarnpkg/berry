@@ -145,16 +145,16 @@ workspace('packages/workspace-a').
 workspace_ident('packages/workspace-a', 'workspace-a').
 workspace_version('packages/workspace-a', []).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', devDependencies).
 workspace('packages/workspace-b').
 workspace_ident('packages/workspace-b', 'workspace-b').
 workspace_version('packages/workspace-b', []).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -190,16 +190,16 @@ workspace('packages/workspace-a').
 workspace_ident('packages/workspace-a', 'workspace-a').
 workspace_version('packages/workspace-a', []).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', devDependencies).
 workspace('packages/workspace-b').
 workspace_ident('packages/workspace-b', 'workspace-b').
 workspace_version('packages/workspace-b', []).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -235,16 +235,16 @@ workspace('packages/workspace-a').
 workspace_ident('packages/workspace-a', 'workspace-a').
 workspace_version('packages/workspace-a', []).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', devDependencies).
 workspace('packages/workspace-b').
 workspace_ident('packages/workspace-b', 'workspace-b').
 workspace_version('packages/workspace-b', []).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -280,16 +280,16 @@ workspace('packages/workspace-a').
 workspace_ident('packages/workspace-a', 'workspace-a').
 workspace_version('packages/workspace-a', []).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-a', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-a', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-a', 'no-deps-bins', '1.0.0', devDependencies).
 workspace('packages/workspace-b').
 workspace_ident('packages/workspace-b', 'workspace-b').
 workspace_version('packages/workspace-b', []).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('packages/workspace-b', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('packages/workspace-b', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('packages/workspace-b', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -448,7 +448,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -481,7 +481,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -514,7 +514,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -547,7 +547,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -579,7 +579,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -612,7 +612,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -645,7 +645,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -678,7 +678,7 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -710,9 +710,9 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -745,9 +745,9 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -780,9 +780,9 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.
@@ -815,9 +815,9 @@ workspace('.').
 workspace_ident('.', 'root-workspace-0b6124').
 workspace_version('.', []).
 workspace_has_dependency('.', 'no-deps', '1.0.0', dependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', dependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', dependencies).
 workspace_has_dependency('.', 'no-deps', '1.0.0', devDependencies).
-workspace_has_dependency('.', 'no-deps-bin', '1.0.0', devDependencies).
+workspace_has_dependency('.', 'no-deps-bins', '1.0.0', devDependencies).
 workspace(_) :- false.
 workspace_ident(_, _) :- false.
 workspace_version(_, _) :- false.

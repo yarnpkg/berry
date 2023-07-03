@@ -101,3 +101,128 @@ export function clean(potentialVersion: string): string | null {
   const version = CLEAN_SEMVER_REGEXP.exec(potentialVersion);
   return version ? version[1] : null;
 }
+
+export type Comparator = {
+  gt: [`>` | `>=`, semver.SemVer] | null;
+  lt: [`<` | `<=`, semver.SemVer] | null;
+};
+
+export function getComparator(comparators: semver.Comparator): Comparator {
+  switch (comparators.operator) {
+    case ``:
+      return {gt: [`>=`, comparators.semver], lt: [`<=`, comparators.semver]};
+
+    case `>`:
+    case `>=`:
+      return {gt: [comparators.operator, comparators.semver], lt: null};
+
+    case `<`:
+    case `<=`:
+      return {gt: null, lt: [comparators.operator, comparators.semver]};
+
+    default: {
+      throw new Error(`Assertion failed: Unexpected comparator operator (${comparators.operator})`);
+    }
+  }
+}
+
+export function mergeComparators(comparators: Array<Comparator>) {
+  if (comparators.length === 0)
+    return null;
+
+  let maxGtComparator: Comparator[`gt`] | null = null;
+  let minLtComparator: Comparator[`lt`] | null = null;
+
+  for (const comparator of comparators) {
+    if (comparator.gt) {
+      const cmp = maxGtComparator !== null
+        ? semver.compare(comparator.gt[1], maxGtComparator[1])
+        : null;
+
+      if (cmp === null || cmp > 0 || (cmp === 0 && comparator.gt[0] === `>`)) {
+        maxGtComparator = comparator.gt;
+      }
+    }
+
+    if (comparator.lt) {
+      const cmp = minLtComparator !== null
+        ? semver.compare(comparator.lt[1], minLtComparator[1])
+        : null;
+
+      if (cmp === null || cmp < 0 || (cmp === 0 && comparator.lt[0] === `<`)) {
+        minLtComparator = comparator.lt;
+      }
+    }
+  }
+
+  if (maxGtComparator && minLtComparator) {
+    const cmp = semver.compare(maxGtComparator[1], minLtComparator[1]);
+    if (cmp === 0 && (maxGtComparator[0] === `>` || minLtComparator[0] === `<`))
+      return null;
+
+    if (cmp > 0) {
+      return null;
+    }
+  }
+
+  return {
+    gt: maxGtComparator,
+    lt: minLtComparator,
+  };
+}
+
+export function stringifyComparator(comparator: Comparator) {
+  if (comparator.gt && comparator.lt) {
+    if (comparator.gt[0] === `>=` && comparator.lt[0] === `<=` && comparator.gt[1].version === comparator.lt[1].version)
+      return comparator.gt[1].version;
+
+    if (comparator.gt[0] === `>=` && comparator.lt[0] === `<`) {
+      if (comparator.lt[1].version === `${comparator.gt[1].major + 1}.0.0-0`)
+        return `^${comparator.gt[1].version}`;
+
+      if (comparator.lt[1].version === `${comparator.gt[1].major}.${comparator.gt[1].minor + 1}.0-0`) {
+        return `~${comparator.gt[1].version}`;
+      }
+    }
+  }
+
+  const parts = [];
+
+  if (comparator.gt)
+    parts.push(comparator.gt[0] + comparator.gt[1].version);
+  if (comparator.lt)
+    parts.push(comparator.lt[0] + comparator.lt[1].version);
+
+  return parts.join(` `);
+}
+
+export function simplifyRanges(ranges: Array<string>) {
+  const parsedRanges = ranges.map(range => validRange(range)!.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
+
+  let alternatives = parsedRanges.shift()!.map(comparators => mergeComparators(comparators))
+    .filter((range): range is Comparator => range !== null);
+
+  for (const parsedRange of parsedRanges) {
+    const nextAlternatives = [];
+
+    for (const comparator of alternatives) {
+      for (const refiners of parsedRange) {
+        const nextComparators = mergeComparators([
+          comparator,
+          ...refiners,
+        ]);
+
+        if (nextComparators !== null) {
+          nextAlternatives.push(nextComparators);
+        }
+      }
+    }
+
+    alternatives = nextAlternatives;
+  }
+
+  if (alternatives.length === 0)
+    return null;
+
+  return alternatives.map(comparator => stringifyComparator(comparator)).join(` || `);
+}

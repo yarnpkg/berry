@@ -1,6 +1,6 @@
-import {Filename,  ppath, xfs} from '@yarnpkg/fslib';
+import {Filename,  npath,  ppath, xfs} from '@yarnpkg/fslib';
 
-import * as scriptUtils        from '../sources/scriptUtils';
+import * as scriptUtils                from '../sources/scriptUtils';
 
 describe(`scriptUtils`, () => {
   describe(`detectPackageManager`, () => {
@@ -33,6 +33,19 @@ describe(`scriptUtils`, () => {
         const pm = await scriptUtils.detectPackageManager(dir);
         expect(pm?.packageManager).toBe(expectations[packageManager]);
       });
+    });
+  });
+
+  describe(`isNodeScript`, () => {
+    const binariesFolder = ppath.join(npath.toPortablePath(__dirname), `../fixtures/binaries`);
+    const binaryNames = xfs.readdirSync(binariesFolder);
+
+    it.each(binaryNames)(`should detect %s as a binary`, name => {
+      expect(scriptUtils.isNodeScript(ppath.join(binariesFolder, name)));
+    });
+
+    it(`shouldn't detect a text file as a binary`, () => {
+      expect(scriptUtils.isNodeScript(npath.toPortablePath(__filename)));
     });
   });
 });

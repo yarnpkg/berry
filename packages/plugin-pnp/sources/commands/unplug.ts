@@ -176,7 +176,7 @@ export default class UnplugCommand extends BaseCommand {
       return structUtils.stringifyLocator(pkg);
     });
 
-    const report = await StreamReport.start({
+    const unplugReport = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
       json: this.json,
@@ -196,11 +196,19 @@ export default class UnplugCommand extends BaseCommand {
 
       await project.topLevelWorkspace.persistManifest();
 
-      report.reportSeparator();
-
-      await project.install({cache, report});
+      if (!this.json) {
+        report.reportSeparator();
+      }
     });
 
-    return report.exitCode();
+    if (unplugReport.hasErrors())
+      return unplugReport.exitCode();
+
+    return await project.installWithNewReport({
+      json: this.json,
+      stdout: this.context.stdout,
+    }, {
+      cache,
+    });
   }
 }

@@ -1,12 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                       from '@yarnpkg/cli';
-import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport} from '@yarnpkg/core';
-import {npmConfigUtils, npmHttpUtils}                                              from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage}                                                    from 'clipanion';
-import micromatch                                                                  from 'micromatch';
-import * as t                                                                      from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
+import {Configuration, Project, MessageName, treeUtils, LightReport, StreamReport, semverUtils, LocatorHash, Locator, miscUtils} from '@yarnpkg/core';
+import {structUtils}                                                                                                             from '@yarnpkg/core';
+import {npmConfigUtils, npmHttpUtils}                                                                                            from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                                                                                  from 'clipanion';
+import micromatch                                                                                                                from 'micromatch';
+import * as t                                                                                                                    from 'typanion';
 
-import * as npmAuditTypes                                                          from '../../npmAuditTypes';
-import * as npmAuditUtils                                                          from '../../npmAuditUtils';
+import * as npmAuditTypes                                                                                                        from '../../npmAuditTypes';
+import * as npmAuditUtils                                                                                                        from '../../npmAuditUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmAuditCommand extends BaseCommand {
@@ -75,6 +76,10 @@ export default class NpmAuditCommand extends BaseCommand {
     description: `Format the output as an NDJSON stream`,
   });
 
+  noDeprecations = Option.Boolean(`--no-deprecations`, false, {
+    description: `Don't warn about deprecated packages`,
+  });
+
   severity = Option.String(`--severity`, npmAuditTypes.Severity.Info, {
     description: `Minimal severity requested for packages to be displayed`,
     validator: t.isEnum(npmAuditTypes.Severity),
@@ -97,50 +102,19 @@ export default class NpmAuditCommand extends BaseCommand {
 
     await project.restoreInstallState();
 
-    const requires = npmAuditUtils.getRequires(project, workspace, {all: this.all, environment: this.environment});
-    const dependencies = npmAuditUtils.getDependencies(project, workspace, {all: this.all});
-
-    if (!this.recursive) {
-      for (const key of Object.keys(dependencies)) {
-        if (!Object.prototype.hasOwnProperty.call(requires, key)) {
-          delete dependencies[key];
-        } else {
-          dependencies[key].requires = {};
-        }
-      }
-    }
+    const topLevelDependencies = npmAuditUtils.getTopLevelDependencies(project, workspace, {all: this.all, environment: this.environment});
+    const packages = npmAuditUtils.getPackages(project, topLevelDependencies, {recursive: this.recursive});
 
     const excludedPackages = Array.from(new Set([
       ...configuration.get(`npmAuditExcludePackages`),
       ...this.excludes,
     ]));
 
-    if (excludedPackages) {
-      for (const pkg of Object.keys(requires)) {
-        if (micromatch.isMatch(pkg, excludedPackages)) {
-          delete requires[pkg];
-        }
-      }
+    const payload = Object.create(null);
 
-      for (const pkg of Object.keys(dependencies)) {
-        if (micromatch.isMatch(pkg, excludedPackages)) {
-          delete dependencies[pkg];
-        }
-      }
-
-      for (const key of Object.keys(dependencies)) {
-        for (const pkg of Object.keys(dependencies[key].requires)) {
-          if (micromatch.isMatch(pkg, excludedPackages)) {
-            delete dependencies[key].requires[pkg];
-          }
-        }
-      }
-    }
-
-    const body = {
-      requires,
-      dependencies,
-    };
+    for (const [packageName, versions] of packages)
+      if (!excludedPackages.some(pattern => micromatch.isMatch(packageName, pattern)))
+        payload[packageName] = [...versions.keys()];
 
     const registry = npmConfigUtils.getAuditRegistry({configuration});
 
@@ -149,37 +123,98 @@ export default class NpmAuditCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async () => {
-      result = ((await npmHttpUtils.post(`/-/npm/v1/security/audits/quick`, body, {
+      // Note: No `await` there, so that the request is sent in parallel with the deprecation checks
+      const auditRequest = npmHttpUtils.post(`/-/npm/v1/security/advisories/bulk`, payload, {
         authType: npmHttpUtils.AuthType.BEST_EFFORT,
         configuration,
         jsonResponse: true,
         registry,
-      })) as unknown) as npmAuditTypes.AuditResponse;
+      }) as unknown as Promise<npmAuditTypes.AuditResponse>;
+
+      const deprecations = await Promise.all(this.noDeprecations ? [] : Array.from(packages, async ([packageName, versions]) => {
+        const registryData = await npmHttpUtils.getPackageMetadata(structUtils.parseIdent(packageName), {
+          project,
+        });
+
+        return miscUtils.mapAndFilter(versions.keys(), version => {
+          const {deprecated} = registryData.versions[version];
+
+          // Apparently some packages have a `deprecated` field set to an empty string
+          // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
+          // the package, completely removing the `deprecated` field). Both the npm website
+          // and all other package managers skip showing deprecation warnings in this case.
+          if (!deprecated)
+            return miscUtils.mapAndFilter.skip;
+
+          return [packageName, version, deprecated] as const;
+        });
+      }));
+
+      const auditResult = await auditRequest;
+
+      for (const [packageName, version, message] of deprecations.flat(1)) {
+        // No need to report the deprecation audit message if the package is already reported as vulnerable
+        if (Object.prototype.hasOwnProperty.call(auditResult, packageName))
+          if (auditResult[packageName].some(advisory => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
+            continue;
+
+        auditResult[packageName] ??= [];
+        auditResult[packageName].push({
+          id: `${packageName} (deprecation)`,
+          title: message.trim() || `This package has been deprecated.`,
+          severity: npmAuditTypes.Severity.Moderate,
+          vulnerable_versions: version,
+        });
+      }
+
+      result = auditResult;
     });
 
     if (httpReport.hasErrors())
       return httpReport.exitCode();
+
+    const severities = npmAuditUtils.getSeverityInclusions(this.severity);
 
     const ignoredAdvisories = Array.from(new Set([
       ...configuration.get(`npmAuditIgnoreAdvisories`),
       ...this.ignores,
     ]));
 
-    if (ignoredAdvisories) {
-      for (const advisory of Object.keys(result.advisories)) {
-        if (micromatch.isMatch(advisory, ignoredAdvisories)) {
-          const entry = result.advisories[advisory];
-          let affectedPathsCount = 0;
-          entry.findings.forEach(finding => affectedPathsCount += finding.paths.length);
-          result.metadata.vulnerabilities[entry.severity] -= affectedPathsCount;
-          delete result.advisories[advisory];
-        }
+    const expandedResult: npmAuditTypes.AuditExtendedResponse = Object.create(null);
+
+    for (const [packageName, advisories] of Object.entries(result)) {
+      const filteredAdvisories = advisories.filter(advisory => {
+        return !micromatch.isMatch(`${advisory.id}`, ignoredAdvisories) && severities.has(advisory.severity);
+      });
+
+      if (filteredAdvisories.length > 0) {
+        expandedResult[packageName] = filteredAdvisories.map(advisory => {
+          const packageVersions = packages.get(packageName);
+          if (typeof packageVersions === `undefined`)
+            throw new Error(`Assertion failed: Expected the registry to only return packages that were requested`);
+
+          const versions = [...packageVersions.keys()].filter(version => {
+            return semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions);
+          });
+
+          const dependents = new Map<LocatorHash, Locator>();
+          for (const version of versions)
+            for (const pkg of packageVersions.get(version)!)
+              dependents.set(pkg.locatorHash, pkg);
+
+          return {
+            ...advisory,
+            versions,
+            dependents: [...dependents.values()],
+          };
+        });
       }
     }
 
-    const hasError = npmAuditUtils.isError(result.metadata.vulnerabilities, this.severity);
+    const hasError = Object.keys(expandedResult).length > 0;
+
     if (!this.json && hasError) {
-      treeUtils.emitTree(npmAuditUtils.getReportTree(result, this.severity), {
+      treeUtils.emitTree(npmAuditUtils.getReportTree(expandedResult), {
         configuration,
         json: this.json,
         stdout: this.context.stdout,

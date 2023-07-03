@@ -10,28 +10,39 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
 
 ### **Major Changes**
 
-- The `yarn set version` command will now skip generating the `yarnPath` configuration on new projects if it detects you're using [Corepack](https://nodejs.org/api/corepack.html)
+- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
+- Some important defaults have changed:
+  - `yarn set version` will now skip generating the `yarnPath` configuration on new projects if it detects you're using [Corepack](https://nodejs.org/api/corepack.html).
+  - `yarn init` will no longer use zero-install by default.
 - All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
   - This doesn't change anything to the plugin API we provide, which will keep being maintained (Yarn still has a modular architecture and uses the exact same APIs as contrib plugins; all that changes is how we distribute our own features).
+- Yarn's UI during installs has been greatly improved:
+  - Packages added and removed from the lockfile are now explicitly called out.
+  - Changes to the project cache are now reported as a single line.
+  - Unactionable warnings (`node-gyp` and transitive peer dependency errors) have been removed.
+  - Skipped builds are now reported during the first installs only (and subsequent `yarn rebuild` calls).
+  - The Yarn version is now displayed (to help us investigate issues [when reported as screenshots](https://discord.com/channels/226791405589233664/749942897071357954/935110539313565746)).
+  - Deprecations have been moved to `yarn npm audit`.
+- Some settings were renamed or removed:
+  - `caFilePath` is now `httpsCaFilePath`
+  - `preferAggregateCacheInfo` has been removed (it's now always on)
+  - `pnpDataPath` has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
+- The `yarn npm audit` command has been reimplemented:
+  - A registry providing the `/-/npm/v1/security/advisories/bulk` endpoint is now expected. Make sure your registry supports it, and let them know you need it otherwise (in the meantime you can use `npmAuditRegistry` to send your audit queries to the npm registry).
+  - Deprecations are now returned by default. To silence them, use `--no-deprecations`.
 - Some legacy layers have been sunset:
   - Plugins cannot access the Clipanion 2 APIs anymore (upgrade to [Clipanion 3](https://github.com/arcanis/clipanion))
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
-- The network settings configuration option has been renamed from `caFilePath` to `httpsCaFilePath`.
-- `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
-- `yarn npm audit` no longer takes into account publish registries. Use [`npmAuditRegistry`](https://yarnpkg.com/configuration/yarnrc#npmAuditRegistry) instead.
-- The `--assume-fresh-project` flag of `yarn init` has been removed. Should only affect people initializing Yarn 4+ projects using a Yarn 2 binary.
-- `yarn init` no longer enables zero-installs by default.
-- Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
-- The `pnpDataPath` option has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
-- The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
-- Yarn now assumes that the `fs.lutimes` bindings are always available (which is true for all supported Node versions).
-- Some libzip bindings are no longer needed for `ZipFS` and have been removed:
-  - `open`
-  - `ZIP_CREATE` & `ZIP_TRUNCATE`
+  - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
+  - The `--assume-fresh-project` flag of `yarn init` has been removed.
 
 ### **API Changes**
 
 The following changes only affect people writing Yarn plugins:
+
+- The `ZipFS` and `ZipOpenFS` classes have been moved from `@yarnpkg/fslib` to `@yarnpkg/libzip`. They no longer need or accept the `libzip` parameter.
+
+  - Reading the zip archives is now done on the Node.js side for performance; as a result, the `open`, `ZIP_CREATE`, and `ZIP_TRUNCATE` bindings are no longer needed for `ZipFS` and have also been removed.
 
 - The `dependencies` field sent returned by `Resolver#resolve` must now be the result of a `Configuration#normalizeDependencyMap` call. This change is prompted by a refactoring of how default protocols (ie `npm:`) are injected into descriptors. The previous implementation caused various descriptors to never be normalized, which made it difficult to know what were the descriptors each function should expect.
 
@@ -65,10 +76,22 @@ The following changes only affect people writing Yarn plugins:
 
 - `workspace.dependencies` has been removed. Use `workspace.anchoredPackage.dependencies` instead.
 
+- The `Installer` class must now return `BuildRequest` structures instead of `BuildDirective[]`. This lets you mark that the build must be skipped, and the reason why.
+
+- `startCacheReport` has been removed, and is now part of the output generated by `fetchEverything`.
+
+- `forgettableNames` & `forgettableBufferSize` have been removed (the only messages using them have been removed, making the forgettable logs implementation obsolete).
+
 ### Installs
 
+- Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
 - The `pnpm` linker avoids creating symlinks that lead to loops on the file system, by moving them higher up in the directory structure.
 - The `pnpm` linker no longer reports duplicate "incompatible virtual" warnings.
+
+### Features
+
+- `yarn run` now injects the environment variables defined in `.env.yarn` when spawning a process. The list of files thus injected can be controlled using the `injectEnvironmentFiles` variable.
+- `yarn workspaces foreach` now automatically enables the `-v,--verbose` flag in interactive terminal environments.
 
 ### Bugfixes
 

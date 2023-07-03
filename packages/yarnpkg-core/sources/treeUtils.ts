@@ -15,7 +15,7 @@ export type TreeRoot = TreeNode & {
 };
 
 export type TreeMap = {
-  [key: string]: TreeNode;
+  [key: string]: TreeNode | false;
 };
 
 export type TreeifyNode = {
@@ -24,13 +24,19 @@ export type TreeifyNode = {
 
 export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
   const target = {};
+  let n = 0;
 
   const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: TreeifyNode) => {
     const iterator = Array.isArray(printNode)
       ? printNode.entries()
       : Object.entries(printNode);
 
-    for (const [key, {label, value, children}] of iterator) {
+    for (const [key, child] of iterator) {
+      if (!child)
+        continue;
+
+      const {label, value, children} = child;
+
       const finalParts = [];
       if (typeof label !== `undefined`)
         finalParts.push(formatUtils.applyStyle(configuration, label, formatUtils.Style.BOLD));
@@ -40,7 +46,12 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
         finalParts.push(formatUtils.applyStyle(configuration, `${key}`, formatUtils.Style.BOLD));
 
       const finalLabel = finalParts.join(`: `);
-      const createdNode = targetNode[finalLabel] = {};
+
+      // The library we use, treeify, doesn't support having multiple nodes with
+      // the same label. To work around that, we prefix each label with a unique
+      // string that we strip before output.
+      const uniquePrefix = `\0${n++}\0`;
+      const createdNode = targetNode[`${uniquePrefix}${finalLabel}`] = {};
 
       if (typeof children !== `undefined`) {
         copyTree(children, createdNode);
@@ -73,7 +84,8 @@ export function treeNodeToJson(printTree: TreeNode) {
       : {};
 
     for (const [key, child] of iterator)
-      targetChildren[key] = copyTree(child);
+      if (child)
+        targetChildren[cleanKey(key)] = copyTree(child);
 
     if (typeof printNode.value === `undefined`)
       return targetChildren;
@@ -99,12 +111,15 @@ export function emitTree(tree: TreeNode, {configuration, stdout, json, separator
       : Object.values(tree.children ?? {});
 
     for (const child of iterator)
-      stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
+      if (child)
+        stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
 
     return;
   }
 
   let treeOutput = asTree(treeNodeToTreeify(tree, {configuration}) as any, false, false);
+
+  treeOutput = treeOutput.replace(/\0[0-9]+\0/g, ``);
 
   // A slight hack to add line returns between two top-level entries
   if (separators >= 1)
@@ -119,4 +134,8 @@ export function emitTree(tree: TreeNode, {configuration, stdout, json, separator
     throw new Error(`Only the first two levels are accepted by treeUtils.emitTree`);
 
   stdout.write(treeOutput);
+}
+
+function cleanKey(key: string | number) {
+  return typeof key === `string` ? key.replace(/^\0[0-9]+\0/, ``) : key;
 }

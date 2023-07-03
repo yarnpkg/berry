@@ -140,10 +140,10 @@ async function getCredentials({configuration, registry, report, stdin, stdout}: 
 
   report.reportSeparator();
 
-  if (process.env.YARN_IS_TEST_ENV) {
+  if (configuration.env.YARN_IS_TEST_ENV) {
     return {
-      name: process.env.YARN_INJECT_NPM_USER || ``,
-      password: process.env.YARN_INJECT_NPM_PASSWORD || ``,
+      name: configuration.env.YARN_INJECT_NPM_USER || ``,
+      password: configuration.env.YARN_INJECT_NPM_PASSWORD || ``,
     };
   }
 

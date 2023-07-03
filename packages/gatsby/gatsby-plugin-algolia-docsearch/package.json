@@ -1,8 +1,18 @@
 {
   "name": "gatsby-plugin-algolia-docsearch",
   "version": "0.0.0",
+  "private": true,
   "peerDependencies": {
     "gatsby": "*",
     "react": "*"
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "license": "BSD-2-Clause",
+  "repository": {
+    "directory": "packages/gatsby/gatsby-plugin-algolia-docsearch",
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/eslint-config",
-  "version": "0.6.0-rc.8",
+  "version": "1.0.0-rc.2",
   "stableVersion": "0.5.1",
   "license": "BSD-2-Clause",
   "exports": {
@@ -29,6 +29,9 @@
     "directory": "packages/eslint-config"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0"
   }
 }

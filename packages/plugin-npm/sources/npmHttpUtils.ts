@@ -1,11 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport} from '@yarnpkg/core';
-import {MessageName, ReportError}                                              from '@yarnpkg/core';
-import {prompt}                                                                from 'enquirer';
-import {URL}                                                                   from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project, miscUtils} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                                                     from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, toFilename, xfs}                                                                               from '@yarnpkg/fslib';
+import {prompt}                                                                                                                       from 'enquirer';
+import pick                                                                                                                           from 'lodash/pick';
+import {URL}                                                                                                                          from 'url';
 
-import {Hooks}                                                                 from './index';
-import * as npmConfigUtils                                                     from './npmConfigUtils';
-import {MapLike}                                                               from './npmConfigUtils';
+import {Hooks}                                                                                                                        from './index';
+import * as npmConfigUtils                                                                                                            from './npmConfigUtils';
+import {MapLike}                                                                                                                      from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -33,7 +35,7 @@ export type Options = httpUtils.Options & RegistryOptions & {
  * It doesn't handle 403 Forbidden, as the npm registry uses it when the user attempts
  * a prohibited action, such as publishing a package with a similar name to an existing package.
  */
-export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string} | undefined, configuration: Configuration}) {
+export async function handleInvalidAuthenticationError(error: any, {attemptedAs, registry, headers, configuration}: {attemptedAs?: string, registry: string, headers: {[key: string]: string | undefined} | undefined, configuration: Configuration}) {
   if (isOtpError(error))
     throw new ReportError(MessageName.AUTHENTICATION_INVALID, `Invalid OTP token`);
 
@@ -64,14 +66,176 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
+export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'> & {
+  project: Project;
+
+  /**
+   * Warning: This option will return all cached metadata if the version is found, but the rest of the metadata can be stale.
+   */
+  version?: string;
+};
+
+// We use 2 different caches:
+// - an in-memory cache, to avoid hitting the disk and the network more than once per process for each package
+// - an on-disk cache, for exact version matches and to avoid refetching the metadata if the resource hasn't changed on the server
+
+const PACKAGE_METADATA_CACHE = new Map<IdentHash, Promise<PackageMetadata> | PackageMetadata>();
+
+/**
+ * Caches and returns the package metadata for the given ident.
+ *
+ * Note: This function only caches and returns specific fields from the metadata.
+ * If you need other fields, use the uncached {@link get} or consider whether it would make more sense to extract
+ * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
+ */
+export async function getPackageMetadata(ident: Ident, {project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+  return await miscUtils.getFactoryWithDefault(PACKAGE_METADATA_CACHE, ident.identHash, async () => {
+    const {configuration} = project;
+
+    registry = normalizeRegistry(configuration, {ident, registry});
+
+    const registryFolder = getRegistryFolder(configuration, registry);
+    const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
+
+    let cached: CachedMetadata | null = null;
+
+    // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
+    // since most likely the user is trying to validate the metadata using hardened mode.
+    if (!project.lockfileNeedsRefresh) {
+      try {
+        cached = await xfs.readJsonPromise(identPath) as CachedMetadata;
+
+        if (typeof version !== `undefined` && typeof cached.metadata.versions[version] !== `undefined`) {
+          return cached.metadata;
+        }
+      } catch {}
+    }
+
+    return await get(getIdentUrl(ident), {
+      ...rest,
+      customErrorMessage: customPackageError,
+      configuration,
+      registry,
+      ident,
+      headers: {
+        ...headers,
+        // We set both headers in case a registry doesn't support ETags
+        [`If-None-Match`]: cached?.etag,
+        [`If-Modified-Since`]: cached?.lastModified,
+      },
+      wrapNetworkRequest: async executor => async () => {
+        const response = await executor();
+
+        if (response.statusCode === 304) {
+          if (cached === null)
+            throw new Error(`Assertion failed: cachedMetadata should not be null`);
+
+          return {
+            ...response,
+            body: cached.metadata,
+          };
+        }
+
+        const packageMetadata = pickPackageMetadata(JSON.parse(response.body.toString()));
+
+        PACKAGE_METADATA_CACHE.set(ident.identHash, packageMetadata);
+
+        const metadata: CachedMetadata = {
+          metadata: packageMetadata,
+          etag: response.headers.etag,
+          lastModified: response.headers[`last-modified`],
+        };
+
+        // We append the PID because it is guaranteed that this code is only run once per process for a given ident
+        const identPathTemp = `${identPath}-${process.pid}.tmp` as PortablePath;
+
+        await xfs.mkdirPromise(registryFolder, {recursive: true});
+        await xfs.writeJsonPromise(identPathTemp, metadata, {compact: true});
+
+        // Doing a rename is important to ensure the cache is atomic
+        await xfs.renamePromise(identPathTemp, identPath);
+
+        return {
+          ...response,
+          body: packageMetadata,
+        };
+      },
+    });
+  });
+}
+
+type CachedMetadata = {
+  metadata: PackageMetadata;
+  etag?: string;
+  lastModified?: string;
+};
+
+const CACHED_FIELDS = [
+  `name`,
+
+  `dist.tarball`,
+
+  `bin`,
+  `scripts`,
+
+  `os`,
+  `cpu`,
+  `libc`,
+
+  `dependencies`,
+  `dependenciesMeta`,
+  `optionalDependencies`,
+
+  `peerDependencies`,
+  `peerDependenciesMeta`,
+
+  `deprecated`,
+] as const;
+
+export type PackageMetadata = {
+  'dist-tags': Record<string, string>;
+  versions: Record<string, {
+    [key in typeof CACHED_FIELDS[number]]: any;
+  } & {
+    dist: {
+      tarball: string;
+    };
+  }>;
+};
+
+function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
+  return {
+    'dist-tags': metadata[`dist-tags`],
+    versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
+      key,
+      pick(value, CACHED_FIELDS) as any,
+    ])),
+  };
+}
+
+/**
+ * Used to invalidate the on-disk cache when the format changes.
+ */
+const CACHE_KEY = hashUtils.makeHash(...CACHED_FIELDS).slice(0, 6);
+
+function getRegistryFolder(configuration: Configuration, registry: string) {
+  const metadataFolder = getMetadataFolder(configuration);
+
+  const parsed = new URL(registry);
+  const registryFilename = toFilename(parsed.hostname);
+
+  return ppath.join(metadataFolder, CACHE_KEY as Filename, registryFilename);
+}
+
+function getMetadataFolder(configuration: Configuration) {
+  return ppath.join(configuration.get(`globalFolder`), `metadata/npm`);
+}
+
 export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+  registry = normalizeRegistry(configuration, {ident, registry});
+
   if (ident && ident.scope && typeof authType === `undefined`)
     authType = AuthType.BEST_EFFORT;
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -87,11 +251,7 @@ export async function get(path: string, {configuration, headers, ident, authType
 }
 
 export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -123,11 +283,7 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
 }
 
 export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -159,11 +315,7 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
 }
 
 export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
-  if (ident && typeof registry === `undefined`)
-    registry = npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
-
-  if (typeof registry !== `string`)
-    throw new Error(`Assertion failed: The registry should be a string`);
+  registry = normalizeRegistry(configuration, {ident, registry});
 
   const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
   if (auth)
@@ -192,6 +344,16 @@ export async function del(path: string, {attemptedAs, configuration, headers, id
       throw error;
     }
   }
+}
+
+function normalizeRegistry(configuration: Configuration, {ident, registry}: Partial<RegistryOptions>): string {
+  if (typeof registry === `undefined` && ident)
+    return npmConfigUtils.getScopeRegistry(ident.scope, {configuration});
+
+  if (typeof registry !== `string`)
+    throw new Error(`Assertion failed: The registry should be a string`);
+
+  return registry;
 }
 
 async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
@@ -242,7 +404,7 @@ function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
   }
 }
 
-async function whoami(registry: string, headers: {[key: string]: string} | undefined, {configuration}: {configuration: Configuration}) {
+async function whoami(registry: string, headers: {[key: string]: string | undefined} | undefined, {configuration}: {configuration: Configuration}) {
   if (typeof headers === `undefined` || typeof headers.authorization === `undefined`)
     return `an anonymous user`;
 

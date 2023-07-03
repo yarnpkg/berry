@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/nm",
-  "version": "4.0.0-rc.45",
+  "version": "4.0.0-rc.48",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -35,7 +35,7 @@
     "directory": "packages/yarnpkg-nm"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   },
   "stableVersion": "3.1.0"
 }

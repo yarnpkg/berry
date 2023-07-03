@@ -1,10 +1,29 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                     from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                      from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                from '@yarnpkg/parsers';
-import CI                                                                                                                                        from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                      from 'clipanion';
-import * as t                                                                                                                                    from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                         from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                          from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                    from '@yarnpkg/parsers';
+import CI                                                                                                                                                                            from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                          from 'clipanion';
+import semver                                                                                                                                                                        from 'semver';
+import * as t                                                                                                                                                                        from 'typanion';
+
+const LOCKFILE_MIGRATION_RULES: Array<{
+  selector: (version: number) => boolean;
+  name: keyof ConfigurationValueMap;
+  value: any;
+}> = [{
+  selector: v => v === -1,
+  name: `nodeLinker`,
+  value: `node-modules`,
+}, {
+  selector: v => v !== -1 && v < 8,
+  name: `enableGlobalCache`,
+  value: false,
+}, {
+  selector: v => v !== -1 && v < 8,
+  name: `compressionLevel`,
+  value: `mixed`,
+}];
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -264,39 +283,6 @@ export default class YarnCommand extends BaseCommand {
       }
     }
 
-    if (configuration.projectCwd !== null && typeof configuration.sources.get(`nodeLinker`) === `undefined`) {
-      const projectCwd = configuration.projectCwd;
-
-      let content;
-      try {
-        content = await xfs.readFilePromise(ppath.join(projectCwd, Filename.lockfile), `utf8`);
-      } catch {}
-
-      // If migrating from a v1 install, we automatically enable the node-modules linker,
-      // since that's likely what the author intended to do.
-      if (content?.includes(`yarn lockfile v1`)) {
-        const nmReport = await StreamReport.start({
-          configuration,
-          json: this.json,
-          stdout: this.context.stdout,
-          includeFooter: false,
-        }, async report => {
-          report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
-          report.reportSeparator();
-
-          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
-
-          await Configuration.updateConfiguration(projectCwd, {
-            nodeLinker: `node-modules`,
-          });
-        });
-
-        if (nmReport.hasErrors()) {
-          return nmReport.exitCode();
-        }
-      }
-    }
-
     if (configuration.projectCwd !== null) {
       const telemetryReport = await StreamReport.start({
         configuration,
@@ -305,9 +291,48 @@ export default class YarnCommand extends BaseCommand {
         includeFooter: false,
       }, async report => {
         if (Configuration.telemetry?.isNew) {
+          Configuration.telemetry.commitMotd();
+
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
+        } else if (Configuration.telemetry?.isMotd) {
+          const data = await fetch(`https://repo.yarnpkg.com/tags`).then(res => res.json()).catch(() => null) as {
+            latest: {stable: string, canary: string};
+            motd: Array<{message: string, url?: string}>;
+          } | null;
+
+          if (data !== null) {
+            let newVersion: [string, string] | null = null;
+            if (YarnVersion !== null) {
+              const isRcBinary = semver.prerelease(YarnVersion);
+              const releaseType = isRcBinary ? `canary` : `stable`;
+              const candidate = data.latest[releaseType];
+
+              if (semver.gt(candidate, YarnVersion)) {
+                newVersion = [releaseType, candidate];
+              }
+            }
+
+            if (newVersion) {
+              Configuration.telemetry.commitMotd();
+
+              report.reportInfo(MessageName.VERSION_NOTICE, `${formatUtils.applyStyle(configuration, `A new ${newVersion[0]} version of Yarn is available:`, formatUtils.Style.BOLD)} ${structUtils.prettyReference(configuration, newVersion[1])}!`);
+              report.reportInfo(MessageName.VERSION_NOTICE, `Upgrade now by running ${formatUtils.pretty(configuration, `yarn set version ${newVersion[1]}`, formatUtils.Type.CODE)}`);
+              report.reportSeparator();
+            } else {
+              const motd = Configuration.telemetry.selectMotd(data.motd);
+
+              if (motd) {
+                report.reportInfo(MessageName.MOTD_NOTICE, formatUtils.pretty(configuration, motd.message, formatUtils.Type.MARKDOWN_INLINE));
+
+                if (motd.url)
+                  report.reportInfo(MessageName.MOTD_NOTICE, `Learn more at ${motd.url}`);
+
+                report.reportSeparator();
+              }
+            }
+          }
         }
       });
 
@@ -317,6 +342,37 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
+
+    const lockfileLastVersion = project.lockfileLastVersion;
+    if (lockfileLastVersion !== null) {
+      const compatReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        const newSettings: Record<string, any> = {};
+
+        for (const rule of LOCKFILE_MIGRATION_RULES) {
+          if (rule.selector(lockfileLastVersion) && typeof configuration.sources.get(rule.name) === `undefined`) {
+            configuration.use(`<compat>`, {[rule.name]: rule.value}, project.cwd, {overwrite: true});
+            newSettings[rule.name] = rule.value;
+          }
+        }
+
+        if (Object.keys(newSettings).length > 0) {
+          await Configuration.updateConfiguration(project.cwd, newSettings);
+
+          report.reportInfo(MessageName.MIGRATION_SUCCESS, `Migrated your project to the latest Yarn version 🚀`);
+          report.reportSeparator();
+        }
+      });
+
+      if (compatReport.hasErrors()) {
+        return compatReport.exitCode();
+      }
+    }
+
     const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 
     if (!workspace)
@@ -341,16 +397,15 @@ export default class YarnCommand extends BaseCommand {
     // the Configuration and Install classes). Feel free to open an issue
     // in order to ask for design feedback before writing features.
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       json: this.json,
       stdout: this.context.stdout,
-      includeLogs: true,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable, checkResolutions, mode: this.mode});
+    }, {
+      cache,
+      immutable,
+      checkResolutions,
+      mode: this.mode,
     });
-
-    return report.exitCode();
   }
 }
 
@@ -437,13 +492,13 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
 
   // We must keep the lockfile version as small as necessary to force Yarn to
   // refresh the merged-in lockfile metadata that may be missing.
-  merged.__metadata.version = Math.min(0, ...variants.map(variant => {
-    return variant.__metadata.version ?? Infinity;
-  }));
+  merged.__metadata.version = `${Math.min(...variants.map(variant => {
+    return parseInt(variant.__metadata.version ?? 0);
+  }))}`;
 
-  merged.__metadata.cacheKey = Math.min(0, ...variants.map(variant => {
-    return variant.__metadata.cacheKey ?? 0;
-  }));
+  merged.__metadata.cacheKey = `${Math.min(...variants.map(variant => {
+    return parseInt(variant.__metadata.cacheKey ?? 0);
+  }))}`;
 
   // parse as valid YAML except that the objects become strings. We can use
   // that to detect them. Damn, it's really ugly though.
@@ -465,30 +520,32 @@ async function autofixLegacyPlugins(configuration: Configuration, immutable: boo
   const legacyPlugins: Array<PortablePath> = [];
   const yarnPluginDir = ppath.join(configuration.projectCwd, `.yarn/plugins/@yarnpkg`);
 
-  const changed = await Configuration.updateConfiguration(configuration.projectCwd, current => {
-    if (!Array.isArray(current.plugins))
-      return current;
+  const changed = await Configuration.updateConfiguration(configuration.projectCwd, {
+    plugins: plugins => {
+      if (!Array.isArray(plugins))
+        return plugins;
 
-    const plugins = current.plugins.filter((plugin: {spec: string, path: PortablePath}) => {
-      if (!plugin.path)
-        return true;
+      const filteredPlugins = plugins.filter((plugin: {spec: string, path: PortablePath}) => {
+        if (!plugin.path)
+          return true;
 
-      const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
-      const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
+        const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
+        const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
 
-      if (isLegacy)
-        legacyPlugins.push(resolvedPath);
+        if (isLegacy)
+          legacyPlugins.push(resolvedPath);
 
-      return !isLegacy;
-    });
+        return !isLegacy;
+      });
 
-    if (current.plugins.length === plugins.length)
-      return current;
+      if (filteredPlugins.length === 0)
+        return Configuration.deleteProperty;
 
-    return {
-      ...current,
-      plugins,
-    };
+      if (filteredPlugins.length === plugins.length)
+        return plugins;
+
+      return filteredPlugins;
+    },
   }, {
     immutable,
   });

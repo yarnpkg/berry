@@ -2,6 +2,12 @@
   "name": "@yarnpkg/gatsby",
   "private": true,
   "license": "BSD-2-Clause",
+  "workspaces": [
+    "gatsby-plugin-algolia-docsearch",
+    "gatsby-plugin-clipanion-cli",
+    "gatsby-plugin-yarn-introspection",
+    "typedoc-plugin-yarn"
+  ],
   "dependencies": {
     "@babel/core": "^7.18.10",
     "@emotion/react": "^11.4.0",
@@ -33,9 +39,9 @@
     "es6-promise": "^4.2.6",
     "gatsby": "^3",
     "gatsby-image": "^3.7.0",
-    "gatsby-plugin-algolia-docsearch": "portal:./gatsby-plugin-algolia-docsearch",
+    "gatsby-plugin-algolia-docsearch": "workspace:^",
     "gatsby-plugin-catch-links": "^3.7.0",
-    "gatsby-plugin-clipanion-cli": "portal:./gatsby-plugin-clipanion-cli",
+    "gatsby-plugin-clipanion-cli": "workspace:^",
     "gatsby-plugin-emotion": "^6.7.0",
     "gatsby-plugin-favicon": "^3.1.6",
     "gatsby-plugin-manifest": "^3.7.0",
@@ -44,7 +50,7 @@
     "gatsby-plugin-react-helmet": "^4.7.0",
     "gatsby-plugin-remove-trailing-slashes": "^3.7.0",
     "gatsby-plugin-sharp": "^3.7.0",
-    "gatsby-plugin-yarn-introspection": "portal:./gatsby-plugin-yarn-introspection",
+    "gatsby-plugin-yarn-introspection": "workspace:^",
     "gatsby-remark-autolink-headers": "^4.4.0",
     "gatsby-remark-prismjs": "^5.4.0",
     "gatsby-remark-table-of-contents": "^1.0.0",
@@ -88,8 +94,8 @@
     "tslib": "^2.4.0",
     "typedoc": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch",
     "typedoc-neo-theme": "^1.0.7",
-    "typedoc-plugin-yarn": "portal:./typedoc-plugin-yarn",
-    "typescript": "5.1.1-rc",
+    "typedoc-plugin-yarn": "workspace:^",
+    "typescript": "5.2.0-beta",
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
@@ -121,6 +127,6 @@
     "@types/tinycolor2": "1.4.2"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   }
 }

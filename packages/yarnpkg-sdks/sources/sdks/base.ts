@@ -19,7 +19,10 @@ export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   await wrapper.writeManifest();
 
   await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
-  await wrapper.writeFile(`lib/api.js` as PortablePath, {requirePath: `` as PortablePath});
+  await wrapper.writeFile(`lib/api.js` as PortablePath, {
+    // Empty path to use the entrypoint and let Node.js resolve the correct path itself
+    requirePath: `` as PortablePath,
+  });
 
   return wrapper;
 };
@@ -27,9 +30,24 @@ export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
 export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`prettier` as PortablePath, {pnpApi, target});
 
+  await wrapper.writeManifest({
+    main: `./index.js`,
+  });
+
+  await wrapper.writeBinary(`index.js` as PortablePath, {
+    // Empty path to use the entrypoint and let Node.js resolve the correct path itself
+    requirePath: `` as PortablePath,
+  });
+
+  return wrapper;
+};
+
+export const generateRelayCompilerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`relay-compiler` as PortablePath, {pnpApi, target});
+
   await wrapper.writeManifest();
 
-  await wrapper.writeBinary(`index.js` as PortablePath);
+  await wrapper.writeBinary(`cli.js` as PortablePath);
 
   return wrapper;
 };
@@ -291,6 +309,7 @@ export const BASE_SDKS: BaseSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerBaseWrapper],
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
+  [`relay-compiler`, generateRelayCompilerBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],
   [`typescript`, generateTypescriptBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],

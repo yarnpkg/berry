@@ -1,8 +1,24 @@
-import {PortablePath, xfs} from '@yarnpkg/fslib';
-import {EOL}               from 'os';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {parseSyml}            from '@yarnpkg/parsers';
+import {EOL}                  from 'os';
 
 describe(`Commands`, () => {
   describe(`config set`, () => {
+    test(
+      `it shouldn't remove empty arrays from the files`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          injectEnvironmentFiles: [],
+        });
+
+        await run(`config`, `set`, `pnpShebang`, `#!/usr/bin/env iojs\n`);
+
+        expect(parseSyml(await xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`))).toMatchObject({
+          injectEnvironmentFiles: [],
+        });
+      }),
+    );
+
     test(
       `it should print the configured value for the current directory`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
@@ -10,7 +26,7 @@ describe(`Commands`, () => {
           stdout: expect.stringContaining(`#!/usr/bin/env iojs\\n`),
         });
 
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml` as PortablePath, `utf8`)).resolves.toContain(`pnpShebang`);
+        await expect(xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`)).resolves.toContain(`pnpShebang`);
       }),
     );
 
@@ -22,7 +38,7 @@ describe(`Commands`, () => {
         expect(stdout).not.toContain(`foobar`);
         expect(stdout).toContain(`********`);
 
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml` as PortablePath, `utf8`)).resolves.toContain(`npmAuthToken: foobar`);
+        await expect(xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`)).resolves.toContain(`npmAuthToken: foobar`);
       }),
     );
 
@@ -36,7 +52,7 @@ describe(`Commands`, () => {
         expect(stdout).toContain(`npmScopes.yarnpkg`);
         expect(stdout).toContain(`npmAlwaysAuth: false`);
 
-        await expect(xfs.readFilePromise(`${path}/.yarnrc.yml` as PortablePath, `utf8`)).resolves.toContain(
+        await expect(xfs.readFilePromise(ppath.join(path, Filename.rc), `utf8`)).resolves.toContain(
           `npmScopes:${EOL}` +
           `  yarnpkg:${EOL}` +
           `    npmAlwaysAuth: false`,

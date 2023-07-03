@@ -1,9 +1,9 @@
 import {Filename, PortablePath, npath, ppath, xfs}                                                               from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL}                                                                               from '@yarnpkg/libzip';
 import {parseSyml, stringifySyml}                                                                                from '@yarnpkg/parsers';
 import camelcase                                                                                                 from 'camelcase';
 import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
 import {UsageError}                                                                                              from 'clipanion';
+import {parse as parseDotEnv}                                                                                    from 'dotenv';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
 
@@ -221,7 +221,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Zip files compression level, from 0 to 9 or mixed (a variant of 9, which stores some files uncompressed, when compression doesn't yield good results)`,
     type: SettingsType.NUMBER,
     values: [`mixed`, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    default: DEFAULT_COMPRESSION_LEVEL,
+    default: 0,
   },
   virtualFolder: {
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named __virtual__)`,
@@ -279,6 +279,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: true,
   },
+  enableMotd: {
+    description: `If true, installs will print an helpful message every day of the week`,
+    type: SettingsType.BOOLEAN,
+    default: !isCI,
+    defaultText: `<dynamic>`,
+  },
   enableProgressBars: {
     description: `If true, the CLI is allowed to show a progress bar for long-running events`,
     type: SettingsType.BOOLEAN,
@@ -289,11 +295,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the CLI is allowed to print the time spent executing commands`,
     type: SettingsType.BOOLEAN,
     default: true,
-  },
-  preferAggregateCacheInfo: {
-    description: `If true, the CLI will only print a one-line report of any cache changes`,
-    type: SettingsType.BOOLEAN,
-    default: isCI,
   },
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
@@ -535,6 +536,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: `throw`,
   },
 
+  // Miscellaneous settings
+  injectEnvironmentFiles: {
+    description: `List of all the environment files that Yarn should inject inside the process when it starts`,
+    type: SettingsType.ABSOLUTE_PATH,
+    default: [`.env.yarn?`],
+    isArray: true,
+  },
+
   // Package patching - to fix incorrect definitions
   packageExtensions: {
     description: `Map of package corrections to apply on the dependency tree`,
@@ -600,9 +609,10 @@ export interface ConfigurationValueMap {
   enableColors: boolean;
   enableHyperlinks: boolean;
   enableInlineBuilds: boolean;
+  enableMessageNames: boolean;
+  enableMotd: boolean;
   enableProgressBars: boolean;
   enableTimers: boolean;
-  preferAggregateCacheInfo: boolean;
   preferInteractive: boolean;
   preferTruncatedLines: boolean;
   progressBarStyle: string | undefined;
@@ -646,6 +656,9 @@ export interface ConfigurationValueMap {
   enableStrictSettings: boolean;
   enableImmutableCache: boolean;
   checksumBehavior: string;
+
+  // Miscellaneous settings
+  injectEnvironmentFiles: Array<PortablePath>;
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
@@ -736,7 +749,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
       throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
 
     const valueWithReplacedVariables = miscUtils.replaceEnvVariables(value, {
-      env: process.env,
+      env: configuration.env,
     });
 
     switch (definition.type) {
@@ -848,7 +861,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         return null;
 
       if (configuration.projectCwd === null) {
-        if (ppath.isAbsolute(definition.default)) {
+        if (Array.isArray(definition.default)) {
+          return definition.default.map((entry: string) => ppath.normalize(entry as PortablePath));
+        } else if (ppath.isAbsolute(definition.default)) {
           return ppath.normalize(definition.default);
         } else if (definition.isNullable) {
           return null;
@@ -973,6 +988,7 @@ export class Configuration {
 
   public invalid: Map<string, string> = new Map();
 
+  public env: Record<string, string | undefined> = {};
   public packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> = new Map();
 
   public limits: Map<string, Limit> = new Map();
@@ -1059,8 +1075,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
@@ -1126,6 +1142,22 @@ export class Configuration {
 
     configuration.startingCwd = startingCwd;
     configuration.projectCwd = projectCwd;
+
+    const env = Object.assign(Object.create(null), process.env);
+    configuration.env = env;
+
+    // load the environment files
+    const environmentFiles = await Promise.all(configuration.get(`injectEnvironmentFiles`).map(async p => {
+      const content = p.endsWith(`?`)
+        ? await xfs.readFilePromise(p.slice(0, -1) as PortablePath, `utf8`).catch(() => ``)
+        : await xfs.readFilePromise(p as PortablePath, `utf8`);
+
+      return parseDotEnv(content);
+    }));
+
+    for (const environmentEntries of environmentFiles)
+      for (const [key, value] of Object.entries(environmentEntries))
+        configuration.env[key] = miscUtils.replaceEnvVariables(value, {env});
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));

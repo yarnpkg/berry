@@ -1,7 +1,17 @@
 {
   "name": "gatsby-plugin-clipanion-cli",
   "version": "0.0.0",
+  "private": true,
   "peerDependencies": {
     "gatsby": "^3.7.0"
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "license": "BSD-2-Clause",
+  "repository": {
+    "directory": "packages/gatsby/gatsby-plugin-clipanion-cli",
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git"
   }
 }

@@ -116,11 +116,17 @@ export default class VersionApplyCommand extends BaseCommand {
         }
 
         report.reportSeparator();
-
-        await project.install({cache, report});
       }
     });
 
-    return applyReport.exitCode();
+    if (applyReport.hasErrors())
+      return applyReport.exitCode();
+
+    return await project.installWithNewReport({
+      json: this.json,
+      stdout: this.context.stdout,
+    }, {
+      cache,
+    });
   }
 }

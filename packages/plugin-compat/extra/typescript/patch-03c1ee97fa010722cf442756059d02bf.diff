@@ -1,6 +1,6 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
 index 80de55fe3..867742baa 100644
-semver exclusivity >=5.1.1-rc
+semver exclusivity >=5.1.1-rc <5.2.0-beta
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
 @@ -5051,6 +5051,9 @@ var sys = (() => {
@@ -345,7 +345,7 @@ semver exclusivity >=5.1.1-rc
    function reloadFileNamesFromConfigFile() {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
 index ec8709520..e61459b87 100644
-semver exclusivity >=5.1.1-rc
+semver exclusivity >=5.1.1-rc <5.2.0-beta
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -8547,6 +8547,9 @@ var sys = (() => {
@@ -998,7 +998,7 @@ semver exclusivity >=5.1.1-rc
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
 index 22e446c17..a81409276 100644
-semver exclusivity >=5.1.1-rc
+semver exclusivity >=5.1.1-rc <5.2.0-beta
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
 @@ -6342,6 +6342,9 @@ ${lanes.join("\n")}
@@ -1697,7 +1697,7 @@ semver exclusivity >=5.1.1-rc
            if (!watchers.has(path)) {
 diff --git a/lib/typescript.js b/lib/typescript.js
 index 87906a6eb..192bb763f 100644
-semver exclusivity >=5.1.1-rc
+semver exclusivity >=5.1.1-rc <5.2.0-beta
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
 @@ -6342,6 +6342,9 @@ ${lanes.join("\n")}
@@ -2294,7 +2294,7 @@ semver exclusivity >=5.1.1-rc
        kindPrecedence = {
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
 index 5f70f8de5..a39cfe0cf 100644
-semver exclusivity >=5.1.1-rc
+semver exclusivity >=5.1.1-rc <5.2.0-beta
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
 @@ -4461,6 +4461,9 @@ var sys = (() => {

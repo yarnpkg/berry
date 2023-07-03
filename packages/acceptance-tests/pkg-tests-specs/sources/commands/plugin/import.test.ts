@@ -89,15 +89,5 @@ describe(`Commands`, () => {
         });
       }),
     );
-
-    test(
-      `it should detect attempts to import built-in plugins`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await expect(run(`plugin`, `import`, `workspace-tools`)).rejects.toMatchObject({
-          code: 1,
-          stdout: expect.stringContaining(`is already installed`),
-        });
-      }),
-    );
   });
 });

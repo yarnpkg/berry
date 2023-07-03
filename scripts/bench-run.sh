@@ -80,7 +80,7 @@ case $PACKAGE_MANAGER in
   yarn)
     setup-yarn2
     bench install-full-cold \
-      --prepare 'rm -rf .yarn .pnp.* yarn.lock && yarn cache clean --all' \
+      --prepare 'rm -rf .yarn .pnp.* yarn.lock .yarn-global' \
       'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn .pnp.* yarn.lock' \
@@ -96,7 +96,7 @@ case $PACKAGE_MANAGER in
     setup-yarn2
     setup-yarn2-nm
     bench install-full-cold \
-      --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
+      --prepare 'rm -rf .yarn node_modules yarn.lock .yarn-global' \
       'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn node_modules yarn.lock' \
@@ -112,7 +112,7 @@ case $PACKAGE_MANAGER in
     setup-yarn2
     setup-yarn2-pnpm
     bench install-full-cold \
-      --prepare 'rm -rf .yarn node_modules yarn.lock && yarn cache clean --all' \
+      --prepare 'rm -rf .yarn node_modules yarn.lock .yarn-global' \
       'yarn install'
     bench install-cache-only \
       --prepare 'rm -rf .yarn node_modules yarn.lock' \

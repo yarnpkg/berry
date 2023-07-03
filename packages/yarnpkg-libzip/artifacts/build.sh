@@ -7,7 +7,7 @@ EMSDK_VERSION=2.0.22
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
 
-ZLIB_VERSION=2.0.6
+ZLIB_VERSION=2.1.2
 LIBZIP_VERSION=1.5.2 # Ignored at the moment; we use a fork, cf next params
 
 LIBZIP_REPO=arcanis/libzip
@@ -46,7 +46,7 @@ LIBZIP_ROOT="$THIS_DIR/libzip-$LIBZIP_VERSION"
   cd "$ZLIB_ROOT/build"
   mkdir -p local/lib local/include
   cp libz.a local/lib/
-  cp zconf.h ../zlib.h local/include/
+  cp zconf.h zlib.h zlib_name_mangling.h local/include/
 
   echo Built zlib
 )

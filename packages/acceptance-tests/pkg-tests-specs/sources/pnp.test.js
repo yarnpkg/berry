@@ -1345,6 +1345,25 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it shouldn't automatically unplug packages with skipped postinstall scripts`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps-scripted`]: {built: false},
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+      },
+    ),
+  );
+
+  test(
     `it should allow packages to define whether they should be unplugged (true)`,
     makeTemporaryEnv(
       {
@@ -2161,5 +2180,22 @@ describe(`Plug'n'Play`, () => {
         });
       },
     ),
+  );
+
+  testIf(
+    () => satisfies(process.versions.node, `>=14`),
+    `it should emit a warning for circular dependency exports access`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+      await xfs.writeFilePromise(ppath.join(path, `a.js`), `require('./b.js');`);
+      await xfs.writeFilePromise(ppath.join(path, `b.js`), `require('./a.js').foo;`);
+
+      await expect(run(`node`, `./a.js`)).resolves.toMatchObject({
+        code: 0,
+        stdout: ``,
+        stderr: expect.stringContaining(`of module exports inside circular dependency`),
+      });
+    }),
   );
 });

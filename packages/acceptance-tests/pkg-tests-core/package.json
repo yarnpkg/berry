@@ -18,6 +18,7 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
+    "@yarnpkg/plugin-npm-cli": "workspace:^",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
     "pem": "dexus/pem",
@@ -34,9 +35,10 @@
     "directory": "packages/acceptance-tests/pkg-tests-core"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   },
   "dependencies": {
+    "typanion": "^3.12.1",
     "uuid": "^8.3.2"
   }
 }

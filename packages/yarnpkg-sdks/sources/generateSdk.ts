@@ -178,6 +178,7 @@ export type SupportedSdk =
   | '@astrojs/language-server'
   | 'eslint'
   | 'prettier'
+  | 'relay-compiler'
   | 'typescript-language-server'
   | 'typescript'
   | 'svelte-language-server'
@@ -205,7 +206,7 @@ export class Wrapper {
     this.target = target;
   }
 
-  async writeManifest() {
+  async writeManifest(rawManifest: Record<string, any> = {}) {
     const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
 
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
@@ -223,10 +224,11 @@ export class Wrapper {
       version: `${manifest.version}-sdk`,
       main: manifest.main,
       type: `commonjs`,
+      ...rawManifest,
     });
   }
 
-  async writeBinary(relPackagePath: PortablePath, options: TemplateOptions = {}) {
+  async writeBinary(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath} = {}) {
     await this.writeFile(relPackagePath, {...options, mode: 0o755});
   }
 

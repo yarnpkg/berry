@@ -1,6 +1,6 @@
 import {FakeFS, LazyFS, NodeFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
 import {ppath, xfs}                                              from '@yarnpkg/fslib';
-import {DEFAULT_COMPRESSION_LEVEL, ZipFS}                        from '@yarnpkg/libzip';
+import {ZipFS}                                                   from '@yarnpkg/libzip';
 import {randomBytes}                                             from 'crypto';
 import fs                                                        from 'fs';
 
@@ -12,7 +12,7 @@ import * as miscUtils                                            from './miscUti
 import * as structUtils                                          from './structUtils';
 import {LocatorHash, Locator}                                    from './types';
 
-const CACHE_VERSION = 9;
+const CACHE_VERSION = 10;
 
 export type CacheOptions = {
   mockedPackages?: Set<LocatorHash>;
@@ -74,7 +74,7 @@ export class Cache {
       this.cacheKey = `${cacheKeyOverride}`;
     } else {
       const compressionLevel = configuration.get(`compressionLevel`);
-      const compressionKey = compressionLevel !== DEFAULT_COMPRESSION_LEVEL
+      const compressionKey = compressionLevel !== `mixed`
         ? `c${compressionLevel}` : ``;
 
       this.cacheKey = [

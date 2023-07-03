@@ -14,6 +14,10 @@ export function isTaggedYarnVersion(version: string | null) {
   return !!(semver.valid(version) && version!.match(/^[^-]+(-rc\.[0-9]+)?$/));
 }
 
+export function plural(n: number, {one, more, zero = more}: {zero?: string, one: string, more: string}) {
+  return n === 0 ? zero : n === 1 ? one : more;
+}
+
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
@@ -571,4 +575,17 @@ export function mergeIntoTarget<T extends object, S extends Array<object>>(targe
  */
 export function toMerged<S extends Array<object>>(...sources: S): MergeObjects<S, {}> {
   return mergeIntoTarget({}, ...sources);
+}
+
+export function groupBy<T extends Record<string, any>, K extends keyof T>(items: Iterable<T>, key: K): {[V in T[K]]?: Array<Extract<T, {[_ in K]: V}>>} {
+  const groups: Record<string, any> = Object.create(null);
+
+  for (const item of items) {
+    const groupKey = item[key];
+
+    groups[groupKey] ??= [];
+    groups[groupKey].push(item);
+  }
+
+  return groups;
 }

@@ -44,12 +44,11 @@ const mte = generatePkgDriver({
         // Otherwise snapshots relying on this would break each time it's bumped
         [`YARN_CACHE_KEY_OVERRIDE`]: `0`,
         // Otherwise the output isn't stable between runs
-        [`YARN_ENABLE_TIMERS`]: `false`,
         [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
+        [`YARN_ENABLE_TIMERS`]: `false`,
         [`FORCE_COLOR`]: `0`,
         // Otherwise the output wouldn't be the same on CI vs non-CI
         [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
-        [`YARN_PREFER_AGGREGATE_CACHE_INFO`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         // Otherwise tests fail on systems where this is globally set to true

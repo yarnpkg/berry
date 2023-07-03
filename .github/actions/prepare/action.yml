@@ -38,6 +38,8 @@ runs:
 
     - uses: actions/cache@v3
       with:
-        path: ${{ steps.global-path.outputs.globalFolder }}/cache
+        path: |
+          ${{ steps.global-path.outputs.globalFolder }}/cache
+          ${{ steps.global-path.outputs.globalFolder }}/metadata
         key: dependencies-${{ runner.os }}-${{ github.workflow }}-${{ github.sha }}
     #endregion

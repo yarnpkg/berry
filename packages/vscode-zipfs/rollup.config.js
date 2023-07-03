@@ -3,6 +3,9 @@ import resolve        from '@rollup/plugin-node-resolve';
 import path           from 'path';
 import esbuild        from 'rollup-plugin-esbuild';
 import {defineConfig} from 'rollup';
+import semver         from 'semver';
+
+import pkg            from './package.json';
 
 const mode = process.env.NODE_ENV || `production`;
 
@@ -24,7 +27,7 @@ export default async () =>
       }),
       esbuild({
         tsconfig: false,
-        target: `node14`,
+        target: `node${semver.minVersion(pkg.engines.node).version}`,
         define: {
           document: `undefined`,
           XMLHttpRequest: `undefined`,
