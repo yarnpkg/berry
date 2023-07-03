@@ -35,6 +35,10 @@ Yarn now accepts sponsorships! Please give a look at our [OpenCollective](https:
   - Plugins cannot access the internal copy of Yup anymore (use [Typanion](https://github.com/arcanis/typanion) instead)
   - Yarn will no longer remove the old Yarn 2.x `.pnp.js` file when migrating.
   - The `--assume-fresh-project` flag of `yarn init` has been removed.
+- Yarn is now interactive by default whenever possible:
+  - The `--interactive` flag is no longer needed for `yarn add` and `yarn up`.
+  - Yarn will never be interactive in CI environments or outside of a TTY.
+  - You can always set `preferInteractive: false` to prevent Yarn from being implicitly interactive.
 
 ### **API Changes**
 
