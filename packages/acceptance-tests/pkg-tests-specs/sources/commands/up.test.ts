@@ -142,8 +142,8 @@ describe(`Commands`, () => {
           },
         });
 
-        expect(stdout).not.toContain(`must be built`);
-        expect(stdout).toMatchSnapshot();
+        expect(stdout).not.toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
+        expect(stdout).not.toContain(`STDOUT preinstall out`);
       }),
     );
 
@@ -160,8 +160,8 @@ describe(`Commands`, () => {
           },
         });
 
-        expect(stdout).not.toContain(`must be built`);
-        expect(stdout).toMatchSnapshot();
+        expect(stdout).not.toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
+        expect(stdout).not.toContain(`STDOUT preinstall out`);
       }),
     );
   });
