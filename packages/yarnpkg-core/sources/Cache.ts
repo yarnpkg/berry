@@ -166,12 +166,6 @@ export class Cache {
     if (cacheVersion < CACHE_VERSION && this.getMigrationMode() === `always`)
       return null;
 
-    console.log({
-      cacheSpec,
-      thisCacheSpec: this.cacheSpec,
-      migrationMode: this.getMigrationMode(),
-    });
-
     // If the cache spec changed, we may need to regenerate the archive
     if (cacheSpec !== this.cacheSpec && this.getMigrationMode() !== `required-only`)
       return null;
