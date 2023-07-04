@@ -63,6 +63,7 @@ export class Cache {
   public readonly check: boolean;
 
   public readonly cacheKey: string;
+  public readonly cacheSpec: string;
 
   private mutexes: Map<LocatorHash, Promise<readonly [
     shouldMock: boolean,
@@ -91,12 +92,14 @@ export class Cache {
     this.check = check;
 
     const compressionLevel = configuration.get(`compressionLevel`);
-    const compressionKey = compressionLevel !== `mixed`
-      ? `c${compressionLevel}` : ``;
+
+    this.cacheSpec = compressionLevel !== `mixed`
+      ? `c${compressionLevel}`
+      : ``;
 
     this.cacheKey = [
       CACHE_VERSION,
-      compressionKey,
+      this.cacheSpec,
     ].join(``);
   }
 
@@ -108,6 +111,14 @@ export class Cache {
     return mirrorCwd !== this.cwd ? mirrorCwd : null;
   }
 
+  getMigrationMode() {
+    const migrationMode = this.configuration.get(`cacheMigrationMode`);
+    if (migrationMode === `auto`)
+      return this.configuration.get(`enableGlobalCache`) ? `always` : `required-only`;
+
+    return migrationMode;
+  }
+
   getVersionFilename(locator: Locator) {
     return `${structUtils.slugifyLocator(locator)}-${this.cacheKey}.zip` as Filename;
   }
@@ -115,7 +126,7 @@ export class Cache {
   getChecksumFilename(locator: Locator, checksum: string) {
     // We only want the actual checksum (not the cache version, since the whole
     // point is to avoid changing the filenames when the cache version changes)
-    const contentChecksum = getHashComponent(checksum);
+    const contentChecksum = splitChecksumComponents(checksum).hash;
 
     // We only care about the first few characters. It doesn't matter if that
     // makes the hash easier to collide with, because we check the file hashes
@@ -138,19 +149,31 @@ export class Cache {
     if (expectedChecksum === null)
       return null;
 
-    const cacheKey = getCacheKeyComponent(expectedChecksum);
-    if (!cacheKey)
+    const {
+      cacheVersion,
+      cacheSpec,
+    } = splitChecksumComponents(expectedChecksum);
+
+    if (cacheVersion === null)
       return null;
 
-    // The cache keys must always be at least as old as the last checkpoint. If
-    // they're up-to-date but the key is different, it means that the configuration
-    // changed and the cache archive must be refreshed.
-    if (cacheKey !== this.cacheKey && getCacheKeyVersion(cacheKey) <= CACHE_CHECKPOINT)
+    // The cache keys must always be at least as old as the last checkpoint.
+    if (cacheVersion < CACHE_CHECKPOINT)
       return null;
 
     // If the global cache is used, then the lockfile must always be up-to-date,
     // so the archives must be regenerated each time the version changes.
-    if (cacheKey !== this.cacheKey && this.configuration.get(`enableGlobalCache`))
+    if (cacheVersion < CACHE_VERSION && this.getMigrationMode() === `always`)
+      return null;
+
+    console.log({
+      cacheSpec,
+      thisCacheSpec: this.cacheSpec,
+      migrationMode: this.getMigrationMode(),
+    });
+
+    // If the cache spec changed, we may need to regenerate the archive
+    if (cacheSpec !== this.cacheSpec && this.getMigrationMode() !== `required-only`)
       return null;
 
     return ppath.resolve(this.cwd, this.getChecksumFilename(locator, expectedChecksum));
@@ -232,7 +255,7 @@ export class Cache {
         return {isValid: true, hash: null};
 
       const actualCacheKey = expectedChecksum && !isColdHit
-        ? getCacheKeyComponent(expectedChecksum)
+        ? splitChecksumComponents(expectedChecksum).cacheKey
         : this.cacheKey;
 
       const actualChecksum = (!opts.skipIntegrityCheck || !expectedChecksum)
@@ -256,7 +279,7 @@ export class Cache {
         if (this.check) {
           checksumBehavior = `throw`;
         // If the lockfile references an old cache format, we tolerate different checksums
-        } else if (getCacheKeyComponent(expectedChecksum) !== getCacheKeyComponent(actualChecksum)) {
+        } else if (splitChecksumComponents(expectedChecksum).cacheKey !== splitChecksumComponents(actualChecksum).cacheKey) {
           checksumBehavior = `update`;
         } else {
           checksumBehavior = this.configuration.get(`checksumBehavior`);
@@ -457,16 +480,21 @@ export class Cache {
   }
 }
 
-function getCacheKeyComponent(checksum: string) {
-  const split = checksum.indexOf(`/`);
-  return split !== -1 ? checksum.slice(0, split) : null;
-}
+const CHECKSUM_REGEX = /^(?:(?<cacheKey>(?<cacheVersion>[0-9]+)(?<cacheSpec>.*))\/)?(?<hash>.*)$/;
 
-function getHashComponent(checksum: string) {
-  const split = checksum.indexOf(`/`);
-  return split !== -1 ? checksum.slice(split + 1) : checksum;
-}
+function splitChecksumComponents(checksum: string) {
+  const match = checksum.match(CHECKSUM_REGEX);
+  if (!match?.groups)
+    throw new Error(`Assertion failed: Expected the checksum to match the requested pattern`);
 
-function getCacheKeyVersion(cacheKey: string) {
-  return parseInt(cacheKey, 10);
+  const cacheVersion = match.groups.cacheVersion
+    ? parseInt(match.groups.cacheVersion)
+    : null;
+
+  return {
+    cacheKey: match.groups.cacheKey ?? null,
+    cacheVersion,
+    cacheSpec: match.groups.cacheSpec ?? null,
+    hash: match.groups.hash,
+  };
 }
