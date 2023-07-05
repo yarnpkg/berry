@@ -254,8 +254,8 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   cacheMigrationMode: {
     description: `Defines the conditions under which Yarn upgrades should cause the cache archives to be regenerated.`,
     type: SettingsType.STRING,
-    values: [`always`, `match-spec`, `required-only`, `auto`],
-    default: `auto`,
+    values: [`always`, `match-spec`, `required-only`],
+    default: `always`,
   },
 
   // Settings related to the output style
@@ -607,7 +607,7 @@ export interface ConfigurationValueMap {
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
-  cacheMigrationMode: `always` | `match-spec` | `required-only` | `auto`;
+  cacheMigrationMode: `always` | `match-spec` | `required-only`;
 
   enableColors: boolean;
   enableHyperlinks: boolean;

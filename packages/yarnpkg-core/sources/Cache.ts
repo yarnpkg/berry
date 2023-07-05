@@ -111,14 +111,6 @@ export class Cache {
     return mirrorCwd !== this.cwd ? mirrorCwd : null;
   }
 
-  getMigrationMode() {
-    const migrationMode = this.configuration.get(`cacheMigrationMode`);
-    if (migrationMode === `auto`)
-      return this.configuration.get(`enableGlobalCache`) ? `always` : `required-only`;
-
-    return migrationMode;
-  }
-
   getVersionFilename(locator: Locator) {
     return `${structUtils.slugifyLocator(locator)}-${this.cacheKey}.zip` as Filename;
   }
@@ -161,13 +153,15 @@ export class Cache {
     if (cacheVersion < CACHE_CHECKPOINT)
       return null;
 
+    const migrationMode = this.configuration.get(`cacheMigrationMode`);
+
     // If the global cache is used, then the lockfile must always be up-to-date,
     // so the archives must be regenerated each time the version changes.
-    if (cacheVersion < CACHE_VERSION && this.getMigrationMode() === `always`)
+    if (cacheVersion < CACHE_VERSION && migrationMode === `always`)
       return null;
 
     // If the cache spec changed, we may need to regenerate the archive
-    if (cacheSpec !== this.cacheSpec && this.getMigrationMode() !== `required-only`)
+    if (cacheSpec !== this.cacheSpec && migrationMode !== `required-only`)
       return null;
 
     return ppath.resolve(this.cwd, this.getChecksumFilename(locator, expectedChecksum));
