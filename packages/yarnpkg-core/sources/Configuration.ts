@@ -51,6 +51,7 @@ const IGNORED_ENV_VARIABLES = new Set([
   `injectNpm2FaToken`,
   `cacheCheckpointOverride`,
   `cacheVersionOverride`,
+  `lockfileVersionOverride`,
 
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings

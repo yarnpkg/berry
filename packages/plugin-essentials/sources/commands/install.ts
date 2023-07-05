@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                    from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                                                     from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                                               from '@yarnpkg/parsers';
-import CI                                                                                                                                                                                       from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                                                     from 'clipanion';
-import semver                                                                                                                                                                                   from 'semver';
-import * as t                                                                                                                                                                                   from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                            from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                             from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                       from '@yarnpkg/parsers';
+import CI                                                                                                                                                               from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                             from 'clipanion';
+import semver                                                                                                                                                           from 'semver';
+import * as t                                                                                                                                                           from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
@@ -291,19 +291,20 @@ export default class YarnCommand extends BaseCommand {
         includeFooter: false,
       }, async report => {
         if (Configuration.telemetry?.isNew) {
-          Configuration.telemetry.commitTips();
+          Configuration.telemetry.commitMotd();
 
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
-        } else if (Configuration.telemetry?.shouldShowTips) {
-          const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
+        } else if (Configuration.telemetry?.isMotd && configuration.get(`enableMotd`)) {
+          const data = await fetch(`https://repo.yarnpkg.com/tags`).then(res => res.json()).catch(() => null) as {
             latest: {stable: string, canary: string};
-            tips: Array<{message: string, url?: string}>;
+            motd: Array<{message: string, url?: string}>;
           } | null;
 
           if (data !== null) {
             let newVersion: [string, string] | null = null;
+            const YarnVersion = `3.0.0`;
             if (YarnVersion !== null) {
               const isRcBinary = semver.prerelease(YarnVersion);
               const releaseType = isRcBinary ? `canary` : `stable`;
@@ -315,19 +316,19 @@ export default class YarnCommand extends BaseCommand {
             }
 
             if (newVersion) {
-              Configuration.telemetry.commitTips();
+              Configuration.telemetry.commitMotd();
 
               report.reportInfo(MessageName.VERSION_NOTICE, `${formatUtils.applyStyle(configuration, `A new ${newVersion[0]} version of Yarn is available:`, formatUtils.Style.BOLD)} ${structUtils.prettyReference(configuration, newVersion[1])}!`);
               report.reportInfo(MessageName.VERSION_NOTICE, `Upgrade now by running ${formatUtils.pretty(configuration, `yarn set version ${newVersion[1]}`, formatUtils.Type.CODE)}`);
               report.reportSeparator();
             } else {
-              const tip = Configuration.telemetry.selectTip(data.tips);
+              const motd = Configuration.telemetry.selectMotd(data.motd);
 
-              if (tip) {
-                report.reportInfo(MessageName.TIPS_NOTICE, formatUtils.pretty(configuration, tip.message, formatUtils.Type.MARKDOWN_INLINE));
+              if (motd) {
+                report.reportInfo(MessageName.MOTD_NOTICE, formatUtils.pretty(configuration, motd.message, formatUtils.Type.MARKDOWN_INLINE));
 
-                if (tip.url)
-                  report.reportInfo(MessageName.TIPS_NOTICE, `Learn more at ${tip.url}`);
+                if (motd.url)
+                  report.reportInfo(MessageName.MOTD_NOTICE, `Learn more at ${motd.url}`);
 
                 report.reportSeparator();
               }

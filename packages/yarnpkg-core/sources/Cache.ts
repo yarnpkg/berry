@@ -84,6 +84,24 @@ export class Cache {
     return cache;
   }
 
+  static getCacheKey(configuration: Configuration) {
+    const compressionLevel = configuration.get(`compressionLevel`);
+
+    const cacheSpec = compressionLevel !== `mixed`
+      ? `c${compressionLevel}`
+      : ``;
+
+    const cacheKey = [
+      CACHE_VERSION,
+      cacheSpec,
+    ].join(``);
+
+    return {
+      cacheKey,
+      cacheSpec,
+    };
+  }
+
   constructor(cacheCwd: PortablePath, {configuration, immutable = configuration.get(`enableImmutableCache`), check = false}: {configuration: Configuration, immutable?: boolean, check?: boolean}) {
     this.configuration = configuration;
     this.cwd = cacheCwd;
@@ -91,16 +109,13 @@ export class Cache {
     this.immutable = immutable;
     this.check = check;
 
-    const compressionLevel = configuration.get(`compressionLevel`);
+    const {
+      cacheSpec,
+      cacheKey,
+    } = Cache.getCacheKey(configuration);
 
-    this.cacheSpec = compressionLevel !== `mixed`
-      ? `c${compressionLevel}`
-      : ``;
-
-    this.cacheKey = [
-      CACHE_VERSION,
-      this.cacheSpec,
-    ].join(``);
+    this.cacheSpec = cacheSpec;
+    this.cacheKey = cacheKey;
   }
 
   get mirrorCwd() {
@@ -304,6 +319,7 @@ export class Cache {
       await xfs.chmodPromise(controlPath, 0o644);
 
       const result = await validateFile(cachePath, {
+        controlPath,
         isColdHit: false,
       });
 
