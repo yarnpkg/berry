@@ -589,3 +589,7 @@ export function groupBy<T extends Record<string, any>, K extends keyof T>(items:
 
   return groups;
 }
+
+export function parseInt(val: string | number) {
+  return typeof val === `string` ? Number.parseInt(val, 10) : val;
+}

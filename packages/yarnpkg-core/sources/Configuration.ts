@@ -49,6 +49,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   `injectNpmUser`,
   `injectNpmPassword`,
   `injectNpm2FaToken`,
+  `cacheCheckpointOverride`,
+  `cacheVersionOverride`,
+  `lockfileVersionOverride`,
 
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
@@ -202,11 +205,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
 
   // Settings related to the package manager internal names
-  cacheKeyOverride: {
-    description: `A global cache key override; used only for test purposes`,
-    type: SettingsType.STRING,
-    default: null,
-  },
   globalFolder: {
     description: `Folder where all system-global files are stored`,
     type: SettingsType.ABSOLUTE_PATH,
@@ -253,6 +251,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the system-wide cache folder will be used regardless of \`cache-folder\``,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  cacheMigrationMode: {
+    description: `Defines the conditions under which Yarn upgrades should cause the cache archives to be regenerated.`,
+    type: SettingsType.STRING,
+    values: [`always`, `match-spec`, `required-only`],
+    default: `always`,
   },
 
   // Settings related to the output style
@@ -595,7 +599,6 @@ export interface ConfigurationValueMap {
   ignorePath: boolean;
   ignoreCwd: boolean;
 
-  cacheKeyOverride: string | null;
   globalFolder: PortablePath;
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -605,6 +608,7 @@ export interface ConfigurationValueMap {
   immutablePatterns: Array<string>;
   rcFilename: Filename;
   enableGlobalCache: boolean;
+  cacheMigrationMode: `always` | `match-spec` | `required-only`;
 
   enableColors: boolean;
   enableHyperlinks: boolean;

@@ -44,7 +44,10 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // When upgraded, the lockfile entries have to be resolved again (but the specific
 // versions are still pinned, no worry). Bump it when you change the fields within
 // the Package type; no more no less.
-const LOCKFILE_VERSION = 8;
+export const LOCKFILE_VERSION = miscUtils.parseInt(
+  process.env.YARN_LOCKFILE_VERSION_OVERRIDE ??
+  8,
+);
 
 // Same thing but must be bumped when the members of the Project class changes (we
 // don't recommend our users to check-in this file, so it's fine to bump it even
@@ -1905,9 +1908,11 @@ export class Project {
 
     const optimizedLockfile: {[key: string]: any} = {};
 
+    const {cacheKey} = Cache.getCacheKey(this.configuration);
+
     optimizedLockfile.__metadata = {
       version: LOCKFILE_VERSION,
-      cacheKey: undefined,
+      cacheKey,
     };
 
     for (const [locatorHash, descriptorHashes] of reverseLookup.entries()) {
@@ -1956,13 +1961,10 @@ export class Project {
         if (cacheKeyIndex === -1)
           throw new Error(`Assertion failed: Expected the checksum to reference its cache key`);
 
-        const cacheKey = checksum.slice(0, cacheKeyIndex);
+        const entryCacheKey = checksum.slice(0, cacheKeyIndex);
         const hash = checksum.slice(cacheKeyIndex + 1);
 
-        if (typeof optimizedLockfile.__metadata.cacheKey === `undefined`)
-          optimizedLockfile.__metadata.cacheKey = cacheKey;
-
-        if (cacheKey === optimizedLockfile.__metadata.cacheKey) {
+        if (entryCacheKey === cacheKey) {
           entryChecksum = hash;
         } else {
           entryChecksum = checksum;

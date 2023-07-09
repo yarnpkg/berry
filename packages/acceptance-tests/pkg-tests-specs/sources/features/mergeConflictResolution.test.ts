@@ -39,7 +39,12 @@ describe(`Features`, () => {
           await exec.execGitInit({cwd: path});
 
           await run(`install`);
-          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {dependencies: {[`no-deps`]: `*`}});
+
+          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
+            dependencies: {
+              [`no-deps`]: `*`,
+            },
+          });
 
           await exec.execFile(`git`, [`add`, `-A`], {cwd: path});
           await exec.execFile(`git`, [`commit`, `-a`, `-m`, `my-commit`], {cwd: path});

@@ -26,6 +26,12 @@
       "format": "uri-reference",
       "default": "./.yarn/cache"
     },
+    "cacheMigrationMode": {
+      "_package": "@yarnpkg/core",
+      "description": "Define what should happen when Yarn detects that a file in the cache has been built and checksumed by an earlier release, or different compression settings. If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old. If `match-spec`, it'll also rebuild the file if the compression level has changed. If `always`, it'll always regenerate the cache files so they use the current cache version. Finally, if `auto` (the default), it'll act as either `required-only` or `always` depending on whether `enableGlobalCache` is enabled (with `always` being selected in that case).",
+      "enum": ["required-only", "match-spec", "always", "auto"],
+      "default": "auto"
+    },
     "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
       "description": "Path to file containing one or multiple Certificate Authority signing certificates",

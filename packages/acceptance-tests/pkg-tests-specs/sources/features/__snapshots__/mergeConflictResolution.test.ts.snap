@@ -6,7 +6,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 
 __metadata:
   version: X
-  cacheKey: 0
+  cacheKey: 0c0
 
 "no-deps@npm:*":
 <<<<<<< HEAD
@@ -56,7 +56,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 
 __metadata:
   version: X
-  cacheKey: 0
+  cacheKey: 0c0
 
 <<<<<<< HEAD
 no-deps@*:
@@ -106,7 +106,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 
 __metadata:
   version: X
-  cacheKey: 0
+  cacheKey: 0c0
 
 "no-deps@npm:*":
 <<<<<<< HEAD
@@ -156,7 +156,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 
 __metadata:
   version: X
-  cacheKey: 0
+  cacheKey: 0c0
 
 "no-deps@npm:*":
 <<<<<<< HEAD
@@ -206,7 +206,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 
 __metadata:
   version: X
-  cacheKey: 0
+  cacheKey: 0c0
 
 "no-deps@npm:*":
 <<<<<<< HEAD
