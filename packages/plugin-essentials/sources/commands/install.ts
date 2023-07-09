@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                                      from '@yarnpkg/cli';
-import {LOCKFILE_VERSION, Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                                                                       from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                                                                 from '@yarnpkg/parsers';
-import CI                                                                                                                                                                                                         from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                                                                       from 'clipanion';
-import semver                                                                                                                                                                                                     from 'semver';
-import * as t                                                                                                                                                                                                     from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                    from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                                     from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                               from '@yarnpkg/parsers';
+import CI                                                                                                                                                                                       from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                                     from 'clipanion';
+import semver                                                                                                                                                                                   from 'semver';
+import * as t                                                                                                                                                                                   from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
