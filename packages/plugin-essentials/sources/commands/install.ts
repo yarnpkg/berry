@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                    from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                                                     from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                                               from '@yarnpkg/parsers';
-import CI                                                                                                                                                                                       from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                                                     from 'clipanion';
-import semver                                                                                                                                                                                   from 'semver';
-import * as t                                                                                                                                                                                   from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                                      from '@yarnpkg/cli';
+import {LOCKFILE_VERSION, Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                                                       from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                                                 from '@yarnpkg/parsers';
+import CI                                                                                                                                                                                                         from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                                                       from 'clipanion';
+import semver                                                                                                                                                                                                     from 'semver';
+import * as t                                                                                                                                                                                                     from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
@@ -484,6 +484,19 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
         }
       }
     }
+
+    // We encode the cacheKeys inside the checksums so that the reconciliation
+    // can merge the data together
+    for (const key of Object.keys(variant)) {
+      if (key === `__metadata`)
+        continue;
+
+      const checksum = variant[key].checksum;
+      if (typeof checksum === `string` && checksum.includes(`/`))
+        continue;
+
+      variant[key].checksum = `${variant.__metadata.cacheKey}/${checksum}`;
+    }
   }
 
   const merged = Object.assign({}, ...variants);
@@ -494,9 +507,8 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     return parseInt(variant.__metadata.version ?? 0);
   }))}`;
 
-  merged.__metadata.cacheKey = `${Math.min(...variants.map(variant => {
-    return parseInt(variant.__metadata.cacheKey ?? 0);
-  }))}`;
+  // It shouldn't matter, since the cacheKey have been embed within the checksums
+  merged.__metadata.cacheKey = `merged`;
 
   // parse as valid YAML except that the objects become strings. We can use
   // that to detect them. Damn, it's really ugly though.
