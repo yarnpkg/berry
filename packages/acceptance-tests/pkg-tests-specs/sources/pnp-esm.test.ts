@@ -120,9 +120,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should allow relative imports with search params`,
     makeTemporaryEnv(
       {},
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -142,9 +139,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should preserve search params in the resolve result (cache busting)`,
     makeTemporaryEnv(
       {},
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -173,9 +167,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should allow absolute imports with search params`,
     makeTemporaryEnv(
       {},
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -361,9 +352,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should load extensionless commonjs files as an entrypoint`,
     makeTemporaryEnv(
       { },
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(typeof require === 'undefined')`);
 
@@ -381,9 +369,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should load symlinked extensionless commonjs files as an entrypoint`,
     makeTemporaryEnv(
       { },
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await xfs.mkdirPromise(ppath.join(path, `lib`));
         await xfs.writeFilePromise(ppath.join(path, `lib/index`), `console.log(typeof require === 'undefined')`);
@@ -403,9 +388,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import bin from './cjs-bin';\nconsole.log(bin)`);
         await xfs.writeFilePromise(ppath.join(path, `cjs-bin`), `module.exports = {foo: 'bar'}`);
@@ -425,9 +407,6 @@ describe(`Plug'n'Play - ESM`, () => {
     makeTemporaryEnv(
       {
         type: `module`,
-      },
-      {
-        pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index`), ``);
@@ -505,9 +484,6 @@ describe(`Plug'n'Play - ESM`, () => {
           "is-number": `1.0.0`,
         },
       },
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `require('no-deps');\nimport('is-number').then(() => console.log(42))`);
 
@@ -525,9 +501,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should set the main module`,
     makeTemporaryEnv(
       {},
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -554,9 +527,6 @@ describe(`Plug'n'Play - ESM`, () => {
     `it should suppress the experimental ESM loader warning`,
     makeTemporaryEnv(
       {},
-      {
-        pnpEnableEsmLoader: true,
-      },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
@@ -578,9 +548,6 @@ describe(`Plug'n'Play - ESM`, () => {
         dependencies: {
           'no-deps-esm': `1.0.0`,
         },
-      },
-      {
-        pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
@@ -608,9 +575,6 @@ describe(`Plug'n'Play - ESM`, () => {
         dependencies: {
           'no-deps-mjs': `1.0.0`,
         },
-      },
-      {
-        pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
         await expect(run(`install`)).resolves.toMatchObject({code: 0});

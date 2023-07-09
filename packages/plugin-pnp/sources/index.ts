@@ -110,9 +110,9 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       isArray: true,
     },
     pnpEnableEsmLoader: {
-      description: `If true, Yarn will generate an ESM loader (\`.pnp.loader.mjs\`). If this is not explicitly set Yarn tries to automatically detect whether ESM support is required.`,
+      description: `If true, Yarn will generate an ESM loader (\`.pnp.loader.mjs\`).`,
       type: SettingsType.BOOLEAN,
-      default: false,
+      default: true,
     },
     pnpEnableInlining: {
       description: `If true, the PnP data will be inlined along with the generated loader`,

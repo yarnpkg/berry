@@ -633,9 +633,9 @@
     },
     "pnpEnableEsmLoader": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`). Yarn tries to automatically detect whether ESM support is required.",
+      "description": "If true, Yarn will generate an experimental ESM loader (`.pnp.loader.mjs`).",
       "type": "boolean",
-      "default": false
+      "default": true
     },
     "pnpEnableInlining": {
       "_package": "@yarnpkg/plugin-pnp",
