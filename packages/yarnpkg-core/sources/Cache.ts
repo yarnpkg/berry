@@ -65,6 +65,9 @@ export class Cache {
   public readonly cacheKey: string;
   public readonly cacheSpec: string;
 
+  private cacheFiles: Set<PortablePath> = new Set();
+  private mirrorFiles: Set<PortablePath> = new Set();
+
   private mutexes: Map<LocatorHash, Promise<readonly [
     shouldMock: boolean,
     cachePath: PortablePath,
@@ -204,9 +207,30 @@ export class Cache {
       }
     }
 
-    if (this.mirrorCwd || !this.immutable) {
+    if (this.mirrorCwd || !this.immutable)
       await xfs.mkdirPromise(this.mirrorCwd || this.cwd, {recursive: true});
-    }
+
+    const listFolder = async (p: PortablePath | null): Promise<Set<PortablePath>> => {
+      if (!p)
+        return new Set();
+
+      const names = await xfs.readdirPromise(p);
+      return new Set(names);
+    };
+
+    const mirrorFilesPromise = listFolder(this.mirrorCwd);
+    const cacheFilesPromise = listFolder(this.cwd);
+
+    this.mirrorFiles = await mirrorFilesPromise;
+    this.cacheFiles = await cacheFilesPromise;
+  }
+
+  private mirrorFileExists(p: PortablePath) {
+    return this.mirrorFiles.has(ppath.basename(p));
+  }
+
+  private cacheFileExists(p: PortablePath) {
+    return this.cacheFiles.has(ppath.basename(p));
   }
 
   async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, ...opts}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS> } & CacheOptions): Promise<[FakeFS<PortablePath>, () => void, string | null]> {
@@ -330,7 +354,7 @@ export class Cache {
     };
 
     const loadPackageThroughMirror = async () => {
-      if (mirrorPath === null || !(await xfs.existsPromise(mirrorPath))) {
+      if (mirrorPath === null || !this.mirrorFileExists(mirrorPath)) {
         const zipFs = await loader!();
         const realPath = zipFs.getRealPath();
         zipFs.saveAndClose();
@@ -399,7 +423,7 @@ export class Cache {
         const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum, opts);
 
         const cacheFileExists = tentativeCachePath !== null
-          ? this.markedFiles.has(tentativeCachePath) || await baseFs.existsPromise(tentativeCachePath)
+          ? this.cacheFileExists(tentativeCachePath)
           : false;
 
         const shouldMock = !!opts.mockedPackages?.has(locator.locatorHash) && (!this.check || !cacheFileExists);
