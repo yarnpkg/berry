@@ -24,6 +24,8 @@ describe(`Features`, () => {
       dependenciesMeta: {
         [`no-deps-scripted`]: {built: false},
       },
+    }, {
+      pnpEnableEsmLoader: false,
     }, async ({path, run, source}) => {
       let {stdout} = await run(`install`);
       expect(stdout).toMatch(/lists build scripts/); // sanity check
@@ -69,6 +71,8 @@ describe(`Features`, () => {
       dependenciesMeta: {
         [`no-deps-scripted`]: {built: false},
       },
+    }, {
+      pnpEnableEsmLoader: false,
     }, async ({path, run, source}) => {
       let {stdout} = await run(`install`);
       expect(stdout).toMatch(/lists build scripts/); // sanity check
@@ -116,6 +120,8 @@ describe(`Features`, () => {
       dependenciesMeta: {
         [`no-deps-scripted`]: {built: false},
       },
+    }, {
+      pnpEnableEsmLoader: false,
     }, async ({path, run, source}) => {
       let {stdout} = await run(`install`, {env: {FORCE_COLOR: `1`}});
       expect(stdout).toMatch(/lists build scripts/); // sanity check
@@ -143,6 +149,8 @@ describe(`Features`, () => {
       dependenciesMeta: {
         [`no-deps-scripted`]: {built: false},
       },
+    }, {
+      pnpEnableEsmLoader: false,
     }, async ({path, run, source}) => {
       let {stdout} = await run(`install`);
       expect(stdout).toMatch(/lists build scripts/); // sanity check
