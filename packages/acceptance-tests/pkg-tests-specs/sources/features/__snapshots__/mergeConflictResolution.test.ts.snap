@@ -95,9 +95,8 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 ➤ YN0000: ┌ Fetch step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
-➤ YN0000: │ ESM support for PnP uses the experimental loader API and is therefore experimental
 ➤ YN0000: └ Completed
-➤ YN0000: · Done with warnings
+➤ YN0000: · Done
 ",
 }
 `;
