@@ -1,15 +1,6 @@
-import {httpUtils}         from '@yarnpkg/core';
 import {npmHttpUtils}      from '@yarnpkg/plugin-npm';
 
 import {makeConfiguration} from './_makeConfiguration';
-
-jest.mock(`@yarnpkg/core`, () => ({
-  ...jest.requireActual(`@yarnpkg/core`),
-  httpUtils: {
-    ...jest.requireActual(`@yarnpkg/core`).httpUtils,
-    get: jest.fn(() => Promise.resolve()),
-  },
-}));
 
 describe(`npmHttpUtils.get`, () => {
   for (const registry of [`https://example.org`, `https://example.org/`, `https://example.org/foo`, `https://example.org/foo/`]) {
@@ -19,12 +10,18 @@ describe(`npmHttpUtils.get`, () => {
       it(`should craft the final path correctly (${registry} + ${path} = ${expected})`, async () => {
         const configuration = await makeConfiguration();
 
+        let actualTarget: string | undefined;
         await npmHttpUtils.get(path, {
           configuration,
           registry,
+          async wrapNetworkRequest(executor, extra) {
+            actualTarget = extra.target.toString();
+
+            return () => Promise.resolve({body: {}, headers: {}, statusCode: 200});
+          },
         });
 
-        expect(httpUtils.get).toHaveBeenCalledWith(expected, expect.anything());
+        expect(actualTarget).toEqual(expected);
       });
     }
   }

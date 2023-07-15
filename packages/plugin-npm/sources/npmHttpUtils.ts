@@ -353,7 +353,7 @@ function normalizeRegistry(configuration: Configuration, {ident, registry}: Part
   if (typeof registry !== `string`)
     throw new Error(`Assertion failed: The registry should be a string`);
 
-  return registry;
+  return npmConfigUtils.normalizeRegistry(registry);
 }
 
 async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
