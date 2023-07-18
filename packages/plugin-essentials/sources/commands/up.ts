@@ -145,6 +145,7 @@ export default class UpCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, {
       cache,
+      mode: this.mode,
     });
   }
 
