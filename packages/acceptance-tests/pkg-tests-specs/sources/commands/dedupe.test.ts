@@ -1,4 +1,5 @@
-import {tests} from 'pkg-tests-core';
+import {ppath, xfs, Filename} from '@yarnpkg/fslib';
+import {tests}                from 'pkg-tests-core';
 
 const {setPackageWhitelist} = tests;
 
@@ -79,6 +80,26 @@ describe(`Commands`, () => {
                   version: `1.1.0`,
                 },
               },
+            });
+          }),
+        );
+
+        it(
+          `should not throw on resolutions by npm-tag-resolver with __archiveUrl`,
+          makeTemporaryEnv({
+            dependencies: {[`no-deps`]: `latest`},
+          }, async ({path, run, source}) => {
+            await run(`install`);
+            await run(`add`, `one-range-dep`);
+
+            const lockFilePath = ppath.join(path, Filename.lockfile);
+            let lockContent = await xfs.readFilePromise(lockFilePath, `utf8`);
+
+            lockContent = lockContent.replace(`"no-deps@npm:2.0.0"`, `"no-deps@npm:2.0.0::__archiveUrl=https%3A%2F%2Fregistry.com%2Fno-deps-2.0.0.tgz"`);
+            await xfs.writeFilePromise(lockFilePath, lockContent);
+
+            await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
+              code: 0,
             });
           }),
         );
