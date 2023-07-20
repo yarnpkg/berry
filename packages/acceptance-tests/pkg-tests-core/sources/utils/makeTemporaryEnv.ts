@@ -42,7 +42,7 @@ const mte = generatePkgDriver({
         // Otherwise we'd send telemetry event when running tests
         [`YARN_ENABLE_TELEMETRY`]: `0`,
         // Otherwise snapshots relying on this would break each time it's bumped
-        [`YARN_CACHE_KEY_OVERRIDE`]: `0`,
+        [`YARN_CACHE_VERSION_OVERRIDE`]: `0`,
         // Otherwise the output isn't stable between runs
         [`YARN_ENABLE_PROGRESS_BARS`]: `false`,
         [`YARN_ENABLE_TIMERS`]: `false`,

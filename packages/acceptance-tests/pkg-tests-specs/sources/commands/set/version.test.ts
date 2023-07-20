@@ -30,6 +30,7 @@ describe(`Commands`, () => {
         env: {
           COREPACK_ROOT: `/path/to/corepack`,
           YARN_IS_TEST_ENV: undefined,
+          YARN_CACHE_VERSION_OVERRIDE: undefined,
         },
       }, async ({path, run, source}) => {
         // To force yarnPath to be set; followed by a sanity check

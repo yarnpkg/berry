@@ -11,13 +11,13 @@ import * as structUtils from './structUtils';
 import * as tgzUtils    from './tgzUtils';
 import * as treeUtils   from './treeUtils';
 
-export {Cache}                                                                                                      from './Cache';
+export {CACHE_VERSION, CACHE_CHECKPOINT, Cache}                                                                     from './Cache';
 export {DEFAULT_RC_FILENAME, DEFAULT_LOCK_FILENAME, LEGACY_PLUGINS, TAG_REGEXP}                                     from './Configuration';
 export {Configuration, FormatType, ProjectLookup, SettingsType, WindowsLinkType}                                    from './Configuration';
 export type {PluginConfiguration, SettingsDefinition, PackageExtensionData}                                         from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                                     from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                               from './Fetcher';
-export {BuildDirectiveType}                                                                            from './Installer';
+export {BuildDirectiveType}                                                                                         from './Installer';
 export type {Installer, BuildDirective, BuildRequest, InstallStatus, InstallPackageExtraApi, FinalizeInstallStatus} from './Installer';
 export {LegacyMigrationResolver}                                                                                    from './LegacyMigrationResolver';
 export {LightReport}                                                                                                from './LightReport';
@@ -29,7 +29,7 @@ export {MessageName, parseMessageName, stringifyMessageName}                    
 export {MultiFetcher}                                                                                               from './MultiFetcher';
 export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                                 from './Plugin';
 export type {PeerRequirement}                                                                                       from './Project';
-export {Project, InstallMode}                                                                                       from './Project';
+export {LOCKFILE_VERSION, Project, InstallMode}                                                                     from './Project';
 export {ReportError, Report}                                                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                                       from './Resolver';
 export {StreamReport}                                                                                               from './StreamReport';

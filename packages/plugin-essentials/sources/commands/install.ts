@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                         from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                                          from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                                    from '@yarnpkg/parsers';
-import CI                                                                                                                                                                            from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                                          from 'clipanion';
-import semver                                                                                                                                                                        from 'semver';
-import * as t                                                                                                                                                                        from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                    from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                                     from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                               from '@yarnpkg/parsers';
+import CI                                                                                                                                                                                       from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                                     from 'clipanion';
+import semver                                                                                                                                                                                   from 'semver';
+import * as t                                                                                                                                                                                   from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
@@ -291,15 +291,15 @@ export default class YarnCommand extends BaseCommand {
         includeFooter: false,
       }, async report => {
         if (Configuration.telemetry?.isNew) {
-          Configuration.telemetry.commitMotd();
+          Configuration.telemetry.commitTips();
 
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
-        } else if (Configuration.telemetry?.isMotd) {
-          const data = await fetch(`https://repo.yarnpkg.com/tags`).then(res => res.json()).catch(() => null) as {
+        } else if (Configuration.telemetry?.shouldShowTips) {
+          const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
             latest: {stable: string, canary: string};
-            motd: Array<{message: string, url?: string}>;
+            tips: Array<{message: string, url?: string}>;
           } | null;
 
           if (data !== null) {
@@ -315,19 +315,19 @@ export default class YarnCommand extends BaseCommand {
             }
 
             if (newVersion) {
-              Configuration.telemetry.commitMotd();
+              Configuration.telemetry.commitTips();
 
               report.reportInfo(MessageName.VERSION_NOTICE, `${formatUtils.applyStyle(configuration, `A new ${newVersion[0]} version of Yarn is available:`, formatUtils.Style.BOLD)} ${structUtils.prettyReference(configuration, newVersion[1])}!`);
               report.reportInfo(MessageName.VERSION_NOTICE, `Upgrade now by running ${formatUtils.pretty(configuration, `yarn set version ${newVersion[1]}`, formatUtils.Type.CODE)}`);
               report.reportSeparator();
             } else {
-              const motd = Configuration.telemetry.selectMotd(data.motd);
+              const tip = Configuration.telemetry.selectTip(data.tips);
 
-              if (motd) {
-                report.reportInfo(MessageName.MOTD_NOTICE, formatUtils.pretty(configuration, motd.message, formatUtils.Type.MARKDOWN_INLINE));
+              if (tip) {
+                report.reportInfo(MessageName.TIPS_NOTICE, formatUtils.pretty(configuration, tip.message, formatUtils.Type.MARKDOWN_INLINE));
 
-                if (motd.url)
-                  report.reportInfo(MessageName.MOTD_NOTICE, `Learn more at ${motd.url}`);
+                if (tip.url)
+                  report.reportInfo(MessageName.TIPS_NOTICE, `Learn more at ${tip.url}`);
 
                 report.reportSeparator();
               }
@@ -486,6 +486,19 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
         }
       }
     }
+
+    // We encode the cacheKeys inside the checksums so that the reconciliation
+    // can merge the data together
+    for (const key of Object.keys(variant)) {
+      if (key === `__metadata`)
+        continue;
+
+      const checksum = variant[key].checksum;
+      if (typeof checksum === `string` && checksum.includes(`/`))
+        continue;
+
+      variant[key].checksum = `${variant.__metadata.cacheKey}/${checksum}`;
+    }
   }
 
   const merged = Object.assign({}, ...variants);
@@ -496,9 +509,8 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
     return parseInt(variant.__metadata.version ?? 0);
   }))}`;
 
-  merged.__metadata.cacheKey = `${Math.min(...variants.map(variant => {
-    return parseInt(variant.__metadata.cacheKey ?? 0);
-  }))}`;
+  // It shouldn't matter, since the cacheKey have been embed within the checksums
+  merged.__metadata.cacheKey = `merged`;
 
   // parse as valid YAML except that the objects become strings. We can use
   // that to detect them. Damn, it's really ugly though.

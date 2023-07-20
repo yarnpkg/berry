@@ -25,13 +25,13 @@ export type RegistryBlock = {
 };
 
 export type RegistryFile = {
-  lastMotd?: number;
+  lastTips?: number;
   lastUpdate?: number;
   blocks?: Record<string, RegistryBlock>;
-  displayedMotd?: Array<number>;
+  displayedTips?: Array<number>;
 };
 
-export type Motd = {
+export type Tip = {
   selector?: string;
   message: string;
   url?: string;
@@ -57,26 +57,26 @@ export function derive(params: DeriveParameters) {
   const lastUpdate = params.state.lastUpdate ?? params.timeNow + updateIntervalMs + Math.floor(updateIntervalMs * params.randomInitialInterval);
   const nextUpdate = lastUpdate + updateIntervalMs;
 
-  // We reset the motd each day at 8am
-  const lastMotd = params.state.lastMotd ?? nowDay * day;
-  const nextMotd = lastMotd + day + 8 * hour - params.timeZone;
+  // We reset the tips each day at 8am
+  const lastTips = params.state.lastTips ?? nowDay * day;
+  const nextTips = lastTips + day + 8 * hour - params.timeZone;
 
   const triggerUpdate = nextUpdate <= params.timeNow;
-  const triggerMotd = nextMotd <= params.timeNow;
+  const triggerTips = nextTips <= params.timeNow;
 
   let nextState: RegistryFile | null = null;
 
-  if (triggerUpdate || triggerMotd || !params.state.lastUpdate || !params.state.lastMotd) {
+  if (triggerUpdate || triggerTips || !params.state.lastUpdate || !params.state.lastTips) {
     nextState = {};
 
     nextState.lastUpdate = triggerUpdate ? params.timeNow : lastUpdate;
-    nextState.lastMotd = lastMotd;
+    nextState.lastTips = lastTips;
 
     nextState.blocks = triggerUpdate ? {} : params.state.blocks;
-    nextState.displayedMotd = params.state.displayedMotd;
+    nextState.displayedTips = params.state.displayedTips;
   }
 
-  return {nextState, triggerUpdate, triggerMotd, nextMotd: triggerMotd ? nowDay * day : lastMotd};
+  return {nextState, triggerUpdate, triggerTips, nextTips: triggerTips ? nowDay * day : lastTips};
 }
 
 export class TelemetryManager {
@@ -86,36 +86,36 @@ export class TelemetryManager {
   private hits: Map<MetricName, Map<string, number>> = new Map();
   private enumerators: Map<MetricName, Set<string>> = new Map();
 
-  private nextMotd: number = 0;
-  private displayedMotd: Array<number> = [];
-  private shouldCommitMotd: boolean = false;
+  private nextTips: number = 0;
+  private displayedTips: Array<number> = [];
+  private shouldCommitTips: boolean = false;
 
   public isNew: boolean;
-  public isMotd: boolean;
+  public shouldShowTips: boolean;
 
   constructor(configuration: Configuration, accountId: string) {
     this.configuration = configuration;
 
     const registryFile = this.getRegistryPath();
     this.isNew = !xfs.existsSync(registryFile);
-    this.isMotd = false;
+    this.shouldShowTips = false;
 
     this.sendReport(accountId);
     this.startBuffer();
   }
 
   /**
-   * Prevent the motd to be displayed today, but doesn't actually display it.
-   * We use it when we replaced the motd by something else (like an upgrade prompt).
+   * Prevents the tip from being displayed today, but doesn't actually display it.
+   * We use it when replacing the tip by something else (like an upgrade prompt).
    */
-  commitMotd() {
-    if (this.isMotd) {
-      this.shouldCommitMotd = true;
+  commitTips() {
+    if (this.shouldShowTips) {
+      this.shouldCommitTips = true;
     }
   }
 
-  selectMotd(allMotds: Array<Motd | null>) {
-    const displayedMotd = new Set(this.displayedMotd);
+  selectTip(allTips: Array<Tip | null>) {
+    const displayedTips = new Set(this.displayedTips);
 
     const checkVersion = (selector: string | undefined) => {
       if (selector && YarnVersion) {
@@ -126,37 +126,37 @@ export class TelemetryManager {
     };
 
     // Get all possible non-null messages
-    const activeMotds = allMotds
+    const activeTips = allTips
       .map((_, index) => index)
-      .filter(index => allMotds[index] && checkVersion(allMotds[index]?.selector));
+      .filter(index => allTips[index] && checkVersion(allTips[index]?.selector));
 
-    if (activeMotds.length === 0)
+    if (activeTips.length === 0)
       return null;
 
     // Filter out the ones that have already been displayed
-    let availableMotds = activeMotds
-      .filter(index => !displayedMotd.has(index));
+    let availableTips = activeTips
+      .filter(index => !displayedTips.has(index));
 
-    // If we've seen all motd, we can reset the list. We still
+    // If we've seen all tips, we can reset the list. We still
     // keep the last few items there, just to make sure we don't
-    // immediately re-display the same motd as the last past days.
-    if (availableMotds.length === 0) {
-      const sliceLength = Math.floor(activeMotds.length * .2);
+    // immediately re-display the same tip as the last past days.
+    if (availableTips.length === 0) {
+      const sliceLength = Math.floor(activeTips.length * .2);
 
-      this.displayedMotd = sliceLength > 0
-        ? this.displayedMotd.slice(-sliceLength)
+      this.displayedTips = sliceLength > 0
+        ? this.displayedTips.slice(-sliceLength)
         : [];
 
-      availableMotds = activeMotds
-        .filter(index => !displayedMotd.has(index));
+      availableTips = activeTips
+        .filter(index => !displayedTips.has(index));
     }
 
-    const selectedMotd = availableMotds[Math.floor(Math.random() * availableMotds.length)];
-    this.displayedMotd.push(selectedMotd);
+    const selectedTip = availableTips[Math.floor(Math.random() * availableTips.length)];
+    this.displayedTips.push(selectedTip);
 
-    this.commitMotd();
+    this.commitTips();
 
-    return allMotds[selectedMotd]!;
+    return allTips[selectedTip]!;
   }
 
   reportVersion(value: string) {
@@ -225,9 +225,9 @@ export class TelemetryManager {
       nextState,
 
       triggerUpdate,
-      triggerMotd,
+      triggerTips,
 
-      nextMotd,
+      nextTips,
     } = derive({
       state,
 
@@ -238,8 +238,8 @@ export class TelemetryManager {
       updateInterval: this.configuration.get(`telemetryInterval`),
     });
 
-    this.nextMotd = nextMotd;
-    this.displayedMotd = state.displayedMotd ?? [];
+    this.nextTips = nextTips;
+    this.displayedTips = state.displayedTips ?? [];
 
     if (nextState !== null) {
       try {
@@ -251,8 +251,8 @@ export class TelemetryManager {
       }
     }
 
-    if (triggerMotd && this.configuration.get(`enableMotd`))
-      this.isMotd = true;
+    if (triggerTips && this.configuration.get(`enableTips`))
+      this.shouldShowTips = true;
 
     if (triggerUpdate) {
       const blocks = state.blocks ?? {};
@@ -347,9 +347,9 @@ export class TelemetryManager {
       }
     }
 
-    if (this.shouldCommitMotd) {
-      state.lastMotd = this.nextMotd;
-      state.displayedMotd = this.displayedMotd;
+    if (this.shouldCommitTips) {
+      state.lastTips = this.nextTips;
+      state.displayedTips = this.displayedTips;
     }
 
     xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});

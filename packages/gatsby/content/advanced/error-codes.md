@@ -437,6 +437,6 @@ On local machines, Yarn will periodically check whether new versions are availab
 
 You don't have to upgrade if you don't wish to - but keeping Yarn up-to-date is generally a good idea, as they tend to often come with a significant amount of performance improvements, bugfixes, and new features.
 
-## YN0089 - `MOTD_NOTICE`
+## YN0089 - `TIPS_NOTICE`
 
 Our research showed that even our power users aren't always aware of some of the less obvious features in Yarn. To improve discoverability, on local machines, Yarn will display every day a tip about some of the nuggets it contains. Perhaps one of them will help you improve your infrastructure someday?
