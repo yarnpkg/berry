@@ -15,6 +15,8 @@ export const mtme = (
       const workspacePath = ppath.join(path, workspace as PortablePath);
       await xfs.mkdirPromise(workspacePath, {recursive: true});
 
+      manifest.name ??= ppath.basename(workspace as PortablePath);
+
       await xfs.writeJsonPromise(ppath.join(workspacePath, Filename.manifest), await deepResolve(manifest));
     }
   };

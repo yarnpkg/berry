@@ -1,9 +1,8 @@
 import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                                                                     from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, xfs}                                                              from '@yarnpkg/fslib';
 import {execFileSync}                                                                                 from 'child_process';
 import {isCI}                                                                                         from 'ci-info';
 import {Cli, UsageError}                                                                              from 'clipanion';
-import {realpathSync}                                                                                 from 'fs';
 
 import {pluginCommands}                                                                               from './pluginCommands';
 
@@ -21,7 +20,6 @@ function runBinary(path: PortablePath) {
       env: {
         ...process.env,
         YARN_IGNORE_PATH: `1`,
-        YARN_IGNORE_CWD: `1`,
       },
     });
   } else {
@@ -30,7 +28,6 @@ function runBinary(path: PortablePath) {
       env: {
         ...process.env,
         YARN_IGNORE_PATH: `1`,
-        YARN_IGNORE_CWD: `1`,
       },
     });
   }
@@ -75,7 +72,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
 
     const yarnPath = configuration.get(`yarnPath`);
     const ignorePath = configuration.get(`ignorePath`);
-    const ignoreCwd = configuration.get(`ignoreCwd`);
 
     const selfPath = npath.toPortablePath(npath.resolve(process.argv[1]));
 
@@ -93,9 +89,8 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       );
 
     // Avoid unnecessary spawn when run directly
-    if (!ignorePath && !ignoreCwd && await isSameBinary()) {
+    if (!ignorePath && await isSameBinary()) {
       process.env.YARN_IGNORE_PATH = `1`;
-      process.env.YARN_IGNORE_CWD = `1`;
 
       await exec(cli);
       return;
@@ -130,7 +125,7 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       }
 
       const context = {
-        cwd: npath.toPortablePath(process.cwd()),
+        cwd: ppath.cwd(),
         plugins: pluginConfiguration,
         quiet: false,
         stdin: process.stdin,
@@ -141,20 +136,6 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       const command = cli.process(process.argv.slice(2), context);
       if (!command.help)
         Configuration.telemetry?.reportCommandName(command.path.join(` `));
-
-      // @ts-expect-error: The cwd is a global option defined by BaseCommand
-      const cwd: string | undefined = command.cwd;
-
-      if (typeof cwd !== `undefined` && !ignoreCwd) {
-        const iAmHere = realpathSync(process.cwd());
-        const iShouldBeHere = realpathSync(cwd);
-
-        if (iAmHere !== iShouldBeHere) {
-          process.chdir(cwd);
-          await run();
-          return;
-        }
-      }
 
       await cli.runExit(command, context);
     }
