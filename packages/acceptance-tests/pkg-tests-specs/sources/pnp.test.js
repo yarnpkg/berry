@@ -125,9 +125,7 @@ describe(`Plug'n'Play`, () => {
         dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
       },
       {
-        // By default tests are executed with the fallback disabled; this
-        // setting forces this test to execute in the default mode instead
-        pnpFallbackMode: undefined,
+        pnpFallbackMode: `dependencies-only`,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -147,9 +145,7 @@ describe(`Plug'n'Play`, () => {
         dependencies: {[`various-requires`]: `1.0.0`, [`no-deps`]: `1.0.0`},
       },
       {
-        // By default tests are executed with the fallback disabled; this
-        // setting forces this test to execute in the default mode instead
-        pnpFallbackMode: undefined,
+        pnpFallbackMode: `dependencies-only`,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -170,9 +166,7 @@ describe(`Plug'n'Play`, () => {
         dependencies: {[`no-deps`]: `1.0.0`},
       },
       {
-        // By default tests are executed with the fallback disabled; this
-        // setting forces this test to execute in the default mode instead
-        pnpFallbackMode: undefined,
+        pnpFallbackMode: `dependencies-only`,
       },
       async ({path, run, source}) => {
         await writeJson(`${path}/packages/workspace-a/package.json`, {
