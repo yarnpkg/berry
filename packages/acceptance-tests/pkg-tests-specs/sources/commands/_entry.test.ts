@@ -155,5 +155,17 @@ describe(`Entry`, () => {
         ].join(`\n`),
       });
     }));
+
+    test(`should use the specified --cwd (inside script)`, makeTemporaryEnv({
+      scripts: {
+        foo: `yarn --cwd=packages exec pwd`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await expect(run(`run`, `foo`)).resolves.toMatchObject({
+        stdout: `${path}/packages\n`,
+      });
+    }));
   });
 });
