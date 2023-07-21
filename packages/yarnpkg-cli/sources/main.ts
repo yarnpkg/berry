@@ -1,39 +1,29 @@
-import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils} from '@yarnpkg/core';
-import {PortablePath, npath, xfs}                                                                     from '@yarnpkg/fslib';
-import {execFileSync}                                                                                 from 'child_process';
-import {isCI}                                                                                         from 'ci-info';
-import {Cli, UsageError}                                                                              from 'clipanion';
-import {realpathSync}                                                                                 from 'fs';
+import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils, formatUtils} from '@yarnpkg/core';
+import {PortablePath, npath, xfs}                                                                                  from '@yarnpkg/fslib';
+import {isCI}                                                                                                      from 'ci-info';
+import {Cli, UsageError}                                                                                           from 'clipanion';
+import {realpathSync}                                                                                              from 'fs';
+import Module                                                                                                      from 'module';
 
-import {pluginCommands}                                                                               from './pluginCommands';
+import {pluginCommands}                                                                                            from './pluginCommands';
 
+// We load the binary into the current process,
+// while making it think it was spawned.
 function runBinary(path: PortablePath) {
-  const physicalPath = npath.fromPortablePath(path);
+  const binPath = npath.fromPortablePath(path);
 
-  process.on(`SIGINT`, () => {
-    // We don't want SIGINT to kill our process; we want it to kill the
-    // innermost process, whose end will cause our own to exit.
-  });
+  process.env.YARN_IGNORE_PATH = `1`;
+  process.env.YARN_IGNORE_CWD = `1`;
 
-  if (physicalPath) {
-    execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
-      stdio: `inherit`,
-      env: {
-        ...process.env,
-        YARN_IGNORE_PATH: `1`,
-        YARN_IGNORE_CWD: `1`,
-      },
-    });
-  } else {
-    execFileSync(physicalPath, process.argv.slice(2), {
-      stdio: `inherit`,
-      env: {
-        ...process.env,
-        YARN_IGNORE_PATH: `1`,
-        YARN_IGNORE_CWD: `1`,
-      },
-    });
-  }
+  process.argv[1] = binPath;
+  process.execArgv = [];
+
+  // Unset the mainModule and let Node.js set it when needed.
+  process.mainModule = undefined;
+
+  // Use nextTick to unwind the stack, and consequently remove this binary from
+  // the stack trace of the next binary.
+  process.nextTick(Module.runMain, binPath);
 }
 
 export async function main({binaryVersion, pluginConfiguration}: {binaryVersion: string, pluginConfiguration: PluginConfiguration}) {
@@ -101,14 +91,10 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       return;
     } else if (yarnPath !== null && !ignorePath) {
       if (!xfs.existsSync(yarnPath)) {
-        process.stdout.write(cli.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`)));
+        process.stdout.write(cli.error(new Error(`The ${formatUtils.pretty(configuration, `yarnPath`, formatUtils.Type.SETTING)} option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`)));
         process.exitCode = 1;
       } else {
-        try {
-          runBinary(yarnPath);
-        } catch (error) {
-          process.exitCode = error.code || 1;
-        }
+        runBinary(yarnPath);
       }
     } else {
       if (ignorePath)
