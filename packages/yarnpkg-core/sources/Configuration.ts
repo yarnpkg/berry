@@ -961,6 +961,32 @@ function getRcFilename() {
   return DEFAULT_RC_FILENAME as Filename;
 }
 
+async function checkYarnPath({configuration, selfPath}: {configuration: Configuration, selfPath: PortablePath}): Promise<PortablePath | null> {
+  const yarnPath = configuration.get(`yarnPath`);
+  const ignorePath = configuration.get(`ignorePath`);
+
+  const tryRead = (p: PortablePath) => xfs.readFilePromise(p).catch(() => {
+    return Buffer.of();
+  });
+
+  const isSameBinary = async () =>
+    yarnPath && (
+      yarnPath === selfPath ||
+        Buffer.compare(...await Promise.all([
+          tryRead(yarnPath),
+          tryRead(selfPath),
+        ])) === 0
+    );
+
+  if (!ignorePath && await isSameBinary()) {
+    return null;
+  } else if (yarnPath !== null && !ignorePath) {
+    return yarnPath;
+  } else {
+    return null;
+  }
+}
+
 export enum ProjectLookup {
   LOCKFILE,
   MANIFEST,
@@ -970,7 +996,7 @@ export enum ProjectLookup {
 export type FindProjectOptions = {
   lookup?: ProjectLookup;
   strict?: boolean;
-  usePath?: boolean;
+  usePathCheck?: PortablePath | null;
   useRc?: boolean;
 };
 
@@ -1052,7 +1078,7 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePath = false, useRc = true}: FindProjectOptions = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -1079,8 +1105,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, enableTelemetry, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, enableTelemetry, lockfileFilename, injectEnvironmentFiles});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, enableTelemetry, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
@@ -1108,12 +1134,16 @@ export class Configuration {
       configuration.useWithSource(source, pickPrimaryCoreFields(data), resolvedRcFileCwd, {strict: false});
     }
 
-    if (usePath) {
-      const yarnPath = configuration.get(`yarnPath`);
-      const ignorePath = configuration.get(`ignorePath`);
+    if (usePathCheck) {
+      const yarnPath = await checkYarnPath({
+        configuration,
+        selfPath: usePathCheck,
+      });
 
-      if (yarnPath !== null && !ignorePath) {
+      if (yarnPath !== null) {
         return configuration;
+      } else {
+        configuration.useWithSource(`<override>`, {ignorePath: true}, startingCwd, {strict: false, overwrite: true});
       }
     }
 

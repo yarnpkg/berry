@@ -37,42 +37,13 @@ function validateNodejsVersion(cli: Cli<CommandContext>) {
   return false;
 }
 
-async function getCoreConfiguration({pluginConfiguration}: {pluginConfiguration: PluginConfiguration}) {
+async function getCoreConfiguration({selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
   // Since we only care about a few very specific settings we tolerate extra configuration key.
   // If we didn't, we wouldn't even be able to run `yarn config` (which is recommended in the invalid config error message)
   return await Configuration.find(npath.toPortablePath(process.cwd()), pluginConfiguration, {
-    usePath: true,
     strict: false,
+    usePathCheck: selfPath,
   });
-}
-
-async function checkYarnPath({configuration}: {configuration: Configuration}): Promise<PortablePath | null> {
-  const yarnPath = configuration.get(`yarnPath`);
-  const ignorePath = configuration.get(`ignorePath`);
-  const ignoreCwd = configuration.get(`ignoreCwd`);
-
-  const selfPath = npath.toPortablePath(npath.resolve(process.argv[1]));
-
-  const tryRead = (p: PortablePath) => xfs.readFilePromise(p).catch(() => {
-    return Buffer.of();
-  });
-
-  const isSameBinary = async () =>
-    yarnPath && (
-      yarnPath === selfPath ||
-        Buffer.compare(...await Promise.all([
-          tryRead(yarnPath),
-          tryRead(selfPath),
-        ])) === 0
-    );
-
-  if (!ignorePath && !ignoreCwd && await isSameBinary()) {
-    return null;
-  } else if (yarnPath !== null && !ignorePath) {
-    return yarnPath;
-  } else {
-    return null;
-  }
 }
 
 function runYarnPath(cli: Cli<CommandContext>, argv: Array<string>, {yarnPath}: {yarnPath: PortablePath}) {
@@ -108,10 +79,10 @@ function checkCwd(argv: Array<string>, {configuration}: {configuration: Configur
     ? ppath.cwd()
     : null;
 
-  if (argv[0] === `--cwd`)
+  if (argv.length >= 2 && argv[0] === `--cwd`)
     return [forcedCwd ?? xfs.realpathSync(npath.toPortablePath(argv[1])), argv.slice(2)];
 
-  if (argv[0].startsWith(`--cwd=`))
+  if (argv.length >= 1 && argv[0].startsWith(`--cwd=`))
     return [forcedCwd ?? xfs.realpathSync(npath.toPortablePath(argv[0].slice(6))), argv.slice(1)];
 
   return [ppath.cwd(), argv];
@@ -157,15 +128,22 @@ function processArgv(cli: Cli<CommandContext>, argv: Array<string>, {cwd, plugin
   };
 }
 
-async function run(cli: Cli<CommandContext>, argv: Array<string>, {pluginConfiguration}: {pluginConfiguration: PluginConfiguration}) {
+async function run(cli: Cli<CommandContext>, argv: Array<string>, {selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
   if (!validateNodejsVersion(cli))
     return 1;
 
-  const configuration = await getCoreConfiguration({pluginConfiguration});
+  const configuration = await getCoreConfiguration({
+    selfPath,
+    pluginConfiguration,
+  });
 
-  const yarnPath = await checkYarnPath({configuration});
-  if (yarnPath !== null)
+  const yarnPath = configuration.get(`yarnPath`);
+  const ignorePath = configuration.get(`ignorePath`);
+
+  if (yarnPath && !ignorePath)
     return runYarnPath(cli, argv, {yarnPath});
+
+  delete process.env.YARN_IGNORE_PATH;
 
   const [cwd, postCwdArgv] = checkCwd(argv, {configuration});
 
@@ -181,18 +159,22 @@ async function run(cli: Cli<CommandContext>, argv: Array<string>, {pluginConfigu
 
 export async function getCli({pluginConfiguration}: {pluginConfiguration: PluginConfiguration}) {
   const cli = getBaseCli();
-  const configuration = await getCoreConfiguration({pluginConfiguration});
+
+  const configuration = await getCoreConfiguration({
+    pluginConfiguration,
+    selfPath: null,
+  });
 
   initCommands(cli, {configuration});
 
   return cli;
 }
 
-export async function runExit(argv: Array<string>, {pluginConfiguration}: {pluginConfiguration: PluginConfiguration}) {
+export async function runExit(argv: Array<string>, {selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
   const cli = getBaseCli();
 
   try {
-    process.exitCode = await run(cli, argv, {pluginConfiguration});
+    process.exitCode = await run(cli, argv, {selfPath, pluginConfiguration});
   } catch (error) {
     Cli.defaultContext.stdout.write(cli.error(error));
     process.exitCode = 1;
