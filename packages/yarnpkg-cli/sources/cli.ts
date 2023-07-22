@@ -1,12 +1,6 @@
-import './polyfills';
-
-// eslint-disable-next-line arca/import-ordering
-import {YarnVersion}            from '@yarnpkg/core';
-
-import {main}                   from './main';
+import {runExit}                from './lib';
 import {getPluginConfiguration} from './tools/getPluginConfiguration';
 
-main({
-  binaryVersion: YarnVersion || `<unknown>`,
+runExit(process.argv.slice(2), {
   pluginConfiguration: getPluginConfiguration(),
 });
