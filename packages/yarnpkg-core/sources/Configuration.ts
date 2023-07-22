@@ -1079,8 +1079,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, enableTelemetry, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, enableTelemetry, lockfileFilename, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, enableTelemetry, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
