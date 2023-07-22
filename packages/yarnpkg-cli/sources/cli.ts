@@ -1,3 +1,4 @@
+import '@yarnpkg/cli/polyfills';
 import {npath}                  from '@yarnpkg/fslib';
 
 import {runExit}                from './lib';
