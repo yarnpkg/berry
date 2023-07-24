@@ -36,7 +36,7 @@ describe(`Entry`, () => {
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
 
       await expect(run(`--cwd`, `${npath.fromPortablePath(path)}/packages`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${path}/packages\n`,
+        stdout: `${npath.fromPortablePath(path)}/packages\n`,
       });
     }));
 
