@@ -76,10 +76,10 @@ function runYarnPath(cli: Cli<CommandContext>, argv: Array<string>, {yarnPath}: 
 
 function checkCwd(argv: Array<string>): [PortablePath, Array<string>] {
   if (argv.length >= 2 && argv[0] === `--cwd`)
-    return [xfs.realpathSync(npath.toPortablePath(argv[1])), argv.slice(2)];
+    return [npath.toPortablePath(npath.resolve(argv[1])), argv.slice(2)];
 
   if (argv.length >= 1 && argv[0].startsWith(`--cwd=`))
-    return [xfs.realpathSync(npath.toPortablePath(argv[0].slice(6))), argv.slice(1)];
+    return [npath.toPortablePath(npath.resolve(argv[0].slice(6))), argv.slice(1)];
 
   return [ppath.cwd(), argv];
 }
