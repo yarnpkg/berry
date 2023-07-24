@@ -26,7 +26,7 @@ describe(`Entry`, () => {
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
 
       await expect(run(`--cwd`, `packages`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/packages\n`,
+        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
       });
     }));
 
@@ -35,8 +35,8 @@ describe(`Entry`, () => {
 
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
 
-      await expect(run(`--cwd`, `${npath.fromPortablePath(path)}/packages`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/packages\n`,
+      await expect(run(`--cwd`, npath.fromPortablePath(`${path}/packages`), `exec`, `pwd`)).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
       });
     }));
 
@@ -47,7 +47,7 @@ describe(`Entry`, () => {
       await xfs.symlinkPromise(`${path}/packages` as PortablePath, `${path}/modules` as PortablePath);
 
       await expect(run(`--cwd`, `modules`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/modules\n`,
+        stdout: `${npath.fromPortablePath(`${path}/modules`)}\n`,
       });
     }));
 
@@ -57,8 +57,8 @@ describe(`Entry`, () => {
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
       await xfs.symlinkPromise(`${path}/packages` as PortablePath, `${path}/modules` as PortablePath);
 
-      await expect(run(`--cwd`, `${npath.fromPortablePath(path)}/modules`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/modules\n`,
+      await expect(run(`--cwd`, npath.fromPortablePath(`${path}/modules`), `exec`, `pwd`)).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(`${path}/modules`)}\n`,
       });
     }));
 
@@ -68,7 +68,7 @@ describe(`Entry`, () => {
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
 
       await expect(run(`--cwd=packages`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/packages\n`,
+        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
       });
     }));
 
@@ -77,8 +77,8 @@ describe(`Entry`, () => {
 
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
 
-      await expect(run(`--cwd=${npath.fromPortablePath(path)}/packages`, `exec`, `pwd`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/packages\n`,
+      await expect(run(`--cwd=${npath.fromPortablePath(`${path}/packages`)}`, `exec`, `pwd`)).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
       });
     }));
 
@@ -92,7 +92,7 @@ describe(`Entry`, () => {
       await xfs.mkdirPromise(`${path}/packages` as PortablePath);
 
       await expect(run(`run`, `foo`)).resolves.toMatchObject({
-        stdout: `${npath.fromPortablePath(path)}/packages\n`,
+        stdout: `${npath.fromPortablePath(`${path}/packages`)}\n`,
       });
     }));
   });
