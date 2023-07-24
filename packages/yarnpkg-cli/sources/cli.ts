@@ -1,12 +1,10 @@
-import './polyfills';
+import '@yarnpkg/cli/polyfills';
+import {npath}                  from '@yarnpkg/fslib';
 
-// eslint-disable-next-line arca/import-ordering
-import {YarnVersion}            from '@yarnpkg/core';
-
-import {main}                   from './main';
+import {runExit}                from './lib';
 import {getPluginConfiguration} from './tools/getPluginConfiguration';
 
-main({
-  binaryVersion: YarnVersion || `<unknown>`,
+runExit(process.argv.slice(2), {
+  selfPath: npath.toPortablePath(npath.resolve(process.argv[1])),
   pluginConfiguration: getPluginConfiguration(),
 });
