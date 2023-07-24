@@ -81,5 +81,19 @@ describe(`Entry`, () => {
         stdout: `${npath.fromPortablePath(path)}/packages\n`,
       });
     }));
+
+    test(`should use the specified --cwd (inside script)`, makeTemporaryEnv({
+      scripts: {
+        foo: `yarn --cwd=packages exec pwd`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await xfs.mkdirPromise(`${path}/packages` as PortablePath);
+
+      await expect(run(`run`, `foo`)).resolves.toMatchObject({
+        stdout: `${npath.fromPortablePath(path)}/packages\n`,
+      });
+    }));
   });
 });
