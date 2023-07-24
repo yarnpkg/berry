@@ -84,6 +84,10 @@ const IGNORED_ENV_VARIABLES = new Set([
 
   // "YARN_REGISTRY", read by yarn 1.x, prevents yarn 2+ installations if set
   `registry`,
+
+  // "ignoreCwd" was previously used to skip extra chdir calls in Yarn Modern when `--cwd` was used.
+  // It needs to be ignored because it's set by the parent process which could be anything.
+  `ignoreCwd`,
 ]);
 
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
@@ -195,11 +199,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   },
   ignorePath: {
     description: `If true, the local executable will be ignored when using the global one`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
-  ignoreCwd: {
-    description: `If true, the \`--cwd\` flag will be ignored`,
     type: SettingsType.BOOLEAN,
     default: false,
   },
@@ -597,7 +596,6 @@ export interface ConfigurationValueMap {
 
   yarnPath: PortablePath | null;
   ignorePath: boolean;
-  ignoreCwd: boolean;
 
   globalFolder: PortablePath;
   cacheFolder: PortablePath;
@@ -1105,8 +1103,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
@@ -1115,7 +1113,7 @@ export class Configuration {
       return secondaryCoreFields;
     };
 
-    const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPluginFields = ({yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
       const pluginFields: any = {};
       for (const [key, value] of Object.entries(rest))
         if (!allCoreFieldKeys.has(key))
