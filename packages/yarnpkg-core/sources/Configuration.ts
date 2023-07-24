@@ -94,7 +94,6 @@ export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
-export const DEFAULT_LOCK_FILENAME = `yarn.lock` as Filename;
 export const SECRET = `********`;
 
 export enum SettingsType {
