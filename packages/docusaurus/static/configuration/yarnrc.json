@@ -246,12 +246,6 @@
       "format": "uri",
       "examples": ["http://proxy:4040"]
     },
-    "ignoreCwd": {
-      "_package": "@yarnpkg/core",
-      "description": "If true, the `--cwd` flag will be ignored.",
-      "type": "boolean",
-      "default": false
-    },
     "ignorePath": {
       "_package": "@yarnpkg/core",
       "description": "If true, the local executable will be ignored when using the global one.",
