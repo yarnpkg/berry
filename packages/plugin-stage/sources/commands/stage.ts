@@ -4,12 +4,10 @@ import {PortablePath, npath, ppath, xfs}    from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError} from 'clipanion';
 
 import {Driver as GitDriver}                from '../drivers/GitDriver';
-import {Driver as MercurialDriver}          from '../drivers/MercurialDriver';
 import {Hooks}                              from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
-  MercurialDriver,
 ];
 
 // eslint-disable-next-line arca/no-default-export
