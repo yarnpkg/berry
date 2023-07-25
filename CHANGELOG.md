@@ -84,6 +84,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `configuration.{packageExtensions,refreshPackageExtensions}` have been removed. Use `configuration.getPackageExtensions` instead.
 
+- `configuration.normalizePackage` is now `async`.
+
 ### Installs
 
 - Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
