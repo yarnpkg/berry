@@ -2,13 +2,9 @@ import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml}                       from '@yarnpkg/parsers';
 import stream                            from 'stream';
 import tarFs                             from 'tar-fs';
-import {promisify}                       from 'util';
 import zlib, {Gzip}                      from 'zlib';
 
 import {execPromise}                     from './exec';
-
-// TODO: Use stream.promises.pipeline when dropping support for Node.js < 15.0.0
-const pipelinePromise = promisify(stream.pipeline);
 
 const IS_WIN32 = process.platform === `win32`;
 
@@ -48,14 +44,14 @@ export const packToStream = (
 };
 
 export const packToFile = async (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
-  await pipelinePromise(
+  await stream.promises.pipeline(
     packToStream(source, options),
     xfs.createWriteStream(target),
   );
 };
 
 export const unpackToDirectory = async (target: PortablePath, source: PortablePath): Promise<void> => {
-  await pipelinePromise(
+  await stream.promises.pipeline(
     xfs.createReadStream(source),
     zlib.createUnzip(),
     tarFs.extract(npath.fromPortablePath(target)),
