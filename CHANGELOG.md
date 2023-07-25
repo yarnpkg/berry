@@ -82,6 +82,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `forgettableNames` & `forgettableBufferSize` have been removed (the only messages using them have been removed, making the forgettable logs implementation obsolete).
 
+- `configuration.{packageExtensions,refreshPackageExtensions}` have been removed. Use `configuration.getPackageExtensions` instead.
+
 ### Installs
 
 - Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.

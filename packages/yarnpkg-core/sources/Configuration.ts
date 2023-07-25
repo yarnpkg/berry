@@ -1017,7 +1017,6 @@ export class Configuration {
   public invalid: Map<string, string> = new Map();
 
   public env: Record<string, string | undefined> = {};
-  public packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> = new Map();
 
   public limits: Map<string, Limit> = new Map();
 
@@ -1336,8 +1335,6 @@ export class Configuration {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
       configuration.sources.set(`cacheFolder`, `<internal>`);
     }
-
-    await configuration.refreshPackageExtensions();
 
     return configuration;
   }
@@ -1751,7 +1748,12 @@ export class Configuration {
     return {os, cpu, libc};
   }
 
-  async refreshPackageExtensions() {
+  private packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> | null = null;
+
+  async getPackageExtensions() {
+    if (this.packageExtensions !== null)
+      return this.packageExtensions;
+
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
 
@@ -1789,9 +1791,10 @@ export class Configuration {
       return hooks.registerPackageExtensions;
     }, this, registerPackageExtension);
 
-    for (const [descriptorString, extensionData] of this.get(`packageExtensions`)) {
+    for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
-    }
+
+    return packageExtensions;
   }
 
   normalizeLocator(locator: Locator) {
@@ -1822,16 +1825,15 @@ export class Configuration {
     }));
   }
 
-  normalizePackage(original: Package) {
+  async normalizePackage(original: Package) {
     const pkg = structUtils.copyPackage(original);
 
     // We use the extensions to define additional dependencies that weren't
     // properly listed in the original package definition
 
-    if (this.packageExtensions == null)
-      throw new Error(`refreshPackageExtensions has to be called before normalizing packages`);
+    const packageExtensions = await this.getPackageExtensions();
 
-    const extensionsPerIdent = this.packageExtensions.get(original.identHash);
+    const extensionsPerIdent = packageExtensions.get(original.identHash);
     if (typeof extensionsPerIdent !== `undefined`) {
       const version = original.version;
 
