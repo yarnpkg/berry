@@ -75,16 +75,12 @@ function runYarnPath(cli: Cli<CommandContext>, argv: Array<string>, {yarnPath}: 
   return 0;
 }
 
-function checkCwd(argv: Array<string>, {configuration}: {configuration: Configuration}): [PortablePath, Array<string>] {
-  const forcedCwd = configuration.get(`ignoreCwd`)
-    ? ppath.cwd()
-    : null;
-
+function checkCwd(argv: Array<string>): [PortablePath, Array<string>] {
   if (argv.length >= 2 && argv[0] === `--cwd`)
-    return [forcedCwd ?? xfs.realpathSync(npath.toPortablePath(argv[1])), argv.slice(2)];
+    return [xfs.realpathSync(npath.toPortablePath(argv[1])), argv.slice(2)];
 
   if (argv.length >= 1 && argv[0].startsWith(`--cwd=`))
-    return [forcedCwd ?? xfs.realpathSync(npath.toPortablePath(argv[0].slice(6))), argv.slice(1)];
+    return [xfs.realpathSync(npath.toPortablePath(argv[0].slice(6))), argv.slice(1)];
 
   return [ppath.cwd(), argv];
 }
@@ -146,7 +142,7 @@ async function run(cli: Cli<CommandContext>, argv: Array<string>, {selfPath, plu
 
   delete process.env.YARN_IGNORE_PATH;
 
-  const [cwd, postCwdArgv] = checkCwd(argv, {configuration});
+  const [cwd, postCwdArgv] = checkCwd(argv);
 
   initTelemetry(cli, {configuration});
   initCommands(cli, {configuration});
