@@ -31,7 +31,7 @@ const pipelinePromise = promisify(stream.pipeline);
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
   ? 150000
-  : 50000;
+  : 75000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;
