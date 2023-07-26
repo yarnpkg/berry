@@ -373,7 +373,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       for (const versionDistTags of allDistTags.slice(1))
         assert.deepStrictEqual(versionDistTags, distTags);
 
-      if (typeof distTags === `object` && distTags !== null && !Object.prototype.hasOwnProperty.call(distTags, `latest`))
+      if (typeof distTags === `object` && distTags !== null && !Object.hasOwn(distTags, `latest`))
         throw new Error(`Assertion failed: The package "${name}" must define a "latest" dist-tag too if it defines any dist-tags`);
 
       const data = JSON.stringify({

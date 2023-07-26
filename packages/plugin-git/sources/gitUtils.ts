@@ -82,7 +82,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
         throw new Error(`Assertion failed: The ${key} parameter must be a literal string`);
 
     const requestedProtocol = Object.values(TreeishProtocols).find(protocol => {
-      return Object.prototype.hasOwnProperty.call(extra, protocol);
+      return Object.hasOwn(extra, protocol);
     });
 
     const [protocol, request] = typeof requestedProtocol !== `undefined`

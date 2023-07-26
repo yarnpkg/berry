@@ -47,7 +47,7 @@ export class LegacyMigrationResolver implements Resolver {
     const parsed = parseSyml(content);
 
     // No need to enable it either if the lockfile is modern
-    if (Object.prototype.hasOwnProperty.call(parsed, `__metadata`))
+    if (Object.hasOwn(parsed, `__metadata`))
       return;
 
     const resolutions = this.resolutions = new Map();
