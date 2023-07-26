@@ -13051,7 +13051,7 @@ const RAW_RUNTIME_STATE =
             "esbuild-wasm",\
             "npm:0.15.15"\
           ]],\
-          ["globby", "npm:11.1.0"],\
+          ["fast-glob", "npm:3.2.12"],\
           ["got", "npm:11.8.2"],\
           ["lodash", "npm:4.17.21"],\
           ["micromatch", "npm:4.0.5"],\

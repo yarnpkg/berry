@@ -7083,7 +7083,7 @@ __metadata:
     diff: "npm:^5.1.0"
     dotenv: "npm:^16.3.1"
     esbuild: "npm:esbuild-wasm@^0.15.15"
-    globby: "npm:^11.0.1"
+    fast-glob: "npm:^3.2.2"
     got: "npm:^11.7.0"
     lodash: "npm:^4.17.15"
     micromatch: "npm:^4.0.2"
