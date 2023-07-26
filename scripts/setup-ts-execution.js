@@ -8,7 +8,7 @@ const zlib = require(`zlib`);
 
 // Needed by the worker spawned by esbuild
 if (process.versions.pnp)
-  process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ``} -r ${JSON.stringify(require.resolve(`pnpapi`))}`;
+  process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ``} --require ${JSON.stringify(require.resolve(`pnpapi`))}`;
 
 const resolveVirtual = process.versions.pnp
   ? require(`pnpapi`).resolveVirtual

@@ -27,6 +27,7 @@ export const quotePathIfNeeded = (path: string) => {
 async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   // We still support .pnp.js files to improve multi-project compatibility.
   // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
+  // TODO: Support `-r` as an alias for `--require` (in all packages)
   const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
   const esmLoaderExpression = /\s*--experimental-loader\s+\S*\.pnp\.loader\.mjs\s*/;
 
