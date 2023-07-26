@@ -13,19 +13,20 @@ description: An in-depth guide to Yarn's various protocols.
 
 The following protocols can be used by any dependency entry listed in the `dependencies` or `devDependencies` fields. While they work regardless of the context we strongly recommend you to only use semver ranges on published packages as they are the one common protocol whose semantic is clearly defined across all package managers.
 
-| Name          | Example                                 | Description                                                                                                                       |
-| ------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Semver        | `^1.2.3`                                | Resolves from the default registry                                                                                                 |
-| Tag           | `latest`                                | Resolves from the default registry                                                                                                 |
-| Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                     |
-| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                   |
-| GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                         |
-| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                   |
-| File          | `file:./my-package`                     | Copies the target location into the cache                                                                                         |
-| Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                   |
-| Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                     |
-| Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                   |
-| Workspace     | `workspace:*`                           | Creates a link to a package in another workspace                                                                                   |
+| Name          | Example                                 | Description                                                                                                                      |
+|---------------|-----------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| Semver        | `^1.2.3`                                | Resolves from the default registry                                                                                               |
+| Tag           | `latest`                                | Resolves from the default registry                                                                                               |
+| Npm alias     | `npm:name@...`                          | Resolves from the npm registry                                                                                                   |
+| Git           | `git@github.com:foo/bar.git`            | Downloads a public package from a Git repository                                                                                 |
+| GitHub        | `github:foo/bar`                        | Downloads a **public** package from GitHub                                                                                       |
+| GitHub        | `foo/bar`                               | Alias for the `github:` protocol                                                                                                 |
+| File          | `file:./my-package`                     | Copies the target location into the cache                                                                                        |
+| Http          | `https://example.com/archive.tar.gz`    | Downloads a package from a http resource                                                                                         |
+| Link          | `link:./my-folder`                      | Creates a link to the `./my-folder` folder (ignore dependencies)                                                                 |
+| Patch         | `patch:left-pad@1.0.0#./my-patch.patch` | Creates a patched copy of the original package                                                                                   |
+| Portal        | `portal:./my-folder`                    | Creates a link to the `./my-folder` folder (follow dependencies)                                                                 |
+| Workspace     | `workspace:*`                           | Creates a link to a package in another workspace                                                                                 |
 | [Exec](#exec) | `exec:./my-generator-package`           | <sup>*Experimental & Plugin*</sup><br/>Instructs Yarn to execute the specified Node script and use its output as package content |
 
 ## Details
@@ -52,10 +53,42 @@ git@github.com:yarnpkg/berry.git#head=master
 
 - Yarn will use either of Yarn, npm, or pnpm to pack the repository, based on the repository style (ie we'll use Yarn if there's a `yarn.lock`, npm if there's a `package-lock.json`, or pnpm if there's a `pnpm-lock.yaml`)
 
-- Workspaces can be cloned as long as the remote repository uses Yarn or npm (npm@>=7.x has to be installed on the system); we can't support pnpm because it doesn't have equivalent for the [`workspace` command](/cli/workspace). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
+- Workspaces can be cloned as long as the remote repository uses Yarn or npm (npm@>=7.x has to be installed on the system); we can't support pnpm because it doesn't have equivalent for the [`workspace` feature](/features/workspaces). Just reference the workspace by name in your range (you can optionally enforce the tag as well):
 
 ```
 git@github.com:yarnpkg/berry.git#workspace=@yarnpkg/shell&tag=@yarnpkg/shell/2.1.0
+```
+
+### Http
+
+The Http protocol allows for sourcing a dependency from any http server.
+
+Requests respect network rules defined in [configuration](/configuration/yarnrc).
+
+Only tarballs are supported for download.
+
+#### Tarball (.tar.gz|.tgz)
+
+A tarball is expected to contain the project's release, like from the result of [`pack`](/cli/pack).
+
+```
+https://registry.npmjs.org/@yarnpkg/plugin-http/-/plugin-http-2.2.1.tgz
+```
+
+##### Option (source)
+
+Optionally a tarball can be treated as if it contains source code. It will not use the tarball as-is but will extract then pack using [`pack`](/cli/pack).
+
+```
+https://github.com/yarnpkg/berry/archive/master.tar.gz#source=true
+```
+
+##### Option (workspace)
+
+If source is set to true a workspace may be set like with the git [protocol](#git).
+
+```
+https://github.com/yarnpkg/berry/archive/master.tar.gz#source=true&workspace=@yarnpkg/plugin-http
 ```
 
 ### Patch

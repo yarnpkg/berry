@@ -11,10 +11,12 @@
     "tslib": "^2.4.0"
   },
   "peerDependencies": {
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^"
   },
   "repository": {
     "type": "git",
