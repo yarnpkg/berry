@@ -7783,7 +7783,6 @@ __metadata:
   resolution: "@yarnpkg/plugin-pnp@workspace:packages/plugin-pnp"
   dependencies:
     "@types/micromatch": "npm:^4.0.1"
-    "@types/semver": "npm:^7.1.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -7791,7 +7790,6 @@ __metadata:
     "@yarnpkg/pnp": "workspace:^"
     clipanion: "npm:^3.2.1"
     micromatch: "npm:^4.0.2"
-    semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
