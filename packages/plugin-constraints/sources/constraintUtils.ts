@@ -37,7 +37,7 @@ export class Index<T extends {[key: string]: any}> {
     this.items.push(item);
 
     for (const field of this.indexedFields) {
-      const value = Object.prototype.hasOwnProperty.call(item, field)
+      const value = Object.hasOwn(item, field)
         ? item[field]
         : undefined;
 
@@ -65,7 +65,7 @@ export class Index<T extends {[key: string]: any}> {
     for (const [field_, value] of filterEntries) {
       const field = field_ as keyof T;
 
-      const index = Object.prototype.hasOwnProperty.call(this.indexes, field)
+      const index = Object.hasOwn(this.indexes, field)
         ? this.indexes[field]
         : undefined;
 
@@ -98,8 +98,8 @@ export class Index<T extends {[key: string]: any}> {
       result = result.filter(item => {
         for (const [field, value] of sequentialFilters) {
           const valid = typeof value !== `undefined`
-            ? Object.prototype.hasOwnProperty.call(item, field) && item[field] === value
-            : Object.prototype.hasOwnProperty.call(item, field) === false;
+            ? Object.hasOwn(item, field) && item[field] === value
+            : Object.hasOwn(item, field) === false;
 
           if (!valid) {
             return false;

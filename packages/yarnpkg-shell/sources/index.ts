@@ -438,9 +438,9 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
           raw = opts.args[argIndex];
         }
       } else {
-        if (Object.prototype.hasOwnProperty.call(state.variables, segment.name)) {
+        if (Object.hasOwn(state.variables, segment.name)) {
           raw = state.variables[segment.name];
-        } else if (Object.prototype.hasOwnProperty.call(state.environment, segment.name)) {
+        } else if (Object.hasOwn(state.environment, segment.name)) {
           raw = state.environment[segment.name];
         }
       }
@@ -703,7 +703,7 @@ function makeActionFromProcedure(procedure: ProcessImplementation, args: Array<s
     let key;
     do {
       key = String(Math.random());
-    } while (Object.prototype.hasOwnProperty.call(activeState.procedures, key));
+    } while (Object.hasOwn(activeState.procedures, key));
 
     activeState.procedures = {...activeState.procedures};
     activeState.procedures[key] = procedure;

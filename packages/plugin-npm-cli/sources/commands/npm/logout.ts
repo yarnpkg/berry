@@ -183,7 +183,7 @@ async function logoutFrom(entryType: `npmRegistries` | `npmScopes`, entryName: s
         ? unknownStore
         : {};
 
-      if (!Object.prototype.hasOwnProperty.call(nextStore, entryName))
+      if (!Object.hasOwn(nextStore, entryName))
         return unknownStore;
 
       const unknownEntry = nextStore[entryName];

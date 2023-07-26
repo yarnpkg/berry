@@ -80,6 +80,8 @@ module.exports = {
       ignoreReadBeforeAssign: true,
     }],
 
+    'prefer-object-has-own': 2,
+
     'prefer-template': 2,
 
     'require-yield': 2,

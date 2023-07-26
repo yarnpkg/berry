@@ -720,10 +720,10 @@ export class Manifest {
 
   setRawField(name: string, value: any, {after = []}: {after?: Array<string>} = {}) {
     const afterSet = new Set(after.filter(key => {
-      return Object.prototype.hasOwnProperty.call(this.raw, key);
+      return Object.hasOwn(this.raw, key);
     }));
 
-    if (afterSet.size === 0 || Object.prototype.hasOwnProperty.call(this.raw, name)) {
+    if (afterSet.size === 0 || Object.hasOwn(this.raw, name)) {
       this.raw[name] = value;
     } else {
       const oldRaw = this.raw;

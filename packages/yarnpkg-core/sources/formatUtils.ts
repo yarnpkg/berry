@@ -401,7 +401,7 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
   if (value === null)
     return applyColor(configuration, `null`, Type.NULL);
 
-  if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
+  if (Object.hasOwn(transforms, formatType)) {
     const transform = transforms[formatType as keyof typeof transforms];
     const typedTransform = transform as Extract<typeof transform, {pretty: (configuration: Configuration, val: Source<T>) => any}>;
     return typedTransform.pretty(configuration, value);
@@ -421,7 +421,7 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
   if (value === null)
     return null;
 
-  if (Object.prototype.hasOwnProperty.call(transforms, formatType)) {
+  if (Object.hasOwn(transforms, formatType)) {
     miscUtils.overrideType<keyof AllTransforms>(formatType);
     return transforms[formatType].json(value as never);
   }

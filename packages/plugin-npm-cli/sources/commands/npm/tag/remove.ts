@@ -44,7 +44,7 @@ export default class NpmTagRemoveCommand extends BaseCommand {
     const prettyIdent = formatUtils.pretty(configuration, ident, formatUtils.Type.IDENT);
 
     const distTags = await getDistTags(ident, configuration);
-    if (!Object.prototype.hasOwnProperty.call(distTags, this.tag))
+    if (!Object.hasOwn(distTags, this.tag))
       throw new UsageError(`${prettyTag} is not a tag of package ${prettyIdent}`);
 
     const report = await StreamReport.start({
