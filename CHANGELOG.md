@@ -82,6 +82,10 @@ The following changes only affect people writing Yarn plugins:
 
 - `forgettableNames` & `forgettableBufferSize` have been removed (the only messages using them have been removed, making the forgettable logs implementation obsolete).
 
+- `workspace.locator` has been removed. You can instead use:
+  - `workspace.anchoredLocator` to get the locator that's used throughout the dependency tree.
+  - `workspace.manifest.version` to get the workspace version.
+
 ### Installs
 
 - Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
