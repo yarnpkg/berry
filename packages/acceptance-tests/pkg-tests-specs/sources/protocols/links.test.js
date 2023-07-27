@@ -113,8 +113,6 @@ describe(`Protocols`, () => {
           [`no-deps`]: `1.0.0`,
           [`foo`]: `link:./my-dir`,
         },
-      }, {
-        pnpFallbackMode: `none`,
       }, async ({path, run, source}) => {
         await xfs.mkdirPromise(`${path}/my-dir`);
         await xfs.writeFilePromise(`${path}/my-dir/index.js`, `module.exports = require('no-deps');\n`);

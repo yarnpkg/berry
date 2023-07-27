@@ -639,9 +639,9 @@
     },
     "pnpFallbackMode": {
       "_package": "@yarnpkg/plugin-pnp",
-      "description": "Enumeration whose values (`none`, `dependencies-only`, `all`) define in which capacity should the PnP hook allow packages to rely on the builtin fallback mechanism. In `dependencies-only` mode (the default), your workspaces aren't allowed to use it.",
+      "description": "Enumeration whose values (`none`, `dependencies-only`, `all`) define in which capacity should the PnP hook allow packages to rely on the builtin fallback mechanism. In `dependencies-only` mode, your workspaces aren't allowed to use it.",
       "enum": ["none", "dependencies-only", "all"],
-      "default": "dependencies-only"
+      "default": "none"
     },
     "pnpIgnorePatterns": {
       "_package": "@yarnpkg/plugin-pnp",

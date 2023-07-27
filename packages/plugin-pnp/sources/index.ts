@@ -118,7 +118,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
     pnpFallbackMode: {
       description: `If true, the generated PnP loader will follow the top-level fallback rule`,
       type: SettingsType.STRING,
-      default: `dependencies-only`,
+      default: `none`,
     },
     pnpUnpluggedFolder: {
       description: `Folder where the unplugged packages must be stored`,
