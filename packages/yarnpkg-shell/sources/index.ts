@@ -4,15 +4,13 @@ import {EnvSegment, ArithmeticExpression, ArithmeticPrimary}                    
 import chalk                                                                                                from 'chalk';
 import {homedir}                                                                                            from 'os';
 import {PassThrough, Readable, Writable}                                                                    from 'stream';
-import {promisify}                                                                                          from 'util';
+import {setTimeout}                                                                                         from 'timers/promises';
 
 import EntryCommand                                                                                         from './commands/entry';
 import {ShellError}                                                                                         from './errors';
 import * as globUtils                                                                                       from './globUtils';
 import {createOutputStreamsWithPrefix, makeBuiltin, makeProcess}                                            from './pipe';
 import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}                                 from './pipe';
-
-const setTimeoutPromise = promisify(setTimeout);
 
 export {EntryCommand};
 export {ShellError};
@@ -165,7 +163,7 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     if (Number.isNaN(seconds))
       throw new ShellError(`sleep: invalid time interval '${time}'`);
 
-    return await setTimeoutPromise(1000 * seconds, 0);
+    return await setTimeout(1000 * seconds, 0);
   }],
 
   [`__ysh_run_procedure`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {

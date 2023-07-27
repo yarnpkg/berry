@@ -2,9 +2,7 @@ import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
 import {execute, UserOptions}     from '@yarnpkg/shell';
 import {PassThrough}              from 'stream';
 import stripAnsi                  from 'strip-ansi';
-import {promisify}                from 'util';
-
-const setTimeoutPromise = promisify(setTimeout);
+import {setTimeout}               from 'timers/promises';
 
 const isNotWin32 = process.platform !== `win32`;
 
@@ -2010,12 +2008,12 @@ describe(`Shell`, () => {
     it(`should wait for all background jobs to finish before resolving`, async () => {
       await expect(Promise.race([
         bufferResult(`sleep 0.4 && echo foo`, [], {tty: false}),
-        setTimeoutPromise(300),
+        setTimeout(300),
       ])).resolves.toBeUndefined();
 
       await expectResult(Promise.race([
         bufferResult(`sleep 0.4 && echo foo`, [], {tty: false}),
-        setTimeoutPromise(500),
+        setTimeout(500),
       ]), {
         stdout: `foo\n`,
         stderr: ``,
@@ -2024,12 +2022,12 @@ describe(`Shell`, () => {
 
       await expect(Promise.race([
         bufferResult(`sleep 0.4 & echo foo`, [], {tty: false}),
-        setTimeoutPromise(300),
+        setTimeout(300),
       ])).resolves.toBeUndefined();
 
       await expectResult(Promise.race([
         bufferResult(`sleep 0.4 & echo foo`, [], {tty: false}),
-        setTimeoutPromise(500),
+        setTimeout(500),
       ]), {
         stdout: `foo\n`,
         stderr: ``,
