@@ -41477,7 +41477,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["lodash", "npm:4.17.21"],\
           ["pkg-tests-core", "workspace:packages/acceptance-tests/pkg-tests-core"],\
-          ["semver", "npm:7.5.4"],\
           ["tar", "npm:6.1.11"],\
           ["tslib", "npm:2.4.0"]\
         ],\
