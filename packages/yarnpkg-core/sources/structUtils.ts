@@ -793,7 +793,7 @@ export function sortDescriptors(descriptors: Iterable<Descriptor>) {
  * @param workspace The workspace to pretty print
  */
 export function prettyWorkspace(configuration: Configuration, workspace: Workspace) {
-  return prettyIdent(configuration, workspace.locator);
+  return prettyIdent(configuration, workspace.anchoredLocator);
 }
 
 /**

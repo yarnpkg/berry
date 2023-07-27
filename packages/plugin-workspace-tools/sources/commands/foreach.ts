@@ -140,7 +140,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
       : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
 
-    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from) || micromatch.isMatch(workspace.relativeCwd, this.from);
+    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.from) || micromatch.isMatch(workspace.relativeCwd, this.from);
     const fromCandidates: Array<Workspace> = this.from.length > 0
       ? rootCandidates.filter(fromPredicate)
       : rootCandidates;
@@ -181,10 +181,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (scriptName === configuration.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
-      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include))
+      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include))
         continue;
 
-      if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude)))
+      if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude)))
         continue;
 
       if (this.publicOnly && workspace.manifest.private === true)
@@ -400,7 +400,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   if (!verbose)
     return null;
 
-  const name = structUtils.stringifyIdent(workspace.locator);
+  const name = structUtils.stringifyIdent(workspace.anchoredLocator);
 
   const prefix = `[${name}]:`;
 

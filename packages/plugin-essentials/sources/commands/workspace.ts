@@ -39,7 +39,7 @@ export default class WorkspaceCommand extends BaseCommand {
     const candidates = project.workspaces;
     const candidatesByName = new Map(
       candidates.map(
-        workspace => [structUtils.stringifyIdent(workspace.locator), workspace],
+        workspace => [structUtils.stringifyIdent(workspace.anchoredLocator), workspace],
       ),
     );
 
