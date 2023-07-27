@@ -51628,7 +51628,7 @@ function makeDefaultStats() {
 }
 function clearStats(stats) {
   for (const key in stats) {
-    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+    if (Object.hasOwn(stats, key)) {
       const element = stats[key];
       if (typeof element === `number`) {
         stats[key] = 0;
@@ -51644,7 +51644,7 @@ function clearStats(stats) {
 function convertToBigIntStats(stats) {
   const bigintStats = new BigIntStatsEntry();
   for (const key in stats) {
-    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+    if (Object.hasOwn(stats, key)) {
       const element = stats[key];
       if (typeof element === `number`) {
         bigintStats[key] = BigInt(element);
@@ -56822,8 +56822,7 @@ function applyPatch(pnpapi, opts) {
     if (!enableNativeHooks)
       return originalModuleResolveFilename.call(require$$0.Module, request, parent, isMain, options);
     if (options && options.plugnplay === false) {
-      const { plugnplay, ...rest } = options;
-      const forwardedOptions = Object.keys(rest).length > 0 ? rest : void 0;
+      const { plugnplay, ...forwardedOptions } = options;
       try {
         enableNativeHooks = false;
         return originalModuleResolveFilename.call(require$$0.Module, request, parent, isMain, forwardedOptions);
@@ -58488,7 +58487,7 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
       const remappedPath = (!considerBuiltins || !isBuiltinModule(request)) && !isIssuerIgnored() ? resolveUnqualifiedExport(request, unqualifiedPath, conditions, issuer) : unqualifiedPath;
       return resolveUnqualified(remappedPath, { extensions });
     } catch (error) {
-      if (Object.prototype.hasOwnProperty.call(error, `pnpCode`))
+      if (Object.hasOwn(error, `pnpCode`))
         Object.assign(error.data, { request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer) });
       throw error;
     }
