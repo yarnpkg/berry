@@ -468,7 +468,7 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
   return value.replace(regex, (...args) => {
     const {variableName, colon, fallback} = args[args.length - 1];
 
-    const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
+    const variableExist = Object.hasOwn(env, variableName);
     const variableValue = env[variableName];
 
     if (variableValue)

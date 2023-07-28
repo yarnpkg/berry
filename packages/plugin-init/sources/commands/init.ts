@@ -82,7 +82,7 @@ export default class InitCommand extends BaseCommand {
     if (!xfs.existsSync(this.context.cwd))
       await xfs.mkdirPromise(this.context.cwd, {recursive: true});
 
-    const lockfilePath = ppath.join(this.context.cwd, configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.context.cwd, Filename.lockfile);
     if (!xfs.existsSync(lockfilePath))
       await xfs.writeFilePromise(lockfilePath, ``);
 

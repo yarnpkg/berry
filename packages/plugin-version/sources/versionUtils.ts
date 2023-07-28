@@ -248,7 +248,7 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
         if (workspace.manifest.version === null)
           continue;
 
-        const identStr = structUtils.stringifyIdent(workspace.locator);
+        const identStr = structUtils.stringifyIdent(workspace.anchoredLocator);
 
         const decision = releaseStore.get(workspace);
         if (decision === Decision.DECLINE) {

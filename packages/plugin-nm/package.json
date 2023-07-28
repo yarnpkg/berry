@@ -14,7 +14,7 @@
     "@yarnpkg/plugin-pnp": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
     "@zkochan/cmd-shim": "^5.1.0",
-    "clipanion": "^3.2.1",
+    "clipanion": "4.0.0-rc.1",
     "tslib": "^2.4.0"
   },
   "peerDependencies": {

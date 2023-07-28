@@ -25,13 +25,10 @@ import * as fsUtils                                            from './fs';
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
-// TODO: Use stream.promises.pipeline when dropping support for Node.js < 15.0.0
-const pipelinePromise = promisify(stream.pipeline);
-
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
   ? 150000
-  : 50000;
+  : 75000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
 export type PackageRegistry = Map<string, PackageEntry>;
@@ -273,10 +270,10 @@ export const getPackageArchiveHash = async (
   name: string,
   version: string,
 ): Promise<string | Buffer> => {
-  const stream = await getPackageArchiveStream(name, version);
+  const archiveStream = await getPackageArchiveStream(name, version);
   const hash = crypto.createHash(`sha1`);
 
-  await pipelinePromise(stream, hash);
+  await stream.promises.pipeline(archiveStream, hash);
 
   return hash.digest(`hex`);
 };
@@ -376,7 +373,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       for (const versionDistTags of allDistTags.slice(1))
         assert.deepStrictEqual(versionDistTags, distTags);
 
-      if (typeof distTags === `object` && distTags !== null && !Object.prototype.hasOwnProperty.call(distTags, `latest`))
+      if (typeof distTags === `object` && distTags !== null && !Object.hasOwn(distTags, `latest`))
         throw new Error(`Assertion failed: The package "${name}" must define a "latest" dist-tag too if it defines any dist-tags`);
 
       const data = JSON.stringify({
@@ -435,7 +432,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         [`Transfer-Encoding`]: `chunked`,
       });
 
-      await pipelinePromise(
+      await stream.promises.pipeline(
         fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)}),
         response,
       );

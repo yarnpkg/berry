@@ -1,6 +1,5 @@
 const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
-const {satisfies} = require(`semver`);
 
 const {
   fs: {writeFile, writeJson},
@@ -565,8 +564,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should support the 'paths' option from require.resolve (same dependency tree)`,
     makeTemporaryEnv(
       {
@@ -603,8 +601,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.cjs in the working dir`,
     makeTemporaryEnv(
       {
@@ -716,8 +713,7 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should throw when using require.resolve with unsupported options`,
     makeTemporaryEnv(
       {
@@ -2182,8 +2178,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=14`),
+  test(
     `it should emit a warning for circular dependency exports access`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
       await expect(run(`install`)).resolves.toMatchObject({code: 0});

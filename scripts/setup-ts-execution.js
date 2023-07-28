@@ -8,7 +8,9 @@ const zlib = require(`zlib`);
 
 // Needed by the worker spawned by esbuild
 if (process.versions.pnp)
-  process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ``} -r ${JSON.stringify(require.resolve(`pnpapi`))}`;
+  // Unquoted because Yarn doesn't support it quoted yet
+  // TODO: make Yarn support quoted PnP requires in NODE_OPTIONS
+  process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ``} --require ${require.resolve(`pnpapi`)}`;
 
 const resolveVirtual = process.versions.pnp
   ? require(`pnpapi`).resolveVirtual

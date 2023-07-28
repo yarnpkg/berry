@@ -273,7 +273,7 @@ class NodeModulesInstaller implements Installer {
       getDependencyTreeRoots: () => {
         return this.opts.project.workspaces.map(workspace => {
           const anchoredLocator = workspace.anchoredLocator;
-          return {name: structUtils.stringifyIdent(workspace.locator), reference: anchoredLocator.reference};
+          return {name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference};
         });
       },
       getPackageInformation: pnpLocator => {
@@ -372,7 +372,7 @@ class NodeModulesInstaller implements Installer {
 }
 
 
-type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U: never;
+type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U : never;
 type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData>>;
 
 async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) {

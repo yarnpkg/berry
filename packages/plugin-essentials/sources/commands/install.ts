@@ -415,7 +415,7 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (!configuration.projectCwd)
     return false;
 
-  const lockfilePath = ppath.join(configuration.projectCwd, configuration.get(`lockfileFilename`));
+  const lockfilePath = ppath.join(configuration.projectCwd, Filename.lockfile);
   if (!await xfs.existsPromise(lockfilePath))
     return false;
 
