@@ -459,6 +459,7 @@
     },
     "npmPublishAccess": {
       "_package": "@yarnpkg/plugin-npm-cli",
+      "type": "string",
       "description": "Defines the default access to use when publishing packages to the npm registry. Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
       "enum": ["public", "restricted"],
       "examples": ["public"]

@@ -18,37 +18,48 @@
   "type": "object",
   "properties": {
     "name": {
-      "description": "The name of the package. Used to identify it across the application, especially amongst multiple workspaces. The first part of the name (here `@scope/`) is optional and is used as a namespace).",
+      "title": "Name of the package.",
+      "description": "Used to identify it across the application, especially amongst multiple workspaces. The first part of the name (here `@scope/`) is optional and is used as a namespace).",
       "type": "string",
       "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
       "examples": ["@scope/name"]
     },
     "version": {
-      "description": "The version of the package. Usually doesn't have any impact on your project, except when it is a workspace - then its version must match the specified ranges for the workspace to be selected as resolution candidate.",
+      "title": "Version of the package.",
+      "description": "Usually doesn't have any impact on your project, except when it is a workspace - then its version must match the specified ranges for the workspace to be selected as resolution candidate.",
       "type": "string",
       "pattern": "^(?:(.+))$",
       "examples": ["1.2.3"]
     },
+    "packageManager": {
+      "title": "Define the package manager that should be used when working on this project.",
+      "description": "This field is used by [Corepack](https://nodejs.org/api/corepack.html) and similar tools to detect the Yarn version in use in a project - in a sense, it has the same purpose as your lockfile, but only for Yarn itself.\n\nYarn will automatically set this value when running `yarn set version`.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["yarn@4.0.0"]
+    },
     "type": {
+      "title": "Define how should be interpreted `.js` files.",
       "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs` (the default) and `module`. Yarn 3+ will generate a `.pnp.cjs` file when using PnP regardless of this option.",
       "type": "string",
       "enum": ["commonjs", "module"],
-      "default": "commonjs",
-      "examples": ["module"]
+      "default": "commonjs"
     },
     "private": {
-      "description": "If true, the package is considered private and Yarn will refuse to publish it regardless of the circumstances. Setting this flag also unlocks some features that wouldn't make sense in published packages, such as workspaces.",
+      "title": "Define whether the package is meant to be published.",
+      "description": "If true, the package is considered private and Yarn will refuse to publish it regardless of the circumstances.",
       "type": "boolean",
       "default": false,
       "examples": [true]
     },
     "license": {
-      "description": "An SPDX identifier that indicates under which license is your package distributed.",
+      "title": "SPDX identifier defining the license under which the package is distributed.",
       "type": "string",
       "examples": ["MIT"]
     },
     "os": {
-      "description": "A value compared during install with `process.platform`. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
+      "title": "Set of platforms on which this package works.",
+      "description": "The value of `process.platform()` will be compared at install-time against this set. Should no matches be found, any postinstall script the package define will be skipped. If the package was exclusively depended upon via `optionalDependencies` entries, the package won't be installed at all.",
       "type": "array",
       "items": {
         "type": "string"
@@ -56,7 +67,8 @@
       "exampleItems": ["linux", "darwin", "win32"]
     },
     "cpu": {
-      "description": "A value compared during install with `process.arch`. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
+      "title": "Set of CPU architectures on which this package works.",
+      "description": "The value of `process.arch()` will be compared at install-time against this set. Should no matches be found, any postinstall script the package define will be skipped. If the package was exclusively depended upon via `optionalDependencies` entries, the package won't be installed at all.",
       "type": "array",
       "items": {
         "type": "string"
@@ -64,7 +76,8 @@
       "exampleItems": ["x64", "ia32", "arm64"]
     },
     "libc": {
-      "description": "A value compared during install with the host standard C library. If the values don't match, the package won't see its postinstall scripts run (if listed in `dependencies`) or won't be installed at all (if listed in `optionalDependencies`).",
+      "title": "Set of C standard libraries on which this package depends.",
+      "description": "The host standard library will be compared at install-time against this set. Should no matches be found, any postinstall script the package define will be skipped. If the package was exclusively depended upon via `optionalDependencies` entries, the package won't be installed at all.",
       "type": "array",
       "items": {
         "type": "string"
@@ -72,25 +85,29 @@
       "exampleItems": ["glibc", "musl"]
     },
     "main": {
-      "description": "The path that will be used to resolve the qualified path to use when accessing the package by its name. This field can be modified at publish-time through the use of the `publishConfig.main` field.",
+      "title": "Path of the file that should be resolved when requiring the package via a bare identifier.",
+      "description": "This field can be modified at publish-time through the use of the `publishConfig.main` field.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["./sources/index.js"]
     },
     "module": {
-      "description": "The path that will be used when an ES6-compatible environment will try to access the package by its name. Doesn't have any direct effect on Yarn itself.",
+      "title": "Path of the file that should be resolved when requiring the package via a bare identifier in an ES6-compatible bundler environment.",
+      "description": "This field should be considered deprecated, with `exports` being its official replacement.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["./sources/index.mjs"]
     },
     "languageName": {
-      "description": "An enumeration used by the linker plugins to figure which linker should install a specific package. Only some values are allowed, consult the documentation to know more.",
+      "title": "Arbitrary value selecting the linker to use when installing the dependency.",
+      "description": "This is an internal package setting that shouldn't be touched unless you really know what you're doing.",
       "type": "string",
       "default": "node",
       "examples": ["node"]
     },
     "bin": {
-      "description": "A field used to expose some executable Javascript files to the parent package. Any entry listed here will be made available through the `$PATH`. Note that it is very advised to only expose Javascript files for portability reasons (shellscripts and non-js binaries require the user to have a specific shell, and are incompatible with zip access).",
+      "title": "Set of files to expose via `yarn run bin-name` and the shell environment.",
+      "description": "If set to a string, the binary value will be the package name (not including its scope part).",
       "type": "object",
       "patternProperties": {
         "^(.+)$": {
@@ -104,12 +121,13 @@
       "_margin": false
     },
     "scripts": {
-      "description": "A field used to list small shell scripts that will be executed when running `yarn run`. Scripts are by default executed by a miniature shell, so some advanced features might not be available (if you have more complex needs, we recommend you to just execute a Javascript file). Note that scripts containing `:` (the colon character) are globals to your project and can be called regardless of your current workspace. Finally, be aware that scripts are always executed relative to the closest workspace (never the cwd).",
+      "title": "Set of scripts to expose via `yarn run script-name`, or as lifecycle hooks.",
+      "description": "Scripts in Yarn are executed by a POSIX-like shell which implements most features you would want to use in one-liner scripts. For example you can assign environment variables using the POSIX syntax, and Yarn will make it work across both Linux, OSX, and Windows.",
       "type": "object",
       "patternProperties": {
         "^test$": {
           "type": "string",
-          "examples": ["jest"]
+          "examples": ["NODE_OPTIONS='--max-old-space-size=2048' jest"]
         },
         "^build$": {
           "type": "string",
@@ -127,7 +145,8 @@
       "exampleKeys": ["test", "build", "count-words"]
     },
     "dependencies": {
-      "description": "The set of dependencies that must be made available to the current package in order for it to work properly. Consult the list of supported ranges for more information.",
+      "title": "Set of dependencies that must be made available to the current package in order for it to work properly.",
+      "description": "Consult the [protocol documentation](/protocols) for more information.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
@@ -140,7 +159,8 @@
       "exampleKeys": ["webpack"]
     },
     "optionalDependencies": {
-      "description": "Similar to the `dependencies` field, except that these entries will not be required to build properly should they have any build script. Note that such dependencies must always be resolvable (otherwise we couldn't store it in the lockfile, which could lead to non-reproducible installs), but those which list `os` / `cpu` / `libc` fields will not be fetched unless they match the current system architecture.\n\n**This field is usually not what you're looking for**, unless you depend on the `fsevents` package. If you need a package to be required only when a specific feature is used then use an optional peer dependency. Your users will have to satisfy it should they use the feature, but it won't cause the build errors to be silently swallowed when the feature is needed.",
+      "title": "Set of dependencies that Yarn should only try to install if the os/cpu/libc fields match those of the host platform.",
+      "description": "Unlike regular dependencies, those listed in `optionalDependencies` are allowed to have a failing `postinstall` step - in fact, they won't even be installed at all if the os/cpu/libc filters don't cover the host platform.\n\nNote that `optionalDependencies` only cares about whether the package should install/build or not - it should still be resolvable, as otherwise it's impossible to tell whether a failure to retrieve the package metadata is intentional or not.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
@@ -153,7 +173,8 @@
       "exampleKeys": ["fsevents"]
     },
     "devDependencies": {
-      "description": "Similar to the `dependencies` field, except that these dependencies are only installed on local installs and will never be installed by the consumers of your package.",
+      "title": "Set of dependencies that must be made available to the current package in order for it to work properly as a workspace.",
+      "description": "Unlike regular dependencies, those listed in `devDependencies` will only be required when the package is installed as part of a workspace project - usually by cloning the project repository then running `yarn install` inside it.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
@@ -166,7 +187,8 @@
       "exampleKeys": ["webpack"]
     },
     "peerDependencies": {
-      "description": "Peer dependencies are inherited dependencies - the consumer of your package will be tasked to provide them. This is typically what you want when writing plugins, for example. Note that peer dependencies can also be listed as regular dependencies; in this case, Yarn will use the package provided by the ancestors if possible, but will fallback to the regular dependencies otherwise.",
+      "title": "Set of dependencies that the package must inherit from its ancestor in the dependency tree.",
+      "description": "The semantic of peer dependencies guarantee that when the package require the dependency, it will be returned the exact same object instance as the one that would be returned to the package's ancestor. This mechanism makes peer dependencies the best way to share singleton states across multiple packages.\n\nAs an extension, Yarn supports \"peer dependencies with default\": dependencies listed in both the `dependencies` and a `peerDependencies` fields will try to solve the peer dependency first, but will fallback to the regular dependency if it can't be satisfied otherwise.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
@@ -179,7 +201,8 @@
       "exampleKeys": ["react", "react-dom"]
     },
     "workspaces": {
-      "description": "Workspaces are an optional feature used by monorepos to split a large project into semi-independent subprojects, each one listing their own set of dependencies. The `workspaces` field is a list of glob patterns that match all directories that should become workspaces of your application.",
+      "title": "Array of folder glob patterns referencing the workspaces of the project.",
+      "description": "Workspaces are an optional feature used by monorepos to split a large project into semi-independent subprojects, each one listing their own set of dependencies. The `workspaces` field is a list of glob patterns that match all directories that should become workspaces of your application. Consult the [workspaces documentation](/features/workspaces) for more information.",
       "type": "array",
       "items": {
         "type": "string"
@@ -187,23 +210,27 @@
       "exampleItems": ["packages/*"]
     },
     "dependenciesMeta": {
-      "description": "This field lists some extra information related to the dependencies listed in the `dependencies` and `devDependencies` fields. In the context of a workspaced project most of these settings will affect *all workspaces* and as such must be specified at the *root* of the project (except if noted otherwise, the `dependenciesMeta` field will be ignored if found within a workspace).",
+      "title": "Extra settings affecting how the `dependencies` and `devDependencies` fields are interpreted.",
+      "description": "In the context of a workspaced project most of these settings will affect *all workspaces* and as such must be specified at the *root* of the project. Unless noted otherwise, the `dependenciesMeta` field will be ignored if found within a workspace.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
           "type": "object",
           "properties": {
             "built": {
-              "description": "If false, the package will never be built (deny-list). This behavior is reversed when the `enableScripts` yarnrc setting is toggled off - when that happens, only packages with `built` explicitly set to `true` will be executed (allow-list), and those with `built` explicitly set to `false` will simply see their build script warnings downgraded into simple notices.",
+              "title": "Define whether to run the postinstall script or not.",
+              "description": "If false, the package will never be built (deny-list). This behavior is reversed when the `enableScripts` yarnrc setting is toggled off - when that happens, only packages with `built` explicitly set to `true` will be built (allow-list); as for those with `built` explicitly set to `false`, they will simply see their build script warnings downgraded into simple notices.",
               "type": "boolean",
               "examples": [false]
             },
             "optional": {
-              "description": "If true, the build isn't required to succeed for the install to be considered a success, and the dependency may be skipped if its `os` / `cpu` / `libc`  fields don't match the current system architecture. It's what the `optionalDependencies` field compiles down to.\n\n**This settings will be applied even when found within a nested manifest**, but the highest requirement in the dependency tree will prevail.",
+              "title": "Define whether the dependency is optional or not.",
+              "description": "Unlike most other settings in `dependenciesMeta`, `optional` is allowed anywhere in the dependency tree. It has the exact same effect as `optionalDependencies` - in fact, that's internally what `optionalDependencies` compiles down to.",
               "type": "boolean",
               "examples": [false]
             },
             "unplugged": {
+              "title": "Define whether the package must be unplugged or not.",
               "description": "If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example `nan` contains C++ headers).",
               "type": "boolean",
               "examples": [true]
@@ -216,14 +243,16 @@
       "exampleKeys": ["fsevents"]
     },
     "peerDependenciesMeta": {
-      "description": "This field lists some extra information related to the dependencies listed in the `peerDependencies` field.",
+      "title": "Extra settings affecting how the `peerDependencies` field is interpreted.",
+      "description": "Unlike `dependenciesMeta`, `peerDependenciesMeta` is allowed in any parts of the dependency tree.",
       "type": "object",
       "patternProperties": {
         "^(?:@([^/]+?)/)?([^/]+?)$": {
           "type": "object",
           "properties": {
             "optional": {
-              "description": "If true, the selected peer dependency will be marked as optional by the package manager and the consumer omitting it won't be reported as an error.",
+              "title": "Define whether to log a warning when the peer dependency can't be satisfied.",
+              "description": "If true, the selected peer dependency will be marked as optional by the package manager, silencing any warning we would otherwise emit.",
               "type": "boolean",
               "examples": [true]
             }
@@ -236,6 +265,7 @@
     },
     "resolutions": {
       "description": "This field allows you to instruct Yarn to use a specific resolution (specific package version) instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.\n\nNote: When a path is relative, like it can be with the `file:` and `portal:` protocols, it is resolved relative to the path of the project.\n\nNote: The `resolutions` field can only be set at the root of the project, and will generate a warning if used in any other workspace.",
+      "title": "Override the resolutions of specific dependencies.",
       "type": "object",
       "patternProperties": {
         "^relay-compiler$": {
@@ -273,12 +303,14 @@
       ]
     },
     "preferUnplugged": {
-      "description": "This field instructs Yarn to either force-extract its content on the disk (useful when you need to ship executable binaries for a reason or another) or to force it to stay within its archive (useful when you want your package to contain *ALL* the sources, including shellscripts, but they aren't useful for runtime purposes).",
+      "title": "Define whether the package must be unplugged or not.",
+      "description": "While Yarn attempts to reference and load packages directly from their zip archives, it may not always be possible. A heuristic tries to detect cases where zip-loading would be problematic and unpack the files on disk instead but, being just a heuristic, it may report incorrect results.\n\nThe `preferUnplugged` field lets you define yourself, as a package author, whether your package works or not when stored as an archive. If set, it will override the default heuristic.",
       "type": "boolean",
       "examples": [false]
     },
     "files": {
-      "description": "The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files.\n\nSome special files and directories are also [included](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L11) or [excluded](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L27) regardless of whether they exist in the `files` array.\n\nYou can also provide a `.npmignore` file in the root of your package or in subdirectories, which will keep files from being included. The `.npmignore` file works just like a `.gitignore`. If there is a `.gitignore` file, and `.npmignore` is missing, `.gitignore`’s contents will be used instead. The `files` field overrides `.npmignore` and `.gitignore`.",
+      "title": "Array of file glob patterns that will be included within the published tarball.",
+      "description": "File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files.\n\nIf this field is missing, Yarn will use the project's `.gitignore` to generate the pack list, or the `.npmignore` file instead if available.\n\nSome special files and directories are also [included](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L11) or [excluded](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L27) regardless of whether they exist in the `files` array.",
       "type": "array",
       "items": {
         "type": "string",
@@ -287,29 +319,30 @@
       "exampleItems": ["dist/**/*", "lib/**/*"]
     },
     "publishConfig": {
-      "description": "This field contains various settings that are only taken into consideration when a package is generated from your local sources (either through `yarn pack` or one of the publish commands like `yarn npm publish`).",
+      "title": "Extra settings affecting how the package is published.",
       "type": "object",
       "properties": {
         "access": {
-          "description": "Defines the package access level to use when publishing packages to the npm registry. Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
+          "title": "Define the access to use when publishing the package.",
+          "description": "Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
           "type": "string",
           "enum": ["public", "restricted"],
           "examples": ["public"]
         },
         "bin": {
-          "description": "If present, the top-level `bin` field from the manifest will be set to this new value before the package is packed to be shipped to remote registries. This won't modify the real manifest, just the one stored within the tarball.",
+          "title": "Replacement of the package's `bin` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
           "examples": ["./build/bin.js"]
         },
         "browser": {
-          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `browser` field when generating the workspace tarball.",
+          "title": "Replacement of the package's `browser` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
           "examples": ["./build/browser.js"]
         },
         "executableFiles": {
-          "description": "By default, for portability reasons, no files except those listed in the bin field will be marked as executable in the resulting package archive. The executableFiles field lets you declare additional fields that must have the executable flag (+x) set even if they aren't directly accessible through the bin field.",
+          "title": "Set of files that must be marked as executable (+x) in the published tarball.",
           "type": "array",
           "items": {
             "type": "string",
@@ -318,13 +351,15 @@
           "exampleItems": ["./dist/shim.js"]
         },
         "main": {
-          "$ref": "#/properties/main",
-          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `main` field when generating the workspace tarball.",
+          "title": "Replacement of the package's `main` field, used in the published tarball over the main one.",
+          "type": "string",
+          "format": "uri-reference",
           "examples": ["./build/index.js"]
         },
         "module": {
-          "$ref": "#/properties/module",
-          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `module` field when generating the workspace tarball.",
+          "title": "Replacement of the package's `module` field, used in the published tarball over the main one.",
+          "type": "string",
+          "format": "uri-reference",
           "examples": ["./build/index.mjs"]
         },
         "registry": {
@@ -334,27 +369,29 @@
           "examples": ["https://npm.pkg.github.com"]
         },
         "type": {
-          "description": "Same principle as the `publishConfig.bin` property; this value will be used instead of the top-level `type` field when generating the workspace tarball.",
+          "title": "Replacement of the package's `type` field, used in the published tarball over the main one.",
           "type": "string",
-          "enum": ["commonjs", "module"],
-          "examples": ["module"]
+          "format": "uri-reference",
+          "examples": ["./build/index.d.ts"]
         }
       },
       "_margin": true
     },
     "installConfig": {
-      "description": "This field contains various settings that alter how the workspace is installed.",
+      "title": "Extra settings affecting how the package is installed.",
       "type": "object",
       "properties": {
         "hoistingLimits": {
-          "description": "Defines the highest point where packages can be hoisted, overriding for the current workspace the value initially set for [`nmHoistingLimits`](/configuration/yarnrc#nmHoistingLimits). Valid values are `workspaces`, `dependencies` and `none`",
+          "title": "Defines the highest point where packages can be hoisted.",
+          "description": "See `nmHoistingLimits` for more information.",
           "type": "string",
           "enum": ["workspaces", "dependencies", "none"],
           "default": "none",
           "examples": ["none"]
         },
         "selfReferences": {
-          "description": "Defines whether workspaces are allowed to require themselves - results in creation of self-referencing symlinks, overriding for the current workspace the value initially set for [`nmSelfReferences`](/configuration/yarnrc#nmSelfReferences)",
+          "title": "Defines whether workspaces are allowed to require themselves.",
+          "description": "See `nmSelfReferences` for more information.",
           "type": "boolean",
           "default": true,
           "examples": [true]
