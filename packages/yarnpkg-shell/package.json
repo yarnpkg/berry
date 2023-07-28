@@ -14,7 +14,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "chalk": "^3.0.0",
-    "clipanion": "^3.2.1",
+    "clipanion": "4.0.0-rc.1",
     "cross-spawn": "7.0.3",
     "fast-glob": "^3.2.2",
     "micromatch": "^4.0.2",

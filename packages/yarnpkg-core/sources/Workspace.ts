@@ -1,5 +1,5 @@
 import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
-import globby                                      from 'globby';
+import fastGlob                                    from 'fast-glob';
 
 import {HardDependencies, Manifest}                from './Manifest';
 import {Project}                                   from './Project';
@@ -60,15 +60,13 @@ export class Workspace {
     if (patterns.length === 0)
       return;
 
-    const relativeCwds = await globby(patterns, {
+    const relativeCwds = await fastGlob(patterns, {
       cwd: npath.fromPortablePath(this.cwd),
-      expandDirectories: false,
       onlyDirectories: true,
-      onlyFiles: false,
       ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
     });
 
-    // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order
+    // fast-glob returns results in arbitrary order
     relativeCwds.sort();
 
     await relativeCwds.reduce(async (previousTask, relativeCwd) => {

@@ -1,9 +1,7 @@
 const {npath, xfs} = require(`@yarnpkg/fslib`);
-const {satisfies} = require(`semver`);
 
 const {
   fs: {writeFile, writeJson},
-  tests: {testIf},
 } = require(`pkg-tests-core`);
 
 describe(`Require tests`, () => {
@@ -190,8 +188,7 @@ describe(`Require tests`, () => {
     ),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should support require.resolve(..., {paths})`,
     makeTemporaryEnv(
       {

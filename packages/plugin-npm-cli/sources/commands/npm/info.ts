@@ -135,7 +135,7 @@ export default class NpmInfoCommand extends BaseCommand {
             report.reportWarning(MessageName.UNNAMED, `Unmet range ${structUtils.prettyRange(configuration, descriptor.range)}; falling back to the latest version`);
             leadWithSeparator = true;
           }
-        } else if (Object.prototype.hasOwnProperty.call(result[`dist-tags`], descriptor.range)) {
+        } else if (Object.hasOwn(result[`dist-tags`], descriptor.range)) {
           version = result[`dist-tags`][descriptor.range];
         } else if (descriptor.range !== `unknown`) {
           report.reportWarning(MessageName.UNNAMED, `Unknown tag ${structUtils.prettyRange(configuration, descriptor.range)}; falling back to the latest version`);

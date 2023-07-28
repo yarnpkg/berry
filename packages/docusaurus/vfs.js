@@ -7,7 +7,7 @@ const {constants} = require(`fs`);
 
 const memoryDrive = mountMemoryDrive(
   require(`fs`),
-  ppath.join(npath.toPortablePath(__dirname), `docs/cli`),
+  ppath.join(npath.toPortablePath(__dirname), `docs/generated`),
   null,
   {typeCheck: constants.S_IFDIR},
 );
@@ -26,13 +26,15 @@ const binaries = [{
   binary: `${__dirname}/../../scripts/run-sdks.js`,
 }];
 
+memoryDrive.mkdirSync(`cli`);
+
 for (const [position, {binary, package}] of binaries.entries()) {
   const isMainPackage = package === `@yarnpkg/cli`;
   const packageParts = package?.match(/^(?:@([^/]+?)\/)?([^/]+)$/);
 
   const [, scope, name] = packageParts ?? [];
 
-  const docFolder = name.replace(/\//g, `-`);
+  const docFolder = ppath.join(`cli`, name.replace(/\//g, `-`));
   memoryDrive.mkdirSync(docFolder);
 
   const docUrl = isMainPackage
@@ -54,6 +56,19 @@ for (const [position, {binary, package}] of binaries.entries()) {
     return a.path < b.path ? -1 : a.path > b.path ? +1 : 0;
   });
 
+  for (const command of commands) {
+    const pathSegments = command.path.split(` `);
+    if (!isMainPackage)
+      pathSegments.unshift(`yarn`);
+
+    command.docusaurus = {
+      id: `cli-${command.path.replace(/ /g, `-`)}`,
+      slug: `${docUrl}/${command.path.split(` `).slice(1).join(`/`) || `default`}`,
+      title: pathSegments.join(` `),
+      description: `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`,
+    };
+  }
+
   for (let t = 0; t < commands.length; ++t) {
     const command = commands[t];
     const sections = [];
@@ -62,17 +77,12 @@ for (const [position, {binary, package}] of binaries.entries()) {
     if (!isMainPackage)
       pathSegments.unshift(`yarn`);
 
-    const navPath = `${docUrl}/${command.path.split(` `).slice(1).join(`/`) || `default`}`;
-    const description = `${command.description[0].toUpperCase()}${command.description.slice(1, -1)}.`;
-
-    const id = `cli-${command.path.replace(/ /g, `-`)}`;
-
     sections.push([
       `---\n`,
-      `id: ${JSON.stringify(id)}\n`,
-      `slug: ${JSON.stringify(navPath)}\n`,
-      `title: ${JSON.stringify(pathSegments.join(` `))}\n`,
-      `description: ${JSON.stringify(description)}\n`,
+      `id: ${JSON.stringify(command.docusaurus.id)}\n`,
+      `slug: ${JSON.stringify(command.docusaurus.slug)}\n`,
+      `title: ${JSON.stringify(command.docusaurus.title)}\n`,
+      `description: ${JSON.stringify(command.docusaurus.description)}\n`,
       `---\n`,
       `\n`,
       `import {TerminalCode} from '@yarnpkg/docusaurus/src/components/TerminalCode';`,
@@ -103,7 +113,7 @@ for (const [position, {binary, package}] of binaries.entries()) {
       sections.push([
         `<div className="subtitle">\n`,
         `\n`,
-        `${description}\n`,
+        `${command.docusaurus.description}\n`,
         `\n`,
         `</div>\n`,
       ].join(``));
@@ -122,7 +132,9 @@ for (const [position, {binary, package}] of binaries.entries()) {
         ...command.examples.map(([description, example]) => [
           `<p>${description}:</p>\n`,
           `\n`,
-          `<TerminalCode command={${JSON.stringify(example)}}/>\n`,
+          `\`\`\`\n`,
+          `${example}\n`,
+          `\`\`\`\n`,
         ].join(`\n`)),
       ].join(``));
     }
@@ -153,9 +165,15 @@ for (const [position, {binary, package}] of binaries.entries()) {
     }
 
     const content = sections.join(`\n`);
-    const filePath = ppath.join(docFolder, `${id}.md`);
+    const filePath = ppath.join(docFolder, `${command.docusaurus.id}.md`);
 
     memoryDrive.writeFileSync(filePath, content);
+  }
+
+  if (isMainPackage) {
+    memoryDrive.writeFileSync(`commandList.js`, `
+      export const commandList = ${JSON.stringify(commands)};
+    `);
   }
 
   memoryDrive.writeJsonSync(ppath.join(docFolder, `_category_.json`), {
@@ -163,9 +181,8 @@ for (const [position, {binary, package}] of binaries.entries()) {
     collapsible: false,
     position,
     link: {
-      type: `generated-index`,
-      title: package,
-      slug: `/${docUrl}`,
+      type: `doc`,
+      id: `cli`,
     },
   });
 }

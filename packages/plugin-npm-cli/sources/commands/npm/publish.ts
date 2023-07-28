@@ -76,10 +76,10 @@ export default class NpmPublishCommand extends BaseCommand {
             jsonResponse: true,
           });
 
-          if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+          if (!Object.hasOwn(registryData, `versions`))
             throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
-          if (Object.prototype.hasOwnProperty.call(registryData.versions, version)) {
+          if (Object.hasOwn(registryData.versions, version)) {
             report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
             return;
           }

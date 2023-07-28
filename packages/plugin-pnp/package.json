@@ -9,13 +9,11 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-stage": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
-    "clipanion": "^3.2.1",
+    "clipanion": "4.0.0-rc.1",
     "micromatch": "^4.0.2",
-    "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
   "peerDependencies": {

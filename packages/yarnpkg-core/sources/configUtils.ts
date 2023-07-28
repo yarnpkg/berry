@@ -40,7 +40,7 @@ function getValueType(data: unknown) {
 }
 
 function hasProperty<T extends string>(data: Record<string, unknown>, key: T): data is {[key in T]: unknown} {
-  return Object.prototype.hasOwnProperty.call(data, key);
+  return Object.hasOwn(data, key);
 }
 
 function isConflictMarker(data: unknown): data is ConflictMarker {

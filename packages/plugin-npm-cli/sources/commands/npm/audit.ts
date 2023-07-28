@@ -154,7 +154,7 @@ export default class NpmAuditCommand extends BaseCommand {
 
       for (const [packageName, version, message] of deprecations.flat(1)) {
         // No need to report the deprecation audit message if the package is already reported as vulnerable
-        if (Object.prototype.hasOwnProperty.call(auditResult, packageName))
+        if (Object.hasOwn(auditResult, packageName))
           if (auditResult[packageName].some(advisory => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
             continue;
 
