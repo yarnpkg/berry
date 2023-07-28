@@ -96,6 +96,7 @@
     "node": ">=18.12.0"
   },
   "dependencies": {
+    "@mdx-js/react": "^1.6.22",
     "@yarnpkg/types": "workspace:^",
     "chalk": "^3.0.0",
     "micromatch": "^4.0.2",
