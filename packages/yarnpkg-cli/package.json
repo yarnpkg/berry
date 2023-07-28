@@ -48,8 +48,7 @@
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
-    "@yarnpkg/pnpify": "workspace:^",
-    "micromatch": "^4.0.2"
+    "@yarnpkg/pnpify": "workspace:^"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"
