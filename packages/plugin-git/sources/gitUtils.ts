@@ -1,5 +1,5 @@
 import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
-import {npath, PortablePath, ppath, xfs}                                                                                                          from '@yarnpkg/fslib';
+import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
 import capitalize                                                                                                                                 from 'lodash/capitalize';
@@ -333,9 +333,9 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
     throw new UsageError(`This command can only be run from within a Yarn project`);
 
   const ignoredPaths = [
+    ppath.resolve(project.cwd, Filename.lockfile),
     ppath.resolve(project.cwd, project.configuration.get(`cacheFolder`)),
     ppath.resolve(project.cwd, project.configuration.get(`installStatePath`)),
-    ppath.resolve(project.cwd, project.configuration.get(`lockfileFilename`)),
     ppath.resolve(project.cwd, project.configuration.get(`virtualFolder`)),
   ];
   await project.configuration.triggerHook((hooks: Hooks) => {

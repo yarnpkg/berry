@@ -338,7 +338,7 @@ export class Project {
 
     this.lockFileChecksum = null;
 
-    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, Filename.lockfile);
     const defaultLanguageName = this.configuration.get(`defaultLanguageName`);
 
     if (xfs.existsSync(lockfilePath)) {
@@ -1748,7 +1748,7 @@ export class Project {
         for (const extension of extensionsByRange)
           extension.status = PackageExtensionStatus.Inactive;
 
-    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, Filename.lockfile);
 
     // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
     let initialLockfile: string | null = null;
@@ -1994,7 +1994,7 @@ export class Project {
   }
 
   async persistLockfile() {
-    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, Filename.lockfile);
 
     let currentContent = ``;
     try {

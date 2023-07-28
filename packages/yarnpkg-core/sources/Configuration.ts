@@ -94,7 +94,6 @@ export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
-export const DEFAULT_LOCK_FILENAME = `yarn.lock` as Filename;
 export const SECRET = `********`;
 
 export enum SettingsType {
@@ -170,7 +169,6 @@ export enum WindowsLinkType {
 //
 // - filenames that don't accept actual paths must end with the "Filename" suffix
 //   prefer to use absolute paths instead, since they are automatically resolved
-//   ex: lockfileFilename
 //
 // - folders must end with the "Folder" suffix
 //   ex: cacheFolder, pnpVirtualFolder
@@ -224,11 +222,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named __virtual__)`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/__virtual__`,
-  },
-  lockfileFilename: {
-    description: `Name of the files where the Yarn dependency tree entries must be stored`,
-    type: SettingsType.STRING,
-    default: DEFAULT_LOCK_FILENAME,
   },
   installStatePath: {
     description: `Path of the file where the install state will be persisted`,
@@ -601,7 +594,6 @@ export interface ConfigurationValueMap {
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   virtualFolder: PortablePath;
-  lockfileFilename: Filename;
   installStatePath: PortablePath;
   immutablePatterns: Array<string>;
   rcFilename: Filename;
@@ -1103,8 +1095,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
-    const pickSecondaryCoreFields = ({yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({yarnPath, ignorePath, injectEnvironmentFiles}: CoreFields) => ({yarnPath, ignorePath, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({yarnPath, ignorePath, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
@@ -1113,7 +1105,7 @@ export class Configuration {
       return secondaryCoreFields;
     };
 
-    const pickPluginFields = ({yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPluginFields = ({yarnPath, ignorePath, ...rest}: CoreFields) => {
       const pluginFields: any = {};
       for (const [key, value] of Object.entries(rest))
         if (!allCoreFieldKeys.has(key))
@@ -1146,14 +1138,12 @@ export class Configuration {
     }
 
     // We need to know the project root before being able to truly instantiate
-    // our configuration, and to know that we need to know the lockfile name
-
-    const lockfileFilename = configuration.get(`lockfileFilename`);
+    // our configuration.
 
     let projectCwd: PortablePath | null;
     switch (lookup) {
       case ProjectLookup.LOCKFILE: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+        projectCwd = await Configuration.findProjectCwd(startingCwd, Filename.lockfile);
       } break;
 
       case ProjectLookup.MANIFEST: {
