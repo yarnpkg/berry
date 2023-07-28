@@ -94,14 +94,14 @@ function checkCwd(cli: YarnCli, argv: Array<string>) {
 
   let postCwdArgv = argv;
   if (argv.length >= 2 && argv[0] === `--cwd`) {
-    cwd = xfs.realpathSync(npath.toPortablePath(argv[1]));
+    cwd = npath.toPortablePath(argv[1]);
     postCwdArgv = argv.slice(2);
   } else if (argv.length >= 1 && argv[0].startsWith(`--cwd=`)) {
-    cwd = xfs.realpathSync(npath.toPortablePath(argv[0].slice(6)));
+    cwd = npath.toPortablePath(argv[0].slice(6));
     postCwdArgv = argv.slice(1);
   }
 
-  cli.defaultContext.cwd = cwd ?? ppath.cwd();
+  cli.defaultContext.cwd = ppath.resolve(cwd ?? ppath.cwd());
   return postCwdArgv;
 }
 
