@@ -14,6 +14,7 @@
     "@types/jest": "^28.1.6",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^18.15.11",
+    "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -96,9 +97,11 @@
     "node": ">=18.12.0"
   },
   "dependencies": {
+    "@mdx-js/react": "^1.6.22",
     "@yarnpkg/types": "workspace:^",
     "chalk": "^3.0.0",
     "micromatch": "^4.0.2",
+    "react": "^17.0.2",
     "semver": "^7.1.2"
   }
 }
