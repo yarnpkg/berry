@@ -1,10 +1,3 @@
----
-category: advanced
-slug: /advanced/changelog
-title: "Changelog"
-description: All changes, version by version.
----
-
 :::tip
 Yarn now accepts sponsors! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 :::

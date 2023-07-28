@@ -285,6 +285,7 @@ const RAW_RUNTIME_STATE =
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
           ["@types/node", "npm:18.16.18"],\
+          ["@types/react", "npm:16.9.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -300,6 +301,7 @@ const RAW_RUNTIME_STATE =
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
           ["micromatch", "npm:4.0.5"],\
           ["pirates", "npm:4.0.5"],\
+          ["react", "npm:17.0.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.0-beta#optional!builtin<compat/typescript>::version=5.2.0-beta&hash=14eedb"]\
@@ -5720,7 +5722,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/utils", "virtual:ea2552deffcd8e6c14bb0bdba0cc52a712bbdaa236935e2900eb463c347210249ce85640c3c572a470dfb43a8f02693dc98c5fe8d2aa8cdad3f0471c93e50371#npm:2.4.1"],\
           ["@docusaurus/utils-common", "virtual:ea2552deffcd8e6c14bb0bdba0cc52a712bbdaa236935e2900eb463c347210249ce85640c3c572a470dfb43a8f02693dc98c5fe8d2aa8cdad3f0471c93e50371#npm:2.4.1"],\
           ["@docusaurus/utils-validation", "npm:2.4.1"],\
-          ["@mdx-js/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.6.22"],\
+          ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
           ["clsx", "npm:1.2.1"],\
@@ -9084,19 +9086,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-b42ad5f261/0/cache/@mdx-js-react-npm-1.6.22-57e4c05c2b-b4fc3b78ca.zip/node_modules/@mdx-js/react/",\
         "packageDependencies": [\
           ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
-          ["@types/react", null],\
-          ["react", null]\
-        ],\
-        "packagePeers": [\
-          "@types/react",\
-          "react"\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.6.22", {\
-        "packageLocation": "./.yarn/__virtual__/@mdx-js-react-virtual-f6577e3408/0/cache/@mdx-js-react-npm-1.6.22-57e4c05c2b-b4fc3b78ca.zip/node_modules/@mdx-js/react/",\
-        "packageDependencies": [\
-          ["@mdx-js/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.6.22"],\
           ["@types/react", "npm:16.9.2"],\
           ["react", "npm:17.0.2"]\
         ],\
@@ -13417,7 +13406,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/theme-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.1"],\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.1"],\
           ["@fontsource/pt-sans", "npm:5.0.5"],\
-          ["@mdx-js/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.6.22"],\
+          ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@monaco-editor/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:4.4.6"],\
           ["@primer/octicons-react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.7.0"],\
           ["@tsconfig/docusaurus", "npm:2.0.0"],\
@@ -13741,6 +13730,7 @@ const RAW_RUNTIME_STATE =
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
           ["@types/node", "npm:18.16.18"],\
+          ["@types/react", "npm:16.9.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -13756,6 +13746,7 @@ const RAW_RUNTIME_STATE =
           ["jest", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:29.2.1"],\
           ["micromatch", "npm:4.0.5"],\
           ["pirates", "npm:4.0.5"],\
+          ["react", "npm:17.0.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.0-beta#optional!builtin<compat/typescript>::version=5.2.0-beta&hash=14eedb"]\
