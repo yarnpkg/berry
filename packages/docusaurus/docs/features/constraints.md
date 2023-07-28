@@ -5,212 +5,113 @@ title: "Constraints"
 description: An in-depth guide to Yarn's constraints, a feature that provides an easy way to enforce common rules across a project.
 ---
 
-> **Experimental**
->
-> This feature is still incubating, and its exact API might change from a release to the next. It means it's the perfect time for you to get involved and let us hear your feedback!
+:::info
+This page documents the new JavaScript-based constraints. The older constraints, based on Prolog, are still supported but should be considered deprecated. Their documentation can be found [here](/features/constraints-prolog).
+:::
 
-> **Plugin**
->
-> To access this feature, first install the `constraints` plugin: `yarn plugin import constraints`
+## Overview
 
-Constraints are a solution to a very basic need: I have a lot of [workspaces](/features/workspaces), and I need to make sure they use the same version of their dependencies. Or that they don't depend on a specific package. Or that they use a specific type of dependency. Anyway, you see the point: whatever is the exact logic, my goal is the same; I want to automatically enforce some kind of rule across all my workspaces. That's exactly what constraints allow you to do.
+Constraints are a solution to a very basic need: you have a lot of [workspaces](/features/workspaces), and you need to make sure they use the same version of their dependencies. Or that they don't depend on a specific package. Or that they use a specific type of dependency. Whatever is the exact logic, your goal is the same: you want to automatically enforce some kind of rule across all your workspaces. That's exactly what constraints are for.
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+## What can we enforce?
+
+Our constraint engine currently supports two main targets:
+
+- Workspace dependencies
+- Arbitrary package.json fields
+
+It currently doesn't support the following, but might in the future (PRs welcome!):
+
+- Transitive dependencies
+- Project structure
 
 ## Creating a constraint
 
-Constraints are created by adding a `constraints.pro` file at the root of your project (repository). The `.pro` extension might leave you perplexed: this is because constraints aren't written in JavaScript (!) but rather in Prolog, a fact-based rule engine. The goal of this section isn't to teach you Prolog (good tutorials already exist, such as [Learn Prolog in Y Minutes](https://learnxinyminutes.com/docs/prolog/)),
-but rather to show you why we chose it and the value it brings.
+Constraints are created by adding a `yarn.config.js` file at the root of your project (repository). This file should export an object with a `constraints` method. This method will be called by the constraints engine, and must define the rules to enforce on the project, using the provided API.
 
-As we mentioned, Prolog is a fact-based engine. It starts with a list of *facts* that are always true, and a list of *predicates* that basically read as "predicate `f(X)` is true if `u(X)` and `v(X)` are both true". By computing for which values of `X` are `u(X)` and `v(X)` true, Prolog is able to automatically compute the list of values for which `f(X)` would be true. This is particularly useful for constraints, because it allows you to write very simple but powerful rules that have the ability to affect all your workspaces in very few lines.
+For example, the following `yarn.config.js` will enforce that all `react` dependencies are set to `18.0.0`.
 
-Going back to the constraint engine, the *facts* are the definitions created by the package manager (such as "fact: the root workspace depends on Lodash version 4.4.2 in devDependencies"), and the *predicates* are the set of rules that you want to enforce across your project (check below for some recipes).
-
-### Query predicate
-
-The following predicates provide information about the current state of your project and are meant to be used in the dependencies of your own rules (check the recipes for examples how to use them in practice). Note that the `/<number>` syntax listed at the end simply is the predicate arity (number of arguments it takes).
-
-The notation on this page uses `-`, `+` and `?` as prefix for the predicate parameters. These values are used commonly in prolog documentation and mean
-
-- `+`: this value is considered input and must be instantiated
-- `-`: this value is considered output and will be instantiated by the predicate, though you can provide a value to verify that the value matches the predicate
-- `?`: this value can be instantiated or not, both will work
-
-#### `dependency_type/1`
-
-```prolog
-dependency_type(
-  -DependencyType
-).
+```ts
+module.exports = {
+  async constraints({Yarn}) {
+    for (const dep of Yarn.dependencies({ ident: 'react' })) {
+      dep.update(`18.0.0`);
+    }
+  },
+};
 ```
 
-True for only three values: `dependencies`, `devDependencies` and `peerDependencies`.
+And the following will enforce that the `engines.node` field is properly set in all workspaces:
 
-#### `workspace/1`
-
-```prolog
-workspace(
-  -WorkspaceCwd
-).
+```ts
+module.exports = {
+  async constraints({Yarn}) {
+    for (const workspace of Yarn.workspaces()) {
+      workspace.set('engines.node', `20.0.0`);
+    }
+  },
+};
 ```
 
-True if the workspace described by the specified `WorkspaceCwd` exists.
+## Declarative model
 
-#### `workspace_ident/2`
+As much as possible, constraints are defined using a declarative model: you declare what the expected state should be, and Yarn checks whether it matches the reality or not. If it doesn't, Yarn will either throw an error (when calling `yarn constraints` without arguments), or attempt to automatically fix the issue (when calling `yarn constraints --fix`).
 
-```prolog
-workspace_ident(
-  ?WorkspaceCwd,
-  ?WorkspaceIdent
-).
+Because of this declarative model, you don't need to check the actual values yourself. For instance, the `if` condition here is extraneous and should be removed:
+
+```ts
+module.exports = {
+  async constraints({Yarn}) {
+    for (const dep of Yarn.dependencies({ ident: 'ts-node' })) {
+      // No need to check for the actual value! Just always call `update`.
+      if (dep.range !== `18.0.0`) {
+        dep.update(`18.0.0`);
+      }
+    }
+  },
+};
 ```
 
-True if the workspace described by the specified `WorkspaceCwd` exists and if it has the specified `WorkspaceIdent`.
+## TypeScript support
 
-#### `workspace_version/2`
-
-```prolog
-workspace_version(
-  ?WorkspaceCwd,
-  ?WorkspaceVersion
-).
-```
-
-True if the workspace described by the specified `WorkspacedCwd` exists and if it has the specified `WorkspaceVersion`.
-
-#### `workspace_has_dependency/4`
-
-```prolog
-workspace_has_dependency(
-  ?WorkspaceCwd,
-  ?DependencyIdent,
-  ?DependencyRange,
-  ?DependencyType
-).
-```
-
-True if the workspace described by the specified `WorkspaceCwd` depends on the dependency described by the specified `DependencyIdent` and `DependencyRange` combination in the dependencies block of the given `DependencyType`.
-
-#### `workspace_field/3`
-
-```prolog
-workspace_field(
-  +WorkspaceCwd,
-  +FieldPath,
-  -FieldValue
-).
-```
-
-True if the workspace described by the `WorkspaceCwd` has the given `FieldValue` in the manifest at `FieldPath`.
-
-The `FieldPath` can target properties of properties via `.` notation, e.g. a `FieldPath` of `'publishConfig.registry'` will set `FieldValue` to the value of the `registry` inside `publishConfig`.
-
-### `workspace_field_test/3`
-
-```prolog
-workspace_field(
-  +WorkspaceCwd,
-  +FieldPath,
-  +CheckCode
-).
-```
-
-True if the workspace described by the `WorkspaceCwd` has a value in the manifest at `FieldPath`, and if this value passes the check of `CheckCode`.
-
-The `CheckCode` script is meant to be written in JavaScript, with the special variable `$$` representing the value obtained from the manifest. This makes `workspace_field_test` an escape hatch for some operations that would be too inconvenient to implement in Prolog (for example checking that a value is present within a JS array, etc).
-
-The `Arguments` parameter is expected to be an optional Prolog list of atoms that will be passed to `CheckCode` through `$0`, `$1`, etc.
-
-### Constraint predicates
-
-The following predicates will affect the behavior of the `yarn constraints` and `yarn constraints --fix` commands.
-
-The parameters to the predicates are prefixed with `+` and `-`. These have the same meaning as in the query predicates. In this context they mean
-
-- `-` These are the output, they will not have a value when the predicate is invoked and the predicate must ensure a value is set
-- `+` These are the input, they will already have a value when the predicate is invoked
-
-#### `gen_enforced_dependency/4`
-
-```prolog
-gen_enforced_dependency(
-  +WorkspaceCwd,
-  -DependencyIdent,
-  -DependencyRange,
-  +DependencyType
-).
-```
-
-The `gen_enforced_dependency` rule offers a neat way to inform the package manager that a specific workspace MUST either depend on a specific range of a specific dependency (if `DependencyRange` is non-null) or not depend at all on the dependency (if `DependencyRange` is null; takes precedence over any conflicting range) in the `DependencyType` dependencies block.
-
-Running `yarn constraints --fix` will instruct Yarn to fix the detected errors the best it can, but in some cases ambiguities will arise. Those will have to be solved manually, although Yarn will help you in the process.
-
-#### `gen_enforced_field/3`
-
-```prolog
-gen_enforced_field(
-  +WorkspaceCwd,
-  -FieldPath,
-  +FieldValue
-).
-```
-
-The `gen_enforced_field` predicate tells the package manager that a specific workspace must have the given `FieldValue` in the manifest via the `FieldPath`. A `FieldValue` of `null` means the field has to be absent:
+Yarn ships types that make it easier to write constraints. To use them, add the dependency to your project:
 
 ```
-? gen_enforced_field(WorkspaceCwd, FieldPath, null).
+$ yarn add @yarnpkg/types
 ```
 
-Note that the value will be interpreted in JSON if possible, or as a regular string otherwise. So if you need to put a `null` value into a field, use the JSON syntax:
+Then, in your `yarn.config.js` file, import the types, in particular the `defineConfig` function which automatically type the configuration methods:
 
-```
-? gen_enforced_field(WorkspaceCwd, FieldPath, 'null').
-```
+```ts
+/** @type {import('@yarnpkg/types')} */
+const { defineConfig } = require('@yarnpkg/types');
 
-Finally, if you need to put a string containing `null` into a field, use the JSON string syntax:
-
-```
-? gen_enforced_field(WorkspaceCwd, FieldPath, '"null"').
-```
-
-Running `yarn constraints --fix` will instruct Yarn to fix the detected errors the best it can, but in some cases ambiguities will arise. Those will have to be solved manually, although Yarn will help you in the process.
-
-## Constraint recipes
-
-The following constraints are a good starting point to figure out how to write your own rules. If you build one that you think would be a good fit for this section, open a PR and we'll add them here!
-
-> **Quick note about the Prolog syntax**
->
-> Be aware that in prolog `X :- Y` basically means "X is true for each Y that's true". Similarly, know that UpperCamelCase names are variables that get "replaced" by every compatible value possible. Finally, the special variable name `_` simply discards the parameter value.
-
-### Prevent all workspaces from depending on a specific package
-
-```prolog
-gen_enforced_dependency(WorkspaceCwd, 'tslib', null, DependencyType) :-
-  workspace_has_dependency(WorkspaceCwd, 'tslib', _, DependencyType).
+module.exports = defineConfig({
+  async constraints({Yarn}) {
+    // `Yarn` is now well-typed ✨
+  },
+});
 ```
 
-We define a rule that says that for each dependency of each workspace in our project, if this dependency name is `tslib`, then it exists a similar rule of the `gen_enforced_dependency` type that forbids the workspace from depending on `tslib`. This will cause the package manager to see that the rule isn't met, and autofix it when requested by removing the dependency from the workspace.
+You can also retrieve the types manually, which can be useful if you extract some rules into helper functions:
 
-### Prevent two workspaces from depending on conflicting versions of a same dependency
-
-```prolog
-gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType) :-
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType),
-  workspace_has_dependency(OtherWorkspaceCwd, DependencyIdent, DependencyRange2, DependencyType2),
-  DependencyRange \= DependencyRange2.
+```ts
+/** @param {import('@yarnpkg/types').Yarn.Constraints.Workspace} dependency */
+function expectMyCustomRule(dependency) {
+  // ...
+}
 ```
 
-We define a `gen_enforced_dependency` rule that requires each dependency of each package (first `workspace_has_dependency`) if it also exists another dependency of another package (second `workspace_has_dependency`) that has the same name but a different range (`\=` operator).
+You can alias the types to make them a little easier to use:
 
-### Force all workspace dependencies to be made explicit
+```ts
+/**
+ * @typedef {import('@yarnpkg/types').Yarn.Constraints.Workspace} Workspace
+ * @typedef {import('@yarnpkg/types').Yarn.Constraints.Dependency} Dependency
+ */
 
-```prolog
-gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:*', DependencyType) :-
-  workspace_ident(_, DependencyIdent),
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, DependencyType).
+/** @param {Workspace} dependency */
+function expectMyCustomRule(dependency) {
+  // ...
+}
 ```
-
-We define a `gen_enforced_dependency` rule that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The final `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).

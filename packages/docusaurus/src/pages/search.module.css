@@ -1,0 +1,190 @@
+.searchContainer {
+  margin-top: calc(var(--ifm-spacing-horizontal) * 2);
+  margin-bottom: calc(var(--ifm-spacing-horizontal) * 2);
+
+  margin-left: var(--ifm-spacing-horizontal);
+  margin-right: var(--ifm-spacing-horizontal);
+}
+
+@media (min-width: 996px) {
+  .searchContainer {
+    margin-left: 60px;
+    margin-right: 60px;
+  }
+}
+
+.sponsors {
+  margin-top: 0;
+  margin-bottom: 0;
+
+  padding: .5rem 1rem;
+
+  border-radius: 10px;
+
+  font-size: 14px;
+
+  background: #ffffff;
+}
+
+.search {
+  margin: 0 !important;
+
+  width: 100%;
+
+  color: #ffffff;
+  font-style: normal;
+}
+
+.search::placeholder {
+  font-style: italic;
+}
+
+.resultCell {
+  padding-top: var(--ifm-spacing-horizontal);
+  padding-bottom: var(--ifm-spacing-horizontal);
+}
+
+.result {
+  position: relative;
+}
+
+.resultLink {
+  display: block;
+
+  position: absolute;
+  inset: 0;
+}
+
+.resultAside {
+  display: flex;
+  align-items: center;
+
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+
+  height: 52px;
+
+  background: #eceff3;
+}
+
+.resultBadges {
+  display: flex;
+  flex: 1;
+
+  padding: 0 15px;
+}
+
+.resultBadges img {
+  display: block;
+}
+
+.resultTools {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-self: stretch;
+  align-items: stretch;
+
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.resultMain {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+
+  padding: 15px;
+
+  height: 120px;
+
+  background: #ffffff;
+}
+
+.resultMain span[aria-live] {
+  width: 100%;
+}
+
+.resultTitle {
+  display: flex;
+  align-items: baseline;
+
+  margin-bottom: 15px;
+}
+
+.resultTitle > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.resultBy {
+  margin-left: 5px;
+
+  font-size: .8rem;
+
+  white-space: nowrap;
+}
+
+.badges {
+  display: flex;
+
+  margin-right: 5px;
+  margin-left: 0;
+}
+
+.badge {
+  display: flex;
+
+  margin-right: 10px;
+
+  border-radius: 2px;
+
+  padding: 0 5px;
+
+  font-size: .8rem;
+}
+
+.badge > * {
+  margin-left: 5px;
+}
+
+.badge > :first-child {
+  margin-left: 0;
+}
+
+.tool {
+  display: flex;
+
+  width: 40px;
+
+  background: #d4d4d4;
+  color: #000000 !important;
+}
+
+.tool:hover {
+  background: #c3c3c3;
+}
+
+.tool > svg {
+  margin: auto;
+}
+
+.tool:first-of-type {
+  border-bottom-left-radius: 6px;
+}
+
+.tool:last-of-type {
+  border-top-right-radius: 2px;
+}
+
+.resultDescription {
+  height: calc(var(--line-height) * 2em);
+  line-height: var(--line-height);
+  --line-height: 1.5;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
