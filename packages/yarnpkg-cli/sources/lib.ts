@@ -5,16 +5,31 @@ import {isCI}                                                                   
 import {Cli, UsageError}                                                                                           from 'clipanion';
 
 import {pluginCommands}                                                                                            from './pluginCommands';
+import {getPluginConfiguration}                                                                                    from './tools/getPluginConfiguration';
 
-function getBaseCli() {
-  return new Cli<CommandContext>({
+export type YarnCli = ReturnType<typeof getBaseCli>;
+
+function getBaseCli({cwd, pluginConfiguration}: {cwd: PortablePath, pluginConfiguration: PluginConfiguration}) {
+  const cli = new Cli<CommandContext>({
     binaryLabel: `Yarn Package Manager`,
     binaryName: `yarn`,
     binaryVersion: YarnVersion ?? `<unknown>`,
   });
+
+  return Object.assign(cli, {
+    defaultContext: {
+      ...Cli.defaultContext,
+      cwd,
+      plugins: pluginConfiguration,
+      quiet: false,
+      stdin: process.stdin,
+      stdout: process.stdout,
+      stderr: process.stderr,
+    },
+  });
 }
 
-function validateNodejsVersion(cli: Cli<CommandContext>) {
+function validateNodejsVersion(cli: YarnCli) {
   // YARN_IGNORE_NODE is special because this code needs to execute as early as possible.
   // It's not a regular core setting because Configuration.find may use functions not available
   // on older Node versions.
@@ -46,7 +61,7 @@ async function getCoreConfiguration({selfPath, pluginConfiguration}: {selfPath: 
   });
 }
 
-function runYarnPath(cli: Cli<CommandContext>, argv: Array<string>, {yarnPath}: {yarnPath: PortablePath}) {
+function runYarnPath(cli: YarnCli, argv: Array<string>, {yarnPath}: {yarnPath: PortablePath}) {
   if (!xfs.existsSync(yarnPath)) {
     (cli.error(new Error(`The "yarn-path" option has been set, but the specified location doesn't exist (${yarnPath}).`)));
     return 1;
@@ -74,17 +89,23 @@ function runYarnPath(cli: Cli<CommandContext>, argv: Array<string>, {yarnPath}: 
   return 0;
 }
 
-function checkCwd(argv: Array<string>): [PortablePath, Array<string>] {
-  if (argv.length >= 2 && argv[0] === `--cwd`)
-    return [xfs.realpathSync(npath.toPortablePath(argv[1])), argv.slice(2)];
+function checkCwd(cli: YarnCli, argv: Array<string>) {
+  let cwd: PortablePath | null = null;
 
-  if (argv.length >= 1 && argv[0].startsWith(`--cwd=`))
-    return [xfs.realpathSync(npath.toPortablePath(argv[0].slice(6))), argv.slice(1)];
+  let postCwdArgv = argv;
+  if (argv.length >= 2 && argv[0] === `--cwd`) {
+    cwd = xfs.realpathSync(npath.toPortablePath(argv[1]));
+    postCwdArgv = argv.slice(2);
+  } else if (argv.length >= 1 && argv[0].startsWith(`--cwd=`)) {
+    cwd = xfs.realpathSync(npath.toPortablePath(argv[0].slice(6)));
+    postCwdArgv = argv.slice(1);
+  }
 
-  return [ppath.cwd(), argv];
+  cli.defaultContext.cwd = cwd ?? ppath.cwd();
+  return postCwdArgv;
 }
 
-function initTelemetry(cli: Cli<CommandContext>, {configuration}: {configuration: Configuration}) {
+function initTelemetry(cli: YarnCli, {configuration}: {configuration: Configuration}) {
   const isTelemetryEnabled = configuration.get(`enableTelemetry`);
   if (!isTelemetryEnabled || isCI || !process.stdout.isTTY)
     return;
@@ -100,7 +121,7 @@ function initTelemetry(cli: Cli<CommandContext>, {configuration}: {configuration
   }
 }
 
-function initCommands(cli: Cli<CommandContext>, {configuration}: {configuration: Configuration}) {
+function initCommands(cli: YarnCli, {configuration}: {configuration: Configuration}) {
   for (const plugin of configuration.plugins.values()) {
     for (const command of plugin.commands || []) {
       cli.register(command);
@@ -108,23 +129,7 @@ function initCommands(cli: Cli<CommandContext>, {configuration}: {configuration:
   }
 }
 
-function processArgv(cli: Cli<CommandContext>, argv: Array<string>, {cwd, pluginConfiguration}: {cwd: PortablePath, pluginConfiguration: PluginConfiguration}) {
-  const context = {
-    cwd,
-    plugins: pluginConfiguration,
-    quiet: false,
-    stdin: process.stdin,
-    stdout: process.stdout,
-    stderr: process.stderr,
-  };
-
-  return {
-    context,
-    command: cli.process(argv, context),
-  };
-}
-
-async function run(cli: Cli<CommandContext>, argv: Array<string>, {selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
+async function run(cli: YarnCli, argv: Array<string>, {selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
   if (!validateNodejsVersion(cli))
     return 1;
 
@@ -141,20 +146,21 @@ async function run(cli: Cli<CommandContext>, argv: Array<string>, {selfPath, plu
 
   delete process.env.YARN_IGNORE_PATH;
 
-  const [cwd, postCwdArgv] = checkCwd(argv);
+  const postCwdArgv = checkCwd(cli, argv);
 
   initTelemetry(cli, {configuration});
   initCommands(cli, {configuration});
 
-  const {command, context} = processArgv(cli, postCwdArgv, {cwd, pluginConfiguration});
+  const command = cli.process(postCwdArgv, cli.defaultContext);
+
   if (!command.help)
     Configuration.telemetry?.reportCommandName(command.path.join(` `));
 
-  return await cli.run(command, context);
+  return await cli.run(command, cli.defaultContext);
 }
 
-export async function getCli({pluginConfiguration}: {pluginConfiguration: PluginConfiguration}) {
-  const cli = getBaseCli();
+export async function getCli({cwd = ppath.cwd(), pluginConfiguration = getPluginConfiguration()}: {cwd?: PortablePath, pluginConfiguration?: PluginConfiguration} = {}) {
+  const cli = getBaseCli({cwd, pluginConfiguration});
 
   const configuration = await getCoreConfiguration({
     pluginConfiguration,
@@ -166,8 +172,8 @@ export async function getCli({pluginConfiguration}: {pluginConfiguration: Plugin
   return cli;
 }
 
-export async function runExit(argv: Array<string>, {selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
-  const cli = getBaseCli();
+export async function runExit(argv: Array<string>, {cwd = ppath.cwd(), selfPath, pluginConfiguration}: {cwd: PortablePath, selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
+  const cli = getBaseCli({cwd, pluginConfiguration});
 
   try {
     process.exitCode = await run(cli, argv, {selfPath, pluginConfiguration});
