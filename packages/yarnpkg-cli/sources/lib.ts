@@ -101,7 +101,7 @@ function checkCwd(cli: YarnCli, argv: Array<string>) {
     postCwdArgv = argv.slice(1);
   }
 
-  cli.defaultContext.cwd = cwd ?? ppath.cwd();
+  cli.defaultContext.cwd = ppath.resolve(cwd) ?? ppath.cwd();
   return postCwdArgv;
 }
 
