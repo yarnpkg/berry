@@ -23,9 +23,6 @@ export class Workspace {
   // @ts-expect-error: This variable is set during the setup process
   public readonly anchoredLocator: Locator;
 
-  // @ts-expect-error: This variable is set during the setup process
-  public readonly locator: Locator;
-
   public readonly workspacesCwds: Set<PortablePath> = new Set();
 
   // @ts-expect-error: This variable is set during the setup process
@@ -44,16 +41,12 @@ export class Workspace {
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substring(0, 6)}`);
-    const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.locator = structUtils.makeLocator(ident, reference);
+    this.anchoredDescriptor = structUtils.makeDescriptor(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.anchoredDescriptor = structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
-
-    // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.anchoredLocator = structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
+    this.anchoredLocator = structUtils.makeLocator(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
     const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
 

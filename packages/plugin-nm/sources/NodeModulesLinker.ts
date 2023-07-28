@@ -273,7 +273,7 @@ class NodeModulesInstaller implements Installer {
       getDependencyTreeRoots: () => {
         return this.opts.project.workspaces.map(workspace => {
           const anchoredLocator = workspace.anchoredLocator;
-          return {name: structUtils.stringifyIdent(workspace.locator), reference: anchoredLocator.reference};
+          return {name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference};
         });
       },
       getPackageInformation: pnpLocator => {
