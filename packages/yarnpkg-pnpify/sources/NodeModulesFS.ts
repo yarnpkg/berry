@@ -309,37 +309,37 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.accessSync(this.resolveDirOrFilePath(p), mode);
   }
 
-  async statPromise(p: PortablePath): Promise<Stats>
-  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async statPromise(p: PortablePath): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   async statPromise(p: PortablePath, opts?: {bigint: boolean}) {
     return await this.baseFs.statPromise(this.resolveDirOrFilePath(p), opts);
   }
 
-  statSync(p: PortablePath): Stats
-  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats
-  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats
+  statSync(p: PortablePath): Stats;
+  statSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
+  statSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats;
   statSync(p: PortablePath, opts?: {bigint: boolean}) {
     return this.baseFs.statSync(this.resolveDirOrFilePath(p), opts);
   }
 
-  async fstatPromise(fd: number): Promise<Stats>
-  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
-  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number): Promise<Stats>;
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   async fstatPromise(fd: number, opts?: {bigint: boolean}) {
     return await this.baseFs.fstatPromise(fd, opts);
   }
 
-  fstatSync(fd: number): Stats
-  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
-  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number): Stats;
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
   fstatSync(fd: number, opts?: {bigint: boolean}) {
     return this.baseFs.fstatSync(fd, opts);
   }
 
-  async lstatPromise(p: PortablePath): Promise<Stats>
-  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>
+  async lstatPromise(p: PortablePath): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>;
   async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
     return this.resolveLink({
       p,
@@ -352,7 +352,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   lstatSync(p: PortablePath): Stats;
   lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats
+  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats;
   lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
     return this.resolveLink({
       p,

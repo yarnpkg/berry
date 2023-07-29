@@ -10,7 +10,7 @@
   "dependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
-    "clipanion": "^3.2.1",
+    "clipanion": "4.0.0-rc.1",
     "git-url-parse": "^13.1.0",
     "lodash": "^4.17.15",
     "semver": "^7.1.2",

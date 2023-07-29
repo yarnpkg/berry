@@ -1,0 +1,20 @@
+:root {
+  --autolink-color-key: var(--cli-color-inline-option);
+  --autolink-color-assign: var(--cli-color-inline-assign);
+  --autolink-color-value: var(--cli-color-inline-value);
+}
+
+.key {
+  color: var(--autolink-color-key);
+
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.assign {
+  color: var(--autolink-color-assign)
+}
+
+.value {
+  color: var(--autolink-color-value)
+}

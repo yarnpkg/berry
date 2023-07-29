@@ -1,15 +1,13 @@
-import {BaseCommand}                        from '@yarnpkg/cli';
-import {Configuration, Project}             from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}    from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError} from 'clipanion';
+import {BaseCommand}                               from '@yarnpkg/cli';
+import {Configuration, Project}                    from '@yarnpkg/core';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}        from 'clipanion';
 
-import {Driver as GitDriver}                from '../drivers/GitDriver';
-import {Driver as MercurialDriver}          from '../drivers/MercurialDriver';
-import {Hooks}                              from '..';
+import {Driver as GitDriver}                       from '../drivers/GitDriver';
+import {Hooks}                                     from '..';
 
 const ALL_DRIVERS = [
   GitDriver,
-  MercurialDriver,
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -83,8 +81,8 @@ export default class StageCommand extends BaseCommand {
 
     const yarnNames: Set<string> = new Set([
       configuration.get(`rcFilename`) as string,
-      configuration.get(`lockfileFilename`) as string,
-      `package.json`,
+      Filename.lockfile,
+      Filename.manifest,
     ]);
 
     const changeList = await driver.filterChanges(root, yarnPaths, yarnNames);

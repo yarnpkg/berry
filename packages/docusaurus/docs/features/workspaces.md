@@ -2,87 +2,114 @@
 category: features
 slug: /features/workspaces
 title: "Workspaces"
-description: An in-depth guide to Yarn's workspaces, a feature that provides an easy way to store multiple packages inside the same project.
+description: A tour of what Yarn has to offer to monorepo projects.
 ---
 
-Yarn workspaces aim to make working with [monorepos](/advanced/lexicon#monorepository) easy, solving one of the main use cases for `yarn link` in a more declarative way. In short, they allow multiple projects to live together in the same repository AND to cross-reference each other - any modification to one's source code being instantly applied to the others.
+## What are workspaces?
 
-First, some vocabulary: in the context of the workspace feature, a *project* is the whole directory tree making up your workspaces (often the repository itself). A *workspace* is a local package made up from your own sources from that same project. Finally, a *worktree* is the name given to workspaces that list their own child workspaces. A project contains one or more worktrees, which may themselves contain any number of workspaces. Any project contains at least one workspace: the root one.
+Workspaces are the name of individual packages that are part of the same project and that Yarn will install and link together to simplify cross-references.
 
-```toc
-# This code block gets replaced with the Table of Contents
+This pattern is often called monorepo when used in conjunction with a repository. Workspaces were initially popularized by projects like Lerna, but Yarn was the first package manager to provide native support for them - support which never stopped improving over years as we build more features around them.
+
+:::info
+We always try to dogfood the features we offer, and workspaces are a prime example: Yarn is composed of a couple of dozens of packages that can each be deployed independently if needed!
+:::
+
+## When should I use workspaces?
+
+Workspaces shine in many situations, with the main ones being:
+
+- When a project has a core package surrounded with various add-ons; this is for example the case for Babel.
+
+- When you need to publish multiple packages and want to avoid your contributors having to open PRs on many separate repositories whenever they want to make a change. This is for example the case for Jest.
+
+- Or when projects want to keep strict boundaries within their code and avoid becoming an entangled monolith. This is for example the case for Yarn itself, or many enterprise codebases.
+
+There's been a significant amount of discussions about whether monorepos are good or bad, with decent arguments on both side. Our team worked with monorepos for years at this point, and with the tooling Yarn provides, the value has always outweighed the cons by a large margin. If you need to create another package for your project, consider whether grouping them together makes sense.
+
+:::tip
+You don't need to split your code in many workspaces for them to become useful. For instance, the [Clipanion repository](https://github.com/arcanis/clipanion) uses only two workspaces, one for the library and one for its website. This patterns avoids mixing dependencies while also making it easy to author PRs that affect both the code and the documentation.
+:::
+
+## How are workspaces declared?
+
+To declare a workspace, all you have to do is add a `workspaces` array to the root `package.json` file, and list relative glob patterns pointing to your workspaces' folders. In the following example, all subdirectories in the `packages` folder will become workspaces.
+
+```json
+{
+  "workspaces": [
+    "packages/*"
+  ]
+}
 ```
 
-## How to declare a worktree?
+## Workspace-related features
 
-Worktrees are defined through the traditional `package.json` files. What makes them special is that they have the following properties:
+### Constraints
 
-- They must declare a `workspaces` field which is expected to be an array of glob patterns that should be used to locate the workspaces that make up the worktree. For example, if you want all folders within the `packages` folder to be workspaces, just add `packages/*` to this array.
+Constraints are to monorepos what Eslint is to your source code. They let you declare rules that must apply to specific workspaces in your project. For example, you can use constraints to enforce that all dependencies in your project are synchronized, to prevent some dependencies from being used, or to enforce that some fields such as `license` or `engines.node` are properly set everywhere.
 
-- They must be connected in some way to the project-level `package.json` file. This doesn't matter in the typical workspace setup because there's usually a single worktree defined in the project-level `package.json`, but if you try to setup nested workspaces then you must make sure that the nested worktree is defined as a valid workspace of its parent worktree (otherwise Yarn won't find its correct parent folder).
+For more information and examples about constraints, check the [dedicated article](/).
 
-Note that because worktrees are defined with an otherwise regular `package.json` file, they also are valid workspaces themselves. If they're named, other workspaces will be able to properly cross-reference them.
+### Cross-references
 
-> **Note**
->
-> Worktrees used to be required to be private (ie list `"private": true` in their package.json). This requirement got removed with the 2.0 release in order to help standalone projects to progressively adopt workspaces (for example by listing their documentation website as a separate workspace).
-
-## What does it mean to be a workspace?
-
-Workspaces have two important properties:
-
-- Only the dependencies depended upon by a workspace can be accessed. Said another way, we strictly enforce your workspaces dependencies. Doing this allows us to cleanly decouple projects from one another, since you don't have to merge all their dependencies in one huge unmaintainable list. We still provide tools to manage dependencies from multiple workspaces at once, but they need to be explicitly used and offer a better integration (for example `yarn add` can make suggestions for your new dependencies based on what other workspaces use, but you can override them).
-
-- If the package manager was to resolve a range that a workspace could satisfy, it will prefer the workspace resolution over the remote resolution if possible. This is the pillar of the monorepo approach: rather than using the remote packages from the registry, your project packages will be interconnected and will use the code stored within your repository.
-
-## Workspace ranges (`workspace:`)
-
-While Yarn automatically picks workspace resolutions when they match, there are times where you absolutely don't want to risk using a package from the remote registry even if the versions don't match (for example if your project isn't actually meant to be published and you just want to use the workspaces to better compartment your code).
-
-For those use cases, Yarn now supports a new resolution protocol starting from the v2: `workspace:`. When this protocol is used Yarn will refuse to resolve to anything else than a local workspace. This range protocol has two flavors:
-
-  - If a semver range, it will select the workspace matching the specified version.
-  - If a project-relative path, it will select the workspace that match this path **(experimental)**.
-
-Note that the second flavor is experimental and we advise against using it for now, as some details might change in the future. Our current recommendation is to use `workspace:*`, which will almost always do what you expect.
-
-## Publishing workspaces
-
-When a workspace is packed into an archive (whether it's through `yarn pack` or one of the publish commands like `yarn npm publish`), we dynamically replace any `workspace:` dependency by:
-
-  - The corresponding version in the target workspace (if you use `*`, `^`, `~`, or a project-relative path)
-  - The associated semver range (for any other range type)
-
-So for example, if we assume we have the following workspaces whose current version is `1.5.0`, the following:
+Packages from monorepos often need to depend on each other - for example when you have an app package depending on a separate library. Yarn makes it very easy thanks to the special `workspace:` protocol, which lets you instruct Yarn to resolve the dependency using the workspace of the same name in the project. For example:
 
 ```json
 {
   "dependencies": {
-    "star": "workspace:*",
-    "caret": "workspace:^",
-    "tilde": "workspace:~",
-    "range": "workspace:^1.2.3",
-    "path": "workspace:path/to/baz"
+    "@my-org/utils": "workspace:^"
   }
 }
 ```
 
-Will be transformed into:
+The `workspace:` protocol accepts either a regular semver range, or the special `^` / `~` / `*` tokens. Whatever the value is won't change how Yarn will resolve the dependency (it will only ever care about the dependency name), but it will affect what the dependency will look like after the package gets published via `yarn npm publish`. For example, if the following ranges are used against a workspace whose `version` field is set to `3.2.1`:
 
-```json
-{
-  "dependencies": {
-    "star": "1.5.0",
-    "caret": "^1.5.0",
-    "tilde": "~1.5.0",
-    "range": "^1.2.3",
-    "path": "1.5.0"
-  }
-}
+| Initial range | Range after publish |
+| --- | --- |
+| `workspace:^3.0.0` | `^3.0.0` |
+| `workspace:^` | `^3.2.1` |
+| `workspace:~` | `~3.2.1` |
+| `workspace:*` | `=3.2.1` |
+
+### Focused installs
+
+A common concern when discovering workspaces is how you need to install all of their dependencies whenever you wish to work on a single one of them. Yarn provides a solution via `yarn workspaces focus`.
+
+This command takes a list of workspaces, extend the list to include transitive dependencies, and exclude everything else from the install. For example, the following would let you install only the dependencies required for your main app to be built and deployed:
+
+```
+yarn workspaces focus @my-org/app
 ```
 
-This feature allows you to not have to depend on something else than your local workspaces, while still being able to publish the resulting packages to the remote registry without having to run intermediary publish steps - your consumers will be able to use your published workspaces as any other package, still benefiting from the guarantees semver offers.
+If you wish to also skip installing `devDependencies`, set the `yarn workspaces focus ! --production` flag. In the following example, Yarn will install the dependencies from all workspaces, but only the production ones:
 
-## Yarn Workspaces vs Lerna
+```
+yarn workspaces focus -A --production
+```
 
-Despite the appearances, the Yarn workspaces and Lerna don't compete. In fact, Lerna will use Yarn's workspaces if possible. In a sense, you can see Lerna as a high-level layer on top of the low-level Yarn implementation.
+### Global scripts
+
+Scripts defined in the `scripts` field from the `package.json` files can be run using `yarn run name`, but only if you run the command from within the workspaces that declare them. That is, unless they are global scripts.
+
+Global scripts are characterized by at least one colon (`:`) in the script name. They can be run from anywhere within the project, as long as there are no duplicates (if two workspaces define scripts with the same names, they won't be upgraded into global scripts).
+
+### Parallel execution
+
+Scripts from multiple workspaces can be run in parallel if they share the same name, by using `yarn workspaces foreach`. The following example shows you how to publish all packages in your project in parallel, but respecting topological order (so that a workspace only gets published once all other workspaces it depends on did):
+
+```
+yarn workspaces foreach -pt npm publish
+```
+
+By default `yarn workspaces foreach` will run the commands on every workspace in the project, but it can be tweaked. In this example we use the `yarn workspaces foreach ! --since` flag to instead only select workspaces that were modified in the current branch compared to the [main branch](/):
+
+```
+yarn workspaces foreach --since run lint
+```
+
+Similarly, the `yarn workspaces foreach ! --from pattern` flag will instead select all workspaces matching the provided glob pattern. As for all other Yarn commands, this flag will be applied to both workspace names and paths relative to the current working directory. For example, this command will run the `build` script on the current workspace and all other workspaces it depends on:
+
+```
+yarn workspaces foreach --from . -R run build
+```

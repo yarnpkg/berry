@@ -212,7 +212,7 @@ export class StreamReport extends Report {
     // Setup progress
     if (configuration.get(`enableProgressBars`) && !json && (stdout as WriteStream).isTTY && (stdout as WriteStream).columns > 22) {
       const styleName = configuration.get(`progressBarStyle`) || defaultStyle;
-      if (!Object.prototype.hasOwnProperty.call(PROGRESS_STYLES, styleName))
+      if (!Object.hasOwn(PROGRESS_STYLES, styleName))
         throw new Error(`Assertion failed: Invalid progress bar style`);
 
       this.progressStyle = PROGRESS_STYLES[styleName];

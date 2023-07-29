@@ -5,198 +5,122 @@ title: "Plug'n'Play"
 description: An overview of Plug'n'Play, a powerful and innovative installation strategy for Node.
 ---
 
-> **PnP API**
->
-> Are you a library author trying to make your library compatible with the Plug'n'Play installation strategy? Do you want to use the PnP API for something awesome? If the answer to any of these questions is yes, make sure to visit the [PnP API](/advanced/pnpapi) page after reading the introduction!
+## What is Yarn Plug'n'Play?
 
-Unveiled in September 2018, Plug'n'Play is an innovative installation strategy for [Node](https://nodejs.org/). Based on prior work in other languages (for example [autoload](https://getcomposer.org/doc/04-schema.md#autoload) for PHP), it presents interesting characteristics that build upon the regular [CommonJS](https://en.wikipedia.org/wiki/CommonJS) `require` workflow in an almost completely backward-compatible way.
+Yarn Plug'n'Play (generally referred to as Yarn PnP) is the default installation strategy in modern releases of Yarn. It can be swapped out for more traditional approaches (including `node_modules` installs, or pnpm-style symlink-based approaches), but we recommend it when creating new projects due to its numerous improvements.
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+## How does it work?
 
-## The node_modules problem
+If you look into the files in your project, you may notice the absence of a `node_modules` folder. This is unusual! We regularly get asked on Discord where the folder is, by people thinking `yarn install` silently failed.
 
-The way installs used to work was simple: when running `yarn install` Yarn would generate a `node_modules` directory that Node was then able to consume thanks to its built-in [Node Resolution Algorithm](https://nodejs.org/api/modules.html#modules_all_together). In this context, Node didn't have to know the first thing about what a "package" was: it only reasoned in terms of files. "Does this file exist here? No: Ok, let's look in the parent `node_modules` then. Does it exist here? Still no: Ok ...", and it kept going until it found the right one. This process was vastly inefficient for several reasons:
+The thing is, this is actually expected! The way Yarn PnP works, it tells Yarn to generate a single Node.js loader file in place of the typical `node_modules` folder. This loader file, named `.pnp.cjs`, contains all information about your project's dependency tree, informing your tools as to the location of the packages on the disk and letting them know how to resolve require and import calls.
 
-- The `node_modules` directories typically contained gargantuan amounts of files. Generating them could make up for more than 70% of the time needed to run `yarn install`. Even having preexisting installations wouldn't save you, as package managers still had to diff the contents of `node_modules` with what it _should_ contain.
+## What are the advantages?
 
-- Because the `node_modules` generation was an I/O-heavy operation, package managers didn't have much leeway to optimize it beyond just doing a simple file copy - and even though it could have used hardlinks or copy-on-write when possible, it would still have needed to diff the current state of the filesystem before making a bunch of syscalls to manipulate the disk.
+Yarn PnP addresses various problems. It would be possible to address _some_ of them via smarter `node_modules` layout algorithms (that's for example what the pnpm-style symlink-based install strategy attempts to do), but PnP is the only strategy that can address them all:
 
-- Because Node had no concept of packages, it also didn't know whether a file was _meant_ to be accessed. It was entirely possible that the code you wrote worked one day in development but broke later in production because you forgot to list one of your dependencies in your `package.json`.
+### Minimal install footprint
 
-- Even at runtime, the Node resolution had to make a bunch of `stat` and `readdir` calls to figure out where to load every single required file from. It was extremely wasteful and was part of why booting Node applications took so much time.
+A Yarn PnP install typically does one thing: generate the Node.js loader file (`.pnp.cjs`). In other package managers, a significant portion of the time is spent performing I/O operations to copy files from one location to another, be it on disk like npm, or via symlinks / hardlinks like pnpm.
 
-- Finally, the very design of the `node_modules` folder was impractical in that it didn't allow package managers to properly de-duplicate packages. Even though some algorithms could be employed to optimize the tree layout ([hoisting](https://yarnpkg.com/advanced/lexicon#hoisting)), we still ended up unable to optimize some particular patterns - causing not only the disk usage to be higher than needed, but also some packages to be instantiated multiple times in memory.
+### Shared installs across disks
 
-## Fixing node_modules
+Related to the previous point, Yarn PnP allows to reuse the same package artifacts across all projects on the disk. Unlike pnpm, which uses a content-addressable store where each file from each package needs to be hardlinked into its final destination, the PnP loader directly references packages via their cache path, removing a lot of complexity.
 
-Yarn already knows everything there is to know about your dependency tree - it even installs it on the disk for you. So, why is it up to Node to find where your packages are? Instead, it should be the package manager's job to inform the interpreter about the location of the packages on the disk and manage any dependencies between packages and even versions of packages. This is why Plug'n'Play was created.
+### Perfect and correct hoisting
 
-In this install mode (the default starting from Yarn 2.0), Yarn generates a single `.pnp.cjs` file instead of the usual `node_modules` folder containing copies of various packages. The `.pnp.cjs` file contains various maps: one linking package names and versions to their location on the disk and another one linking package names and versions to their list of dependencies. With these lookup tables, Yarn can instantly tell Node where to find any package it needs to access, as long as they are part of the dependency tree, and as long as this file is loaded within your environment (more on that in the next section).
+Typical `node_modules` installs attempt to optimize the resulting `node_modules` size by hoisting packages, at the cost of higher risks of ghost dependencies. Unfortunately, even these optimizations have limits! Some dependency patterns prevent safe hoisting, leading to package duplication and multiple instantiations.
 
-This approach has various benefits:
+### Ghost dependencies protection
 
-- Installs are now nearly instantaneous. Yarn only needs to generate a single text file (instead of potentially tens of thousands). The main bottleneck becomes the number of dependencies in a project rather than disk performance.
+Because Yarn keeps a list of all packages and their dependencies, it can prevent accesses to dependencies unaccounted for during resolution, giving you the ability to quickly identify and fix those problems before they get deep into your codebase and jeopardize the stability of your application at deploy time.
 
-- Installs are more stable and reliable due to reduced I/O operations. Especially on Windows (where writing and removing files in batches may trigger various unintended interactions with Windows Defender and similar tools), I/O heavy `node_modules` operations were more prone to failure.
+:::info
+This is sometimes mentioned as a challenge to adopting Yarn PnP. It means errors may be reported when other package managers would seem to work out of the box - that is, until strange breakages start happening as you add, upgrade, or remove unrelated dependencies.
 
-- Perfect optimization of the dependency tree (aka perfect hoisting) and predictable package instantiations.
+While it does add a bit of friction, it's a critical part of what makes Yarn a **very** stable package manager. An application that works today won't suddenly break in the future, and your colleagues won't face seemingly random issues long after your PRs got merged.
+:::
 
-- The generated `.pnp.cjs` file can be committed to your repository as part of the [Zero-Installs](/features/zero-installs) effort, removing the need to run `yarn install` in the first place.
+### Semantic erroring
 
-- Faster application startup! The Node resolution doesn't have to iterate over the filesystem hierarchy nearly as much as before (and soon won't have to do it at all!).
-
-## Initializing PnP
-
-Yarn generates a single `.pnp.cjs` file that needs to be installed for Node to know where to find the relevant packages. This registration is generally transparent: any direct or indirect `node` command executed through one of your `scripts` entries will automatically register the `.pnp.cjs` file as a runtime dependency. For the vast majority of use cases, the following will work just as you would expect:
-
-```json
-{
-  "scripts": {
-    "start": "node ./server.js",
-    "test": "jest"
-  }
-}
-```
-
-For some remaining edge cases, a small setup may be required:
-
-- If you need to run an arbitrary Node script, use [`yarn node`](/cli/node) as the interpreter, instead of `node`. This will be enough to register the `.pnp.cjs` file as a runtime dependency. 
+You may never have noticed it, but when a Node.js import or require call is invalid, you only get a generic error in return, that doesn't really tell you what's the problem or how to address it:
 
 ```
-yarn node ./server.js
+Uncaught Error: Cannot find module 'not-found'
 ```
 
-- If you operate on a system that automatically executes a Node script (for instance on Google Cloud Platform (--reference needed here--)), simply require the PnP file at the top of your init script and call its `setup` function.
+Yarn PnP not only tells you exactly *what* the problem is, but also which packages are involved. For example, the two following error messages may be emitted depending on the circumstances:
 
 ```
-require('./.pnp.cjs').setup();
+Error: Your application tried to access not-found, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.
+
+Required package: not-found
+Required by: /path/to/my-project/
 ```
 
-As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
-
 ```
-node -r ./.pnp.cjs ./server.js
-NODE_OPTIONS="--require $(pwd)/.pnp.cjs" node ./server.js
-```
+Error: awesome-plugin tried to access awesome-core (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.
 
-## PnP `loose` mode
+Required package: awesome-plugin
+Required by: awesome-core
 
-Because the hoisting heuristics aren't standardized and predictable, PnP operating under strict mode will prevent packages from requiring dependencies that are not explicitly listed; even if other dependencies also depend on it. This may cause issues with some packages.
-
-To address this problem, Yarn ships with a "loose" mode which will cause the PnP linker to work in tandem with the `node-modules` hoister - we will first generate the list of packages that would have been hoisted to the top level in a typical `node_modules` install, then remember this list as what we call the "fallback pool".
-
-> Note that because the loose mode directly calls the `node-modules` hoister, it follows the exact same implementation as the true algorithm used by the [`node-modules` linker](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm)!
-
-At runtime, packages that require unlisted dependencies will still be allowed to access them if any version of the dependency ended up in the fallback pool (which packages exactly are allowed to rely on the fallback pool can be tweaked with [pnpFallbackMode](/configuration/yarnrc#pnpFallbackMode)).
-
-Note that the content of the fallback pool is undetermined. If a dependency tree contains multiple versions of the same package, there is no means to determine which one will be hoisted to the top-level. Therefore, a package accessing the fallback pool will still generate a warning (via the [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_type_code_ctor) API).
-
-This mode provides a compromise between the `strict` PnP linker and the `node_modules` linker.
-
-In order to enable `loose` mode, make sure that the [`nodeLinker`](/configuration/yarnrc#nodeLinker) option is set to `pnp` (the default) and add the following into your local [`.yarnrc.yml`](/configuration/yarnrc) file:
-```yaml
-pnpMode: loose
+Ancestor breaking the chain: awesome-template
 ```
 
-[More information about the `pnpMode` option.](/configuration/yarnrc#pnpMode)
+Semantic erroring goes a long way into letting you understand and address problems caused by your dependencies.
 
-### Caveat
+## Is it difficult to use?
 
-Because we *emit* warnings (instead of *throwing* errors) on resolution errors, applications can't *catch* them. This means that the common pattern of trying to `require` an optional peer dependency inside a try/catch block will print a warning at runtime if the dependency is missing, even though it shouldn't. The only runtime implication is that such a warning can cause confusion, but it can safely be ignored.
+### When creating a new project
 
-For this reason, PnP `loose` mode **won't be** the default starting with version 2.1 (as we originally planned). It will continue to be supported as an alternative, hopefully easing the transition to the default and recommended workflow: PnP `strict` mode.
+If you're creating a project from scratch, your project itself should work almost "out of the box". You may have to use `packageExtensions` from time to time to fix an occasional ghost dependency, but that remains uncommon, and this process is otherwise straightforward. Most tools in the ecosystem are designed and tested to work well in Yarn PnP environments, so problems are infrequent.
 
-## Alternatives
+:::warn
+A notable exception is React Native / Expo, which require using typical `node_modules` installs.
+:::
 
-In the years leading up to Plug'n'Play being ratified as the main install strategy, other projects came up with alternative implementations of the Node Resolution Algorithm - usually to circumvent shortcomings of the `require.resolve` API. Examples include Webpack (`enhanced-resolve`), Babel (`resolve`), Jest (`jest-resolve`), and Metro (`metro-resolver`). These alternatives should be considered as superseded by proper integration with Plug'n'Play.
+Really, the main problem you will face will be around IDE integrations. All IDEs have some level of support for Yarn PnP, but in general you should expect having to follow one of the procedures from this guide to make sure all your imports are properly resolved.
 
-### Compatibility Table
+### When migrating an existing project
 
-The following compatibility table gives you an idea of the integration status with various tools from the community. Note that only CLI tools are listed there, as frontend libraries (such as `react`, `vue`, `lodash`, ...) don't reimplement the Node resolution and as such don't need any special logic to take advantage of Plug'n'Play:
+:::info
+Running `yarn install` in a project which used to be installed by Yarn Classic will cause Yarn PnP to be automatically disabled, to make the migration smoother. You'll still benefit from the enhanced stability and other features implemented in modern releases, and can decide whether to spend the time to migrate to PnP or not at a later time.
+:::
 
-**[Suggest an addition to this table](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugnplay.md)**
+Existing projects can be tougher to migrate to Yarn PnP for a couple of reasons:
 
-#### Native support
+- You already start with a lot of dependencies, so there'll be a proportionally higher amount of packages that may list ghost dependencies
+- They may be locked on old versions of their respective packages, and thus have a higher chance to contain ghost dependencies
+- Your own scripts may inadvertently rely on some implementation details or ghost dependencies, sometimes even without you realizing it.
 
-Many common frontend tools now support Plug'n'Play natively!
+None of these are blockers, but they mean it can take a couple of days to migrate an existing project to Yarn PnP. We however provide tools to simplify some of this process, and taking a look at the footguns below will help you identify quicker what way cause something to break, so it's not impossible.
 
-| Project name | Note |
-| --- | --- |
-| Angular | Starting from 13+ |
-| Babel | Starting from `resolve` 1.9 |
-| Create-React-App | Starting from 2.0+ |
-| Docusaurus | Starting from 2.0.0-beta.14 |
-| ESBuild | Starting from [0.15.2](https://github.com/evanw/esbuild/releases/tag/v0.15.2) |
-| ESLint | Some compatibility issues w/ shared configs (fixable using [@rushstack/eslint-patch](https://yarnpkg.com/package/@rushstack/eslint-patch)) |
-| Gatsby | Supported with version ≥2.15.0, ≥3.7.0 |
-| Gulp | Supported with version 4.0+ | 
-| Husky | Starting from 4.0.0-1+ |
-| Jest | Starting from 24.1+ |
-| Next.js | Starting from 9.1.2+ |
-| Parcel | Starting from 2.0.0-nightly.212+ |
-| Preact CLI | Starting from 3.1.0+ |
-| Prettier | Starting from 1.17+ |
-| 🐊`Putout` | Starting from 22.8 |
-| Rollup | Starting from `resolve` 1.9+ |
-| Storybook | Starting from 6.0+ |
-| TypeScript | Via [`plugin-compat`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-compat) (enabled by default)
-| TypeScript-ESLint | Starting from 2.12+ |
-| VSCode-Stylelint | Starting from 1.1+ |
-| WebStorm | Starting from 2019.3+; See [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
-| Webpack | Starting from 5+ ([plugin](https://github.com/arcanis/pnp-webpack-plugin) available for 4.x) |
+Remember that migrating to Yarn PnP is optional: you can revert to `node_modules` installs at any time by setting the `nodeLinker: node-modules` setting in your project's `.yarnrc.yml` file.
 
-#### Support via plugins
+## Footguns
 
-| Project name | Note |
-| --- | --- |
-| VSCode-ESLint | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
-| VSCode | Follow [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) |
-| Webpack 4.x | Via [`pnp-webpack-plugin`](https://github.com/arcanis/pnp-webpack-plugin) (native starting from 5+) |
+### Peer dependencies
 
-#### Incompatible
+Peer dependencies are powerful, but are very difficult to implement - even more so for non-PnP projects, which have to work within the limits of what the filesystem hierarchy allows.
 
-The following tools cannot be used with pure Plug'n'Play install (even under loose mode).
+Yarn PnP, on the other hand, doesn't have this limitation, and will accurately represent the peer dependencies of every project in your dependency tree - even workspaces. If a workspace has a peer dependency, and if this dependency is fulfilled by different versions depending on its grandparent, then the workspace will instantiated twice, once for each unique "dependency set".
 
-**Important:** Even if a tool is incompatible with Plug'n'Play, you can still enable the [`node-modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm). Just follow the [instructions](/getting-started/migration#if-required-enable-the-node-modules-plugin) and you'll be ready to go in a minute 🙂
+This is the correct behaviour, but it may cause an accidental explosion of the number of instantiated workspaces if your project heavily uses peer dependencies without ensuring they are always fulfilled by the exact same versions.
 
-| Project name | Note |
-| --- | --- |
-| Flow | Follow [yarnpkg/berry#634](https://github.com/yarnpkg/berry/issues/634) |
-| React Native | Follow [react-native-community/cli#27](https://github.com/react-native-community/cli/issues/27) |
-| Pulumi | Follow [pulumi/pulumi#3586](https://github.com/pulumi/pulumi/issues/3586) |
-| VSCode Extension Manager (vsce) | Use the [vsce-yarn-patch](https://www.npmjs.com/package/vsce-yarn-patch) fork with the `node-modules` plugin enabled. The fork is required until [microsoft/vscode-vsce#493](https://github.com/microsoft/vscode-vsce/pull/493) is merged, as `vsce` currently uses the removed `yarn list` command |
-| Hugo | Hugo pipes expect a `node-modules` dir. Enable the `node-modules` plugin |
-| ReScript | Follow [rescript-lang/rescript-compiler#3276](https://github.com/rescript-lang/rescript-compiler/issues/3276) |
+### Shared binaries
 
-This list is kept up-to-date based on the latest release we've published starting from v2. In case you notice something off in your own project please try to upgrade Yarn and the problematic package first, then feel free to file an issue. And maybe a PR? 😊
+Yarn prevents ghost dependencies in the packages your project depends on, but also in your own code itself - this is to decrease the chances that a package would work on your development machine but break once published.
 
-## Frequently Asked Questions
+It however has a side effect when it comes to bins. If you have `typescript` listed at the root of your project, the `tsc` binary will be available in the root package _but only in the root project_. In other words, any workspace using the `tsc` binary in its scripts will need to declare it in its dependencies.
 
-### Why not use import maps?
+A good recommendation to avoid this kind of issue is to have a "tooling" workspace to contain your infrastructure tools and scripts, and have all other workspaces depend on it.
 
-Yarn Plug'n'Play provides semantic errors (explaining you the exact reason why a package isn't reachable from another) and a [sensible JS API](/advanced/pnpapi) to solve various shortcomings with `require.resolve`. These are features that import maps wouldn't solve by themselves.
-This is answered in more detail in [this thread](https://github.com/nodejs/modules/issues/477#issuecomment-578091424). 
+## Frequently asked questions
 
-A main reason we're in this mess today is that the original `node_modules` design tried to abstract packages away in order to provide a generic system that would work without any notion of packages. This became a challenge that prompted many implementers to come up with their own interpretations. Import maps suffer from the same flaw.
+### Compatibility with npm / pnpm
 
-### Packages are stored inside Zip archives: How can I access their files?
+Yarn PnP was designed to use the exact same "public interfaces" as other package managers, with differences being kept to what already were implementation details. If a project works with Yarn PnP, it should work everywhere!
 
-When using PnP, packages are stored and accessed directly inside the Zip archives from the cache.
-The PnP runtime (`.pnp.cjs`) automatically patches Node's `fs` module to add support for accessing files inside Zip archives. This way, you don't have to do anything special:
+One caveat though: the opposite isn't always true. Since other package managers don't / can't enforce proper listing of dependencies, they are more vulnerable to shipping ghost dependencies by accident to their consumers. In that way, using Yarn PnP can be seen as a good practice for the health of the ecosystem! 🙂
 
-```js
-const {readFileSync} = require(`fs`);
-
-// Looks similar to `/path/to/.yarn/cache/lodash-npm-4.17.11-1c592398b2-8b49646c65.zip/node_modules/lodash/ceil.js`
-const lodashCeilPath = require.resolve(`lodash/ceil`);
-
-console.log(readFileSync(lodashCeilPath));
-```
-
-### Fallback Mode
-
-Back when PnP was first implemented, the compatibility wasn't as good as it is now. To help with the transition, we designed a fallback mechanism: if a package tries to access an unlisted dependency, it's still allowed to resolve it *if the top-level package lists it as a dependency*. We allow this because there's no resolution ambiguity, as there's a single top-level package in any project. Unfortunately, this may cause confusing behaviors depending on how your project is set up. When that happens, PnP is always right, and the only reason it works when not in a workspace is due to some extra lax.
-
-This behavior was just a patch, and will eventually be removed to clear up any confusion. You can prepare for that now by setting [`pnpFallbackMode`](https://yarnpkg.com/configuration/yarnrc#pnpFallbackMode) to `none`, which will disable the fallback mechanism altogether.
+### How can I fix ghost dependencies?

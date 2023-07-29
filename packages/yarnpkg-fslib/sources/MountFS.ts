@@ -391,9 +391,9 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
-  async fstatPromise(fd: number): Promise<Stats>
-  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
-  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number): Promise<Stats>;
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   async fstatPromise(fd: number, opts?: { bigint: boolean }) {
     if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fstatPromise(fd, opts);
@@ -406,9 +406,9 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     return mountFs.fstatPromise(realFd, opts);
   }
 
-  fstatSync(fd: number): Stats
-  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
-  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number): Stats;
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
   fstatSync(fd: number, opts?: { bigint: boolean }) {
     if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fstatSync(fd, opts);

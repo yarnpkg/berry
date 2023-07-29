@@ -4,8 +4,6 @@
  * work well for content-centric websites.
  */
 
-@import url("https://fonts.googleapis.com/css?family=PT+Sans:400,700");
-
 /**
  * We don't want html, body to have height: 100%, because it would break
  * the body background image, which we need to display the cat on the
@@ -15,6 +13,8 @@
  */
 html, body {
   height: auto !important;
+
+  --ifm-code-padding-horizontal: 0.2rem;
 }
 
 body {
@@ -22,8 +22,11 @@ body {
 }
 
 html {
-  background-image: url('/img/yarn-bg-lossless.webp');
-  background-size: 100% auto;
+  background-image: url('/img/yarn-bg-black.webp');
+  background-size: 100% 100%;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: #ffffff;
 }
 
 .theme-doc-sidebar-container {
@@ -91,6 +94,15 @@ body:not([x-doc-route="/"]) .main-wrapper > :last-child {
   }
 }
 
+.centered-icon {
+  display: flex;
+  align-items: center;
+}
+
+.centered-icon svg {
+  display: block;
+}
+
 .navbar {
   top: -1px;
 }
@@ -142,6 +154,11 @@ body[x-doc-route^="/configuration/"] .col {
   line-height: 1.5em;
 }
 
+.markdown pre {
+  /* Weirdly, the margin and padding seems to be messing with one another with box-sizing */
+  box-sizing: content-box;
+}
+
 .markdown .subtitle {
   margin: calc(var(--ifm-h2-vertical-rhythm-top) * var(--ifm-leading)) 0;
 }
@@ -178,6 +195,13 @@ body[x-doc-route^="/configuration/"] .col {
   margin-bottom: 0;
 }
 
+.rjd-annotation a {
+  color: rgb(156, 220, 254);
+  text-decoration: underline;
+  text-decoration-skip: ink;
+  text-underline-offset: 0.2em;
+}
+
 .rjd-annotation code {
   all: initial;
 
@@ -192,6 +216,23 @@ body[x-doc-route^="/configuration/"] .col {
 
 .footer {
   display: none;
+}
+
+.menu__list-item-collapsible .menu__link:not(.menu__link--sublist) {
+  color: var(--ifm-menu-color-active);
+  font-weight: bold;
+}
+
+.protocols__autocollapse .menu__caret {
+  display: none;
+}
+
+.protocols__autocollapse > ul {
+  display: none !important;
+}
+
+.react-tooltip {
+  z-index: calc(var(--ifm-z-index-fixed) + 1);
 }
 
 /* You can override the default Infima variables here. */

@@ -33,6 +33,8 @@
 }
 
 .reserve {
+  position: relative;
+
   display: flex;
   align-items: flex-start;
 
@@ -40,12 +42,27 @@
 
   padding: 20px;
 
-  background-image: url(/img/yarn-hero-transparent.png);
+  background-image: url(/img/yarn-hero-transparent.webp);
   background-size: 100% auto;
   background-repeat: no-repeat;
   background-position: bottom left;
 
   color: #ffffff;
+}
+
+.reserve::before {
+  position: absolute;
+  content: "";
+
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+
+  background: linear-gradient(180deg, rgba(9,11,31,0) 0%, rgba(9,11,31,0) 95%, rgba(9,11,31,1) 100%);
+
+  pointer-events: none;
 }
 
 @media (min-width: 996px) {
@@ -76,29 +93,49 @@
   margin: 30px 0;
 }
 
+.versions {
+  display: inline-block;
+
+  margin-left: 30px;
+
+  font-size: 15px;
+  font-weight: normal;
+
+  line-height: 1.5;
+}
+
+.versionLine {
+  display: flex;
+}
+
+.channel {
+  width: 50px;
+
+  font-weight: bold;
+}
+
 .search {
   display: flex;
 
   margin-top: 60px;
 
   border: 1px solid #9555bb;
-  border-radius: 20px;
+  border-radius: 10px;
   outline: none;
 
   width: 100%;
   padding: 20px;
 
   background: #090b1f80;
+  color: #ffffff;
 
   font-family: inherit;
   font-size: inherit;
   font-style: italic;
 }
 
-.search, .search:hover {
+.search::placeholder {
   color: #ffffff;
-
-  text-decoration: none;
 }
 
 .followUp {

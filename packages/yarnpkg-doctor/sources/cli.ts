@@ -74,7 +74,7 @@ function extractIdents(name: string) {
 }
 
 function isValidDependency(ident: Ident, {workspace}: {workspace: Workspace}) {
-  if (ident.identHash === workspace.locator.identHash)
+  if (ident.identHash === workspace.anchoredLocator.identHash)
     return true;
 
   if (workspace.manifest.hasDependency(ident))

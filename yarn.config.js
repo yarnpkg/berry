@@ -9,6 +9,11 @@ const {defineConfig} = require(`@yarnpkg/types`);
  * @typedef {import('@yarnpkg/types').Yarn.Constraints.Dependency} Dependency
  */
 
+const IGNORE_CONSISTENT_DEPENDENCIES_FOR = new Set([
+  `.`,
+  `packages/docusaurus`,
+]);
+
 /**
  * This rule will enforce that a workspace MUST depend on the same version of a dependency as the one used by the other workspaces
  * We allow Docusaurus to have different dependencies for now; will be addressed later (when we remove Gatsby)
@@ -16,14 +21,14 @@ const {defineConfig} = require(`@yarnpkg/types`);
  */
 function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.workspace.cwd === `packages/docusaurus`)
+    if (IGNORE_CONSISTENT_DEPENDENCIES_FOR.has(dependency.workspace.cwd))
       continue;
 
     if (dependency.type === `peerDependencies`)
       continue;
 
     for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.workspace.cwd === `packages/docusaurus`)
+      if (IGNORE_CONSISTENT_DEPENDENCIES_FOR.has(otherDependency.workspace.cwd))
         continue;
 
       if (otherDependency.type === `peerDependencies`)

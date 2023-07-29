@@ -1,4 +1,5 @@
-import {Filename, PortablePath, xfs} from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {pathToFileURL}                             from 'url';
 
 const lsStore = async (path: PortablePath) => {
   return await xfs.readdirPromise(`${path}/${Filename.nodeModules}/.store` as PortablePath);
@@ -65,6 +66,29 @@ describe(`Install Artifact Cleanup`, () => {
             await run(`install`);
 
             await expect(xfs.existsPromise(`${path}/.yarn/unplugged` as PortablePath)).resolves.toStrictEqual(false);
+          }));
+
+          it(`should remove the PnP flags from NODE_OPTIONS in build scripts after switching to the ${linker} linker`, makeTemporaryEnv({
+            dependencies: {
+              [`no-deps-scripted`]: `1.0.0`,
+            },
+          }, {
+            pnpEnableEsmLoader: true,
+          }, async ({path, run, source}) => {
+            await run(`install`);
+
+            const hook = `--require ${JSON.stringify(npath.fromPortablePath(ppath.join(path, Filename.pnpCjs)))}`;
+            const esmLoader = `--experimental-loader ${JSON.stringify(pathToFileURL(npath.fromPortablePath(ppath.join(path, Filename.pnpEsmLoader))).href)}`;
+
+            const env = {
+              NODE_OPTIONS: `${hook} ${esmLoader}`,
+            };
+
+            await run(`config`, `set`, `nodeLinker`, linker, {env});
+
+            await expect(run(`install`, `--inline-builds`, {env})).resolves.toMatchObject({
+              stdout: expect.stringContaining(`STDOUT preinstall out`),
+            });
           }));
         });
       }

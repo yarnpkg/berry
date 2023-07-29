@@ -112,7 +112,7 @@ export const renderObjectProperty = (name: string, definition: JSONSchema7, {mod
     if (typeof propertyKey !== `string`)
       throw new Error(`Assertion failed: Expected the propertyKey to be a string, got "${typeof propertyKey}".`);
 
-    if (typeof definition.properties === `object` && Object.prototype.hasOwnProperty.call(definition.properties, propertyKey)) {
+    if (typeof definition.properties === `object` && Object.hasOwn(definition.properties, propertyKey)) {
       return renderProperty(propertyKey, definition.properties[propertyKey], {mode, pathSegments: [...pathSegments, propertyKey], renderAnchor: true});
     } else if (typeof definition.patternProperties === `object`) {
       for (const [patternPropertyKey, patternPropertyDefinition] of Object.entries(definition.patternProperties)) {
@@ -220,7 +220,7 @@ export const convertSchemaToConfiguration = (schema: JSONSchema7, {mode}: {mode:
     if (typeof value !== `object` || value === null)
       return undefined;
 
-    if (!Object.prototype.hasOwnProperty.call(value, `$ref`))
+    if (!Object.hasOwn(value, `$ref`))
       return undefined;
 
     return {

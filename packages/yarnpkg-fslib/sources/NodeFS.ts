@@ -176,9 +176,9 @@ export class NodeFS extends BasePortableFakeFS {
     }
   }
 
-  async fstatPromise(fd: number): Promise<Stats>
-  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>
-  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>
+  async fstatPromise(fd: number): Promise<Stats>;
+  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
+  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
   async fstatPromise(fd: number, opts?: {bigint: boolean}) {
     return await new Promise<BigIntStats | Stats>((resolve, reject) => {
       if (opts) {
@@ -189,9 +189,9 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  fstatSync(fd: number): Stats
-  fstatSync(fd: number, opts: {bigint: true}): BigIntStats
-  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats
+  fstatSync(fd: number): Stats;
+  fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
+  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
   fstatSync(fd: number, opts?: {bigint: boolean}) {
     if (opts) {
       return this.realFs.fstatSync(fd, opts);
