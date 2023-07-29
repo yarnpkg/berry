@@ -94,6 +94,8 @@ The following changes only affect people writing Yarn plugins:
   - `workspace.anchoredLocator` to get the locator that's used throughout the dependency tree.
   - `workspace.manifest.version` to get the workspace version.
 
+- `ProjectLookup` has been removed. Both `Configuration.find` and `Configuration.findProjectCwd` now always do a lockfile lookup.
+
 ### Installs
 
 - Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
