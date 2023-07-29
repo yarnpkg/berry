@@ -180,7 +180,7 @@ export async function genPackList(workspace: Workspace) {
     globalList.reject.push(workspaceAbsolutePath);
   };
 
-  maybeRejectPath(ppath.resolve(project.cwd, configuration.get(`lockfileFilename`)));
+  maybeRejectPath(ppath.resolve(project.cwd, Filename.lockfile));
 
   maybeRejectPath(configuration.get(`cacheFolder`));
   maybeRejectPath(configuration.get(`globalFolder`));

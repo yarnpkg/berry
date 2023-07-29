@@ -1,0 +1,97 @@
+:root {
+  --cli-color-block-binary: #9e95fa;
+  --cli-color-block-path: #9bd1f4;
+  --cli-color-block-positional: #89b6db;
+  --cli-color-block-dash: #b0b2fe;
+  --cli-color-block-option: #b0b2fe;
+  --cli-color-block-assign: #b37ed3;
+  --cli-color-block-value: #d7a856;
+
+  --cli-color-inline-binary: #7a5ecc;
+  --cli-color-inline-path: #6c92c0;
+  --cli-color-inline-positional: #89b6db;
+  --cli-color-inline-dash: #6d6fc3;
+  --cli-color-inline-option: #6d6fc3;
+  --cli-color-inline-assign: #b37ed3;
+  --cli-color-inline-value: #d7a856;
+}
+
+.block {
+  --ifm-pre-background: #393A34;
+
+  --cli-color-binary: var(--cli-color-block-binary);
+  --cli-color-path: var(--cli-color-block-path);
+  --cli-color-positional: var(--cli-color-block-positional);
+  --cli-color-dash: var(--cli-color-block-dash);
+  --cli-color-option: var(--cli-color-block-option);
+  --cli-color-assign: var(--cli-color-block-assign);
+  --cli-color-value: var(--cli-color-block-value);
+}
+
+.inline {
+  --cli-color-binary: var(--cli-color-inline-binary);
+  --cli-color-path: var(--cli-color-inline-path);
+  --cli-color-positional: var(--cli-color-inline-positional);
+  --cli-color-dash: var(--cli-color-inline-dash);
+  --cli-color-option: var(--cli-color-inline-option);
+  --cli-color-assign: var(--cli-color-inline-assign);
+  --cli-color-value: var(--cli-color-inline-value);
+}
+
+.inline code > div {
+  display: inline;
+}
+
+.comment {
+  color: #bababa;
+}
+
+.path {
+  color: var(--cli-color-path);
+
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.path:hover {
+  color: var(--cli-color-binary);
+}
+
+.token[data-tooltip-content] {
+  text-decoration: dotted underline;
+  text-underline-offset: 2px;
+
+  cursor: help;
+}
+
+.token {
+  user-select: contain;
+}
+
+.token[data-type='binary'] {
+  color: var(--cli-color-binary);
+}
+
+.token[data-type='path'] {
+  text-decoration: none !important;
+}
+
+.token[data-type='positional'] {
+  color: var(--cli-color-positional);
+}
+
+.token[data-type='dash'] {
+  color: var(--cli-color-dash);
+}
+
+.token[data-type='option'] {
+  color: var(--cli-color-option);
+}
+
+.token[data-type='assign'] {
+  color: var(--cli-color-assign);
+}
+
+.token[data-type='value'] {
+  color: var(--cli-color-value);
+}

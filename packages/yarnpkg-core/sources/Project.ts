@@ -338,7 +338,7 @@ export class Project {
 
     this.lockFileChecksum = null;
 
-    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, Filename.lockfile);
     const defaultLanguageName = this.configuration.get(`defaultLanguageName`);
 
     if (xfs.existsSync(lockfilePath)) {
@@ -445,14 +445,14 @@ export class Project {
   }
 
   private addWorkspace(workspace: Workspace) {
-    const dup = this.workspacesByIdent.get(workspace.locator.identHash);
+    const dup = this.workspacesByIdent.get(workspace.anchoredLocator.identHash);
     if (typeof dup !== `undefined`)
-      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.locator)}: ${npath.fromPortablePath(workspace.cwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
+      throw new Error(`Duplicate workspace name ${structUtils.prettyIdent(this.configuration, workspace.anchoredLocator)}: ${npath.fromPortablePath(workspace.cwd)} conflicts with ${npath.fromPortablePath(dup.cwd)}`);
 
     this.workspaces.push(workspace);
 
     this.workspacesByCwd.set(workspace.cwd, workspace);
-    this.workspacesByIdent.set(workspace.locator.identHash, workspace);
+    this.workspacesByIdent.set(workspace.anchoredLocator.identHash, workspace);
   }
 
   get topLevelWorkspace() {
@@ -565,7 +565,7 @@ export class Project {
     if (structUtils.isVirtualLocator(locator))
       locator = structUtils.devirtualizeLocator(locator);
 
-    if (workspace.locator.locatorHash !== locator.locatorHash && workspace.anchoredLocator.locatorHash !== locator.locatorHash)
+    if (workspace.anchoredLocator.locatorHash !== locator.locatorHash)
       return null;
 
     return workspace;
@@ -1750,7 +1750,7 @@ export class Project {
         for (const extension of extensionsByRange)
           extension.status = PackageExtensionStatus.Inactive;
 
-    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, Filename.lockfile);
 
     // If we operate with a frozen lockfile, we take a snapshot of it to later make sure it didn't change
     let initialLockfile: string | null = null;
@@ -1996,7 +1996,7 @@ export class Project {
   }
 
   async persistLockfile() {
-    const lockfilePath = ppath.join(this.cwd, this.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(this.cwd, Filename.lockfile);
 
     let currentContent = ``;
     try {

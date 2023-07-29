@@ -16,7 +16,7 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/nm": "workspace:^",
-    "clipanion": "^3.2.1",
+    "clipanion": "4.0.0-rc.1",
     "tslib": "^2.4.0"
   },
   "devDependencies": {

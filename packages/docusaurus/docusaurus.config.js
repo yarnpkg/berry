@@ -1,8 +1,14 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
+require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
+
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
+
+const commandLineHighlight = require(`./src/remark/commandLineHighlight`);
+const autoLink = require(`./src/remark/autoLink`);
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -10,9 +16,10 @@ const config = {
   tagline: `Yarn, the modern JavaScript package manager`,
   url: `https://yarnpkg.com`,
   baseUrl: `/`,
-  onBrokenLinks: `throw`,
+  // TODO: Switch back to `throw`
+  onBrokenLinks: `warn`,
   onBrokenMarkdownLinks: `warn`,
-  favicon: `img/favicon.ico`,
+  favicon: `img/yarn-favicon.svg`,
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -21,6 +28,10 @@ const config = {
     defaultLocale: `en`,
     locales: [`en`],
   },
+
+  plugins: [
+    require.resolve(`./plugin`),
+  ],
 
   webpack: {
     jsLoader: isServer => ({
@@ -42,10 +53,19 @@ const config = {
         docs: {
           routeBasePath: `/`,
           sidebarPath: require.resolve(`./sidebars.js`),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            `https://github.com/yarnpkg/berry/tree/master/packages/docusaurus/`,
+          editUrl: `https://github.com/yarnpkg/berry/tree/master/packages/docusaurus/`,
+          remarkPlugins: [
+            commandLineHighlight.plugin(),
+            autoLink.plugin([{
+              sourceType: `json-schema`,
+              path: require.resolve(`./static/configuration/manifest.json`),
+              urlGenerator: name => `/configuration/manifest#${name}`,
+            }, {
+              sourceType: `json-schema`,
+              path: require.resolve(`./static/configuration/yarnrc.json`),
+              urlGenerator: name => `/configuration/yarnrc#${name}`,
+            }]),
+          ],
         },
         theme: {
           customCss: require.resolve(`./src/css/custom.css`),
@@ -70,6 +90,7 @@ const config = {
         appId: `BH4D9OD16A`,
         apiKey: `029f65f2c00301615fd14958b67d6730`,
         indexName: `yarnpkg_next`,
+        searchPagePath: `docs/search`,
       },
       navbar: {
         title: `Yarn`,
@@ -103,10 +124,10 @@ const config = {
             position: `left`,
           },
           {
-            type: `doc`,
-            docId: `advanced/architecture`,
-            position: `left`,
+            type: `docSidebar`,
+            sidebarId: `advanced`,
             label: `Advanced`,
+            position: `left`,
           },
           {
             href: `https://discord.gg/yarnpkg`,

@@ -11,7 +11,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "clipanion": "^3.2.1",
+    "clipanion": "4.0.0-rc.1",
     "tslib": "^2.4.0"
   },
   "peerDependencies": {

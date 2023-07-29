@@ -201,7 +201,6 @@ jobs:
       fail-fast: false
       matrix:
         # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
-        # https://github.com/nodejs/node/issues/48444
         node: [18, 19, 20]
         platform: [ubuntu-latest]
         shard: ['1/2', '2/2']
