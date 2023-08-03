@@ -395,6 +395,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.NUMBER,
     default: 50,
   },
+  workerPoolConcurrency: {
+    description: `Maximal number of workers in the worker pool`,
+    type: SettingsType.NUMBER,
+    default: nodeUtils.availableParallelism(),
+  },
   networkSettings: {
     description: `Network settings per hostname (glob patterns are supported)`,
     type: SettingsType.MAP,
@@ -636,6 +641,7 @@ export interface ConfigurationValueMap {
   httpsKeyFilePath: PortablePath | null;
   httpsCertFilePath: PortablePath | null;
   enableStrictSsl: boolean;
+  workerPoolConcurrency: number;
 
   logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
 

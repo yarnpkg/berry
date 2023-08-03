@@ -42,7 +42,7 @@ export class TarballHttpFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    return await tgzUtils.convertToZip(sourceBuffer, {
+    return await tgzUtils.convertToZip(sourceBuffer, opts.project.configuration.getLimit(`workerPoolConcurrency`), {
       compressionLevel: opts.project.configuration.get(`compressionLevel`),
       prefixPath: structUtils.getIdentVendorPath(locator),
       stripComponents: 1,

@@ -54,7 +54,7 @@ export class NpmHttpFetcher implements Fetcher {
       ident: locator,
     });
 
-    return await tgzUtils.convertToZip(sourceBuffer, {
+    return await tgzUtils.convertToZip(sourceBuffer, opts.project.configuration.getLimit(`workerPoolConcurrency`), {
       compressionLevel: opts.project.configuration.get(`compressionLevel`),
       prefixPath: structUtils.getIdentVendorPath(locator),
       stripComponents: 1,

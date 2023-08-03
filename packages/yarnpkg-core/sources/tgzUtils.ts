@@ -1,5 +1,6 @@
 import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
 import {ZipCompression, ZipFS}                                      from '@yarnpkg/libzip';
+import {Limit}                                                      from 'p-limit';
 import {PassThrough, Readable}                                      from 'stream';
 import tar                                                          from 'tar';
 
@@ -39,11 +40,11 @@ export interface ExtractBufferOptions {
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
-export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
+export async function convertToZip(tgz: Buffer, limit: Limit, opts: ExtractBufferOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
-  workerPool ||= new WorkerPool(getZipWorkerSource());
+  workerPool ||= new WorkerPool(getZipWorkerSource(), limit);
 
   await workerPool.run({tmpFile, tgz, opts});
 
