@@ -22,7 +22,7 @@ type SearchResult = {
 const SPONSORS = [{
   name: `Doppler`,
   image: `https://dashboard.doppler.com/imgs/logo_color.png`,
-  link: `https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github`,
+  link: `https://www.doppler.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=yarn&utm_source=github`,
   extra: `, the Universal Secrets Platform`,
 }];
 
