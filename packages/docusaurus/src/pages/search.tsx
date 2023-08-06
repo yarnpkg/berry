@@ -20,10 +20,10 @@ type SearchResult = {
 };
 
 const SPONSORS = [{
-  name: `Doppler`,
-  image: `https://dashboard.doppler.com/imgs/logo_color.png`,
-  link: `https://www.doppler.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=yarn&utm_source=github`,
-  extra: `, the Universal Secrets Platform`,
+  name: `WorkOS`,
+  image: `https://assets-global.website-files.com/621f54116cab10f6e9215d8b/621f548d3bca3b62c4bfe1c2_Favicon%2032x32.png`,
+  link: `https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github`,
+  extra: `, the all-in-one solution for enterprise-ready apps`,
 }];
 
 // eslint-disable-next-line arca/no-default-export
