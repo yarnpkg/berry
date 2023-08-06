@@ -49,7 +49,7 @@ To declare a workspace, all you have to do is add a `workspaces` array to the ro
 
 Constraints are to monorepos what Eslint is to your source code. They let you declare rules that must apply to specific workspaces in your project. For example, you can use constraints to enforce that all dependencies in your project are synchronized, to prevent some dependencies from being used, or to enforce that some fields such as `license` or `engines.node` are properly set everywhere.
 
-For more information and examples about constraints, check the [dedicated article](/).
+For more information and examples about constraints, check the [dedicated article](/features/constraints).
 
 ### Cross-references
 
@@ -99,10 +99,10 @@ Global scripts are characterized by at least one colon (`:`) in the script name.
 Scripts from multiple workspaces can be run in parallel if they share the same name, by using `yarn workspaces foreach`. The following example shows you how to publish all packages in your project in parallel, but respecting topological order (so that a workspace only gets published once all other workspaces it depends on did):
 
 ```
-yarn workspaces foreach -pt npm publish
+yarn workspaces foreach --all -pt npm publish
 ```
 
-By default `yarn workspaces foreach` will run the commands on every workspace in the project, but it can be tweaked. In this example we use the `yarn workspaces foreach ! --since` flag to instead only select workspaces that were modified in the current branch compared to the [main branch](/):
+The `yarn workspaces foreach ! --all` flag will run the provided command on every workspace in the project, but it can be tweaked. In this example we use the `yarn workspaces foreach ! --since` flag to instead only select workspaces that were modified in the current branch compared to the [main branch](/):
 
 ```
 yarn workspaces foreach --since run lint

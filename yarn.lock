@@ -7233,7 +7233,7 @@ __metadata:
     clipanion: "npm:4.0.0-rc.1"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.12.1"
+    typanion: "npm:^3.14.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
   languageName: unknown
@@ -7716,7 +7716,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.12.1"
+    typanion: "npm:^3.14.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -7886,7 +7886,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.12.1"
+    typanion: "npm:^3.14.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -8058,6 +8058,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-workspace-tools@workspace:packages/plugin-workspace-tools"
   dependencies:
+    "@types/lodash": "npm:^4.14.136"
     "@types/micromatch": "npm:^4.0.1"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
@@ -8068,7 +8069,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.12.1"
+    typanion: "npm:^3.14.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -23957,7 +23958,7 @@ pem@dexus/pem:
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
     tslib: "npm:^2.4.0"
-    typanion: "npm:^3.12.1"
+    typanion: "npm:^3.14.0"
     uuid: "npm:^8.3.2"
   languageName: unknown
   linkType: soft
@@ -29710,10 +29711,10 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typanion@npm:^3.12.1, typanion@npm:^3.8.0":
-  version: 3.12.1
-  resolution: "typanion@npm:3.12.1"
-  checksum: abd4cd4d4c91dfe548639f17e01581ec3a0be4c3b348c41f73a4b510729102a4028b0040163dffecfaefeb13eeb6b15cc018a69e44d49926b859eba6dfaf24bb
+"typanion@npm:^3.14.0, typanion@npm:^3.8.0":
+  version: 3.14.0
+  resolution: "typanion@npm:3.14.0"
+  checksum: 5e88d9e6121ff0ec543f572152fdd1b70e9cca35406d79013ec8e08defa8ef96de5fec9e98da3afbd1eb4426b9e8e8fe423163d0b482e34a40103cab1ef29abd
   languageName: node
   linkType: hard
 
