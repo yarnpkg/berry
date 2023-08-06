@@ -37,6 +37,10 @@ html {
   --ifm-link-decoration: underline;
 }
 
+.rjd-container {
+  --ifm-link-decoration: none;
+}
+
 .menu {
   overflow-y: scroll;
 }
@@ -203,6 +207,7 @@ body[x-doc-route^="/configuration/"] .col {
   color: rgb(156, 220, 254);
   text-decoration: underline;
   text-decoration-skip: ink;
+  text-decoration-color: #518dae;
   text-underline-offset: 0.2em;
 }
 
