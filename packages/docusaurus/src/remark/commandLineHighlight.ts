@@ -129,7 +129,8 @@ const makeCommandLine = (line: string, cli: YarnCli) => {
 const makeCommandOrRawLine = (line: string, cli: YarnCli) => {
   try {
     return makeCommandLine(line, cli);
-  } catch {
+  } catch (err: any) {
+    console.log(`Failed to parse "${line}": ${err.message}`);
     return makeRawLine(line);
   }
 };
@@ -149,7 +150,7 @@ export const plugin = () => () => {
       const lines = node.value.trim().split(`\n`).map(line => {
         if (line.startsWith(`#`) || line.length === 0) {
           return () => makeRawLine(line);
-        } else if (line.startsWith(`${cli.binaryName} `)) {
+        } else if (line.startsWith(`${cli.binaryName} `) || line === cli.binaryName) {
           return () => makeCommandOrRawLine(line, cli);
         } else {
           return null;

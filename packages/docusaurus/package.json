@@ -24,7 +24,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "algoliasearch": "^4.14.2",
-    "clipanion": "4.0.0-rc.1",
+    "clipanion": "^4.0.0-rc.2",
     "clsx": "^1.2.1",
     "dompurify": "^3.0.5",
     "git-url-parse": "^13.1.0",

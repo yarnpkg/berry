@@ -141,15 +141,15 @@ PNP_RESOLVE(specifier, parentURL)
 
 3. Otherwise, if `specifier` is either an absolute path or a path prefixed with "./" or "../", then
 
-    1. Set `resolved` to [**NM_RESOLVE**](#nm_resolve)(`specifier`, `parentURL`) and return it
+    1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
 
 4. Otherwise,
 
     1. Note: `specifier` is now a bare identifier
 
-    2. Let `unqualified` be [**RESOLVE_TO_UNQUALIFIED**](#resolve_to_unqualified)(`specifier`, `parentURL`)
+    2. Let `unqualified` be [`RESOLVE_TO_UNQUALIFIED`](#resolve_to_unqualified)`(specifier, parentURL)`
 
-    3. Set `resolved` to [**NM_RESOLVE**](#nm_resolve)(`unqualified`, `parentURL`)
+    3. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(unqualified, parentURL)`
 
 ### RESOLVE_TO_UNQUALIFIED
 
@@ -159,21 +159,21 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
 1. Let `resolved` be **undefined**
 
-2. Let `ident` and `modulePath` be the result of [**PARSE_BARE_IDENTIFIER**](#parse_bare_identifier)(`specifier`)
+2. Let `ident` and `modulePath` be the result of [`PARSE_BARE_IDENTIFIER`](#parse_bare_identifier)`(specifier)`
 
-3. Let `manifest` be [**FIND_PNP_MANIFEST**](#find_pnp_manifest)(`parentURL`)
+3. Let `manifest` be [`FIND_PNP_MANIFEST`](#find_pnp_manifest)`(parentURL)`
 
 4. If `manifest` is null, then
 
-    1. Set `resolved` to [**NM_RESOLVE**](#nm_resolve)(`specifier`, `parentURL`) and return it
+    1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
 
-5. Let `parentLocator` be [**FIND_LOCATOR**](#find_locator)(`manifest`, `parentURL`)
+5. Let `parentLocator` be [`FIND_LOCATOR`](#find_locator)`(manifest, parentURL)`
 
 6. If `parentLocator` is null, then
 
-    1. Set `resolved` to [**NM_RESOLVE**](#nm_resolve)(`specifier`, `parentURL`) and return it
+    1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
 
-7. Let `parentPkg` be [**GET_PACKAGE**](#get_package)(`manifest`, `parentLocator`)
+7. Let `parentPkg` be [`GET_PACKAGE`](#get_package)`(manifest, parentLocator)`
 
 8. Let `referenceOrAlias` be the entry from `parentPkg.packageDependencies` referenced by `ident`
 
@@ -183,7 +183,7 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
         1. If `parentLocator` **isn't** in `manifest.fallbackExclusionList`, then
 
-            1. Let `fallback` be [**RESOLVE_VIA_FALLBACK**](#resolve_via_fallback)(`manifest`, `ident`)
+            1. Let `fallback` be [`RESOLVE_VIA_FALLBACK`](#resolve_via_fallback)`(manifest, ident)`
 
             2. If `fallback` is neither **null** nor **undefined**
 
@@ -203,7 +203,7 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
     1. Let `alias` be `referenceOrAlias`
 
-    2. Let `dependencyPkg` be [**GET_PACKAGE**](#get_package)(`manifest`, `alias`)
+    2. Let `dependencyPkg` be [`GET_PACKAGE`](#get_package)`(manifest, alias)`
 
     3. Return `path.resolve(manifest.dirPath, dependencyPkg.packageLocation, modulePath)`
 
@@ -211,7 +211,7 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
     1. Let `reference` be `referenceOrAlias`
 
-    2. Let `dependencyPkg` be [**GET_PACKAGE**](#get_package)(`manifest`, {`ident`, `reference`})
+    2. Let `dependencyPkg` be [`GET_PACKAGE`](#get_package)`(manifest, {ident, reference})`
 
     3. Return `path.resolve(manifest.dirPath, dependencyPkg.packageLocation, modulePath)`
 
@@ -273,7 +273,7 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 RESOLVE_VIA_FALLBACK(manifest, ident)
 ```
 
-1. Let `topLevelPkg` be [**GET_PACKAGE**](#get_package)(`manifest`, {**null**, **null**})
+1. Let `topLevelPkg` be [`GET_PACKAGE`](#get_package)`(manifest, {null, null})`
 
 2. Let `referenceOrAlias` be the entry from `topLevelPkg.packageDependencies` referenced by `ident`
 
@@ -285,7 +285,7 @@ RESOLVE_VIA_FALLBACK(manifest, ident)
 
     1. Let `referenceOrAlias` be the entry from `manifest.fallbackPool` referenced by `ident`
 
-    2. Return it immediatly, whether it's defined or not
+    2. Return it immediately, whether it's defined or not
 
 ### FIND_PNP_MANIFEST
 
@@ -297,7 +297,7 @@ Finding the right PnP manifest to use for a resolution isn't always trivial. The
 
 - Assume that there is a single PnP manifest covering the whole project. This is the most common case, as even when referencing third-party projects (for example via the [`portal:` protocol](/features/protocols#whats-the-difference-between-link-and-portal)) their dependency trees are stored in the same manifest as the main project.
 
-  To do that, call [**FIND_CLOSEST_PNP_MANIFEST**](#find_closest_pnp_manifest)(`require.main.filename`) once at the start of the process, cache its result, and return it for each call to [**FIND_PNP_MANIFEST**](#find_pnp_manifest) (if you're running in Node.js, you can even use `require.resolve('pnpapi')` which will do this work for you).
+  To do that, call [`FIND_CLOSEST_PNP_MANIFEST`](#find_closest_pnp_manifest)`(require.main.filename)` once at the start of the process, cache its result, and return it for each call to [`FIND_PNP_MANIFEST`](#find_pnp_manifest) (if you're running in Node.js, you can even use `require.resolve('pnpapi')` which will do this work for you).
 
 - Try to operate within a multi-project world. **This is rarely required**. We support it inside the Node.js PnP loader, but only because of "project generator" tools like `create-react-app` which are run via `yarn create react-app` and require two different projects (the generator one `and` the generated one) to cooperate within the same Node.js process.
 
@@ -331,7 +331,7 @@ FIND_CLOSEST_PNP_MANIFEST(url)
 
 6. Otherwise,
 
-    1. Return [**FIND_PNP_MANIFEST**](#find_pnp_manifest)(`directoryPath`)
+    1. Return [`FIND_PNP_MANIFEST`](#find_pnp_manifest)`(directoryPath)`
 
 ### PARSE_BARE_IDENTIFIER
 
@@ -355,4 +355,4 @@ PARSE_BARE_IDENTIFIER(specifier)
 
 3. Set `modulePath` to the substring of `specifier` starting from `ident.length`
 
-4. Return {`ident`, `modulePath`}
+4. Return `{ident, modulePath}`
