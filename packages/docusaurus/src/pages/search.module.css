@@ -24,6 +24,18 @@
   font-size: 14px;
 
   background: #ffffff;
+
+  --ifm-link-decoration: underline;
+}
+
+.sponsor {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: bottom;
+}
+
+.sponsor img {
+  margin-right: 3px;
 }
 
 .search {
@@ -37,6 +49,10 @@
 
 .search::placeholder {
   font-style: italic;
+}
+
+.searchResults {
+  margin-top: var(--ifm-spacing-horizontal);
 }
 
 .resultCell {

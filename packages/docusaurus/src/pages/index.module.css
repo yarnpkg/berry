@@ -27,6 +27,10 @@
     box-shadow: none;
   }
 
+  .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) svg {
+    opacity: .8;
+  }
+
   .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) [class~="navbar__logo"] {
     filter: none;
   }

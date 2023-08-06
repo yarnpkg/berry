@@ -8,8 +8,8 @@
   --cli-color-block-value: #d7a856;
 
   --cli-color-inline-binary: #7a5ecc;
-  --cli-color-inline-path: #6c92c0;
-  --cli-color-inline-positional: #89b6db;
+  --cli-color-inline-path: #50569a;
+  --cli-color-inline-positional: #6c92c0;
   --cli-color-inline-dash: #6d6fc3;
   --cli-color-inline-option: #6d6fc3;
   --cli-color-inline-assign: #b37ed3;
@@ -48,12 +48,14 @@
 
 .path {
   color: var(--cli-color-path);
+}
 
+a.path {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.path:hover {
+a.path:hover {
   color: var(--cli-color-binary);
 }
 

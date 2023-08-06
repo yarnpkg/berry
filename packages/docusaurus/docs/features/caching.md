@@ -19,13 +19,9 @@ Yarn will by default cache everything you install and mutualize them for all oth
 
 When installed for the first time on a machine, packages are usually retrieved from the npm registry. While it usually works fine, it's not _always_ the case - the registry is known to experience issues from time to time that often result in failed installs. If you're not prepared, it may be a significant disruption for your developers, as switching branches and performing deploys can be much harder or unstable.
 
-Some companies try to avoid this problem by configuring their registry to a mirror they control (for example by having a server run [Verdaccio](/), an open-source implementation of the npm registry). It however requires a specific setup that isn't always easy to deploy to both developers and CI, and those systems sometimes come with [risks](https://medium.com/%2540alex.birsan/dependency-confusion-4a5d60fec610).
+Some companies try to avoid this problem by configuring their registry to a mirror they control (for example by having a server run [Verdaccio](https://verdaccio.org/), an open-source implementation of the npm registry). It however requires a specific setup that isn't always easy to deploy to both developers and CI, and those systems sometimes come with [risks](https://medium.com/%2540alex.birsan/dependency-confusion-4a5d60fec610).
 
 Yarn provides a very simple but effective alternative: by setting `enableGlobalCache` to false, it will save the package cache into a folder local to your project (by default `.yarn/cache`) that can then be added to Git. Every given commit is thus guaranteed to be installable, even should the npm registry go under.
-
-:::info
-We often get asked whether checking-in binary files is such a good idea, but it's not as clear cut as you'd think. Check [this page](/) for an analysis of the impact an offline mirror may have on a project.
-:::
 
 ### Zero-installs
 
@@ -47,4 +43,6 @@ By contrast, adding your cache to Git and using Yarn PnP gives you a single fold
 
 ### GitHub Actions
 
-A common use-case is to cache installs within GitHub Actions.
+:::info
+We're still investigating the exact set of defaults that make GH Action caching more efficient. It's likely that we'll provide an official `yarn-cache` action mid-term for this purpose.
+:::

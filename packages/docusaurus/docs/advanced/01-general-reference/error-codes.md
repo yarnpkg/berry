@@ -204,25 +204,25 @@ This error should be considered obsolete and not exist; open an issue if you hav
 
 One of your workspaces should depend on a dependency but doesn't.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints check`. In order to fix it simply run `yarn constraints fix` which will autofix all such errors.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints`. In order to fix it simply run `yarn constraints --fix` which will autofix all such errors.
 
 ## YN0024 - `CONSTRAINTS_INCOMPATIBLE_DEPENDENCY`
 
 One of your workspaces should depend on a specific version of a dependency but doesn't.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints check`. In order to fix it simply run `yarn constraints fix` which will autofix all such errors.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints`. In order to fix it simply run `yarn constraints --fix` which will autofix all such errors.
 
 ## YN0025 - `CONSTRAINTS_EXTRANEOUS_DEPENDENCY`
 
 One of your workspaces shouldn't depend on one of the dependencies it lists.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints check`. In order to fix it simply run `yarn constraints fix` which will autofix all such errors.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints`. In order to fix it simply run `yarn constraints --fix` which will autofix all such errors.
 
 ## YN0026 - `CONSTRAINTS_INVALID_DEPENDENCY`
 
 One of your workspaces lists an invalid dependency.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace probably shouldn't depend on the specified dependency in its current state. Since it currently does, Yarn emits this error when running `yarn constraints check`. Fixing this error require manual intervention as the fix is ambiguous from Yarn's point of view.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace probably shouldn't depend on the specified dependency in its current state. Since it currently does, Yarn emits this error when running `yarn constraints`. Fixing this error require manual intervention as the fix is ambiguous from Yarn's point of view.
 
 ## YN0027 - `CANT_SUGGEST_RESOLUTIONS`
 
@@ -420,7 +420,7 @@ Peer dependencies are a little complex, and debugging them may require a lot of 
 To use it, simply pass it the `p`-prefixed code provided in the original peer resolution error message:
 
 ```
-yarn explain peer-requirements pf649cd
+yarn explain peer-requirements pf649c
 ```
 
 ## YN0087 - `MIGRATION_SUCCESS`
