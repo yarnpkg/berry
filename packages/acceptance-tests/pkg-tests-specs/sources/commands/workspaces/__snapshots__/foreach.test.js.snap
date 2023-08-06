@@ -291,7 +291,7 @@ Done
 }
 `;
 
-exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
+exports[`Commands workspace foreach should run on current and descendant workspaces when --worktree is set 1`] = `
 {
   "code": 0,
   "stderr": "",

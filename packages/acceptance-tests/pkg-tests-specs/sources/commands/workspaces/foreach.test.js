@@ -93,7 +93,7 @@ async function setupWorkspaces(path) {
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
     test(
-      `should run on current and descendant workspaces by default`,
+      `should run on current and descendant workspaces when --worktree is set`,
       makeTemporaryEnv(
         {
           private: true,
@@ -103,7 +103,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `run`, `print`, {cwd: `${path}/packages/workspace-c`})).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--worktree`, `run`, `print`, {cwd: `${path}/packages/workspace-c`})).resolves.toMatchSnapshot();
         },
       ),
     );
@@ -119,7 +119,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name`, {cwd: `${path}/packages/workspace-c`});
+          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--worktree`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name ?? "root"`, {cwd: `${path}/packages/workspace-c`});
 
           const orderedStdout = stdout.trim().split(`\n`);
           expect(orderedStdout.pop()).toContain(`Done`);
@@ -127,7 +127,7 @@ describe(`Commands`, () => {
           // The exact order is unstable, so just make sure all the workspaces we expect to be there, are.
           orderedStdout.sort();
 
-          await expect({code, orderedStdout, stderr}).toMatchSnapshot();
+          expect({code, orderedStdout, stderr}).toMatchSnapshot();
         },
       ),
     );

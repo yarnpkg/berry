@@ -28,9 +28,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that it depends on through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. This is the default behavior.
 
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
+
+      - If \`-W,--worktree\` is set, Yarn will find workspaces to run the command on by looking at the current worktree.
 
       - If \`--from\` is set, Yarn will use the packages matching the 'from' glob as the starting point for any recursive search.
 
@@ -58,16 +60,24 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     ]],
   });
 
-  recursive = Option.Boolean(`-R,--recursive`, false, {
-    description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
-  });
+  private schema = [
+    t.hasKeyRelationship(`all`, t.KeyRelationship.Forbids, [`recursive`, `since`, `worktree`]),
+  ];
 
   from = Option.Array(`--from`, [], {
     description: `An array of glob pattern idents or paths from which to base any recursion`,
   });
 
-  all = Option.Boolean(`-A,--all`, false, {
+  all = Option.Boolean(`-A,--all`, true, {
     description: `Run the command on all workspaces of a project`,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, false, {
+    description: `Run the command on the current workspace and all of its recursive dependencies`,
+  });
+
+  worktree = Option.Boolean(`-W,--worktree`, true, {
+    description: `Run the command on all workspaces of the current worktree`,
   });
 
   verbose = Option.Boolean(`-v,--verbose`, {
@@ -132,7 +142,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = this.all
+    const rootWorkspace = !this.worktree && !this.recursive
       ? project.topLevelWorkspace
       : cwdWorkspace!;
 
