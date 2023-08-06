@@ -627,7 +627,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           scope,
           localName,
         };
-      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz.*$/))) {
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz(\?.*)?$/))) {
         const [, scope, localName, split, version] = match;
 
         if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)
