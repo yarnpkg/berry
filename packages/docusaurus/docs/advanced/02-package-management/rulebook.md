@@ -82,7 +82,7 @@ Note that while `createRequire` is Node 12+, a polyfill exists under the name [`
 
 **Solution:** If you're writing a [script](/configuration/manifest#scripts), you can just refer to the binary by its name! So instead of `node_modules/.bin/jest -w`, prefer just writing `jest -w` which will work just fine. If for some reason `jest` isn't available, check that the current package properly [defines it as a dependency](#a-package-should-only-require-what-it-lists-in-its-dependencies).
 
-Sometimes you may find yourself having slightly more complex needs, for example if you wish to spawn a script with specific Node flags. Depending on the context we recommend passing options via the [`NODE_OPTIONS` environment variable](https://nodejs.org/api/cli.html#cli_node_options_options) rather than the CLI, but if that's not an option you can use `yarn bin <name>` to get the specified binary path:
+Sometimes you may find yourself having slightly more complex needs, for example if you wish to spawn a script with specific Node flags. Depending on the context we recommend passing options via the [`NODE_OPTIONS` environment variable](https://nodejs.org/api/cli.html#cli_node_options_options) rather than the CLI, but if that's not an option you can use `yarn bin name` to get the specified binary path:
 
 ```
 yarn node --inspect $(yarn bin jest)
@@ -98,7 +98,7 @@ yarn run --inspect jest
 
 **Why?** This is a tricky one ... basically, it boils down to: package managers are not interchangeable. Using one package manager on a project installed by another is a recipe for troubles, as they follow different configuration settings and rules. For example, Yarn offers a hook system that allows its users to track which scripts are executed and how much time they take. Because `npm run` wouldn't know how to call these hooks, they would get ignore, leading to frustrating experiences for your consumers.
 
-**Solution:** While not the most esthetically pleasing option, the most portable one at the moment is to simply replace `npm run <name>` (or `yarn run <name>`) in your postinstall scripts and derived by the following:
+**Solution:** While not the most esthetically pleasing option, the most portable one at the moment is to simply replace `npm run name` (or `yarn run name`) in your postinstall scripts and derived by the following:
 
 ```
 $npm_execpath run <name>

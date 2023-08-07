@@ -15,6 +15,7 @@ Features in `master` can be tried out by running `yarn set version from sources`
 - Some important defaults have changed:
   - `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible.
   - `yarn init` will no longer use zero-install by default. You still can enable it, but it should make it easier to start one-of projects without having to rewrite the configuration afterwards.
+  - `yarn workspaces foreach` now requires one of `--all`, `--recursive`, `--since`, or `--worktree` to be explicitly specified; the previous default was `--worktree`, but it was rarely what users expected.
 
 - All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
   - This doesn't change anything to the plugin API we provide, which will keep being maintained.

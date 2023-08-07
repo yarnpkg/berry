@@ -23,7 +23,7 @@ Once you're done with your changes, run `yarn patch-commit -s` with the temporar
 
 ## Maintaining patches
 
-By default, `yarn patch` will always reset the patch. If you wish to add new changes, use the `-u,--update` flag and follow the same procedure as before - your patch will be regenerated.
+By default, `yarn patch` will always reset the patch. If you wish to add new changes, use the `yarn patch ! --update` flag and follow the same procedure as before - your patch will be regenerated.
 
 ## Limitations
 

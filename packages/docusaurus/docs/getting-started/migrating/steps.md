@@ -19,14 +19,14 @@ Note that those commands only need to be run once for the whole project and will
 ## Migration steps
 
 1. Make sure you're using Node 18+
-2. Run `corepack enable` to activate [Corepack](https://nodejs.org/api/corepack.html)
+2. Run <CommandLineHighlight type={`inlineCode`} lines={[{type: `command`, command: {name: `corepack`, path: [`enable`], argv: [`enable`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `enable`}]}]}/> to activate [Corepack](https://nodejs.org/api/corepack.html)
 2. Go into your project directory
 3. Run `yarn set version berry`
-4. Convert your `.npmrc` and `.yarnrc` files into [`.yarnrc.yml`](/configuration/yarnrc) (see also [1](/getting-started/migration#update-your-configuration-to-the-new-settings), [2](https://yarnpkg.com/getting-started/migration#dont-use-npmrc-files))
+4. Convert your `.npmrc` and `.yarnrc` files into [`.yarnrc.yml`](/configuration/yarnrc) (details [here](/migration/guide#update-your-configuration-to-the-new-settings))
 5. Run `yarn install` to migrate the lockfile
 6. Commit all changes
 
-Good, you should now have a working Yarn install! Some things might still require some adjustments in your CI scripts (for example the deprecation of [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), or the renaming of `--frozen-lockfile` into `--immutable`), but at least we have a working project.
+Good, you should now have a working Yarn install! Some things might still require some adjustments in your CI scripts (for example the deprecation of [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), or the renaming of `--frozen-lockfile` into `yarn install ! --immutable`), but at least we have a working project.
 
 ## Breaking changes
 
@@ -104,7 +104,7 @@ nmHoistingLimits: workspaces
 | Yarn Classic (1.x) | Yarn Modern |
 | --- | --- |
 | `yarn audit` | `yarn npm audit` |
-| `yarn create` | `yarn dlx create-<name>` |
+| `yarn create` | `yarn dlx create-NAME` |
 | `yarn global` | `yarn dlx` ([Read more](#use-yarn-dlx-instead-of-yarn-global)) |
 | `yarn info` | `yarn npm info` |
 | `yarn list` | `yarn info -AR` (`yarn info ! --json`?) |

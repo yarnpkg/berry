@@ -627,7 +627,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           scope,
           localName,
         };
-      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz$/))) {
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz(\?.*)?$/))) {
         const [, scope, localName, split, version] = match;
 
         if ((localName === `unconventional-tarball` || localName === `private-unconventional-tarball`) && split === `-`)
@@ -790,8 +790,19 @@ export const generatePkgDriver = ({
           return content.replace(/(https?):\/\/localhost:\d+/g, `$1://registry.example.org`);
         }
 
+        function cleanupPackageJson(packageJson: Record<string, any>) {
+          for (const key in packageJson) {
+            if (typeof packageJson[key] === `object`) {
+              packageJson[key] = cleanupPackageJson(packageJson[key]);
+            } else if (typeof packageJson[key] === `string`) {
+              packageJson[key] = packageJson[key].replace(/https?:\/\/registry.example.org/, registryUrl);
+            }
+          }
+          return packageJson;
+        }
+
         // Writes a new package.json file into our temporary directory
-        await xfs.writeJsonPromise(npath.toPortablePath(`${path}/package.json`), await deepResolve(packageJson));
+        await xfs.writeJsonPromise(npath.toPortablePath(`${path}/package.json`), await deepResolve(cleanupPackageJson(packageJson)));
 
         const run = async (...args: Array<any>) => {
           let callDefinition = {};

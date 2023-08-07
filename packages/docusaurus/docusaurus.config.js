@@ -53,7 +53,7 @@ const config = {
         docs: {
           routeBasePath: `/`,
           sidebarPath: require.resolve(`./sidebars.js`),
-          editUrl: `https://github.com/yarnpkg/berry/tree/master/packages/docusaurus/`,
+          editUrl: `https://github.com/yarnpkg/berry/edit/master/packages/docusaurus/`,
           remarkPlugins: [
             commandLineHighlight.plugin(),
             autoLink.plugin([{

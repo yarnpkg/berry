@@ -12,9 +12,7 @@ The preferred way to manage Yarn is by-project and through [Corepack](https://no
 
 1. Start by enabling Corepack, if it isn't already:
 
-```bash
-corepack enable
-```
+<CommandLineHighlight type={`code`} lines={[{type: `command`, command: {name: `corepack`, path: [`enable`], argv: [`enable`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `enable`}]}]}/>
 
 2. Then initialize a new project:
 
