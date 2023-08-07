@@ -1,5 +1,7 @@
-import {Limit}  from 'p-limit';
-import {Worker} from 'worker_threads';
+import PLimit, {Limit} from 'p-limit';
+import {Worker}        from 'worker_threads';
+
+import * as nodeUtils  from './nodeUtils';
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
@@ -7,12 +9,20 @@ type PoolWorker<TOut> = Worker & {
   [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
 };
 
+type WorkerPoolOptions = {
+  limit?: Limit;
+};
+
 export class WorkerPool<TIn, TOut> {
   private workers: Array<PoolWorker<TOut>> = [];
 
   private cleanupInterval: ReturnType<typeof setInterval>;
 
-  constructor(private source: string, private limit: Limit) {
+  private limit: Limit;
+
+  constructor(private source: string, opts: WorkerPoolOptions = {}) {
+    this.limit = opts.limit ?? PLimit(nodeUtils.availableParallelism());
+
     this.cleanupInterval = setInterval(() => {
       if (this.limit.pendingCount === 0 && this.limit.activeCount === 0) {
         // Start terminating one worker at a time when there are no tasks left.

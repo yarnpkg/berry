@@ -388,7 +388,7 @@
       "title": "Amount of workers that are allowed to run at the same time.",
       "description": "We default to the platform parallelism, but for some CI, `os.cpus` may not report accurate values and may overwhelm their containers",
       "type": "number",
-      "default": 50
+      "default": "os.availableParallelism()"
     },
     "networkSettings": {
       "_package": "@yarnpkg/core",
