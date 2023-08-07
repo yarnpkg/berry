@@ -45,7 +45,7 @@ export class TarballFileFetcher implements Fetcher {
       compressionLevel: opts.project.configuration.get(`compressionLevel`),
       prefixPath: structUtils.getIdentVendorPath(locator),
       stripComponents: 1,
-      limit: opts.project.configuration.getLimit(`workerPoolConcurrency`),
+      poolSize: opts.project.configuration.getLimit(`workerPoolConcurrency`),
     });
   }
 }

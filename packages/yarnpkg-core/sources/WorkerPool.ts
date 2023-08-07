@@ -10,7 +10,7 @@ type PoolWorker<TOut> = Worker & {
 };
 
 type WorkerPoolOptions = {
-  limit?: Limit;
+  poolSize?: Limit;
 };
 
 export class WorkerPool<TIn, TOut> {
@@ -21,7 +21,7 @@ export class WorkerPool<TIn, TOut> {
   private limit: Limit;
 
   constructor(private source: string, opts: WorkerPoolOptions = {}) {
-    this.limit = opts.limit ?? PLimit(nodeUtils.availableParallelism());
+    this.limit = opts.poolSize ?? PLimit(nodeUtils.availableParallelism());
 
     this.cleanupInterval = setInterval(() => {
       if (this.limit.pendingCount === 0 && this.limit.activeCount === 0) {
