@@ -41,7 +41,7 @@ export class TarballFileFetcher implements Fetcher {
   async fetchFromDisk(locator: Locator, opts: FetchOptions) {
     const sourceBuffer = await fileUtils.fetchArchiveFromLocator(locator, opts);
 
-    return await tgzUtils.convertToZip(sourceBuffer,  {
+    return await tgzUtils.convertToZip(sourceBuffer, {
       compressionLevel: opts.project.configuration.get(`compressionLevel`),
       prefixPath: structUtils.getIdentVendorPath(locator),
       stripComponents: 1,
