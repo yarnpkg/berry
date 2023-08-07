@@ -64,7 +64,7 @@ export class NpmSemverFetcher implements Fetcher {
       });
     }
 
-    return await tgzUtils.convertToZip(sourceBuffer,  {
+    return await tgzUtils.convertToZip(sourceBuffer, {
       compressionLevel: opts.project.configuration.get(`compressionLevel`),
       prefixPath: structUtils.getIdentVendorPath(locator),
       stripComponents: 1,

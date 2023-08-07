@@ -63,7 +63,7 @@ export class GitFetcher implements Fetcher {
     const sourceBuffer = await xfs.readFilePromise(packagePath);
 
     return await miscUtils.releaseAfterUseAsync(async () => {
-      return await tgzUtils.convertToZip(sourceBuffer,  {
+      return await tgzUtils.convertToZip(sourceBuffer, {
         compressionLevel: opts.project.configuration.get(`compressionLevel`),
         prefixPath: structUtils.getIdentVendorPath(locator),
         stripComponents: 1,
