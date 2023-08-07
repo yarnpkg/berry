@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/cli": minor
   "@yarnpkg/core": minor
   "@yarnpkg/plugin-file": minor
   "@yarnpkg/plugin-git": minor
@@ -26,7 +27,6 @@ declined:
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
   - "@yarnpkg/extensions"
   - "@yarnpkg/nm"
