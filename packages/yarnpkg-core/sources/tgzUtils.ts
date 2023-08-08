@@ -36,18 +36,27 @@ export interface ExtractBufferOptions {
   compressionLevel?: ZipCompression;
   prefixPath?: PortablePath;
   stripComponents?: number;
+}
+
+export interface ConvertToZipOptions extends ExtractBufferOptions {
   poolSize?: Limit;
 }
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
 
-export async function convertToZip(tgz: Buffer, opts: ExtractBufferOptions) {
+export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
   workerPool ||= new WorkerPool(getZipWorkerSource(), {poolSize: opts.poolSize});
 
-  await workerPool.run({tmpFile, tgz, opts});
+  const bufferOpts: ExtractBufferOptions = {
+    compressionLevel: opts.compressionLevel,
+    prefixPath: opts.prefixPath,
+    stripComponents: opts.stripComponents,
+  };
+
+  await workerPool.run({tmpFile, tgz, opts: bufferOpts});
 
   return new ZipFS(tmpFile, {level: opts.compressionLevel});
 }
