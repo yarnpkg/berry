@@ -95,7 +95,7 @@
     "typedoc": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch",
     "typedoc-neo-theme": "^1.0.7",
     "typedoc-plugin-yarn": "workspace:^",
-    "typescript": "5.2.0-beta",
+    "typescript": "5.2.1-rc",
     "unescape-html": "^1.1.0",
     "unfetch": "^4.1.0",
     "unified": "^7.1.0",
