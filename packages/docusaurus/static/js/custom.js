@@ -3,13 +3,13 @@
 const navbarFixedTop = document.getElementsByClassName(`navbar--fixed-top`);
 
 const intersectionObserver = new IntersectionObserver(
-  ([e]) => e.target.isConnected && document.body.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
+  ([e]) => e.target.isConnected && document.documentElement.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
   {threshold: [1]},
 );
 
 const mutationObserver = new MutationObserver(() => {
   if (navbarFixedTop.length === 0) {
-    document.body.classList.remove(`navbar--is-fixed`);
+    document.documentElement.classList.remove(`navbar--is-fixed`);
   } else {
     intersectionObserver.observe(navbarFixedTop[0]);
   }
