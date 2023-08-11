@@ -1,4 +1,4 @@
-/* global window, document, IntersectionObserver */
+/* global window, document, IntersectionObserver, MutationObserver */
 
 const navbarCheck = document.createElement(`div`);
 navbarCheck.style.cssText = `position: absolute; top: 0; left: 0; right: 0; z-index: 9999; margin-top: var(--index-navbar-margin-top); height: var(--ifm-navbar-height); pointer-events: none;`;
@@ -21,6 +21,17 @@ document.addEventListener(`DOMContentLoaded`, () => {
   document.documentElement.classList.toggle(`navbar--is-fixed`, bbox.top < 0);
 
   console.log(`Set fixed`, bbox.top);
+});
+
+const attributeMonitor = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    console.trace(mutation);
+  });
+});
+
+attributeMonitor.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: [`class`],
 });
 
 document.addEventListener(`scroll`, () => {
