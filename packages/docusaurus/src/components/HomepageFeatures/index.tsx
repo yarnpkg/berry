@@ -76,7 +76,7 @@ function Feature({icon, title, description}: FeatureItem) {
   return (
     <div className={clsx(`col col--4`, styles.feature)}>
       <div className={`text--center`}>
-        <img className={styles.icon} src={`/img/${icon}.png`} />
+        <img className={styles.icon} width={200} height={180} src={`/img/${icon}.png`} />
       </div>
       <div className={`text--center padding-horiz--md`}>
         <h3>{title}</h3>
