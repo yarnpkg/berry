@@ -168,6 +168,8 @@
   border: 1px solid white;
   background: #000000cc;
   color: #ffffff;
+
+  --ifm-link-color: #5cb0fa;
 }
 
 @media (min-width: 996px) {
