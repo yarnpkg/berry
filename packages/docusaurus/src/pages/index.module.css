@@ -15,11 +15,11 @@
     --index-navbar-margin-top: 40px;
   }
 
-  :global(body[x-doc-route="/"] .navbar) {
+  :global(html[x-doc-route="/"] .navbar) {
     margin-top: var(--index-navbar-margin-top);
   }
 
-  :global(html:not(.navbar--is-fixed) body[x-doc-route="/"] .navbar) {
+  :global(html[x-doc-route="/"]:not(.navbar--is-fixed) .navbar) {
     --ifm-navbar-link-color: #ffffff;
     --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
 
@@ -27,11 +27,11 @@
     box-shadow: none;
   }
 
-  :global(html:not(.navbar--is-fixed) body[x-doc-route="/"] .navbar svg) {
+  :global(html[x-doc-route="/"]:not(.navbar--is-fixed) .navbar svg) {
     opacity: .8;
   }
 
-  :global(html:not(.navbar--is-fixed) body[x-doc-route="/"] .navbar .navbar__logo) {
+  :global(html[x-doc-route="/"]:not(.navbar--is-fixed) .navbar .navbar__logo) {
     filter: none;
   }
 }

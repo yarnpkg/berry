@@ -83,11 +83,11 @@ html {
   filter: invert(100%) invert(15%) sepia(39%) saturate(2287%) hue-rotate(222deg) brightness(92%) contrast(94%);
 }
 
-body:not([x-doc-route="/"]) footer {
+html:not([x-doc-route="/"]) footer {
   display: none;
 }
 
-body:not([x-doc-route="/"]) .main-wrapper > :last-child {
+html:not([x-doc-route="/"]) .main-wrapper > :last-child {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 
@@ -131,7 +131,7 @@ body:not([x-doc-route="/"]) .main-wrapper > :last-child {
   padding: 0.5rem;
 }
 
-body[x-doc-route^="/configuration/"] .col {
+html[x-doc-route^="/configuration/"] .col {
   max-width: 100% !important;
 }
 

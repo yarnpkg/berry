@@ -16,6 +16,14 @@ document.addEventListener(`DOMContentLoaded`, () => {
   document.documentElement.classList.toggle(`navbar--is-fixed`, bbox.top < 0);
 });
 
+// ---
+
+document.addEventListener(`DOMContentLoaded`, () => {
+  document.html.setAttribute(`x-doc-route`, window.location.pathname);
+});
+
+// ---
+
 (function(h, o, u, n, d) {
   h = h[d] = h[d] || {q: [], onReady(c) {
     h.q.push(c);
