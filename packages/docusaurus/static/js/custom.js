@@ -1,28 +1,18 @@
-/* global window, document, IntersectionObserver, MutationObserver */
+/* global window, document, IntersectionObserver */
 
-const navbarFixedTop = document.getElementsByClassName(`navbar--fixed-top`);
+const NAVBAR_FIXED_THRESHOLD = 0;
+
+const navbarCheck = document.createElement(`div`);
+navbarCheck.style.cssText = `position: absolute; top: 0; left: 0; right: 0; z-index: 9999; margin-top: var(--index-navbar-margin-top); height: var(--ifm-navbar-height); pointer-events: none;`;
 
 const intersectionObserver = new IntersectionObserver(
-  ([e]) => e.target.isConnected && document.documentElement.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
-  {threshold: [1]},
+  ([e]) => document.documentElement.classList.toggle(`navbar--is-fixed`, e.intersectionRatio <= NAVBAR_FIXED_THRESHOLD),
+  {threshold: [NAVBAR_FIXED_THRESHOLD]},
 );
 
-const mutationObserver = new MutationObserver(e => {
-  if (e.every(mutation => mutation.type === `attributes` && mutation.target === document.documentElement))
-    return;
-
-  if (navbarFixedTop.length === 0) {
-    document.documentElement.classList.remove(`navbar--is-fixed`);
-  } else {
-    intersectionObserver.observe(navbarFixedTop[0]);
-  }
-});
-
-mutationObserver.observe(document.documentElement, {
-  attributes: true,
-  attributeFilter: [`class`],
-  childList: true,
-  subtree: true,
+document.addEventListener(`DOMContentLoaded`, () => {
+  document.body.appendChild(navbarCheck);
+  intersectionObserver.observe(navbarCheck);
 });
 
 (function(h, o, u, n, d) {
