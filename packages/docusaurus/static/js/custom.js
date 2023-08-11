@@ -15,13 +15,11 @@ const mutationObserver = new MutationObserver(() => {
   }
 });
 
-document.addEventListener(`DOMContentLoaded`, () => {
-  mutationObserver.observe(document.body, {
-    attributes: true,
-    attributeFilter: [`class`],
-    childList: true,
-    subtree: true,
-  });
+mutationObserver.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: [`class`],
+  childList: true,
+  subtree: true,
 });
 
 (function(h, o, u, n, d) {
