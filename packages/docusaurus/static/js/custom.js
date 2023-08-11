@@ -1,16 +1,27 @@
-/* global window, document, IntersectionObserver */
+/* global window, document, IntersectionObserver, MutationObserver */
 
-const observer = new IntersectionObserver(
-  ([e]) => e.target.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
+const navbarFixedTop = document.getElementsByClassName(`navbar--fixed-top`);
+
+const intersectionObserver = new IntersectionObserver(
+  ([e]) => e.target.isConnected && document.body.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
   {threshold: [1]},
 );
 
-document.addEventListener(`scroll`, () => {
-  const navbar = document.querySelector(`.navbar.navbar--fixed-top`);
-  if (!navbar)
-    return;
+const mutationObserver = new MutationObserver(() => {
+  if (navbarFixedTop.length === 0) {
+    document.body.classList.remove(`navbar--is-fixed`);
+  } else {
+    intersectionObserver.observe(navbarFixedTop[0]);
+  }
+});
 
-  observer.observe(navbar);
+document.addEventListener(`DOMContentLoaded`, () => {
+  mutationObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: [`class`],
+    childList: true,
+    subtree: true,
+  });
 });
 
 (function(h, o, u, n, d) {
