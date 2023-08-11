@@ -1,18 +1,19 @@
 /* global window, document, IntersectionObserver */
 
-const NAVBAR_FIXED_THRESHOLD = 0;
-
 const navbarCheck = document.createElement(`div`);
 navbarCheck.style.cssText = `position: absolute; top: 0; left: 0; right: 0; z-index: 9999; margin-top: var(--index-navbar-margin-top); height: var(--ifm-navbar-height); pointer-events: none;`;
 
 const intersectionObserver = new IntersectionObserver(
-  ([e]) => document.documentElement.classList.toggle(`navbar--is-fixed`, e.intersectionRatio <= NAVBAR_FIXED_THRESHOLD),
-  {threshold: [NAVBAR_FIXED_THRESHOLD]},
+  ([e]) => document.documentElement.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
+  {threshold: [1]},
 );
 
 document.addEventListener(`DOMContentLoaded`, () => {
   document.body.appendChild(navbarCheck);
   intersectionObserver.observe(navbarCheck);
+
+  const bbox = navbarCheck.getBoundingClientRect();
+  document.documentElement.classList.toggle(`navbar--is-fixed`, bbox.top < 0);
 });
 
 (function(h, o, u, n, d) {
