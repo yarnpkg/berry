@@ -7,7 +7,10 @@ const intersectionObserver = new IntersectionObserver(
   {threshold: [1]},
 );
 
-const mutationObserver = new MutationObserver(() => {
+const mutationObserver = new MutationObserver(e => {
+  if (e.every(mutation => mutation.type === `attributes` && mutation.target === document.documentElement))
+    return;
+
   if (navbarFixedTop.length === 0) {
     document.documentElement.classList.remove(`navbar--is-fixed`);
   } else {
