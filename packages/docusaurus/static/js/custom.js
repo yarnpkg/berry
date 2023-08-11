@@ -17,10 +17,14 @@ document.addEventListener(`DOMContentLoaded`, () => {
   document.body.appendChild(navbarCheck);
   intersectionObserver.observe(navbarCheck);
 
-  console.log(`Set fixed`, bbox.top);
-
   const bbox = navbarCheck.getBoundingClientRect();
   document.documentElement.classList.toggle(`navbar--is-fixed`, bbox.top < 0);
+
+  console.log(`Set fixed`, bbox.top);
+});
+
+document.addEventListener(`scroll`, () => {
+  console.log(`scroll`);
 });
 
 // ---
