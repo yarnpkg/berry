@@ -1,0 +1,55 @@
+{
+  "name": "@yarnpkg/completion",
+  "version": "1.0.0",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "exports": {
+    ".": "./sources/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/fslib": "workspace:^",
+    "clcs": "portal:/mnt/projects/git/clipanion/clcs",
+    "which": "^3.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.1",
+    "@types/semver": "^7.1.0",
+    "@types/which": "^3",
+    "esbuild": "npm:esbuild-wasm@^0.15.15",
+    "rollup": "^2.59.0",
+    "rollup-plugin-esbuild": "^3.0.2",
+    "rollup-plugin-preserve-shebang": "^1.0.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "semver": "^7.1.2"
+  },
+  "scripts": {
+    "build:completion:engine": "rollup -c",
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\"",
+    "release": "yarn npm publish",
+    "test": "run test:unit \"$(pwd)\""
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "exports": {
+      ".": "./lib/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-completion"
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  }
+}

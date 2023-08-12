@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10
 
 "@aashutoshrathi/word-wrap@npm:^1.2.3":
@@ -6548,6 +6548,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/which@npm:^3":
+  version: 3.0.0
+  resolution: "@types/which@npm:3.0.0"
+  checksum: 0dccb4b39b19dbf24e45461da581e1e6329ca06f28e467348d982d57ce4da342762c6594d3aa759682d26b9238e0a05938eb64221e7420ea890a1aaca22c2fca
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:^8.5.1":
   version: 8.5.3
   resolution: "@types/ws@npm:8.5.3"
@@ -7199,6 +7206,7 @@ __metadata:
   dependencies:
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/builder": "workspace:^"
+    "@yarnpkg/completion": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
@@ -7236,6 +7244,28 @@ __metadata:
     typanion: "npm:^3.14.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/completion@workspace:^, @yarnpkg/completion@workspace:packages/yarnpkg-completion":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/completion@workspace:packages/yarnpkg-completion"
+  dependencies:
+    "@rollup/plugin-commonjs": "npm:^21.0.1"
+    "@rollup/plugin-json": "npm:^6.0.0"
+    "@rollup/plugin-node-resolve": "npm:^11.0.1"
+    "@types/semver": "npm:^7.1.0"
+    "@types/which": "npm:^3"
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/fslib": "workspace:^"
+    clcs: "portal:/mnt/projects/git/clipanion/clcs"
+    esbuild: "npm:esbuild-wasm@^0.15.15"
+    rollup: "npm:^2.59.0"
+    rollup-plugin-esbuild: "npm:^3.0.2"
+    rollup-plugin-preserve-shebang: "npm:^1.0.1"
+    rollup-plugin-terser: "npm:^7.0.2"
+    semver: "npm:^7.1.2"
+    which: "npm:^3.0.1"
   languageName: unknown
   linkType: soft
 
@@ -10606,6 +10636,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clcs@portal:/mnt/projects/git/clipanion/clcs::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "clcs@portal:/mnt/projects/git/clipanion/clcs::locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "clean-css@npm:^5.2.2, clean-css@npm:^5.3.0":
   version: 5.3.1
   resolution: "clean-css@npm:5.3.1"
@@ -10682,25 +10718,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:2.0.0-rc.16":
-  version: 2.0.0-rc.16
-  resolution: "clipanion@npm:2.0.0-rc.16"
+"clipanion@portal:/mnt/projects/git/clipanion::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "clipanion@portal:/mnt/projects/git/clipanion::locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
   dependencies:
-    chalk: "npm:^2.4.2"
-  checksum: 312910c71e0e7817f4298a75daa4c9ae24a09f231bf5961b3507f87535af4f406abf4391eceb89e803dac2a374d82de8244e8f4515e3e49c95ae98dfd100cda6
-  languageName: node
-  linkType: hard
-
-"clipanion@npm:^4.0.0-rc.2":
-  version: 4.0.0-rc.2
-  resolution: "clipanion@npm:4.0.0-rc.2"
-  dependencies:
+    clcs: "workspace:^"
     typanion: "npm:^3.8.0"
   peerDependencies:
     typanion: "*"
-  checksum: 00a478d46f2983eba02b059a16a3c1fc3f1de2a056d2f75386e253c5e8b01322fdbdd1db1dfdb57ccc81d8fd57c5fc9890ee96003b5702ac5692f1397c2c9c6b
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "clipboardy@npm:^2.3.0":
   version: 2.3.0
@@ -27017,6 +27044,15 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
+"rollup-plugin-preserve-shebang@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "rollup-plugin-preserve-shebang@npm:1.0.1"
+  dependencies:
+    magic-string: "npm:^0.25.7"
+  checksum: 880c042af35f0dd1b6915020ac466441bdaa1ad3f78e395c77bbc1afe929f13eaa96e9d32d689f6750fc69322af71d6eea9cd5a475eaeed06df547f2f2ba2a80
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-terser@npm:^7.0.2":
   version: 7.0.2
   resolution: "rollup-plugin-terser@npm:7.0.2"
@@ -27032,8 +27068,8 @@ pem@dexus/pem:
   linkType: hard
 
 "rollup@npm:^2.59.0":
-  version: 2.59.0
-  resolution: "rollup@npm:2.59.0"
+  version: 2.79.1
+  resolution: "rollup@npm:2.79.1"
   dependencies:
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
@@ -27041,7 +27077,7 @@ pem@dexus/pem:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: c4dd25acc1a231cceaa4f2e6ae412b258517f522ba9b6ec42e273636feeaba422d76bd145ac332f0fec97dc100c213db848f93725e3fc718d3fc29a69b032a5a
+  checksum: df087b701304432f30922bbee5f534ab189aa6938bd383b5686c03147e0d00cd1789ea10a462361326ce6b6ebe448ce272ad3f3cc40b82eeb3157df12f33663c
   languageName: node
   linkType: hard
 
@@ -31454,6 +31490,17 @@ pem@dexus/pem:
   bin:
     node-which: ./bin/node-which
   checksum: 4782f8a1d6b8fc12c65e968fea49f59752bf6302dc43036c3bf87da718a80710f61a062516e9764c70008b487929a73546125570acea95c5b5dcc8ac3052c70f
+  languageName: node
+  linkType: hard
+
+"which@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "which@npm:3.0.1"
+  dependencies:
+    isexe: "npm:^2.0.0"
+  bin:
+    node-which: bin/which.js
+  checksum: adf720fe9d84be2d9190458194f814b5e9015ae4b88711b150f30d0f4d0b646544794b86f02c7ebeec1db2029bc3e83a7ff156f542d7521447e5496543e26890
   languageName: node
   linkType: hard
 
