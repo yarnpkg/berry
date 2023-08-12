@@ -721,7 +721,7 @@ export class Project {
   async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
     const packageExtensions = await this.configuration.getPackageExtensions();
 
-    const pkg = await this.configuration.normalizePackage(originalPkg, {packageExtensions});
+    const pkg = this.configuration.normalizePackage(originalPkg, {packageExtensions});
 
     for (const [identHash, descriptor] of pkg.dependencies) {
       const dependency = await this.configuration.reduceHook(hooks => {
