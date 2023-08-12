@@ -96,7 +96,7 @@ The following changes only affect people writing Yarn plugins:
 
 - `configuration.{packageExtensions,refreshPackageExtensions}` have been removed. Use `configuration.getPackageExtensions` instead.
 
-- `configuration.normalizePackage` is now `async`.
+- `configuration.normalizePackage` now requires a `packageExtensions` option.
 
 ### Installs
 

@@ -664,6 +664,8 @@ export interface ConfigurationValueMap {
 
 export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
 
+export type PackageExtensions = Map<IdentHash, Array<[string, Array<PackageExtension>]>>;
+
 type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   type:
   | (T extends boolean ? SettingsType.BOOLEAN : never)
@@ -1738,9 +1740,12 @@ export class Configuration {
     return {os, cpu, libc};
   }
 
-  private packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> | null = null;
+  private packageExtensions: PackageExtensions | null = null;
 
-  async getPackageExtensions() {
+  /**
+   * Computes and caches the package extensions.
+   */
+  async getPackageExtensions(): Promise<PackageExtensions> {
     if (this.packageExtensions !== null)
       return this.packageExtensions;
 
@@ -1815,13 +1820,11 @@ export class Configuration {
     }));
   }
 
-  async normalizePackage(original: Package) {
+  normalizePackage(original: Package, {packageExtensions}: {packageExtensions: PackageExtensions}) {
     const pkg = structUtils.copyPackage(original);
 
     // We use the extensions to define additional dependencies that weren't
     // properly listed in the original package definition
-
-    const packageExtensions = await this.getPackageExtensions();
 
     const extensionsPerIdent = packageExtensions.get(original.identHash);
     if (typeof extensionsPerIdent !== `undefined`) {
