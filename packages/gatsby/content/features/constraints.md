@@ -209,8 +209,8 @@ We define a `gen_enforced_dependency` rule that requires each dependency of each
 
 ```prolog
 gen_enforced_dependency(WorkspaceCwd, DependencyIdent, 'workspace:*', DependencyType) :-
-  workspace_ident(_, DependencyIdent),
-  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, DependencyType).
+  workspace_has_dependency(WorkspaceCwd, DependencyIdent, _, DependencyType),
+  workspace_ident(_, DependencyIdent).
 ```
 
-We define a `gen_enforced_dependency` rule that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The final `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).
+We define a `gen_enforced_dependency` rule that requires the dependency range `workspace:*` to be used if the dependency name is also the name of a valid workspace. The `workspace_has_dependency` check is there to ensure that this rule is only applied on workspace that currently depend on the specified workspace in the first place (if it wasn't there, the rule would instead force all workspaces to depend on one another).
