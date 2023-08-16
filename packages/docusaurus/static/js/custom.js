@@ -9,6 +9,8 @@ const intersectionObserver = new IntersectionObserver(
 );
 
 document.addEventListener(`scroll`, () => {
+  if (!navbarCheck.parentNode)
+    document.body.appendChild(navbarCheck);
   intersectionObserver.observe(navbarCheck);
 });
 
