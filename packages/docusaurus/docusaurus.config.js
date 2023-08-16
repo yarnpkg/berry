@@ -4,6 +4,8 @@
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 
+const fs = require(`fs`);
+
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 
@@ -96,7 +98,7 @@ const config = {
         title: `Yarn`,
         logo: {
           alt: `Yarn Logo`,
-          src: `img/yarn-white.svg`,
+          src: `data:image/svg+xml;base64,${fs.readFileSync(`${__dirname}/static/img/yarn-white.svg`, `base64`)}`,
         },
         items: [
           {
