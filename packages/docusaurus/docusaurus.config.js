@@ -83,7 +83,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/social-preview.png',
+      image: `img/social-preview.png`,
       colorMode: {
         defaultMode: `light`,
         disableSwitch: true,
