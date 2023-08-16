@@ -16,7 +16,7 @@ const autoLink = require(`./src/remark/autoLink`);
 const config = {
   title: `Yarn`,
   tagline: `Yarn, the modern JavaScript package manager`,
-  url: `https://yarnpkg.com`,
+  url: process.env.DEPLOY_URL ?? `https://yarnpkg.com`,
   baseUrl: `/`,
   // TODO: Switch back to `throw`
   onBrokenLinks: `warn`,
@@ -83,6 +83,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: `img/social-preview.png`,
       colorMode: {
         defaultMode: `light`,
         disableSwitch: true,
