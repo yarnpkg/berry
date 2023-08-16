@@ -16,7 +16,9 @@ const autoLink = require(`./src/remark/autoLink`);
 const config = {
   title: `Yarn`,
   tagline: `Yarn, the modern JavaScript package manager`,
-  url: process.env.DEPLOY_PRIME_URL ?? `https://yarnpkg.com`,
+  url: process.env.DEPLOY_PRIME_URL !== `https://master--yarn4.netlify.app`
+      ? process.env.DEPLOY_PRIME_URL ?? `https://yarnpkg.com`
+      : `https://yarnpkg.com`,
   baseUrl: `/`,
   // TODO: Switch back to `throw`
   onBrokenLinks: `warn`,
