@@ -18,6 +18,7 @@ const moduleWrapper = tsserver => {
   const pnpApi = require(`pnpapi`);
 
   const isVirtual = str => str.match(/\/(\$\$virtual|__virtual__)\//);
+  const isPortal = str => str.startsWith("portal:/");
   const normalize = str => str.replace(/\\/g, `/`).replace(/^\/?/, `/`);
 
   const dependencyTreeRoots = new Set(pnpApi.getDependencyTreeRoots().map(locator => {
@@ -44,7 +45,7 @@ const moduleWrapper = tsserver => {
       const resolved = isVirtual(str) ? pnpApi.resolveVirtual(str) : str;
       if (resolved) {
         const locator = pnpApi.findPackageLocator(resolved);
-        if (locator && dependencyTreeRoots.has(`${locator.name}@${locator.reference}`)) {
+        if (locator && (dependencyTreeRoots.has(`${locator.name}@${locator.reference}`) || isPortal(locator.reference))) {
           str = resolved;
         }
       }
