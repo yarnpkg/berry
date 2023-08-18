@@ -92,7 +92,7 @@ const config = {
         respectPrefersColorScheme: false,
       },
       algolia: {
-        appId: `BH4D9OD16A`,
+        appId: `STXW7VT1S5`,
         apiKey: `029f65f2c00301615fd14958b67d6730`,
         indexName: `yarnpkg_next`,
         searchPagePath: `docs/search`,
