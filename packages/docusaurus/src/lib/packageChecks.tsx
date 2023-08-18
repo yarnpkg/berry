@@ -102,7 +102,7 @@ export const checks: Array<Check> = [{
     });
 
     for (const name of [`preinstall`, `install`, `postinstall`])
-      if (releaseInfo.npm.scripts[name])
+      if (releaseInfo.npm.scripts?.[name])
         return {ok: false};
 
     return {ok: true};

@@ -57,7 +57,7 @@ const defaultRequests = [
 }));
 
 function useHitsWithDefaults(query: string): Array<any> {
-  const {hits} = useHits();
+  const {hits} = useHits({escapeHTML: false});
   const [defaults, setDefaults] = useState<Array<any> | null>(null);
 
   useEffect(() => {

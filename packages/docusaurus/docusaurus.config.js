@@ -92,10 +92,11 @@ const config = {
         respectPrefersColorScheme: false,
       },
       algolia: {
-        appId: `BH4D9OD16A`,
-        apiKey: `029f65f2c00301615fd14958b67d6730`,
+        appId: `STXW7VT1S5`,
+        apiKey: `ecdfaea128fd901572b14543a2116eee`,
         indexName: `yarnpkg_next`,
         searchPagePath: `docs/search`,
+        contextualSearch: false,
       },
       navbar: {
         title: `Yarn`,
