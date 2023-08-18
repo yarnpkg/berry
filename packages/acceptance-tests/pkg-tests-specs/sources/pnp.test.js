@@ -1811,6 +1811,33 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
+
+  test(
+    `it should initialize a symlinked pnpapi module only once when working inside a sandbox environment full of symlinks`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await writeFile(ppath.join(testSandboxPath, `file.js`), `
+        console.log('found duplicate pnpapi instances:', require('pnpapi') !== require('module').findPnpApi(${JSON.stringify(ppath.join(path, Filename.manifest))}));
+      `);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+      ]);
+
+      await expect(run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      })).resolves.toMatchObject({
+        code: 0,
+        stdout: expect.stringContaining(`found duplicate pnpapi instances: false`),
+      });
+    }),
+  );
+
   test(
     `it should be able to resolve an absolute file from a module in an ignored folder`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
