@@ -90,7 +90,7 @@
 }
 
 .hero h1 {
-  font-size: 4rem;
+  font-size: var(--ifm-h1-font-size);
 }
 
 .hero p {
