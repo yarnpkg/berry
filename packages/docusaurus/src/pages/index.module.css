@@ -86,11 +86,9 @@
 @media (min-width: 996px) {
   .hero {
     max-width: 800px;
-  }
-}
 
-.hero h1 {
-  font-size: var(--ifm-h1-font-size);
+    --ifm-h1-font-size: 4rem;
+  }
 }
 
 .hero p {
