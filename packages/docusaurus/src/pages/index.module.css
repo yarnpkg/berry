@@ -89,8 +89,16 @@
   }
 }
 
-.hero h1 {
-  font-size: 4rem;
+@media (min-width: 300px) {
+  .hero {
+    --ifm-h1-font-size: 3rem;
+  }
+}
+
+@media (min-width: 380px) {
+  .hero {
+    --ifm-h1-font-size: 4rem;
+  }
 }
 
 .hero p {
