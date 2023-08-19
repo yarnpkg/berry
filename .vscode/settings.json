@@ -24,5 +24,13 @@
   "search.exclude": {
     "**/.pnp.*": true,
     "**/.yarn": true
-  }
+  },
+  // Use clippy to lint rust code
+  "rust-analyzer.checkOnSave.command": "clippy",
+  // Use rustfmt to format rust code on save
+  "[rust]": {
+    "editor.formatOnSave": true
+  },
+  // nom uses a lot of function composition which makes the the callable snippets annoying
+  "rust-analyzer.completion.callable.snippets": "none",
 }

@@ -1,0 +1,6 @@
+[toolchain]
+channel = "nightly-2023-06-07"
+profile = "default"
+# Required for `build-std`
+components = ["rust-src"]
+targets = ["wasm32-unknown-unknown"]

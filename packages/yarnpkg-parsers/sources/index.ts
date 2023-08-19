@@ -21,3 +21,4 @@ export {parseResolution, stringifyResolution}                                   
 export type {Resolution}                                                                  from './resolution';
 
 export {parseSyml, stringifySyml}                                                         from './syml';
+export type {ParseSymlOptions}                                                            from './syml';

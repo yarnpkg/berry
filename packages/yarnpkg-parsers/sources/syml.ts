@@ -1,6 +1,7 @@
-import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
+import {TextEncoder} from 'util';
 
-import {parse}                     from './grammars/syml';
+import {parse}       from './grammars/syml';
+import {parseLegacy} from './symlLegacy';
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
@@ -126,38 +127,46 @@ export function stringifySyml(value: any) {
 
 stringifySyml.PreserveOrdering = PreserveOrdering;
 
-function parseViaPeg(source: string) {
+const textEncoder = new TextEncoder();
+
+export function parseViaNom(source: string, overwriteDuplicateEntries: boolean) {
   if (!source.endsWith(`\n`))
     source += `\n`;
 
-  return parse(source);
+  // TODO: Use `encodeInto` to avoid the extra copy overhead.
+  const encodedSource = textEncoder.encode(source);
+
+  try {
+    const json = parse(encodedSource, overwriteDuplicateEntries);
+    return JSON.parse(json);
+  } catch (error) {
+    // It's not useful for references to the WASM file to be present in the error stack
+    Error.captureStackTrace(error, parseViaNom);
+
+    throw error;
+  }
 }
 
-const LEGACY_REGEXP = /^(#.*(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
+export type ParseSymlOptions = {
+  /**
+   * If true, the parser will keep the last value when it encounters duplicate keys. Otherwise, it will throw an error.
+   */
+  overwriteDuplicateEntries?: boolean;
+};
 
-function parseViaJsYaml(source: string) {
+const LEGACY_REGEXP = /^((#.*)?(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
+
+export function parseSyml(source: string, {overwriteDuplicateEntries = false}: ParseSymlOptions = {}): Record<string, any> {
   if (LEGACY_REGEXP.test(source))
-    return parseViaPeg(source);
+    return parseLegacy(source);
 
-  const value = safeLoad(source, {
-    schema: FAILSAFE_SCHEMA,
-    json: true,
-  });
+  const value = parseViaNom(source, overwriteDuplicateEntries);
 
-  // Empty files are parsed as `undefined` instead of an empty object
-  // Empty files with 2 newlines or more are `null` instead
-  if (value === undefined || value === null)
-    return {} as {[key: string]: string};
+  // if (typeof value !== `object`)
+  //   throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
 
-  if (typeof value !== `object`)
-    throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
+  // if (Array.isArray(value))
+  //   throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
 
-  if (Array.isArray(value))
-    throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
-
-  return value as {[key: string]: string};
-}
-
-export function parseSyml(source: string) {
-  return parseViaJsYaml(source);
+  return value;
 }

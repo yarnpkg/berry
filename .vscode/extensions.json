@@ -5,8 +5,11 @@
   "recommendations": [
     "EditorConfig.EditorConfig",
     "dbaeumer.vscode-eslint",
-    "arcanis.vscode-zipfs"
+    "arcanis.vscode-zipfs",
+    "rust-lang.rust-analyzer"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
-  "unwantedRecommendations": []
+  "unwantedRecommendations": [
+    "rust-lang.rust"
+  ]
 }

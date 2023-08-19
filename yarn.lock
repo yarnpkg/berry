@@ -5856,13 +5856,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/js-yaml@npm:^3.11.1":
-  version: 3.12.5
-  resolution: "@types/js-yaml@npm:3.12.5"
-  checksum: b673d3028b983b7c2149e45f296b235bd22c0f32c84bef44eaa87bb5e4df982d27d2104d9e6cb915f476844c3c902245cea0fb40ea81ca22e39d55090bdcb612
-  languageName: node
-  linkType: hard
-
 "@types/json-patch@npm:0.0.30":
   version: 0.0.30
   resolution: "@types/json-patch@npm:0.0.30"
@@ -7597,6 +7590,8 @@ __metadata:
     tslib: "npm:^2.4.0"
     typescript: "npm:5.2.1-rc"
   dependenciesMeta:
+    binary-install:
+      unplugged: true
     core-js:
       built: false
     core-js-pure:
@@ -7634,10 +7629,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
-    "@types/js-yaml": "npm:^3.11.1"
-    js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
     tslib: "npm:^2.4.0"
+    wasm-pack: "npm:^0.11.1"
   languageName: unknown
   linkType: soft
 
@@ -9042,6 +9036,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.26.1":
+  version: 0.26.1
+  resolution: "axios@npm:0.26.1"
+  dependencies:
+    follow-redirects: "npm:^1.14.8"
+  checksum: 02863f4a4fd4e43ad6e0c8bc9d1359a0863c43cc57bda42ea21dfce34681e3211df193b2bf2e8ee10b2c3870ab8d6bed38a3cf80cd6e8ee17749b7d73ccd4752
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.2.0":
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
@@ -9589,6 +9592,17 @@ __metadata:
   version: 2.0.0
   resolution: "binary-extensions@npm:2.0.0"
   checksum: 554f65d3378cf71c3185c17dec3ca58334b8ff6ae242db3107284765ce33b2af19efd20c11faec41907a40534929e34b3a98e7d391c61e4211b45732dccb1115
+  languageName: node
+  linkType: hard
+
+"binary-install@npm:^1.0.1":
+  version: 1.1.0
+  resolution: "binary-install@npm:1.1.0"
+  dependencies:
+    axios: "npm:^0.26.1"
+    rimraf: "npm:^3.0.2"
+    tar: "npm:^6.1.11"
+  checksum: 78121e9c32981c101cc090f1564fbd0453d976a1b40c599a5ca623184d739b0a7c49f5ba5f91c05142eb6ff9b2816959bb9e09a3aecd12e4e3e82398bed9b8f0
   languageName: node
   linkType: hard
 
@@ -15026,7 +15040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.10.0, follow-redirects@npm:^1.14.7":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.10.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.8":
   version: 1.15.2
   resolution: "follow-redirects@npm:1.15.2"
   peerDependenciesMeta:
@@ -19801,7 +19815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^3.10.0, js-yaml@npm:^3.13.1, js-yaml@npm:^3.14.1":
+"js-yaml@npm:^3.13.1, js-yaml@npm:^3.14.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:
@@ -31052,6 +31066,17 @@ pem@dexus/pem:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: e7842aff036e2e07ce7a6cc3225e707775b969fe3d0577ad64bd24660e3a9ce3017f0b8c22a136566dcd3a151f37b8ed1ccee103b3bd82bd8a571bf80b247bc4
+  languageName: node
+  linkType: hard
+
+"wasm-pack@npm:^0.11.1":
+  version: 0.11.1
+  resolution: "wasm-pack@npm:0.11.1"
+  dependencies:
+    binary-install: "npm:^1.0.1"
+  bin:
+    wasm-pack: run.js
+  checksum: a4c3e123b2a3010a291646ecf0f751e0e2fffbb17ae99ae88980c3f4e5969f218bcdd2bad67e0c12d91742015de0c09c578ce65e8f16775c7155f2c116284852
   languageName: node
   linkType: hard
 

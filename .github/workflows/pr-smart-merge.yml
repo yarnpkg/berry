@@ -65,9 +65,9 @@ jobs:
             yarn install
           fi
 
-          if git diff --name-only --diff-filter=U | grep packages/yarnpkg-parsers/sources/grammars/shell.js; then
-            git checkout --theirs packages/yarnpkg-parsers/sources/grammars/shell.js
-            yarn grammar:shell
+          if git diff --name-only --diff-filter=U | grep packages/yarnpkg-parsers/sources/grammars/*.js; then
+            git checkout --theirs packages/yarnpkg-parsers/sources/grammars/*.js
+            yarn grammar:all
           fi
         fi
 

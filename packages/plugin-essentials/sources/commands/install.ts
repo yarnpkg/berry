@@ -454,9 +454,11 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
       throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to access the lockfile content in ${hash}`);
 
     try {
-      return parseSyml(content.stdout);
-    } catch {
-      throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `A variant of the conflicting lockfile failed to parse`);
+      // Merge conflicts can sometimes create duplicate fields.
+      // In such cases, we keep the last one.
+      return parseSyml(content.stdout, {overwriteDuplicateEntries: true});
+    } catch (error) {
+      throw new ReportError(MessageName.AUTOMERGE_FAILED_TO_PARSE, `A variant of the conflicting lockfile failed to parse: ${error.message}`);
     }
   }));
 

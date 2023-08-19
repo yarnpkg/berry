@@ -37,6 +37,9 @@
     "typedoc@npm:0.17.0-3": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch"
   },
   "dependenciesMeta": {
+    "binary-install": {
+      "unplugged": true
+    },
     "core-js": {
       "built": false
     },
@@ -79,7 +82,15 @@
     "build:plugin-workspace-tools": "yarn node -r ./scripts/setup-ts-execution ./scripts/create-mock-plugin.ts workspace-tools",
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/yarnpkg-cli/sources/pluginCommands.ts",
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' --exclude '*.tsx' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
-    "test:lint": "eslint --max-warnings 0 \"./**/*.@(tsx|ts|js)\"",
+    "build:compile-inline": "find \"$0\"/sources -name '*.js' && babel \"$0\"/sources --out-dir \"$0\"/sources --extensions .ts,.tsx",
+    "test:lint:eslint": "eslint --max-warnings 0 \"./**/*.@(tsx|ts|js)\"",
+    "test:lint:eslint:fix": "run test:lint:eslint --fix",
+    "test:lint:rust": "cargo clippy -- -D warnings",
+    "test:lint:rust:fix": "cargo clippy --fix --allow-dirty --allow-staged -- -D warnings",
+    "test:lint": "run test:lint:eslint && run test:lint:rust",
+    "test:lint:fix": "run test:lint:eslint:fix && run test:lint:rust:fix",
+    "test:format": "run test:format:fix --check",
+    "test:format:fix": "cargo fmt --all",
     "test:unit": "jest",
     "typecheck:all": "tsc --noEmit"
   },
