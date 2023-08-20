@@ -15,7 +15,7 @@ export async function load(
     };
   },
   nextLoad: typeof load,
-): Promise<{ format: string, source: string, shortCircuit: boolean }> {
+): Promise<{ format: string, source?: string, shortCircuit: boolean }> {
   const url = loaderUtils.tryParseURL(urlString);
   if (url?.protocol !== `file:`)
     return nextLoad(urlString, context, nextLoad);
@@ -49,7 +49,7 @@ export async function load(
 
   return {
     format,
-    source: await fs.promises.readFile(filePath, `utf8`),
+    source: format === `commonjs` ? undefined : await fs.promises.readFile(filePath, `utf8`),
     shortCircuit: true,
   };
 }
