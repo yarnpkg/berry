@@ -15,7 +15,9 @@ While not a feature in itself, the term "Zero Install" encompasses a lot of Yarn
 
 ## How does Yarn impact a project's stability?
 
-Yarn does its best to guarantee that running `yarn install` twice will give you the same result in both cases. The main way it does this is through a lockfile, which contains all the information needed for a project to be installed in a reproducible way across systems. But is it good enough?
+A key workflow characteristic of Zero-install is that the dependency tree is built as you develop or update your project. Yarn generates a `.pnp.cjs` file containing the dependency tree that Node will use to load your packages forever after. This workflow means that the artifacts your team reviews, and on which your tests run, are the artifacts used in production.
+
+Without the Zero-install workflow, Yarn does its best to guarantee that running `yarn install` more than once&mdash;once in development and again whenever installed on a remote server&mdash;will give you the same result every time. The lockfile is the main tool to this end. Your lockfile contains all the information needed for a project to be installed in a reproducible way across systems. But is this approach good enough?
 
 While Yarn does its best to guarantee that what works now will keep working, there's always the off chance that a future Yarn release will introduce a bug that will prevent you from installing your project. Or maybe your production environments will change and `yarn install` won't be able to write in the temporary directories anymore. Or maybe the network will fail and your packages won't be available anymore. Or maybe your credentials will rotate and you will start getting authentication issues. Or ... so many things can go wrong, and not all of them are things we can control.
 
