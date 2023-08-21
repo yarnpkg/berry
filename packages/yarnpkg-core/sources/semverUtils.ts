@@ -197,8 +197,13 @@ export function stringifyComparator(comparator: Comparator) {
 }
 
 export function simplifyRanges(ranges: Array<string>) {
-  const parsedRanges = ranges.map(range => validRange(range)!.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
+  const validRanges = ranges.map(range => range !== `*` ? validRange(range) : null);
+  const onlyValidRanges = validRanges.filter(range => range !== null) as Array<semver.Range>;
 
+  if (onlyValidRanges.length === 0)
+    return null;
+
+  const parsedRanges = onlyValidRanges.map(range => range.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
   let alternatives = parsedRanges.shift()!.map(comparators => mergeComparators(comparators))
     .filter((range): range is Comparator => range !== null);
 
