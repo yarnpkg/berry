@@ -86,6 +86,10 @@ export const Main = styled.div`
   white-space: normal;
   overflow-wrap: break-word;
 
+  &:first-of-type {
+    margin-bottom: 1em;
+  }
+
   & + * {
     margin-top: 0 !important;
   }
