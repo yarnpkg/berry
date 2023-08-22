@@ -1,6 +1,6 @@
 import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils, YarnVersion} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                                           from '@yarnpkg/fslib';
-import {execFileSync}                                                                                              from 'child_process';
+import {execFileSync, type SpawnSyncReturns}                                                                       from 'child_process';
 import {isCI}                                                                                                      from 'ci-info';
 import {Cli, UsageError}                                                                                           from 'clipanion';
 
@@ -83,7 +83,7 @@ function runYarnPath(cli: YarnCli, argv: Array<string>, {yarnPath}: {yarnPath: P
   try {
     execFileSync(process.execPath, [npath.fromPortablePath(yarnPath), ...argv], yarnPathExecOptions);
   } catch (err) {
-    return (err.code as number) ?? 1;
+    return (err as SpawnSyncReturns<void>).status ?? 1;
   }
 
   return 0;
