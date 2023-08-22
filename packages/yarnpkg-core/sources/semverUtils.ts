@@ -108,6 +108,7 @@ export type Comparator = {
 };
 
 export function getComparator(comparators: semver.Comparator): Comparator {
+  // @ts-expect-error: The ANY symbol isn't well declared
   if (comparators.semver === semver.Comparator.ANY)
     return {gt: null, lt: null};
 
