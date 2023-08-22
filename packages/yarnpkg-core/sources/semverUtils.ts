@@ -108,6 +108,9 @@ export type Comparator = {
 };
 
 export function getComparator(comparators: semver.Comparator): Comparator {
+  if (comparators.semver === semver.Comparator.ANY)
+    return {gt: null, lt: null};
+
   switch (comparators.operator) {
     case ``:
       return {gt: [`>=`, comparators.semver], lt: [`<=`, comparators.semver]};
@@ -193,17 +196,15 @@ export function stringifyComparator(comparator: Comparator) {
   if (comparator.lt)
     parts.push(comparator.lt[0] + comparator.lt[1].version);
 
+  if (!parts.length)
+    return `*`;
+
   return parts.join(` `);
 }
 
 export function simplifyRanges(ranges: Array<string>) {
-  const validRanges = ranges.map(range => range !== `*` ? validRange(range) : null);
-  const onlyValidRanges = validRanges.filter(range => range !== null) as Array<semver.Range>;
+  const parsedRanges = ranges.map(range => validRange(range)!.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
 
-  if (onlyValidRanges.length === 0)
-    return null;
-
-  const parsedRanges = onlyValidRanges.map(range => range.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
   let alternatives = parsedRanges.shift()!.map(comparators => mergeComparators(comparators))
     .filter((range): range is Comparator => range !== null);
 
