@@ -1666,13 +1666,39 @@ describe(`Plug'n'Play`, () => {
     }, async ({path, run, source}) => {
       await run(`add`, `no-deps`);
 
-      expect(xfs.existsSync(`${path}/${Filename.pnpData}`)).toBeTruthy();
+      expect(xfs.existsSync(ppath.join(path, Filename.pnpData))).toBeTruthy();
 
-      await writeFile(`${path}/file.js`, `
+      await writeFile(ppath.join(path, `file.js`), `
         console.log(require.resolve('no-deps'));
       `);
 
       await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should work when working inside a sandbox environment full of symlinks, and pnpEnableInlining is set to false`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await writeFile(ppath.join(testSandboxPath, `file.js`), `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpData), ppath.join(testSandboxPath, Filename.pnpData)),
+      ]);
+
+      await expect(run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      })).resolves.toBeTruthy();
     }),
   );
 
