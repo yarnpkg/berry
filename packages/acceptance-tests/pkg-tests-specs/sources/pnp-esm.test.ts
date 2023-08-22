@@ -1011,25 +1011,25 @@ describe(`Plug'n'Play - ESM`, () => {
       {
         type: `module`,
       },
-      async ({ path, run, source }) => {
+      async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `foo.js`), `import './bar.cjs';`);
         await xfs.writeFilePromise(
           ppath.join(path, `bar.cjs`),
           `
           require('module')._extensions['.custom'] = require('module')._extensions['.js'];
           require('./baz');
-          `
+          `,
         );
         await xfs.writeFilePromise(ppath.join(path, `baz.custom`), `console.log(42);`);
 
-        await expect(run(`install`)).resolves.toMatchObject({ code: 0 });
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await expect(run(`node`, `./foo.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `42\n`,
-          stderr: '',
+          stderr: ``,
         });
-      }
-    )
+      },
+    ),
   );
 });
