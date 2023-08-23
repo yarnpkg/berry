@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/plugin-pnp",
-  "version": "4.0.0-rc.49",
-  "stableVersion": "3.2.12",
+  "version": "4.0.0-rc.50",
+  "stableVersion": "3.2.13",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
