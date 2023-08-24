@@ -76,8 +76,11 @@ export function usePackageInfo(name: string) {
   }).data!;
 }
 
-export function usePackageExists(name: string) {
+export function usePackageExists(name: string | null) {
   return useQuery([`packageExists`, name], async () => {
+    if (name === null)
+      return false;
+
     // eslint-disable-next-line no-restricted-globals
     const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}/package.json`);
 

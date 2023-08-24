@@ -1,5 +1,5 @@
 / q=:q /search?q=:q 301!
-/package/* q=:q /package?name=:splat 301
+/package/* /package?name=:splat 301
 
 /install.sh https://classic.yarnpkg.com/install.sh 301
 

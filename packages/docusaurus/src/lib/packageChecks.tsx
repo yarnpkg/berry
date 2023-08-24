@@ -136,7 +136,10 @@ export const checks: Array<Check> = [{
       extensions,
     });
 
-    const dtPackageName = `@types/${name.replace(/^@([^/]*)\/([^/]*)$/, `$1__$2`)}`;
+    const dtPackageName = !name.startsWith(`@types`)
+      ? `@types/${name.replace(/^@([^/]*)\/([^/]*)$/, `$1__$2`)}`
+      : null;
+
     const dtPackage = usePackageExists(dtPackageName);
 
     const fileNoExt = resolution?.replace(/(\.[mc]?(js|ts)x?|\.d\.ts)$/, ``);
@@ -144,7 +147,7 @@ export const checks: Array<Check> = [{
       if (releaseInfo.jsdelivr.fileSet.has(`${fileNoExt}${ext}`))
         return {ok: true};
 
-    if (dtPackage) {
+    if (dtPackageName && dtPackage) {
       const search = new URLSearchParams(location.search);
 
       for (const key of search.keys())
