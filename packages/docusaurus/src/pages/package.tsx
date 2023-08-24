@@ -20,9 +20,17 @@ import Layout                                                                   
 
 import styles                                                                                                                                                                     from './package.module.css';
 
-const SidebarEntry = ({icon: Icon, name}: {icon: React.FunctionComponent, name: string}) => (
-  <div className={clsx(styles.entry, `text--truncate`)}>
-    <Icon/> {name}
+const SidebarEntry = ({icon: Icon, name, extra}: {icon: React.FunctionComponent, name: string, extra?: string}) => (
+  <div className={styles.sidebarEntry}>
+    <div className={styles.sidebarIcon}>
+      <Icon/>
+    </div>
+    <div className={clsx(styles.sidebarName, `text--truncate`)}>
+      {name}
+    </div>
+    {extra && <div className={clsx(styles.sidebarExtra, `text--truncate`)}>
+      {extra}
+    </div>}
   </div>
 );
 
@@ -55,17 +63,18 @@ function useReleaseSidebar({name, version}: {name: string, version: string}) {
     return category;
   };
 
-  const getUrl = (file: string | null, version?: string) => {
+  const getUrl = (file: string | null | undefined, version?: string) => {
     const newSearch = new URLSearchParams(location.search);
 
-    if (file === null)
-      newSearch.delete(`file`);
-    else
-      newSearch.set(`file`, file);
+    if (typeof file !== `undefined`) {
+      if (file !== null) {
+        newSearch.set(`file`, file);
+      } else {
+        newSearch.delete(`file`);
+      }
+    }
 
-    if (typeof version === `undefined`)
-      newSearch.delete(`version`);
-    else
+    if (typeof version !== `undefined`)
       newSearch.set(`version`, version);
 
     const newSearchStr = newSearch.toString();
@@ -128,6 +137,27 @@ function useReleaseSidebar({name, version}: {name: string, version: string}) {
     value: `<div style="height: 10px"/>`,
   });
 
+  const tagsSidebar = Object.assign(makeCategory(`Tags`), {
+    collapsed: false,
+    collapsible: true,
+  });
+
+  const tagVersions = Object.entries(pkgInfo[`dist-tags`]).sort((a, b) => {
+    return semver.compare(a[1], b[1]);
+  });
+
+  // Remove all tags that were last published before latest
+  const latestIndex = tagVersions.findIndex(([tag]) => tag === `latest`);
+  tagVersions.splice(0, latestIndex);
+
+  for (const [tag, version] of tagVersions) {
+    tagsSidebar.items.push({
+      type: `link`,
+      label: <SidebarEntry icon={TagIcon} name={tag} extra={version}/>,
+      href: getUrl(undefined, version),
+    });
+  }
+
   const versionsSidebar = Object.assign(makeCategory(`Versions`), {
     collapsed: true,
     collapsible: true,
@@ -145,7 +175,7 @@ function useReleaseSidebar({name, version}: {name: string, version: string}) {
     versionsSidebar.items.push({
       type: `link`,
       label: <SidebarEntry icon={TagIcon} name={version}/>,
-      href: getUrl(null, version),
+      href: getUrl(undefined, version),
     });
   }
 
@@ -188,6 +218,7 @@ function useReleaseSidebar({name, version}: {name: string, version: string}) {
 
   const sidebar: Array<any> = [
     toolsSidebar,
+    tagsSidebar,
     versionsSidebar,
     packageSidebar,
   ];
@@ -266,16 +297,30 @@ function VersionSelector({name, version}: {name: string, version: string}) {
   delete copy.created;
   delete copy.modified;
 
-  const options: Array<VersionChoice> = Object.entries(copy).filter(([version]) => {
-    return pkgInfo.versions[version] && !pkgInfo.versions[version].deprecated;
-  }).map(([version, releaseTime]) => ({
+  const latest = pkgInfo[`dist-tags`].latest;
+
+  const options: Array<VersionChoice> = Object.entries(copy).map(([version, releaseTime]) => ({
     value: version,
     label: ``,
     time: new Date(releaseTime),
-  }));
-
-  options.sort((a, b) => {
+  })).sort((a, b) => {
     return b.time.getTime() - a.time.getTime();
+  }).filter(({value: version}, index) => {
+    // Don't show deprecated packages
+    if (pkgInfo.versions[version] && pkgInfo.versions[version].deprecated)
+      return false;
+
+    const prerelease = semver.prerelease(version);
+
+    // Don't show old prereleases
+    if (latest && prerelease && semver.gt(latest, version))
+      return false;
+
+    // Don't show nightly releases
+    if (version.match(/-.*2[0-9]{3}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])/) && index > 0)
+      return false;
+
+    return true;
   });
 
   const selected = options.find(option => {
@@ -295,8 +340,19 @@ function VersionSelector({name, version}: {name: string, version: string}) {
     </>;
   };
 
+  const handleChange = (value: VersionChoice | null) => {
+    const search = new URLSearchParams(location.search);
+
+    if (value !== null)
+      search.set(`version`, value.value);
+    else
+      search.delete(`version`);
+
+    location.replace(`?${search.toString()}`);
+  };
+
   return (
-    <Select<VersionChoice> className={styles.versionSelector} options={options} value={selected} components={{MenuList}} formatOptionLabel={formatOptionLabel}/>
+    <Select<VersionChoice> className={styles.versionSelector} options={options} value={selected} components={{MenuList}} formatOptionLabel={formatOptionLabel} onChange={handleChange}/>
   );
 }
 
@@ -408,7 +464,7 @@ function FileView({name, version, path}: {name: string, version: string, path: s
     return <>File not found</>;
 
   return (
-    <Editor path={path} defaultValue={file} options={{readOnly: true}}/>
+    <Editor path={`${name}/${version}/${path}`} defaultValue={file} options={{readOnly: true}}/>
   );
 }
 
