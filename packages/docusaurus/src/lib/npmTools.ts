@@ -176,7 +176,7 @@ export function useReleaseReadme({name, version}: {name: string, version: string
   return readmeHtmlSanitized;
 }
 
-function getResolutionFunction(releaseInfo: ReleaseInfo, {extensions}: {extensions?: Array<string>} = {}) {
+function getResolutionFunction(releaseInfo: ReleaseInfo, {extensions = STANDARD_EXTENSIONS}: {extensions?: Array<string>} = {}) {
   return (qualifier: string) => resolve.sync(qualifier, {
     basedir: `/`,
     includeCoreModules: true,
