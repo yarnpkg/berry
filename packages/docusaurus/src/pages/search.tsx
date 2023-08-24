@@ -186,7 +186,7 @@ function SearchResult({query, hit}: any) {
     : null;
 
   const listing = hit.name
-    ? `/package?q=${encodeURIComponent(query)}&name=${encodeURIComponent(hit.name)}&version=${encodeURIComponent(hit.version)}`
+    ? `/package?q=${encodeURIComponent(query)}&name=${encodeURIComponent(hit.name)}`
     : null;
 
   const title = hit.name && hit.owner?.name && (
