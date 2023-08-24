@@ -7,6 +7,10 @@ import {useQuery}                  from 'react-query';
 import {resolve as resolveExports} from 'resolve.exports';
 import resolve                     from 'resolve';
 
+export type STANDARD_EXTENSIONS = [
+  `.js`, `.cjs`, `.mjs`,
+];
+
 export type PackageInfo = {
   error?: string;
   name: string;
