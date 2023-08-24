@@ -145,7 +145,7 @@ export const checks: Array<Check> = [{
 
       search.set(`name`, dtPackageName);
 
-      const href = `http://localhost:3000/package?${search}`;
+      const href = `/package?${search}`;
       return {ok: true, message: <>Types are available via <Link href={href}>DefinitelyTyped</Link></>};
     }
 
