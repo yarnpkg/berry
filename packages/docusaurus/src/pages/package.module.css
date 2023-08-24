@@ -10,10 +10,32 @@
   display: none;
 }
 
+.sidebarEntry {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.sidebarIcon {
+  margin-right: 10px;
+}
+
+.sidebarName {
+  margin-right: auto;
+}
+
+.sidebarExtra {
+  width: 100px;
+
+  margin-left: 10px;
+}
+
 .versionSelector {
   display: inline-block;
   margin-left: 40px;
   margin-top: 11px;
+
+  width: 250px;
 
   font-family: inherit;
   font-size: 15px;
@@ -21,7 +43,6 @@
 
 .versionSelectorOption {
   display: flex;
-  width: 200px;
 }
 
 .versionSelectorVersion {
@@ -171,13 +192,4 @@
 
 .reportCheckFailure {
   color: #daaa49;
-}
-
-.entry {
-  display: flex;
-  align-items: center;
-}
-
-.entry svg {
-  margin-right: 10px;
 }

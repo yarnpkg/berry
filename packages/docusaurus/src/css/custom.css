@@ -208,6 +208,10 @@ html[x-doc-route^="/configuration/"] .col {
   display: none;
 }
 
+.menu__link {
+  width: 100%;
+}
+
 .menu__list-item-collapsible .menu__link:not(.menu__link--sublist) {
   color: var(--ifm-menu-color-active);
   font-weight: bold;
