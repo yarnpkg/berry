@@ -120,19 +120,27 @@ export const checks: Array<Check> = [{
       version,
     });
 
+    const extensions = [
+      ...STANDARD_EXTENSIONS,
+      ...STANDARD_EXTENSIONS.map(ext => ext.replace(`js`, `ts`)),
+      ...STANDARD_EXTENSIONS.map(ext => ext.replace(`js`, `tsx`)),
+      `.d.ts`,
+    ];
+
     const resolution = useResolution({
       name,
       version,
     }, {
       mainFields: [`main`],
       conditions: [`default`, `require`, `import`, `node`, `types`],
+      extensions,
     });
 
     const dtPackageName = `@types/${name.replace(/^@([^/]*)\/([^/]*)$/, `$1__$2`)}`;
     const dtPackage = usePackageExists(dtPackageName);
 
     const fileNoExt = resolution?.replace(/(\.[mc]?(js|ts)x?|\.d\.ts)$/, ``);
-    for (const ext of [`.mtsx`, `.mts`, `.tsx`, `ts`, `.d.ts`])
+    for (const ext of extensions)
       if (releaseInfo.jsdelivr.fileSet.has(`${fileNoExt}${ext}`))
         return {ok: true};
 
@@ -146,7 +154,7 @@ export const checks: Array<Check> = [{
       search.set(`name`, dtPackageName);
 
       const href = `/package?${search}`;
-      return {ok: true, message: <>Types are available via <Link href={href}>DefinitelyTyped</Link></>};
+      return {ok: true, message: <>Types are available via <Link href={href}>{dtPackageName}</Link></>};
     }
 
     return {ok: false};
