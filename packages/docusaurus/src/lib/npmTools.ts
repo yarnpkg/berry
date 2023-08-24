@@ -7,7 +7,7 @@ import {useQuery}                  from 'react-query';
 import {resolve as resolveExports} from 'resolve.exports';
 import resolve                     from 'resolve';
 
-export type STANDARD_EXTENSIONS = [
+export const STANDARD_EXTENSIONS = [
   `.js`, `.cjs`, `.mjs`,
 ];
 
