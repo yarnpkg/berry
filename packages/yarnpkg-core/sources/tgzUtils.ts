@@ -1,18 +1,33 @@
-import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants} from '@yarnpkg/fslib';
-import {ZipCompression, ZipFS}                                      from '@yarnpkg/libzip';
-import {Limit}                                                      from 'p-limit';
-import {PassThrough, Readable}                                      from 'stream';
-import tar                                                          from 'tar';
+import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils} from '@yarnpkg/fslib';
+import {ZipCompression, ZipFS}                                                 from '@yarnpkg/libzip';
+import PLimit                                                                  from 'p-limit';
+import {PassThrough, Readable}                                                 from 'stream';
+import tar                                                                     from 'tar';
 
-import {WorkerPool}                                                 from './WorkerPool';
-import * as miscUtils                                               from './miscUtils';
-import {getContent as getZipWorkerSource, ConvertToZipPayload}      from './worker-zip';
+import {WorkerPool}                                                            from './WorkerPool';
+import * as miscUtils                                                          from './miscUtils';
+import {getContent as getZipWorkerSource}                                      from './worker-zip';
 
 interface MakeArchiveFromDirectoryOptions {
   baseFs?: FakeFS<PortablePath>;
   prefixPath?: PortablePath | null;
   compressionLevel?: ZipCompression;
   inMemory?: boolean;
+}
+
+export type ConvertToZipPayload = {tmpFile: PortablePath, tgz: Buffer | Uint8Array, opts: ExtractBufferOptions};
+
+export async function convertToZipWorker(data: ConvertToZipPayload) {
+  const {opts, tgz, tmpFile} = data;
+  const {compressionLevel, ...bufferOpts} = opts;
+
+  const zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel, stats: statUtils.makeDefaultStats()});
+
+  // Buffers sent through Node are turned into regular Uint8Arrays
+  const tgzBuffer = Buffer.from(tgz.buffer, tgz.byteOffset, tgz.byteLength);
+  await extractArchiveTo(tgzBuffer, zipFs, bufferOpts);
+
+  zipFs.saveAndClose();
 }
 
 export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
@@ -39,7 +54,7 @@ export interface ExtractBufferOptions {
 }
 
 export interface ConvertToZipOptions extends ExtractBufferOptions {
-  poolSize?: Limit;
+  poolSize: number;
 }
 
 let workerPool: WorkerPool<ConvertToZipPayload, PortablePath> | null;
@@ -48,15 +63,20 @@ export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions) {
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
-  workerPool ||= new WorkerPool(getZipWorkerSource(), {poolSize: opts.poolSize});
-
   const bufferOpts: ExtractBufferOptions = {
     compressionLevel: opts.compressionLevel,
     prefixPath: opts.prefixPath,
     stripComponents: opts.stripComponents,
   };
 
-  await workerPool.run({tmpFile, tgz, opts: bufferOpts});
+
+  if (opts.poolSize > 0) {
+    workerPool ||= new WorkerPool(getZipWorkerSource(), {poolSize: PLimit(opts.poolSize)});
+
+    await workerPool.run({tmpFile, tgz, opts: bufferOpts});
+  } else {
+    await convertToZipWorker({tmpFile, tgz, opts: bufferOpts});
+  }
 
   return new ZipFS(tmpFile, {level: opts.compressionLevel});
 }

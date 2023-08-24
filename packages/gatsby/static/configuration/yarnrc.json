@@ -357,7 +357,7 @@
     },
     "workerPoolConcurrency": {
       "_package": "@yarnpkg/core",
-      "description": "Defines how many workers that are allowed to run at the same time. Yarn defaults to platform parallelism but for some CI, `os.cpus` may not report accurate values and may overwhelm their containers.",
+      "description": "Defines how many workers that are allowed to run at the same time. Yarn defaults to platform parallelism but for some CI, `os.cpus` may not report accurate values and may overwhelm their containers. If set to 0, it does not use workers at all.",
       "type": "number",
       "default": "os.availableParallelism()",
       "examples": [8]
