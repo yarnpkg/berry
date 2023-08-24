@@ -1,8 +1,8 @@
-import Link                                              from '@docusaurus/Link';
-import {useLocation}                                     from '@docusaurus/router';
-import React                                             from 'react';
+import Link                                                                   from '@docusaurus/Link';
+import {useLocation}                                                          from '@docusaurus/router';
+import React                                                                  from 'react';
 
-import {usePackageExists, useReleaseInfo, useResolution} from './npmTools';
+import {STANDARD_EXTENSIONS, usePackageExists, useReleaseInfo, useResolution} from './npmTools';
 
 export type CheckResult = {
   ok: true;
