@@ -42,6 +42,9 @@ export const checks: Array<Check> = [{
   success: `The package has a commonjs entry point`,
   failure: `The package doesn't seem to have a commonjs entry point`,
   useCheck: ({name, version}) => {
+    if (name.startsWith(`@types/`))
+      return {ok: true};
+
     const releaseInfo = useReleaseInfo({
       name,
       version,
@@ -69,6 +72,9 @@ export const checks: Array<Check> = [{
   success: `The package has an ESM entry point`,
   failure: `The package doesn't seem to have an ESM entry point`,
   useCheck: ({name, version}) => {
+    if (name.startsWith(`@types/`))
+      return {ok: true};
+
     const releaseInfo = useReleaseInfo({
       name,
       version,
@@ -120,18 +126,22 @@ export const checks: Array<Check> = [{
       version,
     });
 
-    const extensions = [
-      ...STANDARD_EXTENSIONS,
+    const tsExtensions = [
       ...STANDARD_EXTENSIONS.map(ext => ext.replace(`js`, `ts`)),
       ...STANDARD_EXTENSIONS.map(ext => ext.replace(`js`, `tsx`)),
       `.d.ts`,
+    ];
+
+    const extensions = [
+      ...STANDARD_EXTENSIONS,
+      ...tsExtensions,
     ];
 
     const resolution = useResolution({
       name,
       version,
     }, {
-      mainFields: [`main`],
+      mainFields: [`main`, `types`, `typings`],
       conditions: [`default`, `require`, `import`, `node`, `types`],
       extensions,
     });
@@ -143,7 +153,7 @@ export const checks: Array<Check> = [{
     const dtPackage = usePackageExists(dtPackageName);
 
     const fileNoExt = resolution?.replace(/(\.[mc]?(js|ts)x?|\.d\.ts)$/, ``);
-    for (const ext of extensions)
+    for (const ext of tsExtensions)
       if (releaseInfo.jsdelivr.fileSet.has(`${fileNoExt}${ext}`))
         return {ok: true};
 

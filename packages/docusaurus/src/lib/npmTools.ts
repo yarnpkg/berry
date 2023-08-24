@@ -198,6 +198,17 @@ function getResolutionFunction(releaseInfo: ReleaseInfo, {extensions = STANDARD_
   });
 }
 
+function resolveQualifier(releaseInfo: ReleaseInfo, qualifier: string) {
+  const resolvedQualifier = new URL(qualifier, `https://example.com/`).pathname;
+  const resolutionFunction = getResolutionFunction(releaseInfo);
+
+  try {
+    return resolutionFunction(resolvedQualifier);
+  } catch {
+    return null;
+  }
+}
+
 export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions, extensions}: {mainFields: Array<string>, conditions: Array<string>, extensions?: Array<string>}) {
   const releaseInfo = useReleaseInfo({
     name,
@@ -211,20 +222,15 @@ export function useResolution({name, version}: {name: string, version: string}, 
   if (releaseInfo.npm.exports && !exportsResolution)
     return null;
 
-  const mainFieldResolution = mainFields.map(mainField => {
-    return releaseInfo.npm[mainField];
-  }).find(value => {
-    return typeof value === `string`;
-  });
+  if (exportsResolution)
+    return resolveQualifier(releaseInfo, exportsResolution);
 
-  const qualifier = exportsResolution ?? mainFieldResolution ?? `.`;
-
-  const resolvedQualifier = new URL(qualifier, `https://example.com/`).pathname;
-  const resolutionFunction = getResolutionFunction(releaseInfo);
-
-  try {
-    return resolutionFunction(resolvedQualifier);
-  } catch {
-    return null;
+  for (const mainField of mainFields) {
+    const resolution = resolveQualifier(releaseInfo, releaseInfo.npm[mainField] || `.`);
+    if (resolution !== null) {
+      return resolution;
+    }
   }
+
+  return null;
 }
