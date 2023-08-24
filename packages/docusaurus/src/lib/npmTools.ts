@@ -172,11 +172,12 @@ export function useReleaseReadme({name, version}: {name: string, version: string
   return readmeHtmlSanitized;
 }
 
-function getResolutionFunction(releaseInfo: ReleaseInfo) {
+function getResolutionFunction(releaseInfo: ReleaseInfo, {extensions}: {extensions?: Array<string>} = {}) {
   return (qualifier: string) => resolve.sync(qualifier, {
     basedir: `/`,
     includeCoreModules: true,
     paths: [],
+    extensions,
     isFile: path => releaseInfo.jsdelivr.files.some(file => file.name === path),
     isDirectory: path => releaseInfo.jsdelivr.files.some(file => file.name.startsWith(`${path}/`)),
     realpathSync: path => path,
@@ -190,7 +191,7 @@ function getResolutionFunction(releaseInfo: ReleaseInfo) {
   });
 }
 
-export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions}: {mainFields: Array<string>, conditions: Array<string>}) {
+export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions, extensions}: {mainFields: Array<string>, conditions: Array<string>, extensions?: Array<string>}) {
   const releaseInfo = useReleaseInfo({
     name,
     version,
@@ -214,5 +215,9 @@ export function useResolution({name, version}: {name: string, version: string}, 
   const resolvedQualifier = new URL(qualifier, `https://example.com/`).pathname;
   const resolutionFunction = getResolutionFunction(releaseInfo);
 
-  return resolutionFunction(resolvedQualifier);
+  try {
+    return resolutionFunction(resolvedQualifier);
+  } catch {
+    return null;
+  }
 }
