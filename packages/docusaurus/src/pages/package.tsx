@@ -1,5 +1,5 @@
 import BrowserOnly                                                                                                                                                                from '@docusaurus/BrowserOnly';
-import {Switch, Route, useRouteMatch, useLocation}                                                                                                                                from '@docusaurus/router';
+import {useLocation}                                                                                                                                                              from '@docusaurus/router';
 // @ts-expect-error
 import {DocsSidebarProvider}                                                                                                                                                      from '@docusaurus/theme-common/internal';
 import {HtmlClassNameProvider}                                                                                                                                                    from '@docusaurus/theme-common';
