@@ -1,6 +1,9 @@
 / q=:q /search?q=:q 301!
 /package/* /package?name=:splat 301
 
+/getting-started/migration /migration/overview 301
+/features/zero-installs /features/caching#zero-installs 301
+
 /install.sh https://classic.yarnpkg.com/install.sh 301
 
 /playground/* code=:value https://viko0.sse.codesandbox.io/:splat?code=:value 301
