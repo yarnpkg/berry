@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.0.0-rc.48",
+  "version": "4.0.0-rc.50",
   "stableVersion": "3.3.0",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
@@ -14,7 +14,7 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "chalk": "^3.0.0",
-    "clipanion": "^3.2.1",
+    "clipanion": "^4.0.0-rc.2",
     "esbuild": "npm:esbuild-wasm@^0.15.15",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/monorepo": "workspace:^",
-    "typescript": "5.2.0-beta"
+    "typescript": "5.2.1-rc"
   },
   "scripts": {
     "postpack": "rm -rf lib",

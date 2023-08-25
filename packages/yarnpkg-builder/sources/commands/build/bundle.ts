@@ -1,11 +1,10 @@
 import {getDynamicLibs}                                                     from '@yarnpkg/cli';
 import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
-import {npath}                                                              from '@yarnpkg/fslib';
+import {npath, ppath, xfs}                                                  from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
 import {Command, Option, Usage}                                             from 'clipanion';
 import {build, Plugin}                                                      from 'esbuild';
-import fs                                                                   from 'fs';
 import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
@@ -79,7 +78,7 @@ export default class BuildBundleCommand extends Command {
 
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
     const modules = [...getDynamicLibs().keys()].concat(plugins);
-    const output = path.join(basedir, `bundles/yarn.js`);
+    const output = ppath.join(portableBaseDir, `bundles/yarn.js`);
 
     let version = pkgJsonVersion(basedir);
 
@@ -132,7 +131,7 @@ export default class BuildBundleCommand extends Command {
               'process.env.__FAKE_PLATFORM__': `false`,
             }),
           },
-          outfile: output,
+          outfile: npath.fromPortablePath(output),
           // Default extensions + .mjs
           resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
@@ -159,6 +158,8 @@ export default class BuildBundleCommand extends Command {
           report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
           report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
         }
+
+        await xfs.chmodPromise(output, 0o755);
       });
     });
 
@@ -171,7 +172,7 @@ export default class BuildBundleCommand extends Command {
     } else {
       report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
-      report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, fs.statSync(output).size, formatUtils.Type.SIZE)}`);
+      report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, (await xfs.statPromise(output)).size, formatUtils.Type.SIZE)}`);
       report.reportInfo(null, `${Mark.Question} Bundle version: ${formatUtils.pretty(configuration, version, formatUtils.Type.REFERENCE)}`);
 
       report.reportSeparator();

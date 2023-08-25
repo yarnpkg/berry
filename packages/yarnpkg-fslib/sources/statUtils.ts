@@ -165,7 +165,7 @@ export function makeEmptyStats() {
  */
 export function clearStats(stats: Stats | BigIntStats) {
   for (const key in stats) {
-    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+    if (Object.hasOwn(stats, key)) {
       const element = stats[key as keyof typeof stats];
       if (typeof element === `number`) {
         // @ts-expect-error Typescript can't tell that stats[key] is a number
@@ -187,7 +187,7 @@ export function convertToBigIntStats(stats: Stats): BigIntStats {
   const bigintStats = new BigIntStatsEntry();
 
   for (const key in stats) {
-    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+    if (Object.hasOwn(stats, key)) {
       const element = stats[key as keyof typeof stats];
       if (typeof element === `number`) {
         // @ts-expect-error Typescript isn't able to tell this is valid

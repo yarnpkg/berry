@@ -63,8 +63,12 @@ xfs.mktempSync(temp => {
     `  'before' \\\n`,
     `  'after'\n`,
     `\n`,
+    // macOS
     `if which pbcopy >/dev/null 2>&1; then\n`,
     `  pbcopy < .git/yarn-bench\n`,
+    // Linux
+    `elif which xclip >/dev/null 2>&1; then\n`,
+    `  xclip -selection clipboard < .git/yarn-bench\n`,
     `fi\n`,
   ].join(``));
 
@@ -132,7 +136,7 @@ xfs.mktempSync(temp => {
   console.log(`  - If you want to run some code before the benchmark, add it to the ${chalk.yellow(`bench-prepare.sh`)} script in this folder.`);
   console.log(`  - By default the benchmark will run ${chalk.magenta(`yarn install`)}; you can change that by editing ${chalk.yellow(`bench-script.sh`)}.`);
   console.log(`  - When you want to run the benchmark, run ${chalk.magenta(`bench-run`)}. The repository will be reset between each run.`);
-  console.log(`  - If using OSX, the results will be automatically copied to your clipboard. Otherwise, they'll be available in ${chalk.yellow(`.git/yarn-bench`)}.`);
+  console.log(`  - If using OSX or Linux, the results will be automatically copied to your clipboard. Otherwise, they'll be available in ${chalk.yellow(`.git/yarn-bench`)}.`);
   console.log();
   console.log(`Once you're done, exit the shell and the temporary environment will be removed.`);
 

@@ -60,7 +60,7 @@ const plugin: Plugin<Hooks> = {
         if (project.configuration.isCI) {
           for (const [workspace, workspaceErrors] of remainingErrors) {
             for (const error of workspaceErrors) {
-              reportError(MessageName.CONSTRAINTS_CHECK_FAILED, `${formatUtils.pretty(project.configuration, workspace.locator, formatUtils.Type.IDENT)}: ${error.text}`);
+              reportError(MessageName.CONSTRAINTS_CHECK_FAILED, `${formatUtils.pretty(project.configuration, workspace.anchoredLocator, formatUtils.Type.IDENT)}: ${error.text}`);
             }
           }
         } else {

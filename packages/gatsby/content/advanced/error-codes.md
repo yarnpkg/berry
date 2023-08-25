@@ -422,7 +422,7 @@ Peer dependencies are a little complex, and debugging them may require a lot of 
 To use it, simply pass it the `p`-prefixed code provided in the original peer resolution error message:
 
 ```
-yarn explain peer-requirements pf649cd
+yarn explain peer-requirements pf649c
 ```
 
 ## YN0087 - `MIGRATION_SUCCESS`

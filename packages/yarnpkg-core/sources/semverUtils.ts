@@ -108,6 +108,10 @@ export type Comparator = {
 };
 
 export function getComparator(comparators: semver.Comparator): Comparator {
+  // @ts-expect-error: The ANY symbol isn't well declared
+  if (comparators.semver === semver.Comparator.ANY)
+    return {gt: null, lt: null};
+
   switch (comparators.operator) {
     case ``:
       return {gt: [`>=`, comparators.semver], lt: [`<=`, comparators.semver]};
@@ -192,6 +196,9 @@ export function stringifyComparator(comparator: Comparator) {
     parts.push(comparator.gt[0] + comparator.gt[1].version);
   if (comparator.lt)
     parts.push(comparator.lt[0] + comparator.lt[1].version);
+
+  if (!parts.length)
+    return `*`;
 
   return parts.join(` `);
 }

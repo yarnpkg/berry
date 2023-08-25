@@ -30,7 +30,7 @@ export default class NpmAuditCommand extends BaseCommand {
 
       If particular advisories are needed to be ignored, the \`--ignore\` flag can be used with Advisory ID's to ignore any number of advisories in the audit report. This can also be set in the configuration file with the \`npmAuditIgnoreAdvisories\` option.
 
-      To understand the dependency tree requiring vulnerable packages, check the raw report with the \`--json\` flag or use \`yarn why <package>\` to get more information as to who depends on them.
+      To understand the dependency tree requiring vulnerable packages, check the raw report with the \`--json\` flag or use \`yarn why package\` to get more information as to who depends on them.
     `,
     examples: [[
       `Checks for known security issues with the installed packages. The output is a list of known issues.`,
@@ -154,7 +154,7 @@ export default class NpmAuditCommand extends BaseCommand {
 
       for (const [packageName, version, message] of deprecations.flat(1)) {
         // No need to report the deprecation audit message if the package is already reported as vulnerable
-        if (Object.prototype.hasOwnProperty.call(auditResult, packageName))
+        if (Object.hasOwn(auditResult, packageName))
           if (auditResult[packageName].some(advisory => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
             continue;
 

@@ -88,7 +88,7 @@ export default class LinkCommand extends BaseCommand {
     }
 
     for (const workspace of linkedWorkspaces) {
-      const fullName = structUtils.stringifyIdent(workspace.locator);
+      const fullName = structUtils.stringifyIdent(workspace.anchoredLocator);
       const target = this.relative
         ? ppath.relative(project.cwd, workspace.cwd)
         : workspace.cwd;
