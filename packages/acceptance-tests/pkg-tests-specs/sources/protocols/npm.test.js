@@ -104,5 +104,45 @@ describe(`Protocols`, () => {
         });
       }),
     );
+
+    test(
+      `it should allow fetching packages that have an unconventional url (fragment)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`unconventional-tarball`]: `https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz#fragment`},
+        },
+        async ({path, run, source, registryUrl}) => {
+          await run(`install`);
+
+          await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+            name: `unconventional-tarball`,
+            version: `1.0.0`,
+          });
+
+          await xfs.removePromise(`${path}/.yarn`);
+          await run(`install`);
+        },
+      ),
+    );
+
+    test(
+      `it should allow fetching packages that have an unconventional url (query)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`unconventional-tarball`]: `https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz?auth=1234`},
+        },
+        async ({path, run, source, registryUrl}) => {
+          await run(`install`);
+
+          await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+            name: `unconventional-tarball`,
+            version: `1.0.0`,
+          });
+
+          await xfs.removePromise(`${path}/.yarn`);
+          await run(`install`);
+        },
+      ),
+    );
   });
 });

@@ -473,7 +473,7 @@ function normalizeDirectoryPath(root: PortablePath, folder: PortablePath) {
   return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
 }
 
-type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U: never;
+type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U : never;
 type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData>>;
 
 async function extractCustomPackageData(fetchResult: FetchResult) {

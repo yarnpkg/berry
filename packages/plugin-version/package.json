@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-version",
-  "version": "4.0.0-rc.48",
+  "version": "4.0.0-rc.50",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -11,7 +11,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libui": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
-    "clipanion": "^3.2.1",
+    "clipanion": "^4.0.0-rc.2",
     "ink": "^3.0.8",
     "lodash": "^4.17.15",
     "react": "^16.13.1",

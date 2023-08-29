@@ -75,7 +75,7 @@ export default class PluginImportSourcesCommand extends BaseCommand {
       const identStr = structUtils.stringifyIdent(ident);
       const data = await getAvailablePlugins(configuration, YarnVersion);
 
-      if (!Object.prototype.hasOwnProperty.call(data, identStr))
+      if (!Object.hasOwn(data, identStr))
         throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be built and imported from sources.`);
 
       const pluginSpec = identStr;

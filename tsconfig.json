@@ -6,7 +6,7 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["ES2021", "DOM"],
+    "lib": ["ES2022", "DOM"],
     "module": "commonjs",
     "noImplicitReturns": true,
     "resolveJsonModule": true,
@@ -26,6 +26,7 @@
     "packages/yarnpkg-doctor/fixtures",
     "packages/gatsby",
     "packages/docusaurus",
+    "packages/docusaurus/build",
     "packages/yarnpkg-libzip/artifacts"
   ]
 }

@@ -39,10 +39,6 @@ exports[`Commands workspace foreach --since runs on workspaces changed since bra
   "stderr": "",
   "stdout": "Test Workspace B
 Test Workspace C
-Test Workspace D
-Test Workspace E
-Test Workspace F
-Test Workspace G
 Done
 ",
 }
@@ -54,10 +50,6 @@ exports[`Commands workspace foreach --since runs on workspaces changed since com
   "stderr": "",
   "stdout": "Test Workspace B
 Test Workspace C
-Test Workspace D
-Test Workspace E
-Test Workspace F
-Test Workspace G
 Done
 ",
 }
@@ -291,7 +283,7 @@ Done
 }
 `;
 
-exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
+exports[`Commands workspace foreach should run on current and descendant workspaces when --worktree is set 1`] = `
 {
   "code": 0,
   "stderr": "",

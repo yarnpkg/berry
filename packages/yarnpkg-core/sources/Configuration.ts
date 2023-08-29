@@ -84,13 +84,16 @@ const IGNORED_ENV_VARIABLES = new Set([
 
   // "YARN_REGISTRY", read by yarn 1.x, prevents yarn 2+ installations if set
   `registry`,
+
+  // "ignoreCwd" was previously used to skip extra chdir calls in Yarn Modern when `--cwd` was used.
+  // It needs to be ignored because it's set by the parent process which could be anything.
+  `ignoreCwd`,
 ]);
 
 export const TAG_REGEXP = /^(?!v)[a-z0-9._-]+$/i;
 
 export const ENVIRONMENT_PREFIX = `yarn_`;
 export const DEFAULT_RC_FILENAME = `.yarnrc.yml` as Filename;
-export const DEFAULT_LOCK_FILENAME = `yarn.lock` as Filename;
 export const SECRET = `********`;
 
 export enum SettingsType {
@@ -166,7 +169,6 @@ export enum WindowsLinkType {
 //
 // - filenames that don't accept actual paths must end with the "Filename" suffix
 //   prefer to use absolute paths instead, since they are automatically resolved
-//   ex: lockfileFilename
 //
 // - folders must end with the "Folder" suffix
 //   ex: cacheFolder, pnpVirtualFolder
@@ -198,11 +200,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
-  ignoreCwd: {
-    description: `If true, the \`--cwd\` flag will be ignored`,
-    type: SettingsType.BOOLEAN,
-    default: false,
-  },
 
   // Settings related to the package manager internal names
   globalFolder: {
@@ -225,11 +222,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `Folder where the virtual packages (cf doc) will be mapped on the disk (must be named __virtual__)`,
     type: SettingsType.ABSOLUTE_PATH,
     default: `./.yarn/__virtual__`,
-  },
-  lockfileFilename: {
-    description: `Name of the files where the Yarn dependency tree entries must be stored`,
-    type: SettingsType.STRING,
-    default: DEFAULT_LOCK_FILENAME,
   },
   installStatePath: {
     description: `Path of the file where the install state will be persisted`,
@@ -597,13 +589,11 @@ export interface ConfigurationValueMap {
 
   yarnPath: PortablePath | null;
   ignorePath: boolean;
-  ignoreCwd: boolean;
 
   globalFolder: PortablePath;
   cacheFolder: PortablePath;
   compressionLevel: `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   virtualFolder: PortablePath;
-  lockfileFilename: Filename;
   installStatePath: PortablePath;
   immutablePatterns: Array<string>;
   rcFilename: Filename;
@@ -961,6 +951,32 @@ function getRcFilename() {
   return DEFAULT_RC_FILENAME as Filename;
 }
 
+async function checkYarnPath({configuration, selfPath}: {configuration: Configuration, selfPath: PortablePath}): Promise<PortablePath | null> {
+  const yarnPath = configuration.get(`yarnPath`);
+  const ignorePath = configuration.get(`ignorePath`);
+
+  const tryRead = (p: PortablePath) => xfs.readFilePromise(p).catch(() => {
+    return Buffer.of();
+  });
+
+  const isSameBinary = async () =>
+    yarnPath && (
+      yarnPath === selfPath ||
+        Buffer.compare(...await Promise.all([
+          tryRead(yarnPath),
+          tryRead(selfPath),
+        ])) === 0
+    );
+
+  if (!ignorePath && await isSameBinary()) {
+    return null;
+  } else if (yarnPath !== null && !ignorePath) {
+    return yarnPath;
+  } else {
+    return null;
+  }
+}
+
 export enum ProjectLookup {
   LOCKFILE,
   MANIFEST,
@@ -970,7 +986,7 @@ export enum ProjectLookup {
 export type FindProjectOptions = {
   lookup?: ProjectLookup;
   strict?: boolean;
-  usePath?: boolean;
+  usePathCheck?: PortablePath | null;
   useRc?: boolean;
 };
 
@@ -1052,7 +1068,7 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePath = false, useRc = true}: FindProjectOptions = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -1079,8 +1095,8 @@ export class Configuration {
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles}: CoreFields) => ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles});
-    const pickSecondaryCoreFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, injectEnvironmentFiles, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({yarnPath, ignorePath, injectEnvironmentFiles}: CoreFields) => ({yarnPath, ignorePath, injectEnvironmentFiles});
+    const pickSecondaryCoreFields = ({yarnPath, ignorePath, injectEnvironmentFiles, ...rest}: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
       for (const [key, value] of Object.entries(rest))
         if (allCoreFieldKeys.has(key))
@@ -1089,7 +1105,7 @@ export class Configuration {
       return secondaryCoreFields;
     };
 
-    const pickPluginFields = ({ignoreCwd, yarnPath, ignorePath, lockfileFilename, ...rest}: CoreFields) => {
+    const pickPluginFields = ({yarnPath, ignorePath, ...rest}: CoreFields) => {
       const pluginFields: any = {};
       for (const [key, value] of Object.entries(rest))
         if (!allCoreFieldKeys.has(key))
@@ -1108,24 +1124,26 @@ export class Configuration {
       configuration.useWithSource(source, pickPrimaryCoreFields(data), resolvedRcFileCwd, {strict: false});
     }
 
-    if (usePath) {
-      const yarnPath = configuration.get(`yarnPath`);
-      const ignorePath = configuration.get(`ignorePath`);
+    if (usePathCheck) {
+      const yarnPath = await checkYarnPath({
+        configuration,
+        selfPath: usePathCheck,
+      });
 
-      if (yarnPath !== null && !ignorePath) {
+      if (yarnPath !== null) {
         return configuration;
+      } else {
+        configuration.useWithSource(`<override>`, {ignorePath: true}, startingCwd, {strict: false, overwrite: true});
       }
     }
 
     // We need to know the project root before being able to truly instantiate
-    // our configuration, and to know that we need to know the lockfile name
-
-    const lockfileFilename = configuration.get(`lockfileFilename`);
+    // our configuration.
 
     let projectCwd: PortablePath | null;
     switch (lookup) {
       case ProjectLookup.LOCKFILE: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, lockfileFilename);
+        projectCwd = await Configuration.findProjectCwd(startingCwd, Filename.lockfile);
       } break;
 
       case ProjectLookup.MANIFEST: {
@@ -1837,7 +1855,7 @@ export class Configuration {
 
               case PackageExtensionType.PeerDependencyMeta: {
                 const currentPeerDependencyMeta = pkg.peerDependenciesMeta.get(extension.selector);
-                if (typeof currentPeerDependencyMeta === `undefined` || !Object.prototype.hasOwnProperty.call(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value) {
+                if (typeof currentPeerDependencyMeta === `undefined` || !Object.hasOwn(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value) {
                   extension.status = PackageExtensionStatus.Active;
                   miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
                 }

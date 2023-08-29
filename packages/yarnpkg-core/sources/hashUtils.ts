@@ -1,6 +1,6 @@
 import {PortablePath, xfs, npath, FakeFS} from '@yarnpkg/fslib';
 import {createHash, BinaryLike}           from 'crypto';
-import globby                             from 'globby';
+import fastGlob                           from 'fast-glob';
 
 export function makeHash<T extends string = string>(...args: Array<BinaryLike | null>): T {
   const hash = createHash(`sha512`);
@@ -45,29 +45,26 @@ export async function checksumFile(path: PortablePath, {baseFs, algorithm}: {bas
 }
 
 export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath}) {
-  // Note: We use a two-pass glob instead of using the expandDirectories option
-  // from globby, because the native implementation is broken.
+  // Note: We use a two-pass glob instead of using globby with the expandDirectories
+  // option, because the native implementation is broken.
   //
   // Ref: https://github.com/sindresorhus/globby/issues/147
 
-  const dirListing = await globby(pattern, {
+  const dirListing = await fastGlob(pattern, {
     cwd: npath.fromPortablePath(cwd),
-    expandDirectories: false,
     onlyDirectories: true,
-    unique: true,
   });
 
   const dirPatterns = dirListing.map(entry => {
     return `${entry}/**/*`;
   });
 
-  const listing = await globby([pattern, ...dirPatterns], {
+  const listing = await fastGlob([pattern, ...dirPatterns], {
     cwd: npath.fromPortablePath(cwd),
-    expandDirectories: false,
     onlyFiles: false,
-    unique: true,
   });
 
+  // fast-glob returns results in arbitrary order
   listing.sort();
 
   const hashes = await Promise.all(listing.map(async entry => {

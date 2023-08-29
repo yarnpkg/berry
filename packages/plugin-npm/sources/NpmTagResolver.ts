@@ -43,12 +43,12 @@ export class NpmTagResolver implements Resolver {
       project: opts.project,
     });
 
-    if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))
+    if (!Object.hasOwn(registryData, `dist-tags`))
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data - missing "dist-tags" field`);
 
     const distTags = registryData[`dist-tags`];
 
-    if (!Object.prototype.hasOwnProperty.call(distTags, tag))
+    if (!Object.hasOwn(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
     const version = distTags[tag];

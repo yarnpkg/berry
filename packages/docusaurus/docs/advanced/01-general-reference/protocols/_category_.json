@@ -1,0 +1,10 @@
+{
+  "label": "Protocols",
+  "link": {
+    "type": "generated-index",
+    "slug": "/protocols"
+  },
+  "className": "protocols__autocollapse",
+  "collapsible": true,
+  "collapsed": true
+}

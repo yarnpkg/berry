@@ -28,13 +28,17 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that it depends on through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. By default yarn runs the command only on current and all its descendant workspaces.
+      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. This is the default behavior.
 
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
+
+      - If \`-W,--worktree\` is set, Yarn will find workspaces to run the command on by looking at the current worktree.
 
       - If \`--from\` is set, Yarn will use the packages matching the 'from' glob as the starting point for any recursive search.
 
       - If \`--since\` is set, Yarn will only run the command on workspaces that have been modified since the specified ref. By default Yarn will use the refs specified by the \`changesetBaseRefs\` configuration option.
+
+      - If \`--dry-run\` is set, Yarn will explain what it would do without actually doing anything.
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
@@ -58,16 +62,25 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     ]],
   });
 
-  recursive = Option.Boolean(`-R,--recursive`, false, {
-    description: `Find packages via dependencies/devDependencies instead of using the workspaces field`,
-  });
+  static schema = [
+    t.hasKeyRelationship(`all`, t.KeyRelationship.Forbids, [`from`, `recursive`, `since`, `worktree`], {missingIf: `undefined`}),
+    t.hasAtLeastOneKey([`all`, `recursive`, `since`, `worktree`], {missingIf: `undefined`}),
+  ];
 
-  from = Option.Array(`--from`, [], {
+  from = Option.Array(`--from`, {
     description: `An array of glob pattern idents or paths from which to base any recursion`,
   });
 
-  all = Option.Boolean(`-A,--all`, false, {
+  all = Option.Boolean(`-A,--all`, {
     description: `Run the command on all workspaces of a project`,
+  });
+
+  recursive = Option.Boolean(`-R,--recursive`, {
+    description: `Run the command on the current workspace and all of its recursive dependencies`,
+  });
+
+  worktree = Option.Boolean(`-W,--worktree`, {
+    description: `Run the command on all workspaces of the current worktree`,
   });
 
   verbose = Option.Boolean(`-v,--verbose`, {
@@ -112,6 +125,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     tolerateBoolean: true,
   });
 
+  dryRun = Option.Boolean(`-n,--dry-run`, {
+    description: `Print the commands that would be run, without actually running them`,
+  });
+
   commandName = Option.String();
   args = Option.Proxy();
 
@@ -132,26 +149,81 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
-    const rootWorkspace = this.all
-      ? project.topLevelWorkspace
-      : cwdWorkspace!;
+    const log = (msg: string) => {
+      if (!this.dryRun)
+        return;
 
-    const rootCandidates = this.since
-      ? Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}))
-      : [rootWorkspace, ...(this.from.length > 0 ? rootWorkspace.getRecursiveWorkspaceChildren() : [])];
+      this.context.stdout.write(`${msg}\n`);
+    };
 
-    const fromPredicate = (workspace: Workspace) => micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.from) || micromatch.isMatch(workspace.relativeCwd, this.from);
-    const fromCandidates: Array<Workspace> = this.from.length > 0
-      ? rootCandidates.filter(fromPredicate)
-      : rootCandidates;
+    const getFromWorkspaces = () => {
+      const matchers = this.from!.map(pattern => micromatch.matcher(pattern));
 
-    const candidates = new Set([...fromCandidates, ...(fromCandidates.map(candidate => [...(
-      this.recursive
-        ? this.since
-          ? candidate.getRecursiveWorkspaceDependents()
-          : candidate.getRecursiveWorkspaceDependencies()
-        : candidate.getRecursiveWorkspaceChildren()
-    )])).flat()]);
+      return project.workspaces.filter(workspace => {
+        const ident = structUtils.stringifyIdent(workspace.anchoredLocator);
+        const cwd = workspace.relativeCwd;
+
+        return matchers.some(match => match(ident) || match(cwd));
+      });
+    };
+
+    let selection: Array<Workspace> = [];
+    if (this.since) {
+      log(`Option --since is set; selecting the changed workspaces as root for workspace selection`);
+      selection = Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}));
+    } else {
+      if (this.from) {
+        log(`Option --from is set; selecting the specified workspaces`);
+        selection = [...getFromWorkspaces()];
+      } else if (this.worktree) {
+        log(`Option --worktree is set; selecting the current workspace`);
+        selection = [cwdWorkspace!];
+      } else if (this.recursive) {
+        log(`Option --recursive is set; selecting the current workspace`);
+        selection = [cwdWorkspace!];
+      } else if (this.all) {
+        log(`Option --all is set; selecting all workspaces`);
+        selection = [...project.workspaces];
+      }
+    }
+
+    if (this.dryRun && !this.all) {
+      for (const workspace of selection)
+        log(`\n- ${workspace.relativeCwd}\n  ${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}`);
+
+      if (selection.length > 0) {
+        log(``);
+      }
+    }
+
+    let extra: Set<Workspace> | null;
+    if (this.recursive) {
+      if (this.since) {
+        log(`Option --recursive --since is set; recursively selecting all dependent workspaces`);
+        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependents()]).flat());
+      } else {
+        log(`Option --recursive is set; recursively selecting all transitive dependencies`);
+        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependencies()]).flat());
+      }
+    } else if (this.worktree) {
+      log(`Option --worktree is set; recursively selecting all nested workspaces`);
+      extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceChildren()]).flat());
+    } else {
+      extra = null;
+    }
+
+    if (extra !== null) {
+      selection = [...new Set([
+        ...selection,
+        ...extra,
+      ])];
+
+      if (this.dryRun) {
+        for (const workspace of extra) {
+          log(`\n- ${workspace.relativeCwd}\n  ${structUtils.prettyLocator(configuration, workspace.anchoredLocator)}`);
+        }
+      }
+    }
 
     const workspaces: Array<Workspace> = [];
 
@@ -168,10 +240,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       }
     }
 
-    for (const workspace of candidates) {
+    for (const workspace of selection) {
       if (scriptName && !workspace.manifest.scripts.has(scriptName) && !isGlobalScript) {
         const accessibleBinaries = await scriptUtils.getWorkspaceAccessibleBinaries(workspace);
         if (!accessibleBinaries.has(scriptName)) {
+          log(`Excluding ${workspace.relativeCwd} because it doesn't have a "${scriptName}" script`);
           continue;
         }
       }
@@ -181,17 +254,26 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       if (scriptName === configuration.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
         continue;
 
-      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include))
+      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include)) {
+        log(`Excluding ${workspace.relativeCwd} because it doesn't match the --include filter`);
         continue;
+      }
 
-      if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.locator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude)))
+      if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude))) {
+        log(`Excluding ${workspace.relativeCwd} because it matches the --include filter`);
         continue;
+      }
 
-      if (this.publicOnly && workspace.manifest.private === true)
+      if (this.publicOnly && workspace.manifest.private === true) {
+        log(`Excluding ${workspace.relativeCwd} because it's a private workspace and --no-private was set`);
         continue;
+      }
 
       workspaces.push(workspace);
     }
+
+    if (this.dryRun)
+      return 0;
 
     // --verbose is automatically enabled in TTYs
     const verbose = this.verbose ?? (this.context.stdout as WriteStream).isTTY;
@@ -400,7 +482,7 @@ function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}:
   if (!verbose)
     return null;
 
-  const name = structUtils.stringifyIdent(workspace.locator);
+  const name = structUtils.stringifyIdent(workspace.anchoredLocator);
 
   const prefix = `[${name}]:`;
 

@@ -68,7 +68,7 @@ export default class UnlinkCommand extends BaseCommand {
           if (this.all) {
             for (const workspace of project2.workspaces)
               if (workspace.manifest.name)
-                workspacesToUnlink.add(structUtils.stringifyIdent(workspace.locator));
+                workspacesToUnlink.add(structUtils.stringifyIdent(workspace.anchoredLocator));
 
             if (workspacesToUnlink.size === 0) {
               throw new UsageError(`No workspace found to be unlinked in the target project`);
@@ -77,7 +77,7 @@ export default class UnlinkCommand extends BaseCommand {
             if (!workspace2.manifest.name)
               throw new UsageError(`The target workspace doesn't have a name and thus cannot be unlinked`);
 
-            workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.locator));
+            workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.anchoredLocator));
           }
         } else {
           const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
