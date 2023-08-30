@@ -21,6 +21,7 @@ describe(`Features`, () => {
         await xfs.writeJsonPromise(manifestPath, {
           name: `eslint`,
           version: `1.0.0`,
+          bin: `./bin/eslint.js`,
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -58,6 +59,7 @@ describe(`Features`, () => {
         await xfs.writeJsonPromise(manifestPath, {
           name: `eslint`,
           version: `1.0.0`,
+          bin: `./bin/eslint.js`,
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
