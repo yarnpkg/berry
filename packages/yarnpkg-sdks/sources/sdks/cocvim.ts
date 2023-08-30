@@ -17,11 +17,11 @@ export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: 
   await addCocVimWorkspaceConfiguration(pnpApi, CocVimConfiguration.settings, {
     [`eslint.packageManager`]: `yarn`,
     [`eslint.nodePath`]: npath.fromPortablePath(
-      ppath.dirname(ppath.dirname(ppath.dirname(
+      ppath.dirname(ppath.dirname(
         wrapper.getProjectPathTo(
-          `lib/api.js` as PortablePath,
+          `package.json` as PortablePath,
         ),
-      ))),
+      )),
     ),
   });
 };

@@ -48,11 +48,11 @@ export const generateAstroLanguageServerWrapper: GenerateIntegrationWrapper = as
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`eslint.nodePath`]: npath.fromPortablePath(
-      ppath.dirname(ppath.dirname(ppath.dirname(
+      ppath.dirname(ppath.dirname(
         wrapper.getProjectPathTo(
-          `lib/api.js` as PortablePath,
+          `package.json` as PortablePath,
         ),
-      ))),
+      )),
     ),
   });
 
@@ -67,7 +67,7 @@ export const generatePrettierWrapper: GenerateIntegrationWrapper = async (pnpApi
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`prettier.prettierPath`]: npath.fromPortablePath(
       wrapper.getProjectPathTo(
-        `index.js` as PortablePath,
+        ppath.normalize(wrapper.manifest.main),
       ),
     ),
   });

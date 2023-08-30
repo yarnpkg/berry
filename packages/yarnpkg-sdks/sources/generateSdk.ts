@@ -191,6 +191,7 @@ export type IntegrationSdks = Array<
   | [SupportedSdk, GenerateIntegrationWrapper | null]
 >;
 
+type PackageExports = string | null | { [key: string]: PackageExports } | Array<PackageExports>;
 export class Wrapper {
   private name: PortablePath;
 
@@ -199,16 +200,18 @@ export class Wrapper {
 
   private paths: Map<PortablePath, PortablePath> = new Map();
 
-  constructor(name: PortablePath, {pnpApi, target}: {pnpApi: PnpApi, target: PortablePath}) {
+  public readonly manifest: Record<string, any>;
+
+  constructor(name: PortablePath, {pnpApi, target, manifestOverrides = {}}: {pnpApi: PnpApi, target: PortablePath, manifestOverrides?: Record<string, any>}) {
     this.name = name;
 
     this.pnpApi = pnpApi;
     this.target = target;
+
+    this.manifest = this.loadManifest(manifestOverrides);
   }
 
-  async writeManifest(rawManifest: Record<string, any> = {}) {
-    const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
-
+  private loadManifest(manifestOverrides: Record<string, any> = {}) {
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const dependencyReference = topLevelInformation.packageDependencies.get(this.name)!;
 
@@ -217,15 +220,77 @@ export class Wrapper {
       throw new Error(`Assertion failed: Package ${this.name} isn't a dependency of the top-level`);
 
     const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
-
-    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeJsonPromise(absWrapperPath, {
+    return {
       name: this.name,
       version: `${manifest.version}-sdk`,
       main: manifest.main,
       type: `commonjs`,
-      ...rawManifest,
-    });
+      bin: manifest.bin,
+      exports: manifest.exports,
+      ...manifestOverrides,
+    };
+  }
+
+  async writeDefaults() {
+    await this.writeManifest();
+
+    if (this.manifest.bin)
+      await this.writePackageBinaries();
+
+
+    if (this.manifest.exports)
+      await this.writePackageExports();
+
+
+    if (this.manifest.main) {
+      await this.writeFile(ppath.normalize(this.manifest.main as PortablePath), {requirePath: `.` as PortablePath});
+    }
+  }
+
+  async writePackageBinaries() {
+    if (typeof this.manifest.bin === `string`) {
+      await this.writeBinary(ppath.normalize(this.manifest.bin as PortablePath));
+    } else {
+      for (const relPackagePath of Object.values(this.manifest.bin)) {
+        await this.writeBinary(ppath.normalize(relPackagePath as PortablePath));
+      }
+    }
+  }
+
+  async writePackageExports(packageExports: PackageExports = this.manifest.exports, requirePath: PortablePath = `.` as PortablePath) {
+    if (typeof packageExports === `string`) {
+      if (!packageExports.includes(`*`)) {
+        await this.writeFile(ppath.normalize(packageExports as PortablePath), {requirePath});
+      }
+    } else if (Array.isArray(packageExports)) {
+      await Promise.all(
+        packageExports.map(packageExport => this.writePackageExports(packageExport, requirePath)),
+      );
+    } else if (packageExports !== null) {
+      Object.entries(packageExports).map(async ([key, value]) => {
+        if (key.startsWith(`.`)) {
+          this.writePackageExports(value, key as PortablePath);
+        } else {
+          this.writePackageExports(value, requirePath);
+        }
+      });
+    }
+  }
+
+  async writeManifest() {
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
+    const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
+
+    if (this.paths.has(`package.json` as PortablePath))
+      return;
+
+    this.paths.set(`package.json` as PortablePath, relProjectPath);
+
+    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
+    await xfs.writeJsonPromise(absWrapperPath, this.manifest);
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath} = {}) {
@@ -239,6 +304,11 @@ export class Wrapper {
     const absWrapperPath = ppath.join(this.target, this.name, relPackagePath);
     const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
 
+    if (this.paths.has(relPackagePath))
+      return absWrapperPath;
+
+    this.paths.set(relPackagePath, relProjectPath);
+
     const absPnpApiPath = npath.toPortablePath(this.pnpApi.resolveRequest(`pnpapi`, null)!);
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
 
@@ -246,8 +316,6 @@ export class Wrapper {
     await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, options.requirePath ?? relPackagePath), options), {
       mode: options.mode,
     });
-
-    this.paths.set(relPackagePath, relProjectPath);
 
     return absWrapperPath;
   }
