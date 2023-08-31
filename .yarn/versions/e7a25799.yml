@@ -1,7 +1,7 @@
 releases:
-  "@yarnpkg/cli": patch
-  "@yarnpkg/plugin-pnp": patch
-  "@yarnpkg/pnp": patch
+  "@yarnpkg/cli": major
+  "@yarnpkg/plugin-pnp": major
+  "@yarnpkg/pnp": major
 
 declined:
   - "@yarnpkg/plugin-compat"
