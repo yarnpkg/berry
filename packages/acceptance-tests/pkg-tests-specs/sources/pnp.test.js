@@ -1683,10 +1683,12 @@ describe(`Plug'n'Play`, () => {
     }, async ({path, run, source}) => {
       await run(`add`, `no-deps`);
 
-      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
-      await writeFile(ppath.join(testSandboxPath, `file.js`), `
+      await writeFile(ppath.join(path, `file.js`), `
         console.log(require.resolve('no-deps'));
       `);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await xfs.mkdirpPromise(testSandboxPath);
 
       await Promise.all([
         xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
@@ -1694,6 +1696,7 @@ describe(`Plug'n'Play`, () => {
         xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
         xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
         xfs.symlinkPromise(ppath.join(path, Filename.pnpData), ppath.join(testSandboxPath, Filename.pnpData)),
+        xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
       ]);
 
       await expect(run(`node`, `file.js`, {
@@ -1833,6 +1836,36 @@ describe(`Plug'n'Play`, () => {
           code: 1,
           stderr: expect.stringContaining(`is controlled by multiple pnpapi instances`),
         });
+      });
+    }),
+  );
+
+
+  test(
+    `it should initialize a symlinked pnpapi module only once when working inside a sandbox environment full of symlinks`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `file.js`), `
+        console.log('found duplicate pnpapi instances:', require('pnpapi') !== require('module').findPnpApi(${JSON.stringify(ppath.join(path, Filename.manifest))}));
+      `);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await xfs.mkdirpPromise(testSandboxPath);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+        xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
+      ]);
+
+      await expect(run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      })).resolves.toMatchObject({
+        code: 0,
+        stdout: expect.stringContaining(`found duplicate pnpapi instances: false`),
       });
     }),
   );
