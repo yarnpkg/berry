@@ -242,14 +242,14 @@ export class Wrapper {
   }
 
   async writeDefaults() {
-    if (this.manifest.bin)
-      await this.writePackageBinaries();
+    if (this.manifest.main)
+      await this.writeFile(ppath.normalize(this.manifest.main as PortablePath), {requirePath: PortablePath.dot});
 
     if (this.manifest.exports)
       await this.writePackageExports();
 
-    if (this.manifest.main)
-      await this.writeFile(ppath.normalize(this.manifest.main as PortablePath), {requirePath: PortablePath.dot});
+    if (this.manifest.bin)
+      await this.writePackageBinaries();
 
     await this.writeManifest();
   }
