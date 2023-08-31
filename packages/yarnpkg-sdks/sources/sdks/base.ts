@@ -253,10 +253,11 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
   const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
 
+  await wrapper.writeDefaults();
+
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
   await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
-  await wrapper.writeDefaults();
 
   return wrapper;
 };
