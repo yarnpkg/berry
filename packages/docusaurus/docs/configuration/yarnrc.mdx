@@ -3,11 +3,12 @@ title: "Settings (.yarnrc.yml)"
 description: Allowed fields in .yarnrc.yml files
 ---
 
-import manifestSchema from '@yarnpkg/docusaurus/static/configuration/yarnrc.json';
-import theme     from 'prism-react-renderer/themes/vsDark';
-import {JsonDoc} from 'react-json-doc';
+import manifestSchema        from '@yarnpkg/docusaurus/static/configuration/yarnrc.json';
+import theme                 from 'prism-react-renderer/themes/vsDark';
+import {JsonDoc}             from 'react-json-doc';
+import {descriptionRenderer} from '@yarnpkg/docusaurus/src/lib/descriptionRenderer';
 
-<JsonDoc theme={theme} extraTheme={{
+<JsonDoc theme={theme} descriptionRenderer={descriptionRenderer} extraTheme={{
   container: {borderRadius: `var(--ifm-code-border-radius)`},
   inactiveHeader: {},
   activeHeader: {borderRadius: `var(--ifm-code-border-radius)`, background: `#3d437c`},
