@@ -232,19 +232,16 @@ export class Wrapper {
   }
 
   async writeDefaults() {
-    await this.writeManifest();
-
     if (this.manifest.bin)
       await this.writePackageBinaries();
-
 
     if (this.manifest.exports)
       await this.writePackageExports();
 
+    if (this.manifest.main)
+      await this.writeFile(ppath.normalize(this.manifest.main as PortablePath), {requirePath: PortablePath.dot});
 
-    if (this.manifest.main) {
-      await this.writeFile(ppath.normalize(this.manifest.main as PortablePath), {requirePath: `.` as PortablePath});
-    }
+    await this.writeManifest();
   }
 
   async writePackageBinaries() {
@@ -257,7 +254,7 @@ export class Wrapper {
     }
   }
 
-  async writePackageExports(packageExports: PackageExports = this.manifest.exports, requirePath: PortablePath = `.` as PortablePath) {
+  async writePackageExports(packageExports: PackageExports = this.manifest.exports, requirePath = PortablePath.dot) {
     if (typeof packageExports === `string`) {
       if (!packageExports.includes(`*`)) {
         await this.writeFile(ppath.normalize(packageExports as PortablePath), {requirePath});
@@ -284,13 +281,10 @@ export class Wrapper {
     const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
     const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
 
-    if (this.paths.has(`package.json` as PortablePath))
-      return;
-
-    this.paths.set(`package.json` as PortablePath, relProjectPath);
-
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
     await xfs.writeJsonPromise(absWrapperPath, this.manifest);
+
+    this.paths.set(`package.json` as PortablePath, relProjectPath);
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath} = {}) {
@@ -304,11 +298,6 @@ export class Wrapper {
     const absWrapperPath = ppath.join(this.target, this.name, relPackagePath);
     const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
 
-    if (this.paths.has(relPackagePath))
-      return absWrapperPath;
-
-    this.paths.set(relPackagePath, relProjectPath);
-
     const absPnpApiPath = npath.toPortablePath(this.pnpApi.resolveRequest(`pnpapi`, null)!);
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
 
@@ -316,6 +305,8 @@ export class Wrapper {
     await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, options.requirePath ?? relPackagePath), options), {
       mode: options.mode,
     });
+
+    this.paths.set(relPackagePath, relProjectPath);
 
     return absWrapperPath;
   }
