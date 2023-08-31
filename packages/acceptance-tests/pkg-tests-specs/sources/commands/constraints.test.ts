@@ -1,9 +1,11 @@
-const {npath} = require(`@yarnpkg/fslib`);
+import {npath, ppath} from '@yarnpkg/fslib';
+
+import {environments} from './constraints/environments';
+
+
 const {
   fs: {writeFile},
 } = require(`pkg-tests-core`);
-
-const {environments} = require(`./constraints/environments`);
 
 const scriptNames = {
   prolog: `constraints.pro`,
@@ -93,6 +95,18 @@ const constraints = {
 
 describe(`Commands`, () => {
   describe(`constraints`, () => {
+    it(`should report custom errors`, makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.js`), `
+        exports.constraints = ({Yarn}) => {
+          Yarn.workspace().error('This should fail');
+        };
+      `);
+
+      await expect(run(`constraints`)).rejects.toThrow(/This should fail/);
+    }));
+
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, scripts] of Object.entries(constraints)) {
         for (const [scriptType, script] of Object.entries(scripts)) {
@@ -101,7 +115,7 @@ describe(`Commands`, () => {
               await environment(path);
               await run(`install`);
 
-              await writeFile(`${path}/${scriptNames[scriptType]}`, script);
+              await writeFile(ppath.join(path, (scriptNames as any)[scriptType]), script);
 
               let code;
               let stdout;
