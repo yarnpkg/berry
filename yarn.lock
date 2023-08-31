@@ -25575,13 +25575,14 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react-json-doc@portal:/Users/mael.nison/react-json-doc::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "react-json-doc@portal:/Users/mael.nison/react-json-doc::locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
+"react-json-doc@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "react-json-doc@npm:2.3.3"
   peerDependencies:
     react: "*"
+  checksum: f0a8b58f68bcde5f14aaecfb5bdce7d46397a9b8973997fcfe923fa7f632d415f4b02e88afa4fa71d0ae272664c42c06e2ede1532b359c23efbd9c9d48448811
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "react-json-view@npm:^1.21.3":
   version: 1.21.3
