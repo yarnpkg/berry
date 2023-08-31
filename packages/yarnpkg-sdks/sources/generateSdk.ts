@@ -184,14 +184,22 @@ export type SupportedSdk =
   | 'svelte-language-server'
   | 'flow-bin';
 
-export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
+export type BaseSdks = Array<[
+  SupportedSdk,
+  GenerateBaseWrapper,
+]>;
 
 export type IntegrationSdks = Array<
   | [null, GenerateDefaultWrapper | null]
   | [SupportedSdk, GenerateIntegrationWrapper | null]
 >;
 
-type PackageExports = string | null | { [key: string]: PackageExports } | Array<PackageExports>;
+export type PackageExports =
+  | {[key: string]: PackageExports}
+  | Array<PackageExports>
+  | string
+  | null;
+
 export class Wrapper {
   private name: PortablePath;
 
@@ -208,10 +216,11 @@ export class Wrapper {
     this.pnpApi = pnpApi;
     this.target = target;
 
-    this.manifest = this.loadManifest(manifestOverrides);
+    this.manifest = this.loadManifest();
+    Object.assign(this.manifest, manifestOverrides);
   }
 
-  private loadManifest(manifestOverrides: Record<string, any> = {}) {
+  private loadManifest() {
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const dependencyReference = topLevelInformation.packageDependencies.get(this.name)!;
 
@@ -219,7 +228,9 @@ export class Wrapper {
     if (pkgInformation === null)
       throw new Error(`Assertion failed: Package ${this.name} isn't a dependency of the top-level`);
 
-    const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
+    const manifestPath = npath.join(pkgInformation.packageLocation, Filename.manifest);
+    const manifest = dynamicRequire(manifestPath);
+
     return {
       name: this.name,
       version: `${manifest.version}-sdk`,
@@ -227,7 +238,6 @@ export class Wrapper {
       type: `commonjs`,
       bin: manifest.bin,
       exports: manifest.exports,
-      ...manifestOverrides,
     };
   }
 
@@ -301,10 +311,11 @@ export class Wrapper {
     const absPnpApiPath = npath.toPortablePath(this.pnpApi.resolveRequest(`pnpapi`, null)!);
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
 
+    const moduleReqPath = ppath.join(this.name, options.requirePath ?? relPackagePath);
+    const wrapperScript = TEMPLATE(relPnpApiPath, moduleReqPath, options);
+
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, options.requirePath ?? relPackagePath), options), {
-      mode: options.mode,
-    });
+    await xfs.writeFilePromise(absWrapperPath, wrapperScript, {mode: options.mode});
 
     this.paths.set(relPackagePath, relProjectPath);
 
