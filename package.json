@@ -64,6 +64,9 @@
     "react-json-doc@2.1.0": {
       "unplugged": true
     },
+    "react-json-doc@2.3.2": {
+      "unplugged": true
+    },
     "svg2png": {
       "unplugged": true
     }

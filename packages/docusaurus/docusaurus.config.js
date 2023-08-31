@@ -97,7 +97,6 @@ const config = {
         apiKey: `ecdfaea128fd901572b14543a2116eee`,
         indexName: `yarnpkg_next`,
         searchPagePath: `docs/search`,
-        contextualSearch: false,
       },
       navbar: {
         title: `Yarn`,

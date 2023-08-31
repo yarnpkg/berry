@@ -13452,7 +13452,7 @@ const RAW_RUNTIME_STATE =
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"],\
           ["react-instantsearch-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:6.36.0"],\
           ["react-instantsearch-hooks-web", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:6.36.0"],\
-          ["react-json-doc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.2"],\
+          ["react-json-doc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.3"],\
           ["react-loading-skeleton", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.3.1"],\
           ["react-modal", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.16.1"],\
           ["react-query", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.39.3"],\
@@ -13628,7 +13628,7 @@ const RAW_RUNTIME_STATE =
           ["react-helmet", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.1.0"],\
           ["react-icons", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:3.11.0"],\
           ["react-instantsearch-dom", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:6.36.0"],\
-          ["react-json-doc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.0"],\
+          ["react-json-doc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.3"],\
           ["react-monaco-editor", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:0.36.0"],\
           ["react-responsive-carousel", "npm:3.2.22"],\
           ["react-scroll-into-view-if-needed", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.1.7"],\
@@ -44424,24 +44424,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["react-json-doc", [\
-      ["npm:2.2.0", {\
-        "packageLocation": "./.yarn/cache/react-json-doc-npm-2.2.0-08c2b7413e-7ebbb79dce.zip/node_modules/react-json-doc/",\
+      ["npm:2.3.3", {\
+        "packageLocation": "./.yarn/cache/react-json-doc-npm-2.3.3-1fc7081f27-f0a8b58f68.zip/node_modules/react-json-doc/",\
         "packageDependencies": [\
-          ["react-json-doc", "npm:2.2.0"]\
+          ["react-json-doc", "npm:2.3.3"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["npm:2.3.2", {\
-        "packageLocation": "./.yarn/cache/react-json-doc-npm-2.3.2-9d9ca560f2-2194ed9714.zip/node_modules/react-json-doc/",\
+      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.3", {\
+        "packageLocation": "./.yarn/__virtual__/react-json-doc-virtual-0270f92f56/0/cache/react-json-doc-npm-2.3.3-1fc7081f27-f0a8b58f68.zip/node_modules/react-json-doc/",\
         "packageDependencies": [\
-          ["react-json-doc", "npm:2.3.2"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.0", {\
-        "packageLocation": "./.yarn/__virtual__/react-json-doc-virtual-b91656ad41/0/cache/react-json-doc-npm-2.2.0-08c2b7413e-7ebbb79dce.zip/node_modules/react-json-doc/",\
-        "packageDependencies": [\
-          ["react-json-doc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.2.0"],\
+          ["react-json-doc", "virtual:118b26a6cee620b5aa3e7e8d8b8e34cd9e486f75b92701001168da9be550fadd8c9d9b12643c642e2d528c2624fd8fe7e128eec9d715340efac44400432a0e0c#npm:2.3.3"],\
           ["@types/react", "npm:16.9.2"],\
           ["react", "npm:16.13.1"]\
         ],\
@@ -44451,10 +44444,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.2", {\
-        "packageLocation": "./.yarn/__virtual__/react-json-doc-virtual-6e51683a02/0/cache/react-json-doc-npm-2.3.2-9d9ca560f2-2194ed9714.zip/node_modules/react-json-doc/",\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.3", {\
+        "packageLocation": "./.yarn/__virtual__/react-json-doc-virtual-e7f200b5cd/0/cache/react-json-doc-npm-2.3.3-1fc7081f27-f0a8b58f68.zip/node_modules/react-json-doc/",\
         "packageDependencies": [\
-          ["react-json-doc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.2"],\
+          ["react-json-doc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.3"],\
           ["@types/react", "npm:16.9.2"],\
           ["react", "npm:17.0.2"]\
         ],\

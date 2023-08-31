@@ -7369,7 +7369,7 @@ __metadata:
     react-dom: "npm:^17.0.2"
     react-instantsearch-dom: "npm:^6.36.0"
     react-instantsearch-hooks-web: "npm:^6.36.0"
-    react-json-doc: "npm:^2.3.2"
+    react-json-doc: "npm:^2.3.3"
     react-loading-skeleton: "npm:^3.3.1"
     react-modal: "npm:^3.16.1"
     react-query: "npm:^3.39.3"
@@ -7510,7 +7510,7 @@ __metadata:
     react-helmet: "npm:^6.1.0"
     react-icons: "npm:^3.10.0"
     react-instantsearch-dom: "npm:^6.6.0"
-    react-json-doc: "npm:2.2.0"
+    react-json-doc: "npm:^2.3.3"
     react-monaco-editor: "npm:^0.36.0"
     react-responsive-carousel: "npm:^3.2.22"
     react-scroll-into-view-if-needed: "npm:^2.1.7"
@@ -7614,6 +7614,8 @@ __metadata:
     gatsby-telemetry:
       built: false
     react-json-doc@2.1.0:
+      unplugged: true
+    react-json-doc@2.3.2:
       unplugged: true
     svg2png:
       unplugged: true
@@ -25573,21 +25575,12 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react-json-doc@npm:2.2.0":
-  version: 2.2.0
-  resolution: "react-json-doc@npm:2.2.0"
+"react-json-doc@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "react-json-doc@npm:2.3.3"
   peerDependencies:
     react: "*"
-  checksum: 7ebbb79dcee15adcf08632292af1420a5fc4d3f909a6e2eed0c994ded0a4dd0ee4e8197c0679a8815af5b71d5def7256bffc9c2d62500c46052a28cb659ac40e
-  languageName: node
-  linkType: hard
-
-"react-json-doc@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "react-json-doc@npm:2.3.2"
-  peerDependencies:
-    react: "*"
-  checksum: 2194ed971430cdd645fbcf4219f971424bc7af3e34050bdbf52df1d1c3db6b1b4ead29af40cf6588b74d0b36b4b7b3d53dfba99b66f6dd7afa6461ecf15652bf
+  checksum: f0a8b58f68bcde5f14aaecfb5bdce7d46397a9b8973997fcfe923fa7f632d415f4b02e88afa4fa71d0ae272664c42c06e2ede1532b359c23efbd9c9d48448811
   languageName: node
   linkType: hard
 

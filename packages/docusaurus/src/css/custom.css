@@ -135,6 +135,16 @@ html[x-doc-route^="/configuration/"] .col {
   max-width: 100% !important;
 }
 
+html[x-doc-route="/docs/search"] .main-wrapper > .container {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: calc(var(--ifm-spacing-horizontal) * 2);
+}
+
+html[x-doc-route="/docs/search"] .row {
+  padding: 0;
+}
+
 .markdown table {
   display: table;
 
