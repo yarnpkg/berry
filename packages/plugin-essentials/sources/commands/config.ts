@@ -21,6 +21,10 @@ export default class ConfigCommand extends BaseCommand {
     ]],
   });
 
+  noDefaults = Option.Boolean(`--no-defaults`, false, {
+    description: `Omit the default values from the display`,
+  });
+
   verbose = Option.Boolean(`-v,--verbose`, false, {
     description: `Print the setting description on top of the regular key/value information`,
   });
@@ -91,6 +95,9 @@ export default class ConfigCommand extends BaseCommand {
         const configTree: treeUtils.TreeNode = {children: configTreeChildren};
 
         for (const name of names) {
+          if (this.noDefaults && !configuration.sources.has(name))
+            continue;
+
           const setting = configuration.settings.get(name)!;
           const source = configuration.sources.get(name) ?? `<default>`;
           const value = configuration.getSpecial(name, {hideSecrets: true, getNativePaths: true});
@@ -120,7 +127,7 @@ export default class ConfigCommand extends BaseCommand {
               } else {
                 node[key] = {
                   label: key,
-                  value: formatUtils.tuple(formatUtils.Type.NO_HINT, inspect(value, inspectConfig)),
+                  value: formatUtils.tuple(formatUtils.Type.NO_HINT, inspect(subValue, inspectConfig)),
                 };
               }
             }
