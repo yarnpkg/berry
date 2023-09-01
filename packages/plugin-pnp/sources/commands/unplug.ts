@@ -122,10 +122,10 @@ export default class UnplugCommand extends BaseCommand {
           return;
 
         const isWorkspace = !!project.tryWorkspaceByLocator(pkg);
+        if (depth > 0 && !this.recursive && isWorkspace)
+          return;
 
-        const mustRecurse = depth === 0 || this.recursive;
-        if (!mustRecurse && isWorkspace)
-          seen.add(pkg.locatorHash);
+        seen.add(pkg.locatorHash);
 
         // Note: We shouldn't skip virtual packages, as
         // we don't iterate over the devirtualized copies.
@@ -133,7 +133,7 @@ export default class UnplugCommand extends BaseCommand {
           selection.push(pkg);
 
         // Don't recurse unless requested
-        if (!mustRecurse)
+        if (depth > 0 && !this.recursive)
           return;
 
         for (const dependency of pkg.dependencies.values()) {
