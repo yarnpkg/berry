@@ -1,6 +1,5 @@
 import {BaseCommand}                                                      from '@yarnpkg/cli';
 import {Configuration, MessageName, StreamReport, formatUtils, treeUtils} from '@yarnpkg/core';
-import {miscUtils}                                                        from '@yarnpkg/core';
 import {Command, Option, Usage}                                           from 'clipanion';
 import {inspect}                                                          from 'util';
 
