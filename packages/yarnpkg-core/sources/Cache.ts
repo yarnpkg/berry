@@ -1,3 +1,4 @@
+import {formatUtils}                                             from '@yarnpkg/core';
 import {FakeFS, LazyFS, NodeFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
 import {ppath, xfs}                                              from '@yarnpkg/fslib';
 import {ZipFS}                                                   from '@yarnpkg/libzip';
@@ -413,6 +414,9 @@ export class Cache {
           action();
 
         if (!isCacheHit) {
+          if (this.immutable && opts.unstablePackages?.has(locator.locatorHash))
+            throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}; consider defining ${formatUtils.pretty(this.configuration, `supportedArchitectures`, formatUtils.Type.CODE)} to cache packages for multiple systems`);
+
           return loadPackage();
         } else {
           let checksum: string | null = null;
