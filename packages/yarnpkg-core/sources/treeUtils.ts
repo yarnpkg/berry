@@ -45,7 +45,7 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
       if (finalParts.length === 0)
         finalParts.push(formatUtils.applyStyle(configuration, `${key}`, formatUtils.Style.BOLD));
 
-      const finalLabel = finalParts.join(`: `);
+      const finalLabel = finalParts.join(`: `).trim();
 
       // The library we use, treeify, doesn't support having multiple nodes with
       // the same label. To work around that, we prefix each label with a unique

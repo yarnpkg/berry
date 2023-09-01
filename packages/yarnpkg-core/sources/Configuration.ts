@@ -902,20 +902,34 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
   }
 
   if (definition.type === SettingsType.MAP && rawValue instanceof Map) {
+    if (rawValue.size === 0)
+      return undefined;
+
     const newValue: Map<string, unknown> = new Map();
 
-    for (const [key, value] of rawValue.entries())
-      newValue.set(key, transformConfiguration(value, definition.valueDefinition, transforms));
+    for (const [key, value] of rawValue.entries()) {
+      const transformedValue = transformConfiguration(value, definition.valueDefinition, transforms);
+      if (typeof transformedValue !== `undefined`) {
+        newValue.set(key, transformedValue);
+      }
+    }
 
     return newValue;
   }
 
   if (definition.type === SettingsType.SHAPE && rawValue instanceof Map) {
+    if (rawValue.size === 0)
+      return undefined;
+
     const newValue: Map<string, unknown> = new Map();
 
     for (const [key, value] of rawValue.entries()) {
       const propertyDefinition = definition.properties[key];
-      newValue.set(key, transformConfiguration(value, propertyDefinition, transforms));
+
+      const transformedValue = transformConfiguration(value, propertyDefinition, transforms);
+      if (typeof transformedValue !== `undefined`) {
+        newValue.set(key, transformedValue);
+      }
     }
 
     return newValue;

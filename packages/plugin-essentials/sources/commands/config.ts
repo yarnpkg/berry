@@ -1,8 +1,8 @@
-import {BaseCommand}                              from '@yarnpkg/cli';
-import {Configuration, MessageName, StreamReport} from '@yarnpkg/core';
-import {miscUtils}                                from '@yarnpkg/core';
-import {Command, Option, Usage}                   from 'clipanion';
-import {inspect}                                  from 'util';
+import {BaseCommand}                                                      from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, formatUtils, treeUtils} from '@yarnpkg/core';
+import {miscUtils}                                                        from '@yarnpkg/core';
+import {Command, Option, Usage}                                           from 'clipanion';
+import {inspect}                                                          from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {
@@ -33,15 +33,24 @@ export default class ConfigCommand extends BaseCommand {
     description: `Format the output as an NDJSON stream`,
   });
 
+  names = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins, {
       strict: false,
     });
 
+    const names = this.names.length > 0
+      ? [...new Set(this.names)].sort()
+      : [...configuration.settings.keys()].sort();
+
+    let trailingValue: any;
+
     const report = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,
+      includeFooter: false,
     }, async report => {
       if (configuration.invalid.size > 0 && !this.json) {
         for (const [key, source] of configuration.invalid)
@@ -51,62 +60,104 @@ export default class ConfigCommand extends BaseCommand {
       }
 
       if (this.json) {
-        const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
+        for (const name of names) {
+          const data = configuration.settings.get(name);
+          if (typeof data === `undefined`)
+            report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `No configuration key named "${name}"`);
 
-        for (const key of keys) {
-          const data = configuration.settings.get(key);
+          report.reportSeparator();
 
-          const effective = configuration.getSpecial(key, {
+          const effective = configuration.getSpecial(name, {
             hideSecrets: true,
             getNativePaths: true,
           });
 
-          const source = configuration.sources.get(key);
+          const source = configuration.sources.get(name);
 
           if (this.verbose) {
-            report.reportJson({key, effective, source});
+            report.reportJson({key: name, effective, source});
           } else {
-            report.reportJson({key, effective, source, ...data});
+            report.reportJson({key: name, effective, source, ...data});
           }
         }
       } else {
-        const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
-        const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
-
         const inspectConfig = {
           breakLength: Infinity,
           colors: configuration.get(`enableColors`),
           maxArrayLength: 2,
         };
 
-        if (this.why || this.verbose) {
-          const keysAndDescriptions = keys.map(key => {
-            const setting = configuration.settings.get(key);
+        const configTreeChildren: treeUtils.TreeMap = {};
+        const configTree: treeUtils.TreeNode = {children: configTreeChildren};
 
-            if (!setting)
-              throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
+        for (const name of names) {
+          const setting = configuration.settings.get(name)!;
+          const source = configuration.sources.get(name) ?? `<default>`;
+          const value = configuration.getSpecial(name, {hideSecrets: true, getNativePaths: true});
 
-            const description = this.why
-              ? configuration.sources.get(key) || `<default>`
-              : setting.description;
+          const fields: treeUtils.TreeMap = {
+            Description: {
+              label: `Description`,
+              value: formatUtils.tuple(formatUtils.Type.MARKDOWN, {text: setting.description, format: this.cli.format(), paragraphs: false}),
+            },
+            Source: {
+              label: `Source`,
+              value: formatUtils.tuple(source[0] === `<` ? formatUtils.Type.CODE : formatUtils.Type.PATH, source),
+            },
+          };
 
-            return [key, description] as [string, string];
-          });
+          configTreeChildren[name] = {
+            value: formatUtils.tuple(formatUtils.Type.CODE, name),
+            children: fields,
+          };
 
-          const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
-            return Math.max(max, description.length);
-          }, 0);
+          const setValueTo = (node: treeUtils.TreeMap, value: Map<any, any>) => {
+            for (const [key, subValue] of value) {
+              if (subValue instanceof Map) {
+                const subFields: treeUtils.TreeMap = {};
+                node[key] = {children: subFields};
+                setValueTo(subFields, subValue);
+              } else {
+                node[key] = {
+                  label: key,
+                  value: formatUtils.tuple(formatUtils.Type.NO_HINT, inspect(value, inspectConfig)),
+                };
+              }
+            }
+          };
 
-          for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getSpecial(key, {hideSecrets: true, getNativePaths: true}), inspectConfig)}`);
-          }
-        } else {
-          for (const key of keys) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getSpecial(key, {hideSecrets: true, getNativePaths: true}), inspectConfig)}`);
+          if (value instanceof Map) {
+            setValueTo(fields, value);
+          } else {
+            fields.Value = {
+              label: `Value`,
+              value: formatUtils.tuple(formatUtils.Type.NO_HINT, inspect(value, inspectConfig)),
+            };
           }
         }
+
+        if (names.length !== 1)
+          trailingValue = undefined;
+
+        treeUtils.emitTree(configTree, {
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+          separators: 2,
+        });
       }
     });
+
+    if (!this.json && typeof trailingValue !== `undefined`) {
+      const name = names[0];
+
+      const value = inspect(configuration.getSpecial(name, {hideSecrets: true, getNativePaths: true}), {
+        colors: configuration.get(`enableColors`),
+      });
+
+      this.context.stdout.write(`\n`);
+      this.context.stdout.write(`${value}\n`);
+    }
 
     return report.exitCode();
   }
