@@ -360,9 +360,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
   enableNetwork: {
-    description: `If false, the package manager will refuse to use the network if required to`,
+    description: `If false, Yarn will refuse to use the network if required to`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  enableOfflineMode: {
+    description: `If true, Yarn will attempt to retrieve files and metadata from the global cache rather than the network`,
+    type: SettingsType.BOOLEAN,
+    default: false,
   },
   httpProxy: {
     description: `URL of the http proxy that must be used for outgoing http requests`,
@@ -618,6 +623,7 @@ export interface ConfigurationValueMap {
 
   enableMirror: boolean;
   enableNetwork: boolean;
+  enableOfflineMode: boolean;
   httpProxy: string | null;
   httpsProxy: string | null;
   unsafeHttpWhitelist: Array<string>;

@@ -1,13 +1,14 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project, miscUtils} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                                                                     from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, toFilename, xfs}                                                                               from '@yarnpkg/fslib';
-import {prompt}                                                                                                                       from 'enquirer';
-import pick                                                                                                                           from 'lodash/pick';
-import {URL}                                                                                                                          from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project, miscUtils, Cache} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                                                            from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, toFilename, xfs}                                                                                      from '@yarnpkg/fslib';
+import {prompt}                                                                                                                              from 'enquirer';
+import pick                                                                                                                                  from 'lodash/pick';
+import semver                                                                                                                                from 'semver';
+import {URL}                                                                                                                                 from 'url';
 
-import {Hooks}                                                                                                                        from './index';
-import * as npmConfigUtils                                                                                                            from './npmConfigUtils';
-import {MapLike}                                                                                                                      from './npmConfigUtils';
+import {Hooks}                                                                                                                               from './index';
+import * as npmConfigUtils                                                                                                                   from './npmConfigUtils';
+import {MapLike}                                                                                                                             from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -67,6 +68,7 @@ export function getIdentUrl(ident: Ident) {
 }
 
 export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'> & {
+  cache?: Cache;
   project: Project;
 
   /**
@@ -88,7 +90,7 @@ const PACKAGE_METADATA_CACHE = new Map<IdentHash, Promise<PackageMetadata> | Pac
  * If you need other fields, use the uncached {@link get} or consider whether it would make more sense to extract
  * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
  */
-export async function getPackageMetadata(ident: Ident, {project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+export async function getPackageMetadata(ident: Ident, {cache, project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
   return await miscUtils.getFactoryWithDefault(PACKAGE_METADATA_CACHE, ident.identHash, async () => {
     const {configuration} = project;
 
@@ -104,11 +106,47 @@ export async function getPackageMetadata(ident: Ident, {project, registry, heade
     if (!project.lockfileNeedsRefresh) {
       try {
         cached = await xfs.readJsonPromise(identPath) as CachedMetadata;
-
-        if (typeof version !== `undefined` && typeof cached.metadata.versions[version] !== `undefined`) {
-          return cached.metadata;
-        }
       } catch {}
+
+      if (cached) {
+        if (typeof version !== `undefined` && typeof cached.metadata.versions[version] !== `undefined`)
+          return cached.metadata;
+
+        if (configuration.get(`enableOfflineMode`)) {
+          const copy = structuredClone(cached.metadata);
+          const deleted = new Set();
+
+          if (cache) {
+            for (const version of Object.keys(copy.versions)) {
+              const locator = structUtils.makeLocator(ident, `npm:${version}`);
+              const mirrorPath = cache.getLocatorMirrorPath(locator);
+
+              if (!mirrorPath || !xfs.existsSync(mirrorPath)) {
+                delete copy.versions[version];
+                deleted.add(version);
+              }
+            }
+
+            const latest = copy[`dist-tags`].latest;
+            if (deleted.has(latest)) {
+              const allVersions = Object.keys(cached.metadata.versions)
+                .sort(semver.compare);
+
+              let latestIndex = allVersions.indexOf(latest);
+              while (deleted.has(allVersions[latestIndex]) && latestIndex >= 0)
+                latestIndex -= 1;
+
+              if (latestIndex >= 0) {
+                copy[`dist-tags`].latest = allVersions[latestIndex];
+              } else {
+                delete copy[`dist-tags`].latest;
+              }
+            }
+          }
+
+          return copy;
+        }
+      }
     }
 
     return await get(getIdentUrl(ident), {

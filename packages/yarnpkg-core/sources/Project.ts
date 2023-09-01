@@ -1727,6 +1727,9 @@ export class Project {
     await opts.report.startTimerPromise(`Project validation`, {
       skipIfEmpty: true,
     }, async () => {
+      if (this.configuration.get(`enableOfflineMode`))
+        opts.report.reportWarning(MessageName.OFFLINE_MODE_ENABLED, `Offline work is enabled; Yarn won't fetch packages from the remote registry if it can avoid it`);
+
       await this.configuration.triggerHook(hooks => {
         return hooks.validateProject;
       }, this, {

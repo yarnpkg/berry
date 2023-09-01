@@ -103,6 +103,7 @@ The following changes only affect people writing Yarn plugins:
 
 ### Features
 
+- `enableOfflineMode` is a new setting that, when set, will instruct Yarn to only use the metadata and archives already stored on the local machine rather than download them from the registry. This can be useful when performing local development under network-constrained environments (trains, planes, ...).
 - `yarn run bin` now injects the environment variables defined in `.env.yarn` when spawning a process. This can be configured using the `injectEnvironmentFiles` variable.
 - `yarn workspaces foreach` now automatically enables the `yarn workspaces foreach ! --verbose` flag in interactive terminals.
 - Constraints can now be written in JavaScript. See the [revamped documentation](/features/constraints) for more information.
