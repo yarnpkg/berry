@@ -134,6 +134,46 @@ describe(`Commands`, () => {
       }),
     );
 
+    // Our implementation used to have a bug: we weren't traversing into
+    // workspaces when the --all flag was set (because we would traverse it
+    // anyway as part of the traversal roots), but we were still marking them
+    // as "seen" in the context of the infinite recursion guard. As a result,
+    // we were never iterating over workspaces that were already detected as
+    // the dependency of a previous workspace in the traversal roots.
+    test(
+      `it should respect the \`-A,--all\` flag even under some particular workspace patterns`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      }, async ({path, run, source}) => {
+        await xfs.mkdirPromise(ppath.join(path, `packages/a`), {recursive: true});
+        await xfs.mkdirPromise(ppath.join(path, `packages/b`), {recursive: true});
+
+        await xfs.writeJsonPromise(ppath.join(path, `packages/a/package.json`), {
+          name: `a`,
+          dependencies: {
+            [`b`]: `workspace:^`,
+          },
+        });
+
+        await xfs.writeJsonPromise(ppath.join(path, `packages/b/package.json`), {
+          name: `b`,
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+        await run(`unplug`, `no-deps`, `--all`);
+
+        await expect(readManifest(path, {key: `dependenciesMeta`})).resolves.toEqual({
+          [`no-deps@1.0.0`]: unplugged,
+        });
+      }),
+    );
+
     test(
       `it should respect the \`-A,--all\` and \`-R,--recursive\` flags put together`,
       makeTemporaryEnv({

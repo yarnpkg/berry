@@ -121,6 +121,10 @@ export default class UnplugCommand extends BaseCommand {
         if (seen.has(pkg.locatorHash))
           return;
 
+        const isWorkspace = !!project.tryWorkspaceByLocator(pkg);
+        if (depth > 0 && !this.recursive && isWorkspace)
+          return;
+
         seen.add(pkg.locatorHash);
 
         // Note: We shouldn't skip virtual packages, as
