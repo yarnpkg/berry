@@ -284,7 +284,7 @@ const RAW_RUNTIME_STATE =
           ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.16.18"],\
+          ["@types/node", "npm:18.17.15"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -10917,6 +10917,13 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
+      ["npm:18.17.15", {\
+        "packageLocation": "./.yarn/cache/@types-node-npm-18.17.15-eb331be5c4-5b28c68f44.zip/node_modules/@types/node/",\
+        "packageDependencies": [\
+          ["@types/node", "npm:18.17.15"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:8.10.60", {\
         "packageLocation": "./.yarn/cache/@types-node-npm-8.10.60-786268ea9f-a50dca7a24.zip/node_modules/@types/node/",\
         "packageDependencies": [\
@@ -13330,7 +13337,7 @@ const RAW_RUNTIME_STATE =
           ["@types/diff", "npm:5.0.2"],\
           ["@types/lodash", "npm:4.14.172"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.16.18"],\
+          ["@types/node", "npm:18.17.15"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/treeify", "npm:1.0.0"],\
@@ -13729,7 +13736,7 @@ const RAW_RUNTIME_STATE =
           ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.16.18"],\
+          ["@types/node", "npm:18.17.15"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -23078,7 +23085,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
-          ["@types/node", "npm:18.16.18"],\
+          ["@types/node", "npm:18.17.15"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\

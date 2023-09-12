@@ -38,23 +38,31 @@ export class NodeFS extends BasePortableFakeFS {
   }
 
   async opendirPromise(p: PortablePath, opts?: OpendirOptions): Promise<Dir<PortablePath>> {
-    return await new Promise<Dir<PortablePath>>((resolve, reject) => {
+    return await new Promise<fs.Stats>((resolve, reject) => {
       if (typeof opts !== `undefined`) {
         this.realFs.opendir(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject) as any);
       } else {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject) as any);
       }
     }).then(dir => {
-      return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
+      // @ts-expect-error TODO: The values provided by `dirWithFixedPath` still have
+      // a `NativePath` type, not the `PortablePath` the types say they should have.
+      const dirWithFixedPath: Dir<PortablePath> = Object.assign(dir, {path: p});
+
+      return dirWithFixedPath;
     });
   }
 
   opendirSync(p: PortablePath, opts?: OpendirOptions) {
-    const dir = typeof opts !== `undefined`
-      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) as Dir<PortablePath>
-      : this.realFs.opendirSync(npath.fromPortablePath(p)) as Dir<PortablePath>;
+    const dir: Omit<fs.Dir, `path`> = typeof opts !== `undefined`
+      ? this.realFs.opendirSync(npath.fromPortablePath(p), opts)
+      : this.realFs.opendirSync(npath.fromPortablePath(p));
 
-    return Object.defineProperty(dir, `path`, {value: p, configurable: true, writable: true});
+    // @ts-expect-error TODO: The values provided by `dirWithFixedPath` still have
+    // a `NativePath` type, not the `PortablePath` the types say they should have.
+    const dirWithFixedPath: Dir<PortablePath> = Object.assign(dir, {path: p});
+
+    return dirWithFixedPath;
   }
 
   async readPromise(fd: number, buffer: Buffer, offset: number = 0, length: number = 0, position: number | null = -1) {

@@ -77,9 +77,11 @@ export function opendir<P extends Path>(fakeFs: FakeFS<P>, path: P, entries: Arr
     if (typeof filename === `undefined`)
       return null;
 
-    return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
+    const entryPath = fakeFs.pathUtils.join(path, filename);
+
+    return Object.assign(fakeFs.statSync(entryPath), {
       name: filename,
-      path: undefined,
+      path: entryPath,
     });
   };
 
