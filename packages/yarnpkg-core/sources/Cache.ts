@@ -145,13 +145,6 @@ export class Cache {
   }
 
   getLocatorPath(locator: Locator, expectedChecksum: string | null, opts: CacheOptions = {}) {
-    // If there is no mirror, then the local cache *is* the mirror, in which
-    // case we use the versioned filename pattern. Same if the package is
-    // unstable, meaning it may be there or not depending on the environment,
-    // so we can't rely on its checksum to get a stable location.
-    if (this.mirrorCwd === null || opts.unstablePackages?.has(locator.locatorHash))
-      return ppath.resolve(this.cwd, this.getVersionFilename(locator));
-
     // If we don't yet know the checksum, discard the path resolution for now
     // until the checksum can be obtained from somewhere (mirror or network).
     if (expectedChecksum === null)
@@ -179,6 +172,13 @@ export class Cache {
     // If the cache spec changed, we may need to regenerate the archive
     if (cacheSpec !== this.cacheSpec && migrationMode !== `required-only`)
       return null;
+
+    // If there is no mirror, then the local cache *is* the mirror, in which
+    // case we use the versioned filename pattern. Same if the package is
+    // unstable, meaning it may be there or not depending on the environment,
+    // so we can't rely on its checksum to get a stable location.
+    if (this.mirrorCwd === null || opts.unstablePackages?.has(locator.locatorHash))
+      return ppath.resolve(this.cwd, this.getVersionFilename(locator));
 
     return ppath.resolve(this.cwd, this.getChecksumFilename(locator, expectedChecksum));
   }

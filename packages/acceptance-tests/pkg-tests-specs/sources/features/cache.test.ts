@@ -1,4 +1,4 @@
-import {ppath, xfs} from '@yarnpkg/fslib';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Cache`, () => {
   test(
@@ -111,6 +111,41 @@ describe(`Cache`, () => {
       });
 
       await expect(xfs.readFilePromise(cacheFile)).resolves.toEqual(cacheData);
+    }),
+  );
+
+  test(
+    `it should ignore checksum mismatches and regenerate archives when their cache key is different from Yarn's own cache key, if cacheMigrationMode=always (global cache, hot)`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, {
+      cacheMigrationMode: `always`,
+      enableGlobalCache: true,
+    }, async ({path, run, source}) => {
+      await run(`install`, {
+        cacheVersionOverride: `2`,
+      });
+
+      const cacheFiles = await xfs.readdirPromise(ppath.join(path, `.yarn/global/cache`));
+      const cacheFile = ppath.join(path, `.yarn/global/cache`, cacheFiles.find(name => name.startsWith(`no-deps-`))!);
+
+      // Adding some data to give it a different checksum than what we'll have for
+      // "cache key v1"; zip archives allow pseudo-arbitrary content at their end
+      await xfs.appendFilePromise(cacheFile, `corrupted archive`);
+
+      // Removing the lockfile to make sure it'll be populated with "cache key v1" data
+      await xfs.removePromise(ppath.join(path, Filename.lockfile));
+
+      await run(`install`, {
+        cacheVersionOverride: `1`,
+      });
+
+      await run(`install`, {
+        cacheVersionOverride: `2`,
+        cacheCheckpointOverride: `1`,
+      });
     }),
   );
 
