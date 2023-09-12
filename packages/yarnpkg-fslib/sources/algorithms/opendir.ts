@@ -81,7 +81,7 @@ export function opendir<P extends Path>(fakeFs: FakeFS<P>, path: P, entries: Arr
 
     return Object.assign(fakeFs.statSync(entryPath), {
       name: filename,
-      path: entryPath,
+      path: undefined,
     });
   };
 
