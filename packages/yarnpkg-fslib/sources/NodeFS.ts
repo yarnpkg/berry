@@ -45,8 +45,8 @@ export class NodeFS extends BasePortableFakeFS {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject) as any);
       }
     }).then(dir => {
-      // @ts-expect-error TODO: The values provided by `dirWithFixedPath` still have
-      // a `NativePath` type, not the `PortablePath` the types say they should have.
+      // @ts-expect-error We need a way to tell TS that the values returned by
+      // the `read` methods are compatible with `Dir`, especially the `name` field.
       const dirWithFixedPath: Dir<PortablePath> = Object.assign(dir, {path: p});
 
       return dirWithFixedPath;
@@ -58,8 +58,8 @@ export class NodeFS extends BasePortableFakeFS {
       ? this.realFs.opendirSync(npath.fromPortablePath(p), opts)
       : this.realFs.opendirSync(npath.fromPortablePath(p));
 
-    // @ts-expect-error TODO: The values provided by `dirWithFixedPath` still have
-    // a `NativePath` type, not the `PortablePath` the types say they should have.
+    // @ts-expect-error We need a way to tell TS that the values returned by
+    // the `read` methods are compatible with `Dir`, especially the `name` field.
     const dirWithFixedPath: Dir<PortablePath> = Object.assign(dir, {path: p});
 
     return dirWithFixedPath;
