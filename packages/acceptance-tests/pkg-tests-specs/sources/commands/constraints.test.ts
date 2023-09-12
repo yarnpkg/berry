@@ -9,7 +9,7 @@ const {
 
 const scriptNames = {
   prolog: `constraints.pro`,
-  js: `yarn.config.js`,
+  js: `yarn.config.cjs`,
 };
 
 const constraints = {
@@ -98,7 +98,7 @@ describe(`Commands`, () => {
     it(`should report custom errors`, makeTemporaryEnv({}, async ({path, run, source}) => {
       await run(`install`);
 
-      await writeFile(ppath.join(path, `yarn.config.js`), `
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
         exports.constraints = ({Yarn}) => {
           Yarn.workspace().error('This should fail');
         };
@@ -128,7 +128,7 @@ describe(`Commands`, () => {
               }
 
               // TODO: Use .replaceAll when we drop support for Node.js v14
-              stdout = stdout.split(npath.join(npath.fromPortablePath(path), `yarn.config.js`)).join(`/path/to/yarn.config.js`);
+              stdout = stdout.split(npath.join(npath.fromPortablePath(path), `yarn.config.cjs`)).join(`/path/to/yarn.config.cjs`);
               stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
 
               expect({code, stdout, stderr}).toMatchSnapshot();
