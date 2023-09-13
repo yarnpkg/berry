@@ -59,7 +59,7 @@ export class NodeFS extends BasePortableFakeFS {
       Object.defineProperty(dirWithFixedPath, `path`, {
         value: p,
         configurable: true,
-        enumerable: true,
+        writable: true,
       });
 
       return dirWithFixedPath;
@@ -85,7 +85,7 @@ export class NodeFS extends BasePortableFakeFS {
     Object.defineProperty(dirWithFixedPath, `path`, {
       value: p,
       configurable: true,
-      enumerable: true,
+      writable: true,
     });
 
     return dirWithFixedPath;

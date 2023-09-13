@@ -936,7 +936,7 @@ class NodeFS extends BasePortableFakeFS {
       Object.defineProperty(dirWithFixedPath, `path`, {
         value: p,
         configurable: true,
-        enumerable: true
+        writable: true
       });
       return dirWithFixedPath;
     });
@@ -947,7 +947,7 @@ class NodeFS extends BasePortableFakeFS {
     Object.defineProperty(dirWithFixedPath, `path`, {
       value: p,
       configurable: true,
-      enumerable: true
+      writable: true
     });
     return dirWithFixedPath;
   }
