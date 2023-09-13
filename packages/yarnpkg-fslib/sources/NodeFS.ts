@@ -45,9 +45,22 @@ export class NodeFS extends BasePortableFakeFS {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject) as any);
       }
     }).then(dir => {
-      // @ts-expect-error We need a way to tell TS that the values returned by
-      // the `read` methods are compatible with `Dir`, especially the `name` field.
-      const dirWithFixedPath: Dir<PortablePath> = Object.assign(dir, {path: p});
+      // @ts-expect-error
+      //
+      // We need a way to tell TS that the values returned by the `read`
+      // methods are compatible with `Dir`, especially the `name` field.
+      //
+      // We also can't use `Object.assign` to set the because the `path`
+      // field to a Filename, because the property isn't writable, so
+      // we need to use defineProperty instead.
+      //
+      const dirWithFixedPath: Dir<PortablePath> = dir;
+
+      Object.defineProperty(dirWithFixedPath, `path`, {
+        value: p,
+        configurable: true,
+        enumerable: true,
+      });
 
       return dirWithFixedPath;
     });
@@ -58,9 +71,22 @@ export class NodeFS extends BasePortableFakeFS {
       ? this.realFs.opendirSync(npath.fromPortablePath(p), opts)
       : this.realFs.opendirSync(npath.fromPortablePath(p));
 
-    // @ts-expect-error We need a way to tell TS that the values returned by
-    // the `read` methods are compatible with `Dir`, especially the `name` field.
-    const dirWithFixedPath: Dir<PortablePath> = Object.assign(dir, {path: p});
+    // @ts-expect-error
+    //
+    // We need a way to tell TS that the values returned by the `read`
+    // methods are compatible with `Dir`, especially the `name` field.
+    //
+    // We also can't use `Object.assign` to set the because the `path`
+    // field to a Filename, because the property isn't writable, so
+    // we need to use defineProperty instead.
+    //
+    const dirWithFixedPath: Dir<PortablePath> = dir;
+
+    Object.defineProperty(dirWithFixedPath, `path`, {
+      value: p,
+      configurable: true,
+      enumerable: true,
+    });
 
     return dirWithFixedPath;
   }
