@@ -1151,7 +1151,7 @@ export class Project {
         zero: `No new packages`,
         one: `A package was`,
         more: `${formatUtils.pretty(this.configuration, addedCount, formatUtils.Type.NUMBER)} packages were`,
-      })} added to the cache`;
+      })} added to the project`;
 
       const removedLine = `${miscUtils.plural(removedCount, {
         zero: `none were`,
@@ -2690,7 +2690,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
     }), requested by ${
       structUtils.prettyIdent(project.configuration, warning.requester)
-    }`;
+    }.`;
   }) ?? [];
 
   report.startSectionSync({

@@ -41,7 +41,7 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
+➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -141,7 +141,7 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
+➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -191,7 +191,7 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
+➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
@@ -241,7 +241,7 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 ➤ YN0000: ┌ Resolution step
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Fetch step
-➤ YN0013: │ No new packages added to the cache, but one was removed (- 0.78 KiB).
+➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
 ➤ YN0000: └ Completed
