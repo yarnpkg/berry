@@ -932,12 +932,24 @@ class NodeFS extends BasePortableFakeFS {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     }).then((dir) => {
-      return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+      const dirWithFixedPath = dir;
+      Object.defineProperty(dirWithFixedPath, `path`, {
+        value: p,
+        configurable: true,
+        writable: true
+      });
+      return dirWithFixedPath;
     });
   }
   opendirSync(p, opts) {
     const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
-    return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+    const dirWithFixedPath = dir;
+    Object.defineProperty(dirWithFixedPath, `path`, {
+      value: p,
+      configurable: true,
+      writable: true
+    });
+    return dirWithFixedPath;
   }
   async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
     return await new Promise((resolve, reject) => {
