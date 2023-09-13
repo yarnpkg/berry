@@ -113,3 +113,19 @@ yarn dlx @yarnpkg/sdks vscode
     3. Pick "Use Workspace Version"
 
 Your VSCode project is now configured to use the exact same version of TypeScript as the one you usually use, except that it will be able to properly resolve the type definitions.
+
+### WebStorm / IntelliJ
+
+Most of the configuration should be automatically picked by WebStorm. However, a bug in the IDE may cause issue with Yarn PnP when the TypeScript version is 5.x or higher. The following is a workaround until [WEB-62221](https://youtrack.jetbrains.com/issue/WEB-62221/TypeScript-service-doesnt-work-with-yarn-pnp-when-typescript-version-is-5.x-or-higher) is fixed (the WebStorm teams are aware and signaled working on it).
+
+1. Run the following command:
+
+```bash
+yarn dlx @yarnpkg/sdks base
+```
+
+2. In Settings, go to `Preferences | Languages & Frameworks | TypeScript`
+
+3. Change the TypeScript  path to point to the `.yarn/sdks/typescript` directory in the root of your project
+
+4. Also make sure "Show project errors" is enabled
