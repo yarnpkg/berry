@@ -52749,7 +52749,8 @@ function opendir(fakeFs, path, entries, opts) {
     const filename = entries.shift();
     if (typeof filename === `undefined`)
       return null;
-    return Object.assign(fakeFs.statSync(fakeFs.pathUtils.join(path, filename)), {
+    const entryPath = fakeFs.pathUtils.join(path, filename);
+    return Object.assign(fakeFs.statSync(entryPath), {
       name: filename,
       path: void 0
     });
@@ -53565,12 +53566,24 @@ class NodeFS extends BasePortableFakeFS {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     }).then((dir) => {
-      return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+      const dirWithFixedPath = dir;
+      Object.defineProperty(dirWithFixedPath, `path`, {
+        value: p,
+        configurable: true,
+        enumerable: true
+      });
+      return dirWithFixedPath;
     });
   }
   opendirSync(p, opts) {
     const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
-    return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+    const dirWithFixedPath = dir;
+    Object.defineProperty(dirWithFixedPath, `path`, {
+      value: p,
+      configurable: true,
+      enumerable: true
+    });
+    return dirWithFixedPath;
   }
   async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
     return await new Promise((resolve, reject) => {
