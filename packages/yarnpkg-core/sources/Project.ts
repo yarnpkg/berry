@@ -711,7 +711,7 @@ export class Project {
   }
 
   async loadUserConfig() {
-    const configPath = ppath.join(this.cwd, `yarn.config.js`);
+    const configPath = ppath.join(this.cwd, `yarn.config.cjs`);
     if (!await xfs.existsPromise(configPath))
       return null;
 

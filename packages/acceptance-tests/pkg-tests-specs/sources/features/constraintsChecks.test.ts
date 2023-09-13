@@ -7,7 +7,7 @@ describe(`Features`, () => {
       makeTemporaryEnv({}, {
         enableConstraintsChecks: true,
       }, async ({path, run}) => {
-        await xfs.writeFilePromise(ppath.join(path, `yarn.config.js`), [
+        await xfs.writeFilePromise(ppath.join(path, `yarn.config.cjs`), [
           `exports.constraints = ({ Yarn }) => {\n`,
           `  for (const workspace of Yarn.workspaces()) {\n`,
           `    workspace.set('foo', 'bar')\n`,

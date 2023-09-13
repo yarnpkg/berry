@@ -89,7 +89,7 @@
     "constraintsPath": {
       "_package": "@yarnpkg/plugin-constraints",
       "title": "Path of the constraints file.",
-      "description": "This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.js` file.",
+      "description": "This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.cjs` file.",
       "type": "string",
       "format": "uri-reference",
       "default": "./constraints.pro"
