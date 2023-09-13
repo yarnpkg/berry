@@ -129,3 +129,7 @@ yarn dlx @yarnpkg/sdks base
 3. Change the TypeScript  path to point to the `.yarn/sdks/typescript` directory in the root of your project
 
 4. Also make sure "Show project errors" is enabled
+
+:::warning
+Some problems with module resolution have also been reported around the use of the `workspace:` protocol ([WEB-59218](https://youtrack.jetbrains.com/issue/WEB-59218/Modules-referenced-using-workspace-protocol-not-resolved-in-Yarn-PnP-workspaces)).
+:::
