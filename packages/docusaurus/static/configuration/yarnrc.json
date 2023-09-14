@@ -193,6 +193,13 @@
       "type": "boolean",
       "default": true
     },
+    "enableOfflineMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Define whether Yarn should exclusively read package metadata from its cache",
+      "description": "If true, Yarn will replace any network requests by reads from its local caches - even if they contain old information. This can be useful when performing local work on environments without network access (trains, planes, ...), as you can at least leverage the packages you installed on the same machine in the past.\n\nSince this setting will lead to stale data being used, it's recommended to set it for the current session as an environment variable (by running `export YARN_ENABLE_OFFLINE_MODE=1` in your terminal) rather than by adding it to your `.yarnrc.yml` file.",
+      "type": "boolean",
+      "default": false
+    },
     "enableProgressBars": {
       "_package": "@yarnpkg/core",
       "title": "Define whether animated progress bars should be shown or not.",
