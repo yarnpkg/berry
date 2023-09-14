@@ -68,8 +68,6 @@ export default class ConfigCommand extends BaseCommand {
           if (typeof data === `undefined`)
             report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `No configuration key named "${name}"`);
 
-          report.reportSeparator();
-
           const effective = configuration.getSpecial(name, {
             hideSecrets: true,
             getNativePaths: true,

@@ -10,11 +10,11 @@ const FAKE_LOCAL_APP_DATA = `LOCAL_APP_DATA`;
 const FAKE_WORKSPACE_ROOT = `WORKSPACE_ROOT`;
 const FAKE_HOME = `HOME`;
 
-const FILTER = new RegExp([
+const FILTER = [
   `initScope`,
   `lastUpdateCheck`,
   `defaultLanguageName`,
-].join(`|`));
+];
 
 const environments = {
   [`folder without rcfile in ancestry`]: async () => {
@@ -54,10 +54,6 @@ function cleanupPlainOutput(output, path, homePath) {
 
   // replace the default global folder with a constant
   output = output.replace(/[^"]+\/\.?yarn\/berry/ig, FAKE_LOCAL_APP_DATA);
-
-  output = output.split(/\n/).filter(line => {
-    return line.match(FILTER) !== null;
-  }).join(`\n`);
 
   return output;
 }
@@ -122,7 +118,7 @@ describe(`Commands`, () => {
           let stderr;
 
           try {
-            ({code, stdout, stderr} = await run(`config`, ...flags, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME, HOME: homePath, USERPROFILE: homePath}}));
+            ({code, stdout, stderr} = await run(`config`, ...flags, ...FILTER, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME, HOME: homePath, USERPROFILE: homePath}}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }
