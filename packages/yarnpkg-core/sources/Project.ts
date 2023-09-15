@@ -1136,10 +1136,10 @@ export class Project {
         const locator = this.storedPackages.get(locatorHash);
         const checksum = this.storedChecksums.get(locatorHash) ?? null;
 
-        const p = cache.getLocatorPath(locator!, checksum, cacheOptions);
-        const stat = p ? await xfs.statPromise(p) : null;
+        const p = cache.getLocatorPath(locator!, checksum);
+        const stat = await xfs.statPromise(p);
 
-        return stat?.size ?? 0;
+        return stat.size;
       }));
 
       const finalSizeChange = addedSizes.reduce((sum, size) => sum + size, 0) - (cleanInfo?.size ?? 0);
