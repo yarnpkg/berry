@@ -57,15 +57,19 @@ export const npath: PathUtils<NativePath> & ConvertUtils = Object.create(path) a
 export const ppath: PathUtils<PortablePath> & PortablePathGenerics = Object.create(path.posix) as any;
 
 npath.cwd = () => process.cwd();
-ppath.cwd = () => toPortablePath(process.cwd());
+ppath.cwd = path !== path.posix
+  ? () => toPortablePath(process.cwd())
+  : process.cwd as () => PortablePath;
 
-ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
-  if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
-    return path.posix.resolve(...segments) as PortablePath;
-  } else {
-    return path.posix.resolve(ppath.cwd(), ...segments) as PortablePath;
-  }
-};
+if (path !== path.posix) {
+  ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
+    if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
+      return path.posix.resolve(...segments) as PortablePath;
+    } else {
+      return path.posix.resolve(ppath.cwd(), ...segments) as PortablePath;
+    }
+  };
+}
 
 const contains = function <T extends Path>(pathUtils: PathUtils<T>, from: T, to: T) {
   from = pathUtils.normalize(from);
@@ -83,9 +87,6 @@ const contains = function <T extends Path>(pathUtils: PathUtils<T>, from: T, to:
     return null;
   }
 };
-
-npath.fromPortablePath = fromPortablePath;
-npath.toPortablePath = toPortablePath;
 
 npath.contains = (from: NativePath, to: NativePath) => contains(npath, from, to);
 ppath.contains = (from: PortablePath, to: PortablePath) => contains(ppath, from, to);
@@ -145,10 +146,7 @@ const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
 
 // Path should look like "/N:/berry/scripts/plugin-pack.js"
 // And transform to "N:\berry\scripts\plugin-pack.js"
-function fromPortablePath(p: Path): NativePath {
-  if (process.platform !== `win32`)
-    return p as NativePath;
-
+function fromPortablePathWin32(p: Path): NativePath {
   let portablePathMatch, uncPortablePathMatch;
   if ((portablePathMatch = p.match(PORTABLE_PATH_REGEXP)))
     p = portablePathMatch[1];
@@ -162,10 +160,7 @@ function fromPortablePath(p: Path): NativePath {
 
 // Path should look like "N:/berry/scripts/plugin-pack.js"
 // And transform to "/N:/berry/scripts/plugin-pack.js"
-function toPortablePath(p: Path): PortablePath {
-  if (process.platform !== `win32`)
-    return p as PortablePath;
-
+function toPortablePathWin32(p: Path): PortablePath {
   p = p.replace(/\\/g, `/`);
 
   let windowsPathMatch, uncWindowsPathMatch;
@@ -177,13 +172,17 @@ function toPortablePath(p: Path): PortablePath {
   return p as PortablePath;
 }
 
+const toPortablePath = path !== path.posix
+  ? toPortablePathWin32
+  : (p: Path) => p as PortablePath;
+
+const fromPortablePath = path !== path.posix
+  ? fromPortablePathWin32
+  : (p: Path) => p as NativePath;
+
+npath.fromPortablePath = fromPortablePath;
+npath.toPortablePath = toPortablePath;
+
 export function convertPath<P extends Path>(targetPathUtils: PathUtils<P>, sourcePath: Path): P {
   return (targetPathUtils === (npath as PathUtils<NativePath>) ? fromPortablePath(sourcePath) : toPortablePath(sourcePath)) as P;
-}
-
-export function toFilename(filename: string): Filename {
-  if (npath.parse(filename as NativePath).dir !== `` || ppath.parse(filename as PortablePath).dir !== ``)
-    throw new Error(`Invalid filename: "${filename}"`);
-
-  return filename as any;
 }

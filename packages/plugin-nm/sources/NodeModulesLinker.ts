@@ -3,7 +3,7 @@ import {Locator, Package, FinalizeInstallStatus, hashUtils}                 from
 import {Linker, LinkOptions, MinimalLinkOptions, LinkType, WindowsLinkType} from '@yarnpkg/core';
 import {LocatorHash, Descriptor, DependencyMeta, Configuration}             from '@yarnpkg/core';
 import {MessageName, Project, FetchResult, Installer}                       from '@yarnpkg/core';
-import {PortablePath, npath, ppath, toFilename, Filename}                   from '@yarnpkg/fslib';
+import {PortablePath, npath, ppath, Filename}                               from '@yarnpkg/fslib';
 import {VirtualFS, xfs, FakeFS, NativePath}                                 from '@yarnpkg/fslib';
 import {ZipOpenFS}                                                          from '@yarnpkg/libzip';
 import {buildNodeModulesTree}                                               from '@yarnpkg/nm';
@@ -493,7 +493,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
         const location = ppath.join(rootPath, npath.toPortablePath(relativeLocation));
         const symlinks = miscUtils.getMapWithDefault(binSymlinks, location);
         for (const [name, target] of Object.entries(locationSymlinks as any)) {
-          symlinks.set(toFilename(name), npath.toPortablePath([location, NODE_MODULES, target].join(ppath.sep)));
+          symlinks.set(name as Filename, npath.toPortablePath([location, NODE_MODULES, target].join(ppath.sep)));
         }
       }
     }
@@ -540,7 +540,7 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
     }
     const entries = await xfs.readdirPromise(dir, {withFileTypes: true});
     for (const entry of entries) {
-      const targetPath = ppath.join(dir, toFilename(entry.name));
+      const targetPath = ppath.join(dir, entry.name);
       if (entry.isDirectory()) {
         if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
           await removeDir(targetPath, {innerLoop: true, contentsOnly: false});
@@ -688,7 +688,7 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath, wind
 };
 
 async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, content: Buffer) {
-  const tmpPath = ppath.join(tmpDir, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+  const tmpPath = ppath.join(tmpDir, `${crypto.randomBytes(16).toString(`hex`)}.tmp`);
   try {
     await xfs.writeFilePromise(tmpPath, content);
     try {
@@ -713,7 +713,7 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
           const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
           if (contentDigest !== entry.digest) {
             // If file content was modified by the user, or corrupted, we first move it out of the way
-            const tmpPath = ppath.join(globalHardlinksStore, toFilename(`${crypto.randomBytes(16).toString(`hex`)}.tmp`));
+            const tmpPath = ppath.join(globalHardlinksStore, `${crypto.randomBytes(16).toString(`hex`)}.tmp`);
             await xfs.renamePromise(contentFilePath, tmpPath);
 
             // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
@@ -997,7 +997,7 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
       const binScripts = locatorScriptMap.get(node.locator)!;
       for (const [filename, scriptPath] of binScripts) {
         const symlinkTarget = ppath.join(location, npath.toPortablePath(scriptPath));
-        symlinks.set(toFilename(filename), symlinkTarget);
+        symlinks.set(filename, symlinkTarget);
       }
       for (const [childLocation, childNode] of node.children) {
         const absChildLocation = ppath.join(location, childLocation);
@@ -1349,7 +1349,7 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
         // Remove outdated symlinks
         await xfs.removePromise(ppath.join(binDir, name));
         if (process.platform === `win32`) {
-          await xfs.removePromise(ppath.join(binDir, toFilename(`${name}.cmd`)));
+          await xfs.removePromise(ppath.join(binDir, `${name}.cmd`));
         }
       }
     }

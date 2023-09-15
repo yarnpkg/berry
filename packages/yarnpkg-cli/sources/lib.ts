@@ -121,8 +121,10 @@ function initTelemetry(cli: YarnCli, {configuration}: {configuration: Configurat
 
   Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
 
+  const PLUGIN_REGEX = /^@yarnpkg\/plugin-(.*)$/;
+
   for (const name of configuration.plugins.keys())
-    if (pluginCommands.has(name.match(/^@yarnpkg\/plugin-(.*)$/)?.[1] ?? ``))
+    if (pluginCommands.has(name.match(PLUGIN_REGEX)?.[1] ?? ``))
       Configuration.telemetry?.reportPluginName(name);
 
   if (cli.binaryVersion) {

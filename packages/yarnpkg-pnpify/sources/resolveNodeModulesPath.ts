@@ -1,6 +1,6 @@
-import {PortablePath, Filename}   from '@yarnpkg/fslib';
-import {toFilename, npath, ppath} from '@yarnpkg/fslib';
-import {NodeModulesTree}          from '@yarnpkg/nm';
+import {PortablePath, Filename} from '@yarnpkg/fslib';
+import {npath, ppath}           from '@yarnpkg/fslib';
+import {NodeModulesTree}        from '@yarnpkg/nm';
 
 const NODE_MODULES = `node_modules`;
 
@@ -80,7 +80,7 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
 
   let request = PortablePath.dot;
   while (curIdx <= lastIdx) {
-    const curSegment = toFilename(segments[curIdx]);
+    const curSegment = segments[curIdx] as Filename;
     locationCandidate = ppath.join(locationCandidate, curSegment);
     node = nodeModulesTree.get(locationCandidate);
     if (node) {
@@ -96,7 +96,7 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
     curIdx++;
   }
 
-  request = ppath.join(request, ...segments.slice(lastIdx + 1).map(x => toFilename(x)));
+  request = ppath.join(request, ...segments.slice(lastIdx + 1).map(x => x as Filename));
 
   if (lastNode) {
     if (!lastNode.dirList || request !== PortablePath.dot) {

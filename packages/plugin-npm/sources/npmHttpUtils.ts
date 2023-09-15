@@ -1,6 +1,6 @@
 import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project, miscUtils, Cache} from '@yarnpkg/core';
 import {MessageName, ReportError}                                                                                                            from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, toFilename, xfs}                                                                                      from '@yarnpkg/fslib';
+import {Filename, PortablePath, ppath, xfs}                                                                                                  from '@yarnpkg/fslib';
 import {prompt}                                                                                                                              from 'enquirer';
 import pick                                                                                                                                  from 'lodash/pick';
 import semver                                                                                                                                from 'semver';
@@ -258,11 +258,9 @@ const CACHE_KEY = hashUtils.makeHash(...CACHED_FIELDS).slice(0, 6);
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
-
   const parsed = new URL(registry);
-  const registryFilename = toFilename(parsed.hostname);
 
-  return ppath.join(metadataFolder, CACHE_KEY as Filename, registryFilename);
+  return ppath.join(metadataFolder, CACHE_KEY as Filename, parsed.hostname as Filename);
 }
 
 function getMetadataFolder(configuration: Configuration) {
