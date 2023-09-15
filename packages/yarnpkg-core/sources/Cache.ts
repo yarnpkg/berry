@@ -176,7 +176,7 @@ export class Cache {
     return true;
   }
 
-  getLocatorPath(locator: Locator, expectedChecksum: string | null, opts: CacheOptions = {}) {
+  getLocatorPath(locator: Locator, expectedChecksum: string | null) {
     // When using the global cache we want the archives to be named as per
     // the cache key rather than the hash, as otherwise we wouldn't be able
     // to find them if we didn't have the hash (which is the case when adding
@@ -365,7 +365,7 @@ export class Cache {
         isColdHit: true,
       });
 
-      const cachePath = this.getLocatorPath(locator, checksum, opts);
+      const cachePath = this.getLocatorPath(locator, checksum);
       const copyProcess: Array<() => Promise<void>> = [];
 
       // Copy the package into the mirror
@@ -403,8 +403,8 @@ export class Cache {
       const mutexedLoad = async () => {
         const isUnstablePackage = opts.unstablePackages?.has(locator.locatorHash);
 
-        const tentativeCachePath = isUnstablePackage || expectedChecksum && this.isChecksumCompatible(expectedChecksum)
-          ? this.getLocatorPath(locator, expectedChecksum, opts)
+        const tentativeCachePath = isUnstablePackage || !expectedChecksum || this.isChecksumCompatible(expectedChecksum)
+          ? this.getLocatorPath(locator, expectedChecksum)
           : null;
 
         const cacheFileExists = tentativeCachePath !== null

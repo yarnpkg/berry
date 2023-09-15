@@ -1,4 +1,5 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {tests}                from 'pkg-tests-core';
 
 describe(`Cache`, () => {
   test(
@@ -12,17 +13,35 @@ describe(`Cache`, () => {
     }),
   );
 
-  test(
-    `it should make packages installable even without network`,
-    makeTemporaryEnv({
-      dependencies: {
-        [`no-deps`]: `1.0.0`,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
-      await run(`install`, {enableNetwork: false});
-    }),
-  );
+  for (const enableGlobalCache of [false, true]) {
+    for (const withLockfile of [false, true]) {
+      test(
+        `it should make packages installable even without network (${enableGlobalCache ? `global` : `local`} cache, ${withLockfile ? `with` : `without`} lockfile)`,
+        makeTemporaryEnv({
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        }, {
+          enableGlobalCache,
+        }, async ({path, run, source}) => {
+          await run(`install`);
+
+          if (!withLockfile)
+            await xfs.removePromise(ppath.join(path, Filename.lockfile));
+
+          const requests = await tests.startRegistryRecording(async () => {
+            await run(`install`);
+          });
+
+          if (withLockfile) {
+            expect(requests).toHaveLength(0);
+          } else {
+            expect(requests.filter(req => req.type !== tests.RequestType.PackageInfo)).toHaveLength(0);
+          }
+        }),
+      );
+    }
+  }
 
   test(
     `it should detect when the files checksum is incorrect`,
