@@ -1101,13 +1101,16 @@ export class Configuration {
     delete environmentSettings.rcFilename;
 
     const configuration = new Configuration(startingCwd);
+    const rcFiles = await Configuration.findRcFiles(startingCwd);
 
-    const homeRcPromise = await Configuration.findFolderRcFile(folderUtils.getHomeFolder());
-    const projectRcPromise = configuration.projectCwd !== null
-      ? await Configuration.findFolderRcFile(ppath.join(configuration.projectCwd, Filename.rc))
-      : null;
+    const homeRcFile = await Configuration.findFolderRcFile(folderUtils.getHomeFolder());
+    if (homeRcFile) {
+      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+      if (!rcFile) {
+        rcFiles.unshift(homeRcFile);
+      }
+    }
 
-    const rcFiles = [homeRcPromise, projectRcPromise].filter((rcFile): rcFile is RcFile => rcFile !== null);
     const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
 
     // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
