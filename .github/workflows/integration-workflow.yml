@@ -244,6 +244,13 @@ jobs:
       if: |
         success() || failure()
 
+    - name: 'Check that snapshotting works'
+      run: |
+        YARN_IGNORE_PATH=1 node --snapshot-blob snapshot.blob --build-snapshot ./packages/yarnpkg-cli/bundles/yarn.js
+        YARN_IGNORE_PATH=1 node --snapshot-blob snapshot.blob ./packages/yarnpkg-cli/bundles/yarn.js --version
+        YARN_IGNORE_PATH=1 node --snapshot-blob snapshot.blob ./packages/yarnpkg-cli/bundles/yarn.js run
+        YARN_IGNORE_PATH=1 node --snapshot-blob snapshot.blob ./packages/yarnpkg-cli/bundles/yarn.js install --mode skip-build
+
   big-endian:
     strategy:
       fail-fast: false
