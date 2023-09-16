@@ -274,13 +274,15 @@ export class Wrapper {
         packageExports.map(packageExport => this.writePackageExports(packageExport, requirePath)),
       );
     } else if (packageExports !== null) {
-      Object.entries(packageExports).map(async ([key, value]) => {
-        if (key.startsWith(`.`)) {
-          this.writePackageExports(value, key as PortablePath);
-        } else {
-          this.writePackageExports(value, requirePath);
-        }
-      });
+      await Promise.all(
+        Object.entries(packageExports).map(async ([key, value]) => {
+          if (key.startsWith(`.`)) {
+            await this.writePackageExports(value, key as PortablePath);
+          } else {
+            await this.writePackageExports(value, requirePath);
+          }
+        }),
+      );
     }
   }
 
