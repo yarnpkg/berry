@@ -10,6 +10,7 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@algolia/requester-common": "^4.20.0",
     "@arcanis/slice-ansi": "^1.1.1",
     "@types/semver": "^7.1.0",
     "@types/treeify": "^1.0.0",
@@ -17,6 +18,7 @@
     "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
+    "algoliasearch": "^4.14.2",
     "camelcase": "^5.3.1",
     "chalk": "^3.0.0",
     "ci-info": "^3.2.0",

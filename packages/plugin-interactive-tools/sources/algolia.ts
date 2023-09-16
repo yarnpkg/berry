@@ -1,14 +1,4 @@
-import algoliasearch from 'algoliasearch';
-
-const algolia = {
-  appId: `OFCNCOG2CU`,
-  apiKey: `6fe4476ee5a1832882e326b506d14126`,
-  indexName: `npm-search`,
-};
-
-const client = algoliasearch(algolia.appId, algolia.apiKey).initIndex(
-  algolia.indexName,
-);
+import {Configuration, httpUtils} from '@yarnpkg/core';
 
 export interface AlgoliaPackage {
   objectID: string;
@@ -32,9 +22,12 @@ export interface AlgoliaPackageOwner {
 
 export const search = async (
   query: string,
-  page: number = 0,
+  {configuration, page = 0}: {configuration: Configuration, page?: number},
 ) => {
-  const res = await client.search<AlgoliaPackage>(
+  const algoliaClient = httpUtils.createAlgoliaClient(configuration);
+  const index = algoliaClient.initIndex(`npm-search`);
+
+  const res = await index.search<AlgoliaPackage>(
     query,
     {
       analyticsTags: [`yarn-plugin-interactive-tools`],

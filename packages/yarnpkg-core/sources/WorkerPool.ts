@@ -1,11 +1,11 @@
-import PLimit         from 'p-limit';
-import {Worker}       from 'worker_threads';
+import PLimit                      from 'p-limit';
+import {type Worker as WorkerType} from 'worker_threads';
 
-import * as nodeUtils from './nodeUtils';
+import * as nodeUtils              from './nodeUtils';
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
-type PoolWorker<TOut> = Worker & {
+type PoolWorker<TOut> = WorkerType & {
   [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
 };
 
@@ -32,6 +32,8 @@ export class WorkerPool<TIn, TOut> {
 
   private createWorker() {
     this.cleanupInterval.refresh();
+
+    const Worker = require(`worker_threads`).Worker as typeof WorkerType;
 
     const worker = new Worker(this.source, {
       eval: true,

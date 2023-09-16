@@ -1,6 +1,5 @@
 import {useStdin}                            from 'ink';
 import React, {useEffect, useMemo, useState} from 'react';
-import {emitKeypressEvents}                  from 'readline';
 
 export const MinistoreContext = React.createContext<{
   getAll: () => Map<string, any>;
@@ -13,6 +12,8 @@ export const Application = ({children}: {children: React.ReactElement}) => {
 
   useEffect(() => {
     setRawMode && setRawMode(true);
+
+    const {emitKeypressEvents} = require(`readline`) as typeof import('readline');
     stdin && emitKeypressEvents(stdin);
   }, [stdin, setRawMode]);
 

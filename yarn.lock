@@ -159,17 +159,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@algolia/requester-common@npm:4.0.0-beta.14":
-  version: 4.0.0-beta.14
-  resolution: "@algolia/requester-common@npm:4.0.0-beta.14"
-  checksum: 4f4fec6d40761110e45d60c925ae268b4ffa263f77db8131bbff7ee86c0c38e361a9c88daf12b37d0df47ab587acd000c29ac042066ed92449674561d12826dc
-  languageName: node
-  linkType: hard
-
 "@algolia/requester-common@npm:4.14.2":
   version: 4.14.2
   resolution: "@algolia/requester-common@npm:4.14.2"
   checksum: c590d9b9b1d1e4daf550a1da48e89802451387a25dc7d95c1d2fa9591d68d302dc5402062bc226d18ce18e7a0ad9d12388fa61c7a339543d59b954adc7d01046
+  languageName: node
+  linkType: hard
+
+"@algolia/requester-common@npm:^4.20.0":
+  version: 4.20.0
+  resolution: "@algolia/requester-common@npm:4.20.0"
+  checksum: 8d7aa1d8fc6f0e18ce759845af8150028e376bc85242a9e8db8e6ba3e71a7aaab8e7adfbf7db60b827c33861c59519bd67a7f6f44916b46827766ccb2907cfca
   languageName: node
   linkType: hard
 
@@ -7243,6 +7243,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
+    "@algolia/requester-common": "npm:^4.20.0"
     "@arcanis/slice-ansi": "npm:^1.1.1"
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-json": "npm:^6.0.0"
@@ -7265,6 +7266,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
+    algoliasearch: "npm:^4.14.2"
     camelcase: "npm:^5.3.1"
     chalk: "npm:^3.0.0"
     ci-info: "npm:^3.2.0"
@@ -7823,7 +7825,6 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/libui": "workspace:^"
     "@yarnpkg/plugin-essentials": "workspace:^"
-    algoliasearch: "npm:^4.2.0"
     clipanion: "npm:^4.0.0-rc.2"
     diff: "npm:^5.1.0"
     ink: "npm:^3.0.8"
@@ -8011,7 +8012,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
-    "@algolia/requester-common": "npm:4.0.0-beta.14"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
@@ -8019,7 +8019,6 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-essentials": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
-    algoliasearch: "npm:^4.2.0"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -16916,13 +16915,6 @@ __metadata:
   version: 1.1.0
   resolution: "has-cors@npm:1.1.0"
   checksum: 549ce94113fd23895b22d71ade9809918577b8558cd4d701fe79045d8b1d58d87eba870260b28f6a3229be933a691c55653afd496d0fc52e98fd2ff577f01197
-  languageName: node
-  linkType: hard
-
-"has-flag@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "has-flag@npm:3.0.0"
-  checksum: 4a15638b454bf086c8148979aae044dd6e39d63904cd452d970374fa6a87623423da485dfb814e7be882e05c096a7ccf1ebd48e7e7501d0208d8384ff4dea73b
   languageName: node
   linkType: hard
 
@@ -28852,32 +28844,7 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "supports-color@npm:2.0.0"
-  checksum: d2957d19e782a806abc3e8616b6648cc1e70c3ebe94fb1c2d43160686f6d79cd7c9f22c4853bc4a362d89d1c249ab6d429788c5f6c83b3086e6d763024bf4581
-  languageName: node
-  linkType: hard
-
-"supports-color@npm:^5.3.0":
-  version: 5.5.0
-  resolution: "supports-color@npm:5.5.0"
-  dependencies:
-    has-flag: "npm:^3.0.0"
-  checksum: 5f505c6fa3c6e05873b43af096ddeb22159831597649881aeb8572d6fe3b81e798cc10840d0c9735e0026b250368851b7f77b65e84f4e4daa820a4f69947f55b
-  languageName: node
-  linkType: hard
-
-"supports-color@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "supports-color@npm:6.1.0"
-  dependencies:
-    has-flag: "npm:^3.0.0"
-  checksum: 78a5c43b9e478966ed41ed923a942dfd6209bf3bcc826a01435cfec98d5a17ca5d866effd2b6be438c16cd73b99f4a4397fcbb282e6f653e39046e1335334189
-  languageName: node
-  linkType: hard
-
-"supports-color@npm:^7.0.0, supports-color@npm:^7.1.0":
+"supports-color@npm:7.1.0":
   version: 7.1.0
   resolution: "supports-color@npm:7.1.0"
   dependencies:
@@ -28886,12 +28853,12 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^8.0.0":
-  version: 8.1.1
-  resolution: "supports-color@npm:8.1.1"
+"supports-color@patch:supports-color@npm%3A7.1.0#~/.yarn/patches/supports-color-npm-7.1.0-df2ba1e338.patch":
+  version: 7.1.0
+  resolution: "supports-color@patch:supports-color@npm%3A7.1.0#~/.yarn/patches/supports-color-npm-7.1.0-df2ba1e338.patch::version=7.1.0&hash=28dbbc"
   dependencies:
     has-flag: "npm:^4.0.0"
-  checksum: 157b534df88e39c5518c5e78c35580c1eca848d7dbaf31bbe06cdfc048e22c7ff1a9d046ae17b25691128f631a51d9ec373c1b740c12ae4f0de6e292037e4282
+  checksum: 0012f6518e63564bc45bccb161ef35c0051fe466c69624e1af5c8e08436ed25cf2df037ee5397baa5f103c77a5c92a0b88bfa60d5bbfc2085a918211abd1aab8
   languageName: node
   linkType: hard
 

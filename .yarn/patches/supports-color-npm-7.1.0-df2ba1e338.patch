@@ -1,0 +1,20 @@
+diff --git a/index.js b/index.js
+index dcaa45412304d464fe37e9ceab64ba68ac1a092a..dd6dd54a385e4b29902704749d8528e60160ed92 100644
+--- a/index.js
++++ b/index.js
+@@ -1,6 +1,5 @@
+ 'use strict';
+ const os = require('os');
+-const tty = require('tty');
+ const hasFlag = require('has-flag');
+ 
+ const {env} = process;
+@@ -134,6 +133,6 @@ function getSupportLevel(stream) {
+ 
+ module.exports = {
+ 	supportsColor: getSupportLevel,
+-	stdout: translateLevel(supportsColor(true, tty.isatty(1))),
+-	stderr: translateLevel(supportsColor(true, tty.isatty(2)))
++	stdout: translateLevel(supportsColor(true, process.stdout)),
++	stderr: translateLevel(supportsColor(true, process.stderr))
+ };

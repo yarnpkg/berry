@@ -6,7 +6,6 @@ import {PortablePath, npath, ppath, xfs}                                        
 import {Command, Option, Usage}                                                 from 'clipanion';
 import semver                                                                   from 'semver';
 import {URL}                                                                    from 'url';
-import {runInNewContext}                                                        from 'vm';
 
 import {getAvailablePlugins}                                                    from './list';
 
@@ -126,6 +125,8 @@ export async function savePlugin(pluginSpec: string, pluginBuffer: Buffer, {chec
 
   const vmExports = {} as any;
   const vmModule = {exports: vmExports};
+
+  const {runInNewContext} = require(`vm`) as typeof import('vm');
 
   runInNewContext(pluginBuffer.toString(), {
     module: vmModule,

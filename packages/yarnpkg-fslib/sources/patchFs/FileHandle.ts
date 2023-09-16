@@ -1,5 +1,4 @@
 import type {BigIntStats, ReadStream, StatOptions, Stats, WriteStream, WriteVResult} from 'fs';
-import {createInterface}                                                             from 'readline';
 
 import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}              from '../FakeFS';
 import type {Path}                                                                   from '../path';
@@ -214,6 +213,8 @@ export class FileHandle<P extends Path> {
   }
 
   readLines(options?: CreateReadStreamOptions) {
+    const {createInterface} = require(`readline`);
+
     return createInterface({
       input: this.createReadStream(options),
       crlfDelay: Infinity,

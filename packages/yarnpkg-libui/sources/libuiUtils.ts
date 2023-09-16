@@ -1,8 +1,8 @@
 // This file shouldn't import other libui files, ink, or react.
 
-import os            from 'os';
-import {Writable}    from 'stream';
-import {WriteStream} from 'tty';
+import os                 from 'os';
+import {Writable}         from 'stream';
+import type {WriteStream} from 'tty';
 
 export function checkRequirements({stdout}: {stdout: Writable}) {
   if (os.endianness() === `BE`)

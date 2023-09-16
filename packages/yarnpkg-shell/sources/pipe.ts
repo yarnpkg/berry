@@ -1,5 +1,4 @@
-import {ChildProcess}                               from 'child_process';
-import crossSpawn                                   from 'cross-spawn';
+import {type ChildProcess}                          from 'child_process';
 import {PassThrough, Readable, Transform, Writable} from 'stream';
 import {StringDecoder}                              from 'string_decoder';
 
@@ -51,6 +50,8 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
     const stderr = stdio[2] instanceof Transform
       ? `pipe`
       : stdio[2];
+
+    const crossSpawn = require(`cross-spawn`) as typeof import('cross-spawn');
 
     const child = crossSpawn(name, args, {...spawnOpts, stdio: [
       stdin,

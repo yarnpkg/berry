@@ -1,7 +1,7 @@
 import sliceAnsi                                                                    from '@arcanis/slice-ansi';
 import CI                                                                           from 'ci-info';
 import {Writable}                                                                   from 'stream';
-import {WriteStream}                                                                from 'tty';
+import type {WriteStream}                                                           from 'tty';
 
 import {Configuration}                                                              from './Configuration';
 import {MessageName, stringifyMessageName}                                          from './MessageName';

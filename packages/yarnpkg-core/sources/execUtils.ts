@@ -1,6 +1,5 @@
 import {PortablePath, npath, ppath, BufferEncodingOrBuffer} from '@yarnpkg/fslib';
-import {ChildProcess}                                       from 'child_process';
-import crossSpawn                                           from 'cross-spawn';
+import {type ChildProcess}                                  from 'child_process';
 import {Readable, Writable}                                 from 'stream';
 
 import {Configuration}                                      from './Configuration';
@@ -96,6 +95,7 @@ export async function pipevp(fileName: string, args: Array<string>, {cwd, env = 
   if (hasFd(stderr))
     stdio[2] = stderr;
 
+  const crossSpawn = require(`cross-spawn`) as typeof import('cross-spawn');
   const child = crossSpawn(fileName, args, {
     cwd: npath.fromPortablePath(cwd),
     env: {
@@ -185,6 +185,7 @@ export async function execvp(fileName: string, args: Array<string>, {cwd, env = 
   if (typeof env.PWD !== `undefined`)
     env = {...env, PWD: nativeCwd};
 
+  const crossSpawn = require(`cross-spawn`) as typeof import('cross-spawn');
   const subprocess = crossSpawn(fileName, args, {
     cwd: nativeCwd,
     env,
