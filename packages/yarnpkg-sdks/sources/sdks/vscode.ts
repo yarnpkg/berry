@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath}                                                   from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath}                                         from '@yarnpkg/fslib';
 import {PnpApi}                                                                       from '@yarnpkg/pnp';
 
 import {Wrapper, GenerateIntegrationWrapper, GenerateDefaultWrapper, IntegrationSdks} from '../generateSdk';
@@ -49,9 +49,7 @@ export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: 
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`eslint.nodePath`]: npath.fromPortablePath(
       ppath.dirname(ppath.dirname(
-        wrapper.getProjectPathTo(
-          `package.json` as PortablePath,
-        ),
+        wrapper.getProjectPathTo(Filename.manifest),
       )),
     ),
   });

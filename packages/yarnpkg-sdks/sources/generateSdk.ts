@@ -296,7 +296,7 @@ export class Wrapper {
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
     await xfs.writeJsonPromise(absWrapperPath, this.manifest);
 
-    this.paths.set(`package.json` as PortablePath, relProjectPath);
+    this.paths.set(Filename.manifest, relProjectPath);
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath} = {}) {

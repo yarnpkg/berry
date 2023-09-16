@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath}                           from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath}                 from '@yarnpkg/fslib';
 import {PnpApi}                                               from '@yarnpkg/pnp';
 
 import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
@@ -18,9 +18,7 @@ export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: 
     [`eslint.packageManager`]: `yarn`,
     [`eslint.nodePath`]: npath.fromPortablePath(
       ppath.dirname(ppath.dirname(
-        wrapper.getProjectPathTo(
-          `package.json` as PortablePath,
-        ),
+        wrapper.getProjectPathTo(Filename.manifest),
       )),
     ),
   });
