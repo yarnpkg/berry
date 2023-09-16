@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Features Snapshotting should support running a snapshot (--version) 1`] = `
+"4.0.0-rc.50.git.20230916.hash-ea9158fdf
+"
+`;
+
+exports[`Features Snapshotting should support running a snapshot (install) 1`] = `
+"➤ YN0000: · Yarn 4.0.0-rc.50.git.20230916.hash-ea9158fdf
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + no-deps@npm:1.0.0
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ A package was added to the project (+ 0.78 KiB).
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed
+➤ YN0000: · Done
+"
+`;
+
+exports[`Features Snapshotting should support running a snapshot (run) 1`] = `
+"➤ YN0000: Done
+"
+`;
