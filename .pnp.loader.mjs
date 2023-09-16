@@ -1,9 +1,9 @@
 import fs from 'fs';
 import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
-import moduleExports, { Module } from 'module';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
+import moduleExports, { isBuiltin } from 'module';
 import assert from 'assert';
 
 const SAFE_TIME = 456789e3;
@@ -277,6 +277,7 @@ async function copySymlink(prelayout, postlayout, destinationFs, destination, de
 }
 
 class FakeFS {
+  pathUtils;
   constructor(pathUtils) {
     this.pathUtils = pathUtils;
   }
@@ -879,6 +880,7 @@ class ProxiedFS extends FakeFS {
   watch(p, a, b) {
     return this.baseFs.watch(
       this.mapToBase(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -886,6 +888,7 @@ class ProxiedFS extends FakeFS {
   watchFile(p, a, b) {
     return this.baseFs.watchFile(
       this.mapToBase(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -903,6 +906,7 @@ class ProxiedFS extends FakeFS {
 }
 
 class NodeFS extends BasePortableFakeFS {
+  realFs;
   constructor(realFs = fs) {
     super();
     this.realFs = realFs;
@@ -1270,6 +1274,7 @@ class NodeFS extends BasePortableFakeFS {
   watch(p, a, b) {
     return this.realFs.watch(
       npath.fromPortablePath(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -1277,6 +1282,7 @@ class NodeFS extends BasePortableFakeFS {
   watchFile(p, a, b) {
     return this.realFs.watchFile(
       npath.fromPortablePath(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -1299,10 +1305,7 @@ const NUMBER_REGEXP = /^[0-9]+$/;
 const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
 const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
 class VirtualFS extends ProxiedFS {
-  constructor({ baseFs = new NodeFS() } = {}) {
-    super(ppath);
-    this.baseFs = baseFs;
-  }
+  baseFs;
   static makeVirtualPath(base, component, to) {
     if (ppath.basename(base) !== `__virtual__`)
       throw new Error(`Assertion failed: Virtual folders must be named "__virtual__"`);
@@ -1331,6 +1334,10 @@ class VirtualFS extends ProxiedFS {
     const backstep = `../`.repeat(depth);
     const subpath = match[5] || `.`;
     return VirtualFS.resolveVirtual(ppath.join(target, backstep, subpath));
+  }
+  constructor({ baseFs = new NodeFS() } = {}) {
+    super(ppath);
+    this.baseFs = baseFs;
   }
   getExtractHint(hints) {
     return this.baseFs.getExtractHint(hints);
@@ -1374,8 +1381,6 @@ const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 const HAS_LAZY_LOADED_TRANSLATORS = major > 19 || major === 19 && minor >= 3;
 
-const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
@@ -1963,7 +1968,7 @@ async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
 }
 async function resolve$1(originalSpecifier, context, nextResolve) {
   const { findPnpApi } = moduleExports;
-  if (!findPnpApi || isBuiltinModule(originalSpecifier))
+  if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
   let specifier = originalSpecifier;
   const url = tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : void 0);
@@ -1998,6 +2003,7 @@ async function resolve$1(originalSpecifier, context, nextResolve) {
   try {
     result = pnpapi.resolveRequest(specifier, issuer, {
       conditions: new Set(conditions),
+      // TODO: Handle --experimental-specifier-resolution=node
       extensions: allowLegacyResolve ? void 0 : []
     });
   } catch (err) {
@@ -2041,6 +2047,14 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
           stats.ino,
           stats.size,
           stats.blocks
+          // atime sec
+          // atime ns
+          // mtime sec
+          // mtime ns
+          // ctime sec
+          // ctime ns
+          // birthtime sec
+          // birthtime ns
         ]);
       } catch {
       }
