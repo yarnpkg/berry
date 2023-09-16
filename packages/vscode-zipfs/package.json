@@ -95,7 +95,7 @@
     "@types/vscode": "^1.54.0",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
-    "esbuild": "npm:esbuild-wasm@^0.15.15",
+    "esbuild": "^0.19.3",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2",

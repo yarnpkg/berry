@@ -1,5 +1,4 @@
 import {ppath}        from '@yarnpkg/fslib';
-import Module         from 'module';
 import os             from 'os';
 
 import * as execUtils from './execUtils';
@@ -11,6 +10,28 @@ const openUrlBinary = new Map([
   [`win32`, `explorer.exe`],
 ]).get(process.platform);
 
+const emitWarningStack = [process.emitWarning];
+const inhibatedWarnings: Array<RegExp> = [];
+
+process.emitWarning = (warning: any, options: any) => {
+  if (typeof warning === `string` && !inhibatedWarnings.some(regex => regex.test(warning))) {
+    emitWarningStack?.[0].call(process, warning, options);
+  }
+};
+
+export async function captureWarningsPromise(emitWarning: NodeJS.Process[`emitWarning`], fn: () => Promise<void>) {
+  emitWarningStack.unshift(emitWarning);
+  try {
+    await fn();
+  } finally {
+    emitWarningStack.shift();
+  }
+}
+
+export function inhibateWarning(regex: RegExp) {
+  inhibatedWarnings.push(regex);
+}
+
 export const openUrl = typeof openUrlBinary !== `undefined`
   ? async (url: string) => {
     try {
@@ -21,11 +42,6 @@ export const openUrl = typeof openUrlBinary !== `undefined`
     }
   }
   : undefined;
-
-export function builtinModules(): Set<string> {
-  // @ts-expect-error
-  return new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-}
 
 function getLibc() {
   // It seems that Node randomly crashes with no output under some circumstances when running a getReport() on Windows.

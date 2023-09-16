@@ -1,4 +1,5 @@
 import sliceAnsi                                                                    from '@arcanis/slice-ansi';
+import {nodeUtils}                                                                  from '@yarnpkg/core';
 import CI                                                                           from 'ci-info';
 import {Writable}                                                                   from 'stream';
 import type {WriteStream}                                                           from 'tty';
@@ -115,8 +116,7 @@ export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
 
-    const emitWarning = process.emitWarning;
-    process.emitWarning = (message, name) => {
+    const emitWarning: NodeJS.Process[`emitWarning`] = (message, name) => {
       if (typeof message !== `string`) {
         const error = message;
 
@@ -135,12 +135,13 @@ export class StreamReport extends Report {
       report.reportInfo(MessageName.UNNAMED, formatUtils.applyStyle(opts.configuration, `Yarn ${YarnVersion}`, formatUtils.Style.BOLD));
 
     try {
-      await cb(report);
+      await nodeUtils.captureWarningsPromise(emitWarning, async () => {
+        await cb(report);
+      });
     } catch (error) {
       report.reportExceptionOnce(error);
     } finally {
       await report.finalize();
-      process.emitWarning = emitWarning;
     }
 
     return report;

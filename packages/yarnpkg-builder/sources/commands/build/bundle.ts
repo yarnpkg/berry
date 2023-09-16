@@ -118,6 +118,9 @@ export default class BuildBundleCommand extends Command {
           },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
+          alias: {
+            [`tty`]: require.resolve(`../../mocks/tty.ts`),
+          },
           define: {
             YARN_VERSION: JSON.stringify(version),
             ...(this.noMinify ? {} : {

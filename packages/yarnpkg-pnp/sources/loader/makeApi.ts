@@ -1,6 +1,5 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
-import {Module}                                                                                                                                                                            from 'module';
 import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
 import {inspect}                                                                                                                                                                           from 'util';
 
@@ -10,6 +9,19 @@ import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackag
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
 import {getOptionValue}                                                                                                                                                                    from './node-options.js';
 import * as nodeUtils                                                                                                                                                                      from './nodeUtils';
+
+let ModuleImpl: (typeof import('module').Module) | undefined;
+
+function getModule() {
+  if (typeof ModuleImpl === `undefined`)
+    ({Module: ModuleImpl} = require(`module`) as typeof import('module'));
+
+  return ModuleImpl;
+}
+
+function getDefaultExtensions() {
+  return Object.keys(getModule()._extensions);
+}
 
 export type MakeApiOptions = {
   allowDebug?: boolean;
@@ -336,6 +348,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function makeFakeModule(path: NativePath): NodeModule {
+    const Module = getModule();
+
     // @ts-expect-error
     const fakeModule = new Module(path, null);
     fakeModule.filename = path;
@@ -348,6 +362,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function callNativeResolution(request: PortablePath, issuer: PortablePath): NativePath | false {
+    const Module = getModule();
+
     if (issuer.endsWith(`/`))
       issuer = ppath.join(issuer, `internal.js`);
 
@@ -824,7 +840,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
    */
 
-  function resolveUnqualified(unqualifiedPath: PortablePath, {extensions = Object.keys(Module._extensions)}: ResolveUnqualifiedOptions = {}): PortablePath {
+  function resolveUnqualified(unqualifiedPath: PortablePath, {extensions = getDefaultExtensions()}: ResolveUnqualifiedOptions = {}): PortablePath {
     const candidates: Array<PortablePath> = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 

@@ -1,9 +1,12 @@
 import '@yarnpkg/cli/polyfills';
+import {nodeUtils}              from '@yarnpkg/core';
 import {npath, ppath}           from '@yarnpkg/fslib';
 import {startupSnapshot}        from 'v8';
 
 import {runExit}                from './lib';
 import {getPluginConfiguration} from './tools/getPluginConfiguration';
+
+nodeUtils.inhibateWarning(/built-in module .* is not yet supported in user snapshots/);
 
 function start() {
   runExit(process.argv.slice(2), {
@@ -13,5 +16,10 @@ function start() {
   });
 }
 
-if (!startupSnapshot.isBuildingSnapshot())
+if (!startupSnapshot.isBuildingSnapshot()) {
   start();
+} else {
+  startupSnapshot.setDeserializeMainFunction(() => {
+    start();
+  });
+}
