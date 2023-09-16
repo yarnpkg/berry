@@ -8,6 +8,13 @@ import {getPluginConfiguration} from './tools/getPluginConfiguration';
 
 nodeUtils.inhibateWarning(/built-in module .* is not yet supported in user snapshots/);
 
+declare module 'v8' {
+  export const startupSnapshot: {
+    isBuildingSnapshot(): boolean;
+    setDeserializeMainFunction(fn: () => void): void;
+  };
+}
+
 function start() {
   runExit(process.argv.slice(2), {
     cwd: ppath.cwd(),

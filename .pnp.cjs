@@ -381,6 +381,14 @@ const RAW_RUNTIME_STATE =
           ["@algolia/cache-common", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-cache-browser-local-storage-npm-4.20.0-41fde46270-b9ca7e190a.zip/node_modules/@algolia/cache-browser-local-storage/",\
+        "packageDependencies": [\
+          ["@algolia/cache-browser-local-storage", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/cache-common", [\
@@ -388,6 +396,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@algolia-cache-common-npm-4.14.2-cd5ab62e07-4fd04c714a.zip/node_modules/@algolia/cache-common/",\
         "packageDependencies": [\
           ["@algolia/cache-common", "npm:4.14.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-cache-common-npm-4.20.0-3006b59130-a46377de8a.zip/node_modules/@algolia/cache-common/",\
+        "packageDependencies": [\
+          ["@algolia/cache-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -400,6 +415,14 @@ const RAW_RUNTIME_STATE =
           ["@algolia/cache-common", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-cache-in-memory-npm-4.20.0-0cf4013dd0-3d67dcfae4.zip/node_modules/@algolia/cache-in-memory/",\
+        "packageDependencies": [\
+          ["@algolia/cache-in-memory", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-account", [\
@@ -410,6 +433,16 @@ const RAW_RUNTIME_STATE =
           ["@algolia/client-common", "npm:4.14.2"],\
           ["@algolia/client-search", "npm:4.14.2"],\
           ["@algolia/transporter", "npm:4.14.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-account-npm-4.20.0-12742378b6-b59e9c7a32.zip/node_modules/@algolia/client-account/",\
+        "packageDependencies": [\
+          ["@algolia/client-account", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -425,6 +458,17 @@ const RAW_RUNTIME_STATE =
           ["@algolia/transporter", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-analytics-npm-4.20.0-4a78826b8d-f46d47fdd1.zip/node_modules/@algolia/client-analytics/",\
+        "packageDependencies": [\
+          ["@algolia/client-analytics", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-common", [\
@@ -434,6 +478,15 @@ const RAW_RUNTIME_STATE =
           ["@algolia/client-common", "npm:4.14.2"],\
           ["@algolia/requester-common", "npm:4.14.2"],\
           ["@algolia/transporter", "npm:4.14.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-common-npm-4.20.0-918bd58d1f-7418ba5a00.zip/node_modules/@algolia/client-common/",\
+        "packageDependencies": [\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -448,6 +501,16 @@ const RAW_RUNTIME_STATE =
           ["@algolia/transporter", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-personalization-npm-4.20.0-7aec20c3e2-987715df85.zip/node_modules/@algolia/client-personalization/",\
+        "packageDependencies": [\
+          ["@algolia/client-personalization", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-search", [\
@@ -458,6 +521,16 @@ const RAW_RUNTIME_STATE =
           ["@algolia/client-common", "npm:4.14.2"],\
           ["@algolia/requester-common", "npm:4.14.2"],\
           ["@algolia/transporter", "npm:4.14.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-search-npm-4.20.0-6e29619eed-e82b56404b.zip/node_modules/@algolia/client-search/",\
+        "packageDependencies": [\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -478,6 +551,13 @@ const RAW_RUNTIME_STATE =
           ["@algolia/logger-common", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-logger-common-npm-4.20.0-8ebb472f8b-06ed28f76b.zip/node_modules/@algolia/logger-common/",\
+        "packageDependencies": [\
+          ["@algolia/logger-common", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/logger-console", [\
@@ -488,6 +568,14 @@ const RAW_RUNTIME_STATE =
           ["@algolia/logger-common", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-logger-console-npm-4.20.0-de270d72b7-721dffe375.zip/node_modules/@algolia/logger-console/",\
+        "packageDependencies": [\
+          ["@algolia/logger-console", "npm:4.20.0"],\
+          ["@algolia/logger-common", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/requester-browser-xhr", [\
@@ -496,6 +584,14 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@algolia/requester-browser-xhr", "npm:4.14.2"],\
           ["@algolia/requester-common", "npm:4.14.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-requester-browser-xhr-npm-4.20.0-5d2966daa1-669790c7df.zip/node_modules/@algolia/requester-browser-xhr/",\
+        "packageDependencies": [\
+          ["@algolia/requester-browser-xhr", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -524,6 +620,14 @@ const RAW_RUNTIME_STATE =
           ["@algolia/requester-common", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-requester-node-http-npm-4.20.0-e12b90b81e-7857114b59.zip/node_modules/@algolia/requester-node-http/",\
+        "packageDependencies": [\
+          ["@algolia/requester-node-http", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/transporter", [\
@@ -534,6 +638,16 @@ const RAW_RUNTIME_STATE =
           ["@algolia/cache-common", "npm:4.14.2"],\
           ["@algolia/logger-common", "npm:4.14.2"],\
           ["@algolia/requester-common", "npm:4.14.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-transporter-npm-4.20.0-ee6af3fcca-d02db1b3fe.zip/node_modules/@algolia/transporter/",\
+        "packageDependencies": [\
+          ["@algolia/transporter", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"],\
+          ["@algolia/logger-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -6439,94 +6553,6 @@ const RAW_RUNTIME_STATE =
           ["@esbuild/android-arm", "npm:0.15.11"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-android-arm-npm-0.19.3-80445f2c70/node_modules/@esbuild/android-arm/",\
-        "packageDependencies": [\
-          ["@esbuild/android-arm", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/android-arm64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-android-arm64-npm-0.19.3-fb8a557e6b/node_modules/@esbuild/android-arm64/",\
-        "packageDependencies": [\
-          ["@esbuild/android-arm64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/android-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-android-x64-npm-0.19.3-7abfe6608b/node_modules/@esbuild/android-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/android-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/darwin-arm64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-darwin-arm64-npm-0.19.3-8ea871bd76/node_modules/@esbuild/darwin-arm64/",\
-        "packageDependencies": [\
-          ["@esbuild/darwin-arm64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/darwin-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-darwin-x64-npm-0.19.3-e8f1797544/node_modules/@esbuild/darwin-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/darwin-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/freebsd-arm64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-freebsd-arm64-npm-0.19.3-83b24b8bb2/node_modules/@esbuild/freebsd-arm64/",\
-        "packageDependencies": [\
-          ["@esbuild/freebsd-arm64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/freebsd-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-freebsd-x64-npm-0.19.3-def7299a54/node_modules/@esbuild/freebsd-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/freebsd-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-arm", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-arm-npm-0.19.3-1bf59c99e0/node_modules/@esbuild/linux-arm/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-arm", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-arm64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-arm64-npm-0.19.3-dfef4a6cf9/node_modules/@esbuild/linux-arm64/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-arm64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-ia32", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-ia32-npm-0.19.3-6a098469c0/node_modules/@esbuild/linux-ia32/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-ia32", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["@esbuild/linux-loong64", [\
@@ -6534,112 +6560,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/unplugged/@esbuild-linux-loong64-npm-0.15.11-b380a37e51/node_modules/@esbuild/linux-loong64/",\
         "packageDependencies": [\
           ["@esbuild/linux-loong64", "npm:0.15.11"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-loong64-npm-0.19.3-07446bbaed/node_modules/@esbuild/linux-loong64/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-loong64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-mips64el", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-mips64el-npm-0.19.3-e8785b4649/node_modules/@esbuild/linux-mips64el/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-mips64el", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-ppc64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-ppc64-npm-0.19.3-7b7a47383f/node_modules/@esbuild/linux-ppc64/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-ppc64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-riscv64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-riscv64-npm-0.19.3-22226359ca/node_modules/@esbuild/linux-riscv64/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-riscv64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-s390x", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-s390x-npm-0.19.3-390946e8fc/node_modules/@esbuild/linux-s390x/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-s390x", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/linux-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-linux-x64-npm-0.19.3-55823289f9/node_modules/@esbuild/linux-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/linux-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/netbsd-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-netbsd-x64-npm-0.19.3-b879b9e76d/node_modules/@esbuild/netbsd-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/netbsd-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/openbsd-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-openbsd-x64-npm-0.19.3-b04a33ebda/node_modules/@esbuild/openbsd-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/openbsd-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/sunos-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-sunos-x64-npm-0.19.3-6b15602dc5/node_modules/@esbuild/sunos-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/sunos-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/win32-arm64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-win32-arm64-npm-0.19.3-73ba5beec7/node_modules/@esbuild/win32-arm64/",\
-        "packageDependencies": [\
-          ["@esbuild/win32-arm64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/win32-ia32", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-win32-ia32-npm-0.19.3-0f71410a22/node_modules/@esbuild/win32-ia32/",\
-        "packageDependencies": [\
-          ["@esbuild/win32-ia32", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@esbuild/win32-x64", [\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/@esbuild-win32-x64-npm-0.19.3-665db871be/node_modules/@esbuild/win32-x64/",\
-        "packageDependencies": [\
-          ["@esbuild/win32-x64", "npm:0.19.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12578,7 +12498,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["chalk", "npm:3.0.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["esbuild", "npm:0.19.3"],\
+          ["esbuild", [\
+            "esbuild-wasm",\
+            "npm:0.19.3"\
+          ]],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"],\
           ["typescript", "patch:typescript@npm%3A5.2.1-rc#optional!builtin<compat/typescript>::version=5.2.1-rc&hash=f3b441"]\
@@ -13542,7 +13465,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-pnp", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-pnp"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["camelcase", "npm:5.3.1"],\
           ["chalk", "npm:3.0.0"],\
           ["ci-info", "npm:3.2.0"],\
@@ -13551,7 +13474,10 @@ const RAW_RUNTIME_STATE =
           ["cross-spawn", "npm:7.0.3"],\
           ["diff", "npm:5.1.0"],\
           ["dotenv", "npm:16.3.1"],\
-          ["esbuild", "npm:0.19.3"],\
+          ["esbuild", [\
+            "esbuild-wasm",\
+            "npm:0.19.3"\
+          ]],\
           ["fast-glob", "npm:3.2.12"],\
           ["got", "npm:11.8.2"],\
           ["lodash", "npm:4.17.21"],\
@@ -13626,7 +13552,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
           ["dompurify", "npm:3.0.5"],\
@@ -13776,7 +13702,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-select", "npm:3.0.11"],\
           ["@types/tinycolor2", "npm:1.4.2"],\
           ["@yarnpkg/monorepo", "workspace:."],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["ansi-html", "npm:0.0.7"],\
           ["buffer", "npm:5.7.1"],\
           ["bytes", "npm:3.1.2"],\
@@ -23220,7 +23146,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["arg", "npm:5.0.2"],\
-          ["esbuild", "npm:0.19.3"],\
+          ["esbuild", [\
+            "esbuild-wasm",\
+            "npm:0.19.3"\
+          ]],\
           ["rollup", "npm:2.59.0"],\
           ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],\
           ["semver", "npm:7.5.4"],\
@@ -23630,6 +23559,27 @@ const RAW_RUNTIME_STATE =
           ["@algolia/transporter", "npm:4.14.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/algoliasearch-npm-4.20.0-afd5d8b7ad-15129c8d1c.zip/node_modules/algoliasearch/",\
+        "packageDependencies": [\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["@algolia/cache-browser-local-storage", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"],\
+          ["@algolia/cache-in-memory", "npm:4.20.0"],\
+          ["@algolia/client-account", "npm:4.20.0"],\
+          ["@algolia/client-analytics", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/client-personalization", "npm:4.20.0"],\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/logger-common", "npm:4.20.0"],\
+          ["@algolia/logger-console", "npm:4.20.0"],\
+          ["@algolia/requester-browser-xhr", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/requester-node-http", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["algoliasearch-helper", [\
@@ -23639,6 +23589,20 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch-helper", "npm:3.11.1"]\
         ],\
         "linkType": "SOFT"\
+      }],\
+      ["virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1", {\
+        "packageLocation": "./.yarn/__virtual__/algoliasearch-helper-virtual-df06e1583d/0/cache/algoliasearch-helper-npm-3.11.1-1cc35e5b35-d8a2a9fb36.zip/node_modules/algoliasearch-helper/",\
+        "packageDependencies": [\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
+          ["@algolia/events", "npm:4.0.1"],\
+          ["@types/algoliasearch", null],\
+          ["algoliasearch", "npm:4.20.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/algoliasearch",\
+          "algoliasearch"\
+        ],\
+        "linkType": "HARD"\
       }],\
       ["virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1", {\
         "packageLocation": "./.yarn/__virtual__/algoliasearch-helper-virtual-8e0d3041e4/0/cache/algoliasearch-helper-npm-3.11.1-1cc35e5b35-d8a2a9fb36.zip/node_modules/algoliasearch-helper/",\
@@ -29568,35 +29532,6 @@ const RAW_RUNTIME_STATE =
           ["esbuild-windows-arm64", "npm:0.15.11"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:0.19.3", {\
-        "packageLocation": "./.yarn/unplugged/esbuild-npm-0.19.3-32eb4a916f/node_modules/esbuild/",\
-        "packageDependencies": [\
-          ["esbuild", "npm:0.19.3"],\
-          ["@esbuild/android-arm", "npm:0.19.3"],\
-          ["@esbuild/android-arm64", "npm:0.19.3"],\
-          ["@esbuild/android-x64", "npm:0.19.3"],\
-          ["@esbuild/darwin-arm64", "npm:0.19.3"],\
-          ["@esbuild/darwin-x64", "npm:0.19.3"],\
-          ["@esbuild/freebsd-arm64", "npm:0.19.3"],\
-          ["@esbuild/freebsd-x64", "npm:0.19.3"],\
-          ["@esbuild/linux-arm", "npm:0.19.3"],\
-          ["@esbuild/linux-arm64", "npm:0.19.3"],\
-          ["@esbuild/linux-ia32", "npm:0.19.3"],\
-          ["@esbuild/linux-loong64", "npm:0.19.3"],\
-          ["@esbuild/linux-mips64el", "npm:0.19.3"],\
-          ["@esbuild/linux-ppc64", "npm:0.19.3"],\
-          ["@esbuild/linux-riscv64", "npm:0.19.3"],\
-          ["@esbuild/linux-s390x", "npm:0.19.3"],\
-          ["@esbuild/linux-x64", "npm:0.19.3"],\
-          ["@esbuild/netbsd-x64", "npm:0.19.3"],\
-          ["@esbuild/openbsd-x64", "npm:0.19.3"],\
-          ["@esbuild/sunos-x64", "npm:0.19.3"],\
-          ["@esbuild/win32-arm64", "npm:0.19.3"],\
-          ["@esbuild/win32-ia32", "npm:0.19.3"],\
-          ["@esbuild/win32-x64", "npm:0.19.3"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["esbuild-android-64", [\
@@ -29785,6 +29720,13 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.17.5-9d427259bd-94e32490fe.zip/node_modules/esbuild-wasm/",\
         "packageDependencies": [\
           ["esbuild-wasm", "npm:0.17.5"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:0.19.3", {\
+        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.19.3-0c5c5034ff-a979250ddd.zip/node_modules/esbuild-wasm/",\
+        "packageDependencies": [\
+          ["esbuild-wasm", "npm:0.19.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -35410,8 +35352,8 @@ const RAW_RUNTIME_STATE =
           ["@types/google.maps", "npm:3.50.4"],\
           ["@types/hogan.js", "npm:3.0.1"],\
           ["@types/qs", "npm:6.9.7"],\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
           ["classnames", "npm:2.3.2"],\
           ["hogan.js", "npm:3.0.2"],\
           ["htm", "npm:3.1.1"],\
@@ -44394,8 +44336,8 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.22.6"],\
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:16.13.1"],\
           ["react-fast-compare", "npm:3.2.0"]\
@@ -44415,8 +44357,8 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.22.6"],\
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:17.0.2"],\
           ["react-fast-compare", "npm:3.2.0"]\
@@ -44446,8 +44388,8 @@ const RAW_RUNTIME_STATE =
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
           ["classnames", "npm:2.3.2"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:16.13.1"],\
@@ -44473,8 +44415,8 @@ const RAW_RUNTIME_STATE =
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
           ["classnames", "npm:2.3.2"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:17.0.2"],\
@@ -44508,8 +44450,8 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.22.6"],\
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["algoliasearch-helper", "virtual:7059ce19f90012c3163fb81aa15e785d265791039d4b68fdf94ffdb0a65af5f987fa67e8d34e74fc751a755a2441c1780fe79c0dd779cd10c005cad89b8b1654#npm:3.11.1"],\
           ["instantsearch.js", "virtual:cf3c0f1df91f28e02adb6be548ecf38e79e46df91fc766e4907ba9500aa5086d6387ada9480cd17a3107f649a93cee101a2cabe5574e3306a0e7cb381f20d3e3#npm:4.48.0"],\
           ["react", "npm:17.0.2"],\
           ["use-sync-external-store", "virtual:ee5962d15343176eb2e330648879e8ef1d10bdd1adec7fbbf028bce5997e072cb897774179adae8595efecbe7150e8ebc779a24155660627d223cc2ff2c38d10#npm:1.2.0"]\
@@ -44539,7 +44481,7 @@ const RAW_RUNTIME_STATE =
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["instantsearch.js", "virtual:cf3c0f1df91f28e02adb6be548ecf38e79e46df91fc766e4907ba9500aa5086d6387ada9480cd17a3107f649a93cee101a2cabe5574e3306a0e7cb381f20d3e3#npm:4.48.0"],\
           ["react", "npm:17.0.2"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"],\
@@ -46432,7 +46374,10 @@ const RAW_RUNTIME_STATE =
           ["@rollup/pluginutils", "virtual:8a75fd665d2cffdae4afc565e38653aef357920bdc4cefff043dcec6bd095942c290a59daa08791f732c0600903ebb3097983add68948f2a1c3e74a290b342a7#npm:4.1.0"],\
           ["@types/esbuild", null],\
           ["@types/rollup", null],\
-          ["esbuild", "npm:0.19.3"],\
+          ["esbuild", [\
+            "esbuild-wasm",\
+            "npm:0.19.3"\
+          ]],\
           ["joycon", "npm:3.0.1"],\
           ["jsonc-parser", "npm:3.0.0"],\
           ["rollup", "npm:2.59.0"]\
@@ -50976,7 +50921,10 @@ const RAW_RUNTIME_STATE =
           ["@types/vscode", "npm:1.54.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
-          ["esbuild", "npm:0.19.3"],\
+          ["esbuild", [\
+            "esbuild-wasm",\
+            "npm:0.19.3"\
+          ]],\
           ["rollup", "npm:2.59.0"],\
           ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],\
           ["rollup-plugin-terser", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:7.0.2"],\

@@ -19,7 +19,7 @@
     "@types/semver": "^7.1.0",
     "@yarnpkg/libzip": "workspace:^",
     "arg": "^5.0.2",
-    "esbuild": "^0.19.3",
+    "esbuild": "npm:esbuild-wasm@^0.19.3",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "semver": "^7.1.2",
