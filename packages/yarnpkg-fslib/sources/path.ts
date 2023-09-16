@@ -57,11 +57,11 @@ export const npath: PathUtils<NativePath> & ConvertUtils = Object.create(path) a
 export const ppath: PathUtils<PortablePath> & PortablePathGenerics = Object.create(path.posix) as any;
 
 npath.cwd = () => process.cwd();
-ppath.cwd = path !== path.posix
+ppath.cwd = process.platform === `win32`
   ? () => toPortablePath(process.cwd())
   : process.cwd as () => PortablePath;
 
-if (path !== path.posix) {
+if (process.platform === `win32`) {
   ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
     if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
       return path.posix.resolve(...segments) as PortablePath;
@@ -172,11 +172,11 @@ function toPortablePathWin32(p: Path): PortablePath {
   return p as PortablePath;
 }
 
-const toPortablePath = path !== path.posix
+const toPortablePath = process.platform === `win32`
   ? toPortablePathWin32
   : (p: Path) => p as PortablePath;
 
-const fromPortablePath = path !== path.posix
+const fromPortablePath = process.platform === `win32`
   ? fromPortablePathWin32
   : (p: Path) => p as NativePath;
 

@@ -960,7 +960,7 @@ function getRcFilename() {
 
 async function tryRead(p: PortablePath) {
   try {
-    return xfs.readFilePromise(p);
+    return await xfs.readFilePromise(p);
   } catch {
     return Buffer.of();
   }

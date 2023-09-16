@@ -3,7 +3,6 @@ import fs                             from 'fs';
 import moduleExports, {isBuiltin}     from 'module';
 import {fileURLToPath, pathToFileURL} from 'url';
 
-import * as nodeUtils                 from '../../loader/nodeUtils';
 import {packageImportsResolve}        from '../../node/resolve';
 import {PnpApi}                       from '../../types';
 import * as loaderUtils               from '../loaderUtils';

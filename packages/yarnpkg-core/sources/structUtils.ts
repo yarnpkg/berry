@@ -577,14 +577,10 @@ export function parseFileStyleRange(range: string, {protocol}: {protocol: string
   return {parentLocator, path};
 }
 
-const ENCODE_25 = /%/g;
-const ENCODE_3A = /:/g;
-const ENCODE_23 = /#/g;
-
 function encodeUnsafeCharacters(str: string) {
-  str = str.replace(ENCODE_25, `%25`);
-  str = str.replace(ENCODE_3A, `%3A`);
-  str = str.replace(ENCODE_23, `%23`);
+  str = str.replaceAll(`%`, `%25`);
+  str = str.replaceAll(`:`, `%3A`);
+  str = str.replaceAll(`#`, `%23`);
   return str;
 }
 
