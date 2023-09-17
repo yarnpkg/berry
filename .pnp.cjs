@@ -284,7 +284,7 @@ const RAW_RUNTIME_STATE =
           ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -353,7 +353,7 @@ const RAW_RUNTIME_STATE =
           ["@algolia/client-search", null],\
           ["@types/algolia__client-search", null],\
           ["@types/algoliasearch", null],\
-          ["algoliasearch", "npm:4.14.2"]\
+          ["algoliasearch", "npm:4.20.0"]\
         ],\
         "packagePeers": [\
           "@algolia/client-search",\
@@ -374,90 +374,90 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@algolia/cache-browser-local-storage", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-cache-browser-local-storage-npm-4.14.2-1525dcd2d0-e7d5f43ff0.zip/node_modules/@algolia/cache-browser-local-storage/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-cache-browser-local-storage-npm-4.20.0-41fde46270-b9ca7e190a.zip/node_modules/@algolia/cache-browser-local-storage/",\
         "packageDependencies": [\
-          ["@algolia/cache-browser-local-storage", "npm:4.14.2"],\
-          ["@algolia/cache-common", "npm:4.14.2"]\
+          ["@algolia/cache-browser-local-storage", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/cache-common", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-cache-common-npm-4.14.2-cd5ab62e07-4fd04c714a.zip/node_modules/@algolia/cache-common/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-cache-common-npm-4.20.0-3006b59130-a46377de8a.zip/node_modules/@algolia/cache-common/",\
         "packageDependencies": [\
-          ["@algolia/cache-common", "npm:4.14.2"]\
+          ["@algolia/cache-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/cache-in-memory", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-cache-in-memory-npm-4.14.2-b2851f6d42-d6981f812a.zip/node_modules/@algolia/cache-in-memory/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-cache-in-memory-npm-4.20.0-0cf4013dd0-3d67dcfae4.zip/node_modules/@algolia/cache-in-memory/",\
         "packageDependencies": [\
-          ["@algolia/cache-in-memory", "npm:4.14.2"],\
-          ["@algolia/cache-common", "npm:4.14.2"]\
+          ["@algolia/cache-in-memory", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-account", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-client-account-npm-4.14.2-638e7c4fd3-2e9eed5a4b.zip/node_modules/@algolia/client-account/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-account-npm-4.20.0-12742378b6-b59e9c7a32.zip/node_modules/@algolia/client-account/",\
         "packageDependencies": [\
-          ["@algolia/client-account", "npm:4.14.2"],\
-          ["@algolia/client-common", "npm:4.14.2"],\
-          ["@algolia/client-search", "npm:4.14.2"],\
-          ["@algolia/transporter", "npm:4.14.2"]\
+          ["@algolia/client-account", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-analytics", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-client-analytics-npm-4.14.2-6d6467051e-544dc0994b.zip/node_modules/@algolia/client-analytics/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-analytics-npm-4.20.0-4a78826b8d-f46d47fdd1.zip/node_modules/@algolia/client-analytics/",\
         "packageDependencies": [\
-          ["@algolia/client-analytics", "npm:4.14.2"],\
-          ["@algolia/client-common", "npm:4.14.2"],\
-          ["@algolia/client-search", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"],\
-          ["@algolia/transporter", "npm:4.14.2"]\
+          ["@algolia/client-analytics", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-common", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-client-common-npm-4.14.2-36b62d83ee-7458621d4e.zip/node_modules/@algolia/client-common/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-common-npm-4.20.0-918bd58d1f-7418ba5a00.zip/node_modules/@algolia/client-common/",\
         "packageDependencies": [\
-          ["@algolia/client-common", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"],\
-          ["@algolia/transporter", "npm:4.14.2"]\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-personalization", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-client-personalization-npm-4.14.2-c1d119b502-8ec7937aef.zip/node_modules/@algolia/client-personalization/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-personalization-npm-4.20.0-7aec20c3e2-987715df85.zip/node_modules/@algolia/client-personalization/",\
         "packageDependencies": [\
-          ["@algolia/client-personalization", "npm:4.14.2"],\
-          ["@algolia/client-common", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"],\
-          ["@algolia/transporter", "npm:4.14.2"]\
+          ["@algolia/client-personalization", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/client-search", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-client-search-npm-4.14.2-f4a9cad087-2d9122829a.zip/node_modules/@algolia/client-search/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-client-search-npm-4.20.0-6e29619eed-e82b56404b.zip/node_modules/@algolia/client-search/",\
         "packageDependencies": [\
-          ["@algolia/client-search", "npm:4.14.2"],\
-          ["@algolia/client-common", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"],\
-          ["@algolia/transporter", "npm:4.14.2"]\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -472,68 +472,61 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@algolia/logger-common", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-logger-common-npm-4.14.2-55301effc4-a4000a9883.zip/node_modules/@algolia/logger-common/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-logger-common-npm-4.20.0-8ebb472f8b-06ed28f76b.zip/node_modules/@algolia/logger-common/",\
         "packageDependencies": [\
-          ["@algolia/logger-common", "npm:4.14.2"]\
+          ["@algolia/logger-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/logger-console", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-logger-console-npm-4.14.2-b33418d7de-96c6209c7e.zip/node_modules/@algolia/logger-console/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-logger-console-npm-4.20.0-de270d72b7-721dffe375.zip/node_modules/@algolia/logger-console/",\
         "packageDependencies": [\
-          ["@algolia/logger-console", "npm:4.14.2"],\
-          ["@algolia/logger-common", "npm:4.14.2"]\
+          ["@algolia/logger-console", "npm:4.20.0"],\
+          ["@algolia/logger-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/requester-browser-xhr", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-requester-browser-xhr-npm-4.14.2-7e8355ca8a-7d8666e21c.zip/node_modules/@algolia/requester-browser-xhr/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-requester-browser-xhr-npm-4.20.0-5d2966daa1-669790c7df.zip/node_modules/@algolia/requester-browser-xhr/",\
         "packageDependencies": [\
-          ["@algolia/requester-browser-xhr", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"]\
+          ["@algolia/requester-browser-xhr", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/requester-common", [\
-      ["npm:4.0.0-beta.14", {\
-        "packageLocation": "./.yarn/cache/@algolia-requester-common-npm-4.0.0-beta.14-d212a44b33-4f4fec6d40.zip/node_modules/@algolia/requester-common/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-requester-common-npm-4.20.0-c8e15696c6-8d7aa1d8fc.zip/node_modules/@algolia/requester-common/",\
         "packageDependencies": [\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-requester-common-npm-4.14.2-9e4f0ea5c3-c590d9b9b1.zip/node_modules/@algolia/requester-common/",\
-        "packageDependencies": [\
-          ["@algolia/requester-common", "npm:4.14.2"]\
+          ["@algolia/requester-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/requester-node-http", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-requester-node-http-npm-4.14.2-c97bb16407-5f5fe8b040.zip/node_modules/@algolia/requester-node-http/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-requester-node-http-npm-4.20.0-e12b90b81e-7857114b59.zip/node_modules/@algolia/requester-node-http/",\
         "packageDependencies": [\
-          ["@algolia/requester-node-http", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"]\
+          ["@algolia/requester-node-http", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
     ]],\
     ["@algolia/transporter", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/@algolia-transporter-npm-4.14.2-95bfbf32f6-f742f82ae6.zip/node_modules/@algolia/transporter/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/@algolia-transporter-npm-4.20.0-ee6af3fcca-d02db1b3fe.zip/node_modules/@algolia/transporter/",\
         "packageDependencies": [\
-          ["@algolia/transporter", "npm:4.14.2"],\
-          ["@algolia/cache-common", "npm:4.14.2"],\
-          ["@algolia/logger-common", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"]\
+          ["@algolia/transporter", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"],\
+          ["@algolia/logger-common", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -5145,7 +5138,7 @@ const RAW_RUNTIME_STATE =
           ["@docsearch/css", "npm:3.2.1"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["react", "npm:17.0.2"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"]\
         ],\
@@ -5812,7 +5805,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/utils-validation", "npm:2.4.1"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["clsx", "npm:1.2.1"],\
           ["eta", "npm:2.2.0"],\
@@ -7127,7 +7120,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@jest/console", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["chalk", "npm:4.1.2"],\
           ["jest-message-util", "npm:29.2.1"],\
           ["jest-util", "npm:29.2.1"],\
@@ -7153,7 +7146,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/node-notifier", null],\
           ["ansi-escapes", "npm:4.3.1"],\
           ["chalk", "npm:4.1.2"],\
@@ -7193,7 +7186,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/environment", "npm:29.2.1"],\
           ["@jest/fake-timers", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["jest-mock", "npm:29.2.1"]\
         ],\
         "linkType": "HARD"\
@@ -7227,7 +7220,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/fake-timers", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
           ["@sinonjs/fake-timers", "npm:9.1.2"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["jest-message-util", "npm:29.2.1"],\
           ["jest-mock", "npm:29.2.1"],\
           ["jest-util", "npm:29.2.1"]\
@@ -7266,7 +7259,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
           ["@jridgewell/trace-mapping", "npm:0.3.17"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/node-notifier", null],\
           ["chalk", "npm:4.1.2"],\
           ["collect-v8-coverage", "npm:1.0.1"],\
@@ -7423,7 +7416,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/schemas", "npm:29.0.0"],\
           ["@types/istanbul-lib-coverage", "npm:2.0.1"],\
           ["@types/istanbul-reports", "npm:3.0.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/yargs", "npm:17.0.10"],\
           ["chalk", "npm:4.1.2"]\
         ],\
@@ -10238,7 +10231,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/body-parser", "npm:1.19.2"],\
           ["@types/connect", "npm:3.4.35"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10248,7 +10241,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-bonjour-npm-3.5.10-2862bada55-bfcadb042a.zip/node_modules/@types/bonjour/",\
         "packageDependencies": [\
           ["@types/bonjour", "npm:3.5.10"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10278,7 +10271,7 @@ const RAW_RUNTIME_STATE =
           ["@types/cacheable-request", "npm:6.0.1"],\
           ["@types/http-cache-semantics", "npm:4.0.0"],\
           ["@types/keyv", "npm:3.1.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/responselike", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -10334,7 +10327,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-connect-npm-3.4.35-7337eee0a3-fe81351470.zip/node_modules/@types/connect/",\
         "packageDependencies": [\
           ["@types/connect", "npm:3.4.35"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10345,7 +10338,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/connect-history-api-fallback", "npm:1.3.5"],\
           ["@types/express-serve-static-core", "npm:4.17.31"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10373,7 +10366,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-cross-spawn-npm-6.0.0-daaecbda8f-785e4e1474.zip/node_modules/@types/cross-spawn/",\
         "packageDependencies": [\
           ["@types/cross-spawn", "npm:6.0.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10496,7 +10489,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-express-serve-static-core-npm-4.17.31-846873f446-020210f32d.zip/node_modules/@types/express-serve-static-core/",\
         "packageDependencies": [\
           ["@types/express-serve-static-core", "npm:4.17.31"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/qs", "npm:6.9.7"],\
           ["@types/range-parser", "npm:1.2.3"]\
         ],\
@@ -10508,7 +10501,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-finalhandler-npm-1.1.0-bb15aba0e7-716a57242b.zip/node_modules/@types/finalhandler/",\
         "packageDependencies": [\
           ["@types/finalhandler", "npm:1.1.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10538,7 +10531,7 @@ const RAW_RUNTIME_STATE =
           ["@types/glob", "npm:5.0.36"],\
           ["@types/events", "npm:1.2.0"],\
           ["@types/minimatch", "npm:3.0.3"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -10548,7 +10541,7 @@ const RAW_RUNTIME_STATE =
           ["@types/glob", "npm:7.1.1"],\
           ["@types/events", "npm:1.2.0"],\
           ["@types/minimatch", "npm:3.0.3"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10567,7 +10560,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-graceful-fs-npm-4.1.5-91d62e1050-d076bb61f4.zip/node_modules/@types/graceful-fs/",\
         "packageDependencies": [\
           ["@types/graceful-fs", "npm:4.1.5"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10634,7 +10627,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-http-proxy-npm-1.17.9-fa2f5ce316-48075c535a.zip/node_modules/@types/http-proxy/",\
         "packageDependencies": [\
           ["@types/http-proxy", "npm:1.17.9"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10748,7 +10741,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-keyv-npm-3.1.1-779a80f2c7-ee0d098693.zip/node_modules/@types/keyv/",\
         "packageDependencies": [\
           ["@types/keyv", "npm:3.1.1"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10880,7 +10873,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-minipass-npm-2.2.0-78f6142b4d-1e97dab81c.zip/node_modules/@types/minipass/",\
         "packageDependencies": [\
           ["@types/minipass", "npm:2.2.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10890,7 +10883,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-mkdirp-npm-0.5.2-8180a91a82-c3c2c244ec.zip/node_modules/@types/mkdirp/",\
         "packageDependencies": [\
           ["@types/mkdirp", "npm:0.5.2"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -10910,10 +10903,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:18.17.15", {\
-        "packageLocation": "./.yarn/cache/@types-node-npm-18.17.15-eb331be5c4-5b28c68f44.zip/node_modules/@types/node/",\
+      ["npm:20.6.2", {\
+        "packageLocation": "./.yarn/cache/@types-node-npm-20.6.2-bff5d8378f-4b150698cf.zip/node_modules/@types/node/",\
         "packageDependencies": [\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -10930,7 +10923,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-node-fetch-npm-2.5.10-86e5199acc-1d921aa355.zip/node_modules/@types/node-fetch/",\
         "packageDependencies": [\
           ["@types/node-fetch", "npm:2.5.10"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["form-data", "npm:3.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -10968,7 +10961,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-pem-npm-1.9.5-02fd573aee-106fd1fffd.zip/node_modules/@types/pem/",\
         "packageDependencies": [\
           ["@types/pem", "npm:1.9.5"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11072,7 +11065,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/react-instantsearch-core", "npm:6.26.2"],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"]\
         ],\
         "linkType": "HARD"\
@@ -11203,7 +11196,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-readable-stream-npm-2.3.10-87b127a5f1-d2c0e15c8e.zip/node_modules/@types/readable-stream/",\
         "packageDependencies": [\
           ["@types/readable-stream", "npm:2.3.10"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["safe-buffer", "npm:5.2.1"]\
         ],\
         "linkType": "HARD"\
@@ -11214,7 +11207,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-resolve-npm-1.17.1-9a8396bef2-dc6a6df507.zip/node_modules/@types/resolve/",\
         "packageDependencies": [\
           ["@types/resolve", "npm:1.17.1"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -11231,7 +11224,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-responselike-npm-1.0.0-85dd08af42-e497238945.zip/node_modules/@types/responselike/",\
         "packageDependencies": [\
           ["@types/responselike", "npm:1.0.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11251,7 +11244,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/rimraf", "npm:2.0.4"],\
           ["@types/glob", "npm:7.1.1"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11261,7 +11254,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-sax-npm-1.2.4-559564fa4f-2aa50cbf1d.zip/node_modules/@types/sax/",\
         "packageDependencies": [\
           ["@types/sax", "npm:1.2.4"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11300,7 +11293,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/serve-static", "npm:1.15.0"],\
           ["@types/mime", "npm:2.0.1"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11319,7 +11312,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-sockjs-npm-0.3.33-07d624a8b3-b9bbb2b5c5.zip/node_modules/@types/sockjs/",\
         "packageDependencies": [\
           ["@types/sockjs", "npm:0.3.33"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11355,7 +11348,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/minipass", "npm:2.2.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11365,7 +11358,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-tar-fs-npm-1.16.1-d84562705d-1bf6df36e9.zip/node_modules/@types/tar-fs/",\
         "packageDependencies": [\
           ["@types/tar-fs", "npm:1.16.1"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11375,7 +11368,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-tar-stream-npm-1.6.0-442fee9fb0-a52d38caac.zip/node_modules/@types/tar-stream/",\
         "packageDependencies": [\
           ["@types/tar-stream", "npm:1.6.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11431,7 +11424,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-tunnel-npm-0.0.0-60b0691686-bd3a79bd7b.zip/node_modules/@types/tunnel/",\
         "packageDependencies": [\
           ["@types/tunnel", "npm:0.0.0"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11459,7 +11452,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-vfile-npm-3.0.2-5a6f4624c4-a720d3efb6.zip/node_modules/@types/vfile/",\
         "packageDependencies": [\
           ["@types/vfile", "npm:3.0.2"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/unist", "npm:2.0.3"],\
           ["@types/vfile-message", "npm:1.0.1"]\
         ],\
@@ -11471,7 +11464,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-vfile-message-npm-1.0.1-94f6b0361a-a5fd80df8d.zip/node_modules/@types/vfile-message/",\
         "packageDependencies": [\
           ["@types/vfile-message", "npm:1.0.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/unist", "npm:2.0.3"]\
         ],\
         "linkType": "HARD"\
@@ -11491,7 +11484,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-websocket-npm-1.0.2-6f6a12e472-c6d8470dc3.zip/node_modules/@types/websocket/",\
         "packageDependencies": [\
           ["@types/websocket", "npm:1.0.2"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11510,7 +11503,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@types-ws-npm-8.5.3-ae52c483f1-08aac698ce.zip/node_modules/@types/ws/",\
         "packageDependencies": [\
           ["@types/ws", "npm:8.5.3"],\
-          ["@types/node", "npm:18.17.15"]\
+          ["@types/node", "npm:20.6.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12379,7 +12372,7 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.15"\
+            "npm:0.19.3"\
           ]],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"],\
@@ -13321,6 +13314,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/yarnpkg-core/",\
         "packageDependencies": [\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
           ["@arcanis/slice-ansi", "npm:1.1.1"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-json", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:6.0.0"],\
@@ -13330,7 +13324,7 @@ const RAW_RUNTIME_STATE =
           ["@types/diff", "npm:5.0.2"],\
           ["@types/lodash", "npm:4.14.172"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/treeify", "npm:1.0.0"],\
@@ -13343,6 +13337,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-pnp", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-pnp"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["camelcase", "npm:5.3.1"],\
           ["chalk", "npm:3.0.0"],\
           ["ci-info", "npm:3.2.0"],\
@@ -13353,7 +13348,7 @@ const RAW_RUNTIME_STATE =
           ["dotenv", "npm:16.3.1"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.15"\
+            "npm:0.19.3"\
           ]],\
           ["fast-glob", "npm:3.2.12"],\
           ["got", "npm:11.8.2"],\
@@ -13429,7 +13424,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
           ["dompurify", "npm:3.0.5"],\
@@ -13579,7 +13574,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-select", "npm:3.0.11"],\
           ["@types/tinycolor2", "npm:1.4.2"],\
           ["@yarnpkg/monorepo", "workspace:."],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["ansi-html", "npm:0.0.7"],\
           ["buffer", "npm:5.7.1"],\
           ["bytes", "npm:3.1.2"],\
@@ -13729,7 +13724,7 @@ const RAW_RUNTIME_STATE =
           ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -16484,7 +16479,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16518,7 +16512,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16552,7 +16545,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16586,7 +16578,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16620,7 +16611,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16654,7 +16644,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16688,7 +16677,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16722,7 +16710,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16756,7 +16743,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16790,7 +16776,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:7b82ac5a3734606065dc76f117982c681b5b5076260acfcac869c687f06db0b8c08eae0998f419d64b9e59f6c816bcc70e067c87fa32ffe9cb979faf85cd80b4#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16824,7 +16809,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16858,7 +16842,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16892,7 +16875,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16926,7 +16908,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16960,7 +16941,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -16994,7 +16974,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -17028,7 +17007,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -17062,7 +17040,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -17096,7 +17073,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -17127,7 +17103,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@yarnpkg/plugin-essentials", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/plugin-essentials"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
           ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"],\
@@ -21243,7 +21218,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-4c5a866c44/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21254,7 +21228,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21272,7 +21245,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-490cec5ffd/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21283,7 +21255,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21301,7 +21272,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-c917949672/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21312,7 +21282,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21330,7 +21299,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-cb28bf38c9/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21341,7 +21309,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21359,7 +21326,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-b703e32dce/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21370,7 +21336,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21388,7 +21353,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-44a70d709d/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21399,7 +21363,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21417,7 +21380,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-c2c01ffdc0/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21428,7 +21390,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21446,7 +21407,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-f6dc7d5cc6/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21457,7 +21417,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21475,7 +21434,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-ff5a958b14/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21486,7 +21444,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21504,7 +21461,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-2f069d1713/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:7b82ac5a3734606065dc76f117982c681b5b5076260acfcac869c687f06db0b8c08eae0998f419d64b9e59f6c816bcc70e067c87fa32ffe9cb979faf85cd80b4#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21515,7 +21471,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:7b82ac5a3734606065dc76f117982c681b5b5076260acfcac869c687f06db0b8c08eae0998f419d64b9e59f6c816bcc70e067c87fa32ffe9cb979faf85cd80b4#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21533,7 +21488,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-9151505766/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21544,7 +21498,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21562,7 +21515,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-cf3837d704/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21573,7 +21525,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21591,7 +21542,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-096875f3c9/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21602,7 +21552,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21620,7 +21569,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-2d4eea8f82/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21631,7 +21579,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21649,7 +21596,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-0cb9833e10/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21660,7 +21606,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21678,7 +21623,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-e99dcf2156/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21689,7 +21633,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21707,7 +21650,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-8a5dd8d83e/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21718,7 +21660,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21736,7 +21677,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-029df34125/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21747,7 +21687,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21765,7 +21704,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-1e4008b8b6/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
@@ -21776,7 +21714,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -21794,7 +21731,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@yarnpkg/plugin-typescript", "workspace:packages/plugin-typescript"],\
-          ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/yarnpkg-cli"],\
@@ -21802,7 +21738,6 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-essentials", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/plugin-essentials"],\
           ["@yarnpkg/plugin-pack", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/plugin-pack"],\
-          ["algoliasearch", "npm:4.14.2"],\
           ["semver", "npm:7.5.4"],\
           ["tslib", "npm:2.4.0"]\
         ],\
@@ -23078,14 +23013,14 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["arg", "npm:5.0.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.15"\
+            "npm:0.19.3"\
           ]],\
           ["rollup", "npm:2.59.0"],\
           ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],\
@@ -23476,24 +23411,24 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["algoliasearch", [\
-      ["npm:4.14.2", {\
-        "packageLocation": "./.yarn/cache/algoliasearch-npm-4.14.2-df3332ab38-cd32808319.zip/node_modules/algoliasearch/",\
+      ["npm:4.20.0", {\
+        "packageLocation": "./.yarn/cache/algoliasearch-npm-4.20.0-afd5d8b7ad-15129c8d1c.zip/node_modules/algoliasearch/",\
         "packageDependencies": [\
-          ["algoliasearch", "npm:4.14.2"],\
-          ["@algolia/cache-browser-local-storage", "npm:4.14.2"],\
-          ["@algolia/cache-common", "npm:4.14.2"],\
-          ["@algolia/cache-in-memory", "npm:4.14.2"],\
-          ["@algolia/client-account", "npm:4.14.2"],\
-          ["@algolia/client-analytics", "npm:4.14.2"],\
-          ["@algolia/client-common", "npm:4.14.2"],\
-          ["@algolia/client-personalization", "npm:4.14.2"],\
-          ["@algolia/client-search", "npm:4.14.2"],\
-          ["@algolia/logger-common", "npm:4.14.2"],\
-          ["@algolia/logger-console", "npm:4.14.2"],\
-          ["@algolia/requester-browser-xhr", "npm:4.14.2"],\
-          ["@algolia/requester-common", "npm:4.14.2"],\
-          ["@algolia/requester-node-http", "npm:4.14.2"],\
-          ["@algolia/transporter", "npm:4.14.2"]\
+          ["algoliasearch", "npm:4.20.0"],\
+          ["@algolia/cache-browser-local-storage", "npm:4.20.0"],\
+          ["@algolia/cache-common", "npm:4.20.0"],\
+          ["@algolia/cache-in-memory", "npm:4.20.0"],\
+          ["@algolia/client-account", "npm:4.20.0"],\
+          ["@algolia/client-analytics", "npm:4.20.0"],\
+          ["@algolia/client-common", "npm:4.20.0"],\
+          ["@algolia/client-personalization", "npm:4.20.0"],\
+          ["@algolia/client-search", "npm:4.20.0"],\
+          ["@algolia/logger-common", "npm:4.20.0"],\
+          ["@algolia/logger-console", "npm:4.20.0"],\
+          ["@algolia/requester-browser-xhr", "npm:4.20.0"],\
+          ["@algolia/requester-common", "npm:4.20.0"],\
+          ["@algolia/requester-node-http", "npm:4.20.0"],\
+          ["@algolia/transporter", "npm:4.20.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -23512,7 +23447,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["@algolia/events", "npm:4.0.1"],\
           ["@types/algoliasearch", null],\
-          ["algoliasearch", "npm:4.14.2"]\
+          ["algoliasearch", "npm:4.20.0"]\
         ],\
         "packagePeers": [\
           "@types/algoliasearch",\
@@ -25922,7 +25857,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["chalk", "npm:3.0.0"],\
           ["ansi-styles", "npm:4.2.0"],\
-          ["supports-color", "npm:7.1.0"]\
+          ["supports-color", "npm:7.2.0"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -25931,7 +25866,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["chalk", "npm:4.1.2"],\
           ["ansi-styles", "npm:4.2.0"],\
-          ["supports-color", "npm:7.1.0"]\
+          ["supports-color", "npm:7.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -29618,17 +29553,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["esbuild-wasm", [\
-      ["npm:0.15.15", {\
-        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.15.15-ddeb55310e-2f001c1455.zip/node_modules/esbuild-wasm/",\
-        "packageDependencies": [\
-          ["esbuild-wasm", "npm:0.15.15"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:0.17.5", {\
         "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.17.5-9d427259bd-94e32490fe.zip/node_modules/esbuild-wasm/",\
         "packageDependencies": [\
           ["esbuild-wasm", "npm:0.17.5"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:0.19.3", {\
+        "packageLocation": "./.yarn/cache/esbuild-wasm-npm-0.19.3-0c5c5034ff-a979250ddd.zip/node_modules/esbuild-wasm/",\
+        "packageDependencies": [\
+          ["esbuild-wasm", "npm:0.19.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -30374,7 +30309,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/eval-npm-0.1.8-0cd081d9ca-27366ad289.zip/node_modules/eval/",\
         "packageDependencies": [\
           ["eval", "npm:0.1.8"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["require-like", "npm:0.1.2"]\
         ],\
         "linkType": "HARD"\
@@ -35254,7 +35189,7 @@ const RAW_RUNTIME_STATE =
           ["@types/google.maps", "npm:3.50.4"],\
           ["@types/hogan.js", "npm:3.0.1"],\
           ["@types/qs", "npm:6.9.7"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["classnames", "npm:2.3.2"],\
           ["hogan.js", "npm:3.0.2"],\
@@ -36329,7 +36264,7 @@ const RAW_RUNTIME_STATE =
           ["istanbul-lib-report", "npm:3.0.0"],\
           ["istanbul-lib-coverage", "npm:3.2.0"],\
           ["make-dir", "npm:3.1.0"],\
-          ["supports-color", "npm:7.1.0"]\
+          ["supports-color", "npm:7.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -36435,7 +36370,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/expect", "npm:29.2.1"],\
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["chalk", "npm:4.1.2"],\
           ["co", "npm:4.6.0"],\
           ["dedent", "npm:0.7.0"],\
@@ -36503,7 +36438,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/core", "npm:7.19.1"],\
           ["@jest/test-sequencer", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["@types/ts-node", null],\
           ["babel-jest", "virtual:f5aa59943e1ce45358c81e393ba30c0f3a656ae824d66fbad98d525a0034f13dada2474551f5f06d6311a970c92cc873c0cd8d0e9ac763ec4964d8e95d8a8f79#npm:29.2.1"],\
           ["chalk", "npm:4.1.2"],\
@@ -36649,7 +36584,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/environment", "npm:29.2.1"],\
           ["@jest/fake-timers", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["jest-mock", "npm:29.2.1"],\
           ["jest-util", "npm:29.2.1"]\
         ],\
@@ -36693,7 +36628,7 @@ const RAW_RUNTIME_STATE =
           ["jest-haste-map", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
           ["@types/graceful-fs", "npm:4.1.5"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["anymatch", "npm:3.1.2"],\
           ["fb-watchman", "npm:2.0.0"],\
           ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
@@ -36814,7 +36749,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["jest-mock", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["jest-util", "npm:29.2.1"]\
         ],\
         "linkType": "HARD"\
@@ -36897,7 +36832,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["chalk", "npm:4.1.2"],\
           ["emittery", "npm:0.10.2"],\
           ["graceful-fs", "npm:4.2.10"],\
@@ -36929,7 +36864,7 @@ const RAW_RUNTIME_STATE =
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/transform", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["chalk", "npm:4.1.2"],\
           ["cjs-module-lexer", "npm:1.2.2"],\
           ["collect-v8-coverage", "npm:1.0.1"],\
@@ -36987,7 +36922,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["jest-util", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["chalk", "npm:4.1.2"],\
           ["ci-info", "npm:3.2.0"],\
           ["graceful-fs", "npm:4.2.10"],\
@@ -37018,7 +36953,7 @@ const RAW_RUNTIME_STATE =
           ["jest-watcher", "npm:29.2.1"],\
           ["@jest/test-result", "npm:29.2.1"],\
           ["@jest/types", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["ansi-escapes", "npm:4.3.1"],\
           ["chalk", "npm:4.1.2"],\
           ["emittery", "npm:0.10.2"],\
@@ -37033,9 +36968,9 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-worker-npm-26.6.2-46cbcd449f-5f6b94cf0e.zip/node_modules/jest-worker/",\
         "packageDependencies": [\
           ["jest-worker", "npm:26.6.2"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["merge-stream", "npm:2.0.0"],\
-          ["supports-color", "npm:7.1.0"]\
+          ["supports-color", "npm:7.2.0"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -37043,7 +36978,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-worker-npm-27.5.1-1c110b5894-06c6e2a845.zip/node_modules/jest-worker/",\
         "packageDependencies": [\
           ["jest-worker", "npm:27.5.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["merge-stream", "npm:2.0.0"],\
           ["supports-color", "npm:8.1.1"]\
         ],\
@@ -37053,7 +36988,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/jest-worker-npm-29.2.1-f152a67b79-5180d65ea9.zip/node_modules/jest-worker/",\
         "packageDependencies": [\
           ["jest-worker", "npm:29.2.1"],\
-          ["@types/node", "npm:18.17.15"],\
+          ["@types/node", "npm:20.6.2"],\
           ["jest-util", "npm:29.2.1"],\
           ["merge-stream", "npm:2.0.0"],\
           ["supports-color", "npm:8.1.1"]\
@@ -44238,7 +44173,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.22.6"],\
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:16.13.1"],\
@@ -44259,7 +44194,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.22.6"],\
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:17.0.2"],\
@@ -44290,7 +44225,7 @@ const RAW_RUNTIME_STATE =
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["classnames", "npm:2.3.2"],\
           ["prop-types", "npm:15.8.1"],\
@@ -44317,7 +44252,7 @@ const RAW_RUNTIME_STATE =
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["classnames", "npm:2.3.2"],\
           ["prop-types", "npm:15.8.1"],\
@@ -44352,7 +44287,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.22.6"],\
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["algoliasearch-helper", "virtual:a563b599619e8821447400a9f171adbb7695fa1ced10ff8993d09ceda6a425f98689808159f5dd68e3244cf10180c0c06c4381dc8a5e7dd344d77d0ea9e739ee#npm:3.11.1"],\
           ["instantsearch.js", "virtual:cf3c0f1df91f28e02adb6be548ecf38e79e46df91fc766e4907ba9500aa5086d6387ada9480cd17a3107f649a93cee101a2cabe5574e3306a0e7cb381f20d3e3#npm:4.48.0"],\
           ["react", "npm:17.0.2"],\
@@ -44383,7 +44318,7 @@ const RAW_RUNTIME_STATE =
           ["@types/algoliasearch", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
-          ["algoliasearch", "npm:4.14.2"],\
+          ["algoliasearch", "npm:4.20.0"],\
           ["instantsearch.js", "virtual:cf3c0f1df91f28e02adb6be548ecf38e79e46df91fc766e4907ba9500aa5086d6387ada9480cd17a3107f649a93cee101a2cabe5574e3306a0e7cb381f20d3e3#npm:4.48.0"],\
           ["react", "npm:17.0.2"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"],\
@@ -46278,7 +46213,7 @@ const RAW_RUNTIME_STATE =
           ["@types/rollup", null],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.15"\
+            "npm:0.19.3"\
           ]],\
           ["joycon", "npm:3.0.1"],\
           ["jsonc-parser", "npm:3.0.0"],\
@@ -48326,10 +48261,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:7.1.0", {\
-        "packageLocation": "./.yarn/cache/supports-color-npm-7.1.0-df2ba1e338-f5b2df5336.zip/node_modules/supports-color/",\
+      ["npm:7.2.0", {\
+        "packageLocation": "./.yarn/cache/supports-color-npm-7.2.0-606bfcf7da-c8bb7afd56.zip/node_modules/supports-color/",\
         "packageDependencies": [\
-          ["supports-color", "npm:7.1.0"],\
+          ["supports-color", "npm:7.2.0"],\
           ["has-flag", "npm:4.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -50825,7 +50760,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["esbuild", [\
             "esbuild-wasm",\
-            "npm:0.15.15"\
+            "npm:0.19.3"\
           ]],\
           ["rollup", "npm:2.59.0"],\
           ["rollup-plugin-esbuild", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:3.0.4"],\
@@ -52154,11 +52089,11 @@ const events = require('events');
 const nodeUtils = require('util');
 const stream = require('stream');
 const zlib = require('zlib');
-const require$$0 = require('module');
+const require$$0$1 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
 const buffer = require('buffer');
-const readline = require('readline');
+const require$$0 = require('readline');
 const assert = require('assert');
 
 const _interopDefaultLegacy = e => e && typeof e === 'object' && 'default' in e ? e : { default: e };
@@ -52185,9 +52120,10 @@ const fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 const path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 const nodeUtils__namespace = /*#__PURE__*/_interopNamespace(nodeUtils);
 const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
-const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
+const require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 const StringDecoder__default = /*#__PURE__*/_interopDefaultLegacy(StringDecoder);
 const buffer__default = /*#__PURE__*/_interopDefaultLegacy(buffer);
+const require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 const assert__default = /*#__PURE__*/_interopDefaultLegacy(assert);
 
 const S_IFMT = 61440;
@@ -52238,26 +52174,24 @@ function ERR_DIR_CLOSED() {
 
 const DEFAULT_MODE = S_IFREG | 420;
 class StatEntry {
-  constructor() {
-    this.uid = 0;
-    this.gid = 0;
-    this.size = 0;
-    this.blksize = 0;
-    this.atimeMs = 0;
-    this.mtimeMs = 0;
-    this.ctimeMs = 0;
-    this.birthtimeMs = 0;
-    this.atime = new Date(0);
-    this.mtime = new Date(0);
-    this.ctime = new Date(0);
-    this.birthtime = new Date(0);
-    this.dev = 0;
-    this.ino = 0;
-    this.mode = DEFAULT_MODE;
-    this.nlink = 1;
-    this.rdev = 0;
-    this.blocks = 1;
-  }
+  uid = 0;
+  gid = 0;
+  size = 0;
+  blksize = 0;
+  atimeMs = 0;
+  mtimeMs = 0;
+  ctimeMs = 0;
+  birthtimeMs = 0;
+  atime = /* @__PURE__ */ new Date(0);
+  mtime = /* @__PURE__ */ new Date(0);
+  ctime = /* @__PURE__ */ new Date(0);
+  birthtime = /* @__PURE__ */ new Date(0);
+  dev = 0;
+  ino = 0;
+  mode = DEFAULT_MODE;
+  nlink = 1;
+  rdev = 0;
+  blocks = 1;
   isBlockDevice() {
     return false;
   }
@@ -52281,30 +52215,28 @@ class StatEntry {
   }
 }
 class BigIntStatsEntry {
-  constructor() {
-    this.uid = BigInt(0);
-    this.gid = BigInt(0);
-    this.size = BigInt(0);
-    this.blksize = BigInt(0);
-    this.atimeMs = BigInt(0);
-    this.mtimeMs = BigInt(0);
-    this.ctimeMs = BigInt(0);
-    this.birthtimeMs = BigInt(0);
-    this.atimeNs = BigInt(0);
-    this.mtimeNs = BigInt(0);
-    this.ctimeNs = BigInt(0);
-    this.birthtimeNs = BigInt(0);
-    this.atime = new Date(0);
-    this.mtime = new Date(0);
-    this.ctime = new Date(0);
-    this.birthtime = new Date(0);
-    this.dev = BigInt(0);
-    this.ino = BigInt(0);
-    this.mode = BigInt(DEFAULT_MODE);
-    this.nlink = BigInt(1);
-    this.rdev = BigInt(0);
-    this.blocks = BigInt(1);
-  }
+  uid = BigInt(0);
+  gid = BigInt(0);
+  size = BigInt(0);
+  blksize = BigInt(0);
+  atimeMs = BigInt(0);
+  mtimeMs = BigInt(0);
+  ctimeMs = BigInt(0);
+  birthtimeMs = BigInt(0);
+  atimeNs = BigInt(0);
+  mtimeNs = BigInt(0);
+  ctimeNs = BigInt(0);
+  birthtimeNs = BigInt(0);
+  atime = /* @__PURE__ */ new Date(0);
+  mtime = /* @__PURE__ */ new Date(0);
+  ctime = /* @__PURE__ */ new Date(0);
+  birthtime = /* @__PURE__ */ new Date(0);
+  dev = BigInt(0);
+  ino = BigInt(0);
+  mode = BigInt(DEFAULT_MODE);
+  nlink = BigInt(1);
+  rdev = BigInt(0);
+  blocks = BigInt(1);
   isBlockDevice() {
     return false;
   }
@@ -52339,7 +52271,7 @@ function clearStats(stats) {
       } else if (typeof element === `bigint`) {
         stats[key] = BigInt(0);
       } else if (nodeUtils__namespace.types.isDate(element)) {
-        stats[key] = new Date(0);
+        stats[key] = /* @__PURE__ */ new Date(0);
       }
     }
   }
@@ -52430,6 +52362,9 @@ const Filename = {
   manifest: `package.json`,
   lockfile: `yarn.lock`,
   virtual: `__virtual__`,
+  /**
+   * @deprecated
+   */
   pnpJs: `.pnp.js`,
   pnpCjs: `.pnp.cjs`,
   pnpData: `.pnp.data.json`,
@@ -52705,8 +52640,8 @@ class CustomDir {
     this.path = path;
     this.nextDirent = nextDirent;
     this.opts = opts;
-    this.closed = false;
   }
+  closed = false;
   throwIfClosed() {
     if (this.closed) {
       throw ERR_DIR_CLOSED();
@@ -52764,20 +52699,24 @@ function assertStatus(current, expected) {
   }
 }
 class CustomStatWatcher extends events.EventEmitter {
-  constructor(fakeFs, path, { bigint = false } = {}) {
-    super();
-    this.status = "ready" /* Ready */;
-    this.changeListeners = /* @__PURE__ */ new Map();
-    this.startTimeout = null;
-    this.fakeFs = fakeFs;
-    this.path = path;
-    this.bigint = bigint;
-    this.lastStats = this.stat();
-  }
+  fakeFs;
+  path;
+  bigint;
+  status = "ready" /* Ready */;
+  changeListeners = /* @__PURE__ */ new Map();
+  lastStats;
+  startTimeout = null;
   static create(fakeFs, path, opts) {
     const statWatcher = new CustomStatWatcher(fakeFs, path, opts);
     statWatcher.start();
     return statWatcher;
+  }
+  constructor(fakeFs, path, { bigint = false } = {}) {
+    super();
+    this.fakeFs = fakeFs;
+    this.path = path;
+    this.bigint = bigint;
+    this.lastStats = this.stat();
   }
   start() {
     assertStatus(this.status, "ready" /* Ready */);
@@ -52806,6 +52745,11 @@ class CustomStatWatcher extends events.EventEmitter {
       return clearStats(statInstance);
     }
   }
+  /**
+   * Creates an interval whose callback compares the current stats with the previous stats and notifies all listeners in case of changes.
+   *
+   * @param opts.persistent Decides whether the interval should be immediately unref-ed.
+   */
   makeInterval(opts) {
     const interval = setInterval(() => {
       const currentStats = this.stat();
@@ -52817,10 +52761,16 @@ class CustomStatWatcher extends events.EventEmitter {
     }, opts.interval);
     return opts.persistent ? interval : interval.unref();
   }
+  /**
+   * Registers a listener and assigns it an interval.
+   */
   registerChangeListener(listener, opts) {
     this.addListener("change" /* Change */, listener);
     this.changeListeners.set(listener, this.makeInterval(opts));
   }
+  /**
+   * Unregisters the listener and clears the assigned interval.
+   */
   unregisterChangeListener(listener) {
     this.removeListener("change" /* Change */, listener);
     const interval = this.changeListeners.get(listener);
@@ -52828,6 +52778,9 @@ class CustomStatWatcher extends events.EventEmitter {
       clearInterval(interval);
     this.changeListeners.delete(listener);
   }
+  /**
+   * Unregisters all listeners and clears all assigned intervals.
+   */
   unregisterAllChangeListeners() {
     for (const listener of this.changeListeners.keys()) {
       this.unregisterChangeListener(listener);
@@ -52836,11 +52789,17 @@ class CustomStatWatcher extends events.EventEmitter {
   hasChangeListeners() {
     return this.changeListeners.size > 0;
   }
+  /**
+   * Refs all stored intervals.
+   */
   ref() {
     for (const interval of this.changeListeners.values())
       interval.ref();
     return this;
   }
+  /**
+   * Unrefs all stored intervals.
+   */
   unref() {
     for (const interval of this.changeListeners.values())
       interval.unref();
@@ -52911,6 +52870,7 @@ function unwatchAllFiles(fakeFs) {
 }
 
 class FakeFS {
+  pathUtils;
   constructor(pathUtils) {
     this.pathUtils = pathUtils;
   }
@@ -53513,6 +53473,7 @@ class ProxiedFS extends FakeFS {
   watch(p, a, b) {
     return this.baseFs.watch(
       this.mapToBase(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -53520,6 +53481,7 @@ class ProxiedFS extends FakeFS {
   watchFile(p, a, b) {
     return this.baseFs.watchFile(
       this.mapToBase(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -53537,6 +53499,7 @@ class ProxiedFS extends FakeFS {
 }
 
 class NodeFS extends BasePortableFakeFS {
+  realFs;
   constructor(realFs = fs__default.default) {
     super();
     this.realFs = realFs;
@@ -53904,6 +53867,7 @@ class NodeFS extends BasePortableFakeFS {
   watch(p, a, b) {
     return this.realFs.watch(
       npath.fromPortablePath(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -53911,6 +53875,7 @@ class NodeFS extends BasePortableFakeFS {
   watchFile(p, a, b) {
     return this.realFs.watchFile(
       npath.fromPortablePath(p),
+      // @ts-expect-error
       a,
       b
     );
@@ -53931,16 +53896,25 @@ class NodeFS extends BasePortableFakeFS {
 
 const MOUNT_MASK = 4278190080;
 class MountFS extends BasePortableFakeFS {
+  baseFs;
+  mountInstances;
+  fdMap = /* @__PURE__ */ new Map();
+  nextFd = 3;
+  factoryPromise;
+  factorySync;
+  filter;
+  getMountPoint;
+  magic;
+  maxAge;
+  maxOpenFiles;
+  typeCheck;
+  isMount = /* @__PURE__ */ new Set();
+  notMount = /* @__PURE__ */ new Set();
+  realPaths = /* @__PURE__ */ new Map();
   constructor({ baseFs = new NodeFS(), filter = null, magicByte = 42, maxOpenFiles = Infinity, useCache = true, maxAge = 5e3, typeCheck = fs.constants.S_IFREG, getMountPoint, factoryPromise, factorySync }) {
     if (Math.floor(magicByte) !== magicByte || !(magicByte > 1 && magicByte <= 127))
       throw new Error(`The magic byte must be set to a round value between 1 and 127 included`);
     super();
-    this.fdMap = /* @__PURE__ */ new Map();
-    this.nextFd = 3;
-    this.isMount = /* @__PURE__ */ new Set();
-    this.notMount = /* @__PURE__ */ new Set();
-    this.realPaths = /* @__PURE__ */ new Map();
-    this.limitOpenFilesTimeout = null;
     this.baseFs = baseFs;
     this.mountInstances = useCache ? /* @__PURE__ */ new Map() : null;
     this.factoryPromise = factoryPromise;
@@ -54582,12 +54556,14 @@ class MountFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
         p,
+        // @ts-expect-error
         a,
         b
       );
     }, (mountFs, { subPath }) => {
       return mountFs.watch(
         subPath,
+        // @ts-expect-error
         a,
         b
       );
@@ -54597,6 +54573,7 @@ class MountFS extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(
         p,
+        // @ts-expect-error
         a,
         b
       );
@@ -54662,6 +54639,7 @@ class MountFS extends BasePortableFakeFS {
       };
     }
   }
+  limitOpenFilesTimeout = null;
   limitOpenFiles(max) {
     if (this.mountInstances === null)
       return;
@@ -54751,6 +54729,7 @@ class MountFS extends BasePortableFakeFS {
 }
 
 class PosixFS extends ProxiedFS {
+  baseFs;
   constructor(baseFs) {
     super(npath);
     this.baseFs = baseFs;
@@ -54767,10 +54746,7 @@ const NUMBER_REGEXP = /^[0-9]+$/;
 const VIRTUAL_REGEXP = /^(\/(?:[^/]+\/)*?(?:\$\$virtual|__virtual__))((?:\/((?:[^/]+-)?[a-f0-9]+)(?:\/([^/]+))?)?((?:\/.*)?))$/;
 const VALID_COMPONENT = /^([^/]+-)?[a-f0-9]+$/;
 class VirtualFS extends ProxiedFS {
-  constructor({ baseFs = new NodeFS() } = {}) {
-    super(ppath);
-    this.baseFs = baseFs;
-  }
+  baseFs;
   static makeVirtualPath(base, component, to) {
     if (ppath.basename(base) !== `__virtual__`)
       throw new Error(`Assertion failed: Virtual folders must be named "__virtual__"`);
@@ -54799,6 +54775,10 @@ class VirtualFS extends ProxiedFS {
     const backstep = `../`.repeat(depth);
     const subpath = match[5] || `.`;
     return VirtualFS.resolveVirtual(ppath.join(target, backstep, subpath));
+  }
+  constructor({ baseFs = new NodeFS() } = {}) {
+    super(ppath);
+    this.baseFs = baseFs;
   }
   getExtractHint(hints) {
     return this.baseFs.getExtractHint(hints);
@@ -54839,6 +54819,7 @@ class VirtualFS extends ProxiedFS {
 }
 
 class NodePathFS extends ProxiedFS {
+  baseFs;
   constructor(baseFs) {
     super(npath);
     this.baseFs = baseFs;
@@ -54866,7 +54847,6 @@ function isUtf8(buf, str) {
   return Buffer.byteLength(str) === buf.byteLength;
 }
 
-var _a, _b, _c, _d;
 const kBaseFs = Symbol(`kBaseFs`);
 const kFd = Symbol(`kFd`);
 const kClosePromise = Symbol(`kClosePromise`);
@@ -54876,11 +54856,13 @@ const kRefs = Symbol(`kRefs`);
 const kRef = Symbol(`kRef`);
 const kUnref = Symbol(`kUnref`);
 class FileHandle {
+  [kBaseFs];
+  [kFd];
+  [kRefs] = 1;
+  [kClosePromise] = void 0;
+  [kCloseResolve] = void 0;
+  [kCloseReject] = void 0;
   constructor(fd, baseFs) {
-    this[_a] = 1;
-    this[_b] = void 0;
-    this[_c] = void 0;
-    this[_d] = void 0;
     this[kBaseFs] = baseFs;
     this[kFd] = fd;
   }
@@ -54918,9 +54900,11 @@ class FileHandle {
   createWriteStream(options) {
     return this[kBaseFs].createWriteStream(null, { ...options, fd: this.fd });
   }
+  // FIXME: Missing FakeFS version
   datasync() {
     throw new Error(`Method not implemented.`);
   }
+  // FIXME: Missing FakeFS version
   sync() {
     throw new Error(`Method not implemented.`);
   }
@@ -54964,7 +54948,8 @@ class FileHandle {
     }
   }
   readLines(options) {
-    return readline.createInterface({
+    const { createInterface } = require$$0__default.default;
+    return createInterface({
       input: this.createReadStream(options),
       crlfDelay: Infinity
     });
@@ -54985,6 +54970,7 @@ class FileHandle {
       this[kUnref]();
     }
   }
+  // FIXME: Missing FakeFS version
   utimes(atime, mtime) {
     throw new Error(`Method not implemented.`);
   }
@@ -55013,6 +54999,7 @@ class FileHandle {
       this[kUnref]();
     }
   }
+  // TODO: Use writev from FakeFS when that is implemented
   async writev(buffers, position) {
     try {
       this[kRef](this.writev);
@@ -55037,6 +55024,7 @@ class FileHandle {
       this[kUnref]();
     }
   }
+  // FIXME: Missing FakeFS version
   readv(buffers, position) {
     throw new Error(`Method not implemented.`);
   }
@@ -55064,7 +55052,7 @@ class FileHandle {
     }
     return this[kClosePromise];
   }
-  [(_a = kRefs, _b = kClosePromise, _c = kCloseResolve, _d = kCloseReject, kRef)](caller) {
+  [kRef](caller) {
     if (this[kFd] === -1) {
       const err = new Error(`file closed`);
       err.code = `EBADF`;
@@ -55843,7 +55831,7 @@ var createModule = function() {
       if (_tzset.called)
         return;
       _tzset.called = true;
-      var currentYear = new Date().getFullYear();
+      var currentYear = (/* @__PURE__ */ new Date()).getFullYear();
       var winter = new Date(currentYear, 0, 1);
       var summer = new Date(currentYear, 6, 1);
       var winterOffset = winter.getTimezoneOffset();
@@ -56028,7 +56016,9 @@ const createModule = libzipSync.exports;
 
 const number64 = [
   `number`,
+  // low
   `number`
+  // high
 ];
 var Errors = /* @__PURE__ */ ((Errors2) => {
   Errors2[Errors2["ZIP_ER_OK"] = 0] = "ZIP_ER_OK";
@@ -56066,6 +56056,7 @@ var Errors = /* @__PURE__ */ ((Errors2) => {
   return Errors2;
 })(Errors || {});
 const makeInterface = (emZip) => ({
+  // Those are getters because they can change after memory growth
   get HEAPU8() {
     return emZip.HEAPU8;
   },
@@ -56268,6 +56259,7 @@ function makeEmptyArchive() {
   ]);
 }
 class LibzipError extends Error {
+  code;
   constructor(message, code) {
     super(message);
     this.name = `Libzip Error`;
@@ -56275,15 +56267,28 @@ class LibzipError extends Error {
   }
 }
 class ZipFS extends BasePortableFakeFS {
+  libzip;
+  baseFs;
+  path;
+  stats;
+  zip;
+  lzSource;
+  level;
+  listings = /* @__PURE__ */ new Map();
+  entries = /* @__PURE__ */ new Map();
+  /**
+   * A cache of indices mapped to file sources.
+   * Populated by `setFileSource` calls.
+   * Required for supporting read after write.
+   */
+  fileSources = /* @__PURE__ */ new Map();
+  symlinkCount;
+  fds = /* @__PURE__ */ new Map();
+  nextFd = 0;
+  ready = false;
+  readOnly = false;
   constructor(source, opts = {}) {
     super();
-    this.listings = /* @__PURE__ */ new Map();
-    this.entries = /* @__PURE__ */ new Map();
-    this.fileSources = /* @__PURE__ */ new Map();
-    this.fds = /* @__PURE__ */ new Map();
-    this.nextFd = 0;
-    this.ready = false;
-    this.readOnly = false;
     const pathOptions = opts;
     this.level = typeof pathOptions.level !== `undefined` ? pathOptions.level : DEFAULT_COMPRESSION_LEVEL;
     source ??= makeEmptyArchive();
@@ -56530,6 +56535,7 @@ class ZipFS extends BasePortableFakeFS {
         },
         bytesRead: 0,
         path: p,
+        // "This property is `true` if the underlying file has not been opened yet"
         pending: false
       }
     );
@@ -56576,6 +56582,7 @@ class ZipFS extends BasePortableFakeFS {
         },
         bytesWritten: 0,
         path: p,
+        // "This property is `true` if the underlying file has not been opened yet"
         pending: false
       }
     );
@@ -57424,8 +57431,12 @@ function getPathForDisplay(p) {
 const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 
-const builtinModules = new Set(require$$0.Module.builtinModules || Object.keys(process.binding(`natives`)));
-const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
+let isBuiltin;
+function isBuiltinModule(name) {
+  if (!isBuiltin)
+    ({ isBuiltin } = require$$0__default$1.default);
+  return isBuiltin(name);
+}
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
@@ -57474,7 +57485,7 @@ function reportRequiredFilesToWatchMode(files) {
 function applyPatch(pnpapi, opts) {
   let enableNativeHooks = true;
   process.versions.pnp = String(pnpapi.VERSIONS.std);
-  const moduleExports = require$$0__default.default;
+  const moduleExports = require$$0__default$1.default;
   moduleExports.findPnpApi = (lookupSource) => {
     const lookupPath = lookupSource instanceof url.URL ? url.fileURLToPath(lookupSource) : lookupSource;
     const apiPath = opts.manager.findApiPathFor(lookupPath);
@@ -57489,15 +57500,15 @@ function applyPatch(pnpapi, opts) {
       requireStack.push(cursor.filename || cursor.id);
     return requireStack;
   }
-  const originalModuleLoad = require$$0.Module._load;
-  require$$0.Module._load = function(request, parent, isMain) {
+  const originalModuleLoad = require$$0$1.Module._load;
+  require$$0$1.Module._load = function(request, parent, isMain) {
     if (request === `pnpapi`) {
       const parentApiPath = opts.manager.getApiPathFromParent(parent);
       if (parentApiPath) {
         return opts.manager.getApiEntry(parentApiPath, true).instance;
       }
     }
-    return originalModuleLoad.call(require$$0.Module, request, parent, isMain);
+    return originalModuleLoad.call(require$$0$1.Module, request, parent, isMain);
   };
   function getIssuerSpecsFromPaths(paths) {
     return paths.map((path) => ({
@@ -57526,23 +57537,23 @@ function applyPatch(pnpapi, opts) {
     }
   }
   function makeFakeParent(path) {
-    const fakeParent = new require$$0.Module(``);
+    const fakeParent = new require$$0$1.Module(``);
     const fakeFilePath = npath.join(path, `[file]`);
-    fakeParent.paths = require$$0.Module._nodeModulePaths(fakeFilePath);
+    fakeParent.paths = require$$0$1.Module._nodeModulePaths(fakeFilePath);
     return fakeParent;
   }
   const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
-  const originalModuleResolveFilename = require$$0.Module._resolveFilename;
-  require$$0.Module._resolveFilename = function(request, parent, isMain, options) {
+  const originalModuleResolveFilename = require$$0$1.Module._resolveFilename;
+  require$$0$1.Module._resolveFilename = function(request, parent, isMain, options) {
     if (isBuiltinModule(request))
       return request;
     if (!enableNativeHooks)
-      return originalModuleResolveFilename.call(require$$0.Module, request, parent, isMain, options);
+      return originalModuleResolveFilename.call(require$$0$1.Module, request, parent, isMain, options);
     if (options && options.plugnplay === false) {
       const { plugnplay, ...forwardedOptions } = options;
       try {
         enableNativeHooks = false;
-        return originalModuleResolveFilename.call(require$$0.Module, request, parent, isMain, forwardedOptions);
+        return originalModuleResolveFilename.call(require$$0$1.Module, request, parent, isMain, forwardedOptions);
       } finally {
         enableNativeHooks = true;
       }
@@ -57583,7 +57594,7 @@ function applyPatch(pnpapi, opts) {
         } else {
           if (path === null)
             throw new Error(`Assertion failed: Expected the path to be set`);
-          resolution = originalModuleResolveFilename.call(require$$0.Module, request, module || makeFakeParent(path), isMain);
+          resolution = originalModuleResolveFilename.call(require$$0$1.Module, request, module || makeFakeParent(path), isMain);
         }
       } catch (error) {
         firstError = firstError || error;
@@ -57609,12 +57620,12 @@ Require stack:
       Error.captureStackTrace(firstError);
     throw firstError;
   };
-  const originalFindPath = require$$0.Module._findPath;
-  require$$0.Module._findPath = function(request, paths, isMain) {
+  const originalFindPath = require$$0$1.Module._findPath;
+  require$$0$1.Module._findPath = function(request, paths, isMain) {
     if (request === `pnpapi`)
       return false;
     if (!enableNativeHooks)
-      return originalFindPath.call(require$$0.Module, request, paths, isMain);
+      return originalFindPath.call(require$$0$1.Module, request, paths, isMain);
     const isAbsolute = npath.isAbsolute(request);
     if (isAbsolute)
       paths = [``];
@@ -57628,7 +57639,7 @@ Require stack:
           const api = opts.manager.getApiEntry(pnpApiPath, true).instance;
           resolution = api.resolveRequest(request, path) || false;
         } else {
-          resolution = originalFindPath.call(require$$0.Module, request, [path], isMain);
+          resolution = originalFindPath.call(require$$0$1.Module, request, [path], isMain);
         }
       } catch (error) {
         continue;
@@ -57639,8 +57650,8 @@ Require stack:
     }
     return false;
   };
-  const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
-  require$$0.Module._extensions[`.js`] = function(module, filename) {
+  const originalExtensionJSFunction = require$$0$1.Module._extensions[`.js`];
+  require$$0$1.Module._extensions[`.js`] = function(module, filename) {
     if (filename.endsWith(`.js`)) {
       const pkg = readPackageScope(filename);
       if (pkg && pkg.data?.type === `module`) {
@@ -57696,6 +57707,8 @@ function hydrateRuntimeState(data, { basePath }) {
         packagePeers: new Set(packageInformationData.packagePeers),
         linkType: packageInformationData.linkType,
         discardFromLookup,
+        // we only need this for packages that are used by the currently running script
+        // this is a lazy getter because `ppath.join` has some overhead
         get packageLocation() {
           return resolvedPackageLocation || (resolvedPackageLocation = ppath.join(absolutePortablePath, packageInformationData.packageLocation));
         }
@@ -58576,6 +58589,15 @@ function ParseNodeOptionsEnvVar(node_options, errors) {
   return env_argv;
 }
 
+let ModuleImpl;
+function getModule() {
+  if (typeof ModuleImpl === `undefined`)
+    ({ Module: ModuleImpl } = require$$0__default$1.default);
+  return ModuleImpl;
+}
+function getDefaultExtensions() {
+  return Object.keys(getModule()._extensions);
+}
 function makeApi(runtimeState, opts) {
   const alwaysWarnOnFallback = Number(process.env.PNP_ALWAYS_WARN_ON_FALLBACK) > 0;
   const debugLevel = Number(process.env.PNP_DEBUG_LEVEL);
@@ -58782,15 +58804,17 @@ function makeApi(runtimeState, opts) {
     return null;
   }
   function makeFakeModule(path) {
-    const fakeModule = new require$$0.Module(path, null);
+    const Module = getModule();
+    const fakeModule = new Module(path, null);
     fakeModule.filename = path;
-    fakeModule.paths = require$$0.Module._nodeModulePaths(path);
+    fakeModule.paths = Module._nodeModulePaths(path);
     return fakeModule;
   }
   function callNativeResolution(request, issuer) {
+    const Module = getModule();
     if (issuer.endsWith(`/`))
       issuer = ppath.join(issuer, `internal.js`);
-    return require$$0.Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, { plugnplay: false });
+    return Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, { plugnplay: false });
   }
   function isPathIgnored(path) {
     if (ignorePattern === null)
@@ -59123,7 +59147,7 @@ Required by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDi
       return unqualifiedPath;
     }
   }
-  function resolveUnqualified(unqualifiedPath, { extensions = Object.keys(require$$0.Module._extensions) } = {}) {
+  function resolveUnqualified(unqualifiedPath, { extensions = getDefaultExtensions() } = {}) {
     const candidates = [];
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, { extensions });
     if (qualifiedPath) {
@@ -59286,7 +59310,7 @@ function makeManager(pnpapi, opts) {
   ]);
   function loadApiInstance(pnpApiPath) {
     const nativePath = npath.fromPortablePath(pnpApiPath);
-    const module = new require$$0.Module(nativePath, null);
+    const module = new require$$0$1.Module(nativePath, null);
     module.load(nativePath);
     return module.exports;
   }
@@ -59411,9 +59435,9 @@ const defaultFsLayer = new VirtualFS({
   })
 });
 class DynamicFS extends ProxiedFS {
+  baseFs = defaultFsLayer;
   constructor() {
     super(ppath);
-    this.baseFs = defaultFsLayer;
   }
   mapToBase(p) {
     return p;
@@ -59428,6 +59452,11 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
   fakeFs: dynamicFsLayer,
   pnpapiResolution: defaultPnpapiResolution
 }), {
+  /**
+   * Can be used to generate a different API than the default one (for example
+   * to map it on `/` rather than the local directory path, or to use a
+   * different FS layer than the default one).
+   */
   makeApi: ({
     basePath = void 0,
     fakeFs = dynamicFsLayer,
@@ -59441,6 +59470,10 @@ const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
       ...rest
     });
   },
+  /**
+   * Will inject the specified API into the environment, monkey-patching FS. Is
+   * automatically called when the hook is loaded through `--require`.
+   */
   setup: (api) => {
     applyPatch(api || defaultApi, {
       fakeFs: defaultFsLayer,
@@ -59455,7 +59488,7 @@ manager = makeManager(defaultApi, {
 if (module.parent && module.parent.id === `internal/preload`) {
   defaultApi.setup();
   if (module.filename) {
-    delete require$$0__default.default._cache[module.filename];
+    delete require$$0__default$1.default._cache[module.filename];
   }
 }
 if (process.mainModule === module) {

@@ -1,26 +1,42 @@
-import {PortablePath, xfs}                       from '@yarnpkg/fslib';
-import type {ExtendOptions, RequestError}        from 'got';
-import {Agent as HttpsAgent}                     from 'https';
-import {Agent as HttpAgent, IncomingHttpHeaders} from 'http';
-import micromatch                                from 'micromatch';
-import tunnel, {ProxyOptions}                    from 'tunnel';
-import {URL}                                     from 'url';
+import type * as AlgoliaTypes                              from '@algolia/requester-common';
+import {PortablePath, xfs}                                 from '@yarnpkg/fslib';
+import type {ExtendOptions, RequestError}                  from 'got';
+import {type Agent as HttpsAgent}                          from 'https';
+import {type Agent as HttpAgent, type IncomingHttpHeaders} from 'http';
+import micromatch                                          from 'micromatch';
+import {type ProxyOptions}                                 from 'tunnel';
+import {URL}                                               from 'url';
 
-import {ConfigurationValueMap, Configuration}    from './Configuration';
-import {MessageName}                             from './MessageName';
-import {WrapNetworkRequestInfo}                  from './Plugin';
-import {ReportError}                             from './Report';
-import * as formatUtils                          from './formatUtils';
-import {MapValue, MapValueToObjectValue}         from './miscUtils';
-import * as miscUtils                            from './miscUtils';
+import {ConfigurationValueMap, Configuration}              from './Configuration';
+import {MessageName}                                       from './MessageName';
+import {WrapNetworkRequestInfo}                            from './Plugin';
+import {ReportError}                                       from './Report';
+import * as formatUtils                                    from './formatUtils';
+import {MapValue, MapValueToObjectValue}                   from './miscUtils';
+import * as miscUtils                                      from './miscUtils';
 
 export type {RequestError}                                   from 'got';
 
 const cache = new Map<string, any>();
 const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
-const globalHttpAgent = new HttpAgent({keepAlive: true});
-const globalHttpsAgent = new HttpsAgent({keepAlive: true});
+let agents: {
+  http: HttpAgent;
+  https: HttpsAgent;
+} | null = null;
+
+function getDefaultAgents() {
+  if (agents !== null)
+    return agents;
+
+  const {Agent: HttpAgent} = require(`http`) as typeof import('http');
+  const {Agent: HttpsAgent} = require(`https`) as typeof import('https');
+
+  const http = new HttpAgent({keepAlive: true});
+  const https = new HttpsAgent({keepAlive: true});
+
+  return agents = {http, https};
+}
 
 function parseProxy(specifier: string) {
   const url = new URL(specifier);
@@ -252,13 +268,16 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new ReportError(MessageName.NETWORK_UNSAFE_HTTP, `Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
+  const defaultAgent = getDefaultAgents();
+  const tunnel = require(`tunnel`) as typeof import('tunnel');
+
   const agent = {
     http: networkConfig.httpProxy
       ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
-      : globalHttpAgent,
+      : defaultAgent.http,
     https: networkConfig.httpsProxy
       ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
-      : globalHttpsAgent,
+      : defaultAgent.https,
   };
 
   const gotOptions: ExtendOptions = {agent, headers, method};
@@ -311,4 +330,38 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   return configuration.getLimit(`networkConcurrency`)(() => {
     return gotClient(url);
   });
+}
+
+/* @internal */
+export function createAlgoliaClient(configuration: Configuration) {
+  const requester: AlgoliaTypes.Requester = {
+    async send(req: AlgoliaTypes.Request): Promise<AlgoliaTypes.Response> {
+      try {
+        const res = await request(req.url, req.data || null, {
+          configuration,
+          headers: req.headers,
+        });
+
+        return {
+          content: res.body,
+          isTimedOut: false,
+          status: res.statusCode,
+        };
+      } catch (error) {
+        return {
+          content: error.response.body,
+          isTimedOut: false,
+          status: error.response.statusCode,
+        };
+      }
+    },
+  };
+
+  // Note that the appId and appKey are specific to Yarn's plugin-typescript - please
+  // don't use them anywhere else without asking Algolia's permission
+  const ALGOLIA_API_KEY = `e8e1bd300d860104bb8c58453ffa1eb4`;
+  const ALGOLIA_APP_ID = `OFCNCOG2CU`;
+
+  const algoliasearch = require(`algoliasearch`) as typeof import('algoliasearch').default;
+  return algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_KEY, {requester});
 }

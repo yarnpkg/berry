@@ -191,7 +191,9 @@ export default class SearchCommand extends BaseCommand {
       const fetchHits = async () => {
         setPage(0);
 
-        const res = await search(query);
+        const res = await search(query, {
+          configuration,
+        });
 
         if (res.query === query) {
           setHits(res.hits);
@@ -199,7 +201,10 @@ export default class SearchCommand extends BaseCommand {
       };
 
       const fetchNextPageHits = async () => {
-        const res = await search(query, page + 1);
+        const res = await search(query, {
+          configuration,
+          page: page + 1,
+        });
 
         if (res.query === query && res.page - 1 === page) {
           setPage(res.page);

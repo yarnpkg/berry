@@ -6,7 +6,7 @@ import {suggestUtils}                                                           
 import {Command, Usage}                                                                                                   from 'clipanion';
 import {diffWords}                                                                                                        from 'diff';
 import semver                                                                                                             from 'semver';
-import {WriteStream}                                                                                                      from 'tty';
+import type {WriteStream}                                                                                                 from 'tty';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 

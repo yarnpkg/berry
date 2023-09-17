@@ -4,7 +4,6 @@ import {Project, structUtils} from '@yarnpkg/core';
 import {PortablePath}         from '@yarnpkg/fslib';
 import getPath                from 'lodash/get';
 import pl                     from 'tau-prolog';
-import vm                     from 'vm';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const {is_atom: isAtom, is_variable: isVariable, is_instantiated_list: isInstantiatedList} = pl.type;
@@ -136,7 +135,8 @@ const tauModule = new pl.type.Module(`constraints`, {
     for (const [index, value] of (checkArgv.toJavaScript() as Array<string>).entries())
       vars[`$${index}`] = value;
 
-    const result = vm.runInNewContext(checkCode.id, vars);
+    const {runInNewContext} = require(`vm`) as typeof import('vm');
+    const result = runInNewContext(checkCode.id, vars);
 
     if (result) {
       thread.success(point);

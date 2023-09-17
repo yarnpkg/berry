@@ -7,7 +7,7 @@ import {Command, Option, Usage, UsageError}                          from 'clipa
 import micromatch                                                    from 'micromatch';
 import pLimit                                                        from 'p-limit';
 import {Writable}                                                    from 'stream';
-import {WriteStream}                                                 from 'tty';
+import type {WriteStream}                                            from 'tty';
 import * as t                                                        from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export

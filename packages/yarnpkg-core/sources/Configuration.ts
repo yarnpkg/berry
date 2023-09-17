@@ -1215,11 +1215,13 @@ export class Configuration {
     for (const [name, corePlugin] of corePlugins)
       configuration.activatePlugin(name, corePlugin);
 
+    const {builtinModules} = require(`module`) as typeof import('module');
+
     // load third-party plugins
     const thirdPartyPlugins = new Map<string, Plugin>([]);
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
-      for (const request of nodeUtils.builtinModules())
+      for (const request of builtinModules)
         requireEntries.set(request, () => miscUtils.dynamicRequire(request));
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);

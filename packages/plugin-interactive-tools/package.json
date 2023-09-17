@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@yarnpkg/libui": "workspace:^",
-    "algoliasearch": "^4.2.0",
     "clipanion": "^4.0.0-rc.2",
     "diff": "^5.1.0",
     "ink": "^3.0.8",

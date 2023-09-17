@@ -1,6 +1,6 @@
 import {useStdin}               from 'ink';
 import {useCallback, useEffect} from 'react';
-import {Key}                    from 'readline';
+import type {Key}               from 'readline';
 
 export function useKeypress({active}: {active: boolean}, cb: (ch: string, key: Key) => void, deps: Array<any>) {
   const {stdin} = useStdin();

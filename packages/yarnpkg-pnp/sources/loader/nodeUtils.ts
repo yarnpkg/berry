@@ -1,14 +1,17 @@
 import {NativePath, npath, VirtualFS}   from '@yarnpkg/fslib';
 import fs                               from 'fs';
-import {Module}                         from 'module';
 import path                             from 'path';
 
 import {WATCH_MODE_MESSAGE_USES_ARRAYS} from '../esm-loader/loaderFlags';
 
-// @ts-expect-error
-const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
+let isBuiltin: ((name: string) => boolean) | undefined;
 
-export const isBuiltinModule = (request: string) => request.startsWith(`node:`) || builtinModules.has(request);
+export function isBuiltinModule(name: string) {
+  if (!isBuiltin)
+    ({isBuiltin} = require(`module`) as typeof import('module'));
+
+  return isBuiltin(name);
+}
 
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
 export function readPackageScope(checkPath: NativePath) {
