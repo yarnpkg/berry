@@ -999,14 +999,7 @@ async function checkYarnPath({configuration, selfPath}: {configuration: Configur
   return yarnPath;
 }
 
-export enum ProjectLookup {
-  LOCKFILE,
-  MANIFEST,
-  NONE,
-}
-
 export type FindProjectOptions = {
-  lookup?: ProjectLookup;
   strict?: boolean;
   usePathCheck?: PortablePath | null;
   useRc?: boolean;
@@ -1096,7 +1089,7 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -1167,24 +1160,7 @@ export class Configuration {
     // We need to know the project root before being able to truly instantiate
     // our configuration.
 
-    let projectCwd: PortablePath | null;
-    switch (lookup) {
-      case ProjectLookup.LOCKFILE: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, Filename.lockfile);
-      } break;
-
-      case ProjectLookup.MANIFEST: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
-      } break;
-
-      case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json`))) {
-          projectCwd = ppath.resolve(startingCwd);
-        } else {
-          projectCwd = null;
-        }
-      } break;
-    }
+    const projectCwd = await Configuration.findProjectCwd(startingCwd);
 
     // Great! We now have enough information to really start to setup the
     // core configuration object.
@@ -1416,7 +1392,7 @@ export class Configuration {
     return {path, cwd, data};
   }
 
-  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename | null) {
+  static async findProjectCwd(startingCwd: PortablePath) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -1425,19 +1401,11 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json`)))
-        projectCwd = currentCwd;
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.lockfile)))
+        return currentCwd;
 
-      if (lockfileFilename !== null) {
-        if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename))) {
-          projectCwd = currentCwd;
-          break;
-        }
-      } else {
-        if (projectCwd !== null) {
-          break;
-        }
-      }
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest)))
+        projectCwd = currentCwd;
 
       nextCwd = ppath.dirname(currentCwd);
     }
