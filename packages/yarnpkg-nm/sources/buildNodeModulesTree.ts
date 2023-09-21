@@ -1,5 +1,5 @@
 import {structUtils, Project, MessageName, Locator}                           from '@yarnpkg/core';
-import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
+import {npath, ppath}                                                         from '@yarnpkg/fslib';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
@@ -502,11 +502,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     const [nameOrScope, name] = identName.split(`/`);
 
     return name ? {
-      scope: toFilename(nameOrScope),
-      name: toFilename(name),
+      scope: nameOrScope as Filename,
+      name: name as Filename,
     } : {
       scope: null,
-      name: toFilename(nameOrScope),
+      name: nameOrScope as Filename,
     };
   };
 
@@ -571,7 +571,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
         for (let segCount = segments.length - 1; nodeModulesIdx >= 0 && segCount > nodeModulesIdx; segCount--) {
           const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
-          const targetDir = toFilename(segments[segCount]);
+          const targetDir = segments[segCount] as Filename;
 
           const subdirs = tree.get(dirPath);
           if (!subdirs) {
