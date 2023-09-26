@@ -52,6 +52,9 @@ function cleanupPlainOutput(output: string, path: PortablePath, homePath: Portab
   // replace the generated home folder with a constant
   output = output.replaceAll(npath.fromPortablePath(homePath), FAKE_HOME);
 
+  // replace the windows backslashes by forward slashes
+  output = output.replaceAll(`\\`, `/`);
+
   // replace the default global folder with a constant
   output = output.replace(/[^"]+\/\.?yarn\/berry/ig, FAKE_LOCAL_APP_DATA);
 
