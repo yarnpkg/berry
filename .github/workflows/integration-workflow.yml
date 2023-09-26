@@ -224,6 +224,8 @@ jobs:
 
     - name: 'Run the integration tests'
       run: |
+        # https://github.com/nodejs/node/issues/48444
+        export UV_USE_IO_URING=0
         node ./scripts/run-yarn.js test:integration --maxWorkers=100% --shard=${{matrix.shard}}
       shell: bash
 
