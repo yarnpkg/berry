@@ -1,6 +1,6 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
-import {Module}                                                                                                                                                                            from 'module';
+import {Module, isBuiltin}                                                                                                                                                                 from 'module';
 import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
 import {inspect}                                                                                                                                                                           from 'util';
 
@@ -557,7 +557,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && nodeUtils.isBuiltinModule(request))
+    if (considerBuiltins && isBuiltin(request))
       return null;
 
     const requestForDisplay = getPathForDisplay(request);
@@ -726,7 +726,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && nodeUtils.isBuiltinModule(request)) {
+        if (!considerBuiltins && isBuiltin(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
@@ -926,7 +926,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           ? isPathIgnored(issuer)
           : false;
 
-      const remappedPath = (!considerBuiltins || !nodeUtils.isBuiltinModule(request)) && !isIssuerIgnored()
+      const remappedPath = (!considerBuiltins || !isBuiltin(request)) && !isIssuerIgnored()
         ? resolveUnqualifiedExport(request, unqualifiedPath, conditions, issuer)
         : unqualifiedPath;
 

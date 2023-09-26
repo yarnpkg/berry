@@ -1,4 +1,4 @@
-import {PortablePath, toFilename}               from '@yarnpkg/fslib';
+import {Filename, PortablePath}                 from '@yarnpkg/fslib';
 import querystring                              from 'querystring';
 import semver                                   from 'semver';
 import {makeParser}                             from 'tinylogic';
@@ -16,8 +16,8 @@ import {Ident, Descriptor, Locator, Package}    from './types';
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
 
-const conditionRegex = /(os|cpu|libc)=([a-z0-9_-]+)/;
-const conditionParser = makeParser(conditionRegex);
+const CONDITION_REGEX = /(os|cpu|libc)=([a-z0-9_-]+)/;
+const conditionParser = makeParser(CONDITION_REGEX);
 
 /**
  * Creates a package ident.
@@ -186,6 +186,8 @@ export function isVirtualLocator(locator: Locator): boolean {
   return locator.reference.startsWith(VIRTUAL_PROTOCOL);
 }
 
+const VIRTUAL_PREFIX_REGEXP = /^[^#]*#/;
+
 /**
  * Returns a new devirtualized descriptor based on a virtualized descriptor
  */
@@ -193,7 +195,7 @@ export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
   if (!isVirtualDescriptor(descriptor))
     throw new Error(`Not a virtual descriptor`);
 
-  return makeDescriptor(descriptor, descriptor.range.replace(/^[^#]*#/, ``));
+  return makeDescriptor(descriptor, descriptor.range.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
 
 /**
@@ -204,7 +206,7 @@ export function devirtualizeLocator(locator: Locator): Locator {
   if (!isVirtualLocator(locator))
     throw new Error(`Not a virtual descriptor`);
 
-  return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
+  return makeLocator(locator, locator.reference.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
 
 /**
@@ -214,7 +216,7 @@ export function ensureDevirtualizedDescriptor(descriptor: Descriptor): Descripto
   if (!isVirtualDescriptor(descriptor))
     return descriptor;
 
-  return makeDescriptor(descriptor, descriptor.range.replace(/^[^#]*#/, ``));
+  return makeDescriptor(descriptor, descriptor.range.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
 
 /**
@@ -225,7 +227,7 @@ export function ensureDevirtualizedLocator(locator: Locator): Locator {
   if (!isVirtualLocator(locator))
     return locator;
 
-  return makeLocator(locator, locator.reference.replace(/^[^#]*#/, ``));
+  return makeLocator(locator, locator.reference.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
 
 /**
@@ -337,6 +339,8 @@ export function parseIdent(string: string): Ident {
   return ident;
 }
 
+const IDENT_REGEXP = /^(?:@([^/]+?)\/)?([^@/]+)$/;
+
 /**
  * Parses a string into an ident.
  *
@@ -345,7 +349,7 @@ export function parseIdent(string: string): Ident {
  * @param string The ident string (eg. `@types/lodash`)
  */
 export function tryParseIdent(string: string): Ident | null {
-  const match = string.match(/^(?:@([^/]+?)\/)?([^@/]+)$/);
+  const match = string.match(IDENT_REGEXP);
   if (!match)
     return null;
 
@@ -374,6 +378,9 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
   return descriptor;
 }
 
+const DESCRIPTOR_REGEX_STRICT = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/;
+const DESCRIPTOR_REGEX_LOOSE = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/;
+
 /**
  * Parses a `string` into a descriptor
  *
@@ -384,8 +391,8 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
  */
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
   const match = strict
-    ? string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/);
+    ? string.match(DESCRIPTOR_REGEX_STRICT)
+    : string.match(DESCRIPTOR_REGEX_LOOSE);
 
   if (!match)
     return null;
@@ -421,6 +428,9 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
   return locator;
 }
 
+const LOCATOR_REGEX_STRICT = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/;
+const LOCATOR_REGEX_LOOSE = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/;
+
 /**
  * Parses a `string` into a locator
  *
@@ -431,8 +441,8 @@ export function parseLocator(string: string, strict: boolean = false): Locator {
  */
 export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
   const match = strict
-    ? string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/)
-    : string.match(/^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/);
+    ? string.match(LOCATOR_REGEX_STRICT)
+    : string.match(LOCATOR_REGEX_LOOSE);
 
   if (!match)
     return null;
@@ -469,6 +479,8 @@ type ParseRangeReturnType<Opts extends ParseRangeOptions> =
   & ({source: Opts extends {requireSource: true} ? string : string | null})
   & ({selector: Opts extends {parseSelector: true} ? querystring.ParsedUrlQuery : string});
 
+const RANGE_REGEX = /^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/;
+
 /**
  * Parses a range into its constituents. Ranges typically follow these forms,
  * with both `protocol` and `bindings` being optionals:
@@ -481,7 +493,7 @@ type ParseRangeReturnType<Opts extends ParseRangeOptions> =
  * do for git dependencies).
  */
 export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> {
-  const match = range.match(/^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/);
+  const match = range.match(RANGE_REGEX);
   if (match === null)
     throw new Error(`Invalid range (${range})`);
 
@@ -566,9 +578,9 @@ export function parseFileStyleRange(range: string, {protocol}: {protocol: string
 }
 
 function encodeUnsafeCharacters(str: string) {
-  str = str.replace(/%/g, `%25`);
-  str = str.replace(/:/g, `%3A`);
-  str = str.replace(/#/g, `%23`);
+  str = str.replaceAll(`%`, `%25`);
+  str = str.replaceAll(`:`, `%3A`);
+  str = str.replaceAll(`#`, `%23`);
   return str;
 }
 
@@ -659,6 +671,8 @@ export function slugifyIdent(ident: Ident) {
   }
 }
 
+const TRAILING_COLON_REGEX = /:$/;
+
 /**
  * Returns a string from a locator, formatted as a slug (eg. `@types-lodash-npm-1.0.0-abcdef1234`).
  */
@@ -666,7 +680,7 @@ export function slugifyLocator(locator: Locator) {
   const {protocol, selector} = parseRange(locator.reference);
 
   const humanProtocol = protocol !== null
-    ? protocol.replace(/:$/, ``)
+    ? protocol.replace(TRAILING_COLON_REGEX, ``)
     : `exotic`;
 
   const humanVersion = semver.valid(selector);
@@ -689,7 +703,7 @@ export function slugifyLocator(locator: Locator) {
     ? `${slugifyIdent(locator)}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`
     : `${slugifyIdent(locator)}-${humanReference}-${locator.locatorHash.slice(0, hashTruncate)}`;
 
-  return toFilename(slug);
+  return slug as Filename;
 }
 
 /**
@@ -707,6 +721,8 @@ export function prettyIdent(configuration: Configuration, ident: Ident): string 
   }
 }
 
+const POST_QS_REGEX = /\?.*/;
+
 function prettyRangeNoColors(range: string): string {
   if (range.startsWith(VIRTUAL_PROTOCOL)) {
     const nested = prettyRangeNoColors(range.substring(range.indexOf(`#`) + 1));
@@ -717,7 +733,7 @@ function prettyRangeNoColors(range: string): string {
     // eslint-disable-next-line no-constant-condition
     return false ? `${nested} (virtual:${abbrev})` : `${nested} [${abbrev}]`;
   } else {
-    return range.replace(/\?.*/, `?[...]`);
+    return range.replace(POST_QS_REGEX, `?[...]`);
   }
 }
 
@@ -857,7 +873,7 @@ export function isPackageCompatible(pkg: Package, architectures: nodeUtils.Archi
     return true;
 
   return conditionParser(pkg.conditions, specifier => {
-    const [, name, value] = specifier.match(conditionRegex)!;
+    const [, name, value] = specifier.match(CONDITION_REGEX)!;
     const supported = architectures[name as keyof typeof architectures];
 
     return supported ? supported.includes(value) : true;
