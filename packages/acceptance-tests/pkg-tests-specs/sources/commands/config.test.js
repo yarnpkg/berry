@@ -3,7 +3,7 @@ const {
   fs: {writeFile},
 } = require(`pkg-tests-core`);
 
-const RC_FILENAME = `.spec-yarnrc`;
+const RC_FILENAME = `.yarnrc.yml`;
 const SUBFOLDER = `subfolder`;
 const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
 const FAKE_LOCAL_APP_DATA = `LOCAL_APP_DATA`;
@@ -122,7 +122,7 @@ describe(`Commands`, () => {
           let stderr;
 
           try {
-            ({code, stdout, stderr} = await run(`config`, ...flags, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME, HOME: homePath, USERPROFILE: homePath}}));
+            ({code, stdout, stderr} = await run(`config`, ...flags, {cwd, env: {HOME: homePath, USERPROFILE: homePath}}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

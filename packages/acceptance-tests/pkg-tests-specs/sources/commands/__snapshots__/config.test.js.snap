@@ -5,7 +5,7 @@ exports[`Commands config test (folder with rcfile / as json) 1`] = `
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
 {"key":"lastUpdateCheck","effective":null,"description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
 }
 `;
@@ -25,7 +25,7 @@ exports[`Commands config test (folder with rcfile / showing the source) 1`] = `
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml - 'my-test'
 ➤ YN0000: lastUpdateCheck - <default> - null",
 }
 `;
@@ -45,8 +45,8 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / as
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
-{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.spec-yarnrc","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.yarnrc.yml","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
 }
 `;
 
@@ -65,8 +65,8 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
-➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'",
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml - 'my-test'
+➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.yarnrc.yml - '1555784893958'",
 }
 `;
 
@@ -84,9 +84,9 @@ exports[`Commands config test (folder with rcfile and rc in home folder / as jso
 {
   "code": 0,
   "stderr": "",
-  "stdout": "{"key":"defaultLanguageName","effective":"python","source":"HOME/.spec-yarnrc","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
-{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.spec-yarnrc","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
+  "stdout": "{"key":"defaultLanguageName","effective":"python","source":"HOME/.yarnrc.yml","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.yarnrc.yml","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
 }
 `;
 
@@ -104,9 +104,9 @@ exports[`Commands config test (folder with rcfile and rc in home folder / showin
 {
   "code": 0,
   "stderr": "",
-  "stdout": "➤ YN0000: defaultLanguageName - HOME/.spec-yarnrc - 'python'
-➤ YN0000: initScope - WORKSPACE_ROOT/.spec-yarnrc - 'my-test'
-➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.spec-yarnrc - '1555784893958'",
+  "stdout": "➤ YN0000: defaultLanguageName - HOME/.yarnrc.yml - 'python'
+➤ YN0000: initScope - WORKSPACE_ROOT/.yarnrc.yml - 'my-test'
+➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/.yarnrc.yml - '1555784893958'",
 }
 `;
 
@@ -125,8 +125,8 @@ exports[`Commands config test (folder with rcfile and rc in parent / as json) 1`
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
-{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/subfolder/.spec-yarnrc","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/subfolder/.yarnrc.yml","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
 }
 `;
 
@@ -145,8 +145,8 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing the
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
-➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/subfolder/.spec-yarnrc - '1555784893958'",
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml - 'my-test'
+➤ YN0000: lastUpdateCheck - WORKSPACE_ROOT/subfolder/.yarnrc.yml - '1555784893958'",
 }
 `;
 
@@ -165,7 +165,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / as 
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
 {"key":"lastUpdateCheck","effective":null,"description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}",
 }
 `;
@@ -185,7 +185,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
   "code": 0,
   "stderr": "",
   "stdout": "➤ YN0000: defaultLanguageName - <default> - 'node'
-➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc - 'my-test'
+➤ YN0000: initScope - WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml - 'my-test'
 ➤ YN0000: lastUpdateCheck - <default> - null",
 }
 `;
