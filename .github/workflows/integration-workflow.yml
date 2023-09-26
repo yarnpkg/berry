@@ -201,8 +201,8 @@ jobs:
       fail-fast: false
       matrix:
         # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
-        node: [18, 20.6.1, 20.7]
-        platform: [ubuntu-latest]
+        node: [18, 20.6, 20.7]
+        platform: [ubuntu-22.04, ubuntu-20.04]
         shard: ['1/2', '2/2']
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
