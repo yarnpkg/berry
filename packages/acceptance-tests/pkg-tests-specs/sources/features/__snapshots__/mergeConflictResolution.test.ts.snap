@@ -44,8 +44,9 @@ exports[`Features Merge Conflict Resolution it should properly fix merge conflic
 ➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
+➤ YN0000: │ ESM support for PnP uses the experimental loader API and is therefore experimental
 ➤ YN0000: └ Completed
-➤ YN0000: · Done
+➤ YN0000: · Done with warnings
 ",
 }
 `;
@@ -144,8 +145,9 @@ exports[`Features Merge Conflict Resolution it should support fixing cherry-pick
 ➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
+➤ YN0000: │ ESM support for PnP uses the experimental loader API and is therefore experimental
 ➤ YN0000: └ Completed
-➤ YN0000: · Done
+➤ YN0000: · Done with warnings
 ",
 }
 `;
@@ -194,8 +196,9 @@ exports[`Features Merge Conflict Resolution it should support fixing rebase conf
 ➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
+➤ YN0000: │ ESM support for PnP uses the experimental loader API and is therefore experimental
 ➤ YN0000: └ Completed
-➤ YN0000: · Done
+➤ YN0000: · Done with warnings
 ",
 }
 `;
@@ -244,8 +247,9 @@ exports[`Features Merge Conflict Resolution it shouldn't re-fetch the lockfile m
 ➤ YN0013: │ No new packages added to the project, but one was removed (- 0.78 KiB).
 ➤ YN0000: └ Completed
 ➤ YN0000: ┌ Link step
+➤ YN0000: │ ESM support for PnP uses the experimental loader API and is therefore experimental
 ➤ YN0000: └ Completed
-➤ YN0000: · Done
+➤ YN0000: · Done with warnings
 ",
 }
 `;

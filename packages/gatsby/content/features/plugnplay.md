@@ -74,11 +74,22 @@ yarn node ./server.js
 require('./.pnp.cjs').setup();
 ```
 
-As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) option from Node, associated with the path of the `.pnp.cjs` file. You can easily apply this operation yourself if you prefer:
+As a quick tip, all `yarn node` typically does is set the `NODE_OPTIONS` environment variable to use the [`--require`](https://nodejs.org/api/cli.html#cli_r_require_module) and [`--experimental-loader`](https://nodejs.org/api/cli.html#--experimental-loadermodule) option to setup PnP support. You can apply this operation yourself if you prefer.
 
-```
+If you don't need ESM support you can use the following:
+
+```sh
 node -r ./.pnp.cjs ./server.js
-NODE_OPTIONS="--require $(pwd)/.pnp.cjs" node ./server.js
+# or
+NODE_OPTIONS="--require \"$(pwd)/.pnp.cjs\"" node ./server.js
+```
+
+If you need ESM support you can use the following:
+
+```sh
+node -r ./.pnp.cjs --experimental-loader ./.pnp.loader.mjs ./server.js
+# or
+NODE_OPTIONS="--require \"$(pwd)/.pnp.cjs\" --experimental-loader \"$(pwd)/.pnp.loader.mjs\"" node ./server.js
 ```
 
 ## PnP `loose` mode

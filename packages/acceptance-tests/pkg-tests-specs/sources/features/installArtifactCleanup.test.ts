@@ -38,9 +38,7 @@ describe(`Install Artifact Cleanup`, () => {
             await expect(xfs.existsPromise(`${path}/.pnp.data.json` as PortablePath)).resolves.toStrictEqual(false);
           }));
 
-          it(`should remove the .pnp.loader.mjs file after switching to the ${linker} linker`, makeTemporaryEnv({}, {
-            pnpEnableEsmLoader: true,
-          }, async ({path, run, source}) => {
+          it(`should remove the .pnp.loader.mjs file after switching to the ${linker} linker`, makeTemporaryEnv({}, async ({path, run, source}) => {
             await run(`install`);
 
             // Sanity check

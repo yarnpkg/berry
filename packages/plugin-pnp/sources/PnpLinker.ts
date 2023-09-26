@@ -98,8 +98,6 @@ export class PnpInstaller implements Installer {
     location: PortablePath;
   }> = new Map();
 
-  private isESMLoaderRequired: boolean = false;
-
   constructor(protected opts: LinkOptions) {
     this.opts = opts;
   }
@@ -152,9 +150,6 @@ export class PnpInstaller implements Installer {
           this.customData.store.set(devirtualizedLocator.locatorHash, customPackageData);
         }
       }
-
-      if (customPackageData.manifest.type === `module`)
-        this.isESMLoaderRequired = true;
 
       dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
     }
@@ -236,7 +231,7 @@ export class PnpInstaller implements Installer {
 
     const pnpPath = getPnpPath(this.opts.project);
 
-    if (!this.isEsmEnabled())
+    if (!this.opts.project.configuration.get(`pnpEnableEsmLoader`))
       await xfs.removePromise(pnpPath.esmLoader);
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
@@ -298,22 +293,6 @@ export class PnpInstaller implements Installer {
     // Nothing to transform
   }
 
-  private isEsmEnabled() {
-    if (this.opts.project.configuration.sources.has(`pnpEnableEsmLoader`))
-      return this.opts.project.configuration.get(`pnpEnableEsmLoader`);
-
-    if (this.isESMLoaderRequired)
-      return true;
-
-    for (const workspace of this.opts.project.workspaces) {
-      if (workspace.manifest.type === `module`) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   async finalizeInstallWithPnp(pnpSettings: PnpSettings) {
     const pnpPath = getPnpPath(this.opts.project);
 
@@ -350,7 +329,7 @@ export class PnpInstaller implements Installer {
       });
     }
 
-    if (this.isEsmEnabled()) {
+    if (this.opts.project.configuration.get(`pnpEnableEsmLoader`)) {
       this.opts.report.reportWarning(MessageName.UNNAMED, `ESM support for PnP uses the experimental loader API and is therefore experimental`);
       await xfs.changeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate(), {
         automaticNewlines: true,
@@ -509,7 +488,6 @@ async function extractCustomPackageData(fetchResult: FetchResult) {
     manifest: {
       scripts: manifest.scripts,
       preferUnplugged: manifest.preferUnplugged,
-      type: manifest.type,
     },
     misc: {
       extractHint: jsInstallUtils.getExtractHint(fetchResult),
