@@ -6025,10 +6025,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.15.11":
-  version: 18.16.18
-  resolution: "@types/node@npm:18.16.18"
-  checksum: 4692b4c927bf63efbc3aed6e18c1a264eb8b5673fa7cc0649a38f394ab34d4d4d0e7a2b98f4235bc8dc7615e88080a1b443a06eac9324f67e426398ed857b4a1
+"@types/node@npm:*, @types/node@npm:^18.17.15":
+  version: 18.17.15
+  resolution: "@types/node@npm:18.17.15"
+  checksum: 5b28c68f44657399264efb1308cf87ddbf065299aa9e75abbd9f4d96785e5d7f1fdb0b263f3d7080b89036845e0d907c3edc51f75813c099a7ec311660188928
   languageName: node
   linkType: hard
 
@@ -7252,7 +7252,7 @@ __metadata:
     "@types/diff": "npm:^5.0.0"
     "@types/lodash": "npm:^4.14.136"
     "@types/micromatch": "npm:^4.0.1"
-    "@types/node": "npm:^18.15.11"
+    "@types/node": "npm:^18.17.15"
     "@types/semver": "npm:^7.1.0"
     "@types/tar": "npm:^4.0.4"
     "@types/treeify": "npm:^1.0.0"
@@ -7575,7 +7575,7 @@ __metadata:
     "@mdx-js/react": "npm:^1.6.22"
     "@types/jest": "npm:^28.1.6"
     "@types/micromatch": "npm:^4.0.1"
-    "@types/node": "npm:^18.15.11"
+    "@types/node": "npm:^18.17.15"
     "@types/react": "npm:^16.8.0"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/cli": "workspace:^"
@@ -8085,7 +8085,7 @@ __metadata:
   dependencies:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
-    "@types/node": "npm:^18.15.11"
+    "@types/node": "npm:^18.17.15"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"

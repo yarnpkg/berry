@@ -1,26 +1,26 @@
-import {miscUtils, semverUtils}                                from '@yarnpkg/core';
-import {PortablePath, npath, toFilename, xfs, ppath, Filename} from '@yarnpkg/fslib';
-import {npmAuditTypes}                                         from '@yarnpkg/plugin-npm-cli';
-import assert                                                  from 'assert';
-import crypto                                                  from 'crypto';
-import finalhandler                                            from 'finalhandler';
-import https                                                   from 'https';
-import {IncomingMessage, ServerResponse}                       from 'http';
-import http                                                    from 'http';
-import invariant                                               from 'invariant';
-import {AddressInfo}                                           from 'net';
-import os                                                      from 'os';
-import pem                                                     from 'pem';
-import semver                                                  from 'semver';
-import serveStatic                                             from 'serve-static';
-import stream                                                  from 'stream';
-import * as t                                                  from 'typanion';
-import {promisify}                                             from 'util';
-import {v5 as uuidv5}                                          from 'uuid';
-import {Gzip}                                                  from 'zlib';
+import {miscUtils, semverUtils}                    from '@yarnpkg/core';
+import {PortablePath, npath, xfs, ppath, Filename} from '@yarnpkg/fslib';
+import {npmAuditTypes}                             from '@yarnpkg/plugin-npm-cli';
+import assert                                      from 'assert';
+import crypto                                      from 'crypto';
+import finalhandler                                from 'finalhandler';
+import https                                       from 'https';
+import {IncomingMessage, ServerResponse}           from 'http';
+import http                                        from 'http';
+import invariant                                   from 'invariant';
+import {AddressInfo}                               from 'net';
+import os                                          from 'os';
+import pem                                         from 'pem';
+import semver                                      from 'semver';
+import serveStatic                                 from 'serve-static';
+import stream                                      from 'stream';
+import * as t                                      from 'typanion';
+import {promisify}                                 from 'util';
+import {v5 as uuidv5}                              from 'uuid';
+import {Gzip}                                      from 'zlib';
 
-import {ExecResult}                                            from './exec';
-import * as fsUtils                                            from './fs';
+import {ExecResult}                                from './exec';
+import * as fsUtils                                from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
@@ -257,7 +257,7 @@ export const getPackageArchivePath = async (name: string, version: string): Prom
     throw new Error(`Unknown version "${version}" for package "${name}"`);
 
   const tmpDir = await xfs.mktempPromise();
-  const archivePath = `${tmpDir}/${toFilename(`${name}-${version}.tar.gz`)}` as PortablePath;
+  const archivePath = ppath.join(tmpDir, `${name}-${version}.tar.gz`);
 
   await fsUtils.packToFile(archivePath, npath.toPortablePath(packageVersionEntry.path), {
     virtualPath: npath.toPortablePath(`/package`),

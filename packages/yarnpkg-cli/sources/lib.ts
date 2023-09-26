@@ -99,6 +99,12 @@ function checkCwd(cli: YarnCli, argv: Array<string>) {
   } else if (argv.length >= 1 && argv[0].startsWith(`--cwd=`)) {
     cwd = npath.toPortablePath(argv[0].slice(6));
     postCwdArgv = argv.slice(1);
+  } else if (argv[0] === `add` && argv[argv.length - 2] === `--cwd`) {
+    // CRA adds `--cwd` at the end of the command; it's not ideal, but since
+    // it's unlikely to receive more releases we can just special-case it
+    // TODO v5: remove this special case
+    cwd = npath.toPortablePath(argv[argv.length - 1]);
+    postCwdArgv = argv.slice(0, argv.length - 2);
   }
 
   cli.defaultContext.cwd = cwd !== null
@@ -115,8 +121,10 @@ function initTelemetry(cli: YarnCli, {configuration}: {configuration: Configurat
 
   Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
 
+  const PLUGIN_REGEX = /^@yarnpkg\/plugin-(.*)$/;
+
   for (const name of configuration.plugins.keys())
-    if (pluginCommands.has(name.match(/^@yarnpkg\/plugin-(.*)$/)?.[1] ?? ``))
+    if (pluginCommands.has(name.match(PLUGIN_REGEX)?.[1] ?? ``))
       Configuration.telemetry?.reportPluginName(name);
 
   if (cli.binaryVersion) {

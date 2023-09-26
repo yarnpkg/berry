@@ -9,6 +9,14 @@ import TOCInline from '@theme/TOCInline';
 
 <TOCInline toc={toc} />
 
+## Why is the `yarn` package on npm still on 1.x?
+
+Modern releases of Yarn haven't been distributed on npm since 2019.
+
+The reason is simple: because Yarn wasn't distributed alongside Node.js, many people relied on something like `npm install -g yarn` as part of their image building. It meant that any breaking change would make their way on everyone using this pattern, and break their deployments.
+
+As a result, we decided to retire the `yarn` npm package and only use it for the few 1.x maintenance releases needed. Yarn is now installed directly from our website, via either [Corepack](https://nodejs.org/api/corepack.html) or `yarn set version`.
+
 ## Why should you upgrade to Yarn Modern?
 
 While the Yarn Classic line (1.x) remains a pillar of the JavaScript ecosystem, we recommend upgrading if possible. Why's that?

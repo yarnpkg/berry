@@ -1,3 +1,4 @@
+import {formatUtils}                                             from '@yarnpkg/core';
 import {FakeFS, LazyFS, NodeFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
 import {ppath, xfs}                                              from '@yarnpkg/fslib';
 import {ZipFS}                                                   from '@yarnpkg/libzip';
@@ -143,41 +144,51 @@ export class Cache {
     return `${structUtils.slugifyLocator(locator)}-${significantChecksum}.zip` as Filename;
   }
 
-  getLocatorPath(locator: Locator, expectedChecksum: string | null, opts: CacheOptions = {}) {
-    // If there is no mirror, then the local cache *is* the mirror, in which
-    // case we use the versioned filename pattern. Same if the package is
-    // unstable, meaning it may be there or not depending on the environment,
-    // so we can't rely on its checksum to get a stable location.
-    if (this.mirrorCwd === null || opts.unstablePackages?.has(locator.locatorHash))
-      return ppath.resolve(this.cwd, this.getVersionFilename(locator));
-
+  isChecksumCompatible(checksum: string) {
     // If we don't yet know the checksum, discard the path resolution for now
     // until the checksum can be obtained from somewhere (mirror or network).
-    if (expectedChecksum === null)
-      return null;
+    if (checksum === null)
+      return false;
 
     const {
       cacheVersion,
       cacheSpec,
-    } = splitChecksumComponents(expectedChecksum);
+    } = splitChecksumComponents(checksum);
 
     if (cacheVersion === null)
-      return null;
+      return false;
 
     // The cache keys must always be at least as old as the last checkpoint.
     if (cacheVersion < CACHE_CHECKPOINT)
-      return null;
+      return false;
 
     const migrationMode = this.configuration.get(`cacheMigrationMode`);
 
     // If the global cache is used, then the lockfile must always be up-to-date,
     // so the archives must be regenerated each time the version changes.
     if (cacheVersion < CACHE_VERSION && migrationMode === `always`)
-      return null;
+      return false;
 
     // If the cache spec changed, we may need to regenerate the archive
     if (cacheSpec !== this.cacheSpec && migrationMode !== `required-only`)
-      return null;
+      return false;
+
+    return true;
+  }
+
+  getLocatorPath(locator: Locator, expectedChecksum: string | null) {
+    // When using the global cache we want the archives to be named as per
+    // the cache key rather than the hash, as otherwise we wouldn't be able
+    // to find them if we didn't have the hash (which is the case when adding
+    // new dependencies to a project).
+    if (this.mirrorCwd === null)
+      return ppath.resolve(this.cwd, this.getVersionFilename(locator));
+
+    // Same thing if we don't know the checksum; it means that the package
+    // doesn't support being checksum'd (unstablePackage), so we fallback
+    // on the versioned filename.
+    if (expectedChecksum === null)
+      return ppath.resolve(this.cwd, this.getVersionFilename(locator));
 
     return ppath.resolve(this.cwd, this.getChecksumFilename(locator, expectedChecksum));
   }
@@ -350,14 +361,11 @@ export class Cache {
       const {path: packagePath, source: packageSource} = await loadPackageThroughMirror();
 
       // Do this before moving the file so that we don't pollute the cache with corrupted archives
-      const checksum = (await validateFile(packagePath, {
+      const {hash: checksum} = await validateFile(packagePath, {
         isColdHit: true,
-      })).hash;
+      });
 
-      const cachePath = this.getLocatorPath(locator, checksum, opts);
-      if (!cachePath)
-        throw new Error(`Assertion failed: Expected the cache path to be available`);
-
+      const cachePath = this.getLocatorPath(locator, checksum);
       const copyProcess: Array<() => Promise<void>> = [];
 
       // Copy the package into the mirror
@@ -393,10 +401,11 @@ export class Cache {
 
     const loadPackageThroughMutex = async () => {
       const mutexedLoad = async () => {
-        // We don't yet know whether the cache path can be computed yet, since that
-        // depends on whether the cache is actually the mirror or not, and whether
-        // the checksum is known or not.
-        const tentativeCachePath = this.getLocatorPath(locator, expectedChecksum, opts);
+        const isUnstablePackage = opts.unstablePackages?.has(locator.locatorHash);
+
+        const tentativeCachePath = isUnstablePackage || !expectedChecksum || this.isChecksumCompatible(expectedChecksum)
+          ? this.getLocatorPath(locator, expectedChecksum)
+          : null;
 
         const cacheFileExists = tentativeCachePath !== null
           ? this.markedFiles.has(tentativeCachePath) || await baseFs.existsPromise(tentativeCachePath)
@@ -413,6 +422,9 @@ export class Cache {
           action();
 
         if (!isCacheHit) {
+          if (this.immutable && isUnstablePackage)
+            throw new ReportError(MessageName.IMMUTABLE_CACHE, `Cache entry required but missing for ${structUtils.prettyLocator(this.configuration, locator)}; consider defining ${formatUtils.pretty(this.configuration, `supportedArchitectures`, formatUtils.Type.CODE)} to cache packages for multiple systems`);
+
           return loadPackage();
         } else {
           let checksum: string | null = null;

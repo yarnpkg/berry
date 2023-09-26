@@ -40,6 +40,7 @@ export class NpmTagResolver implements Resolver {
     const tag = descriptor.range.slice(PROTOCOL.length);
 
     const registryData = await npmHttpUtils.getPackageMetadata(descriptor, {
+      cache: opts.fetchOptions?.cache,
       project: opts.project,
     });
 

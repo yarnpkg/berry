@@ -5,7 +5,7 @@ exports[`Commands config test (folder with rcfile / as json) 1`] = `
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
 {"key":"lastUpdateCheck","effective":null,"description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
 ",
 }
@@ -22,7 +22,7 @@ exports[`Commands config test (folder with rcfile / showing explanation) 1`] = `
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
@@ -44,7 +44,7 @@ exports[`Commands config test (folder with rcfile / showing the source) 1`] = `
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
@@ -66,7 +66,7 @@ exports[`Commands config test (folder with rcfile / without flags) 1`] = `
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
@@ -82,8 +82,8 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / as
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
-{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.spec-yarnrc","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.yarnrc.yml","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
 ",
 }
 `;
@@ -99,12 +99,12 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -121,12 +121,12 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / sh
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -143,12 +143,12 @@ exports[`Commands config test (folder with rcfile and rc in ancestor parent / wi
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -159,8 +159,8 @@ exports[`Commands config test (folder with rcfile and rc in home folder / as jso
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
-{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.spec-yarnrc","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/.yarnrc.yml","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
 ",
 }
 `;
@@ -176,12 +176,12 @@ exports[`Commands config test (folder with rcfile and rc in home folder / showin
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -198,12 +198,12 @@ exports[`Commands config test (folder with rcfile and rc in home folder / showin
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -220,12 +220,12 @@ exports[`Commands config test (folder with rcfile and rc in home folder / withou
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -236,8 +236,8 @@ exports[`Commands config test (folder with rcfile and rc in parent / as json) 1`
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
-{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/subfolder/.spec-yarnrc","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"lastUpdateCheck","effective":"1555784893958","source":"WORKSPACE_ROOT/subfolder/.yarnrc.yml","description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
 ",
 }
 `;
@@ -253,12 +253,12 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing exp
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/subfolder/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/subfolder/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -275,12 +275,12 @@ exports[`Commands config test (folder with rcfile and rc in parent / showing the
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/subfolder/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/subfolder/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -297,12 +297,12 @@ exports[`Commands config test (folder with rcfile and rc in parent / without fla
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
  - ├─ Description: Last timestamp we checked whether new Yarn versions were available
- - ├─ Source: WORKSPACE_ROOT/subfolder/.spec-yarnrc
+ - ├─ Source: WORKSPACE_ROOT/subfolder/.yarnrc.yml
  - └─ Value: '1555784893958'
 ",
 }
@@ -313,7 +313,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / as 
   "code": 0,
   "stderr": "",
   "stdout": "{"key":"defaultLanguageName","effective":"node","description":"Default language mode that should be used when a package doesn't offer any insight","type":"STRING","default":"node"}
-{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
+{"key":"initScope","effective":"my-test","source":"WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml","description":"Scope used when creating packages via the init command","type":"STRING","default":null}
 {"key":"lastUpdateCheck","effective":null,"description":"Last timestamp we checked whether new Yarn versions were available","type":"STRING","default":null}
 ",
 }
@@ -330,7 +330,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
@@ -352,7 +352,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / sho
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck
@@ -374,7 +374,7 @@ exports[`Commands config test (folder with rcfile without trailing newline / wit
 │
 ├─ initScope
 │ - ├─ Description: Scope used when creating packages via the init command
-│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.spec-yarnrc
+│ - ├─ Source: WORKSPACE_ROOT/subfolder/subfolder/.yarnrc.yml
 │ - └─ Value: 'my-test'
 │
 └─ lastUpdateCheck

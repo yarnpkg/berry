@@ -1,7 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                  from '@yarnpkg/cli';
 import {Configuration, MessageName, miscUtils, Project, stringifyMessageName} from '@yarnpkg/core';
 import {scriptUtils, structUtils, formatUtils}                                from '@yarnpkg/core';
-import {NativePath, Filename, ppath, xfs, npath}                              from '@yarnpkg/fslib';
+import {NativePath, ppath, xfs, npath}                                        from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
@@ -51,7 +51,7 @@ export default class DlxCommand extends BaseCommand {
       await xfs.writeFilePromise(ppath.join(tmpDir, `yarn.lock`), ``);
 
       const targetYarnrc = ppath.join(tmpDir, `.yarnrc.yml`);
-      const projectCwd = await Configuration.findProjectCwd(this.context.cwd, Filename.lockfile);
+      const projectCwd = await Configuration.findProjectCwd(this.context.cwd);
 
       // We set enableGlobalCache to true for dlx calls to speed it up but only if the
       // project it's run in has enableGlobalCache set to false, otherwise we risk running into

@@ -1,9 +1,9 @@
 import fs from 'fs';
 import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
-import moduleExports, { Module } from 'module';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
+import moduleExports, { isBuiltin } from 'module';
 import assert from 'assert';
 
 const SAFE_TIME = 456789e3;
@@ -16,14 +16,16 @@ const PortablePath = {
 const npath = Object.create(path);
 const ppath = Object.create(path.posix);
 npath.cwd = () => process.cwd();
-ppath.cwd = () => toPortablePath(process.cwd());
-ppath.resolve = (...segments) => {
-  if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
-    return path.posix.resolve(...segments);
-  } else {
-    return path.posix.resolve(ppath.cwd(), ...segments);
-  }
-};
+ppath.cwd = path !== path.posix ? () => toPortablePath(process.cwd()) : process.cwd;
+if (path !== path.posix) {
+  ppath.resolve = (...segments) => {
+    if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
+      return path.posix.resolve(...segments);
+    } else {
+      return path.posix.resolve(ppath.cwd(), ...segments);
+    }
+  };
+}
 const contains = function(pathUtils, from, to) {
   from = pathUtils.normalize(from);
   to = pathUtils.normalize(to);
@@ -37,17 +39,13 @@ const contains = function(pathUtils, from, to) {
     return null;
   }
 };
-npath.fromPortablePath = fromPortablePath;
-npath.toPortablePath = toPortablePath;
 npath.contains = (from, to) => contains(npath, from, to);
 ppath.contains = (from, to) => contains(ppath, from, to);
 const WINDOWS_PATH_REGEXP = /^([a-zA-Z]:.*)$/;
 const UNC_WINDOWS_PATH_REGEXP = /^\/\/(\.\/)?(.*)$/;
 const PORTABLE_PATH_REGEXP = /^\/([a-zA-Z]:.*)$/;
 const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
-function fromPortablePath(p) {
-  if (process.platform !== `win32`)
-    return p;
+function fromPortablePathWin32(p) {
   let portablePathMatch, uncPortablePathMatch;
   if (portablePathMatch = p.match(PORTABLE_PATH_REGEXP))
     p = portablePathMatch[1];
@@ -57,9 +55,7 @@ function fromPortablePath(p) {
     return p;
   return p.replace(/\//g, `\\`);
 }
-function toPortablePath(p) {
-  if (process.platform !== `win32`)
-    return p;
+function toPortablePathWin32(p) {
   p = p.replace(/\\/g, `/`);
   let windowsPathMatch, uncWindowsPathMatch;
   if (windowsPathMatch = p.match(WINDOWS_PATH_REGEXP))
@@ -68,6 +64,10 @@ function toPortablePath(p) {
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
   return p;
 }
+const toPortablePath = path !== path.posix ? toPortablePathWin32 : (p) => p;
+const fromPortablePath = path !== path.posix ? fromPortablePathWin32 : (p) => p;
+npath.fromPortablePath = fromPortablePath;
+npath.toPortablePath = toPortablePath;
 function convertPath(targetPathUtils, sourcePath) {
   return targetPathUtils === npath ? fromPortablePath(sourcePath) : toPortablePath(sourcePath);
 }
@@ -932,12 +932,24 @@ class NodeFS extends BasePortableFakeFS {
         this.realFs.opendir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     }).then((dir) => {
-      return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+      const dirWithFixedPath = dir;
+      Object.defineProperty(dirWithFixedPath, `path`, {
+        value: p,
+        configurable: true,
+        writable: true
+      });
+      return dirWithFixedPath;
     });
   }
   opendirSync(p, opts) {
     const dir = typeof opts !== `undefined` ? this.realFs.opendirSync(npath.fromPortablePath(p), opts) : this.realFs.opendirSync(npath.fromPortablePath(p));
-    return Object.defineProperty(dir, `path`, { value: p, configurable: true, writable: true });
+    const dirWithFixedPath = dir;
+    Object.defineProperty(dirWithFixedPath, `path`, {
+      value: p,
+      configurable: true,
+      writable: true
+    });
+    return dirWithFixedPath;
   }
   async readPromise(fd, buffer, offset = 0, length = 0, position = -1) {
     return await new Promise((resolve, reject) => {
@@ -1362,8 +1374,6 @@ const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 const HAS_LAZY_LOADED_TRANSLATORS = major > 19 || major === 19 && minor >= 3;
 
-const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
@@ -1951,7 +1961,7 @@ async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
 }
 async function resolve$1(originalSpecifier, context, nextResolve) {
   const { findPnpApi } = moduleExports;
-  if (!findPnpApi || isBuiltinModule(originalSpecifier))
+  if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
   let specifier = originalSpecifier;
   const url = tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : void 0);

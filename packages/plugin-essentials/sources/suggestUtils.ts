@@ -315,6 +315,9 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
       } break;
 
       case Strategy.LATEST: {
+        const hasNetwork = project.configuration.get(`enableNetwork`);
+        const isOfflineMode = project.configuration.get(`enableOfflineMode`);
+
         await trySuggest(async () => {
           if (target === Target.PEER) {
             suggested.push({
@@ -322,7 +325,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               name: `Use *`,
               reason: `(catch-all peer dependency pattern)`,
             });
-          } else if (!project.configuration.get(`enableNetwork`)) {
+          } else if (!hasNetwork && !isOfflineMode) {
             suggested.push({
               descriptor: null,
               name: `Resolve from latest`,
@@ -334,7 +337,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               suggested.push({
                 descriptor: latest,
                 name: `Use ${structUtils.prettyDescriptor(project.configuration, latest)}`,
-                reason: `(resolved from latest)`,
+                reason: `(resolved from ${isOfflineMode ? `the cache` : `latest`})`,
               });
             }
           }

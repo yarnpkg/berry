@@ -1,6 +1,6 @@
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 
-const RC_FILENAME = `.spec-yarnrc`;
+const RC_FILENAME = `.yarnrc.yml`;
 const SUBFOLDER = `subfolder`;
 const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
 const FAKE_LOCAL_APP_DATA = `LOCAL_APP_DATA`;
@@ -117,7 +117,7 @@ describe(`Commands`, () => {
           let stderr;
 
           try {
-            ({code, stdout, stderr} = await run(`config`, ...flags, ...FILTER, {cwd, env: {YARN_RC_FILENAME: RC_FILENAME, HOME: homePath, USERPROFILE: homePath}}));
+            ({code, stdout, stderr} = await run(`config`, ...flags, ...FILTER, {cwd, env: {HOME: homePath, USERPROFILE: homePath}}));
           } catch (error) {
             ({code, stdout, stderr} = error);
           }

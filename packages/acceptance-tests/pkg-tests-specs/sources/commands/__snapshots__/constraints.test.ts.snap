@@ -22,8 +22,8 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (amb
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -126,8 +126,8 @@ exports[`Commands constraints test (empty project / gen_enforced_field (ambiguou
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -278,18 +278,18 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stderr": "",
   "stdout": "├─ root-workspace-0b6124@workspace:.
 │  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 ├─ workspace-a@workspace:packages/workspace-a
 │  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 └─ workspace-b@workspace:packages/workspace-b
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -354,19 +354,19 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stderr": "",
   "stdout": "├─ workspace-a@workspace:packages/workspace-a
 │  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│  │  ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-│  │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+│  │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+│  │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 │  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-│     ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-│     └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+│     ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+│     └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 │
 └─ workspace-b@workspace:packages/workspace-b
    ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-   │  ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
    └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -472,18 +472,18 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (am
   "stderr": "",
   "stdout": "├─ root-workspace-0b6124@workspace:.
 │  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 ├─ workspace-a@workspace:packages/workspace-a
 │  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 └─ workspace-b@workspace:packages/workspace-b
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -696,8 +696,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -744,8 +744,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -812,8 +812,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -972,8 +972,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1016,8 +1016,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -1084,8 +1084,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1236,8 +1236,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1284,8 +1284,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -1352,8 +1352,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1512,8 +1512,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1561,11 +1561,11 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-   │  ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
    └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.js:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:4:82)
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -1632,8 +1632,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1792,8 +1792,8 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stderr": "",
   "stdout": "└─ foo@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1896,8 +1896,8 @@ exports[`Commands constraints test (various field types / gen_enforced_field (am
   "stderr": "",
   "stdout": "└─ foo@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.js:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.js:4:46)
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;

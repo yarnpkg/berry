@@ -1,16 +1,19 @@
-import {npath} from '../sources/path';
-
 describe(`Portable paths`, () => {
   for (const platform of [`darwin`, `win32`]) {
     let realPlatform: string;
 
     describe(`Platform ${platform}`, () => {
+      let npath: typeof import('../sources/path').npath;
+
       beforeAll(() => {
         realPlatform = process.platform;
         Object.defineProperty(process, `platform`, {
           configurable: true,
           value: platform,
         });
+
+        jest.resetModules();
+        npath = require(`../sources/path`).npath;
       });
 
       afterAll(() => {

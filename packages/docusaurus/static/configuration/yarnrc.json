@@ -89,7 +89,7 @@
     "constraintsPath": {
       "_package": "@yarnpkg/plugin-constraints",
       "title": "Path of the constraints file.",
-      "description": "This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.js` file.",
+      "description": "This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.cjs` file.",
       "type": "string",
       "format": "uri-reference",
       "default": "./constraints.pro"
@@ -192,6 +192,13 @@
       "description": "If false, Yarn will never make any request to the network by itself, and will throw an exception rather than let it happen. It's a very useful setting for CI, which typically want to make sure they aren't loading their dependencies from the network by mistake.",
       "type": "boolean",
       "default": true
+    },
+    "enableOfflineMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Define whether Yarn should exclusively read package metadata from its cache",
+      "description": "If true, Yarn will replace any network requests by reads from its local caches - even if they contain old information. This can be useful when performing local work on environments without network access (trains, planes, ...), as you can at least leverage the packages you installed on the same machine in the past.\n\nSince this setting will lead to stale data being used, it's recommended to set it for the current session as an environment variable (by running `export YARN_ENABLE_OFFLINE_MODE=1` in your terminal) rather than by adding it to your `.yarnrc.yml` file.",
+      "type": "boolean",
+      "default": false
     },
     "enableProgressBars": {
       "_package": "@yarnpkg/core",

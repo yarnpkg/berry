@@ -34,5 +34,25 @@ describe(`Manifest`, () => {
         [`start`, `node index.js`],
       ]);
     });
+
+    it(`should preserve bin if a string was specified`, () => {
+      const manifest = Manifest.fromText(`{ "name": "name", "bin": "./bin.js" }`);
+      expect(manifest.exportTo({}).bin).toEqual(`./bin.js`);
+    });
+
+    it(`should preserve bin map if a hash was specified`, () => {
+      const manifest = Manifest.fromText(`{ "name": "name", "bin": { "bin1": "./bin1.js", "bin2": "./bin2.js" } }`);
+      expect(manifest.exportTo({}).bin).toEqual({bin1: `./bin1.js`, bin2: `./bin2.js`});
+    });
+
+    it(`should remove bin if an empty path was specified`, () => {
+      const manifest = Manifest.fromText(`{ "name": "name", "bin": "" }`);
+      expect(manifest.exportTo({}).bin).toEqual(undefined);
+    });
+
+    it(`should remove entries from bin map if an empty path was specified`, () => {
+      const manifest = Manifest.fromText(`{ "name": "name", "bin": { "bin1": " ", "bin2": "./bin2.js" } }`);
+      expect(manifest.exportTo({}).bin).toEqual({bin2: `./bin2.js`});
+    });
   });
 });

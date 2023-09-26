@@ -4,6 +4,7 @@ import camelcase                                                                
 import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
 import {UsageError}                                                                                              from 'clipanion';
 import {parse as parseDotEnv}                                                                                    from 'dotenv';
+import {builtinModules}                                                                                          from 'module';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
 
@@ -360,9 +361,14 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
   enableNetwork: {
-    description: `If false, the package manager will refuse to use the network if required to`,
+    description: `If false, Yarn will refuse to use the network if required to`,
     type: SettingsType.BOOLEAN,
     default: true,
+  },
+  enableOfflineMode: {
+    description: `If true, Yarn will attempt to retrieve files and metadata from the global cache rather than the network`,
+    type: SettingsType.BOOLEAN,
+    default: false,
   },
   httpProxy: {
     description: `URL of the http proxy that must be used for outgoing http requests`,
@@ -618,6 +624,7 @@ export interface ConfigurationValueMap {
 
   enableMirror: boolean;
   enableNetwork: boolean;
+  enableOfflineMode: boolean;
   httpProxy: string | null;
   httpsProxy: string | null;
   unsafeHttpWhitelist: Array<string>;
@@ -965,43 +972,57 @@ function getRcFilename() {
   return DEFAULT_RC_FILENAME as Filename;
 }
 
+async function tryRead(p: PortablePath) {
+  try {
+    return await xfs.readFilePromise(p);
+  } catch {
+    return Buffer.of();
+  }
+}
+
+async function isSameBinaryContent(a: PortablePath, b: PortablePath) {
+  return Buffer.compare(...await Promise.all([
+    tryRead(a),
+    tryRead(b),
+  ])) === 0;
+}
+
+async function isSameBinaryInode(a: PortablePath, b: PortablePath) {
+  const [aStat, bStat] = await Promise.all([
+    xfs.statPromise(a),
+    xfs.statPromise(b),
+  ]);
+
+  return aStat.dev === bStat.dev && aStat.ino === bStat.ino;
+}
+
+const isSameBinary = process.platform === `win32`
+  ? isSameBinaryContent
+  : isSameBinaryInode;
+
 async function checkYarnPath({configuration, selfPath}: {configuration: Configuration, selfPath: PortablePath}): Promise<PortablePath | null> {
   const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
 
-  const tryRead = (p: PortablePath) => xfs.readFilePromise(p).catch(() => {
-    return Buffer.of();
-  });
-
-  const isSameBinary = async () =>
-    yarnPath && (
-      yarnPath === selfPath ||
-        Buffer.compare(...await Promise.all([
-          tryRead(yarnPath),
-          tryRead(selfPath),
-        ])) === 0
-    );
-
-  if (!ignorePath && await isSameBinary()) {
+  if (ignorePath || yarnPath === null || yarnPath === selfPath)
     return null;
-  } else if (yarnPath !== null && !ignorePath) {
-    return yarnPath;
-  } else {
-    return null;
-  }
-}
 
-export enum ProjectLookup {
-  LOCKFILE,
-  MANIFEST,
-  NONE,
+  if (await isSameBinary(yarnPath, selfPath))
+    return null;
+
+  return yarnPath;
 }
 
 export type FindProjectOptions = {
-  lookup?: ProjectLookup;
   strict?: boolean;
   usePathCheck?: PortablePath | null;
   useRc?: boolean;
+};
+
+export type RcFile = {
+  cwd: PortablePath;
+  path: PortablePath;
+  data: any;
 };
 
 export class Configuration {
@@ -1082,13 +1103,14 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {lookup = ProjectLookup.LOCKFILE, strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
+  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
+    const configuration = new Configuration(startingCwd);
     const rcFiles = await Configuration.findRcFiles(startingCwd);
 
-    const homeRcFile = await Configuration.findHomeRcFile();
+    const homeRcFile = await Configuration.findFolderRcFile(folderUtils.getHomeFolder());
     if (homeRcFile) {
       const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
       if (!rcFile) {
@@ -1099,7 +1121,7 @@ export class Configuration {
     const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
 
     // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
-    const resolvedRcFileCwd = `.` as PortablePath;
+    const resolvedRcFileCwd = PortablePath.dot;
 
     // First we will parse the `yarn-path` settings. Doing this now allows us
     // to not have to load the plugins if there's a `yarn-path` configured.
@@ -1128,8 +1150,6 @@ export class Configuration {
       return pluginFields;
     };
 
-    const configuration = new Configuration(startingCwd);
-
     configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
     configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
 
@@ -1154,24 +1174,7 @@ export class Configuration {
     // We need to know the project root before being able to truly instantiate
     // our configuration.
 
-    let projectCwd: PortablePath | null;
-    switch (lookup) {
-      case ProjectLookup.LOCKFILE: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, Filename.lockfile);
-      } break;
-
-      case ProjectLookup.MANIFEST: {
-        projectCwd = await Configuration.findProjectCwd(startingCwd, null);
-      } break;
-
-      case ProjectLookup.NONE: {
-        if (xfs.existsSync(ppath.join(startingCwd, `package.json`))) {
-          projectCwd = ppath.resolve(startingCwd);
-        } else {
-          projectCwd = null;
-        }
-      } break;
-    }
+    const projectCwd = await Configuration.findProjectCwd(startingCwd);
 
     // Great! We now have enough information to really start to setup the
     // core configuration object.
@@ -1227,7 +1230,7 @@ export class Configuration {
     const thirdPartyPlugins = new Map<string, Plugin>([]);
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
-      for (const request of nodeUtils.builtinModules())
+      for (const request of builtinModules)
         requireEntries.set(request, () => miscUtils.dynamicRequire(request));
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
@@ -1386,23 +1389,24 @@ export class Configuration {
     return rcFiles;
   }
 
-  static async findHomeRcFile() {
-    const rcFilename = getRcFilename();
+  static async findFolderRcFile(cwd: PortablePath): Promise<RcFile | null> {
+    const path = ppath.join(cwd, Filename.rc);
 
-    const homeFolder = folderUtils.getHomeFolder();
-    const homeRcFilePath = ppath.join(homeFolder, rcFilename);
+    let content: string;
+    try {
+      content = await xfs.readFilePromise(path, `utf8`);
+    } catch (err) {
+      if (err.code === `ENOENT`)
+        return null;
 
-    if (xfs.existsSync(homeRcFilePath)) {
-      const content = await xfs.readFilePromise(homeRcFilePath, `utf8`);
-      const data = parseSyml(content) as any;
-
-      return {path: homeRcFilePath, cwd: homeFolder, data};
+      throw err;
     }
 
-    return null;
+    const data = parseSyml(content) as any;
+    return {path, cwd, data};
   }
 
-  static async findProjectCwd(startingCwd: PortablePath, lockfileFilename: Filename | null) {
+  static async findProjectCwd(startingCwd: PortablePath) {
     let projectCwd = null;
 
     let nextCwd = startingCwd;
@@ -1411,19 +1415,11 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, `package.json`)))
-        projectCwd = currentCwd;
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.lockfile)))
+        return currentCwd;
 
-      if (lockfileFilename !== null) {
-        if (xfs.existsSync(ppath.join(currentCwd, lockfileFilename))) {
-          projectCwd = currentCwd;
-          break;
-        }
-      } else {
-        if (projectCwd !== null) {
-          break;
-        }
-      }
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest)))
+        projectCwd = currentCwd;
 
       nextCwd = ppath.dirname(currentCwd);
     }
