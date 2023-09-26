@@ -1118,7 +1118,7 @@ export class Configuration {
       }
     }
 
-    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
+    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [npath.fromPortablePath(rcFile.path), rcFile.data]));
 
     // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
     const resolvedRcFileCwd = PortablePath.dot;
