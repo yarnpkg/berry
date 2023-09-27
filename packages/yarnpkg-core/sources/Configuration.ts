@@ -759,8 +759,8 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
 
         // singleValue's source should be a single file path, if it exists
         const source = configUtils.getSource(valueBase);
-        if (source)
-          cwd = ppath.resolve(source as PortablePath, `..`);
+        if (source && source[0] !== `<`)
+          cwd = ppath.dirname(npath.toPortablePath(source));
 
         return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
       }
@@ -1591,8 +1591,14 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         const homeFolder = folderUtils.getHomeFolder();
-        const rcFileFolder = ppath.resolve(source as PortablePath, `..`);
-        const isHomeRcFile = homeFolder === rcFileFolder;
+
+        const rcFileFolder = source[0] !== `<`
+          ? ppath.dirname(npath.toPortablePath(source))
+          : null;
+
+        const isHomeRcFile = rcFileFolder !== null
+          ? homeFolder === rcFileFolder
+          : false;
 
         if (strict && !isHomeRcFile) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
