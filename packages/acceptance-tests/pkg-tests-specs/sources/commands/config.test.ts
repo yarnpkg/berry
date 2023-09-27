@@ -46,6 +46,10 @@ function cleanupPlainOutput(output: string, path: PortablePath, homePath: Portab
   // contains `path`. In other words, the formatting depends on the length of `path`.
   output = output.replace(/  +/g, ` - `);
 
+  // The JSON output contains escaped backslashes on Windows; we need to unescape them for
+  // them to be matched against the paths in the two following replacements.
+  output = output.replaceAll(`\\\\`, `\\`);
+
   // replace the generated workspace root with a constant
   output = output.replaceAll(npath.fromPortablePath(path), FAKE_WORKSPACE_ROOT);
 
