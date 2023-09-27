@@ -764,7 +764,7 @@
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x64", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32", "arm64"]
         },
         "libc": {
           "title": "The list of standard C libraries to cover.",
