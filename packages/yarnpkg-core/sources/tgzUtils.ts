@@ -17,12 +17,38 @@ export type ConvertToZipPayload = {
 
 export type ZipWorkerPool = TaskPool<ConvertToZipPayload, PortablePath>;
 
+function createTaskPool(poolMode: string, poolSize: number): ZipWorkerPool {
+  switch (poolMode) {
+    case `async`:
+      return new AsyncPool(convertToZipWorker, {poolSize});
+
+    case `workers`:
+      return new WorkerPool(getZipWorkerSource(), {poolSize});
+
+    default: {
+      throw new Error(`Assertion failed: Unknown value ${poolMode} for taskPoolMode`);
+    }
+  }
+}
+
+let defaultWorkerPool: ZipWorkerPool | undefined;
+
+export function getDefaultTaskPool() {
+  if (typeof defaultWorkerPool === `undefined`)
+    defaultWorkerPool = createTaskPool(`workers`, nodeUtils.availableParallelism());
+
+  return defaultWorkerPool;
+}
+
 const workerPools = new WeakMap<Configuration, ZipWorkerPool>();
 
-export function getConfigurationWorker(configuration: Configuration | void): ZipWorkerPool {
+export function getTaskPoolForConfiguration(configuration: Configuration | void): ZipWorkerPool {
+  if (typeof configuration === `undefined`)
+    return getDefaultTaskPool();
+
   return miscUtils.getFactoryWithDefault(workerPools, configuration, () => {
-    const poolMode = configuration?.get(`taskPoolMode`);
-    const poolSize = configuration?.get(`taskPoolConcurrency`) ?? nodeUtils.availableParallelism();
+    const poolMode = configuration.get(`taskPoolMode`);
+    const poolSize = configuration.get(`taskPoolConcurrency`);
 
     switch (poolMode) {
       case `async`:
@@ -100,7 +126,7 @@ export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions = {}) 
     stripComponents: opts.stripComponents,
   };
 
-  const taskPool = opts.taskPool ?? getConfigurationWorker(opts.configuration);
+  const taskPool = opts.taskPool ?? getTaskPoolForConfiguration(opts.configuration);
   await taskPool.run({tmpFile, tgz, compressionLevel, extractBufferOpts});
 
   return new ZipFS(tmpFile, {level: opts.compressionLevel});
