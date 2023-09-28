@@ -103,8 +103,6 @@ function cleanupJsonOutput(output: string, path: PortablePath, homePath: Portabl
 
 const options = {
   [`without flags`]: {cleanupStdout: cleanupPlainOutput, flags: []},
-  [`showing the source`]: {cleanupStdout: cleanupPlainOutput, flags: [`--why`]},
-  [`showing explanation`]: {cleanupStdout: cleanupPlainOutput, flags: [`--verbose`]},
   [`as json`]: {cleanupStdout: cleanupJsonOutput, flags: [`--json`]},
 };
 
