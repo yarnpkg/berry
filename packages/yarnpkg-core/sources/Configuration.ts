@@ -759,8 +759,8 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
 
         // singleValue's source should be a single file path, if it exists
         const source = configUtils.getSource(valueBase);
-        if (source)
-          cwd = ppath.resolve(source as PortablePath, `..`);
+        if (source && source[0] !== `<`)
+          cwd = ppath.dirname(source as PortablePath);
 
         return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
       }
@@ -909,20 +909,34 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
   }
 
   if (definition.type === SettingsType.MAP && rawValue instanceof Map) {
+    if (rawValue.size === 0)
+      return undefined;
+
     const newValue: Map<string, unknown> = new Map();
 
-    for (const [key, value] of rawValue.entries())
-      newValue.set(key, transformConfiguration(value, definition.valueDefinition, transforms));
+    for (const [key, value] of rawValue.entries()) {
+      const transformedValue = transformConfiguration(value, definition.valueDefinition, transforms);
+      if (typeof transformedValue !== `undefined`) {
+        newValue.set(key, transformedValue);
+      }
+    }
 
     return newValue;
   }
 
   if (definition.type === SettingsType.SHAPE && rawValue instanceof Map) {
+    if (rawValue.size === 0)
+      return undefined;
+
     const newValue: Map<string, unknown> = new Map();
 
     for (const [key, value] of rawValue.entries()) {
       const propertyDefinition = definition.properties[key];
-      newValue.set(key, transformConfiguration(value, propertyDefinition, transforms));
+
+      const transformedValue = transformConfiguration(value, propertyDefinition, transforms);
+      if (typeof transformedValue !== `undefined`) {
+        newValue.set(key, transformedValue);
+      }
     }
 
     return newValue;
@@ -1577,8 +1591,14 @@ export class Configuration {
       const definition = this.settings.get(key);
       if (!definition) {
         const homeFolder = folderUtils.getHomeFolder();
-        const rcFileFolder = ppath.resolve(source as PortablePath, `..`);
-        const isHomeRcFile = homeFolder === rcFileFolder;
+
+        const rcFileFolder = source[0] !== `<`
+          ? ppath.dirname(source as PortablePath)
+          : null;
+
+        const isHomeRcFile = rcFileFolder !== null
+          ? homeFolder === rcFileFolder
+          : false;
 
         if (strict && !isHomeRcFile) {
           throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);

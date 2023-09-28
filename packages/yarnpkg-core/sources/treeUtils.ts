@@ -45,7 +45,7 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
       if (finalParts.length === 0)
         finalParts.push(formatUtils.applyStyle(configuration, `${key}`, formatUtils.Style.BOLD));
 
-      const finalLabel = finalParts.join(`: `);
+      const finalLabel = finalParts.join(`: `).trim();
 
       // The library we use, treeify, doesn't support having multiple nodes with
       // the same label. To work around that, we prefix each label with a unique
@@ -128,7 +128,7 @@ export function emitTree(tree: TreeNode, {configuration, stdout, json, separator
   // Another one for the second level fields. We run it twice because in some pathological cases the regex matches would
   if (separators >= 2)
     for (let t = 0; t < 2; ++t)
-      treeOutput = treeOutput.replace(/^([│ ].{2}[├│ ].{2}[^\n]+\n)(([│ ]).{2}[├└].{2}[^\n]*\n[│ ].{2}[│ ].{2}[├└]─)/gm, `$1$3  │\n$2`).replace(/^│\n/, ``);
+      treeOutput = treeOutput.replace(/^([│ ].{2}[├│ ].{2}[^\n]+\n)(([│ ]).{2}[├└].{2}[^\n]*\n[│ ].{2}[│ ].{2}[├└]─)/gm, `$1$3  │ (\\n)?\n$2`).replace(/^│\n/, ``);
 
   if (separators >= 3)
     throw new Error(`Only the first two levels are accepted by treeUtils.emitTree`);
