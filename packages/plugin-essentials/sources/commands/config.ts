@@ -1,8 +1,8 @@
-import {BaseCommand}                                                      from '@yarnpkg/cli';
-import {Configuration, MessageName, StreamReport, formatUtils, treeUtils} from '@yarnpkg/core';
-import {npath}                                                            from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                           from 'clipanion';
-import {inspect}                                                          from 'util';
+import {BaseCommand}                                                                                from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, formatUtils, reportOptionDeprecations, treeUtils} from '@yarnpkg/core';
+import {npath}                                                                                      from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                                                     from 'clipanion';
+import {inspect}                                                                                    from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {
@@ -25,17 +25,13 @@ export default class ConfigCommand extends BaseCommand {
     description: `Omit the default values from the display`,
   });
 
-  verbose = Option.Boolean(`-v,--verbose`, false, {
-    description: `Print the setting description on top of the regular key/value information`,
-  });
-
-  why = Option.Boolean(`--why`, false, {
-    description: `Print the reason why a setting is set a particular way`,
-  });
-
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });
+
+  // Legacy flags; will emit errors or warnings when used
+  verbose = Option.Boolean(`-v,--verbose`, {hidden: true});
+  why = Option.Boolean(`--why`, {hidden: true});
 
   names = Option.Rest();
 
@@ -43,6 +39,21 @@ export default class ConfigCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins, {
       strict: false,
     });
+
+    const deprecationExitCode = await reportOptionDeprecations({
+      configuration,
+      stdout: this.context.stdout,
+      forceError: this.json,
+    }, [{
+      option: this.verbose,
+      message: `The --verbose option is deprecated, the settings' descriptions are now always displayed`,
+    }, {
+      option: this.why,
+      message: `The --why option is deprecated, the settings' sources are now always displayed`,
+    }]);
+
+    if (deprecationExitCode !== null)
+      return deprecationExitCode;
 
     const names = this.names.length > 0
       ? [...new Set(this.names)].sort()
@@ -79,11 +90,7 @@ export default class ConfigCommand extends BaseCommand {
             ? npath.fromPortablePath(source)
             : source;
 
-          if (this.verbose) {
-            report.reportJson({key: name, effective, source: sourceAsNativePath});
-          } else {
-            report.reportJson({key: name, effective, source: sourceAsNativePath, ...data});
-          }
+          report.reportJson({key: name, effective, source: sourceAsNativePath, ...data});
         }
       } else {
         const inspectConfig = {

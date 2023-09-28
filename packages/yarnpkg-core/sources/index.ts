@@ -32,7 +32,7 @@ export type {PeerRequirement}                                                   
 export {LOCKFILE_VERSION, Project, InstallMode}                                                                     from './Project';
 export {ReportError, Report}                                                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                                       from './Resolver';
-export {StreamReport}                                                                                               from './StreamReport';
+export {StreamReport, reportOptionDeprecations}                                                                     from './StreamReport';
 export {TelemetryManager}                                                                                           from './TelemetryManager';
 export {ThrowReport}                                                                                                from './ThrowReport';
 export {VirtualFetcher}                                                                                             from './VirtualFetcher';
