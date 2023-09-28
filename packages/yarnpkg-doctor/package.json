@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/doctor",
-  "version": "4.0.0-rc.48",
+  "version": "4.0.0-rc.51",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "exports": {
@@ -16,7 +16,7 @@
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^2.4.0",
-    "typescript": "5.2.0-beta"
+    "typescript": "5.2.1-rc"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",

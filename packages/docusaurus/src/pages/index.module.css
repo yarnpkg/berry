@@ -15,11 +15,11 @@
     --index-navbar-margin-top: 40px;
   }
 
-  .html body [class~="navbar"] {
+  .html :global(.navbar) {
     margin-top: var(--index-navbar-margin-top);
   }
 
-  .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) {
+  .html:not(:global(.navbar--is-fixed)) :global(.navbar) {
     --ifm-navbar-link-color: #ffffff;
     --ifm-navbar-link-hover-color: var(--ifm-navbar-link-color);
 
@@ -27,11 +27,11 @@
     box-shadow: none;
   }
 
-  .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) svg {
+  .html:not(:global(.navbar--is-fixed)) :global(.navbar) svg {
     opacity: .8;
   }
 
-  .html body [class~="navbar"]:not([class~="navbar--is-fixed"]) [class~="navbar__logo"] {
+  .html:not(:global(.navbar--is-fixed)) :global(.navbar .navbar__logo) {
     filter: none;
   }
 }
@@ -89,8 +89,16 @@
   }
 }
 
-.hero h1 {
-  font-size: 4rem;
+@media (min-width: 300px) {
+  .hero {
+    --ifm-h1-font-size: 3rem;
+  }
+}
+
+@media (min-width: 380px) {
+  .hero {
+    --ifm-h1-font-size: 4rem;
+  }
 }
 
 .hero p {
@@ -98,14 +106,21 @@
 }
 
 .versions {
-  display: inline-block;
-
-  margin-left: 30px;
+  margin: 30px 0;
 
   font-size: 15px;
   font-weight: normal;
 
   line-height: 1.5;
+}
+
+@media (min-width: 996px) {
+  .versions {
+    display: inline-block;
+
+    margin: 0;
+    margin-left: 30px;
+  }
 }
 
 .versionLine {
@@ -121,7 +136,7 @@
 .search {
   display: flex;
 
-  margin-top: 60px;
+  margin: 30px 0;
 
   border: 1px solid #9555bb;
   border-radius: 10px;
@@ -138,6 +153,12 @@
   font-style: italic;
 }
 
+@media (min-width: 996px) {
+  .search {
+    margin: 60px 0;
+  }
+}
+
 .search::placeholder {
   color: #ffffff;
 }
@@ -145,4 +166,35 @@
 .followUp {
   background: #090b1f;
   color: #ffffff;
+}
+
+.info {
+  border-radius: 8px;
+
+  padding: 1rem;
+
+  border: 1px solid white;
+  background: #000000cc;
+  color: #ffffff;
+
+  --ifm-link-color: #5cb0fa;
+}
+
+@media (min-width: 996px) {
+  .info {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+    z-index: 11;
+
+    max-width: 600px;
+
+    opacity: 1;
+
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  :global(html.navbar--is-fixed) .info {
+    opacity: 0;
+  }
 }

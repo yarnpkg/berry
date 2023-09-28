@@ -4,6 +4,8 @@
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 
+const fs = require(`fs`);
+
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 
@@ -14,12 +16,15 @@ const autoLink = require(`./src/remark/autoLink`);
 const config = {
   title: `Yarn`,
   tagline: `Yarn, the modern JavaScript package manager`,
-  url: `https://yarnpkg.com`,
+  url: process.env.DEPLOY_PRIME_URL !== `https://master--yarn4.netlify.app`
+    ? process.env.DEPLOY_PRIME_URL ?? `https://yarnpkg.com`
+    : `https://yarnpkg.com`,
   baseUrl: `/`,
   // TODO: Switch back to `throw`
   onBrokenLinks: `warn`,
   onBrokenMarkdownLinks: `warn`,
   favicon: `img/yarn-favicon.svg`,
+  trailingSlash: false,
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -81,14 +86,15 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: `img/social-preview.png`,
       colorMode: {
         defaultMode: `light`,
         disableSwitch: true,
         respectPrefersColorScheme: false,
       },
       algolia: {
-        appId: `BH4D9OD16A`,
-        apiKey: `029f65f2c00301615fd14958b67d6730`,
+        appId: `STXW7VT1S5`,
+        apiKey: `ecdfaea128fd901572b14543a2116eee`,
         indexName: `yarnpkg_next`,
         searchPagePath: `docs/search`,
       },
@@ -96,7 +102,7 @@ const config = {
         title: `Yarn`,
         logo: {
           alt: `Yarn Logo`,
-          src: `img/yarn-white.svg`,
+          src: `data:image/svg+xml;base64,${fs.readFileSync(`${__dirname}/static/img/yarn-white.svg`, `base64`)}`,
         },
         items: [
           {

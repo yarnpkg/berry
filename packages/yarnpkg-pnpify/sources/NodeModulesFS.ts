@@ -1,4 +1,4 @@
-import {DirentNoPath, ReaddirOptions}                                                                                              from '@yarnpkg/fslib';
+import {BigIntStats, DirentNoPath, ReaddirOptions, Stats}                                                                          from '@yarnpkg/fslib';
 import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
 import {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
@@ -8,7 +8,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions}                      
 import {NodeModulesTreeOptions, NodeModulesTree}                                                                                   from '@yarnpkg/nm';
 import {buildNodeModulesTree}                                                                                                      from '@yarnpkg/nm';
 import {PnpApi}                                                                                                                    from '@yarnpkg/pnp';
-import fs, {BigIntStats, Stats}                                                                                                    from 'fs';
+import fs                                                                                                                          from 'fs';
 
 import {WatchManager}                                                                                                              from './WatchManager';
 import {dynamicRequireNoCache}                                                                                                     from './dynamicRequire';
@@ -533,7 +533,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
           name,
           path: undefined,
         });
-      }) ;
+      });
     } else {
       return await this.baseFs.readdirPromise(pnpPath.resolvedPath, opts as any);
     }

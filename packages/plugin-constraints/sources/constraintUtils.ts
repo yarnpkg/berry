@@ -174,7 +174,10 @@ export function applyEngineReport(project: Project, {manifestUpdates, reportedEr
   const changedWorkspaces = new Map<Workspace, Record<string, any>>();
   const remainingErrors = new Map<Workspace, Array<AnnotatedError>>();
 
-  for (const [workspaceCwd, workspaceUpdates] of manifestUpdates) {
+  const errorEntries = [...reportedErrors.keys()]
+    .map(workspaceCwd => [workspaceCwd, new Map()] as const);
+
+  for (const [workspaceCwd, workspaceUpdates] of [...errorEntries, ...manifestUpdates]) {
     const workspaceErrors = reportedErrors.get(workspaceCwd)?.map(text => ({text, fixable: false})) ?? [];
     let changedWorkspace = false;
 

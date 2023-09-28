@@ -1,6 +1,6 @@
 import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath, VirtualFS} from '@yarnpkg/fslib';
 import fs                                                                     from 'fs';
-import {Module}                                                               from 'module';
+import {Module, isBuiltin}                                                    from 'module';
 import {URL, fileURLToPath}                                                   from 'url';
 
 import {PnpApi}                                                               from '../types';
@@ -127,7 +127,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const originalModuleResolveFilename = Module._resolveFilename;
 
   Module._resolveFilename = function(request: string, parent: (NodeModule & {pnpApiPath?: PortablePath}) | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
-    if (nodeUtils.isBuiltinModule(request))
+    if (isBuiltin(request))
       return request;
 
     if (!enableNativeHooks)

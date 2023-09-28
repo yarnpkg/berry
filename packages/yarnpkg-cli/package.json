@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "4.0.0-rc.48",
-  "stableVersion": "3.6.1",
+  "version": "4.0.0-rc.51",
+  "stableVersion": "3.6.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {

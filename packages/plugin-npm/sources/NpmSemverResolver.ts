@@ -48,6 +48,7 @@ export class NpmSemverResolver implements Resolver {
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
     const registryData = await npmHttpUtils.getPackageMetadata(descriptor, {
+      cache: opts.fetchOptions?.cache,
       project: opts.project,
       version: semver.valid(range.raw) ? range.raw : undefined,
     });
@@ -126,6 +127,7 @@ export class NpmSemverResolver implements Resolver {
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
     const registryData = await npmHttpUtils.getPackageMetadata(locator, {
+      cache: opts.fetchOptions?.cache,
       project: opts.project,
       version,
     });

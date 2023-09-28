@@ -7,6 +7,10 @@ import {useQuery}                  from 'react-query';
 import {resolve as resolveExports} from 'resolve.exports';
 import resolve                     from 'resolve';
 
+export const STANDARD_EXTENSIONS = [
+  `.js`, `.cjs`, `.mjs`,
+];
+
 export type PackageInfo = {
   error?: string;
   name: string;
@@ -72,8 +76,11 @@ export function usePackageInfo(name: string) {
   }).data!;
 }
 
-export function usePackageExists(name: string) {
+export function usePackageExists(name: string | null) {
   return useQuery([`packageExists`, name], async () => {
+    if (name === null)
+      return false;
+
     // eslint-disable-next-line no-restricted-globals
     const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}/package.json`);
 
@@ -172,11 +179,12 @@ export function useReleaseReadme({name, version}: {name: string, version: string
   return readmeHtmlSanitized;
 }
 
-function getResolutionFunction(releaseInfo: ReleaseInfo) {
+function getResolutionFunction(releaseInfo: ReleaseInfo, {extensions = STANDARD_EXTENSIONS}: {extensions?: Array<string>} = {}) {
   return (qualifier: string) => resolve.sync(qualifier, {
     basedir: `/`,
     includeCoreModules: true,
     paths: [],
+    extensions,
     isFile: path => releaseInfo.jsdelivr.files.some(file => file.name === path),
     isDirectory: path => releaseInfo.jsdelivr.files.some(file => file.name.startsWith(`${path}/`)),
     realpathSync: path => path,
@@ -190,7 +198,18 @@ function getResolutionFunction(releaseInfo: ReleaseInfo) {
   });
 }
 
-export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions}: {mainFields: Array<string>, conditions: Array<string>}) {
+function resolveQualifier(releaseInfo: ReleaseInfo, qualifier: string) {
+  const resolvedQualifier = new URL(qualifier, `https://example.com/`).pathname;
+  const resolutionFunction = getResolutionFunction(releaseInfo);
+
+  try {
+    return resolutionFunction(resolvedQualifier);
+  } catch {
+    return null;
+  }
+}
+
+export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions, extensions}: {mainFields: Array<string>, conditions: Array<string>, extensions?: Array<string>}) {
   const releaseInfo = useReleaseInfo({
     name,
     version,
@@ -203,16 +222,15 @@ export function useResolution({name, version}: {name: string, version: string}, 
   if (releaseInfo.npm.exports && !exportsResolution)
     return null;
 
-  const mainFieldResolution = mainFields.map(mainField => {
-    return releaseInfo.npm[mainField];
-  }).find(value => {
-    return typeof value === `string`;
-  });
+  if (exportsResolution)
+    return resolveQualifier(releaseInfo, exportsResolution);
 
-  const qualifier = exportsResolution ?? mainFieldResolution ?? `.`;
+  for (const mainField of mainFields) {
+    const resolution = resolveQualifier(releaseInfo, releaseInfo.npm[mainField] || `.`);
+    if (resolution !== null) {
+      return resolution;
+    }
+  }
 
-  const resolvedQualifier = new URL(qualifier, `https://example.com/`).pathname;
-  const resolutionFunction = getResolutionFunction(releaseInfo);
-
-  return resolutionFunction(resolvedQualifier);
+  return null;
 }

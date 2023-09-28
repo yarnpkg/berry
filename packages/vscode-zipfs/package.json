@@ -7,7 +7,7 @@
   "description": "Allows to easily inspect and modify files stored within zip archives.",
   "homepage": "https://github.com/yarnpkg/berry/blob/master/packages/vscode-zipfs",
   "icon": "icon.png",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.5",
   "stableVersion": "2.5.1",
   "engines": {
     "vscode": "^1.54.0",

@@ -1,9 +1,8 @@
 import {NativePath, PortablePath}     from '@yarnpkg/fslib';
 import fs                             from 'fs';
-import moduleExports                  from 'module';
+import moduleExports, {isBuiltin}     from 'module';
 import {fileURLToPath, pathToFileURL} from 'url';
 
-import * as nodeUtils                 from '../../loader/nodeUtils';
 import {packageImportsResolve}        from '../../node/resolve';
 import {PnpApi}                       from '../../types';
 import * as loaderUtils               from '../loaderUtils';
@@ -53,7 +52,7 @@ export async function resolve(
   nextResolve: typeof resolve,
 ): Promise<{ url: string, shortCircuit: boolean }> {
   const {findPnpApi} = (moduleExports as unknown) as { findPnpApi?: (path: NativePath) => null | PnpApi };
-  if (!findPnpApi || nodeUtils.isBuiltinModule(originalSpecifier))
+  if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
 
   let specifier = originalSpecifier;

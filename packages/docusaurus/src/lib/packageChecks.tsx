@@ -1,8 +1,8 @@
-import Link                                              from '@docusaurus/Link';
-import {useLocation}                                     from '@docusaurus/router';
-import React                                             from 'react';
+import Link                                                                   from '@docusaurus/Link';
+import {useLocation}                                                          from '@docusaurus/router';
+import React                                                                  from 'react';
 
-import {usePackageExists, useReleaseInfo, useResolution} from './npmTools';
+import {STANDARD_EXTENSIONS, usePackageExists, useReleaseInfo, useResolution} from './npmTools';
 
 export type CheckResult = {
   ok: true;
@@ -42,6 +42,9 @@ export const checks: Array<Check> = [{
   success: `The package has a commonjs entry point`,
   failure: `The package doesn't seem to have a commonjs entry point`,
   useCheck: ({name, version}) => {
+    if (name.startsWith(`@types/`))
+      return {ok: true};
+
     const releaseInfo = useReleaseInfo({
       name,
       version,
@@ -69,6 +72,9 @@ export const checks: Array<Check> = [{
   success: `The package has an ESM entry point`,
   failure: `The package doesn't seem to have an ESM entry point`,
   useCheck: ({name, version}) => {
+    if (name.startsWith(`@types/`))
+      return {ok: true};
+
     const releaseInfo = useReleaseInfo({
       name,
       version,
@@ -102,7 +108,7 @@ export const checks: Array<Check> = [{
     });
 
     for (const name of [`preinstall`, `install`, `postinstall`])
-      if (releaseInfo.npm.scripts[name])
+      if (releaseInfo.npm.scripts?.[name])
         return {ok: false};
 
     return {ok: true};
@@ -120,23 +126,38 @@ export const checks: Array<Check> = [{
       version,
     });
 
+    const tsExtensions = [
+      ...STANDARD_EXTENSIONS.map(ext => ext.replace(`js`, `ts`)),
+      ...STANDARD_EXTENSIONS.map(ext => ext.replace(`js`, `tsx`)),
+      `.d.ts`,
+    ];
+
+    const extensions = [
+      ...STANDARD_EXTENSIONS,
+      ...tsExtensions,
+    ];
+
     const resolution = useResolution({
       name,
       version,
     }, {
-      mainFields: [`main`],
+      mainFields: [`main`, `types`, `typings`],
       conditions: [`default`, `require`, `import`, `node`, `types`],
+      extensions,
     });
 
-    const dtPackageName = `@types/${name.replace(/^@([^/]*)\/([^/]*)$/, `$1__$2`)}`;
+    const dtPackageName = !name.startsWith(`@types`)
+      ? `@types/${name.replace(/^@([^/]*)\/([^/]*)$/, `$1__$2`)}`
+      : null;
+
     const dtPackage = usePackageExists(dtPackageName);
 
     const fileNoExt = resolution?.replace(/(\.[mc]?(js|ts)x?|\.d\.ts)$/, ``);
-    for (const ext of [`.mtsx`, `.mts`, `.tsx`, `ts`, `.d.ts`])
+    for (const ext of tsExtensions)
       if (releaseInfo.jsdelivr.fileSet.has(`${fileNoExt}${ext}`))
         return {ok: true};
 
-    if (dtPackage) {
+    if (dtPackageName && dtPackage) {
       const search = new URLSearchParams(location.search);
 
       for (const key of search.keys())
@@ -145,8 +166,8 @@ export const checks: Array<Check> = [{
 
       search.set(`name`, dtPackageName);
 
-      const href = `http://localhost:3000/package?${search}`;
-      return {ok: true, message: <>Types are available via <Link href={href}>DefinitelyTyped</Link></>};
+      const href = `/package?${search}`;
+      return {ok: true, message: <>Types are available via <Link href={href}>{dtPackageName}</Link></>};
     }
 
     return {ok: false};
