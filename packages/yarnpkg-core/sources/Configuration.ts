@@ -760,7 +760,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
         // singleValue's source should be a single file path, if it exists
         const source = configUtils.getSource(valueBase);
         if (source && source[0] !== `<`)
-          cwd = ppath.dirname(npath.toPortablePath(source));
+          cwd = ppath.dirname(source as PortablePath);
 
         return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
       }
@@ -1118,7 +1118,7 @@ export class Configuration {
       }
     }
 
-    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [npath.fromPortablePath(rcFile.path), rcFile.data]));
+    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
 
     // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
     const resolvedRcFileCwd = PortablePath.dot;
@@ -1593,7 +1593,7 @@ export class Configuration {
         const homeFolder = folderUtils.getHomeFolder();
 
         const rcFileFolder = source[0] !== `<`
-          ? ppath.dirname(npath.toPortablePath(source))
+          ? ppath.dirname(source as PortablePath)
           : null;
 
         const isHomeRcFile = rcFileFolder !== null

@@ -1,5 +1,6 @@
 import {BaseCommand}                                                      from '@yarnpkg/cli';
 import {Configuration, MessageName, StreamReport, formatUtils, treeUtils} from '@yarnpkg/core';
+import {npath}                                                            from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                           from 'clipanion';
 import {inspect}                                                          from 'util';
 
@@ -73,12 +74,15 @@ export default class ConfigCommand extends BaseCommand {
             getNativePaths: true,
           });
 
-          const source = configuration.sources.get(name);
+          const source = configuration.sources.get(name) ?? `<default>`;
+          const sourceAsNativePath = source && source[0] !== `<`
+            ? npath.fromPortablePath(source)
+            : source;
 
           if (this.verbose) {
-            report.reportJson({key: name, effective, source});
+            report.reportJson({key: name, effective, source: sourceAsNativePath});
           } else {
-            report.reportJson({key: name, effective, source, ...data});
+            report.reportJson({key: name, effective, source: sourceAsNativePath, ...data});
           }
         }
       } else {
