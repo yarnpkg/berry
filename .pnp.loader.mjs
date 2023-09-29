@@ -16,8 +16,8 @@ const PortablePath = {
 const npath = Object.create(path);
 const ppath = Object.create(path.posix);
 npath.cwd = () => process.cwd();
-ppath.cwd = path !== path.posix ? () => toPortablePath(process.cwd()) : process.cwd;
-if (path !== path.posix) {
+ppath.cwd = process.platform === `win32` ? () => toPortablePath(process.cwd()) : process.cwd;
+if (process.platform === `win32`) {
   ppath.resolve = (...segments) => {
     if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
       return path.posix.resolve(...segments);
@@ -64,8 +64,8 @@ function toPortablePathWin32(p) {
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
   return p;
 }
-const toPortablePath = path !== path.posix ? toPortablePathWin32 : (p) => p;
-const fromPortablePath = path !== path.posix ? fromPortablePathWin32 : (p) => p;
+const toPortablePath = process.platform === `win32` ? toPortablePathWin32 : (p) => p;
+const fromPortablePath = process.platform === `win32` ? fromPortablePathWin32 : (p) => p;
 npath.fromPortablePath = fromPortablePath;
 npath.toPortablePath = toPortablePath;
 function convertPath(targetPathUtils, sourcePath) {

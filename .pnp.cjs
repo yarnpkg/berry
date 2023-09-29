@@ -35020,8 +35020,8 @@ const Filename = {
 const npath = Object.create(path__default.default);
 const ppath = Object.create(path__default.default.posix);
 npath.cwd = () => process.cwd();
-ppath.cwd = path__default.default !== path__default.default.posix ? () => toPortablePath(process.cwd()) : process.cwd;
-if (path__default.default !== path__default.default.posix) {
+ppath.cwd = process.platform === `win32` ? () => toPortablePath(process.cwd()) : process.cwd;
+if (process.platform === `win32`) {
   ppath.resolve = (...segments) => {
     if (segments.length > 0 && ppath.isAbsolute(segments[0])) {
       return path__default.default.posix.resolve(...segments);
@@ -35068,8 +35068,8 @@ function toPortablePathWin32(p) {
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
   return p;
 }
-const toPortablePath = path__default.default !== path__default.default.posix ? toPortablePathWin32 : (p) => p;
-const fromPortablePath = path__default.default !== path__default.default.posix ? fromPortablePathWin32 : (p) => p;
+const toPortablePath = process.platform === `win32` ? toPortablePathWin32 : (p) => p;
+const fromPortablePath = process.platform === `win32` ? fromPortablePathWin32 : (p) => p;
 npath.fromPortablePath = fromPortablePath;
 npath.toPortablePath = toPortablePath;
 function convertPath(targetPathUtils, sourcePath) {
