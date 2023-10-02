@@ -1,7 +1,5 @@
-import PLimit         from 'p-limit';
-import {Worker}       from 'worker_threads';
-
-import * as nodeUtils from './nodeUtils';
+import pLimit, {Limit} from 'p-limit';
+import {Worker}        from 'worker_threads';
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
@@ -9,12 +7,32 @@ type PoolWorker<TOut> = Worker & {
   [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
 };
 
-export class WorkerPool<TIn, TOut> {
+export interface TaskPool<TIn, TOut> {
+  run(data: TIn): Promise<TOut>;
+}
+
+export class AsyncPool<TIn, TOut> implements TaskPool<TIn, TOut> {
+  private limit: Limit;
+
+  constructor(private fn: (data: TIn) => Promise<TOut>, opts: {poolSize: number}) {
+    this.limit = pLimit(opts.poolSize);
+  }
+
+  run(data: TIn) {
+    return this.limit(() => this.fn(data));
+  }
+}
+
+export class WorkerPool<TIn, TOut> implements TaskPool<TIn, TOut> {
   private workers: Array<PoolWorker<TOut>> = [];
-  private limit = PLimit(nodeUtils.availableParallelism());
+
   private cleanupInterval: ReturnType<typeof setInterval>;
 
-  constructor(private source: string) {
+  private limit: Limit;
+
+  constructor(private source: string, opts: {poolSize: number}) {
+    this.limit = pLimit(opts.poolSize);
+
     this.cleanupInterval = setInterval(() => {
       if (this.limit.pendingCount === 0 && this.limit.activeCount === 0) {
         // Start terminating one worker at a time when there are no tasks left.

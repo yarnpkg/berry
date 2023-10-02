@@ -777,6 +777,21 @@
         }
       }
     },
+    "taskPoolConcurrency": {
+      "_package": "@yarnpkg/core",
+      "title": "Maximal amount of concurrent heavy task processing.",
+      "description": "We default to the platform parallelism, but for some CI, `os.cpus` may not report accurate values and may overwhelm their containers.",
+      "type": "number",
+      "default": "os.availableParallelism()"
+    },
+    "workerPoolMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Execution strategy for heavy tasks.",
+      "description": "By default will use workers when performing heavy tasks, such as converting tgz files to zip. This setting can be used to disable workers and use a regular in-thread async processing.",
+      "type": "string",
+      "enum": ["async", "workers"],
+      "default": "workers"
+    },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
       "title": "Define the minimal amount of time between two telemetry events, in days.",
