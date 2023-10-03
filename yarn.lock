@@ -4974,7 +4974,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.15"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.2.1-rc"
+    typescript: "npm:5.3.0-beta"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5093,7 +5093,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.2.1-rc"
+    typescript: "npm:5.3.0-beta"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5275,7 +5275,7 @@ __metadata:
     react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.2.1-rc"
+    typescript: "npm:5.3.0-beta"
   dependenciesMeta:
     core-js:
       built: false
@@ -18029,23 +18029,23 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.2.1-rc":
-  version: 5.2.1-rc
-  resolution: "typescript@npm:5.2.1-rc"
+"typescript@npm:5.3.0-beta":
+  version: 5.3.0-beta
+  resolution: "typescript@npm:5.3.0-beta"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: be282d261a4f4858ace6038d684a062e215024638eef3579e2ca44226192900598f940f9d03edbc88ff4b3ebe31958c58d36cd2c6fa212926bad6b2b3ecb80a8
+  checksum: 6de8258af991d3a8dff20f864bb87dcdd0f753a9b37239385754cee6c3cf6b70b20d109c970dadc87d4f49c53bbc2b77dabd29bb01c0076affb03724ed5f3c65
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.2.1-rc#optional!builtin<compat/typescript>":
-  version: 5.2.1-rc
-  resolution: "typescript@patch:typescript@npm%3A5.2.1-rc#optional!builtin<compat/typescript>::version=5.2.1-rc&hash=f3b441"
+"typescript@patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>":
+  version: 5.3.0-beta
+  resolution: "typescript@patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: d9bbfec03bab60a013b05e8414ccf14586b113c0ecc73a1791e9f2eb8fd143f2c8a68e2453d7c5286252b2ce7e2358c68055f2de7fab3b9af089ce1e450b77c3
+  checksum: d0be2329d190d33592e53ddff064a17b4d0c2614e2749ec58eb629d575825c4f1427619a9c0d64dfb6b831e7fb8eb9f8084b5146ee8148efabd5e04382d201a3
   languageName: node
   linkType: hard
 
