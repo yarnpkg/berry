@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/plugin-compat",
   "version": "4.0.0-rc.52",
-  "stableVersion": "3.1.14",
+  "stableVersion": "3.1.15",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
