@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.18
 
 LABEL "com.github.actions.name"="local-yarn-command"
 LABEL "com.github.actions.description"="Run a Yarn command using the checked-in build"
