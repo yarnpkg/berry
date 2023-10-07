@@ -75,7 +75,7 @@ Semantic erroring goes a long way into letting you understand and address proble
 
 If you're creating a project from scratch, your project itself should work almost "out of the box". You may have to use `packageExtensions` from time to time to fix an occasional ghost dependency, but that remains uncommon, and this process is otherwise straightforward. Most tools in the ecosystem are designed and tested to work well in Yarn PnP environments, so problems are infrequent.
 
-:::warn
+:::warning
 A notable exception is React Native / Expo, which require using typical `node_modules` installs.
 :::
 
