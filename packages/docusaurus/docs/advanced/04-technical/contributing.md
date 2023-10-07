@@ -125,10 +125,10 @@ It's generally seen as [bad form](https://twitter.com/brian_d_vaughn/status/1224
 
 ## Writing documentation
 
-Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
+Our website is stored within the [`packages/docusaurus`](https://github.com/yarnpkg/berry/tree/master/packages/docusaurus) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/docusaurus/docs/advanced/04-technical/contributing.md)), then run the following command to spawn a local server and see your changes:
 
 ```bash
-yarn develop
+yarn start
 ```
 
 Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and spawn a fresh preview for everyone to see:
