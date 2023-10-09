@@ -125,17 +125,19 @@ It's generally seen as [bad form](https://twitter.com/brian_d_vaughn/status/1224
 
 ## Writing documentation
 
-Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
+We use the static-site-generator [Docusaurus](https://docusaurus.io/docs) to create HTML pages from [markdown](https://www.markdownguide.org/) and [mdx](https://mdxjs.com/docs/) files. 
+
+Our website is stored within the [`packages/docusaurus`](https://github.com/yarnpkg/berry/tree/master/packages/docusaurus) directory. You can change a page by modifying the corresponding markdown or mdx file in the `docs` folder. For example, you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/docusaurus/docs/advanced/04-technical/contributing.md).
+
+Then run the following command to spawn a local server and see your changes:
 
 ```bash
-yarn develop
+yarn start
 ```
 
 Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and spawn a fresh preview for everyone to see:
 
 ![](https://user-images.githubusercontent.com/1037931/61949789-3cc09300-afac-11e9-9817-89e97771a4e1.png)
-
-Once everything is green and a maintainer has reviewed your changes, we'll merge them and a bot will automatically trigger a rebuild of the website and update the `docs` folder 🙂
 
 ## Profiling
 
