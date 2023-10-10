@@ -44,9 +44,6 @@ export enum Errors {
 
 export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
   // Those are getters because they can change after memory growth
-  get HEAP8() {
-    return emZip.HEAP8;
-  },
   get HEAPU8() {
     return emZip.HEAPU8;
   },
@@ -90,9 +87,7 @@ export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
   ZIP_CM_DEFLATE: 8,
 
   uint08S: emZip._malloc(1),
-  uint16S: emZip._malloc(2),
   uint32S: emZip._malloc(4),
-  uint64S: emZip._malloc(8),
 
   malloc: emZip._malloc,
   free: emZip._free,
@@ -109,10 +104,8 @@ export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
 
   delete: emZip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
 
-  stat: emZip.cwrap(`zip_stat`, `number`, [`number`, `string`, `number`, `number`]),
   statIndex: emZip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
 
-  fopen: emZip.cwrap(`zip_fopen`, `number`, [`number`, `string`, `number`]),
   fopenIndex: emZip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
 
   fread: emZip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
@@ -155,21 +148,16 @@ export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
     tell: emZip.cwrap(`zip_source_tell`, `number`, [`number`]),
     read: emZip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
     error: emZip.cwrap(`zip_source_error`, `number`, [`number`]),
-    setMtime: emZip.cwrap(`zip_source_set_mtime`, `number`, [`number`, `number`]),
   },
 
   struct: {
-    stat: emZip.cwrap(`zipstruct_stat`, `number`, []),
     statS: emZip.cwrap(`zipstruct_statS`, `number`, []),
-    statName: emZip.cwrap(`zipstruct_stat_name`, `string`, [`number`]),
-    statIndex: emZip.cwrap(`zipstruct_stat_index`, `number`, [`number`]),
     statSize: emZip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
     statCompSize: emZip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
     statCompMethod: emZip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
     statMtime: emZip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
     statCrc: emZip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
 
-    error: emZip.cwrap(`zipstruct_error`, `number`, []),
     errorS: emZip.cwrap(`zipstruct_errorS`, `number`, []),
     errorCodeZip: emZip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`]),
   },

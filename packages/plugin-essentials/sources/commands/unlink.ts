@@ -1,8 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                                 from '@yarnpkg/cli';
-import {Cache, Configuration, miscUtils, Project, StreamReport, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                  from 'clipanion';
-import micromatch                                                            from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
+import {Cache, Configuration, miscUtils, Project, structUtils} from '@yarnpkg/core';
+import {npath, ppath}                                          from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                    from 'clipanion';
+import micromatch                                              from 'micromatch';
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnlinkCommand extends BaseCommand {
@@ -68,7 +68,7 @@ export default class UnlinkCommand extends BaseCommand {
           if (this.all) {
             for (const workspace of project2.workspaces)
               if (workspace.manifest.name)
-                workspacesToUnlink.add(structUtils.stringifyIdent(workspace.locator));
+                workspacesToUnlink.add(structUtils.stringifyIdent(workspace.anchoredLocator));
 
             if (workspacesToUnlink.size === 0) {
               throw new UsageError(`No workspace found to be unlinked in the target project`);
@@ -77,7 +77,7 @@ export default class UnlinkCommand extends BaseCommand {
             if (!workspace2.manifest.name)
               throw new UsageError(`The target workspace doesn't have a name and thus cannot be unlinked`);
 
-            workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.locator));
+            workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.anchoredLocator));
           }
         } else {
           const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
@@ -92,13 +92,11 @@ export default class UnlinkCommand extends BaseCommand {
       return !workspacesToUnlink.has(pattern.descriptor.fullName);
     });
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report});
+      quiet: this.context.quiet,
+    }, {
+      cache,
     });
-
-    return report.exitCode();
   }
 }

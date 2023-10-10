@@ -23,7 +23,7 @@ export default class SetVersionCommand extends BaseCommand {
 
       By default it only will set the \`packageManager\` field at the root of your project, but if the referenced release cannot be represented this way, if you already have \`yarnPath\` configured, or if you set the \`--yarn-path\` command line flag, then the release will also be downloaded from the Yarn GitHub repository, stored inside your project, and referenced via the \`yarnPath\` settings from your project \`.yarnrc.yml\` file.
 
-      A very good use case for this command is to enforce the version of Yarn used by the any single member of your team inside a same project - by doing this you ensure that you have control on Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting a different behavior than you.
+      A very good use case for this command is to enforce the version of Yarn used by any single member of your team inside the same project - by doing this you ensure that you have control over Yarn upgrades and downgrades (including on your deployment servers), and get rid of most of the headaches related to someone using a slightly different version and getting different behavior.
 
       The version specifier can be:
 
@@ -192,7 +192,7 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
       const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
         cwd: tmpDir,
-        env: {...process.env, YARN_IGNORE_PATH: `1`},
+        env: {...configuration.env, YARN_IGNORE_PATH: `1`},
       });
 
       bundleVersion = stdout.trim();

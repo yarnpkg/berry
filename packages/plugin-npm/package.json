@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/plugin-npm",
-  "version": "3.0.0-rc.39",
-  "stableVersion": "2.7.3",
+  "version": "3.0.0-rc.53",
+  "stableVersion": "2.7.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -11,6 +11,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "enquirer": "^2.3.6",
+    "lodash": "^4.17.15",
     "semver": "^7.1.2",
     "ssri": "^6.0.1",
     "tslib": "^2.4.0"
@@ -20,6 +21,7 @@
     "@yarnpkg/plugin-pack": "workspace:^"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.136",
     "@types/semver": "^7.1.0",
     "@types/ssri": "^6.0.1",
     "@yarnpkg/core": "workspace:^",
@@ -45,6 +47,6 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   }
 }

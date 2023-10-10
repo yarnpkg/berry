@@ -1,5 +1,4 @@
 import {ppath}        from '@yarnpkg/fslib';
-import Module         from 'module';
 import os             from 'os';
 
 import * as execUtils from './execUtils';
@@ -22,15 +21,10 @@ export const openUrl = typeof openUrlBinary !== `undefined`
   }
   : undefined;
 
-export function builtinModules(): Set<string> {
-  // @ts-expect-error
-  return new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
-}
-
 function getLibc() {
-  // It seems that Node randomly crashes with no output under some circumstances when running a getReport() on Windows.
-  // Since Windows has no libc anyway, shortcut this path.
-  if (process.platform === `win32`)
+  // Darwin and Windows have their own standard libraries, and the getReport() call is costly.
+  // It also seems that Node randomly crashes with no output under some circumstances when running a getReport() on Windows.
+  if (process.platform === `darwin` || process.platform === `win32`)
     return null;
 
   const report: any = process.report?.getReport() ?? {};
@@ -140,8 +134,7 @@ export function getCaller() {
 
 export function availableParallelism() {
   // TODO: Use os.availableParallelism directly when dropping support for Node.js < 19.4.0
-  if (`availableParallelism` in os)
-    // @ts-expect-error - No types yet
+  if (typeof os.availableParallelism !== `undefined`)
     return os.availableParallelism();
 
   return Math.max(1, os.cpus().length);

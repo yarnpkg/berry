@@ -1,9 +1,9 @@
-import {VirtualFS, npath}                                                      from '@yarnpkg/fslib';
-import fs                                                                      from 'fs';
-import {fileURLToPath, pathToFileURL}                                          from 'url';
+import {VirtualFS, npath}               from '@yarnpkg/fslib';
+import fs                               from 'fs';
+import {fileURLToPath, pathToFileURL}   from 'url';
 
-import {HAS_JSON_IMPORT_ASSERTION_REQUIREMENT, WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
-import * as loaderUtils                                                        from '../loaderUtils';
+import {WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
+import * as loaderUtils                 from '../loaderUtils';
 
 // The default `load` doesn't support reading from zip files
 export async function load(
@@ -15,7 +15,7 @@ export async function load(
     };
   },
   nextLoad: typeof load,
-): Promise<{ format: string, source: string, shortCircuit: boolean }> {
+): Promise<{ format: string, source?: string, shortCircuit: boolean }> {
   const url = loaderUtils.tryParseURL(urlString);
   if (url?.protocol !== `file:`)
     return nextLoad(urlString, context, nextLoad);
@@ -26,7 +26,7 @@ export async function load(
   if (!format)
     return nextLoad(urlString, context, nextLoad);
 
-  if (HAS_JSON_IMPORT_ASSERTION_REQUIREMENT && format === `json` && context.importAssertions?.type !== `json`) {
+  if (format === `json` && context.importAssertions?.type !== `json`) {
     const err = new TypeError(`[ERR_IMPORT_ASSERTION_TYPE_MISSING]: Module "${urlString}" needs an import assertion of type "json"`) as TypeError & { code: string };
     err.code = `ERR_IMPORT_ASSERTION_TYPE_MISSING`;
     throw err;
@@ -49,7 +49,7 @@ export async function load(
 
   return {
     format,
-    source: await fs.promises.readFile(filePath, `utf8`),
+    source: format === `commonjs` ? undefined : await fs.promises.readFile(filePath, `utf8`),
     shortCircuit: true,
   };
 }

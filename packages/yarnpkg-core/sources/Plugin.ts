@@ -91,9 +91,9 @@ export interface Hooks {
    * add some logging.
    */
   wrapNetworkRequest?: (
-    executor: () => Promise<any>,
+    executor: () => Promise<httpUtils.Response>,
     extra: WrapNetworkRequestInfo
-  ) => Promise<() => Promise<any>>;
+  ) => Promise<() => Promise<httpUtils.Response>>;
 
   /**
    * Called before the build, to compute a global hash key that we will use
@@ -138,6 +138,18 @@ export interface Hooks {
    * `Project` class.
    */
   validateProject?: (
+    project: Project,
+    report: {
+      reportWarning: (name: MessageName, text: string) => void;
+      reportError: (name: MessageName, text: string) => void;
+    }
+  ) => void;
+
+  /**
+   * Called during the `Post-install validation step` of the `install` method
+   * from the `Project` class.
+   */
+  validateProjectAfterInstall?: (
     project: Project,
     report: {
       reportWarning: (name: MessageName, text: string) => void;

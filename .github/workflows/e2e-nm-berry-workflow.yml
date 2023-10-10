@@ -4,13 +4,6 @@ on:
   push:
     branches:
     - master
-    paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-nm-berry-workflow.yml
-    - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-nm/sources/hoist.ts
-    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
-    - packages/plugin-nm/sources/NodeModulesLinker.ts
   pull_request:
     paths:
     - .github/actions/prepare/action.yml

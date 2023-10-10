@@ -1,17 +1,18 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["ES2019", "DOM"],
+    "lib": ["ES2022", "DOM"],
     "module": "commonjs",
     "noImplicitReturns": true,
     "resolveJsonModule": true,
     "strict": true,
     "alwaysStrict": false,
-    "target": "ES2019",
+    "target": "ES2021",
     "declaration": true,
     "importHelpers": true,
     "isolatedModules": true,
@@ -19,9 +20,13 @@
     "useUnknownInCatchVariables": false
   },
   "exclude": [
-    "packages/*/{lib,bin,bundles}",
+    "packages/*/lib",
+    "packages/*/bin",
+    "packages/*/bundles",
     "packages/yarnpkg-doctor/fixtures",
     "packages/gatsby",
+    "packages/docusaurus",
+    "packages/docusaurus/build",
     "packages/yarnpkg-libzip/artifacts"
   ]
 }

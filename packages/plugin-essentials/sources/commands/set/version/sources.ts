@@ -28,11 +28,12 @@ const cloneWorkflow = ({repository, branch}: {repository: string, branch: string
 const updateWorkflow = ({branch}: {branch: string}) => [
   [`git`, `fetch`, `origin`, `--depth=1`, getBranchRef(branch), `--force`],
   [`git`, `reset`, `--hard`, `FETCH_HEAD`],
-  [`git`, `clean`, `-dfx`],
+  [`git`, `clean`, `-dfx`, `-e`, `packages/yarnpkg-cli/bundles`],
 ];
 
-const buildWorkflow = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, target: PortablePath) => [
+const buildWorkflow = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, output: PortablePath, target: PortablePath) => [
   [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, ppath.resolve(target, plugin as Filename)])), ...noMinify ? [`--no-minify`] : [], `|`],
+  [`mv`, `packages/yarnpkg-cli/bundles/yarn.js`, npath.fromPortablePath(output), `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
@@ -70,6 +71,10 @@ export default class SetVersionSourcesCommand extends BaseCommand {
     description: `An array of additional plugins that should be included in the bundle`,
   });
 
+  dryRun = Option.Boolean(`-n,--dry-run`, false, {
+    description: `If set, the bundle will be built but not added to the project`,
+  });
+
   noMinify = Option.Boolean(`--no-minify`, false, {
     description: `Build a bundle for development (debugging) - non-minified and non-mangled`,
   });
@@ -100,19 +105,24 @@ export default class SetVersionSourcesCommand extends BaseCommand {
       report.reportInfo(MessageName.UNNAMED, `Building a fresh bundle`);
       report.reportSeparator();
 
-      await runWorkflow(buildWorkflow(this, target), {configuration, context: this.context, target});
+      const commitHash = await execUtils.execvp(`git`, [`rev-parse`, `--short`, `HEAD`], {cwd: target, strict: true});
+      const bundlePath = ppath.join(target, `packages/yarnpkg-cli/bundles/yarn-${commitHash.stdout.trim()}.js`);
 
-      report.reportSeparator();
+      if (!xfs.existsSync(bundlePath)) {
+        await runWorkflow(buildWorkflow(this, bundlePath, target), {configuration, context: this.context, target});
+        report.reportSeparator();
+      }
 
-      const bundlePath = ppath.resolve(target, `packages/yarnpkg-cli/bundles/yarn.js`);
       const bundleBuffer = await xfs.readFilePromise(bundlePath);
 
-      const {bundleVersion} = await setVersion(configuration, null, async () => bundleBuffer, {
-        report,
-      });
+      if (!this.dryRun) {
+        const {bundleVersion} = await setVersion(configuration, null, async () => bundleBuffer, {
+          report,
+        });
 
-      if (!this.skipPlugins) {
-        await updatePlugins(this, bundleVersion, {project, report, target});
+        if (!this.skipPlugins) {
+          await updatePlugins(this, bundleVersion, {project, report, target});
+        }
       }
     });
 
@@ -167,7 +177,7 @@ export async function prepareRepo(spec: PrepareSpec, {configuration, report, tar
     try {
       await runWorkflow(updateWorkflow(spec), {configuration, context: spec.context, target});
       ready = true;
-    } catch (error) {
+    } catch {
       report.reportSeparator();
       report.reportWarning(MessageName.UNNAMED, `Repository update failed; we'll try to regenerate it`);
     }

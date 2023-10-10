@@ -278,14 +278,16 @@ export class Manifest {
 
     this.bin = new Map();
     if (typeof data.bin === `string`) {
-      if (this.name !== null) {
+      if (data.bin.trim() === ``) {
+        errors.push(new Error(`Invalid bin field`));
+      } else if (this.name !== null) {
         this.bin.set(this.name.name, normalizeSlashes(data.bin));
       } else {
         errors.push(new Error(`String bin field, but no attached package name`));
       }
     } else if (typeof data.bin === `object` && data.bin !== null) {
       for (const [key, value] of Object.entries(data.bin)) {
-        if (typeof value !== `string`) {
+        if (typeof value !== `string` || value.trim() === ``) {
           errors.push(new Error(`Invalid bin definition for '${key}'`));
           continue;
         }
@@ -720,10 +722,10 @@ export class Manifest {
 
   setRawField(name: string, value: any, {after = []}: {after?: Array<string>} = {}) {
     const afterSet = new Set(after.filter(key => {
-      return Object.prototype.hasOwnProperty.call(this.raw, key);
+      return Object.hasOwn(this.raw, key);
     }));
 
-    if (afterSet.size === 0 || Object.prototype.hasOwnProperty.call(this.raw, name)) {
+    if (afterSet.size === 0 || Object.hasOwn(this.raw, name)) {
       this.raw[name] = value;
     } else {
       const oldRaw = this.raw;

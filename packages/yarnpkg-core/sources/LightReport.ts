@@ -80,10 +80,6 @@ export class LightReport extends Report {
     return await realCb();
   }
 
-  async startCacheReport<T>(cb: () => Promise<T>) {
-    return await cb();
-  }
-
   reportSeparator() {
   }
 
@@ -115,6 +111,10 @@ export class LightReport extends Report {
 
   reportJson(data: any) {
     // Just ignore the json output
+  }
+
+  reportFold(title: string, text: string) {
+    // Just ignore the fold output
   }
 
   async finalize() {

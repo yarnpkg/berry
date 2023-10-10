@@ -39,10 +39,6 @@ exports[`Commands workspace foreach --since runs on workspaces changed since bra
   "stderr": "",
   "stdout": "Test Workspace B
 Test Workspace C
-Test Workspace D
-Test Workspace E
-Test Workspace F
-Test Workspace G
 Done
 ",
 }
@@ -54,10 +50,6 @@ exports[`Commands workspace foreach --since runs on workspaces changed since com
   "stderr": "",
   "stdout": "Test Workspace B
 Test Workspace C
-Test Workspace D
-Test Workspace E
-Test Workspace F
-Test Workspace G
 Done
 ",
 }
@@ -210,6 +202,34 @@ Done
 }
 `;
 
+exports[`Commands workspace foreach should only run the scripts on workspaces that match the --include path list with globs 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "[workspace-c]: Process started
+[workspace-c]: Test Workspace C
+[workspace-c]: Process exited (exit code 0)
+
+[workspace-d]: Process started
+[workspace-d]: Test Workspace D
+[workspace-d]: Process exited (exit code 0)
+
+[workspace-e]: Process started
+[workspace-e]: Test Workspace E
+[workspace-e]: Process exited (exit code 0)
+
+[workspace-f]: Process started
+[workspace-f]: Test Workspace F
+[workspace-f]: Process exited (exit code 0)
+
+[workspace-g]: Process started
+[workspace-g]: Test Workspace G
+[workspace-g]: Process exited (exit code 0)
+Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should prefix the output with run with --verbose 1`] = `
 {
   "code": 0,
@@ -263,7 +283,7 @@ Done
 }
 `;
 
-exports[`Commands workspace foreach should run on current and descendant workspaces by default 1`] = `
+exports[`Commands workspace foreach should run on current and descendant workspaces when --worktree is set 1`] = `
 {
   "code": 0,
   "stderr": "",

@@ -1,9 +1,9 @@
-import {Configuration, formatUtils, Manifest, miscUtils, nodeUtils, Project, Workspace} from '@yarnpkg/core';
-import {PortablePath}                                                                   from '@yarnpkg/fslib';
-import get                                                                              from 'lodash/get';
-import set                                                                              from 'lodash/set';
-import toPath                                                                           from 'lodash/toPath';
-import unset                                                                            from 'lodash/unset';
+import {Configuration, formatUtils, Manifest, miscUtils, nodeUtils, Project, treeUtils, Workspace} from '@yarnpkg/core';
+import {PortablePath}                                                                              from '@yarnpkg/fslib';
+import get                                                                                         from 'lodash/get';
+import set                                                                                         from 'lodash/set';
+import toPath                                                                                      from 'lodash/toPath';
+import unset                                                                                       from 'lodash/unset';
 
 export type ProcessResult = {
   manifestUpdates: Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>;
@@ -14,7 +14,7 @@ export interface Engine {
   process(): Promise<ProcessResult | null>;
 }
 
-export class Index<T extends Record<keyof T, any>> {
+export class Index<T extends {[key: string]: any}> {
   private items: Array<T> = [];
 
   private indexes: {
@@ -37,7 +37,7 @@ export class Index<T extends Record<keyof T, any>> {
     this.items.push(item);
 
     for (const field of this.indexedFields) {
-      const value = Object.prototype.hasOwnProperty.call(item, field)
+      const value = Object.hasOwn(item, field)
         ? item[field]
         : undefined;
 
@@ -65,7 +65,7 @@ export class Index<T extends Record<keyof T, any>> {
     for (const [field_, value] of filterEntries) {
       const field = field_ as keyof T;
 
-      const index = Object.prototype.hasOwnProperty.call(this.indexes, field)
+      const index = Object.hasOwn(this.indexes, field)
         ? this.indexes[field]
         : undefined;
 
@@ -98,8 +98,8 @@ export class Index<T extends Record<keyof T, any>> {
       result = result.filter(item => {
         for (const [field, value] of sequentialFilters) {
           const valid = typeof value !== `undefined`
-            ? Object.prototype.hasOwnProperty.call(item, field) && item[field] === value
-            : Object.prototype.hasOwnProperty.call(item, field) === false;
+            ? Object.hasOwn(item, field) && item[field] === value
+            : Object.hasOwn(item, field) === false;
 
           if (!valid) {
             return false;
@@ -155,7 +155,7 @@ function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller)
       fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
 
       if (caller.column !== null) {
-        fileParts.push(formatUtils.pretty(configuration, caller.line, formatUtils.Type.NUMBER));
+        fileParts.push(formatUtils.pretty(configuration, caller.column, formatUtils.Type.NUMBER));
       }
     }
 
@@ -165,16 +165,19 @@ function formatStackLine(configuration: Configuration, caller: nodeUtils.Caller)
   return parts.join(` `);
 }
 
-export function applyEngineReport(project: Project, {manifestUpdates, reportedErrors}: ProcessResult, {fix}: {fix?: boolean} = {}) {
-  type AnnotatedError = {
-    text: string;
-    fixable: boolean;
-  };
+export type AnnotatedError = {
+  text: string;
+  fixable: boolean;
+};
 
+export function applyEngineReport(project: Project, {manifestUpdates, reportedErrors}: ProcessResult, {fix}: {fix?: boolean} = {}) {
   const changedWorkspaces = new Map<Workspace, Record<string, any>>();
   const remainingErrors = new Map<Workspace, Array<AnnotatedError>>();
 
-  for (const [workspaceCwd, workspaceUpdates] of manifestUpdates) {
+  const errorEntries = [...reportedErrors.keys()]
+    .map(workspaceCwd => [workspaceCwd, new Map()] as const);
+
+  for (const [workspaceCwd, workspaceUpdates] of [...errorEntries, ...manifestUpdates]) {
     const workspaceErrors = reportedErrors.get(workspaceCwd)?.map(text => ({text, fixable: false})) ?? [];
     let changedWorkspace = false;
 
@@ -236,4 +239,38 @@ export function applyEngineReport(project: Project, {manifestUpdates, reportedEr
     changedWorkspaces,
     remainingErrors,
   };
+}
+
+export function convertReportToRoot(errors: Map<Workspace, Array<AnnotatedError>>, {configuration}: {configuration: Configuration}) {
+  const root: treeUtils.TreeRoot = {children: []};
+
+  for (const [workspace, workspaceErrors] of errors) {
+    const errorNodes: Array<treeUtils.TreeNode> = [];
+    for (const error of workspaceErrors) {
+      const lines = error.text.split(/\n/);
+
+      if (error.fixable)
+        lines[0] = `${formatUtils.pretty(configuration, `⚙`, `gray`)} ${lines[0]}`;
+
+      errorNodes.push({
+        value: formatUtils.tuple(formatUtils.Type.NO_HINT, lines[0]),
+        children: lines.slice(1).map(line => ({
+          value: formatUtils.tuple(formatUtils.Type.NO_HINT, line),
+        })),
+      });
+    }
+
+    const workspaceNode: treeUtils.TreeNode = {
+      value: formatUtils.tuple(formatUtils.Type.LOCATOR, workspace.anchoredLocator),
+      children: miscUtils.sortMap(errorNodes, node => node.value![1]),
+    };
+
+    root.children.push(workspaceNode);
+  }
+
+  root.children = miscUtils.sortMap(root.children, node => {
+    return node.value![1];
+  });
+
+  return root;
 }

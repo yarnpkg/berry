@@ -1,13 +1,13 @@
-import {npath, toFilename} from '@yarnpkg/fslib';
+import {Filename, npath} from '@yarnpkg/fslib';
 
-import {WatchManager}      from '../sources/WatchManager';
+import {WatchManager}    from '../sources/WatchManager';
 
 describe(`WatchManager`, () => {
   const manager = new WatchManager();
 
   it(`should trigger callback when dir entries added`, () => {
     const dirPath = npath.toPortablePath(`/abc`);
-    const dirList = new Set([`file1.ts`, `file2.ts`].map(x => toFilename(x)));
+    const dirList = new Set([`file1.ts`, `file2.ts`]) as Set<Filename>;
     const callback = jest.fn();
     const watcherCallback = jest.fn();
 
@@ -15,7 +15,7 @@ describe(`WatchManager`, () => {
     watcher.on(`rename`, watcherCallback);
 
     manager.notifyWatchers(() => ({
-      dirList: new Set([`file1.ts`, `file5.ts`, `file2.ts`, `file3.ts`].map(x => toFilename(x))),
+      dirList: new Set([`file1.ts`, `file5.ts`, `file2.ts`, `file3.ts`]) as Set<Filename>,
       realPath: dirPath,
       resolvedPath: dirPath,
     }));
@@ -32,7 +32,7 @@ describe(`WatchManager`, () => {
   it(`should trigger callback when dir entries removed`, () => {
     const manager = new WatchManager();
     const dirPath = npath.toPortablePath(`/abc`);
-    const dirList = new Set([`file1.ts`, `file2.ts`, `file3.ts`, `file4.ts`].map(x => toFilename(x)));
+    const dirList = new Set([`file1.ts`, `file2.ts`, `file3.ts`, `file4.ts`]) as Set<Filename>;
     const callback = jest.fn();
     const watcherCallback = jest.fn();
 
@@ -40,7 +40,7 @@ describe(`WatchManager`, () => {
     watcher.on(`rename`, watcherCallback);
 
     manager.notifyWatchers(() => ({
-      dirList: new Set([`file1.ts`, `file4.ts`].map(x => toFilename(x))),
+      dirList: new Set([`file1.ts`, `file4.ts`]) as Set<Filename>,
       resolvedPath: dirPath,
       realPath: dirPath,
     }));
@@ -55,7 +55,7 @@ describe(`WatchManager`, () => {
 
   it(`should not trigger closed callback`, () => {
     const dirPath = npath.toPortablePath(`/abc`);
-    const dirList = new Set([`file1.ts`].map(x => toFilename(x)));
+    const dirList = new Set([`file1.ts`]) as Set<Filename>;
     const callback = jest.fn();
     const watcherCallback = jest.fn();
 
@@ -64,7 +64,7 @@ describe(`WatchManager`, () => {
     watcher.close();
 
     manager.notifyWatchers(() => ({
-      dirList: new Set([`file1.ts`, `file2.ts`].map(x => toFilename(x))),
+      dirList: new Set([`file1.ts`, `file2.ts`]) as Set<Filename>,
       resolvedPath: dirPath,
       realPath: dirPath,
     }));

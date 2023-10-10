@@ -1,6 +1,5 @@
 const {npath, ppath, xfs, Filename} = require(`@yarnpkg/fslib`);
 const cp = require(`child_process`);
-const {satisfies} = require(`semver`);
 
 const {
   fs: {writeFile, writeJson},
@@ -565,8 +564,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should support the 'paths' option from require.resolve (same dependency tree)`,
     makeTemporaryEnv(
       {
@@ -603,8 +601,7 @@ describe(`Plug'n'Play`, () => {
     ),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should terminate when the 'paths' option from require.resolve includes empty string and there is no .pnp.cjs in the working dir`,
     makeTemporaryEnv(
       {
@@ -716,8 +713,7 @@ describe(`Plug'n'Play`, () => {
     }),
   );
 
-  testIf(
-    () => satisfies(process.versions.node, `>=8.9.0`),
+  test(
     `it should throw when using require.resolve with unsupported options`,
     makeTemporaryEnv(
       {
@@ -1345,6 +1341,25 @@ describe(`Plug'n'Play`, () => {
   );
 
   test(
+    `it shouldn't automatically unplug packages with skipped postinstall scripts`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+        dependenciesMeta: {
+          [`no-deps-scripted`]: {built: false},
+        },
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        expect(xfs.existsSync(`${path}/.yarn/unplugged`)).toEqual(false);
+      },
+    ),
+  );
+
+  test(
     `it should allow packages to define whether they should be unplugged (true)`,
     makeTemporaryEnv(
       {
@@ -1651,13 +1666,42 @@ describe(`Plug'n'Play`, () => {
     }, async ({path, run, source}) => {
       await run(`add`, `no-deps`);
 
-      expect(xfs.existsSync(`${path}/${Filename.pnpData}`)).toBeTruthy();
+      expect(xfs.existsSync(ppath.join(path, Filename.pnpData))).toBeTruthy();
 
-      await writeFile(`${path}/file.js`, `
+      await writeFile(ppath.join(path, `file.js`), `
         console.log(require.resolve('no-deps'));
       `);
 
       await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+    }),
+  );
+
+  test(
+    `it should work when working inside a sandbox environment full of symlinks, and pnpEnableInlining is set to false`,
+    makeTemporaryEnv({}, {
+      pnpEnableInlining: false,
+    }, async ({path, run, source}) => {
+      await run(`add`, `no-deps`);
+
+      await writeFile(ppath.join(path, `file.js`), `
+        console.log(require.resolve('no-deps'));
+      `);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await xfs.mkdirpPromise(testSandboxPath);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpData), ppath.join(testSandboxPath, Filename.pnpData)),
+        xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
+      ]);
+
+      await expect(run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      })).resolves.toBeTruthy();
     }),
   );
 
@@ -1792,6 +1836,36 @@ describe(`Plug'n'Play`, () => {
           code: 1,
           stderr: expect.stringContaining(`is controlled by multiple pnpapi instances`),
         });
+      });
+    }),
+  );
+
+
+  test(
+    `it should initialize a symlinked pnpapi module only once when working inside a sandbox environment full of symlinks`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `file.js`), `
+        console.log('found duplicate pnpapi instances:', require('pnpapi') !== require('module').findPnpApi(${JSON.stringify(ppath.join(path, Filename.manifest))}));
+      `);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await xfs.mkdirpPromise(testSandboxPath);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+        xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
+      ]);
+
+      await expect(run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      })).resolves.toMatchObject({
+        code: 0,
+        stdout: expect.stringContaining(`found duplicate pnpapi instances: false`),
       });
     }),
   );
@@ -2161,5 +2235,21 @@ describe(`Plug'n'Play`, () => {
         });
       },
     ),
+  );
+
+  test(
+    `it should emit a warning for circular dependency exports access`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+      await xfs.writeFilePromise(ppath.join(path, `a.js`), `require('./b.js');`);
+      await xfs.writeFilePromise(ppath.join(path, `b.js`), `require('./a.js').foo;`);
+
+      await expect(run(`node`, `./a.js`)).resolves.toMatchObject({
+        code: 0,
+        stdout: ``,
+        stderr: expect.stringContaining(`of module exports inside circular dependency`),
+      });
+    }),
   );
 });

@@ -1,12 +1,14 @@
 import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
-import {npath, PortablePath, ppath, xfs}                                                                                                          from '@yarnpkg/fslib';
+import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
 import capitalize                                                                                                                                 from 'lodash/capitalize';
 import querystring                                                                                                                                from 'querystring';
 import semver                                                                                                                                     from 'semver';
 
-import {tryParseGitURL}                                                                                                                           from './hosted-git-info-parse';
+import {normalizeRepoUrl}                                                                                                                         from './utils/normalizeRepoUrl';
+
+export {normalizeRepoUrl};
 
 function makeGitEnvironment() {
   return {
@@ -82,7 +84,7 @@ export function splitRepoUrl(url: string): RepoUrlParts {
         throw new Error(`Assertion failed: The ${key} parameter must be a literal string`);
 
     const requestedProtocol = Object.values(TreeishProtocols).find(protocol => {
-      return Object.prototype.hasOwnProperty.call(extra, protocol);
+      return Object.hasOwn(extra, protocol);
     });
 
     const [protocol, request] = typeof requestedProtocol !== `undefined`
@@ -115,29 +117,6 @@ export function splitRepoUrl(url: string): RepoUrlParts {
   }
 }
 
-export function normalizeRepoUrl(url: string, {git = false}: {git?: boolean} = {}) {
-  // "git+https://" isn't an actual Git protocol. It's just a way to
-  // disambiguate that this URL points to a Git repository.
-  url = url.replace(/^git\+https:/, `https:`);
-
-  // We support this as an alias to GitHub repositories
-  url = url.replace(/^(?:github:|https:\/\/github\.com\/)?(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)(?:\.git)?(#.*)?$/, `https://github.com/$1/$2.git$3`);
-
-  // We support GitHub `/tarball/` URLs
-  url = url.replace(/^https:\/\/github\.com\/(?!\.{1,2}\/)([a-zA-Z0-9._-]+)\/(?!\.{1,2}(?:#|$))([a-zA-Z0-9._-]+?)\/tarball\/(.+)?$/, `https://github.com/$1/$2.git#$3`);
-
-  if (git) {
-    // Try to normalize the URL in a way that git accepts.
-    const parsedUrl = tryParseGitURL(url);
-    if (parsedUrl)
-      url = parsedUrl.href;
-
-    // The `git+` prefix doesn't mean anything at all for Git.
-    url = url.replace(/^git\+([^:]+):/, `$1:`);
-  }
-
-  return url;
-}
 
 export function normalizeLocator(locator: Locator) {
   return structUtils.makeLocator(locator, normalizeRepoUrl(locator.reference));
@@ -266,7 +245,7 @@ export async function resolveUrl(url: string, configuration: Configuration) {
     }
   };
 
-  return `${repo}#${resolve(protocol, request)}`;
+  return normalizeRepoUrl(`${repo}#${resolve(protocol, request)}`);
 }
 
 export async function clone(url: string, configuration: Configuration) {
@@ -354,9 +333,9 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
     throw new UsageError(`This command can only be run from within a Yarn project`);
 
   const ignoredPaths = [
+    ppath.resolve(project.cwd, Filename.lockfile),
     ppath.resolve(project.cwd, project.configuration.get(`cacheFolder`)),
     ppath.resolve(project.cwd, project.configuration.get(`installStatePath`)),
-    ppath.resolve(project.cwd, project.configuration.get(`lockfileFilename`)),
     ppath.resolve(project.cwd, project.configuration.get(`virtualFolder`)),
   ];
   await project.configuration.triggerHook((hooks: Hooks) => {

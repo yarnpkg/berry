@@ -14,6 +14,10 @@ export function isTaggedYarnVersion(version: string | null) {
   return !!(semver.valid(version) && version!.match(/^[^-]+(-rc\.[0-9]+)?$/));
 }
 
+export function plural(n: number, {one, more, zero = more}: {zero?: string, one: string, more: string}) {
+  return n === 0 ? zero : n === 1 ? one : more;
+}
+
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
@@ -116,7 +120,12 @@ export function convertMapsToIndexableObjects<T>(arg: T): MapValueToObjectValue<
   return arg as MapValueToObjectValue<T>;
 }
 
-export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
+export interface GetSetMap<K, V> {
+  get(k: K): V | undefined;
+  set(k: K, v: V): void;
+}
+
+export function getFactoryWithDefault<K, T>(map: GetSetMap<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -125,7 +134,7 @@ export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () 
   return value;
 }
 
-export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
+export function getArrayWithDefault<K, T>(map: GetSetMap<K, Array<T>>, key: K) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -134,7 +143,7 @@ export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
   return value;
 }
 
-export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
+export function getSetWithDefault<K, T>(map: GetSetMap<K, Set<T>>, key: K) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -143,7 +152,7 @@ export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
   return value;
 }
 
-export function getMapWithDefault<K, MK, MV>(map: Map<K, Map<MK, MV>>, key: K) {
+export function getMapWithDefault<K, MK, MV>(map: GetSetMap<K, Map<MK, MV>>, key: K) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -464,7 +473,7 @@ export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: 
   return value.replace(regex, (...args) => {
     const {variableName, colon, fallback} = args[args.length - 1];
 
-    const variableExist = Object.prototype.hasOwnProperty.call(env, variableName);
+    const variableExist = Object.hasOwn(env, variableName);
     const variableValue = env[variableName];
 
     if (variableValue)
@@ -571,4 +580,21 @@ export function mergeIntoTarget<T extends object, S extends Array<object>>(targe
  */
 export function toMerged<S extends Array<object>>(...sources: S): MergeObjects<S, {}> {
   return mergeIntoTarget({}, ...sources);
+}
+
+export function groupBy<T extends Record<string, any>, K extends keyof T>(items: Iterable<T>, key: K): {[V in T[K]]?: Array<Extract<T, {[_ in K]: V}>>} {
+  const groups: Record<string, any> = Object.create(null);
+
+  for (const item of items) {
+    const groupKey = item[key];
+
+    groups[groupKey] ??= [];
+    groups[groupKey].push(item);
+  }
+
+  return groups;
+}
+
+export function parseInt(val: string | number) {
+  return typeof val === `string` ? Number.parseInt(val, 10) : val;
 }

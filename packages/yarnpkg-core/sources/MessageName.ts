@@ -96,6 +96,12 @@ export enum MessageName {
   RESOLUTION_FAILED = 82,
   AUTOMERGE_GIT_ERROR = 83,
   CONSTRAINTS_CHECK_FAILED = 84,
+  UPDATED_RESOLUTION_RECORD = 85,
+  EXPLAIN_PEER_DEPENDENCIES_CTA = 86,
+  MIGRATION_SUCCESS = 87,
+  VERSION_NOTICE = 88,
+  TIPS_NOTICE = 89,
+  OFFLINE_MODE_ENABLED = 90,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

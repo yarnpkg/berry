@@ -1,7 +1,7 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "4.0.0-rc.39",
-  "stableVersion": "3.4.1",
+  "version": "4.0.0-rc.53",
+  "stableVersion": "3.6.4",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -39,17 +39,16 @@
     "@yarnpkg/plugin-workspace-tools": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "ci-info": "^3.2.0",
-    "clipanion": "^3.2.0-rc.10",
+    "clipanion": "^4.0.0-rc.2",
     "semver": "^7.1.2",
     "tslib": "^2.4.0",
-    "typanion": "^3.3.0"
+    "typanion": "^3.14.0"
   },
   "devDependencies": {
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
-    "@yarnpkg/pnpify": "workspace:^",
-    "micromatch": "^4.0.2"
+    "@yarnpkg/pnpify": "workspace:^"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^"
@@ -110,6 +109,6 @@
     "directory": "packages/yarnpkg-cli"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   }
 }

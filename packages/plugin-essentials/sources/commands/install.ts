@@ -1,10 +1,29 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                     from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                                                                                    from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                from '@yarnpkg/parsers';
-import CI                                                                                                                        from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                      from 'clipanion';
-import * as t                                                                                                                    from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                                              from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils, reportOptionDeprecations} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                                                               from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                                                         from '@yarnpkg/parsers';
+import CI                                                                                                                                                                                                                 from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                                                               from 'clipanion';
+import semver                                                                                                                                                                                                             from 'semver';
+import * as t                                                                                                                                                                                                             from 'typanion';
+
+const LOCKFILE_MIGRATION_RULES: Array<{
+  selector: (version: number) => boolean;
+  name: keyof ConfigurationValueMap;
+  value: any;
+}> = [{
+  selector: v => v === -1,
+  name: `nodeLinker`,
+  value: `node-modules`,
+}, {
+  selector: v => v !== -1 && v < 8,
+  name: `enableGlobalCache`,
+  value: false,
+}, {
+  selector: v => v !== -1 && v < 8,
+  name: `compressionLevel`,
+  value: `mixed`,
+}];
 
 // eslint-disable-next-line arca/no-default-export
 export default class YarnCommand extends BaseCommand {
@@ -111,122 +130,69 @@ export default class YarnCommand extends BaseCommand {
     // Google App Engine
     const isGCP = !!process.env.FUNCTION_TARGET || !!process.env.GOOGLE_RUNTIME;
 
-    const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
-      const deprecationReport = await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
-        includeFooter: false,
-      }, async report => {
-        if (error) {
-          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, message);
-        } else {
-          report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, message);
-        }
-      });
+    const deprecationExitCode = await reportOptionDeprecations({
+      configuration,
+      stdout: this.context.stdout,
+    }, [{
+      // The ignoreEngines flag isn't implemented at the moment. I'm still
+      // considering how it should work in the context of plugins - would it
+      // make sense to allow them (or direct dependencies) to define new
+      // "engine check"? Since it has implications regarding the architecture,
+      // I prefer to postpone the decision to later. Also it wouldn't be a flag,
+      // it would definitely be a configuration setting.
+      option: this.ignoreEngines,
+      message: `The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`,
+      error: !CI.VERCEL,
+    }, {
+      // The registry flag isn't supported anymore because it makes little sense
+      // to use a registry for a single install. You instead want to configure it
+      // for all installs inside a project, so through the .yarnrc.yml file. Note
+      // that if absolutely necessary, the old behavior can be emulated by adding
+      // the YARN_NPM_REGISTRY_SERVER variable to the environment.
+      option: this.registry,
+      message: `The --registry option is deprecated; prefer setting npmRegistryServer in your .yarnrc.yml file`,
+    }, {
+      // The preferOffline flag doesn't make much sense with our architecture.
+      // It would require the fetchers to also act as resolvers, which is
+      // doable but quirky. Since a similar behavior is available via the
+      // --cached flag in yarn add, I prefer to move it outside of the core and
+      // let someone implement this "resolver-that-reads-the-cache" logic.
+      option: this.preferOffline,
+      message: `The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`,
+      error: !CI.VERCEL,
+    }, {
+      // Since the production flag would yield a different lockfile than the
+      // regular installs, it's not part of the regular `install` command anymore.
+      // Instead, we expect users to use it with `yarn workspaces focus` (which can
+      // be used even outside of monorepos).
+      option: this.production,
+      message: `The --production option is deprecated on 'install'; use 'yarn workspaces focus' instead`,
+      error: true,
+    }, {
+      // Yarn 2+ isn't interactive during installs anyway, so there's no real point
+      // to this flag at the moment.
+      option: this.nonInteractive,
+      message: `The --non-interactive option is deprecated`,
+      error: !isGCP,
+    }, {
+      // We want to prevent people from using --frozen-lockfile
+      // Note: it's been deprecated because we're now locking more than just the
+      // lockfile - for example the PnP artifacts will also be locked.
+      option: this.frozenLockfile,
+      message: `The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`,
+      callback: () => this.immutable = this.frozenLockfile,
+    }, {
+      // We also want to prevent them from using --cache-folder
+      // Note: it's been deprecated because the cache folder should be set from
+      // the settings. Otherwise there would be a very high chance that multiple
+      // Yarn commands would use different caches, causing unexpected behaviors.
+      option: this.cacheFolder,
+      message: `The cache-folder option has been deprecated; use rc settings instead`,
+      error: !CI.NETLIFY,
+    }]);
 
-      if (deprecationReport.hasErrors()) {
-        return deprecationReport.exitCode();
-      } else {
-        return null;
-      }
-    };
-
-    // The ignoreEngines flag isn't implemented at the moment. I'm still
-    // considering how it should work in the context of plugins - would it
-    // make sense to allow them (or direct dependencies) to define new
-    // "engine check"? Since it has implications regarding the architecture,
-    // I prefer to postpone the decision to later. Also it wouldn't be a flag,
-    // it would definitely be a configuration setting.
-    if (typeof this.ignoreEngines !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`, {
-        error: !CI.VERCEL,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // The registry flag isn't supported anymore because it makes little sense
-    // to use a registry for a single install. You instead want to configure it
-    // for all installs inside a project, so through the .yarnrc.yml file. Note
-    // that if absolutely necessary, the old behavior can be emulated by adding
-    // the YARN_NPM_REGISTRY_SERVER variable to the environment.
-    if (typeof this.registry !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --registry option is deprecated; prefer setting npmRegistryServer in your .yarnrc.yml file`, {
-        error: false,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // The preferOffline flag doesn't make much sense with our architecture.
-    // It would require the fetchers to also act as resolvers, which is
-    // doable but quirky. Since a similar behavior is available via the
-    // --cached flag in yarn add, I prefer to move it outside of the core and
-    // let someone implement this "resolver-that-reads-the-cache" logic.
-    if (typeof this.preferOffline !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`, {
-        error: !CI.VERCEL,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // Since the production flag would yield a different lockfile than the
-    // regular installs, it's not part of the regular `install` command anymore.
-    // Instead, we expect users to use it with `yarn workspaces focus` (which can
-    // be used even outside of monorepos).
-    if (typeof this.production !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --production option is deprecated on 'install'; use 'yarn workspaces focus' instead`, {
-        error: true,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // Yarn 2 isn't interactive during installs anyway, so there's no real point
-    // to this flag at the moment.
-    if (typeof this.nonInteractive !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --non-interactive option is deprecated`, {
-        error: !isGCP,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // We want to prevent people from using --frozen-lockfile
-    // Note: it's been deprecated because we're now locking more than just the
-    // lockfile - for example the PnP artifacts will also be locked.
-    if (typeof this.frozenLockfile !== `undefined`) {
-      await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: false,
-      });
-
-      this.immutable = this.frozenLockfile;
-    }
-
-    // We also want to prevent them from using --cache-folder
-    // Note: it's been deprecated because the cache folder should be set from
-    // the settings. Otherwise there would be a very high chance that multiple
-    // Yarn commands would use different caches, causing unexpected behaviors.
-    if (typeof this.cacheFolder !== `undefined`) {
-      const exitCode = await reportDeprecation(`The cache-folder option has been deprecated; use rc settings instead`, {
-        error: !CI.NETLIFY,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
+    if (deprecationExitCode !== null)
+      return deprecationExitCode;
 
     const updateMode = this.mode === InstallMode.UpdateLockfile;
     if (updateMode && (this.immutable || this.immutableCache))
@@ -242,47 +208,25 @@ export default class YarnCommand extends BaseCommand {
         stdout: this.context.stdout,
         includeFooter: false,
       }, async report => {
+        let changed = false;
+
+        if (await autofixLegacyPlugins(configuration, immutable)) {
+          report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically removed core plugins that are now builtins 👍`);
+          changed = true;
+        }
+
         if (await autofixMergeConflicts(configuration, immutable)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
+          changed = true;
+        }
+
+        if (changed) {
           report.reportSeparator();
         }
       });
 
       if (fixReport.hasErrors()) {
         return fixReport.exitCode();
-      }
-    }
-
-    if (configuration.projectCwd !== null && typeof configuration.sources.get(`nodeLinker`) === `undefined`) {
-      const projectCwd = configuration.projectCwd;
-
-      let content;
-      try {
-        content = await xfs.readFilePromise(ppath.join(projectCwd, Filename.lockfile), `utf8`);
-      } catch {}
-
-      // If migrating from a v1 install, we automatically enable the node-modules linker,
-      // since that's likely what the author intended to do.
-      if (content?.includes(`yarn lockfile v1`)) {
-        const nmReport = await StreamReport.start({
-          configuration,
-          json: this.json,
-          stdout: this.context.stdout,
-          includeFooter: false,
-        }, async report => {
-          report.reportInfo(MessageName.AUTO_NM_SUCCESS, `Migrating from Yarn 1; automatically enabling the compatibility node-modules linker 👍`);
-          report.reportSeparator();
-
-          configuration.use(`<compat>`, {nodeLinker: `node-modules`}, projectCwd, {overwrite: true});
-
-          await Configuration.updateConfiguration(projectCwd, {
-            nodeLinker: `node-modules`,
-          });
-        });
-
-        if (nmReport.hasErrors()) {
-          return nmReport.exitCode();
-        }
       }
     }
 
@@ -294,9 +238,48 @@ export default class YarnCommand extends BaseCommand {
         includeFooter: false,
       }, async report => {
         if (Configuration.telemetry?.isNew) {
+          Configuration.telemetry.commitTips();
+
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Yarn will periodically gather anonymous telemetry: https://yarnpkg.com/advanced/telemetry`);
           report.reportInfo(MessageName.TELEMETRY_NOTICE, `Run ${formatUtils.pretty(configuration, `yarn config set --home enableTelemetry 0`, formatUtils.Type.CODE)} to disable`);
           report.reportSeparator();
+        } else if (Configuration.telemetry?.shouldShowTips) {
+          const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
+            latest: {stable: string, canary: string};
+            tips: Array<{message: string, url?: string}>;
+          } | null;
+
+          if (data !== null) {
+            let newVersion: [string, string] | null = null;
+            if (YarnVersion !== null) {
+              const isRcBinary = semver.prerelease(YarnVersion);
+              const releaseType = isRcBinary ? `canary` : `stable`;
+              const candidate = data.latest[releaseType];
+
+              if (semver.gt(candidate, YarnVersion)) {
+                newVersion = [releaseType, candidate];
+              }
+            }
+
+            if (newVersion) {
+              Configuration.telemetry.commitTips();
+
+              report.reportInfo(MessageName.VERSION_NOTICE, `${formatUtils.applyStyle(configuration, `A new ${newVersion[0]} version of Yarn is available:`, formatUtils.Style.BOLD)} ${structUtils.prettyReference(configuration, newVersion[1])}!`);
+              report.reportInfo(MessageName.VERSION_NOTICE, `Upgrade now by running ${formatUtils.pretty(configuration, `yarn set version ${newVersion[1]}`, formatUtils.Type.CODE)}`);
+              report.reportSeparator();
+            } else {
+              const tip = Configuration.telemetry.selectTip(data.tips);
+
+              if (tip) {
+                report.reportInfo(MessageName.TIPS_NOTICE, formatUtils.pretty(configuration, tip.message, formatUtils.Type.MARKDOWN_INLINE));
+
+                if (tip.url)
+                  report.reportInfo(MessageName.TIPS_NOTICE, `Learn more at ${tip.url}`);
+
+                report.reportSeparator();
+              }
+            }
+          }
         }
       });
 
@@ -306,6 +289,37 @@ export default class YarnCommand extends BaseCommand {
     }
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
+
+    const lockfileLastVersion = project.lockfileLastVersion;
+    if (lockfileLastVersion !== null) {
+      const compatReport = await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        const newSettings: Record<string, any> = {};
+
+        for (const rule of LOCKFILE_MIGRATION_RULES) {
+          if (rule.selector(lockfileLastVersion) && typeof configuration.sources.get(rule.name) === `undefined`) {
+            configuration.use(`<compat>`, {[rule.name]: rule.value}, project.cwd, {overwrite: true});
+            newSettings[rule.name] = rule.value;
+          }
+        }
+
+        if (Object.keys(newSettings).length > 0) {
+          await Configuration.updateConfiguration(project.cwd, newSettings);
+
+          report.reportInfo(MessageName.MIGRATION_SUCCESS, `Migrated your project to the latest Yarn version 🚀`);
+          report.reportSeparator();
+        }
+      });
+
+      if (compatReport.hasErrors()) {
+        return compatReport.exitCode();
+      }
+    }
+
     const cache = await Cache.find(configuration, {immutable: immutableCache, check: this.checkCache});
 
     if (!workspace)
@@ -330,16 +344,15 @@ export default class YarnCommand extends BaseCommand {
     // the Configuration and Install classes). Feel free to open an issue
     // in order to ask for design feedback before writing features.
 
-    const report = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       json: this.json,
       stdout: this.context.stdout,
-      includeLogs: true,
-    }, async (report: StreamReport) => {
-      await project.install({cache, report, immutable, checkResolutions, mode: this.mode});
+    }, {
+      cache,
+      immutable,
+      checkResolutions,
+      mode: this.mode,
     });
-
-    return report.exitCode();
   }
 }
 
@@ -349,7 +362,7 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (!configuration.projectCwd)
     return false;
 
-  const lockfilePath = ppath.join(configuration.projectCwd, configuration.get(`lockfileFilename`));
+  const lockfilePath = ppath.join(configuration.projectCwd, Filename.lockfile);
   if (!await xfs.existsPromise(lockfilePath))
     return false;
 
@@ -418,19 +431,31 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
         }
       }
     }
+
+    // We encode the cacheKeys inside the checksums so that the reconciliation
+    // can merge the data together
+    for (const key of Object.keys(variant)) {
+      if (key === `__metadata`)
+        continue;
+
+      const checksum = variant[key].checksum;
+      if (typeof checksum === `string` && checksum.includes(`/`))
+        continue;
+
+      variant[key].checksum = `${variant.__metadata.cacheKey}/${checksum}`;
+    }
   }
 
   const merged = Object.assign({}, ...variants);
 
   // We must keep the lockfile version as small as necessary to force Yarn to
   // refresh the merged-in lockfile metadata that may be missing.
-  merged.__metadata.version = Math.min(0, ...variants.map(variant => {
-    return variant.__metadata.version ?? Infinity;
-  }));
+  merged.__metadata.version = `${Math.min(...variants.map(variant => {
+    return parseInt(variant.__metadata.version ?? 0);
+  }))}`;
 
-  merged.__metadata.cacheKey = Math.min(0, ...variants.map(variant => {
-    return variant.__metadata.cacheKey ?? 0;
-  }));
+  // It shouldn't matter, since the cacheKey have been embed within the checksums
+  merged.__metadata.cacheKey = `merged`;
 
   // parse as valid YAML except that the objects become strings. We can use
   // that to detect them. Damn, it's really ugly though.
@@ -441,6 +466,53 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   await xfs.changeFilePromise(lockfilePath, stringifySyml(merged), {
     automaticNewlines: true,
   });
+
+  return true;
+}
+
+async function autofixLegacyPlugins(configuration: Configuration, immutable: boolean) {
+  if (!configuration.projectCwd)
+    return false;
+
+  const legacyPlugins: Array<PortablePath> = [];
+  const yarnPluginDir = ppath.join(configuration.projectCwd, `.yarn/plugins/@yarnpkg`);
+
+  const changed = await Configuration.updateConfiguration(configuration.projectCwd, {
+    plugins: plugins => {
+      if (!Array.isArray(plugins))
+        return plugins;
+
+      const filteredPlugins = plugins.filter((plugin: {spec: string, path: PortablePath}) => {
+        if (!plugin.path)
+          return true;
+
+        const resolvedPath = ppath.resolve(configuration.projectCwd!, plugin.path);
+        const isLegacy = LEGACY_PLUGINS.has(plugin.spec) && ppath.contains(yarnPluginDir, resolvedPath);
+
+        if (isLegacy)
+          legacyPlugins.push(resolvedPath);
+
+        return !isLegacy;
+      });
+
+      if (filteredPlugins.length === 0)
+        return Configuration.deleteProperty;
+
+      if (filteredPlugins.length === plugins.length)
+        return plugins;
+
+      return filteredPlugins;
+    },
+  }, {
+    immutable,
+  });
+
+  if (!changed)
+    return false;
+
+  await Promise.all(legacyPlugins.map(async pluginPath => {
+    await xfs.removePromise(pluginPath);
+  }));
 
   return true;
 }

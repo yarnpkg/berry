@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
 import {IdentHash, structUtils}                                                                         from '@yarnpkg/core';
-import {Project, StreamReport, Workspace, InstallMode}                                                  from '@yarnpkg/core';
+import {Project, Workspace, InstallMode}                                                                from '@yarnpkg/core';
 import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                                                             from 'clipanion';
 import {prompt}                                                                                         from 'enquirer';
@@ -141,14 +141,12 @@ export default class UpCommand extends BaseCommand {
       project.storedResolutions.delete(descriptor.descriptorHash);
     }
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async report => {
-      await project.install({cache, report});
+    }, {
+      cache,
+      mode: this.mode,
     });
-
-    return installReport.exitCode();
   }
 
   async executeUpClassic() {
@@ -186,6 +184,7 @@ export default class UpCommand extends BaseCommand {
 
       // The range has to be static
       const pseudoDescriptor = structUtils.parseDescriptor(pattern);
+      const stringifiedPseudoDescriptor = structUtils.stringifyIdent(pseudoDescriptor);
 
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
@@ -194,7 +193,12 @@ export default class UpCommand extends BaseCommand {
             return structUtils.stringifyIdent(descriptor);
           });
 
-          for (const stringifiedIdent of micromatch(stringifiedIdents, structUtils.stringifyIdent(pseudoDescriptor))) {
+          // As a special case, we support "*" as a pattern to upgrade all packages
+          const matches = stringifiedPseudoDescriptor === `*`
+            ? stringifiedIdents
+            : micromatch(stringifiedIdents, stringifiedPseudoDescriptor);
+
+          for (const stringifiedIdent of matches) {
             const ident = structUtils.parseIdent(stringifiedIdent);
 
             const existingDescriptor = workspace.manifest[target].get(ident.identHash);
@@ -342,13 +346,11 @@ export default class UpCommand extends BaseCommand {
     if (askedQuestions)
       this.context.stdout.write(`\n`);
 
-    const installReport = await StreamReport.start({
-      configuration,
+    return await project.installWithNewReport({
       stdout: this.context.stdout,
-    }, async report => {
-      await project.install({cache, report, mode: this.mode});
+    }, {
+      cache,
+      mode: this.mode,
     });
-
-    return installReport.exitCode();
   }
 }

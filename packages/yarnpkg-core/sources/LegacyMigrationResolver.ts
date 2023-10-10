@@ -1,4 +1,4 @@
-import {xfs, ppath}                                      from '@yarnpkg/fslib';
+import {xfs, ppath, Filename}                            from '@yarnpkg/fslib';
 import {parseSyml}                                       from '@yarnpkg/parsers';
 
 import {MessageName}                                     from './MessageName';
@@ -37,7 +37,7 @@ export class LegacyMigrationResolver implements Resolver {
   constructor(private readonly resolver: Resolver) { }
 
   async setup(project: Project, {report}: {report: Report}) {
-    const lockfilePath = ppath.join(project.cwd, project.configuration.get(`lockfileFilename`));
+    const lockfilePath = ppath.join(project.cwd, Filename.lockfile);
 
     // No need to enable it if the lockfile doesn't exist
     if (!xfs.existsSync(lockfilePath))
@@ -47,7 +47,7 @@ export class LegacyMigrationResolver implements Resolver {
     const parsed = parseSyml(content);
 
     // No need to enable it either if the lockfile is modern
-    if (Object.prototype.hasOwnProperty.call(parsed, `__metadata`))
+    if (Object.hasOwn(parsed, `__metadata`))
       return;
 
     const resolutions = this.resolutions = new Map();

@@ -1,0 +1,83 @@
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch?'
+        required: true
+        default: 'cherry-pick/'
+
+name: 'Release Branch'
+jobs:
+  release:
+    name: 'Release a new stable version'
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_OPTIONS: --max_old_space_size=8192
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{github.event.inputs.branch}}
+        token: ${{secrets.YARNBOT_TOKEN}}
+
+    - name: 'Retrieve all the relevant tags'
+      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+    - name: 'Use Node.js 18.x'
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+
+    - name: 'Build a binary for convenience'
+      run: |
+        yarn build:cli
+
+        TMPBIN=$(mktemp -d)
+        cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
+
+        grep -v "yarnPath:" .yarnrc.yml > $TMPBIN/.yarnrc.yml
+        cp $TMPBIN/.yarnrc.yml .yarnrc.yml
+        echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
+        git update-index --skip-worktree -- .yarnrc.yml
+
+    - name: 'Generate the release commits'
+      run: |
+        git config user.name "Yarn Bot"
+        git config user.email nison.mael+yarnbot@gmail.com
+
+        OLD_VERSION=$(YARN_IGNORE_PATH=1 node ./packages/yarnpkg-cli/bin/yarn.js --version)
+        ./scripts/release/01-release-tags.sh
+        NEW_VERSION=$(YARN_IGNORE_PATH=1 node ./packages/yarnpkg-cli/bin/yarn.js --version)
+
+        git push --follow-tags
+
+        if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
+          GH_TOKEN="${{secrets.YARNBOT_TOKEN}}" gh release create "@yarnpkg/cli/$NEW_VERSION" --title "v$NEW_VERSION" --verify-tag --generate-notes --notes-start-tag "@yarnpkg/cli/$OLD_VERSION"
+        fi
+
+    - name: 'Upload the releases'
+      run: |
+        yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
+        yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
+        ./scripts/release/02-release-builds.sh
+        ./scripts/release/03-release-npm.sh
+
+    - name: 'Updates the stableVersion field'
+      run: |
+        # Revert the change from "Build a binary for convenience"
+        git update-index --no-skip-worktree -- .yarnrc.yml
+        git checkout HEAD -- .yarnrc.yml
+
+        RELEASE_COMMIT=$(git rev-parse HEAD)
+        node ./scripts/stable-versions-store.js
+        git fetch origin master
+        git checkout master
+        node ./scripts/stable-versions-restore.js
+        HEAD_COMMIT=$(git rev-parse HEAD)
+
+        git reset --soft $HEAD_COMMIT
+        git checkout $RELEASE_COMMIT -- packages/*/bin/**
+        git add .
+        git commit -m 'Sync master with the changes from ${{github.event.inputs.branch}}'
+        git push

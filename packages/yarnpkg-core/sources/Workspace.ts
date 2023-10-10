@@ -1,5 +1,5 @@
 import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
-import globby                                      from 'globby';
+import fastGlob                                    from 'fast-glob';
 
 import {HardDependencies, Manifest}                from './Manifest';
 import {Project}                                   from './Project';
@@ -23,9 +23,6 @@ export class Workspace {
   // @ts-expect-error: This variable is set during the setup process
   public readonly anchoredLocator: Locator;
 
-  // @ts-expect-error: This variable is set during the setup process
-  public readonly locator: Locator;
-
   public readonly workspacesCwds: Set<PortablePath> = new Set();
 
   // @ts-expect-error: This variable is set during the setup process
@@ -44,37 +41,38 @@ export class Workspace {
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
     const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substring(0, 6)}`);
-    const reference = this.manifest.version ? this.manifest.version : `0.0.0`;
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.locator = structUtils.makeLocator(ident, reference);
+    this.anchoredDescriptor = structUtils.makeDescriptor(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.anchoredDescriptor = structUtils.makeDescriptor(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
-
-    // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
-    this.anchoredLocator = structUtils.makeLocator(this.locator, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
+    this.anchoredLocator = structUtils.makeLocator(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
     const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
 
-    const relativeCwds = await globby(patterns, {
+    if (patterns.length === 0)
+      return;
+
+    const relativeCwds = await fastGlob(patterns, {
       cwd: npath.fromPortablePath(this.cwd),
-      expandDirectories: false,
       onlyDirectories: true,
-      onlyFiles: false,
       ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
     });
 
-    // It seems that the return value of globby isn't in any guaranteed order - not even the directory listing order
+    // fast-glob returns results in arbitrary order
     relativeCwds.sort();
 
-    for (const relativeCwd of relativeCwds) {
+    await relativeCwds.reduce(async (previousTask, relativeCwd) => {
       const candidateCwd = ppath.resolve(this.cwd, npath.toPortablePath(relativeCwd));
 
-      if (xfs.existsSync(ppath.join(candidateCwd, `package.json`))) {
+      const exists = await xfs.existsPromise(ppath.join(candidateCwd, `package.json`));
+
+      // Ensure candidateCwds are added in order
+      await previousTask;
+      if (exists) {
         this.workspacesCwds.add(candidateCwd);
       }
-    }
+    }, Promise.resolve());
   }
 
   get anchoredPackage() {

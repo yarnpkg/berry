@@ -38,5 +38,11 @@ module.exports = {
         message: `Use 'semverUtils.validRange' instead`,
       },
     ],
+    'no-restricted-globals': [2,
+      {
+        name: `fetch`,
+        message: `Use 'httpUtils' instead`,
+      },
+    ],
   },
 };

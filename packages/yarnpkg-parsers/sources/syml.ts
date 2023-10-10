@@ -25,7 +25,7 @@ function isRemovableField(value: any): boolean {
   if (typeof value === `undefined`)
     return true;
 
-  if (typeof value === `object` && value !== null)
+  if (typeof value === `object` && value !== null && !Array.isArray(value))
     return Object.keys(value).every(key => isRemovableField(value[key]));
 
   return false;

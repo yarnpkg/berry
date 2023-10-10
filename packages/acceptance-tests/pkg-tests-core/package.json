@@ -10,8 +10,6 @@
   "devDependencies": {
     "@types/finalhandler": "1.1.0",
     "@types/invariant": "^2.2.30",
-    "@types/klaw": "^2.0.0",
-    "@types/minimatch": "^3.0.3",
     "@types/pem": "^1",
     "@types/semver": "^7.1.0",
     "@types/serve-static": "1.13.3",
@@ -20,10 +18,9 @@
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
+    "@yarnpkg/plugin-npm-cli": "workspace:^",
     "finalhandler": "^1.1.2",
     "invariant": "^2.2.4",
-    "klaw": "^2.1.1",
-    "minimatch": "^3.0.4",
     "pem": "dexus/pem",
     "pkg-tests-fixtures": "workspace:^",
     "semver": "^7.1.2",
@@ -38,9 +35,10 @@
     "directory": "packages/acceptance-tests/pkg-tests-core"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   },
   "dependencies": {
+    "typanion": "^3.14.0",
     "uuid": "^8.3.2"
   }
 }

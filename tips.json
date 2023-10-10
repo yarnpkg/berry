@@ -1,0 +1,33 @@
+[{
+  "message": "**Did you know?** Yarn will display a useful tip each day, but they can be disabled via `enableTips: false`."
+}, {
+  "message": "**Did you know?** All `scripts` entries are run by a Posix-like JS interpreter. Even on Windows!"
+}, {
+  "message": "**Did you know?** Yarn supports all three install types: node_modules, Plug'n'Play, and symlinks."
+}, {
+  "message": "**Did you know?** Constraints are a feature letting you write JS functions to validate your workspaces."
+}, {
+  "message": "**Did you know?** If it detects TypeScript, Yarn will auto-try to add the @types packages when needed."
+}, {
+  "message": "**Did you know?** Yarn can install workspaces from any git repository."
+}, {
+  "message": "**Did you know?** You can run scripts regardless of where you are in the project if they contain a colon; ex: `yarn build:frontend`."
+}, {
+  "message": "**Did you know?** You can run commands in any directory by adding the path as the first CLI parameter; ex: `yarn packages/client add clipanion`."
+}, {
+  "message": "**Did you know?** Yarn forbids by default unsecure http requests. This can be controlled via `unsafeHttpWhitelist`."
+}, {
+  "message": "**Did you know?** Package transpilation should be performed in `prepack` and not `prepublish`, which should only do package validation."
+}, {
+  "message": "**Did you know?** The `main`, `bin`, `exports`, ... fields can be overriden on publish by their counterparts found in `publishConfig`."
+}, {
+  "message": "**Did you know?** The Yarn shell lets you use `$1`, `$2`, and even `$@` in your `scripts` entries."
+}, {
+  "message": "**Did you know?** The `yarn patch` command lets you modify your dependencies and keep the changes in a separate patchfile."
+}, {
+  "message": "**Did you know?** You can build and try any Yarn pull request by running `yarn set version from sources --branch <PR#>`."
+}, {
+  "message": "**Did you know?** The `npmPublishRegistry` yarnrc setting lets you publish to a different registry than the one you fetch packages from."
+}, {
+  "message": "**Did you know?** Yarn's `portal:` or `link:` dependencies should be favored over per-tool alias configuration."
+}]

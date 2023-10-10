@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/extensions",
-  "version": "2.0.0-rc.21",
+  "version": "2.0.0-rc.35",
   "stableVersion": "1.1.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
@@ -34,6 +34,6 @@
     "/lib/**/*"
   ],
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=18.12.0"
   }
 }

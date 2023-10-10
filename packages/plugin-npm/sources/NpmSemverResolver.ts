@@ -47,11 +47,10 @@ export class NpmSemverResolver implements Resolver {
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
-      customErrorMessage: npmHttpUtils.customPackageError,
-      configuration: opts.project.configuration,
-      ident: descriptor,
-      jsonResponse: true,
+    const registryData = await npmHttpUtils.getPackageMetadata(descriptor, {
+      cache: opts.fetchOptions?.cache,
+      project: opts.project,
+      version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
     const candidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
@@ -127,17 +126,16 @@ export class NpmSemverResolver implements Resolver {
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
-    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(locator), {
-      customErrorMessage: npmHttpUtils.customPackageError,
-      configuration: opts.project.configuration,
-      ident: locator,
-      jsonResponse: true,
+    const registryData = await npmHttpUtils.getPackageMetadata(locator, {
+      cache: opts.fetchOptions?.cache,
+      project: opts.project,
+      version,
     });
 
-    if (!Object.prototype.hasOwnProperty.call(registryData, `versions`))
+    if (!Object.hasOwn(registryData, `versions`))
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
-    if (!Object.prototype.hasOwnProperty.call(registryData.versions, version))
+    if (!Object.hasOwn(registryData.versions, version))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return reference "${version}"`);
 
     const manifest = new Manifest();
@@ -151,26 +149,9 @@ export class NpmSemverResolver implements Resolver {
       for (const value of manifest.scripts.values()) {
         if (value.match(NODE_GYP_MATCH)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
-          opts.report.reportWarningOnce(MessageName.NODE_GYP_INJECTED, `${structUtils.prettyLocator(opts.project.configuration, locator)}: Implicit dependencies on node-gyp are discouraged`);
           break;
         }
       }
-    }
-
-    // Apparently some packages have a `deprecated` field set to an empty string
-    // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
-    // the package, completely removing the `deprecated` field). Both the npm website
-    // and all other package managers skip showing deprecation warnings in this case.
-    if (typeof manifest.raw.deprecated === `string` && manifest.raw.deprecated !== ``) {
-      const prefix = structUtils.prettyLocator(opts.project.configuration, locator);
-
-      // If the `deprecated` field contains anything, even only whitespace, the package
-      // is considered deprecated by both the npm website and CLI.
-      const deprecationMessage = manifest.raw.deprecated.match(/\S/)
-        ? `${prefix} is deprecated: ${manifest.raw.deprecated}`
-        : `${prefix} is deprecated`;
-
-      opts.report.reportWarningOnce(MessageName.DEPRECATED_PACKAGE, deprecationMessage);
     }
 
     return {

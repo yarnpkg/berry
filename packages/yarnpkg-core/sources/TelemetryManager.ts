@@ -1,9 +1,11 @@
 import {xfs, PortablePath, ppath} from '@yarnpkg/fslib';
 
 import {Configuration}            from './Configuration';
+import {YarnVersion}              from './YarnVersion';
 import * as hashUtils             from './hashUtils';
 import * as httpUtils             from './httpUtils';
 import * as miscUtils             from './miscUtils';
+import * as semverUtils           from './semverUtils';
 
 export enum MetricName {
   VERSION = `version`,
@@ -23,11 +25,59 @@ export type RegistryBlock = {
 };
 
 export type RegistryFile = {
+  lastTips?: number;
   lastUpdate?: number;
-  blocks?: {
-    [userId: string]: RegistryBlock;
-  };
+  blocks?: Record<string, RegistryBlock>;
+  displayedTips?: Array<number>;
 };
+
+export type Tip = {
+  selector?: string;
+  message: string;
+  url?: string;
+};
+
+export type DeriveParameters = {
+  state: RegistryFile;
+
+  timeNow: number;
+  timeZone: number;
+
+  randomInitialInterval: number;
+  updateInterval: number;
+};
+
+export function derive(params: DeriveParameters) {
+  const hour = 60 * 60 * 1000;
+  const day = 24 * hour;
+
+  const nowDay = Math.floor(params.timeNow / day);
+  const updateIntervalMs = params.updateInterval * day;
+
+  const lastUpdate = params.state.lastUpdate ?? params.timeNow + updateIntervalMs + Math.floor(updateIntervalMs * params.randomInitialInterval);
+  const nextUpdate = lastUpdate + updateIntervalMs;
+
+  // We reset the tips each day at 8am
+  const lastTips = params.state.lastTips ?? nowDay * day;
+  const nextTips = lastTips + day + 8 * hour - params.timeZone;
+
+  const triggerUpdate = nextUpdate <= params.timeNow;
+  const triggerTips = nextTips <= params.timeNow;
+
+  let nextState: RegistryFile | null = null;
+
+  if (triggerUpdate || triggerTips || !params.state.lastUpdate || !params.state.lastTips) {
+    nextState = {};
+
+    nextState.lastUpdate = triggerUpdate ? params.timeNow : lastUpdate;
+    nextState.lastTips = lastTips;
+
+    nextState.blocks = triggerUpdate ? {} : params.state.blocks;
+    nextState.displayedTips = params.state.displayedTips;
+  }
+
+  return {nextState, triggerUpdate, triggerTips, nextTips: triggerTips ? nowDay * day : lastTips};
+}
 
 export class TelemetryManager {
   private configuration: Configuration;
@@ -36,16 +86,77 @@ export class TelemetryManager {
   private hits: Map<MetricName, Map<string, number>> = new Map();
   private enumerators: Map<MetricName, Set<string>> = new Map();
 
+  private nextTips: number = 0;
+  private displayedTips: Array<number> = [];
+  private shouldCommitTips: boolean = false;
+
   public isNew: boolean;
+  public shouldShowTips: boolean;
 
   constructor(configuration: Configuration, accountId: string) {
     this.configuration = configuration;
 
     const registryFile = this.getRegistryPath();
     this.isNew = !xfs.existsSync(registryFile);
+    this.shouldShowTips = false;
 
     this.sendReport(accountId);
     this.startBuffer();
+  }
+
+  /**
+   * Prevents the tip from being displayed today, but doesn't actually display it.
+   * We use it when replacing the tip by something else (like an upgrade prompt).
+   */
+  commitTips() {
+    if (this.shouldShowTips) {
+      this.shouldCommitTips = true;
+    }
+  }
+
+  selectTip(allTips: Array<Tip | null>) {
+    const displayedTips = new Set(this.displayedTips);
+
+    const checkVersion = (selector: string | undefined) => {
+      if (selector && YarnVersion) {
+        return semverUtils.satisfiesWithPrereleases(YarnVersion, selector);
+      } else {
+        return false;
+      }
+    };
+
+    // Get all possible non-null messages
+    const activeTips = allTips
+      .map((_, index) => index)
+      .filter(index => allTips[index] && checkVersion(allTips[index]?.selector));
+
+    if (activeTips.length === 0)
+      return null;
+
+    // Filter out the ones that have already been displayed
+    let availableTips = activeTips
+      .filter(index => !displayedTips.has(index));
+
+    // If we've seen all tips, we can reset the list. We still
+    // keep the last few items there, just to make sure we don't
+    // immediately re-display the same tip as the last past days.
+    if (availableTips.length === 0) {
+      const sliceLength = Math.floor(activeTips.length * .2);
+
+      this.displayedTips = sliceLength > 0
+        ? this.displayedTips.slice(-sliceLength)
+        : [];
+
+      availableTips = activeTips
+        .filter(index => !displayedTips.has(index));
+    }
+
+    const selectedTip = availableTips[Math.floor(Math.random() * availableTips.length)];
+    this.displayedTips.push(selectedTip);
+
+    this.commitTips();
+
+    return allTips[selectedTip]!;
   }
 
   reportVersion(value: string) {
@@ -103,99 +214,117 @@ export class TelemetryManager {
   private sendReport(accountId: string) {
     const registryFile = this.getRegistryPath();
 
-    let content: RegistryFile;
+    let state: RegistryFile;
     try {
-      content = xfs.readJsonSync(registryFile);
+      state = xfs.readJsonSync(registryFile);
     } catch {
-      content = {};
+      state = {};
     }
 
-    const now = Date.now();
-    const interval = this.configuration.get(`telemetryInterval`) * 24 * 60 * 60 * 1000;
+    const {
+      nextState,
 
-    const lastUpdate = content.lastUpdate ?? now + interval + Math.floor(interval * Math.random());
-    const nextUpdate = lastUpdate + interval;
+      triggerUpdate,
+      triggerTips,
 
-    if (nextUpdate > now && content.lastUpdate != null)
-      return;
+      nextTips,
+    } = derive({
+      state,
 
-    try {
-      xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
-      xfs.writeJsonSync(registryFile, {lastUpdate: now});
-    } catch {
-      // In some cases this location is read-only. Too bad 🤷‍♀️
-      return;
-    }
+      timeNow: Date.now(),
+      timeZone: new Date().getTimezoneOffset() * 60 * 1000,
 
-    if (nextUpdate > now)
-      return;
-
-    if (!content.blocks)
-      return;
-
-    const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
-    const sendPayload = (payload: any) => httpUtils.post(rawUrl, payload, {
-      configuration: this.configuration,
-    }).catch(() => {
-      // Nothing we can do
+      randomInitialInterval: Math.random(),
+      updateInterval: this.configuration.get(`telemetryInterval`),
     });
 
-    for (const [userId, block] of Object.entries(content.blocks ?? {})) {
-      if (Object.keys(block).length === 0)
-        continue;
+    this.nextTips = nextTips;
+    this.displayedTips = state.displayedTips ?? [];
 
-      const upload: any = block;
-      upload.userId = userId;
-      upload.reportType = `primary`;
-
-      for (const key of Object.keys(upload.enumerators ?? {}))
-        upload.enumerators[key] = upload.enumerators[key].length;
-
-      sendPayload(upload);
-
-      // Datadog doesn't support well sending multiple tags in a single
-      // payload, so we instead send them separately, at most one value
-      // per query (we still aggregate different tags together).
-      const toSend = new Map();
-
-      // Also the max amount of queries (at worst once a week, remember)
-      const maxValues = 20;
-
-      for (const [metricName, values] of Object.entries<any>(upload.values))
-        if (values.length > 0)
-          toSend.set(metricName, values.slice(0, maxValues));
-
-      while (toSend.size > 0) {
-        const upload: any = {};
-        upload.userId = userId;
-        upload.reportType = `secondary`;
-        upload.metrics = {};
-
-        for (const [metricName, values] of toSend) {
-          upload.metrics[metricName] = values.shift();
-          if (values.length === 0) {
-            toSend.delete(metricName);
-          }
-        }
-
-        sendPayload(upload);
+    if (nextState !== null) {
+      try {
+        xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
+        xfs.writeJsonSync(registryFile, nextState);
+      } catch {
+        // In some cases this location is read-only. Too bad 🤷‍♀️
+        return false;
       }
     }
+
+    if (triggerTips && this.configuration.get(`enableTips`))
+      this.shouldShowTips = true;
+
+    if (triggerUpdate) {
+      const blocks = state.blocks ?? {};
+
+      if (Object.keys(blocks).length === 0) {
+        const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
+        const sendPayload = (payload: any) => httpUtils.post(rawUrl, payload, {
+          configuration: this.configuration,
+        }).catch(() => {
+          // Nothing we can do
+        });
+
+        for (const [userId, block] of Object.entries(state.blocks ?? {})) {
+          if (Object.keys(block).length === 0)
+            continue;
+
+          const upload: any = block;
+          upload.userId = userId;
+          upload.reportType = `primary`;
+
+          for (const key of Object.keys(upload.enumerators ?? {}))
+            upload.enumerators[key] = upload.enumerators[key].length;
+
+          sendPayload(upload);
+
+          // Datadog doesn't support well sending multiple tags in a single
+          // payload, so we instead send them separately, at most one value
+          // per query (we still aggregate different tags together).
+          const toSend = new Map();
+
+          // Also the max amount of queries (at worst once a week, remember)
+          const maxValues = 20;
+
+          for (const [metricName, values] of Object.entries<any>(upload.values))
+            if (values.length > 0)
+              toSend.set(metricName, values.slice(0, maxValues));
+
+          while (toSend.size > 0) {
+            const upload: any = {};
+            upload.userId = userId;
+            upload.reportType = `secondary`;
+            upload.metrics = {};
+
+            for (const [metricName, values] of toSend) {
+              upload.metrics[metricName] = values.shift();
+              if (values.length === 0) {
+                toSend.delete(metricName);
+              }
+            }
+
+            sendPayload(upload);
+          }
+        }
+      }
+    }
+
+    return true;
   }
 
   private applyChanges() {
     const registryFile = this.getRegistryPath();
 
-    let content: RegistryFile;
+    let state: RegistryFile;
     try {
-      content = xfs.readJsonSync(registryFile);
+      state = xfs.readJsonSync(registryFile);
     } catch {
-      content = {};
+      state = {};
     }
 
     const userId = this.configuration.get(`telemetryUserId`) ?? `*`;
 
-    const blocks = content.blocks = content.blocks ?? {};
+    const blocks = state.blocks = state.blocks ?? {};
     const block = blocks[userId] = blocks[userId] ?? {};
 
     for (const key of this.hits.keys()) {
@@ -218,8 +347,13 @@ export class TelemetryManager {
       }
     }
 
+    if (this.shouldCommitTips) {
+      state.lastTips = this.nextTips;
+      state.displayedTips = this.displayedTips;
+    }
+
     xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
-    xfs.writeJsonSync(registryFile, content);
+    xfs.writeJsonSync(registryFile, state);
   }
 
   private startBuffer() {

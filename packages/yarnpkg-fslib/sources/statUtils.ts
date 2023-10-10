@@ -6,8 +6,10 @@ import {Filename}                          from './path';
 
 export const DEFAULT_MODE = S_IFREG | 0o644;
 
-export class DirEntry {
+export class DirEntry<T = undefined> {
   public name: Filename = `` as Filename;
+  public path: T = `` as T;
+
   public mode: number = 0;
 
   isBlockDevice() {
@@ -163,7 +165,7 @@ export function makeEmptyStats() {
  */
 export function clearStats(stats: Stats | BigIntStats) {
   for (const key in stats) {
-    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+    if (Object.hasOwn(stats, key)) {
       const element = stats[key as keyof typeof stats];
       if (typeof element === `number`) {
         // @ts-expect-error Typescript can't tell that stats[key] is a number
@@ -185,7 +187,7 @@ export function convertToBigIntStats(stats: Stats): BigIntStats {
   const bigintStats = new BigIntStatsEntry();
 
   for (const key in stats) {
-    if (Object.prototype.hasOwnProperty.call(stats, key)) {
+    if (Object.hasOwn(stats, key)) {
       const element = stats[key as keyof typeof stats];
       if (typeof element === `number`) {
         // @ts-expect-error Typescript isn't able to tell this is valid

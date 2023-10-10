@@ -1,11 +1,10 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
-import {Module}                                                                                                                                                                            from 'module';
-import {resolve as resolveExport}                                                                                                                                                          from 'resolve.exports';
+import {Module, isBuiltin}                                                                                                                                                                 from 'module';
 import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
 import {inspect}                                                                                                                                                                           from 'util';
 
-import {packageImportsResolve}                                                                                                                                                             from '../node/resolve.js';
+import {packageExportsResolve, packageImportsResolve}                                                                                                                                      from '../node/resolve.js';
 import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
 
 import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
@@ -195,7 +194,6 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   const defaultExportsConditions = new Set([
-    `default`,
     `node`,
     `require`,
     ...getOptionValue(`--conditions`),
@@ -206,7 +204,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    *
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
-  function applyNodeExportsResolution(unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions) {
+  function applyNodeExportsResolution(unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions, issuer: PortablePath | null) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       resolveIgnored: true,
       includeDiscardFromLookup: true,
@@ -226,6 +224,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     const pkgJson = JSON.parse(opts.fakeFs.readFileSync(manifestPath, `utf8`));
 
+    if (pkgJson.exports == null)
+      return null;
+
     let subpath = ppath.contains(packageLocation, unqualifiedPath);
     if (subpath === null) {
       throw makeError(
@@ -234,31 +235,27 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       );
     }
 
-    if (!isRelativeRegexp.test(subpath))
+    if (subpath !== `.` && !isRelativeRegexp.test(subpath))
       subpath = `./${subpath}` as PortablePath;
 
-    let resolvedExport;
     try {
-      resolvedExport = resolveExport(pkgJson, ppath.normalize(subpath), {
-        // @ts-expect-error - Type should be Iterable<string>
+      const resolvedExport = packageExportsResolve({
+        packageJSONUrl: pathToFileURL(npath.fromPortablePath(manifestPath)),
+        packageSubpath: subpath,
+        exports: pkgJson.exports,
+        base: issuer ? pathToFileURL(npath.fromPortablePath(issuer)) : null,
         conditions,
-        unsafe: true,
       });
+
+      return npath.toPortablePath(fileURLToPath(resolvedExport));
     } catch (error) {
       throw makeError(
         ErrorCode.EXPORTS_RESOLUTION_FAILED,
         error.message,
         {unqualifiedPath: getPathForDisplay(unqualifiedPath), locator, pkgJson, subpath: getPathForDisplay(subpath), conditions},
-        // Currently, resolve.exports only throws ERR_PACKAGE_PATH_NOT_EXPORTED errors, but without assigning the error code.
-        // TODO: Use error.code once https://github.com/lukeed/resolve.exports/pull/6 gets merged.
-        `ERR_PACKAGE_PATH_NOT_EXPORTED`,
+        error.code,
       );
     }
-
-    if (typeof resolvedExport === `string`)
-      return ppath.join(packageLocation, resolvedExport as PortablePath);
-
-    return null;
   }
 
   /**
@@ -560,7 +557,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && nodeUtils.isBuiltinModule(request))
+    if (considerBuiltins && isBuiltin(request))
       return null;
 
     const requestForDisplay = getPathForDisplay(request);
@@ -729,7 +726,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           }
         }
       } else if (dependencyReference === undefined) {
-        if (!considerBuiltins && nodeUtils.isBuiltinModule(request)) {
+        if (!considerBuiltins && isBuiltin(request)) {
           if (isDependencyTreeRoot(issuerLocator)) {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
@@ -809,12 +806,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions) {
+  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions, issuer: PortablePath | null) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
     if (isStrictRegExp.test(request))
       return unqualifiedPath;
 
-    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, conditions);
+    const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, conditions, issuer);
     if (unqualifiedExportPath) {
       return ppath.normalize(unqualifiedExportPath);
     } else {
@@ -929,13 +926,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           ? isPathIgnored(issuer)
           : false;
 
-      const remappedPath = (!considerBuiltins || !nodeUtils.isBuiltinModule(request)) && !isIssuerIgnored()
-        ? resolveUnqualifiedExport(request, unqualifiedPath, conditions)
+      const remappedPath = (!considerBuiltins || !isBuiltin(request)) && !isIssuerIgnored()
+        ? resolveUnqualifiedExport(request, unqualifiedPath, conditions, issuer)
         : unqualifiedPath;
 
       return resolveUnqualified(remappedPath, {extensions});
     } catch (error) {
-      if (Object.prototype.hasOwnProperty.call(error, `pnpCode`))
+      if (Object.hasOwn(error, `pnpCode`))
         Object.assign(error.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
 
       throw error;

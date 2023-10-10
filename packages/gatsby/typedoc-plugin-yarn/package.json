@@ -1,9 +1,0 @@
-{
-  "name": "typedoc-plugin-yarn",
-  "version": "0.0.0",
-  "private": true,
-  "dependencies": {
-    "typedoc": "0.17.0-3",
-    "typescript": "^3.8.3"
-  }
-}

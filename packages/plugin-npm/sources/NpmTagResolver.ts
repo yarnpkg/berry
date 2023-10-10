@@ -39,18 +39,17 @@ export class NpmTagResolver implements Resolver {
   async getCandidates(descriptor: Descriptor, dependencies: unknown, opts: ResolveOptions) {
     const tag = descriptor.range.slice(PROTOCOL.length);
 
-    const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(descriptor), {
-      configuration: opts.project.configuration,
-      ident: descriptor,
-      jsonResponse: true,
+    const registryData = await npmHttpUtils.getPackageMetadata(descriptor, {
+      cache: opts.fetchOptions?.cache,
+      project: opts.project,
     });
 
-    if (!Object.prototype.hasOwnProperty.call(registryData, `dist-tags`))
+    if (!Object.hasOwn(registryData, `dist-tags`))
       throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data - missing "dist-tags" field`);
 
     const distTags = registryData[`dist-tags`];
 
-    if (!Object.prototype.hasOwnProperty.call(distTags, tag))
+    if (!Object.hasOwn(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
     const version = distTags[tag];
@@ -78,7 +77,7 @@ export class NpmTagResolver implements Resolver {
 
       if (parsedRange.params?.__archiveUrl) {
         const newRange = structUtils.makeRange({protocol: PROTOCOL, selector: parsedRange.selector, source: null, params: null});
-        const [resolvedLocator] = await this.getCandidates(structUtils.makeDescriptor(descriptor, newRange), dependencies, opts);
+        const [resolvedLocator] = await opts.resolver.getCandidates(structUtils.makeDescriptor(descriptor, newRange), dependencies, opts);
         if (locator.reference !== resolvedLocator.reference) {
           continue;
         }

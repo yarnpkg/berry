@@ -255,18 +255,13 @@ export default class InfoCommand extends BaseCommand {
         if (!extra.has(`cache`))
           return;
 
-        const cacheOptions = {
-          mockedPackages: project.disabledLocators,
-          unstablePackages: project.conditionalLocators,
-        };
-
         const checksum = project.storedChecksums.get(pkg.locatorHash) ?? null;
-        const cachePath = cache.getLocatorPath(pkg, checksum, cacheOptions);
+        const cachePath = cache.getLocatorPath(pkg, checksum);
 
         let stat;
         if (cachePath !== null) {
           try {
-            stat = xfs.statSync(cachePath);
+            stat = await xfs.statPromise(cachePath);
           } catch {}
         }
 

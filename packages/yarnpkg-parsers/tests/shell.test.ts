@@ -172,6 +172,9 @@ describe(`Shell parser`, () => {
 
 const STRINGIFIER_TESTS: Array<[string, string]> = [
   [`echo foo`, `echo foo`],
+  [`echo parapapa`, `echo parapapa`],
+  [`echo 'foo bar'`, `echo 'foo bar'`],
+  [`echo "foo' bar'"`, `echo "foo' bar'"`],
   [`echo foo; echo bar`, `echo foo; echo bar`],
   [`echo foo; echo bar;`, `echo foo; echo bar`],
   [`echo foo &`, `echo foo &`],
@@ -190,7 +193,7 @@ const STRINGIFIER_TESTS: Array<[string, string]> = [
   [`FOO=bar echo foo`, `FOO=bar echo foo`],
   [`FOO=bar BAZ=qux`, `FOO=bar BAZ=qux`],
   [`FOO=$'\\x09'`, `FOO=$'\\t'`],
-  [`FOO=$'\\u0027'`, `FOO=$'\\''`],
+  [`FOO=$'\\u0027'`, `FOO="'"`],
   [`FOO=$'\\U0001F601'`, `FOO=😁`],
 ];
 

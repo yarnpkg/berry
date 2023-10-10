@@ -75,6 +75,27 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should upgrade all dependencies when the name is *`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `^1.0.0`,
+          [`@types/is-number`]: `1.0.0`,
+          [`@types/no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`up`, `*`);
+
+        await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toStrictEqual({
+          dependencies: {
+            [`no-deps`]: `^2.0.0`,
+            [`@types/is-number`]: `^2.0.0`,
+            [`@types/no-deps`]: `^2.0.0`,
+          },
+        });
+      }),
+    );
+
+    test(
       `it should upgrade regular dependencies to the current project (resolved tag)`,
       makeTemporaryEnv({
         dependencies: {
@@ -98,13 +119,49 @@ describe(`Commands`, () => {
           [`no-deps`]: `1.0.0`,
         },
       }, async ({path, run, source}) => {
-        await run(`add`, `-F`, `no-deps@latest`);
+        await run(`up`, `-F`, `no-deps@latest`);
 
         await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
           dependencies: {
             [`no-deps`]: `latest`,
           },
         });
+      }),
+    );
+
+    test(
+      `it should skip build scripts when using --mode=skip-build`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const {stdout} = await run(`up`, `no-deps-scripted`, `--mode=skip-build`, {
+          env: {
+            YARN_ENABLE_INLINE_BUILDS: `1`,
+          },
+        });
+
+        expect(stdout).not.toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
+        expect(stdout).not.toContain(`STDOUT preinstall out`);
+      }),
+    );
+
+    test(
+      `it should skip build scripts when using --mode=skip-build (recursive)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-scripted`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const {stdout} = await run(`up`, `no-deps-scripted`, `--recursive`, `--mode=skip-build`, {
+          env: {
+            YARN_ENABLE_INLINE_BUILDS: `1`,
+          },
+        });
+
+        expect(stdout).not.toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
+        expect(stdout).not.toContain(`STDOUT preinstall out`);
       }),
     );
   });

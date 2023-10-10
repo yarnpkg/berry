@@ -12,25 +12,30 @@ function computeCacheSize(cacheDir: PortablePath): number {
 describe(`Features`, () => {
   describe(`Compression Level`, () => {
     test(
-      `compression level 6 cache size should be less than default max compression cache size`,
+      `compressionLevel: 6 should lead to a lower cache size than compressionLevel: 9`,
       makeTemporaryEnv(
         {
           dependencies: {
             [`various-requires`]: `1.0.0`,
           },
         },
-        {
-          cacheKeyOverride: undefined,
-        },
         async ({path, run}) => {
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, ``);
           const cacheDir = `${path}/.yarn/cache` as PortablePath;
+
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            compressionLevel: 9,
+            checksumBehavior: `update`,
+          });
 
           await run(`install`);
 
           const levelMaxCacheSize = computeCacheSize(cacheDir);
 
-          await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `compressionLevel: 6\nchecksumBehavior: update\n`);
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            compressionLevel: 6,
+            checksumBehavior: `update`,
+          });
 
           await run(`install`);
 
@@ -46,9 +51,6 @@ describe(`Features`, () => {
           dependencies: {
             [`various-requires`]: `1.0.0`,
           },
-        },
-        {
-          cacheKeyOverride: undefined,
         },
         async ({path, run}) => {
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `compressionLevel: 6\n`);
