@@ -213,7 +213,7 @@ export default class NpmAuditCommand extends BaseCommand {
 
     const hasError = Object.keys(expandedResult).length > 0;
 
-    if (!this.json && hasError) {
+    if (this.json || hasError) {
       treeUtils.emitTree(npmAuditUtils.getReportTree(expandedResult), {
         configuration,
         json: this.json,

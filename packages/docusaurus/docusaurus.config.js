@@ -12,6 +12,19 @@ const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 const commandLineHighlight = require(`./src/remark/commandLineHighlight`);
 const autoLink = require(`./src/remark/autoLink`);
 
+const remarkPlugins = [
+  commandLineHighlight.plugin(),
+  autoLink.plugin([{
+    sourceType: `json-schema`,
+    path: require.resolve(`./static/configuration/manifest.json`),
+    urlGenerator: name => `/configuration/manifest#${name}`,
+  }, {
+    sourceType: `json-schema`,
+    path: require.resolve(`./static/configuration/yarnrc.json`),
+    urlGenerator: name => `/configuration/yarnrc#${name}`,
+  }]),
+];
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: `Yarn`,
@@ -54,23 +67,15 @@ const config = {
       `classic`,
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        blog: false,
+        blog: {
+          routeBasePath: `blog`,
+          remarkPlugins,
+        },
         docs: {
           routeBasePath: `/`,
           sidebarPath: require.resolve(`./sidebars.js`),
           editUrl: `https://github.com/yarnpkg/berry/edit/master/packages/docusaurus/`,
-          remarkPlugins: [
-            commandLineHighlight.plugin(),
-            autoLink.plugin([{
-              sourceType: `json-schema`,
-              path: require.resolve(`./static/configuration/manifest.json`),
-              urlGenerator: name => `/configuration/manifest#${name}`,
-            }, {
-              sourceType: `json-schema`,
-              path: require.resolve(`./static/configuration/yarnrc.json`),
-              urlGenerator: name => `/configuration/yarnrc#${name}`,
-            }]),
-          ],
+          remarkPlugins,
         },
         theme: {
           customCss: require.resolve(`./src/css/custom.css`),
@@ -133,6 +138,11 @@ const config = {
             type: `docSidebar`,
             sidebarId: `advanced`,
             label: `Advanced`,
+            position: `left`,
+          },
+          {
+            to: `blog`,
+            label: `Blog`,
             position: `left`,
           },
           {
