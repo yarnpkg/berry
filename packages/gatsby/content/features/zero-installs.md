@@ -57,7 +57,7 @@ Every time you update a dependency and commit it, the repository will grow, the 
 
     - Git will lazily download the missing files as needed. For example, if you run `git checkout` on an old commit, Git will fetch whatever files are needed before the command returns, so you won't see any difference.
 
-    - **This feature is supported by both GitHub and Gitlab, and is probably the best option at your disposal** if you can modify the way `git clone` is performed. Note however that the `actions/checkout` GitHub Action doesn't allow it yet (a PR is open [here](https://github.com/actions/checkout/pull/680)).
+    - **This feature is supported by both GitHub and Gitlab, and is probably the best option at your disposal** if you can modify the way `git clone` is performed.
 
 - [Sparse checkouts](https://github.blog/2020-01-17-bring-your-monorepo-down-to-size-with-sparse-checkout/) are the older cousin of partial clones. Instead of retrieving the whole Git history but putting aside the binary data, sparse checkouts instead define a cutoff commit which Git will treat as having no parents.
 
