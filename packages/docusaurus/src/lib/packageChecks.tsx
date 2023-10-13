@@ -157,7 +157,7 @@ export const checks: Array<Check> = [{
       if (releaseInfo.jsdelivr.fileSet.has(`${fileNoExt}${ext}`))
         return {ok: true};
 
-    if (dtPackageName && dtPackage) {
+    if (dtPackageName && dtPackage.data) {
       const search = new URLSearchParams(location.search);
 
       for (const key of search.keys())
