@@ -44,14 +44,14 @@ describe(`Plugins`, () => {
         `it should automatically add @types for scoped packages`,
         makeTemporaryEnv({}, async ({path, run, source}) => {
           await writeConfiguration(path, {plugins: [require.resolve(`@yarnpkg/monorepo/scripts/plugin-typescript.js`)]});
-          await run(`add`, `@iarna/toml`);
+          await run(`add`, `@babel/traverse@7.99.0`);
 
           await expect(readManifest(path)).resolves.toMatchObject({
             dependencies: {
-              [`@iarna/toml`]: `^1.0.0`,
+              [`@babel/traverse`]: `7.99.0`,
             },
             devDependencies: {
-              [`@types/iarna__toml`]: `^1`,
+              [`@types/babel__traverse`]: `^7`,
             },
           });
         }),
