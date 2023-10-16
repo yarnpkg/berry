@@ -2825,13 +2825,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iarna/toml@npm:^2.2.5":
-  version: 2.2.5
-  resolution: "@iarna/toml@npm:2.2.5"
-  checksum: b61426dc1a3297bbcb24cb8e9c638663866b4bb6f28f2c377b167e4b1f8956d8d208c484b73bb59f4232249903545cc073364c43576d2d5ad66afbd730ad24a9
-  languageName: node
-  linkType: hard
-
 "@istanbuljs/load-nyc-config@npm:^1.0.0":
   version: 1.1.0
   resolution: "@istanbuljs/load-nyc-config@npm:1.1.0"
@@ -5259,7 +5252,6 @@ __metadata:
     "@babel/preset-env": "npm:^7.18.10"
     "@babel/preset-react": "npm:^7.18.6"
     "@babel/preset-typescript": "npm:^7.18.6"
-    "@iarna/toml": "npm:^2.2.5"
     "@mdx-js/react": "npm:^1.6.22"
     "@types/jest": "npm:^28.1.6"
     "@types/micromatch": "npm:^4.0.1"
