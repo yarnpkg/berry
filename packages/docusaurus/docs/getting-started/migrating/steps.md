@@ -44,7 +44,7 @@ Most configuration keys have also been renamed to be more consistent. The compre
 
 ### Explicitly call the `pre` and `post` scripts
 
-Some changes were made to how [lifecycle scripts](/advanced/lifecycle-scripts) work in order to clarify their purpose and remove confusing behaviors. One such change is that custom `pre` and `post` script are no longer support. As a result, rewrite:
+Some changes were made to how [lifecycle scripts](/advanced/lifecycle-scripts) work in order to clarify their purpose and remove confusing behaviors. One such change is that custom `pre` and `post` scripts are no longer supported. As a result, rewrite:
 
 ```json
 {
