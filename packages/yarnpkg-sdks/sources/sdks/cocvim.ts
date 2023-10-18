@@ -1,4 +1,4 @@
-import {PortablePath, npath, ppath}                           from '@yarnpkg/fslib';
+import {Filename, PortablePath, npath, ppath}                 from '@yarnpkg/fslib';
 import {PnpApi}                                               from '@yarnpkg/pnp';
 
 import {Wrapper, GenerateIntegrationWrapper, IntegrationSdks} from '../generateSdk';
@@ -17,11 +17,9 @@ export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: 
   await addCocVimWorkspaceConfiguration(pnpApi, CocVimConfiguration.settings, {
     [`eslint.packageManager`]: `yarn`,
     [`eslint.nodePath`]: npath.fromPortablePath(
-      ppath.dirname(ppath.dirname(ppath.dirname(
-        wrapper.getProjectPathTo(
-          `lib/api.js` as PortablePath,
-        ),
-      ))),
+      ppath.dirname(ppath.dirname(
+        wrapper.getProjectPathTo(Filename.manifest),
+      )),
     ),
   });
 };

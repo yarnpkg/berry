@@ -79,7 +79,7 @@ export default class SdkCommand extends Command {
     }
 
     if (nextProjectRoot === currProjectRoot)
-      throw new Error(`This tool can only be used with projects using Yarn Plug'n'Play`);
+      throw new UsageError(`This tool can only be used with projects using Yarn Plug'n'Play`);
 
     const configuration = Configuration.create(currProjectRoot);
     const pnpPath = ppath.join(currProjectRoot, pnpFilename);
