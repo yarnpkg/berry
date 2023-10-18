@@ -12,7 +12,7 @@ While the Yarn Classic line (1.x) remains a pillar of the JavaScript ecosystem, 
 
 - **New features:** Yarn Modern provides many new features that didn't exist in Yarn 1.x - or any other package managers for that matter. As an example, [Constraints](/features/constraints) are exclusive to Yarn Modern.
 
-- **Flexibility:** Yarn Modern supports all three installation strategy: Yarn PnP, `node_modules`, and via a pnpm-like content-addressed cache. No matter which one you prefer, you have it at your disposal.
+- **Flexibility:** Yarn Modern supports all three installation strategies: Yarn PnP, `node_modules`, and via a pnpm-like content-addressed cache. No matter which one you prefer, you have it at your disposal.
 
 - **Extensibility:** Yarn Modern's architecture allows you to build your own features as you need it. No need to wait for us to implement this feature you hope for - you can now implement it yourself, according to your own specs, and use it straight away! Focused workspaces, custom installs, project validation, ...
 

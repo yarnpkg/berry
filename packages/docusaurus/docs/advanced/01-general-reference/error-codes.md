@@ -144,7 +144,7 @@ This error is usually caused by a Yarn plugin being missing.
 
 A package cannot be found in the cache for the given package and will be fetched from its remote location.
 
-When a package is downloaded from whatever its remote location is, Yarn stores it in a specific folder called then cache. Then, the next time this package was to be downloaded, Yarn simply check this directory and use the stored package if available. This message simply means that the package couldn't be found there. It's not a huge issue, but you probably should try to limit it as much as possible - for example by using [Zero-Installs](/features/zero-installs).
+When a package is downloaded from whatever its remote location is, Yarn stores it in a specific folder called then cache. Then, the next time this package was to be downloaded, Yarn simply check this directory and use the stored package if available. This message simply means that the package couldn't be found there. It's not a huge issue, but you probably should try to limit it as much as possible - for example by using [Zero-Installs](/features/caching#zero-installs).
 
 ## YN0014 - `YARN_IMPORT_FAILED`
 

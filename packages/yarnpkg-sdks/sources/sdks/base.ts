@@ -6,9 +6,7 @@ import {Wrapper, GenerateBaseWrapper, BaseSdks} from '../generateSdk';
 export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`@astrojs/language-server` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/nodeServer.js` as PortablePath);
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
@@ -16,28 +14,15 @@ export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async
 export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/eslint.js` as PortablePath);
-  await wrapper.writeFile(`lib/api.js` as PortablePath, {
-    // Empty path to use the entrypoint and let Node.js resolve the correct path itself
-    requirePath: `` as PortablePath,
-  });
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
 
 export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`prettier` as PortablePath, {pnpApi, target});
+  const wrapper = new Wrapper(`prettier` as PortablePath, {pnpApi, target, manifestOverrides: {exports: undefined}});
 
-  await wrapper.writeManifest({
-    main: `./index.js`,
-  });
-
-  await wrapper.writeBinary(`index.js` as PortablePath, {
-    // Empty path to use the entrypoint and let Node.js resolve the correct path itself
-    requirePath: `` as PortablePath,
-  });
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
@@ -45,9 +30,7 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
 export const generateRelayCompilerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`relay-compiler` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`cli.js` as PortablePath);
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
@@ -55,9 +38,7 @@ export const generateRelayCompilerBaseWrapper: GenerateBaseWrapper = async (pnpA
 export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`typescript-language-server` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`lib/cli.js` as PortablePath);
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
@@ -272,14 +253,10 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
   const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/tsc` as PortablePath);
-  await wrapper.writeBinary(`bin/tsserver` as PortablePath);
+  await wrapper.writeDefaults();
 
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
-  await wrapper.writeFile(`lib/typescript.js` as PortablePath);
   await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
 
   return wrapper;
@@ -288,9 +265,7 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`svelte-language-server` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`bin/server.js` as PortablePath);
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
@@ -298,9 +273,7 @@ export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = asyn
 export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`flow-bin` as PortablePath, {pnpApi, target});
 
-  await wrapper.writeManifest();
-
-  await wrapper.writeBinary(`cli.js` as PortablePath);
+  await wrapper.writeDefaults();
 
   return wrapper;
 };
