@@ -125,9 +125,9 @@ It's generally seen as [bad form](https://twitter.com/brian_d_vaughn/status/1224
 
 ## Writing documentation
 
-We use the static-site-generator [Docusaurus](https://docusaurus.io/docs) to create HTML pages from [markdown](https://www.markdownguide.org/) and [mdx](https://mdxjs.com/docs/) files. 
+We use [Docusaurus](https://docusaurus.io/docs) to generate HTML pages from [mdx](https://mdxjs.com/docs/) sources files. 
 
-Our website is stored within the [`packages/docusaurus`](https://github.com/yarnpkg/berry/tree/master/packages/docusaurus) directory. You can change a page by modifying the corresponding markdown or mdx file in the `docs` folder. For example, you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/docusaurus/docs/advanced/04-technical/contributing.md).
+Our website is stored within the [`packages/docusaurus`](https://github.com/yarnpkg/berry/tree/master/packages/docusaurus) directory. You can change a page by modifying the corresponding `.mdx` file in the `docs` folder. For example, you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/docusaurus/docs/advanced/04-technical/contributing.md).
 
 Then run the following command to spawn a local server and see your changes:
 
@@ -135,7 +135,7 @@ Then run the following command to spawn a local server and see your changes:
 yarn start
 ```
 
-Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and spawn a fresh preview for everyone to see:
+Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and create a fresh preview for everyone to see:
 
 ![](https://user-images.githubusercontent.com/1037931/61949789-3cc09300-afac-11e9-9817-89e97771a4e1.png)
 
