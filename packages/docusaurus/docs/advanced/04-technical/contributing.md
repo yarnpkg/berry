@@ -33,7 +33,7 @@ Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite
 
 ## Writing your feature
 
-Our repository is setup in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `@babel/register` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
+Our repository is set up in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `esbuild` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
 
 ```bash
 yarn install # Will automatically pick up any changes you made to sources
@@ -54,7 +54,7 @@ yarn build:cli
 yarn test:integration
 ```
 
-Note that because we want to avoid adding the `@babel/register` overhead to each Yarn call the CLI will need to be prebuilt for the integration tests to run - that's what the `yarn build:cli` command is for. This unfortunately means that you will need to rebuild the CLI after each modification if you want the integration tests to pick up your changes.
+Note that because we want to avoid adding the `esbuild` overhead to each Yarn call the CLI will need to be prebuilt for the integration tests to run - that's what the `yarn build:cli` command is for. This unfortunately means that you will need to rebuild the CLI after each modification if you want the integration tests to pick up your changes.
 
 Both unit tests and integration tests use Jest, which means that you can filter the tests you want to run by using the `-t` flag (or simply the file path):
 
