@@ -148,17 +148,17 @@ describe(`Commands`, () => {
           `packages/*`,
         ],
       }, async ({path, run, source}) => {
-        await xfs.mkdirPromise(ppath.join(path, `packages/a`), {recursive: true});
-        await xfs.mkdirPromise(ppath.join(path, `packages/b`), {recursive: true});
+        await xfs.mkdirPromise(ppath.join(path, `packages/a` as PortablePath), {recursive: true});
+        await xfs.mkdirPromise(ppath.join(path, `packages/b` as PortablePath), {recursive: true});
 
-        await xfs.writeJsonPromise(ppath.join(path, `packages/a/package.json`), {
+        await xfs.writeJsonPromise(ppath.join(path, `packages/a/package.json` as PortablePath), {
           name: `a`,
           dependencies: {
             [`b`]: `workspace:^`,
           },
         });
 
-        await xfs.writeJsonPromise(ppath.join(path, `packages/b/package.json`), {
+        await xfs.writeJsonPromise(ppath.join(path, `packages/b/package.json` as PortablePath), {
           name: `b`,
           dependencies: {
             [`no-deps`]: `1.0.0`,
