@@ -684,6 +684,8 @@ export interface ConfigurationValueMap {
 
 export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
 
+export type PackageExtensions = Map<IdentHash, Array<[string, Array<PackageExtension>]>>;
+
 type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   type:
   | (T extends boolean ? SettingsType.BOOLEAN : never)
@@ -1057,7 +1059,6 @@ export class Configuration {
   public invalid: Map<string, string> = new Map();
 
   public env: Record<string, string | undefined> = {};
-  public packageExtensions: Map<IdentHash, Array<[string, Array<PackageExtension>]>> = new Map();
 
   public limits: Map<string, Limit> = new Map();
 
@@ -1356,8 +1357,6 @@ export class Configuration {
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
       configuration.sources.set(`cacheFolder`, `<internal>`);
     }
-
-    await configuration.refreshPackageExtensions();
 
     return configuration;
   }
@@ -1770,7 +1769,15 @@ export class Configuration {
     return {os, cpu, libc};
   }
 
-  async refreshPackageExtensions() {
+  private packageExtensions: PackageExtensions | null = null;
+
+  /**
+   * Computes and caches the package extensions.
+   */
+  async getPackageExtensions(): Promise<PackageExtensions> {
+    if (this.packageExtensions !== null)
+      return this.packageExtensions;
+
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
 
@@ -1808,9 +1815,10 @@ export class Configuration {
       return hooks.registerPackageExtensions;
     }, this, registerPackageExtension);
 
-    for (const [descriptorString, extensionData] of this.get(`packageExtensions`)) {
+    for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
       registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
-    }
+
+    return packageExtensions;
   }
 
   normalizeLocator(locator: Locator) {
@@ -1841,16 +1849,13 @@ export class Configuration {
     }));
   }
 
-  normalizePackage(original: Package) {
+  normalizePackage(original: Package, {packageExtensions}: {packageExtensions: PackageExtensions}) {
     const pkg = structUtils.copyPackage(original);
 
     // We use the extensions to define additional dependencies that weren't
     // properly listed in the original package definition
 
-    if (this.packageExtensions == null)
-      throw new Error(`refreshPackageExtensions has to be called before normalizing packages`);
-
-    const extensionsPerIdent = this.packageExtensions.get(original.identHash);
+    const extensionsPerIdent = packageExtensions.get(original.identHash);
     if (typeof extensionsPerIdent !== `undefined`) {
       const version = original.version;
 

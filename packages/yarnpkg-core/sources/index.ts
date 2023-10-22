@@ -14,7 +14,7 @@ import * as treeUtils   from './treeUtils';
 export {CACHE_VERSION, CACHE_CHECKPOINT, Cache}                                                                     from './Cache';
 export {DEFAULT_RC_FILENAME, LEGACY_PLUGINS, TAG_REGEXP}                                                            from './Configuration';
 export {Configuration, FormatType, SettingsType, WindowsLinkType}                                                   from './Configuration';
-export type {PluginConfiguration, SettingsDefinition, PackageExtensionData}                                         from './Configuration';
+export type {PluginConfiguration, SettingsDefinition, PackageExtensionData, PackageExtensions}                      from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                                     from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                               from './Fetcher';
 export {BuildDirectiveType}                                                                                         from './Installer';

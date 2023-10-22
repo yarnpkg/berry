@@ -95,6 +95,10 @@ The following changes only affect people writing Yarn plugins:
   - `workspace.anchoredLocator` to get the locator that's used throughout the dependency tree.
   - `workspace.manifest.version` to get the workspace version.
 
+- `configuration.{packageExtensions,refreshPackageExtensions}` have been removed. Use `configuration.getPackageExtensions` instead.
+
+- `configuration.normalizePackage` now requires a `packageExtensions` option.
+
 - `ProjectLookup` has been removed. Both `Configuration.find` and `Configuration.findProjectCwd` now always do a lockfile lookup.
 
 ### Installs

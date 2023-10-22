@@ -719,7 +719,9 @@ export class Project {
   }
 
   async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
-    const pkg = this.configuration.normalizePackage(originalPkg);
+    const packageExtensions = await this.configuration.getPackageExtensions();
+
+    const pkg = this.configuration.normalizePackage(originalPkg, {packageExtensions});
 
     for (const [identHash, descriptor] of pkg.dependencies) {
       const dependency = await this.configuration.reduceHook(hooks => {
@@ -1746,7 +1748,9 @@ export class Project {
     if (hasPreErrors)
       return;
 
-    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+    const packageExtensions = await this.configuration.getPackageExtensions();
+
+    for (const extensionsByIdent of packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
           extension.status = PackageExtensionStatus.Inactive;
@@ -1776,7 +1780,7 @@ export class Project {
     }, async () => {
       emitPeerDependencyWarnings(this, opts.report);
 
-      for (const [, extensionsPerRange] of this.configuration.packageExtensions) {
+      for (const [, extensionsPerRange] of packageExtensions) {
         for (const [, extensions] of extensionsPerRange) {
           for (const extension of extensions) {
             if (extension.userProvided) {
@@ -1827,7 +1831,7 @@ export class Project {
       }
     });
 
-    for (const extensionsByIdent of this.configuration.packageExtensions.values())
+    for (const extensionsByIdent of packageExtensions.values())
       for (const [, extensionsByRange] of extensionsByIdent)
         for (const extension of extensionsByRange)
           if (extension.userProvided && extension.status === PackageExtensionStatus.Active)
