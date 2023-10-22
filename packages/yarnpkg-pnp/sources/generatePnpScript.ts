@@ -44,7 +44,10 @@ function generateInlinedSetup(data: SerializedState) {
 function generateSplitSetup() {
   return [
     `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
-    `  return hydrateRuntimeState(require(${JSON.stringify(`./${Filename.pnpData}`)}), {basePath: basePath || __dirname});\n`,
+    `  const fs = require('fs');\n`,
+    `  const path = require('path');\n`,
+    `  const pnpDataFilepath = path.resolve(__dirname, ${JSON.stringify(Filename.pnpData)});\n`,
+    `  return hydrateRuntimeState(JSON.parse(fs.readFileSync(pnpDataFilepath, 'utf8')), {basePath: basePath || __dirname});\n`,
     `}\n`,
   ].join(``);
 }

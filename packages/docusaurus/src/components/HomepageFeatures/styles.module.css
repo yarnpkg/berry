@@ -13,4 +13,7 @@
   margin-bottom: 40px;
 
   width: 200px;
+
+  object-fit: contain;
+  object-position: center center;
 }

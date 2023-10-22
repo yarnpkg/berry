@@ -77,8 +77,12 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   const findApiPathCache = new Map<PortablePath, PortablePath | null>();
 
   function addToCacheAndReturn(start: PortablePath, end: PortablePath, target: PortablePath | null) {
-    if (target !== null)
+    if (target !== null) {
       target = VirtualFS.resolveVirtual(target);
+
+      // Ensure that a potentially symlinked PnP API module is instantiated at most once
+      target = opts.fakeFs.realpathSync(target);
+    }
 
     let curr: PortablePath;
     let next = start;

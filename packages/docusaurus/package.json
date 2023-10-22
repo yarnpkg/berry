@@ -24,7 +24,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "algoliasearch": "^4.14.2",
-    "clipanion": "4.0.0-rc.1",
+    "clipanion": "^4.0.0-rc.2",
     "clsx": "^1.2.1",
     "dompurify": "^3.0.5",
     "git-url-parse": "^13.1.0",
@@ -45,7 +45,7 @@
     "react-dom": "^17.0.2",
     "react-instantsearch-dom": "^6.36.0",
     "react-instantsearch-hooks-web": "^6.36.0",
-    "react-json-doc": "^2.3.2",
+    "react-json-doc": "^2.3.3",
     "react-loading-skeleton": "^3.3.1",
     "react-modal": "^3.16.1",
     "react-query": "^3.39.3",
@@ -61,7 +61,8 @@
     "tslib": "^2.4.0",
     "unist-util-visit": "^2",
     "unist-util-visit-parents": "^2",
-    "usehooks-ts": "^2.9.1"
+    "usehooks-ts": "^2.9.1",
+    "webpack": "^5.88.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^2.4.1",

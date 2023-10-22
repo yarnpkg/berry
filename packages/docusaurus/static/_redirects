@@ -1,0 +1,64 @@
+/ q=:q /search?q=:q 301!
+/package/* /package?name=:splat 301
+
+/getting-started/migration /migration/overview 301
+/features/zero-installs /features/caching#zero-installs 301
+
+/install.sh https://classic.yarnpkg.com/install.sh 301
+
+/playground/* code=:value https://viko0.sse.codesandbox.io/:splat?code=:value 301
+/playground/* https://viko0.sse.codesandbox.io/:splat 301
+
+/install.sh https://classic.yarnpkg.com/install.sh 301
+
+/downloads/* https://classic.yarnpkg.com/downloads/:splat 301
+
+/latest-version https://classic.yarnpkg.com/latest-version 301
+/latest-rc-version https://classic.yarnpkg.com/latest-rc-version 301
+
+/latest.tar.gz https://classic.yarnpkg.com/latest.tar.gz 301
+/latest.tar.gz.asc https://classic.yarnpkg.com/latest.tar.gz.asc 301
+/latest.msi https://classic.yarnpkg.com/latest.msi 301
+/latest.deb https://classic.yarnpkg.com/latest.deb 301
+/latest.rpm https://classic.yarnpkg.com/latest.rpm 301
+
+/latest-rc.tar.gz https://classic.yarnpkg.com/latest-rc.tar.gz 301
+/latest-rc.tar.gz.asc https://classic.yarnpkg.com/latest-rc.tar.gz.asc 301
+/latest-rc.msi https://classic.yarnpkg.com/latest-rc.msi 301
+/latest-rc.deb https://classic.yarnpkg.com/latest-rc.deb 301
+/latest-rc.rpm https://classic.yarnpkg.com/latest-rc.rpm 301
+
+/blog/* https://classic.yarnpkg.com/blog/:splat 301
+
+/lang/en/* https://classic.yarnpkg.com/en/:splat 301
+/en/* https://classic.yarnpkg.com/en/:splat 301
+
+/lang/es-ES/* https://classic.yarnpkg.com/es-ES/:splat 301
+/es-ES/* https://classic.yarnpkg.com/es-ES/:splat 301
+
+/lang/fr/* https://classic.yarnpkg.com/fr/:splat 301
+/fr/* https://classic.yarnpkg.com/fr/:splat 301
+
+/lang/id-ID/* https://classic.yarnpkg.com/id-ID/:splat 301
+/id-ID/* https://classic.yarnpkg.com/id-ID/:splat 301
+
+/lang/ja/* https://classic.yarnpkg.com/ja/:splat 301
+/ja/* https://classic.yarnpkg.com/ja/:splat 301
+
+/lang/pt-BR/* https://classic.yarnpkg.com/pt-BR/:splat 301
+/pt-BR/* https://classic.yarnpkg.com/pt-BR/:splat 301
+
+/lang/ru/* https://classic.yarnpkg.com/ru/:splat 301
+/ru/* https://classic.yarnpkg.com/ru/:splat 301
+
+/lang/tr/* https://classic.yarnpkg.com/tr/:splat 301
+/tr/* https://classic.yarnpkg.com/tr/:splat 301
+
+/lang/uk/* https://classic.yarnpkg.com/uk/:splat 301
+/uk/* https://classic.yarnpkg.com/uk/:splat 301
+
+/lang/zh-Hans/* https://classic.yarnpkg.com/zh-Hans/:splat 301
+/zh-Hans/* https://classic.yarnpkg.com/zh-Hans/:splat 301
+
+/lang/zh-Hant/* https://classic.yarnpkg.com/zh-Hant/:splat 301
+/zh-Hant/* https://classic.yarnpkg.com/zh-Hant/:splat 301

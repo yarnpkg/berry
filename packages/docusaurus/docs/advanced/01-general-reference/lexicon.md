@@ -62,7 +62,7 @@ While not always practical (it causes the repository size to grow, although we h
 - It doesn't require additional infrastructure, such as a [Verdaccio proxy](https://verdaccio.org/)
 - It doesn't require additional configuration, such as registry authentication
 - The install fetch step is as fast as it can be, with no data transfer at all
-- It lets you reach [zero-installs](https://yarnpkg.com/features/zero-installs) if you also use the PnP linker
+- It lets you reach [zero-installs](/features/caching#zero-installs) if you also use the PnP linker
 
 To enable the local cache, set `enableGlobalCache` to `false`, run an install, and add the new artifacts to your repository (you might want to [update your gitignore](/getting-started/qa#which-files-should-be-gitignored) accordingly).
 
@@ -206,4 +206,4 @@ Yarn is a command line tool used to manage programming environments. Written in 
 
 ### Zero-Install
 
-See also: [Zero-Install](/features/zero-installs)
+See also: [Zero-Install](/features/caching#zero-installs)

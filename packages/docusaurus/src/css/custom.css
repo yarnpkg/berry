@@ -33,6 +33,14 @@ html {
   border-right: 0 !important;
 }
 
+.container {
+  --ifm-link-decoration: underline;
+}
+
+.rjd-container {
+  --ifm-link-decoration: none;
+}
+
 .menu {
   overflow-y: scroll;
 }
@@ -75,11 +83,11 @@ html {
   filter: invert(100%) invert(15%) sepia(39%) saturate(2287%) hue-rotate(222deg) brightness(92%) contrast(94%);
 }
 
-body:not([x-doc-route="/"]) footer {
+html:not([x-doc-route="/"]) footer {
   display: none;
 }
 
-body:not([x-doc-route="/"]) .main-wrapper > :last-child {
+html:not([x-doc-route="/"]) .main-wrapper > :last-child {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 
@@ -119,31 +127,22 @@ body:not([x-doc-route="/"]) .main-wrapper > :last-child {
   height: var(--ifm-navbar-height);
 }
 
-.navbar__link--active {
-  position: relative;
-}
-
-.navbar__link--active::before {
-  position: absolute;
-
-  left: var(--ifm-navbar-item-padding-horizontal);
-  right: var(--ifm-navbar-item-padding-horizontal);
-  bottom: -3px;
-
-  height: 3px;
-  background: linear-gradient(to left, #7678ff, #c326ef);
-}
-
-body[x-doc-route="/"] .navbar:not(.navbar--is-fixed) .navbar__link--active::before {
-  content: '';
-}
-
 .menu.thin-scrollbar {
   padding: 0.5rem;
 }
 
-body[x-doc-route^="/configuration/"] .col {
+html[x-doc-route^="/configuration/"] .col {
   max-width: 100% !important;
+}
+
+html[x-doc-route="/docs/search"] .main-wrapper > .container {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: calc(var(--ifm-spacing-horizontal) * 2);
+}
+
+html[x-doc-route="/docs/search"] .row {
+  padding: 0;
 }
 
 .markdown table {
@@ -199,6 +198,7 @@ body[x-doc-route^="/configuration/"] .col {
   color: rgb(156, 220, 254);
   text-decoration: underline;
   text-decoration-skip: ink;
+  text-decoration-color: #518dae;
   text-underline-offset: 0.2em;
 }
 
@@ -216,6 +216,10 @@ body[x-doc-route^="/configuration/"] .col {
 
 .footer {
   display: none;
+}
+
+.menu__link {
+  width: 100%;
 }
 
 .menu__list-item-collapsible .menu__link:not(.menu__link--sublist) {
@@ -252,7 +256,13 @@ body[x-doc-route^="/configuration/"] .col {
   --ifm-navbar-padding-vertical: 0;
   --ifm-breadcrumb-item-background-active: #f5f5f5;
   --ifm-code-font-size: 95%;
+  --ifm-pre-line-height: 2;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+a {
+  text-underline-offset: 2px;
+  text-decoration-color: #e4e0fd;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */

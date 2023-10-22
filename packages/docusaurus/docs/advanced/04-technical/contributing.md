@@ -33,7 +33,7 @@ Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite
 
 ## Writing your feature
 
-Our repository is setup in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `@babel/register` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
+Our repository is set up in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `esbuild` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
 
 ```bash
 yarn install # Will automatically pick up any changes you made to sources
@@ -54,7 +54,7 @@ yarn build:cli
 yarn test:integration
 ```
 
-Note that because we want to avoid adding the `@babel/register` overhead to each Yarn call the CLI will need to be prebuilt for the integration tests to run - that's what the `yarn build:cli` command is for. This unfortunately means that you will need to rebuild the CLI after each modification if you want the integration tests to pick up your changes.
+Note that because we want to avoid adding the `esbuild` overhead to each Yarn call the CLI will need to be prebuilt for the integration tests to run - that's what the `yarn build:cli` command is for. This unfortunately means that you will need to rebuild the CLI after each modification if you want the integration tests to pick up your changes.
 
 Both unit tests and integration tests use Jest, which means that you can filter the tests you want to run by using the `-t` flag (or simply the file path):
 
@@ -125,17 +125,19 @@ It's generally seen as [bad form](https://twitter.com/brian_d_vaughn/status/1224
 
 ## Writing documentation
 
-Our website is stored within the [`packages/gatsby`](https://github.com/yarnpkg/berry/tree/master/packages/gatsby) directory. *Do not manually edit the html files in the `docs` folder!* Instead, just make your changes in the Gatsby directory (for example you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/contributing.md)), then run the following command to spawn a local server and see your changes:
+We use [Docusaurus](https://docusaurus.io/docs) to generate HTML pages from [mdx](https://mdxjs.com/docs/) sources files. 
+
+Our website is stored within the [`packages/docusaurus`](https://github.com/yarnpkg/berry/tree/master/packages/docusaurus) directory. You can change a page by modifying the corresponding `.mdx` file in the `docs` folder. For example, you'd edit this very page [here](https://github.com/yarnpkg/berry/blob/master/packages/docusaurus/docs/advanced/04-technical/contributing.md).
+
+Then run the following command to spawn a local server and see your changes:
 
 ```bash
-yarn develop
+yarn start
 ```
 
-Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and spawn a fresh preview for everyone to see:
+Once you're happy with what the documentation looks like, just commit your local changes and open a PR. Netlify will pick up your changes and create a fresh preview for everyone to see:
 
 ![](https://user-images.githubusercontent.com/1037931/61949789-3cc09300-afac-11e9-9817-89e97771a4e1.png)
-
-Once everything is green and a maintainer has reviewed your changes, we'll merge them and a bot will automatically trigger a rebuild of the website and update the `docs` folder 🙂
 
 ## Profiling
 

@@ -120,7 +120,12 @@ export function convertMapsToIndexableObjects<T>(arg: T): MapValueToObjectValue<
   return arg as MapValueToObjectValue<T>;
 }
 
-export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () => T) {
+export interface GetSetMap<K, V> {
+  get(k: K): V | undefined;
+  set(k: K, v: V): void;
+}
+
+export function getFactoryWithDefault<K, T>(map: GetSetMap<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -129,7 +134,7 @@ export function getFactoryWithDefault<K, T>(map: Map<K, T>, key: K, factory: () 
   return value;
 }
 
-export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
+export function getArrayWithDefault<K, T>(map: GetSetMap<K, Array<T>>, key: K) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -138,7 +143,7 @@ export function getArrayWithDefault<K, T>(map: Map<K, Array<T>>, key: K) {
   return value;
 }
 
-export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
+export function getSetWithDefault<K, T>(map: GetSetMap<K, Set<T>>, key: K) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)
@@ -147,7 +152,7 @@ export function getSetWithDefault<K, T>(map: Map<K, Set<T>>, key: K) {
   return value;
 }
 
-export function getMapWithDefault<K, MK, MV>(map: Map<K, Map<MK, MV>>, key: K) {
+export function getMapWithDefault<K, MK, MV>(map: GetSetMap<K, Map<MK, MV>>, key: K) {
   let value = map.get(key);
 
   if (typeof value === `undefined`)

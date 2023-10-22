@@ -1455,7 +1455,11 @@ describe(`Shell`, () => {
             await xfs.writeFilePromise(ppath.join(tmpDir, `BAR.txt`), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `hello_world123.txt`), ``);
             await xfs.writeFilePromise(ppath.join(tmpDir, `&434)hello.txt`), ``);
-            await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt`), ``);
+
+            // TODO: Remove the condition once Node is fixed:
+            // https://github.com/nodejs/node/issues/48673
+            if (process.platform !== `win32`)
+              await xfs.writeFilePromise(ppath.join(tmpDir, `😀.txt`), ``);
 
             await expectResult(bufferResult(
               `echo +([[:alnum:]]).txt`,

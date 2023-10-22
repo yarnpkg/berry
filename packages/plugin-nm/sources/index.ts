@@ -27,7 +27,7 @@ const plugin: Plugin<Hooks> = {
   },
   configuration: {
     nmHoistingLimits: {
-      description: `Prevent packages to be hoisted past specific levels`,
+      description: `Prevents packages to be hoisted past specific levels`,
       type: SettingsType.STRING,
       values: [
         NodeModulesHoistingLimits.WORKSPACES,
@@ -37,7 +37,7 @@ const plugin: Plugin<Hooks> = {
       default: NodeModulesHoistingLimits.NONE,
     },
     nmMode: {
-      description: `If set to "hardlinks-local" Yarn will utilize hardlinks to reduce disk space consumption inside "node_modules" directories. With "hardlinks-global" Yarn will use global content addressable storage to reduce "node_modules" size across all the projects using this option.`,
+      description: `Defines in which measure Yarn must use hardlinks and symlinks when generated \`node_modules\` directories.`,
       type: SettingsType.STRING,
       values: [
         NodeModulesMode.CLASSIC,
@@ -47,7 +47,7 @@ const plugin: Plugin<Hooks> = {
       default: NodeModulesMode.CLASSIC,
     },
     nmSelfReferences: {
-      description: `If set to 'false' the workspace will not be allowed to require itself and corresponding self-referencing symlink will not be created`,
+      description: `Defines whether the linker should generate self-referencing symlinks for workspaces.`,
       type: SettingsType.BOOLEAN,
       default: true,
     },

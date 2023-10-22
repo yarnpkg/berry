@@ -1,11 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                    from '@yarnpkg/cli';
-import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils} from '@yarnpkg/core';
-import {xfs, ppath, Filename, PortablePath}                                                                                                                                                     from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                                                                                               from '@yarnpkg/parsers';
-import CI                                                                                                                                                                                       from 'ci-info';
-import {Command, Option, Usage, UsageError}                                                                                                                                                     from 'clipanion';
-import semver                                                                                                                                                                                   from 'semver';
-import * as t                                                                                                                                                                                   from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                                              from '@yarnpkg/cli';
+import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils, reportOptionDeprecations} from '@yarnpkg/core';
+import {xfs, ppath, Filename, PortablePath}                                                                                                                                                                               from '@yarnpkg/fslib';
+import {parseSyml, stringifySyml}                                                                                                                                                                                         from '@yarnpkg/parsers';
+import CI                                                                                                                                                                                                                 from 'ci-info';
+import {Command, Option, Usage, UsageError}                                                                                                                                                                               from 'clipanion';
+import semver                                                                                                                                                                                                             from 'semver';
+import * as t                                                                                                                                                                                                             from 'typanion';
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;
@@ -130,122 +130,69 @@ export default class YarnCommand extends BaseCommand {
     // Google App Engine
     const isGCP = !!process.env.FUNCTION_TARGET || !!process.env.GOOGLE_RUNTIME;
 
-    const reportDeprecation = async (message: string, {error}: {error: boolean}) => {
-      const deprecationReport = await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
-        includeFooter: false,
-      }, async report => {
-        if (error) {
-          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, message);
-        } else {
-          report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, message);
-        }
-      });
+    const deprecationExitCode = await reportOptionDeprecations({
+      configuration,
+      stdout: this.context.stdout,
+    }, [{
+      // The ignoreEngines flag isn't implemented at the moment. I'm still
+      // considering how it should work in the context of plugins - would it
+      // make sense to allow them (or direct dependencies) to define new
+      // "engine check"? Since it has implications regarding the architecture,
+      // I prefer to postpone the decision to later. Also it wouldn't be a flag,
+      // it would definitely be a configuration setting.
+      option: this.ignoreEngines,
+      message: `The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`,
+      error: !CI.VERCEL,
+    }, {
+      // The registry flag isn't supported anymore because it makes little sense
+      // to use a registry for a single install. You instead want to configure it
+      // for all installs inside a project, so through the .yarnrc.yml file. Note
+      // that if absolutely necessary, the old behavior can be emulated by adding
+      // the YARN_NPM_REGISTRY_SERVER variable to the environment.
+      option: this.registry,
+      message: `The --registry option is deprecated; prefer setting npmRegistryServer in your .yarnrc.yml file`,
+    }, {
+      // The preferOffline flag doesn't make much sense with our architecture.
+      // It would require the fetchers to also act as resolvers, which is
+      // doable but quirky. Since a similar behavior is available via the
+      // --cached flag in yarn add, I prefer to move it outside of the core and
+      // let someone implement this "resolver-that-reads-the-cache" logic.
+      option: this.preferOffline,
+      message: `The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`,
+      error: !CI.VERCEL,
+    }, {
+      // Since the production flag would yield a different lockfile than the
+      // regular installs, it's not part of the regular `install` command anymore.
+      // Instead, we expect users to use it with `yarn workspaces focus` (which can
+      // be used even outside of monorepos).
+      option: this.production,
+      message: `The --production option is deprecated on 'install'; use 'yarn workspaces focus' instead`,
+      error: true,
+    }, {
+      // Yarn 2+ isn't interactive during installs anyway, so there's no real point
+      // to this flag at the moment.
+      option: this.nonInteractive,
+      message: `The --non-interactive option is deprecated`,
+      error: !isGCP,
+    }, {
+      // We want to prevent people from using --frozen-lockfile
+      // Note: it's been deprecated because we're now locking more than just the
+      // lockfile - for example the PnP artifacts will also be locked.
+      option: this.frozenLockfile,
+      message: `The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`,
+      callback: () => this.immutable = this.frozenLockfile,
+    }, {
+      // We also want to prevent them from using --cache-folder
+      // Note: it's been deprecated because the cache folder should be set from
+      // the settings. Otherwise there would be a very high chance that multiple
+      // Yarn commands would use different caches, causing unexpected behaviors.
+      option: this.cacheFolder,
+      message: `The cache-folder option has been deprecated; use rc settings instead`,
+      error: !CI.NETLIFY,
+    }]);
 
-      if (deprecationReport.hasErrors()) {
-        return deprecationReport.exitCode();
-      } else {
-        return null;
-      }
-    };
-
-    // The ignoreEngines flag isn't implemented at the moment. I'm still
-    // considering how it should work in the context of plugins - would it
-    // make sense to allow them (or direct dependencies) to define new
-    // "engine check"? Since it has implications regarding the architecture,
-    // I prefer to postpone the decision to later. Also it wouldn't be a flag,
-    // it would definitely be a configuration setting.
-    if (typeof this.ignoreEngines !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --ignore-engines option is deprecated; engine checking isn't a core feature anymore`, {
-        error: !CI.VERCEL,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // The registry flag isn't supported anymore because it makes little sense
-    // to use a registry for a single install. You instead want to configure it
-    // for all installs inside a project, so through the .yarnrc.yml file. Note
-    // that if absolutely necessary, the old behavior can be emulated by adding
-    // the YARN_NPM_REGISTRY_SERVER variable to the environment.
-    if (typeof this.registry !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --registry option is deprecated; prefer setting npmRegistryServer in your .yarnrc.yml file`, {
-        error: false,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // The preferOffline flag doesn't make much sense with our architecture.
-    // It would require the fetchers to also act as resolvers, which is
-    // doable but quirky. Since a similar behavior is available via the
-    // --cached flag in yarn add, I prefer to move it outside of the core and
-    // let someone implement this "resolver-that-reads-the-cache" logic.
-    if (typeof this.preferOffline !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --prefer-offline flag is deprecated; use the --cached flag with 'yarn add' instead`, {
-        error: !CI.VERCEL,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // Since the production flag would yield a different lockfile than the
-    // regular installs, it's not part of the regular `install` command anymore.
-    // Instead, we expect users to use it with `yarn workspaces focus` (which can
-    // be used even outside of monorepos).
-    if (typeof this.production !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --production option is deprecated on 'install'; use 'yarn workspaces focus' instead`, {
-        error: true,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // Yarn 2 isn't interactive during installs anyway, so there's no real point
-    // to this flag at the moment.
-    if (typeof this.nonInteractive !== `undefined`) {
-      const exitCode = await reportDeprecation(`The --non-interactive option is deprecated`, {
-        error: !isGCP,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
-
-    // We want to prevent people from using --frozen-lockfile
-    // Note: it's been deprecated because we're now locking more than just the
-    // lockfile - for example the PnP artifacts will also be locked.
-    if (typeof this.frozenLockfile !== `undefined`) {
-      await reportDeprecation(`The --frozen-lockfile option is deprecated; use --immutable and/or --immutable-cache instead`, {
-        error: false,
-      });
-
-      this.immutable = this.frozenLockfile;
-    }
-
-    // We also want to prevent them from using --cache-folder
-    // Note: it's been deprecated because the cache folder should be set from
-    // the settings. Otherwise there would be a very high chance that multiple
-    // Yarn commands would use different caches, causing unexpected behaviors.
-    if (typeof this.cacheFolder !== `undefined`) {
-      const exitCode = await reportDeprecation(`The cache-folder option has been deprecated; use rc settings instead`, {
-        error: !CI.NETLIFY,
-      });
-
-      if (exitCode !== null) {
-        return exitCode;
-      }
-    }
+    if (deprecationExitCode !== null)
+      return deprecationExitCode;
 
     const updateMode = this.mode === InstallMode.UpdateLockfile;
     if (updateMode && (this.immutable || this.immutableCache))

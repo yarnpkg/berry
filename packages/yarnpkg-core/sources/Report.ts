@@ -130,7 +130,7 @@ export abstract class Report {
       unlock = resolve;
     });
 
-    const setTitle = throttle((title: string) => {
+    const setTitle: (title: string) => void = throttle((title: string) => {
       const thisUnlock = unlock;
 
       lock = new Promise<void>(resolve => {

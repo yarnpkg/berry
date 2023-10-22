@@ -1,5 +1,5 @@
 :::tip
-Yarn now accepts sponsors! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
+Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 :::
 
 ## Master
@@ -15,6 +15,7 @@ Features in `master` can be tried out by running `yarn set version from sources`
 - Some important defaults have changed:
   - `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible.
   - `yarn init` will no longer use zero-install by default. You still can enable it, but it should make it easier to start one-of projects without having to rewrite the configuration afterwards.
+  - `yarn workspaces foreach` now requires one of `--all`, `--recursive`, `--since`, or `--worktree` to be explicitly specified; the previous default was `--worktree`, but it was rarely what users expected.
 
 - All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
   - This doesn't change anything to the plugin API we provide, which will keep being maintained.
@@ -98,6 +99,8 @@ The following changes only affect people writing Yarn plugins:
 
 - `configuration.normalizePackage` now requires a `packageExtensions` option.
 
+- `ProjectLookup` has been removed. Both `Configuration.find` and `Configuration.findProjectCwd` now always do a lockfile lookup.
+
 ### Installs
 
 - Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
@@ -106,6 +109,7 @@ The following changes only affect people writing Yarn plugins:
 
 ### Features
 
+- `enableOfflineMode` is a new setting that, when set, will instruct Yarn to only use the metadata and archives already stored on the local machine rather than download them from the registry. This can be useful when performing local development under network-constrained environments (trains, planes, ...).
 - `yarn run bin` now injects the environment variables defined in `.env.yarn` when spawning a process. This can be configured using the `injectEnvironmentFiles` variable.
 - `yarn workspaces foreach` now automatically enables the `yarn workspaces foreach ! --verbose` flag in interactive terminals.
 - Constraints can now be written in JavaScript. See the [revamped documentation](/features/constraints) for more information.

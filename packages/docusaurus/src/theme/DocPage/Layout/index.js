@@ -83,7 +83,7 @@ const useFocusModal = () => {
 
   useLayoutEffect(() => {
     setModal(getSuggestedModal({onExit: () => setModal(null)}));
-  }, [location.hash]);
+  }, [location.pathname]);
 
   return modal;
 };

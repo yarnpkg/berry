@@ -13,7 +13,7 @@ import * as treeUtils   from './treeUtils';
 
 export {CACHE_VERSION, CACHE_CHECKPOINT, Cache}                                                                     from './Cache';
 export {DEFAULT_RC_FILENAME, LEGACY_PLUGINS, TAG_REGEXP}                                                            from './Configuration';
-export {Configuration, FormatType, ProjectLookup, SettingsType, WindowsLinkType}                                    from './Configuration';
+export {Configuration, FormatType, SettingsType, WindowsLinkType}                                                   from './Configuration';
 export type {PluginConfiguration, SettingsDefinition, PackageExtensionData, PackageExtensions}                      from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                                     from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                               from './Fetcher';
@@ -32,7 +32,7 @@ export type {PeerRequirement}                                                   
 export {LOCKFILE_VERSION, Project, InstallMode}                                                                     from './Project';
 export {ReportError, Report}                                                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                                       from './Resolver';
-export {StreamReport}                                                                                               from './StreamReport';
+export {StreamReport, reportOptionDeprecations}                                                                     from './StreamReport';
 export {TelemetryManager}                                                                                           from './TelemetryManager';
 export {ThrowReport}                                                                                                from './ThrowReport';
 export {VirtualFetcher}                                                                                             from './VirtualFetcher';

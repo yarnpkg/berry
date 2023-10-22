@@ -18,12 +18,12 @@ export type BigIntStats = NodeBigIntStats & {
   crc?: number;
 };
 
-export type Dirent<T extends Path> = Exclude<NodeDirent, 'name'> & {
+export type Dirent<T extends Path> = Omit<NodeDirent, 'name' | 'path'> & {
   name: Filename;
   path: T;
 };
 
-export type DirentNoPath = Exclude<NodeDirent, 'name'> & {
+export type DirentNoPath = Omit<NodeDirent, 'name' | 'path'> & {
   name: Filename;
 };
 

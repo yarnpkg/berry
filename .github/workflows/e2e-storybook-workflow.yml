@@ -12,6 +12,8 @@ on:
     - scripts/e2e-setup-ci.sh
 
 name: 'E2E Storybook'
+env:
+  STORYBOOK_DISABLE_TELEMETRY: 1
 jobs:
   chore:
     name: 'Validating Storybook (with a React app)'

@@ -27,9 +27,9 @@ It currently doesn't support the following, but might in the future (PRs welcome
 
 ## Creating a constraint
 
-Constraints are created by adding a `yarn.config.js` file at the root of your project (repository). This file should export an object with a `constraints` method. This method will be called by the constraints engine, and must define the rules to enforce on the project, using the provided API.
+Constraints are created by adding a `yarn.config.cjs` file at the root of your project (repository). This file should export an object with a `constraints` method. This method will be called by the constraints engine, and must define the rules to enforce on the project, using the provided API.
 
-For example, the following `yarn.config.js` will enforce that all `react` dependencies are set to `18.0.0`.
+For example, the following `yarn.config.cjs` will enforce that all `react` dependencies are set to `18.0.0`.
 
 ```ts
 module.exports = {
@@ -80,7 +80,7 @@ Yarn ships types that make it easier to write constraints. To use them, add the 
 $ yarn add @yarnpkg/types
 ```
 
-Then, in your `yarn.config.js` file, import the types, in particular the `defineConfig` function which automatically type the configuration methods:
+Then, in your `yarn.config.cjs` file, import the types, in particular the `defineConfig` function which automatically type the configuration methods:
 
 ```ts
 /** @type {import('@yarnpkg/types')} */

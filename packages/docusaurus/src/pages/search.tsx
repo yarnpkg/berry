@@ -1,23 +1,30 @@
-import Link                                              from '@docusaurus/Link';
-import {useHistory, useLocation}                         from '@docusaurus/router';
-import useDocusaurusContext                              from '@docusaurus/useDocusaurusContext';
-import {CodeIcon, FileDirectoryIcon}                     from '@primer/octicons-react';
-import Layout                                            from '@theme/Layout';
-import clsx                                              from 'clsx';
-import {InstantSearch, useHits, useSearchBox}            from 'react-instantsearch-hooks-web';
-import Skeleton                                          from 'react-loading-skeleton';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import Link                                                       from '@docusaurus/Link';
+import {useHistory, useLocation}                                  from '@docusaurus/router';
+import useDocusaurusContext                                       from '@docusaurus/useDocusaurusContext';
+import {CodeIcon, FileDirectoryIcon}                              from '@primer/octicons-react';
+import Layout                                                     from '@theme/Layout';
+import clsx                                                       from 'clsx';
+import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch-hooks-web';
+import Skeleton                                                   from 'react-loading-skeleton';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-import {searchClient}                                    from '../lib/searchClient';
+import {searchClient}                                             from '../lib/searchClient';
 
-import indexStyles                                       from './index.module.css';
-import styles                                            from './search.module.css';
+import indexStyles                                                from './index.module.css';
+import styles                                                     from './search.module.css';
 
 type SearchResult = {
   title: string;
   icon: string;
   description: JSX.Element;
 };
+
+const SPONSORS = [{
+  name: `WorkOS`,
+  image: `https://assets-global.website-files.com/621f54116cab10f6e9215d8b/621f548d3bca3b62c4bfe1c2_Favicon%2032x32.png`,
+  link: `https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github`,
+  extra: `, the all-in-one solution for enterprise-ready apps`,
+}];
 
 // eslint-disable-next-line arca/no-default-export
 export default function Packages(): JSX.Element {
@@ -50,7 +57,7 @@ const defaultRequests = [
 }));
 
 function useHitsWithDefaults(query: string): Array<any> {
-  const {hits} = useHits();
+  const {hits} = useHits({escapeHTML: false});
   const [defaults, setDefaults] = useState<Array<any> | null>(null);
 
   useEffect(() => {
@@ -104,14 +111,18 @@ function SearchInterface() {
     refine(parsedSearch.get(`q`) ?? ``);
   }, [location.search]);
 
+  const sponsor = useMemo(() => {
+    return SPONSORS[Math.floor(Math.random() * SPONSORS.length)];
+  }, []);
+
   return <>
     <div className={styles.searchContainer}>
       <SearchBar/>
     </div>
     <div className={clsx(styles.searchContainer, styles.sponsors)}>
-      The Yarn project is sponsored on <a href={`https://opencollective.com/yarnpkg`}>OpenCollective</a> by Foo. Thanks to them!
+      The Yarn project is sponsored on <a href={`https://opencollective.com/yarnpkg`}>OpenCollective</a> by <a className={styles.sponsor} href={sponsor.link}><img src={sponsor.image} style={{height: `1.2rem`}}/><span>{sponsor.name}</span></a>{sponsor.extra}. Thanks to them!
     </div>
-    <div className={styles.searchContainer}>
+    <div className={clsx(styles.searchContainer, styles.searchResults)}>
       <div className={`row`}>
         {hits.map(hit => <SearchResult key={hit.rev} query={query} hit={hit}/>)}
       </div>
@@ -175,7 +186,7 @@ function SearchResult({query, hit}: any) {
     : null;
 
   const listing = hit.name
-    ? `/package?q=${encodeURIComponent(query)}&name=${encodeURIComponent(hit.name)}&version=${encodeURIComponent(hit.version)}`
+    ? `/package?q=${encodeURIComponent(query)}&name=${encodeURIComponent(hit.name)}`
     : null;
 
   const title = hit.name && hit.owner?.name && (

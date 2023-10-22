@@ -7,6 +7,29 @@ const ifAtLeastNode20It = !process.version.match(/^v1[89]\./) ? it : it.skip;
 const ifNotWin32It = process.platform !== `win32` ? it : it.skip;
 
 describe(`NodeFS`, () => {
+  describe(`opendir`, () => {
+    it(`shouldn't crash`, async () => {
+      // The `path` property of fs.Dir only has a getter; if our implementation
+      // overrides it, it'll crash (we need to defineProperty it instead). This
+      // test makes sure we don't accidentally remove it.
+
+      const tmpdir = await xfs.mktempPromise();
+      await xfs.writeFilePromise(ppath.join(tmpdir, `foo`), ``);
+
+      const dir1 = xfs.opendirSync(tmpdir);
+      expect(dir1.path).toEqual(tmpdir);
+      expect(dir1.readSync()).toMatchObject({
+        name: `foo`,
+      });
+
+      const dir2 = await xfs.opendirPromise(tmpdir);
+      expect(dir2.path).toEqual(tmpdir);
+      await expect(dir2.read()).resolves.toMatchObject({
+        name: `foo`,
+      });
+    });
+  });
+
   describe(`readdir`, () => {
     ifAtLeastNode20It(`should support recursive directory listing`, async () => {
       const tmpdir = await xfs.mktempPromise();

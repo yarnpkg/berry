@@ -1,5 +1,5 @@
 import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
-import {xfs, npath, ppath, toFilename}             from '@yarnpkg/fslib';
+import {xfs, npath, ppath}                         from '@yarnpkg/fslib';
 import {ZipOpenFS}                                 from '@yarnpkg/libzip';
 import {execute}                                   from '@yarnpkg/shell';
 import capitalize                                  from 'lodash/capitalize';
@@ -202,7 +202,7 @@ export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack
       project,
       scriptEnv,
       async (name: string, argv0: string, args: Array<string>) => {
-        return await makePathWrapper(binFolder, toFilename(name), argv0, args);
+        return await makePathWrapper(binFolder, name as Filename, argv0, args);
       },
     );
   }
@@ -734,8 +734,8 @@ async function installBinaries(target: PortablePath, binaries: PackageAccessible
   await Promise.all(
     Array.from(binaries, ([binaryName, [, binaryPath, isScript]]) => {
       return isScript
-        ? makePathWrapper(target, toFilename(binaryName), process.execPath, [binaryPath])
-        : makePathWrapper(target, toFilename(binaryName), binaryPath, []);
+        ? makePathWrapper(target, binaryName as Filename, process.execPath, [binaryPath])
+        : makePathWrapper(target, binaryName as Filename, binaryPath, []);
     }),
   );
 }

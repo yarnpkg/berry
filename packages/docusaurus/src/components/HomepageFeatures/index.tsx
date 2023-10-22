@@ -45,7 +45,7 @@ const FeatureList: Array<FeatureItem> = [
     icon: `icon-plugins`,
     description: (
       <>
-        Yarn may solve all your problems - but it'll give you the tools to
+        Yarn may not solve all your problems - but it'll give you the tools to
         solve the ones you find on your way.
       </>
     ),
@@ -55,7 +55,7 @@ const FeatureList: Array<FeatureItem> = [
     icon: `icon-innovation`,
     description: (
       <>
-        We believe in challenging the status quo. Yarn will always be to the
+        We believe in challenging the status quo. Yarn will always be at the
         frontline, brewing new workflows and improving old ones.
       </>
     ),
@@ -76,7 +76,7 @@ function Feature({icon, title, description}: FeatureItem) {
   return (
     <div className={clsx(`col col--4`, styles.feature)}>
       <div className={`text--center`}>
-        <img className={styles.icon} src={`/img/${icon}.png`} />
+        <img className={styles.icon} width={200} height={180} src={`/img/${icon}.png`} />
       </div>
       <div className={`text--center padding-horiz--md`}>
         <h3>{title}</h3>

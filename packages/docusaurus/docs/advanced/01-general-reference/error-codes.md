@@ -144,7 +144,7 @@ This error is usually caused by a Yarn plugin being missing.
 
 A package cannot be found in the cache for the given package and will be fetched from its remote location.
 
-When a package is downloaded from whatever its remote location is, Yarn stores it in a specific folder called then cache. Then, the next time this package was to be downloaded, Yarn simply check this directory and use the stored package if available. This message simply means that the package couldn't be found there. It's not a huge issue, but you probably should try to limit it as much as possible - for example by using [Zero-Installs](/features/zero-installs).
+When a package is downloaded from whatever its remote location is, Yarn stores it in a specific folder called then cache. Then, the next time this package was to be downloaded, Yarn simply check this directory and use the stored package if available. This message simply means that the package couldn't be found there. It's not a huge issue, but you probably should try to limit it as much as possible - for example by using [Zero-Installs](/features/caching#zero-installs).
 
 ## YN0014 - `YARN_IMPORT_FAILED`
 
@@ -204,25 +204,25 @@ This error should be considered obsolete and not exist; open an issue if you hav
 
 One of your workspaces should depend on a dependency but doesn't.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints check`. In order to fix it simply run `yarn constraints fix` which will autofix all such errors.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints`. In order to fix it simply run `yarn constraints --fix` which will autofix all such errors.
 
 ## YN0024 - `CONSTRAINTS_INCOMPATIBLE_DEPENDENCY`
 
 One of your workspaces should depend on a specific version of a dependency but doesn't.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints check`. In order to fix it simply run `yarn constraints fix` which will autofix all such errors.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints`. In order to fix it simply run `yarn constraints --fix` which will autofix all such errors.
 
 ## YN0025 - `CONSTRAINTS_EXTRANEOUS_DEPENDENCY`
 
 One of your workspaces shouldn't depend on one of the dependencies it lists.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints check`. In order to fix it simply run `yarn constraints fix` which will autofix all such errors.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace must depend on the specified range of the specified dependency. Since it currently doesn't, Yarn emits this error when running `yarn constraints`. In order to fix it simply run `yarn constraints --fix` which will autofix all such errors.
 
 ## YN0026 - `CONSTRAINTS_INVALID_DEPENDENCY`
 
 One of your workspaces lists an invalid dependency.
 
-A [constraint](/features/constraints) has been put into effect that declares that the specified workspace probably shouldn't depend on the specified dependency in its current state. Since it currently does, Yarn emits this error when running `yarn constraints check`. Fixing this error require manual intervention as the fix is ambiguous from Yarn's point of view.
+A [constraint](/features/constraints) has been put into effect that declares that the specified workspace probably shouldn't depend on the specified dependency in its current state. Since it currently does, Yarn emits this error when running `yarn constraints`. Fixing this error require manual intervention as the fix is ambiguous from Yarn's point of view.
 
 ## YN0027 - `CANT_SUGGEST_RESOLUTIONS`
 
@@ -420,7 +420,7 @@ Peer dependencies are a little complex, and debugging them may require a lot of 
 To use it, simply pass it the `p`-prefixed code provided in the original peer resolution error message:
 
 ```
-yarn explain peer-requirements pf649cd
+yarn explain peer-requirements pf649c
 ```
 
 ## YN0087 - `MIGRATION_SUCCESS`
@@ -438,3 +438,9 @@ You don't have to upgrade if you don't wish to - but keeping Yarn up-to-date is 
 ## YN0089 - `TIPS_NOTICE`
 
 Our research showed that even our power users aren't always aware of some of the less obvious features in Yarn. To improve discoverability, on local machines, Yarn will display every day a tip about some of the nuggets it contains. Perhaps one of them will help you improve your infrastructure someday?
+
+## YN0090 - `OFFLINE_MODE_ENABLED`
+
+When enabled, the `enableOfflineMode` flag tells Yarn to ignore remote registries and only pull data from its internal caches. This is a handy mode when working from within network-constrained environments such as planes or trains.
+
+To leave the offline work mode, check how it got enabled by running `yarn config --why`. If `<environment>`, run `unset YARN_ENABLE_OFFLINE_MODE` in your terminal. Otherwise, remove the `enableOfflineMode` flag from the relevant `.yarnrc.yml` files.
