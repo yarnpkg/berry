@@ -1,9 +1,0 @@
-releases:
-  "@yarnpkg/plugin-git": patch
-
-declined:
-  - "@yarnpkg/plugin-essentials"
-  - "@yarnpkg/plugin-github"
-  - "@yarnpkg/plugin-version"
-  - "@yarnpkg/plugin-workspace-tools"
-  - "@yarnpkg/cli"

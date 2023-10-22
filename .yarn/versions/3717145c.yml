@@ -1,5 +1,0 @@
-releases:
-  "@yarnpkg/plugin-http": patch
-
-declined:
-  - "@yarnpkg/cli"

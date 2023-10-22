@@ -1,5 +1,0 @@
-releases:
-  "@yarnpkg/plugin-nm": major
-
-declined:
-  - "@yarnpkg/cli"

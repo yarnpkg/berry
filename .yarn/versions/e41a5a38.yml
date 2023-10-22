@@ -1,5 +1,0 @@
-declined:
-  - vscode-zipfs
-  - "@yarnpkg/builder"
-  - "@yarnpkg/core"
-  - "@yarnpkg/pnp"

@@ -1,5 +1,0 @@
-releases:
-  "@yarnpkg/types": patch
-
-declined:
-  - "@yarnpkg/plugin-constraints"
