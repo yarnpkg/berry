@@ -64,7 +64,6 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
   static schema = [
     t.hasKeyRelationship(`all`, t.KeyRelationship.Forbids, [`from`, `recursive`, `since`, `worktree`], {missingIf: `undefined`}),
-    t.hasAtLeastOneKey([`all`, `recursive`, `since`, `worktree`], {missingIf: `undefined`}),
   ];
 
   from = Option.Array(`--from`, {
@@ -135,6 +134,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
+
+    if ([`all`, `recursive`, `since`, `worktree`].every(opt => this[opt] === undefined)) {
+      if (this.from === undefined) {
+        this.all = true;
+      } else {
+        this.recursive = true;
+      }
+    }
 
     if (!this.all && !cwdWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
