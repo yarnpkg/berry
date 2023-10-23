@@ -5165,7 +5165,7 @@ __metadata:
     react-dom: "npm:^17.0.2"
     react-instantsearch-dom: "npm:^6.36.0"
     react-instantsearch-hooks-web: "npm:^6.36.0"
-    react-json-doc: "npm:^2.3.3"
+    react-json-doc: "npm:^2.3.4"
     react-loading-skeleton: "npm:^3.3.1"
     react-modal: "npm:^3.16.1"
     react-query: "npm:^3.39.3"
@@ -15495,12 +15495,12 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react-json-doc@npm:^2.3.3":
-  version: 2.3.3
-  resolution: "react-json-doc@npm:2.3.3"
+"react-json-doc@npm:^2.3.4":
+  version: 2.3.4
+  resolution: "react-json-doc@npm:2.3.4"
   peerDependencies:
     react: "*"
-  checksum: f0a8b58f68bcde5f14aaecfb5bdce7d46397a9b8973997fcfe923fa7f632d415f4b02e88afa4fa71d0ae272664c42c06e2ede1532b359c23efbd9c9d48448811
+  checksum: ab1714321c9d5171b319208128a8192308f26eb1ae4fadd08f53f06d2d29d13dd246c136da83530ba2a7ad605071811ad901bcc6474327aa3fde4b8256c4c172
   languageName: node
   linkType: hard
 
