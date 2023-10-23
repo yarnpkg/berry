@@ -135,7 +135,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
 
-    if ([`all`, `recursive`, `since`, `worktree`].every(opt => this[opt] === undefined)) {
+    if (([`all`, `recursive`, `since`, `worktree`] as const).every(opt => this[opt] === undefined)) {
       if (this.from === undefined) {
         this.all = true;
       } else {
