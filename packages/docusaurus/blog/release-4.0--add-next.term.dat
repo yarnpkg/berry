@@ -1,0 +1,10 @@
+[94m➤[39m YN0000: · [1mYarn 4.0.0[22m
+[94m➤[39m [90mYN0000[39m: ┌ Resolution step
+[94m➤[39m ]8;;https://yarnpkg.com/advanced/error-codes#yn0085---updated_resolution_recordYN0085]8;;: │ [38;2;95;175;0m+[39m [38;2;215;135;95mnext[39m[38;2;135;175;255m@[39m[38;2;135;175;255mnpm:13.5.4[39m, [38;2;215;135;95mreact-dom[39m[38;2;135;175;255m@[39m[38;2;135;175;255mnpm:18.2.0[39m, and [38;2;255;215;0m24[39m more.
+[94m➤[39m [90mYN0000[39m: └ Completed in 0s 280ms
+[94m➤[39m [90mYN0000[39m: ┌ Fetch step
+[94m➤[39m ]8;;https://yarnpkg.com/advanced/error-codes#yn0013---fetch_not_cachedYN0013]8;;: │ [38;2;255;215;0m22[39m packages were added to the project ([38;2;255;49;49m+ 177.72 MiB[39m).
+[94m➤[39m [90mYN0000[39m: └ Completed in 3s 723ms
+[94m➤[39m [90mYN0000[39m: ┌ Link step
+[94m➤[39m [90mYN0000[39m: └ Completed
+[93m➤[39m YN0000: · Done with warnings in 4s 123ms

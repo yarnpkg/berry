@@ -39,6 +39,6 @@ Workspaces can be cloned as long as the remote repository uses Yarn (or npm, in 
 git@github.com:yarnpkg/berry.git#workspace=@yarnpkg/shell&tag=@yarnpkg/shell/2.1.0
 ```
 
-:::warning
+:::caution
 Not all package managers support installing workspaces from git repositories; you shouldn't rely on this feature in your `dependencies` field if your package is meant to be published.
 :::

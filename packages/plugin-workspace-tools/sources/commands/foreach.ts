@@ -28,7 +28,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`-t,--topological\` is set, Yarn will only run the command after all workspaces that it depends on through the \`dependencies\` field have successfully finished executing. If \`--topological-dev\` is set, both the \`dependencies\` and \`devDependencies\` fields will be considered when figuring out the wait points.
 
-      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project. This is the default behavior.
+      - If \`-A,--all\` is set, Yarn will run the command on all the workspaces of a project.
 
       - If \`-R,--recursive\` is set, Yarn will find workspaces to run the command on by recursively evaluating \`dependencies\` and \`devDependencies\` fields, instead of looking at the \`workspaces\` fields.
 
@@ -47,18 +47,18 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
     `,
     examples: [[
-      `Publish current and all descendant packages`,
-      `yarn workspaces foreach npm publish --tolerate-republish`,
+      `Publish all packages`,
+      `yarn workspaces foreach -A npm publish --tolerate-republish`,
     ], [
-      `Run build script on current and all descendant packages`,
-      `yarn workspaces foreach run build`,
+      `Run the build script on all descendant packages`,
+      `yarn workspaces foreach -A run build`,
     ], [
-      `Run build script on current and all descendant packages in parallel, building package dependencies first`,
-      `yarn workspaces foreach -pt run build`,
+      `Run the build script on current and all descendant packages in parallel, building package dependencies first`,
+      `yarn workspaces foreach -Apt run build`,
     ],
     [
-      `Run build script on several packages and all their dependencies, building dependencies first`,
-      `yarn workspaces foreach -ptR --from '{workspace-a,workspace-b}' run build`,
+      `Run the build script on several packages and all their dependencies, building dependencies first`,
+      `yarn workspaces foreach -Rpt --from '{workspace-a,workspace-b}' run build`,
     ]],
   });
 

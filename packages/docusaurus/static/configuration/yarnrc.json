@@ -130,10 +130,24 @@
       "type": "boolean",
       "examples": [true]
     },
+    "enableConstraintsChecks": {
+      "_package": "@yarnpkg/plugin-constraints",
+      "title": "Define whether constraints should run on every install.",
+      "description": "If true, Yarn will run your constraints right after finishing its installs. This may help decrease the feedback loop delay by catching errors long before your CI would even report them.",
+      "type": "boolean",
+      "examples": [true]
+    },
     "enableGlobalCache": {
       "_package": "@yarnpkg/core",
       "title": "Define whether the cache should be shared between all local projects.",
       "description": "If true (the default), Yarn will store the cache files into a folder located within `globalFolder` instead of respecting `cacheFolder`.",
+      "type": "boolean",
+      "default": true
+    },
+    "enableHardenedMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Define whether Yarn should attempt to check for malicious changes.",
+      "description": "If true, Yarn will query the remote registries to validate that the lockfile content matches the remote information. These checks make installs slower, so you should only run them on branches managed by users outside your circle of trust.\n\nYarn will automatically enable the hardened mode on GitHub pull requests from public repository. Should you want to disable it, explicitly set it to `false` in your yarnrc file.",
       "type": "boolean",
       "default": true
     },

@@ -94,6 +94,10 @@ html:not([x-doc-route="/"]) .main-wrapper > :last-child {
   margin-bottom: 0;
 }
 
+html.blog-wrapper .container {
+  background: white;
+}
+
 @media (max-width: 996px) {
   .main-wrapper > :last-child {
     margin: 0;
@@ -135,14 +139,17 @@ html[x-doc-route^="/configuration/"] .col {
   max-width: 100% !important;
 }
 
-html[x-doc-route="/docs/search"] .main-wrapper > .container {
+html:not(.docs-wrapper) .main-wrapper > .container {
   background: #ffffff;
   border-radius: 10px;
+}
+
+html.search-page-wrapper .main-wrapper > .container {
   padding: calc(var(--ifm-spacing-horizontal) * 2);
 }
 
-html[x-doc-route="/docs/search"] .row {
-  padding: 0;
+html.search-page-wrapper .row {
+  padding: 0 !important;
 }
 
 .markdown table {
@@ -214,6 +221,10 @@ html[x-doc-route="/docs/search"] .row {
   --prism-color: #f6f8fa !important;
 }
 
+pre {
+  font-size: .9rem;
+}
+
 .footer {
   display: none;
 }
@@ -256,7 +267,7 @@ html[x-doc-route="/docs/search"] .row {
   --ifm-navbar-padding-vertical: 0;
   --ifm-breadcrumb-item-background-active: #f5f5f5;
   --ifm-code-font-size: 95%;
-  --ifm-pre-line-height: 2;
+  --ifm-pre-line-height: 1.7;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 

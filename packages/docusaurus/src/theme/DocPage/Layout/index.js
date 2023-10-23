@@ -26,7 +26,7 @@ function getSuggestedModal({onExit}) {
   if (navigation.length > 0 && navigation[0].type !== `navigate` && window.location.hostname !== `localhost`)
     return null;
 
-  const target = document.querySelector(location.hash);
+  const target = document.getElementById(location.hash.slice(1));
   if (!target)
     return null;
 
