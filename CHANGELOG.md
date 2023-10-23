@@ -8,9 +8,11 @@ Yarn now accepts sponsors! Please give a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+## 4.0.0
+
 ### **Major Changes**
 
-- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
+- With Node.js 16's [now being End of Life'd](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
 
 - Some important defaults have changed:
   - `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible.
