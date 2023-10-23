@@ -141,8 +141,16 @@ function initCommands(cli: YarnCli, {configuration}: {configuration: Configurati
 }
 
 async function run(cli: YarnCli, argv: Array<string>, {selfPath, pluginConfiguration}: {selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
-  if (!validateNodejsVersion(cli))
-    return 1;
+  // Yarn 1.x downloads the latest version of Yarn when running `yarn set
+  // version`. This causes problem when someone with Node 16 runs something
+  // like `yarn set version 3.6.4` expecting it to work (since 3.x supported
+  // Node.js 16). As a workaround, we disable the engine check on `yarn set
+  // version`.
+  //
+  // TODO: Remove that once we have a better way to handle this
+  if (argv[0] !== `set` || argv[1] !== `version`)
+    if (!validateNodejsVersion(cli))
+      return 1;
 
   const configuration = await getCoreConfiguration({
     selfPath,
