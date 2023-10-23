@@ -37,7 +37,7 @@ It is guaranteed to be called in topological order (in other words, your depende
 
 For backwards compatibility, the `preinstall` and `install` scripts, if presents, are called right before running the `postinstall` script from the same package. In general, prefer using `postinstall` over those two.
 
-:::warning
+:::caution
 Postinstall scripts have should be avoided at all cost, as they make installs slower and riskier. Many users will refuse to install dependencies that have `postinstall` scripts. Additionally, since the output isn't shown out of the box, using them to print a message to the user will not work as you expect.
 :::
 
