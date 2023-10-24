@@ -9,7 +9,7 @@ import {ZipOpenFS}                                                          from
 import {buildNodeModulesTree}                                               from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from '@yarnpkg/nm';
 import {parseSyml}                                                          from '@yarnpkg/parsers';
-import {jsInstallUtils}                                                     from '@yarnpkg/plugin-pnp';
+import {NodeLinker, jsInstallUtils}                                         from '@yarnpkg/plugin-pnp';
 import {PnpApi, PackageInformation}                                         from '@yarnpkg/pnp';
 import cmdShim                                                              from '@zkochan/cmd-shim';
 import {UsageError}                                                         from 'clipanion';
@@ -108,7 +108,7 @@ export class NodeModulesLinker implements Linker {
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
-    return opts.project.configuration.get(`nodeLinker`) === `node-modules`;
+    return opts.project.configuration.get(`nodeLinker`) === NodeLinker.NODE_MODULES;
   }
 }
 
@@ -218,7 +218,7 @@ class NodeModulesInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.NODE_MODULES)
       return undefined;
 
     const defaultFsLayer = new VirtualFS({
