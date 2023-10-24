@@ -90,7 +90,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
   },
   configuration: {
     nodeLinker: {
-      description: `The linker used for installing Node packages, one of: "pnp", "node-modules"`,
+      description: `The linker used for installing Node packages, one of: ${Object.values(NodeLinker).map(v => `"${v}"`).join(`, `)}}`,
       type: SettingsType.STRING,
       default: NodeLinker.PNP,
     },
