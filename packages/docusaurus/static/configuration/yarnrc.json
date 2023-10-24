@@ -343,6 +343,18 @@
       },
       "_exampleKeys": ["homepage"]
     },
+    "injectEnvironmentFiles": {
+      "_package": "@yarnpkg/core",
+      "title": "Array of .env files which will get injected into any subprocess spawned by Yarn.",
+      "description": "By default Yarn will automatically inject the variables stored in the `.env.yarn` file, but you can use this setting to change this behavior.\n\nNote that adding a question mark at the end of the path will silence the error Yarn would throw should the file be missing, which may come in handy when declaring local configuration files.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      },
+      "default": [],
+      "_exampleItems": [".my-env", ".my-local-env?"]
+    },
     "installStatePath": {
       "_package": "@yarnpkg/core",
       "title": "Path where the install state will be persisted.",
