@@ -171,6 +171,21 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should allow excluding packages (deprecations)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-deprecated`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--exclude`, `no-deps-deprecated`)).resolves.toMatchObject({
+          stdout: expect.stringContaining(`No audit suggestions`),
+        });
+      }),
+    );
+
+    test(
       `it should allow excluding packages (when using --json)`,
       makeTemporaryEnv({
         dependencies: {
