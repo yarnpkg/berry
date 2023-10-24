@@ -93,9 +93,7 @@ const config = {
     ({
       image: `img/social-preview.png`,
       colorMode: {
-        defaultMode: `light`,
-        disableSwitch: true,
-        respectPrefersColorScheme: false,
+        respectPrefersColorScheme: true,
       },
       algolia: {
         appId: `STXW7VT1S5`,
