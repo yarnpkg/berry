@@ -30,9 +30,18 @@ import * as semverUtils                                                         
 import * as structUtils                                                                                          from './structUtils';
 import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
 
-const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
-  ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
-  : false;
+const isPublicRepository = (function () {
+  if (GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH) {
+    const githubEventPath = npath.toPortablePath(process.env.GITHUB_EVENT_PATH);
+    try {
+      return !(xfs.readJsonSync(githubEventPath).repository?.private ?? true);
+    } catch (err) {
+      return false;
+    }
+  }
+
+  return false;
+})();
 
 export const LEGACY_PLUGINS = new Set([
   `@yarnpkg/plugin-constraints`,
