@@ -682,4 +682,48 @@ describe(`Dragon tests`, () => {
       },
     ),
   );
+
+  test(
+    `it should pass the dragon test 13`,
+    makeTemporaryEnv(
+      {
+        workspaces: [
+          `pkg-a`,
+          `pkg-b`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // This dragon test represents the following scenario:
+        //
+        // .
+        // ├── pkg-a/
+        // │   └── no-deps-failing (optional)
+        // └── pkg-b/
+        //     └── no-deps-failing (not optional)
+        //
+        // Depending on the order of traversal, we may end up marking pkg-c as
+        // being traversed, and skipping future traversals. If we're not being
+        // careful, it may cause the "not optional" flag to be skipped as well,
+        // making Yarn believe that pkg-c is optional when it's not.
+
+        await xfs.mkdirPromise(`${path}/pkg-a`);
+        await xfs.writeJsonPromise(`${path}/pkg-a/package.json`, {
+          name: `pkg-a`,
+          optionalDependencies: {
+            [`no-deps-failing`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirPromise(`${path}/pkg-b`);
+        await xfs.writeJsonPromise(`${path}/pkg-b/package.json`, {
+          name: `pkg-b`,
+          dependencies: {
+            [`no-deps-failing`]: `1.0.0`,
+          },
+        });
+
+        await expect(run(`install`)).rejects.toThrowError(`no-deps-failing@npm:1.0.0 couldn't be built successfully`);
+      },
+    ),
+  );
 });
