@@ -34,8 +34,8 @@ const isPublicRepository = (function () {
   if (GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH) {
     const githubEventPath = npath.toPortablePath(process.env.GITHUB_EVENT_PATH);
     try {
-      return xfs.readJsonSync(githubEventPath).repository?.private ?? true;
-    } catch {
+      return !(xfs.readJsonSync(githubEventPath).repository?.private ?? true);
+    } catch (err) {
       return false;
     }
   }
