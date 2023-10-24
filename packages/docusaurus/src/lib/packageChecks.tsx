@@ -141,8 +141,8 @@ export const checks: Array<Check> = [{
       name,
       version,
     }, {
-      mainFields: [`main`, `types`, `typings`],
-      conditions: [`default`, `require`, `import`, `node`, `types`],
+      mainFields: [`types`, `typings`, `main`],
+      conditions: [`types`, `default`, `require`, `import`, `node`],
       extensions,
     });
 
