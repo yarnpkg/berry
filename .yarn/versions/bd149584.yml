@@ -1,0 +1,6 @@
+releases:
+  "@yarnpkg/cli": patch
+  "@yarnpkg/core": patch
+  "@yarnpkg/plugin-nm": patch
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/plugin-pnpm": patch
