@@ -269,10 +269,9 @@ export class StreamReport extends Report {
   }
 
   getRecommendedLength() {
-    const PREFIX_SIZE = `➤ YN0000: `.length;
+    const PREFIX_SIZE = `➤ YN0000: ⠋ `.length;
 
-    // The -1 is to account for terminals that would wrap after
-    // the last column rather before the first overwrite
+    // The `- 1` is to account for terminals that would wrap after the last column rather before the first overwrite
     const recommendedLength = this.progressStyle !== null
       ? (this.stdout as WriteStream).columns - 1
       : super.getRecommendedLength();
