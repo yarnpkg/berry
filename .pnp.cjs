@@ -8837,6 +8837,7 @@ const RAW_RUNTIME_STATE =
           ["@monaco-editor/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:4.4.6"],\
           ["@primer/octicons-react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.7.0"],\
           ["@tsconfig/docusaurus", "npm:2.0.0"],\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/dompurify", "npm:3.0.2"],\
           ["@types/git-url-parse", "npm:9.0.0"],\
           ["@types/lodash", "npm:4.14.172"],\
@@ -8861,6 +8862,7 @@ const RAW_RUNTIME_STATE =
           ["ansi-to-html", "npm:0.7.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
+          ["cross-spawn", "npm:7.0.3"],\
           ["dompurify", "npm:3.0.5"],\
           ["esbuild-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.20.0"],\
           ["git-url-parse", "npm:13.1.0"],\
