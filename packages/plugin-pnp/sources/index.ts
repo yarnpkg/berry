@@ -77,6 +77,12 @@ declare module '@yarnpkg/core' {
   }
 }
 
+export enum NodeLinker {
+  PNP = `pnp`,
+  PNPM = `pnpm`,
+  NODE_MODULES = `node-modules`,
+}
+
 const plugin: Plugin<CoreHooks & StageHooks> = {
   hooks: {
     populateYarnPaths,
