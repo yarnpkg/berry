@@ -6,7 +6,7 @@ description: An in-depth guide to Yarn's constraints, a feature that provides an
 ---
 
 :::info
-This page documents the new JavaScript-based constraints. The older constraints, based on Prolog, are still supported but should be considered deprecated. Their documentation can be found [here](/features/constraints-prolog).
+This page documents the new JavaScript-based constraints. The older constraints, based on Prolog, are still supported but should be considered deprecated. Their documentation can be found [here](https://v3.yarnpkg.com/features/constraints).
 :::
 
 ## Overview
@@ -156,4 +156,3 @@ module.exports = defineConfig({
   },
 });
 ```
-

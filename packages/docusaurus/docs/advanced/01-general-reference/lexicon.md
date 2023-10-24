@@ -132,13 +132,13 @@ See also: [Workspaces](/features/workspaces)
 
 A range is a string that, when combined with a package name, can be used to select multiple versions of a single package. Ranges typically follow <abbr>semver</abbr>, but can use any of the supported Yarn protocols.
 
-See also: [Protocols](/features/protocols)
+See also: [Protocols](/protocols)
 
 ### Reference
 
 A reference is a string that, when combined with a package name, can be used to select one single version of a single package. References typically follow <abbr>semver</abbr>, but can use any of the supported Yarn protocols.
 
-See also: [Protocols](/features/protocols)
+See also: [Protocols](/protocols)
 
 ### Resolver
 
@@ -192,7 +192,7 @@ Generally speaking workspaces are a Yarn features used to work on multiple proje
 
 In the context of Yarn's vocabulary, workspaces are local <abbr>packages</abbr> that directly belong to a <abbr>project</abbr>.
 
-See also: [Packages](/features/packages), [Workspaces](/features/workspaces)
+See also: [Workspaces](/features/workspaces)
 
 ### Worktree
 

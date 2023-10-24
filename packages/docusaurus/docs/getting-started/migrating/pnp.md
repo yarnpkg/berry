@@ -15,7 +15,7 @@ While we recommend to use [Yarn Plug'n'Play](/features/pnp) for new projects, en
 
 ## Calling the Doctor
 
-Plug'n'Play enforces strict [dependency rules]((/advanced/rulebook)). You'll get errors should something in your application rely on unlisted dependencies which could cause your application to become unstable.
+Plug'n'Play enforces strict [dependency rules](/advanced/rulebook). You'll get errors should something in your application rely on unlisted dependencies which could cause your application to become unstable.
 
 To quickly detect which places may rely on unsafe patterns, Yarn provides a tool called the Doctor. Just run `yarn dlx @yarnpkg/doctor` in your project and the Doctor will start looking at your source files to detect any potentially problematic pattern.
 
