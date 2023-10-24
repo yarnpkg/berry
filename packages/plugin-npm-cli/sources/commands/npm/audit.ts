@@ -131,7 +131,7 @@ export default class NpmAuditCommand extends BaseCommand {
         registry,
       }) as unknown as Promise<npmAuditTypes.AuditResponse>;
 
-      const deprecations = await Promise.all(this.noDeprecations ? [] : Array.from(Object.entries(payload), async ([packageName, versions]) => {
+      const deprecations = this.noDeprecations ? [] : await Promise.all(Array.from(Object.entries(payload), async ([packageName, versions]) => {
         const registryData = await npmHttpUtils.getPackageMetadata(structUtils.parseIdent(packageName), {
           project,
         });
