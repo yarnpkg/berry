@@ -38,7 +38,7 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
 
   // We remove the PnP hook from NODE_OPTIONS because the process can have
   // NODE_OPTIONS set while changing linkers, which affects build scripts.
-  if (project.configuration.get(`nodeLinker`) !== `pnp`) {
+  if (project.configuration.get(`nodeLinker`) !== NodeLinker.PNP) {
     env.NODE_OPTIONS = nodeOptions;
     return;
   }
@@ -92,7 +92,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
     nodeLinker: {
       description: `The linker used for installing Node packages, one of: "pnp", "node-modules"`,
       type: SettingsType.STRING,
-      default: `pnp`,
+      default: NodeLinker.PNP,
     },
     winLinkType: {
       description: `Whether Yarn should use Windows Junctions or symlinks when creating links on Windows.`,

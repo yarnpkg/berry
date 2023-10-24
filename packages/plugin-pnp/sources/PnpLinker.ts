@@ -5,7 +5,7 @@ import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs}             
 import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
 import {UsageError}                                                                                             from 'clipanion';
 
-import {getPnpPath}                                                                                             from './index';
+import {NodeLinker, getPnpPath}                                                                                 from './index';
 import * as jsInstallUtils                                                                                      from './jsInstallUtils';
 import * as pnpUtils                                                                                            from './pnpUtils';
 
@@ -76,7 +76,7 @@ export class PnpLinker implements Linker {
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
-    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
+    if (opts.project.configuration.get(`nodeLinker`) !== NodeLinker.PNP)
       return false;
 
     if (opts.project.configuration.get(`pnpMode`) !== this.mode)
@@ -239,7 +239,7 @@ export class PnpInstaller implements Installer {
     if (!this.isEsmEnabled())
       await xfs.removePromise(pnpPath.esmLoader);
 
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.PNP) {
       await xfs.removePromise(pnpPath.cjs);
       await xfs.removePromise(pnpPath.data);
       await xfs.removePromise(pnpPath.esmLoader);

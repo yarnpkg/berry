@@ -4,6 +4,7 @@ import {structUtils, semverUtils}                                               
 import {Command, Option, Usage, UsageError}                                                                                from 'clipanion';
 import micromatch                                                                                                          from 'micromatch';
 
+import {NodeLinker}                                                                                                        from '../index';
 import * as pnpUtils                                                                                                       from '../pnpUtils';
 
 // eslint-disable-next-line arca/no-default-export
@@ -71,7 +72,7 @@ export default class UnplugCommand extends BaseCommand {
     if (!workspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    if (configuration.get(`nodeLinker`) !== `pnp`)
+    if (configuration.get(`nodeLinker`) !== NodeLinker.PNP)
       throw new UsageError(`This command can only be used if the \`nodeLinker\` option is set to \`pnp\``);
 
     await project.restoreInstallState();
