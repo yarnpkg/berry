@@ -872,13 +872,15 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         result.set(propKey, getDefaultValue(configuration, propDefinition));
 
       return result;
-    }
+    } break;
+
     case SettingsType.MAP: {
       if (definition.isArray && !ignoreArrays)
         return [];
 
       return new Map<string, any>();
-    }
+    } break;
+
     case SettingsType.ABSOLUTE_PATH: {
       if (definition.default === null)
         return null;
@@ -902,10 +904,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
           return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
-    }
+    } break;
+
     default: {
       return definition.default;
-    }  }
+    } break;
+  }
 }
 
 type SettingTransforms = {
@@ -1902,7 +1906,8 @@ export class Configuration {
 
               default: {
                 miscUtils.assertNever(extension);
-              }            }
+              } break;
+            }
           }
         }
       }
