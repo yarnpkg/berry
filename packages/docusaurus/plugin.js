@@ -17,6 +17,7 @@ module.exports = function(context, options) {
           fallback: {
             fs: false,
             module: false,
+            buffer: false,
             os: require.resolve(`os-browserify`),
             path: require.resolve(`path-browserify`),
           },
