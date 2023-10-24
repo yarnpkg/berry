@@ -2615,7 +2615,7 @@ function applyVirtualResolutionMutations({
               requesters: new Map(),
               links: new Map(),
               version: peerVersion,
-              hash: `p${hashUtils.makeHash(identStr).slice(0, 5)}`,
+              hash: `p${peerResolution.locatorHash.slice(0, 5)}`,
             }));
 
             aggregatedWarning.dependents.set(dependent.locatorHash, dependent);
@@ -2670,7 +2670,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       return peerDependency.range;
     });
 
-    const andDescendants = warning.dependents.size > 1
+    const andDescendants = warning.links.size > 1
       ? `and other dependencies request`
       : `requests`;
 
@@ -2685,7 +2685,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       structUtils.prettyReference(project.configuration, warning.version)
     }, which doesn't satisfy what ${
       structUtils.prettyIdent(project.configuration, warning.requesters.values().next().value)
-    } ${andDescendants} (${rangeDescription}).`;
+    } (${formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)}) ${andDescendants} (${rangeDescription}).`;
   }) ?? [];
 
   const omittedWarnings = warningsByType[PeerWarningType.NotProvided]?.map(warning => {
