@@ -701,10 +701,10 @@ describe(`Dragon tests`, () => {
         // └── pkg-b/
         //     └── no-deps-failing (not optional)
         //
-        // Depending on the order of traversal, we may end up marking pkg-c as
-        // being traversed, and skipping future traversals. If we're not being
-        // careful, it may cause the "not optional" flag to be skipped as well,
-        // making Yarn believe that pkg-c is optional when it's not.
+        // Depending on the order of traversal we may end up marking no-deps-failing
+        // as being traversed, and skip all future traversals. If we're not being
+        // careful this may cause setting the "not optional" flag to be skipped as
+        // well, making Yarn believe that no-deps-failing is optional when it's not.
 
         await xfs.mkdirPromise(`${path}/pkg-a`);
         await xfs.writeJsonPromise(`${path}/pkg-a/package.json`, {
