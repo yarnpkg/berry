@@ -1,6 +1,6 @@
 import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, miscUtils, structUtils, WindowsLinkType} from '@yarnpkg/core';
 import {Filename, PortablePath, setupCopyIndex, ppath, xfs, DirentNoPath}                                                                                                                                                                   from '@yarnpkg/fslib';
-import {jsInstallUtils}                                                                                                                                                                                                                     from '@yarnpkg/plugin-pnp';
+import {NodeLinker, jsInstallUtils}                                                                                                                                                                                                         from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                                                                         from 'clipanion';
 
 export type PnpmCustomData = {
@@ -76,7 +76,7 @@ export class PnpmLinker implements Linker {
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
-    return opts.project.configuration.get(`nodeLinker`) === `pnpm`;
+    return opts.project.configuration.get(`nodeLinker`) === NodeLinker.PNPM;
   }
 }
 
@@ -170,7 +170,7 @@ class PnpmInstaller implements Installer {
   }
 
   async attachInternalDependencies(locator: Locator, dependencies: Array<[Descriptor, Locator]>) {
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`)
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.PNPM)
       return;
 
     // We don't install those packages at all, because they can't be used anyway
@@ -264,7 +264,7 @@ class PnpmInstaller implements Installer {
   async finalizeInstall() {
     const storeLocation = getStoreLocation(this.opts.project);
 
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `pnpm`) {
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.PNPM) {
       await xfs.removePromise(storeLocation);
     } else {
       let extraneous: Set<Filename>;
@@ -295,7 +295,7 @@ class PnpmInstaller implements Installer {
     await this.asyncActions.wait();
 
     await removeIfEmpty(storeLocation);
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
+    if (this.opts.project.configuration.get(`nodeLinker`) !== NodeLinker.NODE_MODULES)
       await removeIfEmpty(getNodeModulesLocation(this.opts.project));
 
     return {
