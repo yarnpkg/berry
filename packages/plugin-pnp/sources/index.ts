@@ -84,7 +84,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
   },
   configuration: {
     nodeLinker: {
-      description: `The linker used for installing Node packages, one of: "pnp", "node-modules"`,
+      description: `The linker used for installing Node packages, one of: "pnp", "pnpm", or "node-modules"`,
       type: SettingsType.STRING,
       default: `pnp`,
     },
