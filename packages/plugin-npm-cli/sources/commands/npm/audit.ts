@@ -110,7 +110,7 @@ export default class NpmAuditCommand extends BaseCommand {
       ...this.excludes,
     ]));
 
-    const payload = Object.create(null);
+    const payload: Record<string, Array<string>> = Object.create(null);
 
     for (const [packageName, versions] of packages)
       if (!excludedPackages.some(pattern => micromatch.isMatch(packageName, pattern)))
@@ -131,12 +131,12 @@ export default class NpmAuditCommand extends BaseCommand {
         registry,
       }) as unknown as Promise<npmAuditTypes.AuditResponse>;
 
-      const deprecations = await Promise.all(this.noDeprecations ? [] : Array.from(packages, async ([packageName, versions]) => {
+      const deprecations = this.noDeprecations ? [] : await Promise.all(Array.from(Object.entries(payload), async ([packageName, versions]) => {
         const registryData = await npmHttpUtils.getPackageMetadata(structUtils.parseIdent(packageName), {
           project,
         });
 
-        return miscUtils.mapAndFilter(versions.keys(), version => {
+        return miscUtils.mapAndFilter(versions, version => {
           const {deprecated} = registryData.versions[version];
 
           // Apparently some packages have a `deprecated` field set to an empty string
@@ -213,7 +213,7 @@ export default class NpmAuditCommand extends BaseCommand {
 
     const hasError = Object.keys(expandedResult).length > 0;
 
-    if (!this.json && hasError) {
+    if (hasError) {
       treeUtils.emitTree(npmAuditUtils.getReportTree(expandedResult), {
         configuration,
         json: this.json,
@@ -229,11 +229,7 @@ export default class NpmAuditCommand extends BaseCommand {
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      report.reportJson(result);
-
-      if (!hasError) {
-        report.reportInfo(MessageName.EXCEPTION, `No audit suggestions`);
-      }
+      report.reportInfo(MessageName.EXCEPTION, `No audit suggestions`);
     });
 
     return hasError ? 1 : 0;
