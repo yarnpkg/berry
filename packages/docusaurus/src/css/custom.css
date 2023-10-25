@@ -204,7 +204,7 @@ html.search-page-wrapper .row {
 .rjd-annotation a {
   color: rgb(156, 220, 254);
   text-decoration: underline;
-  text-decoration-skip: ink;
+  text-decoration-skip-ink: auto;
   text-decoration-color: #518dae;
   text-underline-offset: 0.2em;
 }
