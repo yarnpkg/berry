@@ -9,9 +9,9 @@ In order to simplify our work maintaining Yarn, we ask you to help us by providi
 
 To help you help us, we use a tool called [Sherlock](https://github.com/arcanis/sherlock) which allows you to attach reproduction testcases to your issues. In a sense, it's a bit like if you were writing a Jest test directly in your issue. By using this system we can quickly check whether a problem can be reproduced, and whether our fix is the right one. It's a win-win for everyone!
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
+import TOCInline from '@theme/TOCInline';
+
+<TOCInline toc={toc} />
 
 ## Adding a reproduction to your issue
 
