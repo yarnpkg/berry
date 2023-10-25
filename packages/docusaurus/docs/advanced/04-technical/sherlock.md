@@ -1,6 +1,6 @@
 ---
 category: advanced
-path: /advanced/sherlock
+slug: /advanced/sherlock
 title: "Sherlock"
 description: An overview of Yarn's GitHub Actions issue toolkit that helps users provide minimal reproductions.
 ---
