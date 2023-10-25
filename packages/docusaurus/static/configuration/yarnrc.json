@@ -31,9 +31,9 @@
       "_package": "@yarnpkg/core",
       "type": "string",
       "title": "Behavior that Yarn should follow when it detects that a cache entry is outdated.",
-      "description": "Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:\n\n- If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.\n- If `match-spec`, it'll also rebuild the file if the compression level has changed.\n- If `always`, it'll always regenerate the cache files so they use the current cache version.\n- If `auto` (the default), it'll act as either `required-only` or `always` depending on whether `enableGlobalCache` is enabled (with `always` being selected in that case).",
-      "enum": ["required-only", "match-spec", "always", "auto"],
-      "default": "auto"
+      "description": "Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:\n\n- If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.\n- If `match-spec`, it'll also rebuild the file if the compression level has changed.\n- If `always` (the default), it'll always regenerate the cache files so they use the current cache version.",
+      "enum": ["required-only", "match-spec", "always"],
+      "default": "always"
     },
     "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
