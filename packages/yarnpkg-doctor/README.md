@@ -97,7 +97,7 @@ This rule is a temporary measure to address this [issue](https://github.com/webp
 
 This rule warns when the `bundleDependencies` (or `bundledDependencies`) field is used.
 
-Visit [the dedicated section](https://yarnpkg.com/getting-started/migration#dont-use-bundledependencies) on the website to learn more.
+Visit [the dedicated section](https://yarnpkg.com/migration/guide#dont-use-bundledependencies) on the website to learn more.
 
 ## Further reading
 

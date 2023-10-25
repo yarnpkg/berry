@@ -182,7 +182,7 @@ export default class InitCommand extends BaseCommand {
         ``,
         `# Swap the comments on the following lines if you wish to use zero-installs`,
         `# In that case, don't forget to run \`yarn config set enableGlobalCache false\`!`,
-        `# Documentation here: https://yarnpkg.com/features/zero-installs`,
+        `# Documentation here: https://yarnpkg.com/features/caching#zero-installs`,
         ``,
         `#!.yarn/cache`,
         `.pnp.*`,

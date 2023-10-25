@@ -18,7 +18,7 @@
 
 Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
-- Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it to your repository
+- Yarn supports [plugins](https://yarnpkg.com/features/extensibility); adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
 - Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to make package scripts portable across Windows, Linux, and macOS

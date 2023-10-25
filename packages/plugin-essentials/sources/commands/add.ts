@@ -43,7 +43,7 @@ export default class AddCommand extends BaseCommand {
 
       - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
 
-      For a compilation of all the supported protocols, please consult the dedicated page from our website: https://yarnpkg.com/features/protocols.
+      For a compilation of all the supported protocols, please consult the dedicated page from our website: https://yarnpkg.com/protocols.
     `,
     examples: [[
       `Add a regular package to the current workspace`,
