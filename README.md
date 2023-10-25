@@ -221,7 +221,7 @@ Plugins can be developed by third-party entities. To use them within your applic
 
 ### Creating a new plugin
 
-To create your own plugin, please refer to the [documentation](https://yarnpkg.com/features/plugins).
+To create your own plugin, please refer to the [documentation](https://yarnpkg.com/advanced/plugin-tutorial).
 
 ## Generic packages
 
