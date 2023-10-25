@@ -5137,6 +5137,7 @@ __metadata:
     "@types/semver": "npm:^7.1.0"
     "@types/three": "npm:^0.144.0"
     "@yarnpkg/cli": "workspace:^"
+    "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"

@@ -6,6 +6,8 @@ require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 
 const fs = require(`fs`);
 
+const {YarnVersion} = require(`@yarnpkg/core`);
+
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 
@@ -73,6 +75,11 @@ const config = {
         },
         docs: {
           routeBasePath: `/`,
+          versions: {
+            current: {
+              label: `master (${YarnVersion})`,
+            },
+          },
           sidebarPath: require.resolve(`./sidebars.js`),
           editUrl: `https://github.com/yarnpkg/berry/edit/master/packages/docusaurus/`,
           remarkPlugins,
@@ -144,6 +151,21 @@ const config = {
             to: `blog`,
             label: `Blog`,
             position: `left`,
+          },
+          {
+            type: `docsVersionDropdown`,
+            position: `right`,
+            dropdownActiveClassDisabled: true,
+            dropdownItemsAfter: [
+              {
+                label: `3.6.4`,
+                href: `https://v3.yarnpkg.com`,
+              },
+              {
+                label: `1.22.19`,
+                href: `https://classic.yarnpkg.com/en/docs`,
+              },
+            ],
           },
           {
             href: `https://discord.gg/yarnpkg`,
