@@ -203,7 +203,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 - [plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
 - [plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
 - [plugin-interactive-tools](packages/plugin-interactive-tools) adds support for various interactive commands ([`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)).
-- [plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/features/protocols#whats-the-difference-between-link-and-portal) references as dependencies.
+- [plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/protocol/link) references as dependencies.
 - [plugin-nm](packages/plugin-nm) adds support for installing packages through a `node_modules` folder.
 - [plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) dependencies, resolving them from an npm-like registry.
 - [plugin-npm-cli](packages/plugin-npm-cli) adds support for npm-specific commands ([`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
