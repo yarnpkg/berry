@@ -1,9 +1,142 @@
-import {xfs, npath}    from '@yarnpkg/fslib';
-import {fs as fsUtils} from 'pkg-tests-core';
-import tar             from 'tar';
+import {miscUtils}         from '@yarnpkg/core';
+import {xfs, npath, ppath} from '@yarnpkg/fslib';
+import {fs as fsUtils}     from 'pkg-tests-core';
+import tar                 from 'tar';
 
 describe(`Commands`, () => {
   describe(`pack`, () => {
+    describe(`pack list`, () => {
+      const files = [
+        `fileX`,
+        `fileY`,
+        `folderA/fileX`,
+        `folderA/fileY`,
+        `folderA/folderU/fileX`,
+        `folderA/folderU/fileY`,
+        `folderA/folderV/fileX`,
+        `folderA/folderV/fileY`,
+        `folderB/fileX`,
+        `folderB/fileY`,
+        `folderB/folderU/fileX`,
+        `folderB/folderU/fileY`,
+        `folderB/folderV/fileX`,
+        `folderB/folderV/fileY`,
+      ];
+
+      const tests = [{
+        gitignore: [
+        ],
+        expected: [
+          `fileX`,
+          `fileY`,
+          `folderA/fileX`,
+          `folderA/fileY`,
+          `folderA/folderU/fileX`,
+          `folderA/folderU/fileY`,
+          `folderA/folderV/fileX`,
+          `folderA/folderV/fileY`,
+          `folderB/fileX`,
+          `folderB/fileY`,
+          `folderB/folderU/fileX`,
+          `folderB/folderU/fileY`,
+          `folderB/folderV/fileX`,
+          `folderB/folderV/fileY`,
+          `package.json`,
+        ],
+      }, {
+        gitignore: [
+          `*X`,
+        ],
+        expected: [
+          `fileY`,
+          `folderA/fileY`,
+          `folderA/folderU/fileY`,
+          `folderA/folderV/fileY`,
+          `folderB/fileY`,
+          `folderB/folderU/fileY`,
+          `folderB/folderV/fileY`,
+          `package.json`,
+        ],
+      }, {
+        gitignore: [
+          `file*`,
+          `!fileX`,
+        ],
+        expected: [
+          `fileX`,
+          `folderA/fileX`,
+          `folderA/folderU/fileX`,
+          `folderA/folderV/fileX`,
+          `folderB/fileX`,
+          `folderB/folderU/fileX`,
+          `folderB/folderV/fileX`,
+          `package.json`,
+        ],
+      }, {
+        gitignore: [
+          `file*`,
+          `!/fileX`,
+        ],
+        expected: [
+          `fileX`,
+          `package.json`,
+        ],
+      }, {
+        gitignore: [
+          `**/fileX`,
+        ],
+        expected: [
+          `fileX`, // TODO: Should be ignored
+          `fileY`,
+          `folderA/fileY`,
+          `folderA/folderU/fileY`,
+          `folderA/folderV/fileY`,
+          `folderB/fileY`,
+          `folderB/folderU/fileY`,
+          `folderB/folderV/fileY`,
+          `package.json`,
+        ],
+      }, {
+        gitignore: [
+          `*`,
+          `!**/fileX`,
+        ],
+        expected: [
+          // `fileX`, // TODO: Should not be ignored
+          `folderA/fileX`,
+          `folderA/folderU/fileX`,
+          `folderA/folderV/fileX`,
+          `folderB/fileX`,
+          `folderB/folderU/fileX`,
+          `folderB/folderV/fileX`,
+          `package.json`,
+        ],
+      }];
+
+      for (const test of tests) {
+        it(`should return the expected pack list (${test.gitignore.join(`,`)})`, makeTemporaryEnv({}, async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `.gitignore`), test.gitignore.join(`\n`));
+
+          for (const entry of files) {
+            await xfs.mkdirPromise(ppath.join(path, ppath.dirname(entry)), {recursive: true});
+            await xfs.writeFilePromise(ppath.join(path, entry), ``);
+          }
+
+          await run(`install`);
+
+          const {stdout} = await run(`pack`, `--dry-run`, `--json`);
+
+          const locations = miscUtils.parseJsonStream(stdout).map(entry => {
+            return entry.location;
+          }).filter(location => {
+            return !!location;
+          });
+
+          expect(locations).toEqual(test.expected);
+        }));
+      }
+    });
+
     test(
       `it should list all the files in a package`,
       makeTemporaryEnv({}, async ({path, run, source}) => {

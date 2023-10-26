@@ -598,3 +598,8 @@ export function groupBy<T extends Record<string, any>, K extends keyof T>(items:
 export function parseInt(val: string | number) {
   return typeof val === `string` ? Number.parseInt(val, 10) : val;
 }
+
+/** @internal */
+export function parseJsonStream(stream: string) {
+  return stream.split(/\n/g).filter(line => line.trim() !== ``).map(line => JSON.parse(line));
+}
