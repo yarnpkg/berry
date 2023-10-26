@@ -3,140 +3,18 @@ import {xfs, npath, ppath} from '@yarnpkg/fslib';
 import {fs as fsUtils}     from 'pkg-tests-core';
 import tar                 from 'tar';
 
+async function genPackList(run) {
+  const {stdout} = await run(`pack`, `--dry-run`, `--json`);
+
+  return miscUtils.parseJsonStream(stdout).map(entry => {
+    return entry.location;
+  }).filter(location => {
+    return !!location;
+  });
+}
+
 describe(`Commands`, () => {
   describe(`pack`, () => {
-    describe(`pack list`, () => {
-      const files = [
-        `fileX`,
-        `fileY`,
-        `folderA/fileX`,
-        `folderA/fileY`,
-        `folderA/folderU/fileX`,
-        `folderA/folderU/fileY`,
-        `folderA/folderV/fileX`,
-        `folderA/folderV/fileY`,
-        `folderB/fileX`,
-        `folderB/fileY`,
-        `folderB/folderU/fileX`,
-        `folderB/folderU/fileY`,
-        `folderB/folderV/fileX`,
-        `folderB/folderV/fileY`,
-      ];
-
-      const tests = [{
-        gitignore: [
-        ],
-        expected: [
-          `fileX`,
-          `fileY`,
-          `folderA/fileX`,
-          `folderA/fileY`,
-          `folderA/folderU/fileX`,
-          `folderA/folderU/fileY`,
-          `folderA/folderV/fileX`,
-          `folderA/folderV/fileY`,
-          `folderB/fileX`,
-          `folderB/fileY`,
-          `folderB/folderU/fileX`,
-          `folderB/folderU/fileY`,
-          `folderB/folderV/fileX`,
-          `folderB/folderV/fileY`,
-          `package.json`,
-        ],
-      }, {
-        gitignore: [
-          `*X`,
-        ],
-        expected: [
-          `fileY`,
-          `folderA/fileY`,
-          `folderA/folderU/fileY`,
-          `folderA/folderV/fileY`,
-          `folderB/fileY`,
-          `folderB/folderU/fileY`,
-          `folderB/folderV/fileY`,
-          `package.json`,
-        ],
-      }, {
-        gitignore: [
-          `file*`,
-          `!fileX`,
-        ],
-        expected: [
-          `fileX`,
-          `folderA/fileX`,
-          `folderA/folderU/fileX`,
-          `folderA/folderV/fileX`,
-          `folderB/fileX`,
-          `folderB/folderU/fileX`,
-          `folderB/folderV/fileX`,
-          `package.json`,
-        ],
-      }, {
-        gitignore: [
-          `file*`,
-          `!/fileX`,
-        ],
-        expected: [
-          `fileX`,
-          `package.json`,
-        ],
-      }, {
-        gitignore: [
-          `**/fileX`,
-        ],
-        expected: [
-          `fileX`, // TODO: Should be ignored
-          `fileY`,
-          `folderA/fileY`,
-          `folderA/folderU/fileY`,
-          `folderA/folderV/fileY`,
-          `folderB/fileY`,
-          `folderB/folderU/fileY`,
-          `folderB/folderV/fileY`,
-          `package.json`,
-        ],
-      }, {
-        gitignore: [
-          `*`,
-          `!**/fileX`,
-        ],
-        expected: [
-          // `fileX`, // TODO: Should not be ignored
-          `folderA/fileX`,
-          `folderA/folderU/fileX`,
-          `folderA/folderV/fileX`,
-          `folderB/fileX`,
-          `folderB/folderU/fileX`,
-          `folderB/folderV/fileX`,
-          `package.json`,
-        ],
-      }];
-
-      for (const test of tests) {
-        it(`should return the expected pack list (${test.gitignore.join(`,`)})`, makeTemporaryEnv({}, async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, `.gitignore`), test.gitignore.join(`\n`));
-
-          for (const entry of files) {
-            await xfs.mkdirPromise(ppath.join(path, ppath.dirname(entry)), {recursive: true});
-            await xfs.writeFilePromise(ppath.join(path, entry), ``);
-          }
-
-          await run(`install`);
-
-          const {stdout} = await run(`pack`, `--dry-run`, `--json`);
-
-          const locations = miscUtils.parseJsonStream(stdout).map(entry => {
-            return entry.location;
-          }).filter(location => {
-            return !!location;
-          });
-
-          expect(locations).toEqual(test.expected);
-        }));
-      }
-    });
-
     test(
       `it should list all the files in a package`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
@@ -446,6 +324,151 @@ describe(`Commands`, () => {
         const {stdout} = await run(`pack`, `--dry-run`);
         expect(stdout).not.toMatch(/a\.js/);
         expect(stdout).toMatch(/b\.js/);
+      }),
+    );
+
+    test(
+      `it should support gitignore patterns (*)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `x.js\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `foo/y.js`,
+          `package.json`,
+          `y.js`,
+        ]);
+      }),
+    );
+
+    test(
+      `it should allow to explicitly add back a file excluded by a gitignore`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `*.js\n!x.js\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `foo/x.js`,
+          `package.json`,
+          `x.js`,
+        ]);
+      }),
+    );
+
+    test(
+      `it should allow to explicitly add back a single file excluded by a gitignore`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `*.js\n!/x.js\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `package.json`,
+          `x.js`,
+        ]);
+      }),
+    );
+
+    test(
+      `it should support gitignore patterns (**)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `**/x.js\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `foo/bar/y.js`,
+          `foo/y.js`,
+          `package.json`,
+          `x.js`, // TODO: This shouldn't be here; https://github.com/yarnpkg/berry/issues/5872
+          `y.js`,
+        ]);
+      }),
+    );
+
+    test(
+      `it should keep digging inside excluded folders (unlike gitignore!)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `*\n!x.js\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `foo/bar/x.js`,
+          `foo/x.js`,
+          `package.json`,
+          `x.js`,
+        ]);
+      }),
+    );
+
+    test(
+      `it should keep digging inside excluded folders (unlike gitignore!)`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `*\n!x.js\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `foo/bar/x.js`,
+          `foo/x.js`,
+          `package.json`,
+          `x.js`,
+        ]);
+      }),
+    );
+
+    // TODO: https://github.com/yarnpkg/berry/issues/5872
+    test.skip(
+      `it should be possible to re-exclude something which got not-excluded`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        await fsUtils.writeFile(`${path}/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/x.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/foo/bar/y.js`, `module.exports = 42;\n`);
+        await fsUtils.writeFile(`${path}/.gitignore`, `*\n!x.js\nfoo/bar\n`);
+
+        await run(`install`);
+
+        await expect(genPackList(run)).resolves.toEqual([
+          `foo/x.js`,
+          `package.json`,
+          `x.js`,
+        ]);
       }),
     );
 
