@@ -1,7 +1,9 @@
+import {nodeUtils}                   from '@yarnpkg/core';
 import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {pathToFileURL}               from 'url';
 
-const ifAtMostNode20It = process.version.match(/^v(1[89]|20)\./) ? it : it.skip;
+const ifAtLeastNode21It = nodeUtils.major >= 21 ? it : it.skip;
+const ifAtMostNode20It = nodeUtils.major <= 20 ? it : it.skip;
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -422,6 +424,26 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
+  ifAtLeastNode21It(
+    `it should allow extensionless commonjs imports`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import bin from './cjs-bin';\nconsole.log(bin)`);
+        await xfs.writeFilePromise(ppath.join(path, `cjs-bin`), `module.exports = 42`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index.mjs`)).resolves.toMatchObject({
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
   ifAtMostNode20It(
     `it should not allow extensionless files with {"type": "module"}`,
     makeTemporaryEnv(
@@ -432,13 +454,34 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index`), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(42)`);
 
         await expect(run(`install`)).resolves.toMatchObject({code: 0});
 
         await expect(run(`node`, `./index`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension`),
+        });
+      },
+    ),
+  );
+
+  ifAtLeastNode21It(
+    `it should allow extensionless files with {"type": "module"}`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(42)`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index`)).resolves.toMatchObject({
+          stdout: `42\n`,
         });
       },
     ),
