@@ -9,10 +9,6 @@ Writing portable packages is incredibly important, as it ensures that your users
 
 To help with that, this page details the up-to-date collection of good practices you should follow in order to make your package work seamlessly on all three main package managers (Yarn, pnpm, and npm), and explanations if you want to learn more.
 
-```toc
-# This code block gets replaced with the Table of Contents
-```
-
 ## Packages should only ever require what they formally list in their dependencies
 
 **Why?** Because otherwise your package will be susceptible to unpredictable [hoisting](/advanced/lexicon#hoisting) that will lead some of your consumers to experience pseudo-random crashes, depending on the other packages they will happen to use.
