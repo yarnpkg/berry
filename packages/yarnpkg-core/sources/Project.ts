@@ -2193,7 +2193,7 @@ function applyVirtualResolutionMutations({
   const peerDependencyDependents = new Map<LocatorHash, Set<LocatorHash>>();
 
   // We must keep a copy of the workspaces original dependencies, because they
-  // may be overriden during the virtual package resolution - cf Dragon Test #5
+  // may be overridden during the virtual package resolution - cf Dragon Test #5
   const originalWorkspaceDefinitions = new Map<LocatorHash, Package | null>(project.workspaces.map(workspace => {
     const locatorHash = workspace.anchoredLocator.locatorHash;
 
