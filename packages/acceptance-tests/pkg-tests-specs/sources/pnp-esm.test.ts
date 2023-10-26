@@ -1,6 +1,8 @@
 import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {pathToFileURL}               from 'url';
 
+const ifAtMostNode20It = process.version.match(/^v(1[89]|20)\./) ? it : it.skip;
+
 describe(`Plug'n'Play - ESM`, () => {
   test(
     `it should be able to import a node builtin`,
@@ -399,7 +401,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  ifAtMostNode20It(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },
@@ -420,7 +422,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  ifAtMostNode20It(
     `it should not allow extensionless files with {"type": "module"}`,
     makeTemporaryEnv(
       {
