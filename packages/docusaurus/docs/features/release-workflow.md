@@ -6,7 +6,7 @@ description: An in-depth guide to Yarn's release workflow which helps with manag
 ---
 
 
-:::tip
+:::info Experimental
 This feature is still incubating, and we'll likely be improving it based on your feedback.
 :::
 
