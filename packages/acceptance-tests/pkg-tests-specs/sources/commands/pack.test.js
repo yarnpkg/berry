@@ -1,16 +1,13 @@
-import {miscUtils}     from '@yarnpkg/core';
-import {xfs, npath}    from '@yarnpkg/fslib';
-import {fs as fsUtils} from 'pkg-tests-core';
-import tar             from 'tar';
+import {xfs, npath}          from '@yarnpkg/fslib';
+import {fs as fsUtils, misc} from 'pkg-tests-core';
+import tar                   from 'tar';
 
 async function genPackList(run) {
   const {stdout} = await run(`pack`, `--dry-run`, `--json`);
 
-  return miscUtils.parseJsonStream(stdout).map(entry => {
+  return misc.parseJsonStream(stdout).map(entry => {
     return entry.location;
-  }).filter(location => {
-    return !!location;
-  });
+  }).filter(location => !!location);
 }
 
 describe(`Commands`, () => {
