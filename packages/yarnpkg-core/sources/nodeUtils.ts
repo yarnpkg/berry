@@ -4,6 +4,8 @@ import os             from 'os';
 import * as execUtils from './execUtils';
 import * as miscUtils from './miscUtils';
 
+export const major = Number(process.versions.node.split(`.`)[0]);
+
 const openUrlBinary = new Map([
   [`darwin`, `open`],
   [`linux`, `xdg-open`],

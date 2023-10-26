@@ -4,7 +4,17 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, Wat
 import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                      from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                                                   from './FakeFS';
 import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                                                       from './FakeFS';
-import {FSPath, PortablePath, Filename, ppath, npath}                                                                                                           from './path';
+import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                                               from './path';
+
+function direntToPortable(dirent: Dirent<NativePath>): Dirent<PortablePath> {
+  // We don't need to return a copy, we can just reuse the object the real fs returned
+  const portableDirent = dirent as Dirent<PortablePath>;
+
+  if (typeof dirent.path === `string`)
+    portableDirent.path = npath.toPortablePath(dirent.path);
+
+  return portableDirent;
+}
 
 export class NodeFS extends BasePortableFakeFS {
   private readonly realFs: typeof fs;
@@ -469,9 +479,17 @@ export class NodeFS extends BasePortableFakeFS {
   async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
     return await new Promise<any>((resolve, reject) => {
       if (opts) {
-        this.realFs.readdir(npath.fromPortablePath(p), opts as any, this.makeCallback(resolve, reject) as any);
+        if (opts.recursive && process.platform === `win32`) {
+          if (opts.withFileTypes) {
+            this.realFs.readdir(npath.fromPortablePath(p), opts as any, this.makeCallback<Array<Dirent<NativePath>>>(results => resolve(results.map(direntToPortable)), reject) as any);
+          } else {
+            this.realFs.readdir(npath.fromPortablePath(p), opts as any, this.makeCallback<Array<NativePath>>(results => resolve(results.map(npath.toPortablePath)), reject) as any);
+          }
+        } else {
+          this.realFs.readdir(npath.fromPortablePath(p), opts as any, this.makeCallback(resolve, reject) as any);
+        }
       } else {
-        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(value => resolve(value as Array<Filename>), reject));
+        this.realFs.readdir(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
       }
     });
   }
@@ -488,9 +506,17 @@ export class NodeFS extends BasePortableFakeFS {
   readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
   readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
     if (opts) {
-      return this.realFs.readdirSync(npath.fromPortablePath(p), opts as any) as Array<any>;
+      if (opts.recursive && process.platform === `win32`) {
+        if (opts.withFileTypes) {
+          return (this.realFs.readdirSync(npath.fromPortablePath(p), opts as any) as any as Array<Dirent<NativePath>>).map(direntToPortable);
+        } else {
+          return (this.realFs.readdirSync(npath.fromPortablePath(p), opts as any) as any as Array<NativePath>).map(npath.toPortablePath);
+        }
+      } else {
+        return this.realFs.readdirSync(npath.fromPortablePath(p), opts as any) as Array<PortablePath>;
+      }
     } else {
-      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Array<any>;
+      return this.realFs.readdirSync(npath.fromPortablePath(p)) as Array<PortablePath>;
     }
   }
 
