@@ -83,6 +83,8 @@ export default class ConstraintsCheckCommand extends BaseCommand {
         updates.push(workspace.persistManifest());
       }
 
+      await Promise.all(updates);
+
       if (changedWorkspaces.size > 0 && t > 1)
         continue;
 
