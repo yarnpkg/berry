@@ -87,7 +87,7 @@ When this pattern is found, the `__virtual__/<hash>/<n>` part must be removed, t
 If writing a JS tool, the [`@yarnpkg/fslib`](https://yarnpkg.com/package/@yarnpkg/fslib) package may be of assistance, providing a virtual-aware filesystem layer called `VirtualFS`.
 
 :::note
-The `__virtual__` folder name appeared with Yarn 3.0. Earlier releases used `$$virtual`, but we changed it after discovering that this pattern triggered bugs in softwares where paths were used as either regexps or replacement. For example, `$$` found in the second parameter from [`String.prototype.replace`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) silently turned into `$`.
+The `__virtual__` folder name appeared with Yarn 3.0. Earlier releases used `$$virtual`, but we changed it after discovering that this pattern triggered bugs in software where paths were used as either regexps or replacement. For example, `$$` found in the second parameter from [`String.prototype.replace`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) silently turned into `$`.
 :::
 
 ## Manifest reference
