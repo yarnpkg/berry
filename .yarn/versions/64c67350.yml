@@ -1,8 +1,0 @@
-releases:
-  "@yarnpkg/plugin-pnp": patch
-
-declined:
-  - "@yarnpkg/plugin-nm"
-  - "@yarnpkg/plugin-pnpm"
-  - "@yarnpkg/cli"
-  - "@yarnpkg/core"
