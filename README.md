@@ -18,10 +18,10 @@
 
 Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
-- Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it into your repository
+- Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it to your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
-- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to make package scripts portable across of Windows, Linux, and macOS
+- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to make package scripts portable across Windows, Linux, and macOS
 - Yarn is first and foremost a [Node API](https://yarnpkg.com/api/) that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
@@ -68,7 +68,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
       </a>
     </td>
     <td>
-      <b><a href="https://www.datadoghq.com/">Datadog</a></b> has been sponsoring the time from our lead maintainer for more than a year now. They also upgraded our account so that we can benefit from long-term telemetry (<a href="https://github.com/yarnpkg/berry/issues/1250">RFC</a>).
+      <b><a href="https://www.datadoghq.com/">Datadog</a></b> has been sponsoring the time of our lead maintainer for more than a year now. They also upgraded our account so that we can benefit from long-term telemetry (<a href="https://github.com/yarnpkg/berry/issues/1250">RFC</a>).
     </td>
   </tr>
   <tr>
@@ -225,7 +225,7 @@ To create your own plugin, please refer to the [documentation](https://yarnpkg.c
 
 ## Generic packages
 
-The following packages are generic and can be used in a variety of purposes (including to implement other package managers, but not only):
+The following packages are generic and can be used for a variety of purposes (including to implement other package managers, but not only):
 
 - [@yarnpkg/core](packages/yarnpkg-core) allows any application to manipulate a project programmatically.
 - [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.
