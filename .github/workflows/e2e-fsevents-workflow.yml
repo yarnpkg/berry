@@ -14,7 +14,7 @@ on:
 name: 'E2E FSEvents'
 jobs:
   chore:
-    name: 'Validating FSEvents'
+    name: 'Validating FSEvents (^1)'
     runs-on: macos-latest
 
     steps:
@@ -102,6 +102,17 @@ jobs:
         EOT
 
         yarn node ./test.js
+      if: |
+        success() || failure()
+
+  chore-latest:
+    name: 'Validating FSEvents (latest)'
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the integration test (FSEvents latest)'
       run: |

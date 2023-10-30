@@ -13,7 +13,7 @@ on:
 name: 'E2E Docusaurus'
 jobs:
   chore:
-    name: 'Validating Docusaurus'
+    name: 'Validating Docusaurus (JavaScript)'
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +26,17 @@ jobs:
         source scripts/e2e-setup-ci.sh
         yarn dlx create-docusaurus@latest my-website classic && cd my-website
         yarn build
+      if: |
+        success() || failure()
+
+  chore-ts:
+    name: 'Validating Docusaurus (TypeScript)'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the TypeScript integration test'
       run: |

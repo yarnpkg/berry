@@ -14,7 +14,7 @@ on:
 name: 'E2E CRA'
 jobs:
   chore:
-    name: 'Validating Create-React-App'
+    name: 'Validating Create-React-App (JavaScript)'
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +32,17 @@ jobs:
 
         yarn build
         yarn test
+      if: |
+        success() || failure()
+
+  chore-ts:
+    name: 'Validating Create-React-App'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the TypeScript integration test'
       run: |

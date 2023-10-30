@@ -14,7 +14,28 @@ on:
 name: 'E2E Create-Vue'
 jobs:
   chore:
-    name: 'Validating Create-Vue'
+    name: 'Validating Create-Vue (Vue 2)'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test (Vue 2)'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn dlx create-vue@2 vue-project --default --typescript
+        cd vue-project
+        yarn
+
+        yarn build
+      if: |
+        success() || failure()
+
+  chore-v3:
+    name: 'Validating Create-Vue (Vue 3)'
     runs-on: ubuntu-latest
 
     steps:
@@ -32,15 +53,5 @@ jobs:
 
         yarn build
         yarn lint
-
-    - name: 'Running the integration test (Vue 2)'
-      run: |
-        source scripts/e2e-setup-ci.sh
-
-        yarn dlx create-vue@2 vue-project --default --typescript
-        cd vue-project
-        yarn
-
-        yarn build
       if: |
         success() || failure()

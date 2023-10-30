@@ -35,6 +35,17 @@ jobs:
 
         echo '42' | tee ko.js
         ! yarn eslint ko.js
+      if: |
+        success() || failure()
+
+  chore-ts:
+    name: 'Validating ESLint (TypeScript)'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ./.github/actions/prepare
 
     - name: 'Running the TypeScript integration test'
       run: |
