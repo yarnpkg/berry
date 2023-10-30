@@ -161,6 +161,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/actions/workflows/e2e-vitest-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vitest-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>
 </td></tr>
 
