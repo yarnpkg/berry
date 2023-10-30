@@ -127,7 +127,7 @@ The documentation can be found at [yarnpkg.com](https://yarnpkg.com/).
 
 ## API
 
-The API documentation can be found at [v3.yarnpkg.com/api](https://v3.yarnpkg.com/api) (v3.6 or lower).
+The API documentation can be found at [yarnpkg.com/api](https://yarnpkg.com/api).
 
 ## Current status
 
