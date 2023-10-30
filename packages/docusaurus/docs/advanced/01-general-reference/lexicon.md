@@ -104,7 +104,7 @@ See also: [Virtual Packages](#virtual-package)
 
 Plugins are a new concept introduced in Yarn 2+. Through the use of plugins, Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
 
-See also: [Plugins](/features/plugins), [Plugin interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
+See also: [Plugins](/features/extensibility#what-can-plugins-do), [Plugin interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
 
 ### Plug'n'Play
 
