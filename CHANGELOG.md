@@ -8,6 +8,15 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+## 4.0.1
+
+- Fixes progress bars when the terminal is too large
+- Fixes crashes while running Yarn within Docker within GitHub Actions
+- Fixes `yarn npm audit --ignore NUM` which didn't apply to deprecations
+- Fixes `yarn npm audit --json` which didn't print the right output format
+- Fixes an incorrect type export in `@yarnpkg/core`
+- Implements back the `yarn explain peer-requirements` command
+
 ## 4.0.0
 
 ### **Major Changes**
