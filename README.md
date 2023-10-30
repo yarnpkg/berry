@@ -16,7 +16,7 @@
 
 ---
 
-Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
+Yarn is a modern package manager split into various packages. Its novel architecture allows us to do things currently impossible with existing solutions:
 
 - Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it to your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
@@ -40,7 +40,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
       </a>
     </td>
     <td>
-      <b>All your environment variables, in one place</b>. Stop struggling with scattered API keys, hacking together home-brewed tools, and avoiding access controls. Keep your team and servers in sync with <b><a href="https://www.doppler.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=yarn&utm_source=github">Doppler</a></b>.
+      <b>All your environment variables in one place</b>. Stop struggling with scattered API keys, hacking together home-brewed tools, and avoiding access controls. Keep your team and servers in sync with <b><a href="https://www.doppler.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=yarn&utm_source=github">Doppler</a></b>.
     </td>
   </tr>
   <tr>
@@ -180,7 +180,7 @@ yarn build:cli
 
 **How it works**
 
-After building the CLI your global `yarn` will immediately start to reflect your local changes. This is because Yarn will pick up the [`yarnPath`](https://yarnpkg.com/configuration/yarnrc#yarnPath) settings in this repository's [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc), which is configured to use the newly built CLI if available.
+After building the CLI, your global `yarn` will immediately start to reflect your local changes. This is because Yarn will pick up the [`yarnPath`](https://yarnpkg.com/configuration/yarnrc#yarnPath) settings in this repository's [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc), which is configured to use the newly built CLI if available.
 
 **Works out of the box!**
 
@@ -217,7 +217,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 
 ### Third-party plugins
 
-Plugins can be developed by third-party entities. To use them within your applications, just specify the full plugin URL when calling [`yarn plugin import`](https://yarnpkg.com/cli/plugin/import). Note that plugins aren't fetched from the npm registry at this time - they must be distributed as a single JavaScript file.
+Plugins can be developed by third-party entities. To use them within your applications, specify the full plugin URL when calling [`yarn plugin import`](https://yarnpkg.com/cli/plugin/import). Note that plugins aren't fetched from the npm registry at this time - they must be distributed as a single JavaScript file.
 
 ### Creating a new plugin
 
@@ -239,7 +239,7 @@ The following packages are generic and can be used for a variety of purposes (in
 
 ## Yarn packages
 
-The following packages are meant to be used by Yarn itself, and probably won't be useful to other applications:
+The following packages are meant to be used by Yarn itself and probably won't be useful to other applications:
 
 - [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
 - [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).
