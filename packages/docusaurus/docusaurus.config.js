@@ -5,9 +5,11 @@ require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 
 const fs = require(`fs`);
+const path = require(`path`);
 
 const {YarnVersion} = require(`@yarnpkg/core`);
 
+const fastGlob = require(`fast-glob`);
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 
@@ -51,6 +53,16 @@ const config = {
 
   plugins: [
     require.resolve(`./plugin`),
+    [
+      `docusaurus-plugin-typedoc-api`,
+      {
+        projectRoot: path.join(__dirname, `../..`),
+        packages: fastGlob
+          .sync(`packages/{yarnpkg,plugin}-*`, {cwd: `../..`, onlyDirectories: true})
+          .map(path => ({path, entry: `sources/`})),
+        readmes: true,
+      },
+    ],
   ],
 
   webpack: {
@@ -150,6 +162,11 @@ const config = {
           {
             to: `blog`,
             label: `Blog`,
+            position: `left`,
+          },
+          {
+            to: `api`,
+            label: `API`,
             position: `left`,
           },
           {

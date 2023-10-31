@@ -2168,7 +2168,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/mdx-loader@npm:2.4.3":
+"@docusaurus/mdx-loader@npm:*, @docusaurus/mdx-loader@npm:2.4.3":
   version: 2.4.3
   resolution: "@docusaurus/mdx-loader@npm:2.4.3"
   dependencies:
@@ -2242,7 +2242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/plugin-content-docs@npm:2.4.3":
+"@docusaurus/plugin-content-docs@npm:2.4.3, @docusaurus/plugin-content-docs@npm:^2.4.3":
   version: 2.4.3
   resolution: "@docusaurus/plugin-content-docs@npm:2.4.3"
   dependencies:
@@ -2442,7 +2442,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/theme-common@npm:2.4.3, @docusaurus/theme-common@npm:^2.4.3":
+"@docusaurus/theme-common@npm:2.4.3, @docusaurus/theme-common@npm:^2, @docusaurus/theme-common@npm:^2.4.3":
   version: 2.4.3
   resolution: "@docusaurus/theme-common@npm:2.4.3"
   dependencies:
@@ -2506,7 +2506,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/types@npm:2.4.3":
+"@docusaurus/types@npm:2.4.3, @docusaurus/types@npm:^2.4.3":
   version: 2.4.3
   resolution: "@docusaurus/types@npm:2.4.3"
   dependencies:
@@ -2552,7 +2552,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/utils@npm:2.4.3":
+"@docusaurus/utils@npm:2.4.3, @docusaurus/utils@npm:^2.4.3":
   version: 2.4.3
   resolution: "@docusaurus/utils@npm:2.4.3"
   dependencies:
@@ -4802,6 +4802,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vscode/codicons@npm:^0.0.33":
+  version: 0.0.33
+  resolution: "@vscode/codicons@npm:0.0.33"
+  checksum: 34b4ca3d796f9fd3543edd5d875f0477e8006712236b03eecc0ec72f60b072c8d1be5c4687d19cf9c6beb3594c7be1b93986f531047ea01247c02689f2117335
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.11.6, @webassemblyjs/ast@npm:^1.11.5":
   version: 1.11.6
   resolution: "@webassemblyjs/ast@npm:1.11.6"
@@ -5113,6 +5120,7 @@ __metadata:
     "@codesandbox/sandpack-react": "npm:^1.15.0"
     "@docusaurus/core": "npm:^2.4.3"
     "@docusaurus/module-type-aliases": "npm:^2.4.3"
+    "@docusaurus/plugin-content-docs": "npm:^2.4.3"
     "@docusaurus/preset-classic": "npm:^2.4.3"
     "@docusaurus/theme-classic": "npm:^2.4.3"
     "@docusaurus/theme-common": "npm:^2.4.3"
@@ -5148,8 +5156,10 @@ __metadata:
     clipanion: "npm:^4.0.0-rc.2"
     clsx: "npm:^1.2.1"
     cross-spawn: "npm:7.0.3"
+    docusaurus-plugin-typedoc-api: "npm:^3.0.1"
     dompurify: "npm:^3.0.5"
     esbuild-loader: "npm:^2.20.0"
+    fast-glob: "npm:^3.2.2"
     git-url-parse: "npm:^13.1.0"
     github-markdown-css: "npm:^5.1.0"
     js-untar: "npm:^2.0.0"
@@ -5182,6 +5192,7 @@ __metadata:
     semver: "npm:^7.1.2"
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
+    typescript: "npm:5.3.0-beta"
     unist-util-visit: "npm:^2"
     unist-util-visit-parents: "npm:^2"
     usehooks-ts: "npm:^2.9.1"
@@ -6097,6 +6108,13 @@ __metadata:
   version: 6.0.1
   resolution: "ansi-regex@npm:6.0.1"
   checksum: 1ff8b7667cded1de4fa2c9ae283e979fc87036864317da86a2e546725f96406746411d0d85e87a2d12fa5abd715d90006de7fa4fa0477c92321ad3b4c7d4e169
+  languageName: node
+  linkType: hard
+
+"ansi-sequence-parser@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "ansi-sequence-parser@npm:1.1.1"
+  checksum: 9ce30f257badc2ef62cac8028a7e26c368d22bf26650427192e8ffd102da42e377e3affe90fae58062eecc963b0b055f510dde3b677c7e0c433c67069b5a8ee5
   languageName: node
   linkType: hard
 
@@ -8402,6 +8420,24 @@ __metadata:
   dependencies:
     esutils: "npm:^2.0.2"
   checksum: b4b28f1df5c563f7d876e7461254a4597b8cabe915abe94d7c5d1633fed263fcf9a85e8d3836591fc2d040108e822b0d32758e5ec1fe31c590dc7e08086e3e48
+  languageName: node
+  linkType: hard
+
+"docusaurus-plugin-typedoc-api@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "docusaurus-plugin-typedoc-api@npm:3.0.1"
+  dependencies:
+    "@docusaurus/plugin-content-docs": "npm:^2.4.3"
+    "@docusaurus/types": "npm:^2.4.3"
+    "@docusaurus/utils": "npm:^2.4.3"
+    "@vscode/codicons": "npm:^0.0.33"
+    marked: "npm:^4.3.0"
+    typedoc: "npm:0.25.0"
+  peerDependencies:
+    "@docusaurus/core": ^2.0.0
+    react: ">=16.0.0"
+    typescript: ^4.0.0 || ^5.0.0
+  checksum: 6ef5a0d49b2c7f5eb15ed06fa50fadc7d4beab2b96bcb19ddbe242257c370cfd8e5a73ef4a452c465037aa2fe7a967fb61331063caf1cc4433a5a8fe62db7a18
   languageName: node
   linkType: hard
 
@@ -12502,10 +12538,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "jsonc-parser@npm:3.0.0"
-  checksum: 30747660fe34a1abc9b749b7381f5750c0283bedaf8b806f8d0984111e67729476cd4d31529b86b5d85a148d30bb62b8f65dc43e681750b38020fbe5b6c0ea1a
+"jsonc-parser@npm:^3.0.0, jsonc-parser@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "jsonc-parser@npm:3.2.0"
+  checksum: bd68b902e5f9394f01da97921f49c5084b2dc03a0c5b4fdb2a429f8d6f292686c1bf87badaeb0a8148d024192a88f5ad2e57b2918ba43fe25cf15f3371db64d4
   languageName: node
   linkType: hard
 
@@ -12845,6 +12881,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lunr@npm:^2.3.9":
+  version: 2.3.9
+  resolution: "lunr@npm:2.3.9"
+  checksum: f2f6db34c046f5a767782fe2454e6dd69c75ba3c5cf5c1cb9cacca2313a99c2ba78ff8fa67dac866fb7c4ffd5f22e06684793f5f15ba14bddb598b94513d54bf
+  languageName: node
+  linkType: hard
+
 "lz-string@npm:^1.4.4":
   version: 1.4.4
   resolution: "lz-string@npm:1.4.4"
@@ -12985,6 +13028,15 @@ __metadata:
   peerDependencies:
     marked: ^4 || ^5
   checksum: e60715545faf154cd2e96d6977fd3af2702906bfa55e64fcb02031337cc6d60cc33c69a63ffd1857b79c052e7329e686624c8fcd8efcb9af5d4bc23c25d61796
+  languageName: node
+  linkType: hard
+
+"marked@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "marked@npm:4.3.0"
+  bin:
+    marked: bin/marked.js
+  checksum: c830bb4cb3705b754ca342b656e8a582d7428706b2678c898b856f6030c134ce2d1e19136efa3e6a1841f7330efbd24963d6bdeddc57d2938e906250f99895d0
   languageName: node
   linkType: hard
 
@@ -13288,6 +13340,15 @@ __metadata:
   dependencies:
     brace-expansion: "npm:^2.0.1"
   checksum: 3bcc271af1e5e95260fb9acd859628db9567a27ff1fe45b42fcf9b37f17dddbc5a23a614108755a6e076a5109969cabdc0b266ae6929fab12e679ec0f07f65ec
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^9.0.3":
+  version: 9.0.3
+  resolution: "minimatch@npm:9.0.3"
+  dependencies:
+    brace-expansion: "npm:^2.0.1"
+  checksum: c81b47d28153e77521877649f4bab48348d10938df9e8147a58111fe00ef89559a2938de9f6632910c4f7bf7bb5cd81191a546167e58d357f0cfb1e18cecc1c5
   languageName: node
   linkType: hard
 
@@ -16816,6 +16877,18 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
+"shiki@npm:^0.14.1":
+  version: 0.14.5
+  resolution: "shiki@npm:0.14.5"
+  dependencies:
+    ansi-sequence-parser: "npm:^1.1.0"
+    jsonc-parser: "npm:^3.2.0"
+    vscode-oniguruma: "npm:^1.7.0"
+    vscode-textmate: "npm:^8.0.0"
+  checksum: 02c96cf7efcf71679e5c0d58eb91fea6a680251cadcbb15b7a3ccff38004382d3a6d0fdf4a336c2ecda6f6beb50eb9658d3ce91111196621df4fb18bbe4d334e
+  languageName: node
+  linkType: hard
+
 "side-channel@npm:^1.0.4":
   version: 1.0.4
   resolution: "side-channel@npm:1.0.4"
@@ -18042,6 +18115,22 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
+"typedoc@npm:0.25.0":
+  version: 0.25.0
+  resolution: "typedoc@npm:0.25.0"
+  dependencies:
+    lunr: "npm:^2.3.9"
+    marked: "npm:^4.3.0"
+    minimatch: "npm:^9.0.3"
+    shiki: "npm:^0.14.1"
+  peerDependencies:
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
+  bin:
+    typedoc: bin/typedoc
+  checksum: 4a3a318c027c353a907d1f76f61d97b6b2490ec866e35b4bd26ad90ca05b63500523a11ce8b16640d2306601d995b77a7b11365fa7b2e0974fb0ea8d3c1b024f
+  languageName: node
+  linkType: hard
+
 "typescript@npm:5.3.0-beta":
   version: 5.3.0-beta
   resolution: "typescript@npm:5.3.0-beta"
@@ -18655,6 +18744,20 @@ pem@dexus/pem:
   bin:
     vsce: vsce
   checksum: 2e5bd9688b990603b706a3726d1414ed2e9850eedde103b4839bf49a58baa3080337d8a0858d1dc3ab0d6ccb21915c1d84599a6e25d3ba0bb2b4368379134c66
+  languageName: node
+  linkType: hard
+
+"vscode-oniguruma@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "vscode-oniguruma@npm:1.7.0"
+  checksum: 7da9d21459f9788544b258a5fd1b9752df6edd8b406a19eea0209c6bf76507d5717277016799301c4da0d536095f9ca8c06afd1ab8f4001189090c804ca4814e
+  languageName: node
+  linkType: hard
+
+"vscode-textmate@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "vscode-textmate@npm:8.0.0"
+  checksum: 9fa7d66d6042cb090d116c2d8820d34c8870cfcbaed6e404da89f66b899970ed0ac47b59a2e30fc40a25af5414822bb3ea27974f714e9b91910d69c894be95f7
   languageName: node
   linkType: hard
 
