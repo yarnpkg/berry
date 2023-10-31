@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://yarnpkg.com/">
-    <img alt="Yarn" src="https://github.com/yarnpkg/assets/blob/master/yarn-kitten-full.png?raw=true" width="546">
+    <img alt="yarn" src="https://github.com/yarnpkg/assets/blob/master/yarn-kitten-full.png?raw=true" width="546">
   </a>
 </p>
 
 <p align="center">
-  Fast, reliable, and secure dependency management.
+  Fast, Reliable, and Secure dependency management.
 </p>
 
 <p align="center">
@@ -78,7 +78,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
       </a>
     </td>
     <td>
-      <b><a href="https://sysgears.com/">Sysgears</a></b> also sponsored time from very early in the 2.x development. In particular, their strong investment is the reason why Yarn 2 supports node_modules installs even better than it used to.
+      <b><a href="https://sysgears.com/">Sysgears</a></b> also sponsored time from very early in the 2.x development. In particular, their significant investment is the reason why Yarn 2 supports node_modules installs even more effectively than it did before.
     </td>
   </tr>
   <tr>
@@ -183,7 +183,7 @@ yarn build:cli
 
 After building the CLI your global `yarn` will immediately start to reflect your local changes. This is because Yarn will pick up the [`yarnPath`](https://yarnpkg.com/configuration/yarnrc#yarnPath) settings in this repository's [`.yarnrc.yml`](https://yarnpkg.com/configuration/yarnrc), which is configured to use the newly built CLI if available.
 
-**Works out of the box!**
+**Works out of the box! **
 
 Note that no other command is needed! Given that our dependencies are checked-in within the repository (within the [`.yarn/cache`](.yarn/cache) directory), you don't even need to run [`yarn install`](https://yarnpkg.com/cli/install). Everything just works right after cloning the project and is guaranteed to continue to work ten years from now 🙂
 
