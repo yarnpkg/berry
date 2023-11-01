@@ -14,7 +14,7 @@ export default class SetResolutionCommand extends BaseCommand {
     details: `
       This command updates the resolution table so that \`descriptor\` is resolved by \`resolution\`.
 
-      Note that by default this command only affect the current resolution table - meaning that this "manual override" will disappear if you remove the lockfile, or if the package disappear from the table. If you wish to make the enforced resolution persist whatever happens, add the \`-s,--save\` flag which will also edit the \`resolutions\` field from your top-level manifest.
+      Note that by default this command only affect the current resolution table - meaning that this "manual override" will disappear if you remove the lockfile, or if the package disappear from the table. If you wish to make the enforced resolution persist whatever happens, edit the \`resolutions\` field in your top-level manifest.
 
       Note that no attempt is made at validating that \`resolution\` is a valid resolution entry for \`descriptor\`.
     `,
@@ -22,10 +22,6 @@ export default class SetResolutionCommand extends BaseCommand {
       `Force all instances of lodash@npm:^1.2.3 to resolve to 1.5.0`,
       `$0 set resolution lodash@npm:^1.2.3 1.5.0`,
     ]],
-  });
-
-  save = Option.Boolean(`-s,--save`, false, {
-    description: `Persist the resolution inside the top-level manifest`,
   });
 
   descriptor = Option.String();
