@@ -40,9 +40,9 @@ Object {
   "stdout": "Test Workspace B
 Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
@@ -55,9 +55,9 @@ Object {
   "stdout": "Test Workspace B
 Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
@@ -146,10 +146,6 @@ Object {
 [workspace-d]: Test Workspace D
 [workspace-d]: Process exited (exit code 0)
 
-[workspace-e]: Process started
-[workspace-e]: Test Workspace E
-[workspace-e]: Process exited (exit code 0)
-
 [workspace-f]: Process started
 [workspace-f]: Test Workspace F
 [workspace-f]: Process exited (exit code 0)
@@ -157,6 +153,10 @@ Object {
 [workspace-g]: Process started
 [workspace-g]: Test Workspace G
 [workspace-g]: Process exited (exit code 0)
+
+[workspace-e]: Process started
+[workspace-e]: Test Workspace E
+[workspace-e]: Process exited (exit code 0)
 Done
 ",
 }
@@ -170,9 +170,9 @@ Object {
 Test Workspace B
 Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
@@ -186,9 +186,9 @@ Object {
 Test Workspace B
 Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
@@ -230,10 +230,6 @@ Object {
 [workspace-d]: Test Workspace D
 [workspace-d]: Process exited (exit code 0)
 
-[workspace-e]: Process started
-[workspace-e]: Test Workspace E
-[workspace-e]: Process exited (exit code 0)
-
 [workspace-f]: Process started
 [workspace-f]: Test Workspace F
 [workspace-f]: Process exited (exit code 0)
@@ -241,6 +237,10 @@ Object {
 [workspace-g]: Process started
 [workspace-g]: Test Workspace G
 [workspace-g]: Process exited (exit code 0)
+
+[workspace-e]: Process started
+[workspace-e]: Test Workspace E
+[workspace-e]: Process exited (exit code 0)
 Done
 ",
 }
@@ -269,9 +269,9 @@ Object {
   "stderr": "",
   "stdout": "Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
@@ -303,9 +303,9 @@ packages/workspace-a
 packages/workspace-b
 packages/workspace-c
 packages/workspace-c/packages/workspace-d
-packages/workspace-c/packages/workspace-d/packages/workspace-e
 packages/workspace-c/packages/workspace-f
 packages/workspace-c/packages/workspace-g
+packages/workspace-c/packages/workspace-d/packages/workspace-e
 Done
 ",
 }
