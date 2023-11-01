@@ -10,6 +10,7 @@ Features in `master` can be tried out by running `yarn set version from sources`
 
 ## 4.0.1
 
+- Fixes creation of symlinks for `node-modules` linker when inner workspace depends on outer workspace
 - Fixes progress bars when the terminal is too large
 - Fixes crashes while running Yarn within Docker within GitHub Actions
 - Fixes `yarn npm audit --ignore NUM` which didn't apply to deprecations
