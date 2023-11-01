@@ -109,6 +109,27 @@ describe(`Commands`, () => {
     );
 
     test(
+      `should support self referencing workspaces field`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`.`],
+        },
+        async ({path, run}) => {
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `--worktree`, `exec`, `echo`, `42`)).resolves.toMatchObject(
+            {
+              code: 0,
+              stdout: `42\nDone\n`,
+              stderr: ``,
+            },
+          );
+        },
+      ),
+    );
+
+    test(
       `should execute 'node' command`,
       makeTemporaryEnv(
         {

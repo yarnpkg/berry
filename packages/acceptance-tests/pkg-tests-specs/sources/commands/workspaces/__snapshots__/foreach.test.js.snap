@@ -289,9 +289,9 @@ exports[`Commands workspace foreach should run on current and descendant workspa
   "stderr": "",
   "stdout": "Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
