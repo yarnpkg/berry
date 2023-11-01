@@ -608,7 +608,7 @@ describe(`Node_Modules`, () => {
   test(`should create circular symlinks when inner workspace depends on outer workspace`,
     makeTemporaryEnv(
       {
-        name: 'foo',
+        name: `foo`,
         workspaces: [`ws`],
       },
       {
@@ -619,8 +619,8 @@ describe(`Node_Modules`, () => {
         await writeJson(npath.toPortablePath(`${path}/ws/package.json`), {
           name: `ws`,
           dependencies: {
-            foo: 'workspace:*'
-          }
+            foo: `workspace:*`,
+          },
         });
 
         await run(`install`);
