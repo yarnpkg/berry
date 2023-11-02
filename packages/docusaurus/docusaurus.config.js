@@ -13,6 +13,8 @@ const fastGlob = require(`fast-glob`);
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 
+const {miscUtils} = require(`@yarnpkg/core`);
+
 const commandLineHighlight = require(`./src/remark/commandLineHighlight`);
 const autoLink = require(`./src/remark/autoLink`);
 
@@ -57,9 +59,18 @@ const config = {
       `docusaurus-plugin-typedoc-api`,
       {
         projectRoot: path.join(__dirname, `../..`),
-        packages: fastGlob
-          .sync(`packages/{yarnpkg,plugin}-*`, {cwd: `../..`, onlyDirectories: true})
-          .map(path => ({path, entry: `sources/index.ts`})),
+        packages: miscUtils.mapAndFilter(
+          fastGlob.sync(`packages/{yarnpkg,plugin}-*`, {cwd: `../..`, onlyDirectories: true}),
+          workspacePath => {
+            const manifest = require(path.join(`../..`, workspacePath, `package.json`));
+            const entry = manifest.exports?.[`.`];
+            if (typeof entry !== `string`)
+              return miscUtils.mapAndFilter.skip;
+
+
+            return {path: workspacePath, entry};
+          },
+        ),
         readmes: true,
         typedocOptions: {
           plugin: [`./src/typedoc/plugin.ts`],

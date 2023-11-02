@@ -86,6 +86,7 @@
     "@types/react-window": "^1",
     "@types/resolve": "^1.20.0",
     "@types/semver": "^7.1.0",
+    "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
