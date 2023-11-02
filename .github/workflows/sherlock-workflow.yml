@@ -1,5 +1,8 @@
 on: [issues]
 
+env:
+  node-version: '18.x'
+
 name: 'Sherlock for Yarn'
 jobs:
   issue:
@@ -9,9 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: actions/setup-node@v3
+    - name: 'Use Node.js ${{ env.node-version }}'
+      uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version: ${{ env.node-version }}
 
     - name: 'Always use the latest sherlock'
       run: |

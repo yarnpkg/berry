@@ -11,7 +11,8 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v3
+    - name: 'Use Node.js ${{ inputs.node-version }}'
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         check-latest: true
