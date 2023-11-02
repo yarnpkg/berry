@@ -1,7 +1,7 @@
 releases:
+  "@yarnpkg/cli": patch
   "@yarnpkg/plugin-essentials": patch
 
 declined:
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-typescript"
-  - "@yarnpkg/cli"
