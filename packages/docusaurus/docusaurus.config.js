@@ -59,8 +59,11 @@ const config = {
         projectRoot: path.join(__dirname, `../..`),
         packages: fastGlob
           .sync(`packages/{yarnpkg,plugin}-*`, {cwd: `../..`, onlyDirectories: true})
-          .map(path => ({path, entry: `sources/`})),
+          .map(path => ({path, entry: `sources/index.ts`})),
         readmes: true,
+        typedocOptions: {
+          plugin: [`./src/typedoc/plugin.ts`],
+        },
       },
     ],
   ],

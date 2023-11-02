@@ -5192,6 +5192,7 @@ __metadata:
     semver: "npm:^7.1.2"
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
+    typedoc: "npm:^0.25.3"
     typescript: "npm:5.3.0-beta"
     unist-util-visit: "npm:^2"
     unist-util-visit-parents: "npm:^2"
@@ -18128,6 +18129,22 @@ pem@dexus/pem:
   bin:
     typedoc: bin/typedoc
   checksum: 4a3a318c027c353a907d1f76f61d97b6b2490ec866e35b4bd26ad90ca05b63500523a11ce8b16640d2306601d995b77a7b11365fa7b2e0974fb0ea8d3c1b024f
+  languageName: node
+  linkType: hard
+
+"typedoc@npm:^0.25.3":
+  version: 0.25.3
+  resolution: "typedoc@npm:0.25.3"
+  dependencies:
+    lunr: "npm:^2.3.9"
+    marked: "npm:^4.3.0"
+    minimatch: "npm:^9.0.3"
+    shiki: "npm:^0.14.1"
+  peerDependencies:
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
+  bin:
+    typedoc: bin/typedoc
+  checksum: 1dd06155589731143e18555f51c0ad0543136040684aefadff3117b3c3c0ffb7ea41dec9de2cf2cf50afb51f0450f3b8e93a73a7a2928c80aa2516a2d247db4a
   languageName: node
   linkType: hard
 

@@ -94,6 +94,7 @@
     "docusaurus-plugin-typedoc-api": "^3.0.1",
     "esbuild-loader": "^2.20.0",
     "fast-glob": "^3.2.2",
+    "typedoc": "^0.25.3",
     "typescript": "5.3.0-beta"
   },
   "browserslist": {

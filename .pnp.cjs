@@ -8867,6 +8867,7 @@ const RAW_RUNTIME_STATE =
           ["semver", "npm:7.5.4"],\
           ["three", "npm:0.145.0"],\
           ["tslib", "npm:2.4.0"],\
+          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
           ["typescript", "patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"],\
           ["unist-util-visit", "npm:2.0.3"],\
           ["unist-util-visit-parents", "npm:2.1.2"],\
@@ -21658,12 +21659,13 @@ const RAW_RUNTIME_STATE =
           ["@types/docusaurus__plugin-content-docs", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
+          ["@types/typedoc", null],\
           ["@types/typescript", null],\
           ["@vscode/codicons", "npm:0.0.33"],\
           ["marked", "npm:4.3.0"],\
           ["react", "npm:17.0.2"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"],\
-          ["typedoc", "virtual:061b21b3222cd76da33dc4a93d3fb37c70f5ad248464575b984992c920dc267501e7cdaec0b4b12448cfe2b5659deb818238001ce4f044522dfe4528dec6f686#npm:0.25.0"],\
+          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
           ["typescript", "patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"]\
         ],\
         "packagePeers": [\
@@ -21673,9 +21675,11 @@ const RAW_RUNTIME_STATE =
           "@types/docusaurus__plugin-content-docs",\
           "@types/react-dom",\
           "@types/react",\
+          "@types/typedoc",\
           "@types/typescript",\
           "react-dom",\
           "react",\
+          "typedoc",\
           "typescript"\
         ],\
         "linkType": "HARD"\
@@ -33347,17 +33351,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["typedoc", [\
-      ["npm:0.25.0", {\
-        "packageLocation": "./.yarn/cache/typedoc-npm-0.25.0-15b82dad2e-4a3a318c02.zip/node_modules/typedoc/",\
+      ["npm:0.25.3", {\
+        "packageLocation": "./.yarn/cache/typedoc-npm-0.25.3-11902e45cc-1dd0615558.zip/node_modules/typedoc/",\
         "packageDependencies": [\
-          ["typedoc", "npm:0.25.0"]\
+          ["typedoc", "npm:0.25.3"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:061b21b3222cd76da33dc4a93d3fb37c70f5ad248464575b984992c920dc267501e7cdaec0b4b12448cfe2b5659deb818238001ce4f044522dfe4528dec6f686#npm:0.25.0", {\
-        "packageLocation": "./.yarn/__virtual__/typedoc-virtual-b58a0b826a/0/cache/typedoc-npm-0.25.0-15b82dad2e-4a3a318c02.zip/node_modules/typedoc/",\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3", {\
+        "packageLocation": "./.yarn/__virtual__/typedoc-virtual-a08452fa82/0/cache/typedoc-npm-0.25.3-11902e45cc-1dd0615558.zip/node_modules/typedoc/",\
         "packageDependencies": [\
-          ["typedoc", "virtual:061b21b3222cd76da33dc4a93d3fb37c70f5ad248464575b984992c920dc267501e7cdaec0b4b12448cfe2b5659deb818238001ce4f044522dfe4528dec6f686#npm:0.25.0"],\
+          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
           ["@types/typescript", null],\
           ["lunr", "npm:2.3.9"],\
           ["marked", "npm:4.3.0"],\
