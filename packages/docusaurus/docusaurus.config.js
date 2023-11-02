@@ -6,8 +6,9 @@ require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 
 const fs = require(`fs`);
 
-const lightCodeTheme = require(`prism-react-renderer/themes/github`);
-const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
+const {themes} = require('prism-react-renderer');
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.dracula;
 
 const commandLineHighlight = require(`./src/remark/commandLineHighlight`);
 const autoLink = require(`./src/remark/autoLink`);
@@ -165,6 +166,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        additionalLanguages: [`bash`, `json`],
       },
     }),
 };
