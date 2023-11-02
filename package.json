@@ -32,9 +32,7 @@
   },
   "resolutions": {
     "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
-    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
-    "typedoc@npm:0.16.0": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch",
-    "typedoc@npm:0.17.0-3": "patch:typedoc@npm%3A0.17.0-3#~/.yarn/patches/typedoc-npm-0.17.0-3-0ce05847cf.patch"
+    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -48,27 +46,6 @@
     },
     "fsevents": {
       "built": false
-    },
-    "gatsby": {
-      "built": false
-    },
-    "gatsby-cli": {
-      "built": false
-    },
-    "gatsby-plugin-mdx@2.14.0": {
-      "unplugged": true
-    },
-    "gatsby-telemetry": {
-      "built": false
-    },
-    "react-json-doc@2.1.0": {
-      "unplugged": true
-    },
-    "react-json-doc@2.3.2": {
-      "unplugged": true
-    },
-    "svg2png": {
-      "unplugged": true
     }
   },
   "scripts": {

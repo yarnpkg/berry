@@ -5300,20 +5300,6 @@ __metadata:
       built: false
     fsevents:
       built: false
-    gatsby:
-      built: false
-    gatsby-cli:
-      built: false
-    gatsby-plugin-mdx@2.14.0:
-      unplugged: true
-    gatsby-telemetry:
-      built: false
-    react-json-doc@2.1.0:
-      unplugged: true
-    react-json-doc@2.3.2:
-      unplugged: true
-    svg2png:
-      unplugged: true
   languageName: unknown
   linkType: soft
 
