@@ -66,15 +66,13 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
         case `yarn`: {
           const packageManager = Number(major) === 1 ? PackageManager.Yarn1 : PackageManager.Yarn2;
           return {packageManagerField: true, packageManager, reason};
-        } break;
-
+        }
         case `npm`: {
           return {packageManagerField: true, packageManager: PackageManager.Npm, reason};
-        } break;
-
+        }
         case `pnpm`: {
           return {packageManagerField: true, packageManager: PackageManager.Pnpm, reason};
-        } break;
+        }
       }
     }
   }
@@ -140,7 +138,7 @@ export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack
   ]);
 
   if (project) {
-    scriptEnv.INIT_CWD = npath.cwd();
+    scriptEnv.INIT_CWD = npath.fromPortablePath(project.configuration.startingCwd);
     scriptEnv.PROJECT_CWD = npath.fromPortablePath(project.cwd);
   }
 
