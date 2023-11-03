@@ -31,8 +31,8 @@ fi
 
 YARN_NPM_PUBLISH_REGISTRY=https://npm.pkg.github.com yarn workspaces foreach \
   --verbose --topological --no-private "${RELEASE_ARGUMENTS[@]}" \
-  npm publish --tolerate-republish
+  npm publish --tolerate-republish --tag="v3"
 
 yarn workspaces foreach \
   --verbose --topological --no-private "${RELEASE_ARGUMENTS[@]}" \
-  npm publish --tolerate-republish
+  npm publish --tolerate-republish --tag="v3"
