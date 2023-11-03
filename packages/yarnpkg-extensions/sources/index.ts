@@ -975,4 +975,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       graphql: `^14.2.0 || ^15.0.0 || ^16.0.0`,
     },
   }],
+  // https://github.com/vuetifyjs/vuetify-loader/commit/6634db3218dcc706db1c5c9e90f338ce76e9fff3
+  [`vite-plugin-vuetify@<=1.0.2`, {
+    peerDependencies: {
+      vue: `^3.0.0`,
+    },
+  }],
 ];
