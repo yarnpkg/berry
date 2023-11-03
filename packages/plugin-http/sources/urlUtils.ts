@@ -1,7 +1,3 @@
-export const TARBALL_REGEXP = /^\/([^/?#](?:\.tar\.gz|\.tgz)|[^/?#])$/;
-
-export const PROTOCOL_REGEXP = /^https?:/;
-
 export function isTgzUrl(url: string) {
   let parsed: URL;
   try {
