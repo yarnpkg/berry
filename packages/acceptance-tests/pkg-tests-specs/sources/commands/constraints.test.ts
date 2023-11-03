@@ -107,6 +107,39 @@ describe(`Commands`, () => {
       await expect(run(`constraints`)).rejects.toThrow(/This should fail/);
     }));
 
+    it(`shouldn't report errors when comparing identical objects`, makeTemporaryEnv({
+      foo: {
+        ok: true,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        exports.constraints = ({Yarn}) => {
+          Yarn.workspace().set('foo', {ok: true});
+        };
+      `);
+
+      await run(`constraints`);
+    }));
+
+    it(`should report an error when comparing objects with different key ordering`, makeTemporaryEnv({
+      foo: {
+        b: true,
+        a: true,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        exports.constraints = ({Yarn}) => {
+          Yarn.workspace().set('foo', {a: true, b: true});
+        };
+      `);
+
+      await expect(run(`constraints`)).rejects.toThrow(`Invalid field foo; expected { a: true, b: true }, found { b: true, a: true }`);
+    }));
+
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, scripts] of Object.entries(constraints)) {
         for (const [scriptType, script] of Object.entries(scripts)) {
