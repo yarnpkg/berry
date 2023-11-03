@@ -43,7 +43,7 @@ Generally, a few main things will need to be taken care of:
 
 4. Some tools (mostly React Native and Flow) will require downgrading to the `node_modules` install strategy by setting the [`nodeLinker`](https://yarnpkg.com/configuration/yarnrc#nodeLinker) setting to `node-modules`. TypeScript doesn't have this problem.
 
-Most projects will only face those four problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/getting-started/migration).
+Most projects will only face those four problems, which can all be fixed in a good afternoon of work. For more detailed instructions, please see the detailed [migration guide](/migration/guide).
 
 ## Which files should be gitignored?
 
@@ -211,7 +211,7 @@ Speed is relative and a temporary state. Processes, roadmaps and core values are
 
 ## Why is TypeScript patched even if I don't use Plug'n'Play?
 
-Given that PnP is a resolver standard different from Node, tools that reimplement the `require.resolve` API need to add some logic to account for the PnP resolution. While various projects did so (for example Webpack 5 now supports PnP out of the box), a few are still on the fence about it. In the case of TypeScript we started and keep maintaining a [pull request](https://github.com/microsoft/TypeScript/pull/35206), but the TypeScript team still has to accept it. In order to unblock our users, we made the decision to automatically apply this exact pull request to the downloaded TypeScript versions, using our new [`patch:` protocol](/features/protocols#patch).
+Given that PnP is a resolver standard different from Node, tools that reimplement the `require.resolve` API need to add some logic to account for the PnP resolution. While various projects did so (for example Webpack 5 now supports PnP out of the box), a few are still on the fence about it. In the case of TypeScript we started and keep maintaining a [pull request](https://github.com/microsoft/TypeScript/pull/35206), but the TypeScript team still has to accept it. In order to unblock our users, we made the decision to automatically apply this exact pull request to the downloaded TypeScript versions, using our new [`patch:` protocol](/protocol/patch).
 
 Which now begs the question: why do we still apply this patch even when Plug'n'Play is disabled? The main reason is that Yarn intends to provide consistent behaviour. Some setups involve using the `node_modules` linker during development (to avoid having to setup editor [SDKS](/getting-started/editor-sdks)) and PnP in production (for install speed). If we were to only apply the patches when PnP is enabled, then the package cache would turn different, which would for example break immutable installs.
 

@@ -6,11 +6,8 @@
     "start": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus start",
     "build": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
-    "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "serve": "docusaurus serve"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^1.15.0",
@@ -22,10 +19,12 @@
     "@primer/octicons-react": "^17.7.0",
     "@types/three": "^0.144.0",
     "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "algoliasearch": "^4.14.2",
     "clipanion": "^4.0.0-rc.2",
     "clsx": "^1.2.1",
+    "cross-spawn": "7.0.3",
     "dompurify": "^3.0.5",
     "git-url-parse": "^13.1.0",
     "github-markdown-css": "^5.1.0",
@@ -72,6 +71,7 @@
     "@docusaurus/theme-classic": "^2.4.3",
     "@docusaurus/theme-common": "^2.4.3",
     "@tsconfig/docusaurus": "^2.0.0",
+    "@types/cross-spawn": "6.0.0",
     "@types/dompurify": "^3",
     "@types/git-url-parse": "^9.0.0",
     "@types/lodash": "^4.14.136",

@@ -27,6 +27,6 @@ By default, `yarn patch` will always reset the patch. If you wish to add new cha
 
 ## Limitations
 
-- Because they're currently computed at fetch time rather than resolution time, the package dependencies have already been resolved and patches won't be able to alter them.
+- Because they're currently computed at fetch time rather than resolution time, the package dependencies have already been resolved and patches won't be able to alter them. Instead, use the `packageExtensions` mechanism which is specifically made to add new runtime dependencies to packages.
 
 - Patches are ill-suited for modifying binary files. Minified files are problematic as well, although we could improve the feature to automatically process such files through a Prettier-like tool.
