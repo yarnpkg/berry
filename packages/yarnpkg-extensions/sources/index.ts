@@ -981,4 +981,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       vue: `^3.0.0`,
     },
   }],
+  // https://github.com/vuetifyjs/vuetify-loader/commit/6634db3218dcc706db1c5c9e90f338ce76e9fff3
+  [`webpack-plugin-vuetify@<=2.0.1`, {
+    peerDependencies: {
+      vue: `^3.2.6`,
+    },
+  }],
 ];
