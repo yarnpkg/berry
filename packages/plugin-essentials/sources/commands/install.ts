@@ -344,15 +344,17 @@ export default class YarnCommand extends BaseCommand {
     // the Configuration and Install classes). Feel free to open an issue
     // in order to ask for design feedback before writing features.
 
-    return await project.installWithNewReport({
+    const report = await StreamReport.start({
+      configuration,
       json: this.json,
       stdout: this.context.stdout,
-    }, {
-      cache,
-      immutable,
-      checkResolutions,
-      mode: this.mode,
+      forceSectionAlignment: true,
+      includeLogs: true,
+    }, async report => {
+      await project.install({cache, report, immutable, checkResolutions, mode: this.mode});
     });
+
+    return report.exitCode();
   }
 }
 

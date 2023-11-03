@@ -1,8 +1,59 @@
 import {Filename, xfs, ppath, npath} from '@yarnpkg/fslib';
-import {tests}                       from 'pkg-tests-core';
+import {tests, misc}                 from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`install`, () => {
+    test(
+      `it should print regular messages as JSON items when using --json`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const {stdout} = await run(`install`, `--json`);
+
+        expect(misc.parseJsonStream(stdout)).toEqual([{
+          data: `┌ Resolution step`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `└ Completed`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `┌ Fetch step`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `└ Completed`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `┌ Link step`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `└ Completed`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `Done`,
+          displayName: `YN0000`,
+          indent: `· `,
+          name: 0,
+          type: `info`,
+        }]);
+      }),
+    );
+
     test(
       `it should print the logs to the standard output when using --inline-builds`,
       makeTemporaryEnv({
