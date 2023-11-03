@@ -9,6 +9,12 @@ describe(`Commands`, () => {
         const {stdout} = await run(`install`, `--json`);
 
         expect(misc.parseJsonStream(stdout)).toEqual([{
+          data: `Yarn 0.0.0`,
+          displayName: `YN0000`,
+          indent: `· `,
+          name: 0,
+          type: `info`,
+        }, {
           data: `┌ Resolution step`,
           displayName: `YN0000`,
           indent: ``,
