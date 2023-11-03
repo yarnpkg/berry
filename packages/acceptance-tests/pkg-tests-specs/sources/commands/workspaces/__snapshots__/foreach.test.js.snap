@@ -314,6 +314,23 @@ exports[`Commands workspace foreach should run scripts in parallel but following
 }
 `;
 
+exports[`Commands workspace foreach should run set INIT_CWD to each individual workspace cwd even with global scripts 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "
+packages/workspace-a
+packages/workspace-b
+packages/workspace-c
+packages/workspace-c/packages/workspace-d
+packages/workspace-c/packages/workspace-d/packages/workspace-e
+packages/workspace-c/packages/workspace-f
+packages/workspace-c/packages/workspace-g
+Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should start all the processes at once when --jobs is unlimited 1`] = `
 {
   "code": 0,
