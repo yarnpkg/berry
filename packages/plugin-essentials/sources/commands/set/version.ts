@@ -3,6 +3,7 @@ import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion,
 import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
 import {PortablePath, ppath, xfs, npath}                                                      from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
+import {dirname}                                                                              from 'path';
 import semver                                                                                 from 'semver';
 
 export type Tags = {
@@ -204,12 +205,12 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
-  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases`);
-  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs`);
-  const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
-
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
   const yarnPath = configuration.get(`yarnPath`);
+
+  const releaseFolder = ppath.resolve(projectCwd, yarnPath ? dirname(yarnPath) : `.yarn/releases`);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs`);
+  const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
 
   const absolutelyMustUseYarnPath = !isTaggedYarnVersion;
   let probablyShouldUseYarnPath = absolutelyMustUseYarnPath || !!yarnPath || !!useYarnPath;
