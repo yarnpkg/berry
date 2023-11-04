@@ -25,12 +25,16 @@ Features in `master` can be tried out by running `yarn set version from sources`
 - With Node.js 16's [now being End of Life'd](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
 
 - Some important defaults have changed:
-  - `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible.
+
+  - `yarn init` and `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible (when they detect `COREPACK_ROOT` in your environment variables).
+
   - `yarn init` will no longer use zero-install by default. You still can enable it, but it should make it easier to start one-of projects without having to rewrite the configuration afterwards.
-    - As a result, `enableGlobalCache` now defaults to `true`. If your 3.6 project uses Zero-Installs, the first `yarn install` you run after the upgrade will automatically set `enableGlobalCache: false` in your local `.yarnrc.yml`.
+    - As a result, `enableGlobalCache` now defaults to `true`. If your project uses Zero-Installs, the first `yarn install` you run after migrating to 4.0 will automatically set `enableGlobalCache: false` in your local `.yarnrc.yml`.
+
   - `yarn workspaces foreach` now requires one of `--all`, `--recursive`, `--since`, or `--worktree` to be explicitly specified; the previous default was `--worktree`, but it was rarely what users expected.
+
   - `compressionLevel` now defaults to `0` rather than `mixed`. It's been proved significantly faster on installs, and the size impact was reasonable enough to change the default. Note that it benefits you **even if you use Zero-Installs**: as per our tests, a zero-compression is actually easier to handle for Git (you can see by yourself with those examples using [`compressionLevel: 0`](https://github.com/yarnpkg/example-repo-zip0) vs [`compressionLevel: mixed`](https://github.com/yarnpkg/example-repo-zipn)).
-    - To avoid making the upgrade too disruptive, Yarn will check whether zero-installs are enabled the first time you run `yarn install` after migrating from 3.6 to 4.0. If you do, it will automatically set the old default (`compressionLevel: mixed`) in your `.yarnrc.yml` file. You can then remove it whenever you feel ready to actually change the compression settings.
+    - To avoid making the upgrade too disruptive, Yarn will check whether Zero-Installs are enabled the first time you run `yarn install` after migrating from 3.6 to 4.0. If you do, it will automatically set the old default (`compressionLevel: mixed`) in your `.yarnrc.yml` file. You can then remove it whenever you feel ready to actually change the compression settings.
 
 - All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
   - This doesn't change anything to the plugin API we provide, which will keep being maintained.
