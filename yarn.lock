@@ -5184,7 +5184,7 @@ __metadata:
     clipanion: "npm:^4.0.0-rc.2"
     clsx: "npm:^1.2.1"
     cross-spawn: "npm:7.0.3"
-    docusaurus-plugin-typedoc-api: "npm:^3.0.1"
+    docusaurus-plugin-typedoc-api: "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch"
     dompurify: "npm:^3.0.5"
     esbuild-loader: "npm:^2.20.0"
     fast-glob: "npm:^3.2.2"
@@ -8452,7 +8452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc-api@npm:^3.0.1":
+"docusaurus-plugin-typedoc-api@npm:3.0.1":
   version: 3.0.1
   resolution: "docusaurus-plugin-typedoc-api@npm:3.0.1"
   dependencies:
@@ -8467,6 +8467,24 @@ __metadata:
     react: ">=16.0.0"
     typescript: ^4.0.0 || ^5.0.0
   checksum: 6ef5a0d49b2c7f5eb15ed06fa50fadc7d4beab2b96bcb19ddbe242257c370cfd8e5a73ef4a452c465037aa2fe7a967fb61331063caf1cc4433a5a8fe62db7a18
+  languageName: node
+  linkType: hard
+
+"docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch":
+  version: 3.0.1
+  resolution: "docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=9dc2d9"
+  dependencies:
+    "@docusaurus/plugin-content-docs": "npm:^2.4.3"
+    "@docusaurus/types": "npm:^2.4.3"
+    "@docusaurus/utils": "npm:^2.4.3"
+    "@vscode/codicons": "npm:^0.0.33"
+    marked: "npm:^4.3.0"
+    typedoc: "npm:0.25.0"
+  peerDependencies:
+    "@docusaurus/core": ^2.0.0
+    react: ">=16.0.0"
+    typescript: ^4.0.0 || ^5.0.0
+  checksum: 427b56827ca0e001fb43d89e11a9c9f62ef9ce04f94767f0093c4424585eab3edd2d4624901ee64db1bc8c0edb888d80a5b50c224f9988cd39a88b9b9a2a02d3
   languageName: node
   linkType: hard
 

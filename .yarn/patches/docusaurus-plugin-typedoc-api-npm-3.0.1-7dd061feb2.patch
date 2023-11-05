@@ -1,0 +1,35 @@
+diff --git a/lib/plugin/url.js b/lib/plugin/url.js
+index efff9c4a325475e1d66c1f083e3bdd2d1df27c79..18db0eae6a361b4dc7e4c6f7760bac15aca8af61 100644
+--- a/lib/plugin/url.js
++++ b/lib/plugin/url.js
+@@ -17,8 +17,6 @@ function getKindSlug(decl) {
+       return 'namespace';
+     case TypeDoc.ReflectionKind.Enum:
+       return 'enum';
+-    case TypeDoc.ReflectionKind.Function:
+-      return 'function';
+     case TypeDoc.ReflectionKind.Class:
+       return 'class';
+     case TypeDoc.ReflectionKind.Interface:
+diff --git a/lib/plugin/url.js.map b/lib/plugin/url.js.map
+index d52ef489fb04b2c84a89a384f852e7db7e73eb19..a5d564d46c055988daa1d3f30387db5fc293ac5f 100644
+--- a/lib/plugin/url.js.map
++++ b/lib/plugin/url.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"url.js","sources":["../../src/plugin/url.ts"],"sourcesContent":null,"names":["path","ReflectionKind"],"mappings":";;;;;;;;;AAEO,SAAS,OAAO,CAAC,GAAG,KAAK,EAAE;AAClC,EAAE,OAAOA,qBAAI,CAAC,IAAI,CAAC,GAAG,KAAK,CAAC,CAAC,OAAO,CAAC,KAAK,EAAE,GAAG,CAAC,CAAC;AACjD,CAAC;AACM,SAAS,WAAW,CAAC,IAAI,EAAE;AAClC,EAAE,QAAQ,IAAI,CAAC,IAAI;AACnB,IAAI,KAAKC,sBAAc,CAAC,MAAM;AAC9B,MAAM,OAAO,SAAS,CAAC;AACvB,IAAI,KAAKA,sBAAc,CAAC,SAAS;AACjC,MAAM,OAAO,WAAW,CAAC;AACzB,IAAI,KAAKA,sBAAc,CAAC,IAAI;AAC5B,MAAM,OAAO,MAAM,CAAC;AACpB,IAAI,KAAKA,sBAAc,CAAC,QAAQ;AAChC,MAAM,OAAO,UAAU,CAAC;AACxB,IAAI,KAAKA,sBAAc,CAAC,KAAK;AAC7B,MAAM,OAAO,OAAO,CAAC;AACrB,IAAI,KAAKA,sBAAc,CAAC,SAAS;AACjC,MAAM,OAAO,WAAW,CAAC;AACzB,IAAI;AACJ,MAAM,OAAO,EAAE,CAAC;AAChB,GAAG;AACH,CAAC;AACM,SAAS,cAAc,CAAC,SAAS,EAAE,UAAU,EAAE,eAAe,EAAE;AACvE;AACA,EAAE,IAAI,eAAe,IAAI,SAAS,CAAC,WAAW,KAAK,GAAG,EAAE;AACxD,IAAI,OAAO,GAAG,CAAC;AACf,GAAG;AACH;AACA;AACA,EAAE,MAAM,IAAI,GAAG,SAAS,CAAC,WAAW,IAAID,qBAAI,CAAC,QAAQ,CAAC,SAAS,CAAC,WAAW,CAAC,CAAC;AAC7E;AACA;AACA,EAAE,MAAM,UAAU,GAAG,UAAU,CAAC,OAAO,CAAC,KAAK,EAAE,GAAG,CAAC,CAAC;AACpD,EAAE,IAAI,UAAU,KAAK,OAAO,EAAE;AAC9B,IAAI,OAAO,IAAI,CAAC;AAChB,GAAG;AACH,EAAE,OAAO,CAAC,EAAE,IAAI,CAAC,CAAC,EAAE,UAAU,CAAC,CAAC,CAAC;AACjC;;;;;;"}
+\ No newline at end of file
++{"version":3,"file":"url.js","sources":["../../src/plugin/url.ts"],"sourcesContent":null,"names":["path","ReflectionKind"],"mappings":";;;;;;;;;AAEO,SAAS,OAAO,CAAC,GAAG,KAAK,EAAE;AAClC,EAAE,OAAOA,qBAAI,CAAC,IAAI,CAAC,GAAG,KAAK,CAAC,CAAC,OAAO,CAAC,KAAK,EAAE,GAAG,CAAC,CAAC;AACjD,CAAC;AACM,SAAS,WAAW,CAAC,IAAI,EAAE;AAClC,EAAE,QAAQ,IAAI,CAAC,IAAI;AACnB,IAAI,KAAKC,sBAAc,CAAC,MAAM;AAC9B,MAAM,OAAO,SAAS,CAAC;AACvB,IAAI,KAAKA,sBAAc,CAAC,SAAS;AACjC,MAAM,OAAO,WAAW,CAAC;AACzB,IAAI,KAAKA,sBAAc,CAAC,IAAI;AAC5B,MAAM,OAAO,MAAM,CAAC;AACpB,IAAI,KAAKA,sBAAc,CAAC,KAAK;AAC7B,MAAM,OAAO,OAAO,CAAC;AACrB,IAAI,KAAKA,sBAAc,CAAC,SAAS;AACjC,MAAM,OAAO,WAAW,CAAC;AACzB,IAAI;AACJ,MAAM,OAAO,EAAE,CAAC;AAChB,GAAG;AACH,CAAC;AACM,SAAS,cAAc,CAAC,SAAS,EAAE,UAAU,EAAE,eAAe,EAAE;AACvE;AACA,EAAE,IAAI,eAAe,IAAI,SAAS,CAAC,WAAW,KAAK,GAAG,EAAE;AACxD,IAAI,OAAO,GAAG,CAAC;AACf,GAAG;AACH;AACA;AACA,EAAE,MAAM,IAAI,GAAG,SAAS,CAAC,WAAW,IAAID,qBAAI,CAAC,QAAQ,CAAC,SAAS,CAAC,WAAW,CAAC,CAAC;AAC7E;AACA;AACA,EAAE,MAAM,UAAU,GAAG,UAAU,CAAC,OAAO,CAAC,KAAK,EAAE,GAAG,CAAC,CAAC;AACpD,EAAE,IAAI,UAAU,KAAK,OAAO,EAAE;AAC9B,IAAI,OAAO,IAAI,CAAC;AAChB,GAAG;AACH,EAAE,OAAO,CAAC,EAAE,IAAI,CAAC,CAAC,EAAE,UAAU,CAAC,CAAC,CAAC;AACjC;;;;;;"}
+\ No newline at end of file
+diff --git a/src/plugin/url.ts b/src/plugin/url.ts
+index bc452e082774ee8ee8c2773a8f8e6cc73b35c8f3..ff969f199e31f72027fb73f3b1cf07b647213d13 100644
+--- a/src/plugin/url.ts
++++ b/src/plugin/url.ts
+@@ -14,8 +14,6 @@ export function getKindSlug(decl: JSONOutput.DeclarationReflection): string {
+ 			return 'namespace';
+ 		case ReflectionKind.Enum:
+ 			return 'enum';
+-		case ReflectionKind.Function:
+-			return 'function';
+ 		case ReflectionKind.Class:
+ 			return 'class';
+ 		case ReflectionKind.Interface:

@@ -92,7 +92,7 @@
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "ansi-to-html": "^0.7.2",
-    "docusaurus-plugin-typedoc-api": "^3.0.1",
+    "docusaurus-plugin-typedoc-api": "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch",
     "esbuild-loader": "^2.20.0",
     "fast-glob": "^3.2.2",
     "typedoc": "^0.25.3",
