@@ -72,6 +72,7 @@ const config = {
           },
         ),
         readmes: true,
+        gitRefName: process.env.COMMIT_REF ?? `master`,
         typedocOptions: {
           plugin: [`./src/typedoc/plugin.ts`],
         },
