@@ -1,3 +1,4 @@
+import {miscUtils}                                                                             from '@yarnpkg/core';
 import pnpApi                                                                                  from 'pnpapi';
 import {Application, Converter, DeclarationReflection, ProjectReflection, SignatureReflection} from 'typedoc';
 
@@ -6,11 +7,20 @@ function resolveVirtual(path: string) {
 }
 
 function remapPaths(context, ref: DeclarationReflection | ProjectReflection | SignatureReflection) {
-  if (`sources` in ref) {
-    for (const source of ref.sources ?? []) {
+  if (`sources` in ref && ref.sources !== undefined) {
+    const seen = new Set<string>();
+    ref.sources = miscUtils.mapAndFilter(ref.sources, source => {
       source.fileName = resolveVirtual(source.fileName);
       source.fullFileName = resolveVirtual(source.fullFileName);
-    }
+
+      const key = `${source.fullFileName}:${source.line}:${source.character}`;
+      if (seen.has(key)) {
+        return miscUtils.mapAndFilter.skip;
+      } else {
+        seen.add(key);
+        return source;
+      }
+    });
   }
 }
 
