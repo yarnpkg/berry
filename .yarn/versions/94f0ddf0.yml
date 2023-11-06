@@ -1,5 +1,5 @@
 releases:
-  "@yarnpkg/plugin-essentials": patch
+  "@yarnpkg/plugin-essentials": minor
 
 declined:
   - "@yarnpkg/plugin-interactive-tools"
