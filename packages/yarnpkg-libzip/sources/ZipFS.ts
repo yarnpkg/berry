@@ -1272,6 +1272,19 @@ export class ZipFS extends BasePortableFakeFS {
     this.utimesImpl(resolvedP, mtime);
   }
 
+  async ftimesPromise(fd: number, atime: Date | string | number, mtime: Date | string | number) {
+    return this.ftimesSync(fd, atime, mtime);
+  }
+
+  ftimesSync(fd: number, atime: Date | string | number, mtime: Date | string | number) {
+    if (this.readOnly)
+      throw errors.EROFS(`ftimes '${fd}'`);
+
+    const resolvedP = this.fdToPath(fd, `ftimes`);
+
+    this.utimesImpl(resolvedP, mtime);
+  }
+
   async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     return this.lutimesSync(p, atime, mtime);
   }

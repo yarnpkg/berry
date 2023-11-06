@@ -279,6 +279,9 @@ export abstract class FakeFS<P extends Path> {
   abstract utimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract utimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
+  abstract ftimesPromise(fd: number, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
+  abstract ftimesSync(fd: number, atime: Date | string | number, mtime: Date | string | number): void;
+
   abstract lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
