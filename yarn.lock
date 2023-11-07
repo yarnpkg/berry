@@ -8472,7 +8472,7 @@ __metadata:
 
 "docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch":
   version: 3.0.1
-  resolution: "docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=690901"
+  resolution: "docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"
   dependencies:
     "@docusaurus/plugin-content-docs": "npm:^2.4.3"
     "@docusaurus/types": "npm:^2.4.3"
@@ -8484,7 +8484,7 @@ __metadata:
     "@docusaurus/core": ^2.0.0
     react: ">=16.0.0"
     typescript: ^4.0.0 || ^5.0.0
-  checksum: 6f68daceda63fe15120bcd9d9b5583e633ee3f7003257f92ed4e204d3bb8515e818c9a1e153144d314345a75d7d0c5006a49148709786ef146f2bc66b1b5d384
+  checksum: a52a91cefa948f869cca91a992da53e355f1d1d3693a7856198ea86e72ae6620d7255a75443da96701f0698b83add86036a08c93abf8a33803d7e191ee47c1a4
   languageName: node
   linkType: hard
 

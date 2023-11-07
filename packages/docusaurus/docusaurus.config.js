@@ -114,6 +114,7 @@ const config = {
         typedocOptions: {
           plugin: [`./src/typedoc/plugin.ts`],
         },
+        remarkPlugins,
       },
     ],
   ],

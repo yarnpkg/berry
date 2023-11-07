@@ -8878,7 +8878,7 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
           ["cross-spawn", "npm:7.0.3"],\
-          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=690901"],\
+          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"],\
           ["dompurify", "npm:3.0.5"],\
           ["esbuild-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.20.0"],\
           ["fast-glob", "npm:3.2.12"],\
@@ -21685,17 +21685,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["docusaurus-plugin-typedoc-api", [\
-      ["patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=690901", {\
-        "packageLocation": "./.yarn/cache/docusaurus-plugin-typedoc-api-patch-71bb3c0b19-6f68daceda.zip/node_modules/docusaurus-plugin-typedoc-api/",\
+      ["patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0", {\
+        "packageLocation": "./.yarn/cache/docusaurus-plugin-typedoc-api-patch-c12a7f739c-a52a91cefa.zip/node_modules/docusaurus-plugin-typedoc-api/",\
         "packageDependencies": [\
-          ["docusaurus-plugin-typedoc-api", "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=690901"]\
+          ["docusaurus-plugin-typedoc-api", "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=690901", {\
-        "packageLocation": "./.yarn/__virtual__/docusaurus-plugin-typedoc-api-virtual-a7e0d4ab59/0/cache/docusaurus-plugin-typedoc-api-patch-71bb3c0b19-6f68daceda.zip/node_modules/docusaurus-plugin-typedoc-api/",\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0", {\
+        "packageLocation": "./.yarn/__virtual__/docusaurus-plugin-typedoc-api-virtual-37d4103367/0/cache/docusaurus-plugin-typedoc-api-patch-c12a7f739c-a52a91cefa.zip/node_modules/docusaurus-plugin-typedoc-api/",\
         "packageDependencies": [\
-          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=690901"],\
+          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
