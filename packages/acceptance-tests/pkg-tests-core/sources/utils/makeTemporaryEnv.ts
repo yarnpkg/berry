@@ -58,6 +58,8 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
         // Older versions of Windows need this set to not have node throw an error
         [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
+        // We don't want the PnP runtime to be accidentally injected
+        [`NODE_OPTIONS`]: ``,
         ...rcEnv,
         ...env,
       },
