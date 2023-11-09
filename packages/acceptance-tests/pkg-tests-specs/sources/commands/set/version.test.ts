@@ -1,3 +1,4 @@
+import {Configuration}                      from '@yarnpkg/core';
 import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 
 const yarnrcRegexp = /^yarnPath:/;
@@ -143,13 +144,14 @@ describe(`Commands`, () => {
 });
 
 async function check(path: PortablePath, checks: {corepackVersion: string | RegExp, usePath: boolean}) {
-  const releasesPath = ppath.join(path, `.yarn/releases`);
+  const configuration = await Configuration.find(path, null);
+  const releasesPath = configuration.get(`yarnPath`);
   const yarnrcPath = ppath.join(path, Filename.rc);
   const manifestPath = ppath.join(path, Filename.manifest);
 
   let releases: Array<string> | null;
   try {
-    releases = await xfs.readdirPromise(releasesPath);
+    releases = releasesPath ? await xfs.readdirPromise(ppath.dirname(releasesPath)) : null;
   } catch (err) {
     if (err.code === `ENOENT`) {
       releases = null;
