@@ -1,4 +1,3 @@
-import {Configuration}                      from '@yarnpkg/core';
 import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 
 const yarnrcRegexp = /^yarnPath:/;
@@ -102,7 +101,7 @@ describe(`Commands`, () => {
         await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
 
         await run(`set`, `version`, `self`, {cwd: projectDir});
-        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true});
+        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true}, ppath.join(path, `.yarn/releases`));
       }),
     );
 
@@ -137,21 +136,76 @@ describe(`Commands`, () => {
         await xfs.writeFilePromise(ppath.join(projectDir, Filename.lockfile), ``);
 
         await run(`set`, `version`, `self`, `--only-if-needed`, {cwd: projectDir});
-        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true});
+        await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true}, ppath.join(path, `.yarn/releases`));
+      }),
+    );
+
+    test(
+      `it should respect the current yarnPath, if it is defined`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `4.0.0`);
+        await check(path, {corepackVersion: `4.0.0`, usePath: true});
+        const oldYarnPath = ppath.join(path, `.yarn/releases/yarn-4.0.0.cjs`);
+        const releasesPath = ppath.join(path, `releases_dir`);
+        await xfs.mkdirPromise(releasesPath);
+        const yarnAbsPath = ppath.join(releasesPath, `/yarn-4.0.0.cjs`);
+        const yarnPath = ppath.relative(path, yarnAbsPath);
+        await xfs.renamePromise(oldYarnPath, yarnAbsPath);
+        await xfs.writeFilePromise(ppath.join(path, Filename.rc), `yarnPath: ${yarnPath}`);
+        await run(`set`, `version`, `3.0.0`);
+        await check(path, {corepackVersion: `3.0.0`, usePath: true}, ppath.dirname(yarnAbsPath));
+      }),
+    );
+
+    test(
+      `it should respect the current yarnPath, if it is defined`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `4.0.0`);
+        await check(path, {corepackVersion: `4.0.0`, usePath: true});
+        const oldYarnPath = ppath.join(path, `.yarn/releases/yarn-4.0.0.cjs`);
+        const releasesPPath = ppath.join(path, `releases_dir`);
+        await xfs.mkdirPromise(releasesPPath);
+        const yarnAbsPath = ppath.join(releasesPPath, `/yarn-4.0.0.cjs`);
+        const yarnPath = ppath.relative(path, yarnAbsPath);
+        await xfs.renamePromise(oldYarnPath, yarnAbsPath);
+        await xfs.writeFilePromise(ppath.join(path, Filename.rc), `yarnPath: ${yarnPath}`);
+        await run(`set`, `version`, `3.0.0`);
+        await check(path, {corepackVersion: `3.0.0`, usePath: true}, ppath.dirname(yarnAbsPath));
+      }),
+    );
+    test(
+      `it should respect the current yarnPath if defined, even when corepack is enabled and the version range is semver`,
+      makeTemporaryEnv({}, {
+        env: {COREPACK_ROOT: undefined},
+      }, async ({path, run, source}) => {
+        await run(`set`, `version`, `4.0.0`);
+        await check(path, {corepackVersion: `4.0.0`, usePath: true});
+        const oldYarnPath = ppath.join(path, `.yarn/releases/yarn-4.0.0.cjs`);
+        const releasesPPath = ppath.join(path, `releases_dir`);
+        await xfs.mkdirPromise(releasesPPath);
+        const yarnAbsPath = ppath.join(releasesPPath, `/yarn-4.0.0.cjs`);
+        const yarnPath = ppath.relative(path, yarnAbsPath);
+        await xfs.renamePromise(oldYarnPath, yarnAbsPath);
+        await xfs.writeFilePromise(ppath.join(path, Filename.rc), `yarnPath: ${yarnPath}`);
+        await run(`set`, `version`, `3.0.0`, {env: {COREPACK_ROOT: `/path/to/corepack`}});
+        await check(path, {corepackVersion: `3.0.0`, usePath: true}, ppath.dirname(yarnAbsPath));
       }),
     );
   });
 });
 
-async function check(path: PortablePath, checks: {corepackVersion: string | RegExp, usePath: boolean}) {
-  const configuration = await Configuration.find(path, null);
-  const releasesPath = configuration.get(`yarnPath`);
+async function check(path: PortablePath, checks: {corepackVersion: string | RegExp, usePath: boolean}, releasesDir?: PortablePath) {
+  releasesDir = checks.usePath ? (releasesDir ?? ppath.join(path, `.yarn/releases`)) : undefined;
   const yarnrcPath = ppath.join(path, Filename.rc);
   const manifestPath = ppath.join(path, Filename.manifest);
 
   let releases: Array<string> | null;
   try {
-    releases = releasesPath ? await xfs.readdirPromise(ppath.dirname(releasesPath)) : null;
+    releases = releasesDir ? await xfs.readdirPromise(releasesDir) : null;
   } catch (err) {
     if (err.code === `ENOENT`) {
       releases = null;
