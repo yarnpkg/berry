@@ -158,25 +158,6 @@ describe(`Commands`, () => {
         await check(path, {corepackVersion: `3.0.0`, usePath: true}, ppath.dirname(yarnAbsPath));
       }),
     );
-
-    test(
-      `it should respect the current yarnPath, if it is defined`,
-      makeTemporaryEnv({}, {
-        env: {COREPACK_ROOT: undefined},
-      }, async ({path, run, source}) => {
-        await run(`set`, `version`, `4.0.0`);
-        await check(path, {corepackVersion: `4.0.0`, usePath: true});
-        const oldYarnPath = ppath.join(path, `.yarn/releases/yarn-4.0.0.cjs`);
-        const releasesPPath = ppath.join(path, `releases_dir`);
-        await xfs.mkdirPromise(releasesPPath);
-        const yarnAbsPath = ppath.join(releasesPPath, `/yarn-4.0.0.cjs`);
-        const yarnPath = ppath.relative(path, yarnAbsPath);
-        await xfs.renamePromise(oldYarnPath, yarnAbsPath);
-        await xfs.writeFilePromise(ppath.join(path, Filename.rc), `yarnPath: ${yarnPath}`);
-        await run(`set`, `version`, `3.0.0`);
-        await check(path, {corepackVersion: `3.0.0`, usePath: true}, ppath.dirname(yarnAbsPath));
-      }),
-    );
     test(
       `it should respect the current yarnPath if defined, even when corepack is enabled and the version range is semver`,
       makeTemporaryEnv({}, {
