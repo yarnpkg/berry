@@ -19,7 +19,8 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
 
   const originalReadFile = binding.readFileUtf8 || binding.readFileSync;
   if (originalReadFile) {
-    binding.readFileSync = binding.readFileUtf8 = function (...args) {
+    // @ts-expect-error - No index signature
+    binding[originalReadFile.name] = function (...args: Parameters<typeof originalReadFile>) {
       try {
         return fs.readFileSync(args[0], {
           encoding: `utf8`,

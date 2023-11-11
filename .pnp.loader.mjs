@@ -2044,7 +2044,7 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
   const binding = process.binding(`fs`);
   const originalReadFile = binding.readFileUtf8 || binding.readFileSync;
   if (originalReadFile) {
-    binding.readFileSync = binding.readFileUtf8 = function(...args) {
+    binding[originalReadFile.name] = function(...args) {
       try {
         return fs.readFileSync(args[0], {
           encoding: `utf8`,
