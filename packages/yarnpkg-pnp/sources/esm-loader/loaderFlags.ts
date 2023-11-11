@@ -9,4 +9,5 @@ export const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || (major === 19 && min
 export const HAS_LAZY_LOADED_TRANSLATORS = (major === 20 && minor < 6) || (major === 19 && minor >= 3);
 
 // https://github.com/nodejs/node/pull/43772
-export const HAS_LOADER_CHAINING = major > 19 || (major === 19 && minor >= 6);
+// TODO: Update the version range if it gets backported to v18.
+export const HAS_LOADERS_AFFECTING_LOADERS = major > 19 || (major === 19 && minor >= 6);
