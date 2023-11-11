@@ -7,3 +7,6 @@ export const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || (major === 19 && min
 // https://github.com/nodejs/node/pull/48842 changed it so that our patch is loaded after the internal translators.
 // TODO: Update the version range if https://github.com/nodejs/node/pull/46425 lands.
 export const HAS_LAZY_LOADED_TRANSLATORS = (major === 20 && minor < 6) || (major === 19 && minor >= 3);
+
+// https://github.com/nodejs/node/pull/43772
+export const HAS_LOADER_CHAINING = major > 19 || (major === 19 && minor >= 6);

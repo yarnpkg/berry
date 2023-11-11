@@ -1,5 +1,6 @@
 import {nodeUtils}                   from '@yarnpkg/core';
 import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {HAS_LOADER_CHAINING}         from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
 import {pathToFileURL}               from 'url';
 
 const ifAtLeastNode21It = nodeUtils.major >= 21 ? it : it.skip;
@@ -778,7 +779,7 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   // Tests /packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
-  it(
+  (HAS_LOADER_CHAINING ? it : it.skip)(
     `should support loaders importing named exports from commonjs files`,
     makeTemporaryEnv(
       {
