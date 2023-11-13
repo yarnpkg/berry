@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Run a check, thanks
+
 set -e
 
 HERE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"

@@ -42,7 +42,6 @@ export function hydratePnpSource(source: string, {basePath, fakeFs, pnpapiResolu
   });
 
   return makeApi(runtimeState, {
-    compatibilityMode: true,
     fakeFs,
     pnpapiResolution,
   });
