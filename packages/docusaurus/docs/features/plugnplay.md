@@ -124,3 +124,18 @@ Yarn PnP was designed to use the exact same "public interfaces" as other package
 One caveat though: the opposite isn't always true. Since other package managers don't / can't enforce proper listing of dependencies, they are more vulnerable to shipping ghost dependencies by accident to their consumers. In that way, using Yarn PnP can be seen as a good practice for the health of the ecosystem! 🙂
 
 ### How can I fix ghost dependencies?
+
+Ghost dependencies can be solved using the `packageExtensions` setting, which allows you to add new dependencies to any package in your dependency tree. For example, should you face an error such as `@babel/core tried to access @babel/types, but it isn't declared in its dependencies`, you can easily fix it by adding the following to your `.yarnrc.yml` file:
+
+```yaml
+packageExtensions:
+  "@babel/core@*":
+    dependencies:
+      "@babel/types": "*"
+```
+
+It may sometimes make sense to extend the `peerDependencies` field rather the `dependencies` field, this is to be addressed case-by-case.
+
+:::tip
+To avoid you having to add too many `packageExtensions` entries, the Yarn team maintains a list of [known ghost dependencies in the ecosystem](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-extensions/sources/index.ts) that we automatically fix. This list is used by both Yarn and pnpm, and we're more than happy to merge contributions there.
+:::
