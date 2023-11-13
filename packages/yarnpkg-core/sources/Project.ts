@@ -711,6 +711,14 @@ export class Project {
   }
 
   async loadUserConfig() {
+    // TODO: We're injecting the .pnp.cjs in the environment, so that it's
+    // able to required the project dependencies. It's not ideal to hardcode
+    // this logic here, but I'm not quite sure yet what would be a better place.
+    //
+    const pnpPath = ppath.join(this.cwd, `.pnp.cjs`);
+    if (await xfs.existsPromise(pnpPath))
+      miscUtils.dynamicRequire(pnpPath).setup();
+
     const configPath = ppath.join(this.cwd, `yarn.config.cjs`);
     if (!await xfs.existsPromise(configPath))
       return null;
