@@ -1,14 +1,14 @@
 ---
 category: getting-started
 slug: /migration/pnp
-title: "Yarn PnP migration"
+title: "To go further: Yarn PnP"
 description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 sidebar_position: 3
 sidebar_label: "To go further"
 ---
 
 :::info
-This step is **completely optional**!
+These steps are **completely optional**!
 
 While we recommend to use [Yarn Plug'n'Play](/features/pnp) for new projects, enabling it on existing projects may require a time investment. Feel free to skip this part if you prefer, and to come back to it whenever you have more time and/or a concrete benefit to get from it.
 :::
