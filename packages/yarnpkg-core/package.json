@@ -37,6 +37,7 @@
     "tunnel": "^0.0.6"
   },
   "devDependencies": {
+    "@octokit/webhooks-types": "^7.3.1",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",

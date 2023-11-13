@@ -3424,6 +3424,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@octokit/webhooks-types@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@octokit/webhooks-types@npm:7.3.1"
+  checksum: c4da1e1eb94a90c2e79e158f6e6d935aa099340f7cccac3449feca4cd4e2b5b5b04bbb8414310791d421b3451cd5b0685f498f1bcec6af85d2c14803dae2e1b8
+  languageName: node
+  linkType: hard
+
 "@polka/url@npm:^1.0.0-next.20":
   version: 1.0.0-next.21
   resolution: "@polka/url@npm:1.0.0-next.21"
@@ -5038,6 +5045,7 @@ __metadata:
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
     "@arcanis/slice-ansi": "npm:^1.1.1"
+    "@octokit/webhooks-types": "npm:^7.3.1"
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-json": "npm:^6.0.0"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"

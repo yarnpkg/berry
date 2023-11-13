@@ -5662,6 +5662,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@octokit/webhooks-types", [\
+      ["npm:7.3.1", {\
+        "packageLocation": "./.yarn/cache/@octokit-webhooks-types-npm-7.3.1-80c0b1629f-c4da1e1eb9.zip/node_modules/@octokit/webhooks-types/",\
+        "packageDependencies": [\
+          ["@octokit/webhooks-types", "npm:7.3.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@polka/url", [\
       ["npm:1.0.0-next.21", {\
         "packageLocation": "./.yarn/cache/@polka-url-npm-1.0.0-next.21-02342f3d90-c7654046d3.zip/node_modules/@polka/url/",\
@@ -8749,6 +8758,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@arcanis/slice-ansi", "npm:1.1.1"],\
+          ["@octokit/webhooks-types", "npm:7.3.1"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-json", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:6.0.0"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\

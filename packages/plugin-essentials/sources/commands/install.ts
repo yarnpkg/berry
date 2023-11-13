@@ -331,6 +331,19 @@ export default class YarnCommand extends BaseCommand {
 
     const enableHardenedMode = configuration.get(`enableHardenedMode`);
 
+    if (enableHardenedMode && configuration.sources.get(`enableHardenedMode`) === `<default>`) {
+      await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        report.reportWarning(MessageName.UNNAMED, `Yarn detected that the current workflow is executed from a public pull request. For safety the hardened mode has been enabled.`);
+        report.reportWarning(MessageName.UNNAMED, `It will attempt to prevent malicious lockfile manipulations, in exchange for a slower install time. Check our ${formatUtils.applyHyperlink(configuration, `documentation`, `https://yarnpkg.com/features/security#hardened-mode`)} for more details.`);
+        report.reportSeparator();
+      });
+    }
+
     if (this.refreshLockfile ?? enableHardenedMode)
       project.lockfileNeedsRefresh = true;
 
