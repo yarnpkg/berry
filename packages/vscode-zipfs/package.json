@@ -118,5 +118,5 @@
   "dependencies": {
     "tslib": "^2.4.0"
   },
-  "stableVersion": "2.5.1"
+  "stableVersion": "3.0.0"
 }
