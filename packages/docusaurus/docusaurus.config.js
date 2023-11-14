@@ -5,11 +5,15 @@ require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 
 const fs = require(`fs`);
+const path = require(`path`);
 
 const {YarnVersion} = require(`@yarnpkg/core`);
 
+const fastGlob = require(`fast-glob`);
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
+
+const {miscUtils} = require(`@yarnpkg/core`);
 
 const commandLineHighlight = require(`./src/remark/commandLineHighlight`);
 const autoLink = require(`./src/remark/autoLink`);
@@ -51,6 +55,68 @@ const config = {
 
   plugins: [
     require.resolve(`./plugin`),
+    [
+      `docusaurus-plugin-typedoc-api`,
+      {
+        projectRoot: path.join(__dirname, `../..`),
+        packages: miscUtils.mapAndFilter(
+          fastGlob.sync([`packages/{yarnpkg,plugin}-*`], {cwd: `../..`, onlyDirectories: true}),
+          workspacePath => {
+            let category = `Generic Packages`;
+            if (workspacePath === `packages/yarnpkg-builder` || workspacePath === `packages/yarnpkg-cli`)
+              category = `Yarn Packages`;
+            else if (workspacePath.startsWith(`packages/plugin-`))
+              category = `Default Plugins`;
+
+            /** @type {Map<string, import('docusaurus-plugin-typedoc-api/lib/types').PackageEntryConfig>} */
+            const entries = new Map();
+            function resolveEntries(exports) {
+              // Only handle export cases found in this monorepo
+              for (const [key, value] of Object.entries(exports)) {
+                if (typeof value === `object`) {
+                  // "exports": { ...: { ... } }
+                  resolveEntries(value);
+                } else if (!value.endsWith(`.ts`)) {
+                  // "exports": { ...: "./path/to.js" }
+                  return;
+                } else if (key.startsWith(`.`)) {
+                  // "exports": { "./path": "./path/to.ts" }
+                  const isIndex = key === `.`;
+                  entries.set(
+                    isIndex ? `index` : key.slice(2),
+                    {path: value, label: isIndex ? `Main Entrypoint` : `Entrypoint: ${key.slice(2)}`},
+                  );
+                } else {
+                  // "exports": { "condition": "./path/to.ts" }
+                  const isDefault = key === `default`;
+                  entries.set(
+                    isDefault ? `index` : `[${key}]`,
+                    {path: value, label: isDefault ? `Default Entrypoint` : `Condition: ${key}`},
+                  );
+                }
+              }
+            }
+            const manifest = require(path.join(`../..`, workspacePath, `package.json`));
+            if (!manifest.exports)
+              return miscUtils.mapAndFilter.skip;
+            resolveEntries(manifest.exports);
+
+            return {path: workspacePath, category, entry: Object.fromEntries(entries)};
+          },
+        ),
+        packageCategories: [
+          `Generic Packages`,
+          `Yarn Packages`,
+          `Default Plugins`,
+        ],
+        readmes: true,
+        gitRefName: process.env.COMMIT_REF ?? `master`,
+        typedocOptions: {
+          plugin: [`./src/typedoc/plugin.ts`],
+        },
+        remarkPlugins,
+      },
+    ],
   ],
 
   webpack: {
@@ -150,6 +216,11 @@ const config = {
           {
             to: `blog`,
             label: `Blog`,
+            position: `left`,
+          },
+          {
+            to: `api`,
+            label: `API`,
             position: `left`,
           },
           {

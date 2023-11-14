@@ -1,4 +1,5 @@
-import visit from 'unist-util-visit-parents';
+import visit           from 'unist-util-visit-parents';
+import {pathToFileURL} from 'url';
 
 export type AutoLinkSpec = {
   sourceType: `json-schema`;
@@ -88,7 +89,7 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
     if (hasAutoLinks) {
       ast.children.unshift({
         type: `import`,
-        value: `import {AutoLink} from '@yarnpkg/docusaurus/src/components/AutoLink';\n`,
+        value: `import {AutoLink} from ${JSON.stringify(pathToFileURL(require.resolve(`../components/AutoLink.tsx`)))};\n`,
       });
     }
   };

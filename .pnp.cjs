@@ -3730,7 +3730,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/traverse", "npm:7.19.1"],\
           ["@docusaurus/cssnano-preset", "npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/react-loadable", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:5.5.2"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
@@ -3823,7 +3823,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/traverse", "npm:7.19.1"],\
           ["@docusaurus/cssnano-preset", "npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/react-loadable", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:5.5.2"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
@@ -3927,22 +3927,23 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@docusaurus/mdx-loader", [\
-      ["npm:2.4.3", {\
-        "packageLocation": "./.yarn/cache/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a-20e810843d.zip/node_modules/@docusaurus/mdx-loader/",\
+      ["patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d", {\
+        "packageLocation": "./.yarn/cache/@docusaurus-mdx-loader-patch-11f5e942d5-48db5cb18f.zip/node_modules/@docusaurus/mdx-loader/",\
         "packageDependencies": [\
-          ["@docusaurus/mdx-loader", "npm:2.4.3"]\
+          ["@docusaurus/mdx-loader", "patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3", {\
-        "packageLocation": "./.yarn/__virtual__/@docusaurus-mdx-loader-virtual-4b34be0ffd/0/cache/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a-20e810843d.zip/node_modules/@docusaurus/mdx-loader/",\
+      ["virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d", {\
+        "packageLocation": "./.yarn/__virtual__/@docusaurus-mdx-loader-virtual-fabc774cb7/0/cache/@docusaurus-mdx-loader-patch-11f5e942d5-48db5cb18f.zip/node_modules/@docusaurus/mdx-loader/",\
         "packageDependencies": [\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@babel/parser", "npm:7.19.1"],\
           ["@babel/traverse", "npm:7.19.1"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@mdx-js/mdx", "npm:1.6.22"],\
+          ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
           ["escape-html", "npm:1.0.3"],\
@@ -4019,9 +4020,9 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/plugin-content-blog", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
           ["@docusaurus/utils-validation", "npm:2.4.3"],\
           ["@types/react", "npm:16.9.2"],\
@@ -4055,16 +4056,16 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3", {\
-        "packageLocation": "./.yarn/__virtual__/@docusaurus-plugin-content-docs-virtual-56d92f8592/0/cache/@docusaurus-plugin-content-docs-npm-2.4.3-d23740f53a-1d768df0f7.zip/node_modules/@docusaurus/plugin-content-docs/",\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3", {\
+        "packageLocation": "./.yarn/__virtual__/@docusaurus-plugin-content-docs-virtual-60b7481160/0/cache/@docusaurus-plugin-content-docs-npm-2.4.3-d23740f53a-1d768df0f7.zip/node_modules/@docusaurus/plugin-content-docs/",\
         "packageDependencies": [\
-          ["@docusaurus/plugin-content-docs", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@docusaurus/utils-validation", "npm:2.4.3"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
@@ -4102,9 +4103,9 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@docusaurus/plugin-content-pages", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@docusaurus/utils-validation", "npm:2.4.3"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
@@ -4137,7 +4138,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/plugin-debug", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/core", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
           ["fs-extra", "npm:10.1.0"],\
@@ -4260,7 +4261,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/core", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
           ["@docusaurus/utils-validation", "npm:2.4.3"],\
           ["@types/react", "npm:16.9.2"],\
@@ -4294,7 +4295,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/preset-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/core", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/plugin-content-blog", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
-          ["@docusaurus/plugin-content-docs", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/plugin-content-pages", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/plugin-debug", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/plugin-google-analytics", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
@@ -4305,12 +4306,15 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/theme-search-algolia", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
+          ["@types/docusaurus__plugin-content-docs", null],\
           ["@types/react", "npm:16.9.2"],\
           ["@types/react-dom", null],\
           ["react", "npm:17.0.2"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"]\
         ],\
         "packagePeers": [\
+          "@docusaurus/plugin-content-docs",\
+          "@types/docusaurus__plugin-content-docs",\
           "@types/react-dom",\
           "@types/react",\
           "react-dom",\
@@ -4355,15 +4359,15 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@docusaurus/theme-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/core", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/plugin-content-blog", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
-          ["@docusaurus/plugin-content-docs", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/plugin-content-pages", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/theme-translations", "npm:2.4.3"],\
           ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
           ["@docusaurus/utils-validation", "npm:2.4.3"],\
           ["@mdx-js/react", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:1.6.22"],\
@@ -4405,10 +4409,10 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@docusaurus-theme-common-virtual-1186bdd630/0/cache/@docusaurus-theme-common-npm-2.4.3-c261e25288-ddb26b7eef.zip/node_modules/@docusaurus/theme-common/",\
         "packageDependencies": [\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/plugin-content-blog", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
-          ["@docusaurus/plugin-content-docs", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/plugin-content-pages", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@docusaurus/utils-common", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#npm:2.4.3"],\
@@ -4449,7 +4453,7 @@ const RAW_RUNTIME_STATE =
           ["@docsearch/react", "virtual:51105d41b5c2a479287687d3f22dadc05bd7910e1ae83989c279f5a2dfcc0a5c392e762ebc66c382106a0e889383a84328badf1bfb0374527f1639a0fc858e1f#npm:3.2.1"],\
           ["@docusaurus/core", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/plugin-content-docs", "virtual:b32f149858069bb32d6e226f2700e07f74b42b4e87898c95b479b3eb5d7d0f45f272dc2d639f959fbaac5d4780bc257e7f0e907814fb5655b38da7911fedc97a#npm:2.4.3"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/theme-translations", "npm:2.4.3"],\
           ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
@@ -4528,12 +4532,12 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3", {\
-        "packageLocation": "./.yarn/__virtual__/@docusaurus-utils-virtual-f1ed609ca2/0/cache/@docusaurus-utils-npm-2.4.3-9f6f3ef859-11caf1b04b.zip/node_modules/@docusaurus/utils/",\
+      ["virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3", {\
+        "packageLocation": "./.yarn/__virtual__/@docusaurus-utils-virtual-bf22bf0332/0/cache/@docusaurus-utils-npm-2.4.3-9f6f3ef859-11caf1b04b.zip/node_modules/@docusaurus/utils/",\
         "packageDependencies": [\
-          ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/types", null],\
+          ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
           ["@svgr/webpack", "npm:6.3.1"],\
           ["@types/docusaurus__types", null],\
           ["escape-string-regexp", "npm:4.0.0"],\
@@ -4557,12 +4561,12 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3", {\
-        "packageLocation": "./.yarn/__virtual__/@docusaurus-utils-virtual-a297c5aa54/0/cache/@docusaurus-utils-npm-2.4.3-9f6f3ef859-11caf1b04b.zip/node_modules/@docusaurus/utils/",\
+      ["virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3", {\
+        "packageLocation": "./.yarn/__virtual__/@docusaurus-utils-virtual-f1ed609ca2/0/cache/@docusaurus-utils-npm-2.4.3-9f6f3ef859-11caf1b04b.zip/node_modules/@docusaurus/utils/",\
         "packageDependencies": [\
-          ["@docusaurus/utils", "virtual:94f020b194b61ddc87eed66f45f3f97ea8dc71090b98e2c772ced7c741e78e46cc9be6344290f40c391e4bdaf85d20ad2616cf2a9f732de6754b59b8d8f0bfde#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:706f143487a78b8684246f275ed29f3133385011efe15f7e5b0935539ed7e237f13f299e33b733e5b45f7630cd4116f4dce8bfea7ea24e9bd56dd7ea4b54682a#npm:2.4.3"],\
           ["@docusaurus/logger", "npm:2.4.3"],\
-          ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
+          ["@docusaurus/types", null],\
           ["@svgr/webpack", "npm:6.3.1"],\
           ["@types/docusaurus__types", null],\
           ["escape-string-regexp", "npm:4.0.0"],\
@@ -7612,6 +7616,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@vscode/codicons", [\
+      ["npm:0.0.33", {\
+        "packageLocation": "./.yarn/cache/@vscode-codicons-npm-0.0.33-7699cffa69-34b4ca3d79.zip/node_modules/@vscode/codicons/",\
+        "packageDependencies": [\
+          ["@vscode/codicons", "npm:0.0.33"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@webassemblyjs/ast", [\
       ["npm:1.11.6", {\
         "packageLocation": "./.yarn/cache/@webassemblyjs-ast-npm-1.11.6-d3fd2bb49a-4c1303971c.zip/node_modules/@webassemblyjs/ast/",\
@@ -8839,6 +8852,7 @@ const RAW_RUNTIME_STATE =
           ["@codesandbox/sandpack-react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.15.0"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/preset-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/theme-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
@@ -8874,8 +8888,10 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
           ["cross-spawn", "npm:7.0.3"],\
+          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"],\
           ["dompurify", "npm:3.0.5"],\
           ["esbuild-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.20.0"],\
+          ["fast-glob", "npm:3.2.12"],\
           ["git-url-parse", "npm:13.1.0"],\
           ["github-markdown-css", "npm:5.1.0"],\
           ["js-untar", "npm:2.0.0"],\
@@ -8908,6 +8924,8 @@ const RAW_RUNTIME_STATE =
           ["semver", "npm:7.5.4"],\
           ["three", "npm:0.145.0"],\
           ["tslib", "npm:2.4.0"],\
+          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
+          ["typescript", "patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"],\
           ["unist-util-visit", "npm:2.0.3"],\
           ["unist-util-visit-parents", "npm:2.1.2"],\
           ["usehooks-ts", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.9.1"],\
@@ -18843,6 +18861,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["ansi-sequence-parser", [\
+      ["npm:1.1.1", {\
+        "packageLocation": "./.yarn/cache/ansi-sequence-parser-npm-1.1.1-4cfd5b85e2-9ce30f257b.zip/node_modules/ansi-sequence-parser/",\
+        "packageDependencies": [\
+          ["ansi-sequence-parser", "npm:1.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["ansi-styles", [\
       ["npm:3.2.1", {\
         "packageLocation": "./.yarn/cache/ansi-styles-npm-3.2.1-8cb8107983-d85ade01c1.zip/node_modules/ansi-styles/",\
@@ -21663,6 +21690,54 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["doctrine", "npm:3.0.0"],\
           ["esutils", "npm:2.0.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["docusaurus-plugin-typedoc-api", [\
+      ["patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0", {\
+        "packageLocation": "./.yarn/cache/docusaurus-plugin-typedoc-api-patch-c12a7f739c-a52a91cefa.zip/node_modules/docusaurus-plugin-typedoc-api/",\
+        "packageDependencies": [\
+          ["docusaurus-plugin-typedoc-api", "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0", {\
+        "packageLocation": "./.yarn/__virtual__/docusaurus-plugin-typedoc-api-virtual-37d4103367/0/cache/docusaurus-plugin-typedoc-api-patch-c12a7f739c-a52a91cefa.zip/node_modules/docusaurus-plugin-typedoc-api/",\
+        "packageDependencies": [\
+          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"],\
+          ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
+          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
+          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
+          ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
+          ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
+          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
+          ["@types/docusaurus__core", null],\
+          ["@types/docusaurus__plugin-content-docs", null],\
+          ["@types/react", "npm:16.9.2"],\
+          ["@types/react-dom", null],\
+          ["@types/typedoc", null],\
+          ["@types/typescript", null],\
+          ["@vscode/codicons", "npm:0.0.33"],\
+          ["marked", "npm:4.3.0"],\
+          ["react", "npm:17.0.2"],\
+          ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"],\
+          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
+          ["typescript", "patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"]\
+        ],\
+        "packagePeers": [\
+          "@docusaurus/core",\
+          "@docusaurus/plugin-content-docs",\
+          "@types/docusaurus__core",\
+          "@types/docusaurus__plugin-content-docs",\
+          "@types/react-dom",\
+          "@types/react",\
+          "@types/typedoc",\
+          "@types/typescript",\
+          "react-dom",\
+          "react",\
+          "typedoc",\
+          "typescript"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -26321,10 +26396,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["jsonc-parser", [\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/jsonc-parser-npm-3.0.0-66e692e88a-30747660fe.zip/node_modules/jsonc-parser/",\
+      ["npm:3.2.0", {\
+        "packageLocation": "./.yarn/cache/jsonc-parser-npm-3.2.0-1896ece3b7-bd68b902e5.zip/node_modules/jsonc-parser/",\
         "packageDependencies": [\
-          ["jsonc-parser", "npm:3.0.0"]\
+          ["jsonc-parser", "npm:3.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -26704,6 +26779,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["lunr", [\
+      ["npm:2.3.9", {\
+        "packageLocation": "./.yarn/cache/lunr-npm-2.3.9-fa3aa9c2d6-f2f6db34c0.zip/node_modules/lunr/",\
+        "packageDependencies": [\
+          ["lunr", "npm:2.3.9"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["lz-string", [\
       ["npm:1.4.4", {\
         "packageLocation": "./.yarn/cache/lz-string-npm-1.4.4-59a2091d3f-da3abc3c15.zip/node_modules/lz-string/",\
@@ -26852,6 +26936,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["marked", [\
+      ["npm:4.3.0", {\
+        "packageLocation": "./.yarn/cache/marked-npm-4.3.0-e7ef9e874f-c830bb4cb3.zip/node_modules/marked/",\
+        "packageDependencies": [\
+          ["marked", "npm:4.3.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:5.1.1", {\
         "packageLocation": "./.yarn/cache/marked-npm-5.1.1-3219cf7472-88bf0b1db5.zip/node_modules/marked/",\
         "packageDependencies": [\
@@ -27232,6 +27323,14 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/minimatch-npm-5.1.0-34f6240621-3bcc271af1.zip/node_modules/minimatch/",\
         "packageDependencies": [\
           ["minimatch", "npm:5.1.0"],\
+          ["brace-expansion", "npm:2.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:9.0.3", {\
+        "packageLocation": "./.yarn/cache/minimatch-npm-9.0.3-69d7d6fad5-c81b47d281.zip/node_modules/minimatch/",\
+        "packageDependencies": [\
+          ["minimatch", "npm:9.0.3"],\
           ["brace-expansion", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
@@ -31374,7 +31473,7 @@ const RAW_RUNTIME_STATE =
             "npm:0.15.15"\
           ]],\
           ["joycon", "npm:3.0.1"],\
-          ["jsonc-parser", "npm:3.0.0"],\
+          ["jsonc-parser", "npm:3.2.0"],\
           ["rollup", "npm:2.59.0"]\
         ],\
         "packagePeers": [\
@@ -31870,6 +31969,19 @@ const RAW_RUNTIME_STATE =
           ["glob", "npm:7.2.3"],\
           ["interpret", "npm:1.2.0"],\
           ["rechoir", "npm:0.6.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["shiki", [\
+      ["npm:0.14.5", {\
+        "packageLocation": "./.yarn/cache/shiki-npm-0.14.5-517816014d-02c96cf7ef.zip/node_modules/shiki/",\
+        "packageDependencies": [\
+          ["shiki", "npm:0.14.5"],\
+          ["ansi-sequence-parser", "npm:1.1.1"],\
+          ["jsonc-parser", "npm:3.2.0"],\
+          ["vscode-oniguruma", "npm:1.7.0"],\
+          ["vscode-textmate", "npm:8.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -33295,7 +33407,40 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["typedoc", [\
+      ["npm:0.25.3", {\
+        "packageLocation": "./.yarn/cache/typedoc-npm-0.25.3-11902e45cc-1dd0615558.zip/node_modules/typedoc/",\
+        "packageDependencies": [\
+          ["typedoc", "npm:0.25.3"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3", {\
+        "packageLocation": "./.yarn/__virtual__/typedoc-virtual-a08452fa82/0/cache/typedoc-npm-0.25.3-11902e45cc-1dd0615558.zip/node_modules/typedoc/",\
+        "packageDependencies": [\
+          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
+          ["@types/typescript", null],\
+          ["lunr", "npm:2.3.9"],\
+          ["marked", "npm:4.3.0"],\
+          ["minimatch", "npm:9.0.3"],\
+          ["shiki", "npm:0.14.5"],\
+          ["typescript", "patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"]\
+        ],\
+        "packagePeers": [\
+          "@types/typescript",\
+          "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["typescript", [\
+      ["patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49", {\
+        "packageLocation": "./.yarn/cache/typescript-patch-64163f9e2b-d0be2329d1.zip/node_modules/typescript/",\
+        "packageDependencies": [\
+          ["typescript", "patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["patch:typescript@npm%3A5.3.1-rc#optional!builtin<compat/typescript>::version=5.3.1-rc&hash=e012d7", {\
         "packageLocation": "./.yarn/cache/typescript-patch-eda66d82fe-7f15bd5095.zip/node_modules/typescript/",\
         "packageDependencies": [\
@@ -34044,6 +34189,24 @@ const RAW_RUNTIME_STATE =
           ["xml2js", "npm:0.4.23"],\
           ["yauzl", "npm:2.10.0"],\
           ["yazl", "npm:2.5.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["vscode-oniguruma", [\
+      ["npm:1.7.0", {\
+        "packageLocation": "./.yarn/cache/vscode-oniguruma-npm-1.7.0-07cc55fbcc-7da9d21459.zip/node_modules/vscode-oniguruma/",\
+        "packageDependencies": [\
+          ["vscode-oniguruma", "npm:1.7.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["vscode-textmate", [\
+      ["npm:8.0.0", {\
+        "packageLocation": "./.yarn/cache/vscode-textmate-npm-8.0.0-2deb0cc7cf-9fa7d66d60.zip/node_modules/vscode-textmate/",\
+        "packageDependencies": [\
+          ["vscode-textmate", "npm:8.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
