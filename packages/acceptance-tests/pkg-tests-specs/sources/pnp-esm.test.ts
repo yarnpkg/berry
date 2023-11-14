@@ -756,6 +756,34 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
+  // Tests /packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
+  (loaderFlags.HAS_LOADERS_AFFECTING_LOADERS ? it : it.skip)(
+    `should support loaders importing named exports from commonjs files`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-exports': `1.0.0`,
+        },
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `loader.mjs` as Filename), `
+          import {foo} from 'no-deps-exports';
+          console.log(foo);
+        `);
+        await xfs.writeFilePromise(ppath.join(path, `index.js` as Filename), ``);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `--loader`, `./loader.mjs`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+          stderr: ``,
+        });
+      },
+    ),
+  );
+
   describe(`private import mappings`, () => {
     test(
       `it should support private import mappings`,
