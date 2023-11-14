@@ -54,7 +54,7 @@ jobs:
         git push --follow-tags
 
         if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
-          GH_TOKEN="${{secrets.YARNBOT_TOKEN}}" gh release create "@yarnpkg/cli/$NEW_VERSION" --title "v$NEW_VERSION" --verify-tag --generate-notes --notes-start-tag "@yarnpkg/cli/$OLD_VERSION"
+          GH_TOKEN="${{secrets.YARNBOT_TOKEN}}" gh release create "@yarnpkg/cli/$NEW_VERSION" --title "v$NEW_VERSION" --verify-tag --generate-notes --notes-start-tag "@yarnpkg/cli/$OLD_VERSION" --latest=false
         fi
 
     - name: 'Upload the releases'
