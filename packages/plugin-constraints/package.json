@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
@@ -46,6 +46,5 @@
   ],
   "engines": {
     "node": ">=18.12.0"
-  },
-  "stableVersion": "4.0.1"
+  }
 }
