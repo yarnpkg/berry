@@ -69,22 +69,3 @@ jobs:
         yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
         ./scripts/release/02-release-builds.sh
         ./scripts/release/03-release-npm.sh
-
-    - name: 'Updates the stableVersion field'
-      run: |
-        # Revert the change from "Build a binary for convenience"
-        git update-index --no-skip-worktree -- .yarnrc.yml
-        git checkout HEAD -- .yarnrc.yml
-
-        RELEASE_COMMIT=$(git rev-parse HEAD)
-        node ./scripts/stable-versions-store.js
-        git fetch origin master
-        git checkout master
-        node ./scripts/stable-versions-restore.js
-        HEAD_COMMIT=$(git rev-parse HEAD)
-
-        git reset --soft $HEAD_COMMIT
-        git checkout $RELEASE_COMMIT -- packages/*/bin/**
-        git add .
-        git commit -m 'Sync master with the changes from ${{github.event.inputs.branch}}'
-        git push
