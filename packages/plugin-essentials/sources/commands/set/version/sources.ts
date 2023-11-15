@@ -9,6 +9,7 @@ import {getAvailablePlugins}                                                    
 import {setVersion}                                                                                                   from '../version';
 
 const PR_REGEXP = /^[0-9]+$/;
+const IS_WIN32 = process.platform === `win32`;
 
 function getBranchRef(branch: string) {
   if (PR_REGEXP.test(branch)) {
@@ -33,7 +34,7 @@ const updateWorkflow = ({branch}: {branch: string}) => [
 
 const buildWorkflow = ({plugins, noMinify}: {noMinify: boolean, plugins: Array<string>}, output: PortablePath, target: PortablePath) => [
   [`yarn`, `build:cli`, ...new Array<string>().concat(...plugins.map(plugin => [`--plugin`, ppath.resolve(target, plugin as Filename)])), ...noMinify ? [`--no-minify`] : [], `|`],
-  [`mv`, `packages/yarnpkg-cli/bundles/yarn.js`, npath.fromPortablePath(output), `|`],
+  [IS_WIN32 ? `move` : `mv`, `packages/yarnpkg-cli/bundles/yarn.js`, npath.fromPortablePath(output), `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export

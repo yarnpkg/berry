@@ -113,6 +113,7 @@ export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = a
         `bin/server.js` as PortablePath,
       ),
     ),
+    [`svelte.language-server.runtime-args`]: [`--loader`, `./.pnp.loader.mjs`],
   });
 
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {

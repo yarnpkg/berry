@@ -3,6 +3,7 @@ import {parseShell}        from '@yarnpkg/parsers';
 import {Definition, Token} from 'clipanion';
 import {capitalize}        from 'lodash';
 import visit               from 'unist-util-visit-parents';
+import {pathToFileURL}     from 'url';
 
 export type ScriptLine =
   | RawLine
@@ -178,7 +179,7 @@ export const plugin = () => () => {
     if (highlightNodes.length > 0) {
       ast.children.unshift({
         type: `import`,
-        value: `import {CommandLineHighlight} from '@yarnpkg/docusaurus/src/components/CommandLineHighlight';\n`,
+        value: `import {CommandLineHighlight} from ${JSON.stringify(pathToFileURL(require.resolve(`../components/CommandLineHighlight.tsx`)))};\n`,
       });
 
       await Promise.all(highlightNodes);

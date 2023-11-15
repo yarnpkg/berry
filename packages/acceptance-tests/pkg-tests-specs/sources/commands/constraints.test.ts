@@ -107,6 +107,23 @@ describe(`Commands`, () => {
       await expect(run(`constraints`)).rejects.toThrow(/This should fail/);
     }));
 
+    it(`should allow requiring dependencies from the yarn.config.cjs file`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        require('no-deps');
+
+        exports.constraints = ({Yarn}) => {
+        };
+      `);
+
+      await run(`constraints`);
+    }));
+
     it(`shouldn't report errors when comparing identical objects`, makeTemporaryEnv({
       foo: {
         ok: true,
