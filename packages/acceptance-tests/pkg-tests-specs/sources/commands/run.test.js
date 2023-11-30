@@ -158,6 +158,33 @@ describe(`Commands`, () => {
         },
       ),
     );
+    test(`it should print the list of available scripts as JSON if no parameters passed to command`,
+      makeTemporaryEnv(
+        {
+          scripts: {
+            foo: `echo hello`,
+            bar: `echo hi`,
+          },
+        },
+        async ({path, run, source}) => {
+          const {code, stdout, stderr} = await run(`run`, `--json`);
+          expect({code, stdout, stderr}).toMatchObject({
+            code: 0,
+            stderr: ``,
+            stdout: expect.stringMatching(JSON.stringify([
+              {
+                name: `"foo"`,
+                value: `"echo hello"`,
+              },
+              {
+                name: `"bar"`,
+                value: `"echo hi"`,
+              },
+            ])),
+          });
+        },
+      ),
+    );
 
     test(`it should normalize scoped bin entries`,
       makeTemporaryEnv(
