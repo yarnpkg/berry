@@ -234,11 +234,11 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
-  ftimesSync(): never {
+  futimesSync(): never {
     throw makeError();
   }
 
-  async ftimesPromise(): Promise<never> {
+  async futimesPromise(): Promise<never> {
     throw makeError();
   }
 
