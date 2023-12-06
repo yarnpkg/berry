@@ -1272,11 +1272,11 @@ export class ZipFS extends BasePortableFakeFS {
     this.utimesImpl(resolvedP, mtime);
   }
 
-  async ftimesPromise(fd: number, atime: Date | string | number, mtime: Date | string | number) {
-    return this.ftimesSync(fd, atime, mtime);
+  async futimesPromise(fd: number, atime: Date | string | number, mtime: Date | string | number) {
+    return this.futimesSync(fd, atime, mtime);
   }
 
-  ftimesSync(fd: number, atime: Date | string | number, mtime: Date | string | number) {
+  futimesSync(fd: number, atime: Date | string | number, mtime: Date | string | number) {
     if (this.readOnly)
       throw errors.EROFS(`ftimes '${fd}'`);
 
