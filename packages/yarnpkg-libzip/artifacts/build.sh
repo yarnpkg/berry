@@ -7,7 +7,7 @@ EMSDK_VERSION=2.0.22
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$THIS_DIR"
 
-ZLIB_VERSION=2.1.2
+ZLIB_VERSION=2.1.5
 LIBZIP_VERSION=1.5.2 # Ignored at the moment; we use a fork, cf next params
 
 LIBZIP_REPO=arcanis/libzip
