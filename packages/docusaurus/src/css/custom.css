@@ -135,6 +135,13 @@ html.blog-wrapper .container {
   overflow-x: auto;
 }
 
+.DocSearch-Button-Placeholder {
+  width: 0;
+  overflow: hidden;
+  visibility: hidden;
+  white-space: nowrap;
+}
+
 .navbar__logo {
   height: var(--ifm-navbar-height);
 }
