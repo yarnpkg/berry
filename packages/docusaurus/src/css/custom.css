@@ -135,10 +135,16 @@ html.blog-wrapper .container {
 
 .navbar__inner > .navbar__items:first-child {
   /* Allow the first nav item group to scroll horizontally. */
+
+  /* Without this rule, rightmost items in first nav group
+   * would overlap leftmost items in second nav group,
+   * becoming completely unreadable. */
+
   /* NOTE: Would NOT work as is if there is a drop-down menu. */
   /* That’s why it’s only applied to the first nav item group:
    * the second nav group has a dropdown, which would be cut off
    * by this overflow rule. */
+
   overflow-x: auto;
 }
 
