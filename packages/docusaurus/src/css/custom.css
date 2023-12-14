@@ -127,6 +127,10 @@ html.blog-wrapper .container {
   display: none;
 }
 
+.navbar__item {
+  white-space: nowrap;
+}
+
 .navbar__logo {
   height: var(--ifm-navbar-height);
 }
