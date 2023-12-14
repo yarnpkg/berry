@@ -113,6 +113,7 @@ export default class YarnCommand extends BaseCommand {
   frozenLockfile = Option.Boolean(`--frozen-lockfile`, {hidden: true});
   ignoreEngines = Option.Boolean(`--ignore-engines`, {hidden: true});
   nonInteractive = Option.Boolean(`--non-interactive`, {hidden: true});
+  noProgress = Option.boolean(`--no-progress`, {hidden: true});
   preferOffline = Option.Boolean(`--prefer-offline`, {hidden: true});
   production = Option.Boolean(`--production`, {hidden: true});
   registry = Option.String(`--registry`, {hidden: true});
@@ -174,6 +175,11 @@ export default class YarnCommand extends BaseCommand {
       option: this.nonInteractive,
       message: `The --non-interactive option is deprecated`,
       error: !isGCP,
+    }, {
+      // Undocumented but valid flag for yarn 1, throws an error if used with later yarn
+      option: this.noProgress,
+      message: `The --no-progress option is deprecated`,
+      error: false,
     }, {
       // We want to prevent people from using --frozen-lockfile
       // Note: it's been deprecated because we're now locking more than just the
