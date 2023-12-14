@@ -131,6 +131,10 @@ html.blog-wrapper .container {
   white-space: nowrap;
 }
 
+.navbar__inner > .navbar__items:first-child {
+  overflow-x: auto;
+}
+
 .navbar__logo {
   height: var(--ifm-navbar-height);
 }
