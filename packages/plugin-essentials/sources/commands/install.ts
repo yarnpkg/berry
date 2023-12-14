@@ -113,7 +113,7 @@ export default class YarnCommand extends BaseCommand {
   frozenLockfile = Option.Boolean(`--frozen-lockfile`, {hidden: true});
   ignoreEngines = Option.Boolean(`--ignore-engines`, {hidden: true});
   nonInteractive = Option.Boolean(`--non-interactive`, {hidden: true});
-  noProgress = Option.boolean(`--no-progress`, {hidden: true});
+  noProgress = Option.Boolean(`--no-progress`, {hidden: true});
   preferOffline = Option.Boolean(`--prefer-offline`, {hidden: true});
   production = Option.Boolean(`--production`, {hidden: true});
   registry = Option.String(`--registry`, {hidden: true});
