@@ -128,14 +128,26 @@ html.blog-wrapper .container {
 }
 
 .navbar__item {
+  /* Avoid awkward linebreaks of menu items.
+   * Labels should be kept short, however. */
   white-space: nowrap;
 }
 
 .navbar__inner > .navbar__items:first-child {
+  /* Allow the first nav item group to scroll horizontally. */
+  /* NOTE: Would NOT work as is if there is a drop-down menu. */
+  /* That’s why it’s only applied to the first nav item group:
+   * the second nav group has a dropdown, which would be cut off
+   * by this overflow rule. */
   overflow-x: auto;
 }
 
 .DocSearch-Button-Placeholder {
+  /* Hide faux placeholder in the search trigger button
+   * while maintaining reasonable whitespace.
+   * This is subjective, but I believe placeholder doesn’t add
+   * useful information and makes the button visually
+   * appear as a text input field, which it is in fact not. */
   width: 0;
   overflow: hidden;
   visibility: hidden;
