@@ -24,6 +24,17 @@ module.exports = {
         makeTemporaryMonorepoEnv: `readonly`,
       },
     },
+    {
+      files: [`!packages/docusaurus/**`],
+      rules: {
+        'no-restricted-globals': [2,
+          {
+            name: `URL`,
+            message: `Import from 'url' instead`,
+          },
+        ],
+      },
+    },
   ],
   rules: {
     'no-restricted-properties': [2,
