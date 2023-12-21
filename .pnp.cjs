@@ -40705,7 +40705,7 @@ function getPackageConfig(path, specifier, base, readFileSyncFn) {
   return packageConfig;
 }
 function getPackageScopeConfig(resolved, readFileSyncFn) {
-  let packageJSONUrl = new URL("./package.json", resolved);
+  let packageJSONUrl = new url.URL("./package.json", resolved);
   while (true) {
     const packageJSONPath2 = packageJSONUrl.pathname;
     if (StringPrototypeEndsWith(packageJSONPath2, "node_modules/package.json")) {
@@ -40721,7 +40721,7 @@ function getPackageScopeConfig(resolved, readFileSyncFn) {
       return packageConfig2;
     }
     const lastPackageJSONUrl = packageJSONUrl;
-    packageJSONUrl = new URL("../package.json", packageJSONUrl);
+    packageJSONUrl = new url.URL("../package.json", packageJSONUrl);
     if (packageJSONUrl.pathname === lastPackageJSONUrl.pathname) {
       break;
     }
@@ -40765,7 +40765,7 @@ function getPackageScopeConfig(resolved, readFileSyncFn) {
 function throwImportNotDefined(specifier, packageJSONUrl, base) {
   throw new ERR_PACKAGE_IMPORT_NOT_DEFINED(
     specifier,
-    packageJSONUrl && url.fileURLToPath(new URL(".", packageJSONUrl)),
+    packageJSONUrl && url.fileURLToPath(new url.URL(".", packageJSONUrl)),
     url.fileURLToPath(base)
   );
 }
@@ -40784,7 +40784,7 @@ function throwInvalidPackageTarget(subpath, target, packageJSONUrl, internal, ba
     target = `${target}`;
   }
   throw new ERR_INVALID_PACKAGE_TARGET(
-    url.fileURLToPath(new URL(".", packageJSONUrl)),
+    url.fileURLToPath(new url.URL(".", packageJSONUrl)),
     subpath,
     target,
     internal,
@@ -40800,7 +40800,7 @@ function resolvePackageTargetString(target, subpath, match, packageJSONUrl, base
     if (internal && !StringPrototypeStartsWith(target, "../") && !StringPrototypeStartsWith(target, "/")) {
       let isURL = false;
       try {
-        new URL(target);
+        new url.URL(target);
         isURL = true;
       } catch {
       }
@@ -40816,9 +40816,9 @@ function resolvePackageTargetString(target, subpath, match, packageJSONUrl, base
     StringPrototypeSlice(target, 2)
   ) !== null)
     throwInvalidPackageTarget(match, target, packageJSONUrl, internal, base);
-  const resolved = new URL(target, packageJSONUrl);
+  const resolved = new url.URL(target, packageJSONUrl);
   const resolvedPath = resolved.pathname;
-  const packagePath = new URL(".", packageJSONUrl).pathname;
+  const packagePath = new url.URL(".", packageJSONUrl).pathname;
   if (!StringPrototypeStartsWith(resolvedPath, packagePath))
     throwInvalidPackageTarget(match, target, packageJSONUrl, internal, base);
   if (subpath === "")
@@ -40828,11 +40828,11 @@ function resolvePackageTargetString(target, subpath, match, packageJSONUrl, base
     throwInvalidSubpath(request, packageJSONUrl, internal, base);
   }
   if (pattern) {
-    return new URL(
+    return new url.URL(
       RegExpPrototypeSymbolReplace(patternRegEx, resolved.href, () => subpath)
     );
   }
-  return new URL(subpath, resolved);
+  return new url.URL(subpath, resolved);
 }
 function isArrayIndex(key) {
   const keyNum = +key;
@@ -40975,7 +40975,7 @@ function isConditionalExportsMainSugar(exports, packageJSONUrl, base) {
 }
 function throwExportsNotFound(subpath, packageJSONUrl, base) {
   throw new ERR_PACKAGE_PATH_NOT_EXPORTED(
-    url.fileURLToPath(new URL(".", packageJSONUrl)),
+    url.fileURLToPath(new url.URL(".", packageJSONUrl)),
     subpath,
     base && url.fileURLToPath(base)
   );
@@ -42024,7 +42024,7 @@ ${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}
       conditions: opts2.conditions ?? defaultExportsConditions,
       readFileSyncFn: tryReadFile
     });
-    if (resolved instanceof URL) {
+    if (resolved instanceof url.URL) {
       return resolveUnqualified(npath.toPortablePath(url.fileURLToPath(resolved)), { extensions: opts2.extensions });
     } else {
       if (resolved.startsWith(`#`))

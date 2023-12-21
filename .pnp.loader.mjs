@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
+import { URL, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
@@ -1432,7 +1432,7 @@ async function tryReadFile$1(path2) {
 }
 function tryParseURL(str, base) {
   try {
-    return new URL$1(str, base);
+    return new URL(str, base);
   } catch {
     return null;
   }
