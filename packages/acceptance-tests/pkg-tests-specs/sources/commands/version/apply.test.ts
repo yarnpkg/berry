@@ -15,6 +15,12 @@ describe(`Commands`, () => {
             version: `0.0.0`,
           });
 
+          await run(`version`, `apply`, `--dry-run`);
+
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            version: `0.0.0`,
+          });
+
           await run(`version`, `apply`);
 
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
