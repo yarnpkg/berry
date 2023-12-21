@@ -119,7 +119,7 @@ export default class VersionApplyCommand extends BaseCommand {
       }
     });
 
-    if (applyReport.hasErrors())
+    if (this.dryRun || applyReport.hasErrors())
       return applyReport.exitCode();
 
     return await project.installWithNewReport({

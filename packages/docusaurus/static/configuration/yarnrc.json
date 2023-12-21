@@ -262,7 +262,7 @@
       "description": "Various files we be stored there: global cache, metadata cache, ...",
       "type": "string",
       "format": "uri-reference",
-      "examples": ["${HOME}/.yarn/berry/global"]
+      "examples": ["${HOME}/.yarn/berry"]
     },
     "httpProxy": {
       "_package": "@yarnpkg/core",
