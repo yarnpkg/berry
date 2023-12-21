@@ -21,7 +21,7 @@
   IN THE SOFTWARE.
 */
 
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL, URL } from 'url';
 import {
   ERR_INVALID_MODULE_SPECIFIER,
   ERR_INVALID_PACKAGE_CONFIG,

@@ -1,4 +1,4 @@
-import { fileURLToPath } from 'url';
+import { fileURLToPath, URL } from 'url';
 
 import { ERR_INVALID_PACKAGE_CONFIG } from './errors.js';
 import { filterOwnProperties } from './util.js';
