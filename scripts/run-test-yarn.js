@@ -2,6 +2,7 @@
 
 require(`../.pnp.cjs`).setup();
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
+const {URL} = require(`url`);
 
 const {tests: {startPackageServer}} = require(`../packages/acceptance-tests/pkg-tests-core`);
 

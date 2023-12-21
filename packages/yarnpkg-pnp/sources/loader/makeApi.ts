@@ -1,7 +1,7 @@
 import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
 import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
 import {Module, isBuiltin}                                                                                                                                                                 from 'module';
-import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
+import {fileURLToPath, pathToFileURL, URL}                                                                                                                                                 from 'url';
 import {inspect}                                                                                                                                                                           from 'util';
 
 import {packageExportsResolve, packageImportsResolve}                                                                                                                                      from '../node/resolve.js';

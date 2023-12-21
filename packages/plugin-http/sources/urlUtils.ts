@@ -1,3 +1,5 @@
+import {URL} from 'url';
+
 export function isTgzUrl(url: string) {
   let parsed: URL;
   try {
