@@ -1,7 +1,6 @@
-import {BaseCommand, pluginCommands}        from '@yarnpkg/cli';
-import {Configuration, Project, Workspace}  from '@yarnpkg/core';
-import {scriptUtils, structUtils}           from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError} from 'clipanion';
+import {BaseCommand, pluginCommands}                                 from '@yarnpkg/cli';
+import {Configuration, Project, scriptUtils, structUtils, Workspace} from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                          from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
@@ -48,6 +47,10 @@ export default class RunCommand extends BaseCommand {
     description: `Check the root workspace for scripts and/or binaries instead of the current one`,
   });
 
+  excludeRoot = Option.Boolean(`-R,--exclude-root`, false, {
+    description: `Do not fall back to the root workspace for scripts/binaries if unavailable in the current workspace`,
+  });
+
   binariesOnly = Option.Boolean(`-B,--binaries-only`, false, {
     description: `Ignore any user defined scripts and only check for binaries`,
   });
@@ -72,20 +75,28 @@ export default class RunCommand extends BaseCommand {
 
     await project.restoreInstallState();
 
-    const effectiveLocator = this.topLevel
-      ? project.topLevelWorkspace.anchoredLocator
-      : locator;
+    const topLevelLocator = project.topLevelWorkspace.anchoredLocator;
+    const effectiveLocator = this.topLevel ? topLevelLocator : locator;
 
     // First we check to see whether a script exist inside the current package
-    // for the given name
+    // for the given name, and fallback to root if the excludeRoot option is unset
 
-    if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
-      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+    if (!this.binariesOnly) {
+      const executePackageScriptOptions = {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr};
+
+      if (await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
+        return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, executePackageScriptOptions);
+
+      if (!this.excludeRoot && locator !== topLevelLocator && await scriptUtils.hasPackageScript(topLevelLocator, this.scriptName, {project})) {
+        return await scriptUtils.executePackageScript(topLevelLocator, this.scriptName, this.args, executePackageScriptOptions);
+      }
+    }
+
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
 
-    const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project});
+    const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project, excludeRoot: this.excludeRoot});
     const binary = binaries.get(this.scriptName);
 
     if (binary) {
