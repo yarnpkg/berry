@@ -668,7 +668,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project, c
 
   const visibleLocators: Set<LocatorHash> = new Set([locator.locatorHash]);
 
-  if (!currentWorkspaceOnly || topLevel) {
+  if (!currentWorkspaceOnly) {
     const rootLocator = project.topLevelWorkspace.anchoredLocator;
     const rootPkg = project.storedPackages.get(rootLocator.locatorHash)!;
     getPackageVisibleLocators(project, rootPkg, visibleLocators);
@@ -676,7 +676,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project, c
 
   // Running this after the root fallback makes current workspace version
   // take priority over root version
-  if (!topLevel)
+  if (!topLevel || currentWorkspaceOnly)
     getPackageVisibleLocators(project, pkg, visibleLocators);
 
   const dependenciesWithBinaries = await Promise.all(Array.from(visibleLocators, async locatorHash => {
