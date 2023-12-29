@@ -1,25 +1,24 @@
-import capitalize from 'lodash/capitalize';
-import pLimit from 'p-limit';
-import { PassThrough, Readable, Writable } from 'stream';
+import {CwdFS, Filename, NativePath, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {ZipOpenFS}                                                    from '@yarnpkg/libzip';
+import {execute}                                                      from '@yarnpkg/shell';
+import capitalize                                                     from 'lodash/capitalize';
+import pLimit                                                         from 'p-limit';
+import {PassThrough, Readable, Writable}                              from 'stream';
 
-import { CwdFS, Filename, NativePath, npath, PortablePath, ppath, xfs } from '@yarnpkg/fslib';
-import { ZipOpenFS } from '@yarnpkg/libzip';
-import { execute } from '@yarnpkg/shell';
-
-import { Configuration } from './Configuration';
-import * as execUtils from './execUtils';
-import * as formatUtils from './formatUtils';
-import { Manifest } from './Manifest';
-import { MessageName } from './MessageName';
-import * as miscUtils from './miscUtils';
-import { Project } from './Project';
-import { Report, ReportError } from './Report';
-import * as semverUtils from './semverUtils';
-import { StreamReport } from './StreamReport';
-import * as structUtils from './structUtils';
-import { Locator, LocatorHash, Package } from './types';
-import { Workspace } from './Workspace';
-import { YarnVersion } from './YarnVersion';
+import {Configuration}                                                from './Configuration';
+import {Manifest}                                                     from './Manifest';
+import {MessageName}                                                  from './MessageName';
+import {Project}                                                      from './Project';
+import {Report, ReportError}                                          from './Report';
+import {StreamReport}                                                 from './StreamReport';
+import {Workspace}                                                    from './Workspace';
+import {YarnVersion}                                                  from './YarnVersion';
+import * as execUtils                                                 from './execUtils';
+import * as formatUtils                                               from './formatUtils';
+import * as miscUtils                                                 from './miscUtils';
+import * as semverUtils                                               from './semverUtils';
+import * as structUtils                                               from './structUtils';
+import {Locator, LocatorHash, Package}                                from './types';
 
 /**
  * @internal
@@ -678,7 +677,7 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project, c
   // Running this after the root fallback makes current workspace version
   // take priority over root version
   if (!topLevel)
-  getPackageVisibleLocators(project, pkg, visibleLocators);
+    getPackageVisibleLocators(project, pkg, visibleLocators);
 
   const dependenciesWithBinaries = await Promise.all(Array.from(visibleLocators, async locatorHash => {
     const dependency = project.storedPackages.get(locatorHash);
