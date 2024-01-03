@@ -11,3 +11,6 @@ export const HAS_LAZY_LOADED_TRANSLATORS = (major === 20 && minor < 6) || (major
 // https://github.com/nodejs/node/pull/43772
 // TODO: Update the version range if it gets backported to v18.
 export const HAS_LOADERS_AFFECTING_LOADERS = major > 19 || (major === 19 && minor >= 6);
+
+// https://github.com/nodejs/node/pull/49869
+export const ALLOWS_EXTENSIONLESS_FILES = major >= 21 || (major === 20 && minor >= 10) || (major === 18 && minor >= 19);
