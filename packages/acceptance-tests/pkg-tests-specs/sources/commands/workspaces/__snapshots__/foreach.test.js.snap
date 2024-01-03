@@ -230,7 +230,7 @@ Done
 }
 `;
 
-exports[`Commands workspace foreach should prefix the output with run with --verbose 1`] = `
+exports[`Commands workspace foreach should prefix the output and include timing information when run with -vv (two verbose levels) 1`] = `
 {
   "code": 0,
   "stderr": "",
@@ -261,6 +261,22 @@ exports[`Commands workspace foreach should prefix the output with run with --ver
 [workspace-g]: Process started
 [workspace-g]: Test Workspace G
 [workspace-g]: Process exited (exit code 0)
+Done
+",
+}
+`;
+
+exports[`Commands workspace foreach should prefix the output when run with one --verbose 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "[workspace-a]: Test Workspace A
+[workspace-b]: Test Workspace B
+[workspace-c]: Test Workspace C
+[workspace-d]: Test Workspace D
+[workspace-e]: Test Workspace E
+[workspace-f]: Test Workspace F
+[workspace-g]: Test Workspace G
 Done
 ",
 }

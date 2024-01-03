@@ -42,7 +42,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
 
-      Adding the \`-v,--verbose\` flag (automatically enabled in interactive terminal environments) will cause Yarn to print more information; in particular the name of the workspace that generated the output will be printed at the front of each line.
+      The \`-v,--verbose\` flag can be passed up to twice: once to prefix output lines with the originating workspace's name, and again to include start/finish/timing log lines. Maximum verbosity is enabled by default in terminal environments.
 
       If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
     `,
@@ -83,8 +83,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     description: `Run the command on all workspaces of the current worktree`,
   });
 
-  verbose = Option.Boolean(`-v,--verbose`, {
-    description: `Prefix each output line with the name of the originating workspace`,
+  verbose = Option.Counter(`-v,--verbose`, {
+    description: `Increase level of logging verbosity up to 2 times`,
   });
 
   parallel = Option.Boolean(`-p,--parallel`, false, {
@@ -275,8 +275,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (this.dryRun)
       return 0;
 
-    // --verbose is automatically enabled in TTYs
-    const verbose = this.verbose ?? (this.context.stdout as WriteStream).isTTY;
+    // Default to maximum verbosity in terminal environments.
+    const verbosity = this.verbose ?? ((this.context.stdout as WriteStream).isTTY ? Infinity : 0);
+    const label = verbosity > 0;
+    const timing = verbosity > 1;
 
     const concurrency = this.parallel ?
       (this.jobs === `unlimited`
@@ -308,17 +310,17 @@ export default class WorkspacesForeachCommand extends BaseCommand {
         if (abortNextCommands)
           return -1;
 
-        if (!parallel && verbose && commandIndex > 1)
+        if (!parallel && timing && commandIndex > 1)
           report.reportSeparator();
 
-        const prefix = getPrefix(workspace, {configuration, verbose, commandIndex});
+        const prefix = getPrefix(workspace, {configuration, label, commandIndex});
 
         const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
         const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
 
         try {
-          if (verbose)
-            report.reportInfo(null, `${prefix} Process started`);
+          if (timing)
+            report.reportInfo(null, `${prefix ? `${prefix} ` : ``}Process started`);
 
           const start = Date.now();
 
@@ -335,9 +337,9 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           await stderrEnd;
 
           const end = Date.now();
-          if (verbose) {
+          if (timing) {
             const timerMessage = configuration.get(`enableTimers`) ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}` : ``;
-            report.reportInfo(null, `${prefix} Process exited (exit code ${exitCode})${timerMessage}`);
+            report.reportInfo(null, `${prefix ? `${prefix} ` : ``}Process exited (exit code ${exitCode})${timerMessage}`);
           }
 
           if (exitCode === 130) {
@@ -475,11 +477,11 @@ function createStream(report: Report, {prefix, interlaced}: {prefix: string | nu
 type GetPrefixOptions = {
   configuration: Configuration;
   commandIndex: number;
-  verbose: boolean;
+  label: boolean;
 };
 
-function getPrefix(workspace: Workspace, {configuration, commandIndex, verbose}: GetPrefixOptions) {
-  if (!verbose)
+function getPrefix(workspace: Workspace, {configuration, commandIndex, label}: GetPrefixOptions) {
+  if (!label)
     return null;
 
   const name = structUtils.stringifyIdent(workspace.anchoredLocator);
