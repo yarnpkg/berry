@@ -1,10 +1,6 @@
-import {nodeUtils}                     from '@yarnpkg/core';
-import {Filename, npath, ppath, xfs}   from '@yarnpkg/fslib';
-import {HAS_LOADERS_AFFECTING_LOADERS} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                 from 'url';
-
-const ifAtLeastNode21It = nodeUtils.major >= 21 ? it : it.skip;
-const ifAtMostNode20It = nodeUtils.major <= 20 ? it : it.skip;
+import {Filename, npath, ppath, xfs}                               from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                             from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -404,7 +400,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  ifAtMostNode20It(
+  (ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },
@@ -425,7 +421,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  ifAtLeastNode21It(
+  (ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
     `it should allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },
@@ -445,7 +441,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  ifAtMostNode20It(
+  (ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless files with {"type": "module"}`,
     makeTemporaryEnv(
       {
@@ -467,7 +463,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  ifAtLeastNode21It(
+  (ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
     `it should allow extensionless files with {"type": "module"}`,
     makeTemporaryEnv(
       {
