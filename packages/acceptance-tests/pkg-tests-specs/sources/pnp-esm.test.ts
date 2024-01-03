@@ -423,7 +423,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  (loaderFlags.ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },
@@ -444,7 +444,27 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  (loaderFlags.ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
+    `it should allow extensionless commonjs imports`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs` as Filename), `import bin from './cjs-bin';\nconsole.log(bin)`);
+        await xfs.writeFilePromise(ppath.join(path, `cjs-bin` as Filename), `module.exports = 42`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index.mjs`)).resolves.toMatchObject({
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  (loaderFlags.ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless files with {"type": "module"}`,
     makeTemporaryEnv(
       {
@@ -461,6 +481,27 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension`),
+        });
+      },
+    ),
+  );
+
+  (loaderFlags.ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
+    `it should allow extensionless files with {"type": "module"}`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index` as Filename), `console.log(42)`);
+
+        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+
+        await expect(run(`node`, `./index`)).resolves.toMatchObject({
+          stdout: `42\n`,
         });
       },
     ),
