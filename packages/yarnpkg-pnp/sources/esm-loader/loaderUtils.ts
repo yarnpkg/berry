@@ -1,7 +1,6 @@
 import {NativePath}   from '@yarnpkg/fslib';
 import fs             from 'fs';
 import path           from 'path';
-import {URL}          from 'url';
 
 import * as nodeUtils from '../loader/nodeUtils';
 

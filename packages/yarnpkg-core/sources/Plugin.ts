@@ -1,7 +1,6 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
 import {Writable, Readable}                                                                   from 'stream';
-import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
 import {Fetcher}                                                                              from './Fetcher';
