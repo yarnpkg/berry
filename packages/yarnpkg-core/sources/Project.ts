@@ -52,8 +52,6 @@ const INSTALL_STATE_VERSION = 2;
 const MULTIPLE_KEYS_REGEXP = / *, */g;
 const TRAILING_SLASH_REGEXP = /\/$/;
 
-const FETCHER_CONCURRENCY = 32;
-
 const gzip = promisify(zlib.gzip);
 const gunzip = promisify(zlib.gunzip);
 
@@ -997,7 +995,7 @@ export class Project {
     const progress = Report.progressViaCounter(locatorHashes.length);
     await report.reportProgress(progress);
 
-    const limit = pLimit(FETCHER_CONCURRENCY);
+    const limit = pLimit(this.configuration.get(`networkConcurrency`) + 10);
 
     await report.startCacheReport(async () => {
       await miscUtils.allSettledSafe(locatorHashes.map(locatorHash => limit(async () => {
