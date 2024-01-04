@@ -15,7 +15,7 @@ const mte = generatePkgDriver({
   async runDriver(
     path,
     [command, ...args],
-    {cwd, projectFolder, registryUrl, env, ...config},
+    {cwd, execArgv = [], projectFolder, registryUrl, env, ...config},
   ) {
     const rcEnv: Record<string, any> = {};
     for (const [key, value] of Object.entries(config))
@@ -32,7 +32,7 @@ const mte = generatePkgDriver({
       ? require.resolve(`${__dirname}/../../../../../scripts/run-yarn.js`)
       : require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
 
-    const res = await execFile(process.execPath, [yarnBinary, ...cwdArgs, command, ...args], {
+    const res = await execFile(process.execPath, [...execArgv, yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
       env: {
         [`HOME`]: nativeHomePath,
@@ -58,6 +58,8 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
         // Older versions of Windows need this set to not have node throw an error
         [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
+        // We don't want the PnP runtime to be accidentally injected
+        [`NODE_OPTIONS`]: ``,
         ...rcEnv,
         ...env,
       },

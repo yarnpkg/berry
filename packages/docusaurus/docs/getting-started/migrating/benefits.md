@@ -16,4 +16,4 @@ While the Yarn Classic line (1.x) remains a pillar of the JavaScript ecosystem, 
 
 - **Extensibility:** Yarn Modern's architecture allows you to build your own features as you need it. No need to wait for us to implement this feature you hope for - you can now implement it yourself, according to your own specs, and use it straight away! Focused workspaces, custom installs, project validation, ...
 
-- **Future proof:** Yarn Modern was built after we starting to see how difficult it was to build new features on Yarn Classic, with most changes having unpredictable consequences. This plateau has been solved, as evidenced by the slate of features that we released in the past few major releases.
+- **Future proof:** Yarn Modern was built after we started to see how difficult it was to build new features on Yarn Classic, with most changes having unpredictable consequences. This plateau has been solved, as evidenced by the slate of features that we released in the past few major releases.

@@ -18,10 +18,10 @@
 
 Yarn is a modern package manager split into various packages. Its novel architecture allows to do things currently impossible with existing solutions:
 
-- Yarn supports [plugins](https://yarnpkg.com/features/plugins); adding a plugin is as simple as adding it into your repository
+- Yarn supports [plugins](https://yarnpkg.com/features/extensibility); adding a plugin is as simple as adding it into your repository
 - Yarn supports Node by default but isn't limited to it - plugins can add support for other languages
 - Yarn supports [workspaces](https://yarnpkg.com/features/workspaces) natively, and its CLI takes advantage of that
-- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to make package scripts portable across of Windows, Linux, and macOS
+- Yarn uses a bash-like [portable shell](https://github.com/yarnpkg/berry/tree/master/packages/yarnpkg-shell#yarnpkgshell) to make package scripts portable across Windows, Linux, and macOS
 - Yarn is first and foremost a [Node API](https://yarnpkg.com/api/) that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
@@ -68,7 +68,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
       </a>
     </td>
     <td>
-      <b><a href="https://www.datadoghq.com/">Datadog</a></b> has been sponsoring the time from our lead maintainer for more than a year now. They also upgraded our account so that we can benefit from long-term telemetry (<a href="https://github.com/yarnpkg/berry/issues/1250">RFC</a>).
+      <b><a href="https://www.datadoghq.com/">Datadog</a></b> has been sponsoring the time of our lead maintainer for more than a year now. They also upgraded our account so that we can benefit from long-term telemetry (<a href="https://github.com/yarnpkg/berry/issues/1250">RFC</a>).
     </td>
   </tr>
   <tr>
@@ -161,6 +161,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-rollup-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-storybook-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
+[![](https://github.com/yarnpkg/berry/actions/workflows/e2e-vitest-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vitest-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>
 </td></tr>
 
@@ -203,7 +204,7 @@ Those plugins typically come bundled with Yarn. You don't need to do anything sp
 - [plugin-http](packages/plugin-http) adds support for using straight URL references as dependencies (tgz archives only).
 - [plugin-init](packages/plugin-init) adds support for the [`yarn init`](https://yarnpkg.com/cli/init) command.
 - [plugin-interactive-tools](packages/plugin-interactive-tools) adds support for various interactive commands ([`yarn upgrade-interactive`](https://yarnpkg.com/cli/upgrade-interactive)).
-- [plugin-link](packages/plugin-link) adds support for using [`link:` and `portal:`](https://yarnpkg.com/features/protocols#whats-the-difference-between-link-and-portal) references as dependencies.
+- [plugin-link](packages/plugin-link) adds support for using [`link:`](https://yarnpkg.com/protocol/link) and [`portal:`](https://yarnpkg.com/protocol/portal) references as dependencies.
 - [plugin-nm](packages/plugin-nm) adds support for installing packages through a `node_modules` folder.
 - [plugin-npm](packages/plugin-npm) adds support for using [semver ranges](https://semver.org) dependencies, resolving them from an npm-like registry.
 - [plugin-npm-cli](packages/plugin-npm-cli) adds support for npm-specific commands ([`yarn npm login`](https://yarnpkg.com/cli/npm/login), [`yarn npm publish`](https://yarnpkg.com/cli/npm/publish), ...).
@@ -221,11 +222,11 @@ Plugins can be developed by third-party entities. To use them within your applic
 
 ### Creating a new plugin
 
-To create your own plugin, please refer to the [documentation](https://yarnpkg.com/features/plugins).
+To create your own plugin, please refer to the [documentation](https://yarnpkg.com/advanced/plugin-tutorial).
 
 ## Generic packages
 
-The following packages are generic and can be used in a variety of purposes (including to implement other package managers, but not only):
+The following packages are generic and can be used for a variety of purposes (including to implement other package managers, but not only):
 
 - [@yarnpkg/core](packages/yarnpkg-core) allows any application to manipulate a project programmatically.
 - [@yarnpkg/fslib](packages/yarnpkg-fslib) is a set of tools to abstract the filesystem through type-safe primitives.

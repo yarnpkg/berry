@@ -2,7 +2,7 @@ require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
 const {ppath, npath} = require(`@yarnpkg/fslib`);
 const {mountMemoryDrive} = require(`@yarnpkg/libzip`);
-const {execFileSync} = require(`child_process`);
+const crossSpawn = require(`cross-spawn`);
 const {constants} = require(`fs`);
 
 const memoryDrive = mountMemoryDrive(
@@ -41,9 +41,10 @@ for (const [position, {binary, package}] of binaries.entries()) {
     ? `/cli`
     : `/${name}/cli`;
 
-  const output = execFileSync(`yarn`, [`node`, binary, `--clipanion=definitions`], {
+  const output = crossSpawn.sync(`yarn`, [`node`, binary, `--clipanion=definitions`], {
     env: {...process.env, NODE_OPTIONS: undefined},
-  });
+    windowsHide: true,
+  }).stdout;
 
   let commands;
   try {

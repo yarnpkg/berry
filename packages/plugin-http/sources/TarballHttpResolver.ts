@@ -3,27 +3,15 @@ import {Descriptor, Locator, Manifest}                            from '@yarnpkg
 import {LinkType}                                                 from '@yarnpkg/core';
 import {miscUtils, structUtils}                                   from '@yarnpkg/core';
 
-import {PROTOCOL_REGEXP, TARBALL_REGEXP}                          from './constants';
+import * as urlUtils                                              from './urlUtils';
 
 export class TarballHttpResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!TARBALL_REGEXP.test(descriptor.range))
-      return false;
-
-    if (PROTOCOL_REGEXP.test(descriptor.range))
-      return true;
-
-    return false;
+    return urlUtils.isTgzUrl(descriptor.range);
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!TARBALL_REGEXP.test(locator.reference))
-      return false;
-
-    if (PROTOCOL_REGEXP.test(locator.reference))
-      return true;
-
-    return false;
+    return urlUtils.isTgzUrl(locator.reference);
   }
 
   shouldPersistResolution(locator: Locator, opts: MinimalResolveOptions) {

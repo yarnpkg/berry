@@ -711,6 +711,14 @@ export class Project {
   }
 
   async loadUserConfig() {
+    // TODO: We're injecting the .pnp.cjs in the environment, so that it's
+    // able to required the project dependencies. It's not ideal to hardcode
+    // this logic here, but I'm not quite sure yet what would be a better place.
+    //
+    const pnpPath = ppath.join(this.cwd, `.pnp.cjs`);
+    if (await xfs.existsPromise(pnpPath))
+      miscUtils.dynamicRequire(pnpPath).setup();
+
     const configPath = ppath.join(this.cwd, `yarn.config.cjs`);
     if (!await xfs.existsPromise(configPath))
       return null;
@@ -2193,7 +2201,7 @@ function applyVirtualResolutionMutations({
   const peerDependencyDependents = new Map<LocatorHash, Set<LocatorHash>>();
 
   // We must keep a copy of the workspaces original dependencies, because they
-  // may be overriden during the virtual package resolution - cf Dragon Test #5
+  // may be overridden during the virtual package resolution - cf Dragon Test #5
   const originalWorkspaceDefinitions = new Map<LocatorHash, Package | null>(project.workspaces.map(workspace => {
     const locatorHash = workspace.anchoredLocator.locatorHash;
 
@@ -2615,7 +2623,7 @@ function applyVirtualResolutionMutations({
               requesters: new Map(),
               links: new Map(),
               version: peerVersion,
-              hash: `p${hashUtils.makeHash(identStr).slice(0, 5)}`,
+              hash: `p${peerResolution.locatorHash.slice(0, 5)}`,
             }));
 
             aggregatedWarning.dependents.set(dependent.locatorHash, dependent);
@@ -2670,7 +2678,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       return peerDependency.range;
     });
 
-    const andDescendants = warning.dependents.size > 1
+    const andDescendants = warning.links.size > 1
       ? `and other dependencies request`
       : `requests`;
 
@@ -2685,7 +2693,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       structUtils.prettyReference(project.configuration, warning.version)
     }, which doesn't satisfy what ${
       structUtils.prettyIdent(project.configuration, warning.requesters.values().next().value)
-    } ${andDescendants} (${rangeDescription}).`;
+    } (${formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)}) ${andDescendants} (${rangeDescription}).`;
   }) ?? [];
 
   const omittedWarnings = warningsByType[PeerWarningType.NotProvided]?.map(warning => {

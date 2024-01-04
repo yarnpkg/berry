@@ -26,7 +26,7 @@ Although rarely called directly, `yarn pack` is a crucial part of Yarn. Each tim
 This script is called before `yarn npm publish` before the package has even been packed. This is the place where you'll want to check that the project is in an ok state.
 
 :::caution
-Because it's only called on prepublish, **the prepublish hook shouldn't have side effects.** In particular don't transpile the package sources in `prepublish`, as people consuming directly your repository (such as through the [`git:` protocol](/features/protocols#git)) wouldn't be able to use your project. Instead, use `prepack`.
+Because it's only called on prepublish, **the prepublish hook shouldn't have side effects.** In particular don't transpile the package sources in `prepublish`, as people consuming directly your repository (such as through the [`git:` protocol](/protocol/git)) wouldn't be able to use your project. Instead, use `prepack`.
 :::
 
 ## `postinstall`
@@ -38,7 +38,7 @@ It is guaranteed to be called in topological order (in other words, your depende
 For backwards compatibility, the `preinstall` and `install` scripts, if presents, are called right before running the `postinstall` script from the same package. In general, prefer using `postinstall` over those two.
 
 :::caution
-Postinstall scripts have should be avoided at all cost, as they make installs slower and riskier. Many users will refuse to install dependencies that have `postinstall` scripts. Additionally, since the output isn't shown out of the box, using them to print a message to the user will not work as you expect.
+Postinstall scripts should be avoided at all cost, as they make installs slower and riskier. Many users will refuse to install dependencies that have `postinstall` scripts. Additionally, since the output isn't shown out of the box, using them to print a message to the user will not work as you expect.
 :::
 
 ## Environment variables

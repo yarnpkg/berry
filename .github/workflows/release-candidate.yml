@@ -6,6 +6,9 @@ on:
         required: false
         default: '1'
 
+env:
+  node-version: '18.x'
+
 name: 'Release Candidate'
 jobs:
   release:
@@ -24,9 +27,10 @@ jobs:
     - name: 'Retrieve all the relevant tags'
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-    - uses: actions/setup-node@v3
+    - name: 'Use Node.js ${{ env.node-version }}'
+      uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version: ${{ env.node-version }}
 
     - name: 'Build a binary for convenience'
       run: |

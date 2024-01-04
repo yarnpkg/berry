@@ -230,7 +230,7 @@ Done
 }
 `;
 
-exports[`Commands workspace foreach should prefix the output with run with --verbose 1`] = `
+exports[`Commands workspace foreach should prefix the output and include timing information when run with -vv (two verbose levels) 1`] = `
 {
   "code": 0,
   "stderr": "",
@@ -266,6 +266,22 @@ Done
 }
 `;
 
+exports[`Commands workspace foreach should prefix the output when run with one --verbose 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "[workspace-a]: Test Workspace A
+[workspace-b]: Test Workspace B
+[workspace-c]: Test Workspace C
+[workspace-d]: Test Workspace D
+[workspace-e]: Test Workspace E
+[workspace-f]: Test Workspace F
+[workspace-g]: Test Workspace G
+Done
+",
+}
+`;
+
 exports[`Commands workspace foreach should run execute global scripts even on workspaces that don't declare them 1`] = `
 {
   "code": 0,
@@ -289,9 +305,9 @@ exports[`Commands workspace foreach should run on current and descendant workspa
   "stderr": "",
   "stdout": "Test Workspace C
 Test Workspace D
-Test Workspace E
 Test Workspace F
 Test Workspace G
+Test Workspace E
 Done
 ",
 }
@@ -311,6 +327,23 @@ exports[`Commands workspace foreach should run scripts in parallel but following
 {
   "code": 0,
   "stderr": "",
+}
+`;
+
+exports[`Commands workspace foreach should run set INIT_CWD to each individual workspace cwd even with global scripts 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "
+packages/workspace-a
+packages/workspace-b
+packages/workspace-c
+packages/workspace-c/packages/workspace-d
+packages/workspace-c/packages/workspace-d/packages/workspace-e
+packages/workspace-c/packages/workspace-f
+packages/workspace-c/packages/workspace-g
+Done
+",
 }
 `;
 

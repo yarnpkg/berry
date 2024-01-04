@@ -87,7 +87,7 @@ When this pattern is found, the `__virtual__/<hash>/<n>` part must be removed, t
 If writing a JS tool, the [`@yarnpkg/fslib`](https://yarnpkg.com/package/@yarnpkg/fslib) package may be of assistance, providing a virtual-aware filesystem layer called `VirtualFS`.
 
 :::note
-The `__virtual__` folder name appeared with Yarn 3.0. Earlier releases used `$$virtual`, but we changed it after discovering that this pattern triggered bugs in softwares where paths were used as either regexps or replacement. For example, `$$` found in the second parameter from [`String.prototype.replace`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) silently turned into `$`.
+The `__virtual__` folder name appeared with Yarn 3.0. Earlier releases used `$$virtual`, but we changed it after discovering that this pattern triggered bugs in software where paths were used as either regexps or replacement. For example, `$$` found in the second parameter from [`String.prototype.replace`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) silently turned into `$`.
 :::
 
 ## Manifest reference
@@ -295,7 +295,7 @@ FIND_PNP_MANIFEST(url)
 
 Finding the right PnP manifest to use for a resolution isn't always trivial. There are two main options:
 
-- Assume that there is a single PnP manifest covering the whole project. This is the most common case, as even when referencing third-party projects (for example via the [`portal:` protocol](/features/protocols#whats-the-difference-between-link-and-portal)) their dependency trees are stored in the same manifest as the main project.
+- Assume that there is a single PnP manifest covering the whole project. This is the most common case, as even when referencing third-party projects (for example via the [`portal:` protocol](/protocol/portal#portals-vs-links)) their dependency trees are stored in the same manifest as the main project.
 
   To do that, call [`FIND_CLOSEST_PNP_MANIFEST`](#find_closest_pnp_manifest)`(require.main.filename)` once at the start of the process, cache its result, and return it for each call to [`FIND_PNP_MANIFEST`](#find_pnp_manifest) (if you're running in Node.js, you can even use `require.resolve('pnpapi')` which will do this work for you).
 

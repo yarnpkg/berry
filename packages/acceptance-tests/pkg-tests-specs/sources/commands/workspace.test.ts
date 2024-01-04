@@ -72,7 +72,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `should preserve INIT_CWD to the original value`,
+      `should run set INIT_CWD to each individual workspace cwd`,
       makeTemporaryEnv(
         {
           private: true,
@@ -81,20 +81,11 @@ describe(`Commands`, () => {
         async ({path, run}) => {
           await setupWorkspaces(path);
 
-          let code;
-          let stdout;
-          let stderr;
+          await run(`install`);
 
-          try {
-            await run(`install`);
-            ({code, stdout, stderr} = await run(`workspace`, `component-a`, `run`, `printInitCwd`, {cwd: ppath.join(path, `docs`)}));
-          } catch (error) {
-            ({code, stdout, stderr} = error);
-          }
-
-          stdout = ppath.relative(path, npath.toPortablePath(stdout.trim()));
-
-          await expect({code, stdout, stderr}).toMatchSnapshot();
+          await expect(run(`workspace`, `component-a`, `run`, `printInitCwd`, {cwd: ppath.join(path, `docs`)})).resolves.toMatchObject({
+            stdout: `${npath.join(npath.fromPortablePath(path), `components/component-a`)}\n`,
+          });
         },
       ),
     );

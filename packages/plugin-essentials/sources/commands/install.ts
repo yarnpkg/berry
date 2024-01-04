@@ -331,6 +331,19 @@ export default class YarnCommand extends BaseCommand {
 
     const enableHardenedMode = configuration.get(`enableHardenedMode`);
 
+    if (enableHardenedMode && typeof configuration.sources.get(`enableHardenedMode`) === `undefined`) {
+      await StreamReport.start({
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+        includeFooter: false,
+      }, async report => {
+        report.reportWarning(MessageName.UNNAMED, `Yarn detected that the current workflow is executed from a public pull request. For safety the hardened mode has been enabled.`);
+        report.reportWarning(MessageName.UNNAMED, `It will prevent malicious lockfile manipulations, in exchange for a slower install time. You can opt-out if necessary; check our ${formatUtils.applyHyperlink(configuration, `documentation`, `https://yarnpkg.com/features/security#hardened-mode`)} for more details.`);
+        report.reportSeparator();
+      });
+    }
+
     if (this.refreshLockfile ?? enableHardenedMode)
       project.lockfileNeedsRefresh = true;
 
@@ -344,15 +357,18 @@ export default class YarnCommand extends BaseCommand {
     // the Configuration and Install classes). Feel free to open an issue
     // in order to ask for design feedback before writing features.
 
-    return await project.installWithNewReport({
+    const report = await StreamReport.start({
+      configuration,
       json: this.json,
       stdout: this.context.stdout,
-    }, {
-      cache,
-      immutable,
-      checkResolutions,
-      mode: this.mode,
+      forceSectionAlignment: true,
+      includeLogs: true,
+      includeVersion: true,
+    }, async report => {
+      await project.install({cache, report, immutable, checkResolutions, mode: this.mode});
     });
+
+    return report.exitCode();
   }
 }
 

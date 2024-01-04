@@ -104,7 +104,7 @@ See also: [Virtual Packages](#virtual-package)
 
 Plugins are a new concept introduced in Yarn 2+. Through the use of plugins, Yarn can be extended and made even more powerful - whether it's through the addition of new <abbr>resolvers</abbr>, <abbr>fetchers</abbr>, or <abbr>linkers</abbr>.
 
-See also: [Plugins](/features/plugins), [Plugin interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
+See also: [Plugins](/features/extensibility), [Plugin interface](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-core/sources/Plugin.ts#L67)
 
 ### Plug'n'Play
 
@@ -132,13 +132,13 @@ See also: [Workspaces](/features/workspaces)
 
 A range is a string that, when combined with a package name, can be used to select multiple versions of a single package. Ranges typically follow <abbr>semver</abbr>, but can use any of the supported Yarn protocols.
 
-See also: [Protocols](/features/protocols)
+See also: [Protocols](/protocols)
 
 ### Reference
 
 A reference is a string that, when combined with a package name, can be used to select one single version of a single package. References typically follow <abbr>semver</abbr>, but can use any of the supported Yarn protocols.
 
-See also: [Protocols](/features/protocols)
+See also: [Protocols](/protocols)
 
 ### Resolver
 
@@ -192,7 +192,7 @@ Generally speaking workspaces are a Yarn features used to work on multiple proje
 
 In the context of Yarn's vocabulary, workspaces are local <abbr>packages</abbr> that directly belong to a <abbr>project</abbr>.
 
-See also: [Packages](/features/packages), [Workspaces](/features/workspaces)
+See also: [Workspaces](/features/workspaces)
 
 ### Worktree
 

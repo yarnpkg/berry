@@ -9,14 +9,6 @@ exports[`Commands workspace <workspace-name> <sub-command> runs a given command 
 }
 `;
 
-exports[`Commands workspace <workspace-name> <sub-command> should preserve INIT_CWD to the original value 1`] = `
-{
-  "code": 0,
-  "stderr": "",
-  "stdout": "docs",
-}
-`;
-
 exports[`Commands workspace <workspace-name> <sub-command> when the given workspace doesnt exist lists all possible workspaces 1`] = `
 {
   "code": 0,

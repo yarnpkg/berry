@@ -24,4 +24,4 @@ This plugin is included by default in Yarn.
 
 ## Caveat
 
-You cannot add dependencies through the `patch:` protocol. Check this [FAQ entry](https://yarnpkg.com/features/protocols#why-cant-i-add-dependencies-through-the-patch-protocol) for more details.
+You cannot add dependencies through the `patch:` protocol. Check this [FAQ entry](https://yarnpkg.com/features/patching#limitations) for more details.

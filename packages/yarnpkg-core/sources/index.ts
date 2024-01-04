@@ -28,8 +28,8 @@ export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMe
 export {MessageName, parseMessageName, stringifyMessageName}                                                        from './MessageName';
 export {MultiFetcher}                                                                                               from './MultiFetcher';
 export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                                 from './Plugin';
-export type {PeerRequirement}                                                                                       from './Project';
-export {LOCKFILE_VERSION, Project, InstallMode}                                                                     from './Project';
+export type {PeerRequirement, PeerWarning}                                                                          from './Project';
+export {LOCKFILE_VERSION, PeerWarningType, Project, InstallMode}                                                    from './Project';
 export {ReportError, Report}                                                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                                       from './Resolver';
 export {StreamReport, reportOptionDeprecations}                                                                     from './StreamReport';

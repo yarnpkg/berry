@@ -6,15 +6,13 @@
     "start": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus start",
     "build": "NODE_OPTIONS=\"${NODE_OPTIONS:-} --require ./vfs.js\" docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
-    "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "serve": "docusaurus serve"
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^1.15.0",
     "@docusaurus/core": "^2.4.3",
+    "@docusaurus/plugin-content-docs": "^2.4.3",
     "@docusaurus/preset-classic": "^2.4.3",
     "@fontsource/pt-sans": "^5.0.5",
     "@mdx-js/react": "^1.6.22",
@@ -22,10 +20,12 @@
     "@primer/octicons-react": "^17.7.0",
     "@types/three": "^0.144.0",
     "@yarnpkg/cli": "workspace:^",
+    "@yarnpkg/core": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "algoliasearch": "^4.14.2",
     "clipanion": "^4.0.0-rc.2",
     "clsx": "^1.2.1",
+    "cross-spawn": "7.0.3",
     "dompurify": "^3.0.5",
     "git-url-parse": "^13.1.0",
     "github-markdown-css": "^5.1.0",
@@ -72,6 +72,7 @@
     "@docusaurus/theme-classic": "^2.4.3",
     "@docusaurus/theme-common": "^2.4.3",
     "@tsconfig/docusaurus": "^2.0.0",
+    "@types/cross-spawn": "6.0.0",
     "@types/dompurify": "^3",
     "@types/git-url-parse": "^9.0.0",
     "@types/lodash": "^4.14.136",
@@ -85,12 +86,17 @@
     "@types/react-window": "^1",
     "@types/resolve": "^1.20.0",
     "@types/semver": "^7.1.0",
+    "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "ansi-to-html": "^0.7.2",
-    "esbuild-loader": "^2.20.0"
+    "docusaurus-plugin-typedoc-api": "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch",
+    "esbuild-loader": "^2.20.0",
+    "fast-glob": "^3.2.2",
+    "typedoc": "^0.25.3",
+    "typescript": "5.3.0-beta"
   },
   "browserslist": {
     "production": [

@@ -2,17 +2,11 @@ import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
 import {Locator}                                    from '@yarnpkg/core';
 import {httpUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
 
-import {TARBALL_REGEXP, PROTOCOL_REGEXP}            from './constants';
+import * as urlUtils                                from './urlUtils';
 
 export class TarballHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!TARBALL_REGEXP.test(locator.reference))
-      return false;
-
-    if (PROTOCOL_REGEXP.test(locator.reference))
-      return true;
-
-    return false;
+    return urlUtils.isTgzUrl(locator.reference);
   }
 
   getLocalPath(locator: Locator, opts: FetchOptions) {

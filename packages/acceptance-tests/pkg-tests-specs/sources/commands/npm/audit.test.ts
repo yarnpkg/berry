@@ -164,7 +164,39 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await run(`npm`, `audit`, `--exclude`, `vulnerable`);
+        await expect(run(`npm`, `audit`, `--exclude`, `vulnerable`)).resolves.toMatchObject({
+          stdout: expect.stringContaining(`No audit suggestions`),
+        });
+      }),
+    );
+
+    test(
+      `it should allow excluding packages (deprecations)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-deprecated`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--exclude`, `no-deps-deprecated`)).resolves.toMatchObject({
+          stdout: expect.stringContaining(`No audit suggestions`),
+        });
+      }),
+    );
+
+    test(
+      `it should allow excluding packages (when using --json)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--exclude`, `vulnerable`, `--json`)).resolves.toMatchObject({
+          stdout: ``,
+        });
       }),
     );
 
@@ -177,7 +209,24 @@ describe(`Commands`, () => {
       }, async ({path, run, source}) => {
         await run(`install`);
 
-        await run(`npm`, `audit`, `--ignore`, `1`);
+        await expect(run(`npm`, `audit`, `--ignore`, `1`)).resolves.toMatchObject({
+          stdout: expect.stringContaining(`No audit suggestions`),
+        });
+      }),
+    );
+
+    test(
+      `it should allow ignoring advisories (when using --json)`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`vulnerable`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--ignore`, `1`, `--json`)).resolves.toMatchObject({
+          stdout: ``,
+        });
       }),
     );
 

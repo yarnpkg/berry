@@ -1,8 +1,65 @@
 import {Filename, xfs, ppath, npath} from '@yarnpkg/fslib';
-import {tests}                       from 'pkg-tests-core';
+import {tests, misc}                 from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`install`, () => {
+    test(
+      `it should print regular messages as JSON items when using --json`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const {stdout} = await run(`install`, `--json`);
+
+        expect(misc.parseJsonStream(stdout)).toEqual([{
+          data: `Yarn 0.0.0`,
+          displayName: `YN0000`,
+          indent: `· `,
+          name: 0,
+          type: `info`,
+        }, {
+          data: `┌ Resolution step`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `└ Completed`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `┌ Fetch step`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `└ Completed`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `┌ Link step`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `└ Completed`,
+          displayName: `YN0000`,
+          indent: ``,
+          name: null,
+          type: `info`,
+        }, {
+          data: `Done`,
+          displayName: `YN0000`,
+          indent: `· `,
+          name: 0,
+          type: `info`,
+        }]);
+      }),
+    );
+
     test(
       `it should print the logs to the standard output when using --inline-builds`,
       makeTemporaryEnv({
@@ -187,7 +244,6 @@ describe(`Commands`, () => {
       }),
     );
 
-
     test(
       `it should not enable --refresh-lockfile --immutable in private PR CIs`,
       makeTemporaryEnv({
@@ -207,6 +263,65 @@ describe(`Commands`, () => {
           repository: {
             private: true,
           },
+        });
+
+        await run(`install`);
+
+        await run(`install`, {
+          env: {
+            GITHUB_ACTIONS: `true`,
+            GITHUB_EVENT_NAME: `pull_request`,
+            GITHUB_EVENT_PATH: npath.fromPortablePath(eventPath),
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should not enable --refresh-lockfile --immutable if the GH environment file is missing`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+        const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+        const modifiedLockfile = lockfileContent.replace(/no-deps: "npm:1.0.0"/, `no-deps: "npm:2.0.0"`);
+        await xfs.writeFilePromise(lockfilePath, modifiedLockfile);
+
+        const eventPath = ppath.join(path, `github-event-file.json`);
+
+        await run(`install`);
+
+        await run(`install`, {
+          env: {
+            GITHUB_ACTIONS: `true`,
+            GITHUB_EVENT_NAME: `pull_request`,
+            GITHUB_EVENT_PATH: npath.fromPortablePath(eventPath),
+          },
+        });
+      }),
+    );
+
+    test(
+      `it should not enable --refresh-lockfile --immutable if the GH environment file is weird`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`one-fixed-dep`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+        const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
+        const modifiedLockfile = lockfileContent.replace(/no-deps: "npm:1.0.0"/, `no-deps: "npm:2.0.0"`);
+        await xfs.writeFilePromise(lockfilePath, modifiedLockfile);
+
+        const eventPath = ppath.join(path, `github-event-file.json`);
+        await xfs.writeJsonPromise(eventPath, {
+          hello: `world`,
         });
 
         await run(`install`);

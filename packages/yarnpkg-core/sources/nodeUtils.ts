@@ -1,8 +1,10 @@
-import {ppath}        from '@yarnpkg/fslib';
-import os             from 'os';
+import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import os                         from 'os';
 
-import * as execUtils from './execUtils';
-import * as miscUtils from './miscUtils';
+import * as execUtils             from './execUtils';
+import * as miscUtils             from './miscUtils';
+
+export const major = Number(process.versions.node.split(`.`)[0]);
 
 const openUrlBinary = new Map([
   [`darwin`, `open`],
@@ -21,11 +23,28 @@ export const openUrl = typeof openUrlBinary !== `undefined`
   }
   : undefined;
 
+const LDD_PATH = `/usr/bin/ldd` as PortablePath;
+
 function getLibc() {
   // Darwin and Windows have their own standard libraries, and the getReport() call is costly.
   // It also seems that Node randomly crashes with no output under some circumstances when running a getReport() on Windows.
   if (process.platform === `darwin` || process.platform === `win32`)
     return null;
+
+  let header: Buffer | undefined;
+  try {
+    header = xfs.readFileSync(LDD_PATH);
+  } catch {}
+
+  // Since the getReport can be prohibitely expensive (it also queries DNS which, if misconfigured, can take a long time to timeout),
+  // we first check if the ldd binary is glibc or musl, and only then run the getReport() if we can't determine the libc variant.
+  if (typeof header !== `undefined`) {
+    if (header && header.includes(`GLIBC`))
+      return `glibc`;
+    if (header && header.includes(`musl`)) {
+      return `musl`;
+    }
+  }
 
   const report: any = process.report?.getReport() ?? {};
   const sharedObjects: Array<string> = report.sharedObjects ?? [];

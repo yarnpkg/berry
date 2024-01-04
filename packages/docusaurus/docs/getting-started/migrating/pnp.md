@@ -1,21 +1,21 @@
 ---
 category: getting-started
 slug: /migration/pnp
-title: "Yarn PnP migration"
+title: "To go further: Yarn PnP"
 description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) to Yarn 2 (Berry).
 sidebar_position: 3
 sidebar_label: "To go further"
 ---
 
 :::info
-This step is **completely optional**!
+These steps are **completely optional**!
 
 While we recommend to use [Yarn Plug'n'Play](/features/pnp) for new projects, enabling it on existing projects may require a time investment. Feel free to skip this part if you prefer, and to come back to it whenever you have more time and/or a concrete benefit to get from it.
 :::
 
 ## Calling the Doctor
 
-Plug'n'Play enforces strict [dependency rules]((/advanced/rulebook)). You'll get errors should something in your application rely on unlisted dependencies which could cause your application to become unstable.
+Plug'n'Play enforces strict [dependency rules](/advanced/rulebook). You'll get errors should something in your application rely on unlisted dependencies which could cause your application to become unstable.
 
 To quickly detect which places may rely on unsafe patterns, Yarn provides a tool called the Doctor. Just run `yarn dlx @yarnpkg/doctor` in your project and the Doctor will start looking at your source files to detect any potentially problematic pattern.
 

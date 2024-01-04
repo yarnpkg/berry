@@ -203,7 +203,7 @@ export function applyEngineReport(project: Project, {manifestUpdates, reportedEr
         const [[newValue]] = newValues;
 
         const currentValue = get(manifest, fieldPath);
-        if (currentValue === newValue)
+        if (JSON.stringify(currentValue) === JSON.stringify(newValue))
           continue;
 
         if (!fix) {

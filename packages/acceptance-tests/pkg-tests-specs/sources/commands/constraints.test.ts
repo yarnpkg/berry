@@ -107,6 +107,56 @@ describe(`Commands`, () => {
       await expect(run(`constraints`)).rejects.toThrow(/This should fail/);
     }));
 
+    it(`should allow requiring dependencies from the yarn.config.cjs file`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        require('no-deps');
+
+        exports.constraints = ({Yarn}) => {
+        };
+      `);
+
+      await run(`constraints`);
+    }));
+
+    it(`shouldn't report errors when comparing identical objects`, makeTemporaryEnv({
+      foo: {
+        ok: true,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        exports.constraints = ({Yarn}) => {
+          Yarn.workspace().set('foo', {ok: true});
+        };
+      `);
+
+      await run(`constraints`);
+    }));
+
+    it(`should report an error when comparing objects with different key ordering`, makeTemporaryEnv({
+      foo: {
+        b: true,
+        a: true,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        exports.constraints = ({Yarn}) => {
+          Yarn.workspace().set('foo', {a: true, b: true});
+        };
+      `);
+
+      await expect(run(`constraints`)).rejects.toThrow(`Invalid field foo; expected { a: true, b: true }, found { b: true, a: true }`);
+    }));
+
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, scripts] of Object.entries(constraints)) {
         for (const [scriptType, script] of Object.entries(scripts)) {

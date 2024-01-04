@@ -1,3 +1,4 @@
+import {WebhookEvent}                                                                                            from '@octokit/webhooks-types';
 import {Filename, PortablePath, npath, ppath, xfs}                                                               from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                                from '@yarnpkg/parsers';
 import camelcase                                                                                                 from 'camelcase';
@@ -30,9 +31,27 @@ import * as semverUtils                                                         
 import * as structUtils                                                                                          from './structUtils';
 import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
 
-const isPublicRepository = GITHUB_ACTIONS && process.env.GITHUB_EVENT_PATH
-  ? !(xfs.readJsonSync(npath.toPortablePath(process.env.GITHUB_EVENT_PATH)).repository?.private ?? true)
-  : false;
+const isPublicRepository = (function () {
+  if (!GITHUB_ACTIONS || !process.env.GITHUB_EVENT_PATH)
+    return false;
+
+  const githubEventPath = npath.toPortablePath(process.env.GITHUB_EVENT_PATH);
+
+  let data: WebhookEvent;
+  try {
+    data = xfs.readJsonSync(githubEventPath) as WebhookEvent;
+  } catch {
+    return false;
+  }
+
+  if (!(`repository` in data) || !data.repository)
+    return false;
+
+  if (data.repository.private ?? true)
+    return false;
+
+  return true;
+})();
 
 export const LEGACY_PLUGINS = new Set([
   `@yarnpkg/plugin-constraints`,
@@ -863,15 +882,13 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         result.set(propKey, getDefaultValue(configuration, propDefinition));
 
       return result;
-    } break;
-
+    }
     case SettingsType.MAP: {
       if (definition.isArray && !ignoreArrays)
         return [];
 
       return new Map<string, any>();
-    } break;
-
+    }
     case SettingsType.ABSOLUTE_PATH: {
       if (definition.default === null)
         return null;
@@ -895,11 +912,10 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
           return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
-    } break;
-
+    }
     default: {
       return definition.default;
-    } break;
+    }
   }
 }
 
@@ -1897,7 +1913,7 @@ export class Configuration {
 
               default: {
                 miscUtils.assertNever(extension);
-              } break;
+              }
             }
           }
         }

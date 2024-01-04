@@ -31,9 +31,9 @@
       "_package": "@yarnpkg/core",
       "type": "string",
       "title": "Behavior that Yarn should follow when it detects that a cache entry is outdated.",
-      "description": "Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:\n\n- If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.\n- If `match-spec`, it'll also rebuild the file if the compression level has changed. If `always`, it'll always regenerate the cache files so they use the current cache version.\n- If `auto` (the default), it'll act as either `required-only` or `always` depending on whether `enableGlobalCache` is enabled (with `always` being selected in that case).",
-      "enum": ["required-only", "match-spec", "always", "auto"],
-      "default": "auto"
+      "description": "Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:\n\n- If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.\n- If `match-spec`, it'll also rebuild the file if the compression level has changed.\n- If `always` (the default), it'll always regenerate the cache files so they use the current cache version.",
+      "enum": ["required-only", "match-spec", "always"],
+      "default": "always"
     },
     "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
@@ -82,8 +82,8 @@
       "_package": "@yarnpkg/core",
       "type": ["number", "string"],
       "title": "Compression level employed for zip archives",
-      "description": "Possible values go from 0 (\"no compression, faster\") to 9 (\"heavy compression, slower\"). The default is 'mixed', which is a variant of 9 where files may be stored uncompressed if the builtin libzip heuristic thinks it will lead to a more sensible result.",
-      "enum": ["mixed", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "description": "Possible values go from `0` (\"no compression, faster\") to `9` (\"heavy compression, slower\"). The value `mixed` is a variant of `9` where files are stored uncompressed if the gzip overhead would exceed the size gain.\n\nThe default is `0`, which tends to be significantly faster to install. Projects using zero-installs are advised to keep it this way, as experiments showed that Git stores uncompressed package archives more efficiently than gzip-compressed ones.",
+      "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "mixed"],
       "default": "mixed"
     },
     "constraintsPath": {
@@ -262,7 +262,7 @@
       "description": "Various files we be stored there: global cache, metadata cache, ...",
       "type": "string",
       "format": "uri-reference",
-      "examples": ["${HOME}/.yarn/berry/global"]
+      "examples": ["${HOME}/.yarn/berry"]
     },
     "httpProxy": {
       "_package": "@yarnpkg/core",
@@ -342,6 +342,18 @@
         }
       },
       "_exampleKeys": ["homepage"]
+    },
+    "injectEnvironmentFiles": {
+      "_package": "@yarnpkg/core",
+      "title": "Array of .env files which will get injected into any subprocess spawned by Yarn.",
+      "description": "By default Yarn will automatically inject the variables stored in the `.env.yarn` file, but you can use this setting to change this behavior.\n\nNote that adding a question mark at the end of the path will silence the error Yarn would throw should the file be missing, which may come in handy when declaring local configuration files.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      },
+      "default": [],
+      "_exampleItems": [".my-env", ".my-local-env?"]
     },
     "installStatePath": {
       "_package": "@yarnpkg/core",

@@ -7,10 +7,10 @@ sidebar_position: 2
 ---
 
 :::tip
-The preferred way to manage Yarn is by-project and through [Corepack](https://nodejs.org/dist/latest/docs/api/corepack.html), a tool shipped by default with Node.js. Modern releases of Yarn aren't meant to be installed globally, or from npm.
+The preferred way to manage Yarn is by-project and through [Corepack](/corepack), a tool shipped by default with Node.js. Modern releases of Yarn aren't meant to be installed globally, or from npm.
 :::
 
-1. Start by enabling Corepack, if it isn't already:
+1. Start by enabling [Corepack](/corepack), if it isn't already; this will add the `yarn` binary to your PATH:
 
 <CommandLineHighlight type={`code`} lines={[{type: `command`, command: {name: `corepack`, path: [`enable`], argv: [`enable`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `enable`}]}]}/>
 
