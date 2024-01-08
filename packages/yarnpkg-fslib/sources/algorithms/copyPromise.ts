@@ -173,7 +173,11 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
 
 async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>, linkStrategy: HardlinkFromIndexStrategy<P1>) {
   const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
-  const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${sourceHash}.dat` as P1);
+  const defaultMode = 0o644;
+  const sourceMode = sourceStat.mode & 0o777;
+  // add mode to the index file name if it's not the default b/c different packages could have the file with same content, but different modes
+  const indexFileName = `${sourceHash}${sourceMode !== defaultMode ? sourceMode.toString(8) : ''}`;
+  const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${indexFileName}.dat` as P1);
 
   enum AtomicBehavior {
     Lock,
@@ -265,9 +269,8 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   postlayout.push(async () => {
     if (!indexStat) {
       await destinationFs.lutimesPromise(indexPath, defaultTime, defaultTime);
-      const mode = sourceStat.mode & 0o777;
-      if (mode !== 0o644) {
-        await destinationFs.chmodPromise(indexPath, sourceStat.mode);
+      if (sourceMode !== defaultMode) {
+        await destinationFs.chmodPromise(indexPath, sourceMode);
       }
     }
 
