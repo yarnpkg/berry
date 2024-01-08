@@ -23,7 +23,7 @@ describe(`Features`, () => {
           await run(`install`, {cwd: path2});
 
           const statA = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/package.json`));
-          const statB = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/package.json`));
+          const statB = await xfs.statPromise(ppath.join(path2, `node_modules/no-deps/package.json`));
 
           expect({
             dev: statA.dev,
@@ -57,7 +57,7 @@ describe(`Features`, () => {
           await run(`install`, {cwd: path2});
 
           const statA = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/index.js`));
-          const statB = await xfs.statPromise(ppath.join(path, `node_modules/no-deps/index.js`));
+          const statB = await xfs.statPromise(ppath.join(path2, `node_modules/no-deps/index.js`));
 
           expect({
             dev: statA.dev,
@@ -79,20 +79,18 @@ describe(`Features`, () => {
       }, {
         nodeLinker: `pnpm`,
       }, async ({path, run, source}) => {
-        await xfs.mktempPromise(async path2 => {
-          await run(`install`);
+        await run(`install`);
 
-          const referenceFile = ppath.join(path, `node_modules/no-deps/index.js`);
+        const referenceFile = ppath.join(path, `node_modules/no-deps/index.js`);
 
-          const originalContent = await xfs.readFilePromise(referenceFile, `utf8`);
-          const newContent = `${originalContent}// oh no, modified\n`;
+        const originalContent = await xfs.readFilePromise(referenceFile, `utf8`);
+        const newContent = `${originalContent}// oh no, modified\n`;
 
-          await xfs.writeFilePromise(referenceFile, newContent);
+        await xfs.writeFilePromise(referenceFile, newContent);
 
-          await run(`install`);
+        await run(`install`);
 
-          await expect(xfs.readFilePromise(referenceFile, `utf8`)).resolves.toEqual(originalContent);
-        });
+        await expect(xfs.readFilePromise(referenceFile, `utf8`)).resolves.toEqual(originalContent);
       }),
     );
 
@@ -117,7 +115,7 @@ describe(`Features`, () => {
           await run(`install`, {cwd: path2});
 
           const referenceFileA = ppath.join(path, `node_modules/no-deps/index.js`);
-          const referenceFileB = ppath.join(path, `node_modules/no-deps/index.js`);
+          const referenceFileB = ppath.join(path2, `node_modules/no-deps/index.js`);
 
           const originalContent = await xfs.readFilePromise(referenceFileA, `utf8`);
           const newContent = `${originalContent}// oh no, modified\n`;
