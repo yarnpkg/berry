@@ -263,8 +263,13 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   });
 
   postlayout.push(async () => {
-    if (!indexStat)
+    if (!indexStat) {
       await destinationFs.lutimesPromise(indexPath, defaultTime, defaultTime);
+      const mode = sourceStat.mode & 0o777;
+      if (mode !== 0o644) {
+        await destinationFs.chmodPromise(indexPath, sourceStat.mode);
+      }
+    }
 
     if (tempPath && !tempPathCleaned) {
       await destinationFs.unlinkPromise(tempPath);
