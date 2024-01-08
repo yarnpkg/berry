@@ -176,7 +176,7 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
   const defaultMode = 0o644;
   const sourceMode = sourceStat.mode & 0o777;
   // add mode to the index file name if it's not the default b/c different packages could have the file with same content, but different modes
-  const indexFileName = `${sourceHash}${sourceMode !== defaultMode ? sourceMode.toString(8) : ''}`;
+  const indexFileName = `${sourceHash}${sourceMode !== defaultMode ? sourceMode.toString(8) : ``}`;
   const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2) as P1, `${indexFileName}.dat` as P1);
 
   enum AtomicBehavior {
