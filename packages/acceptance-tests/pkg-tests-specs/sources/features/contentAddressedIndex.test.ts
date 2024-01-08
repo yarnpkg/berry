@@ -2,7 +2,6 @@ import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Content-Addressed Index`, () => {
-    
     if (process.platform !== `win32`) {
       test(
         `it should preserve executable mode when installing`,
