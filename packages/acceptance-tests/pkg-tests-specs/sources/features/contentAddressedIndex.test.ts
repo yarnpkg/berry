@@ -2,22 +2,25 @@ import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
 describe(`Features`, () => {
   describe(`Content-Addressed Index`, () => {
-    test(
-      `it should preserve executable mode when installing`,
-      makeTemporaryEnv({
-        dependencies: {
-          [`has-bin-entries`]: `1.0.0`,
-        },
-      }, {
-        nodeLinker: `pnpm`,
-      }, async ({path, run, source}) => {
-        await run(`install`);
+    
+    if (process.platform !== `win32`) {
+      test(
+        `it should preserve executable mode when installing`,
+        makeTemporaryEnv({
+          dependencies: {
+            [`has-bin-entries`]: `1.0.0`,
+          },
+        }, {
+          nodeLinker: `pnpm`,
+        }, async ({path, run, source}) => {
+          await run(`install`);
 
-        const stat = await xfs.statPromise(ppath.join(path, `node_modules/has-bin-entries/bin-with-exit-code.js`));
-        const executableBits = 0o111;
-        expect(stat.mode & executableBits).toEqual(executableBits);
-      }),
-    );
+          const stat = await xfs.statPromise(ppath.join(path, `node_modules/has-bin-entries/bin-with-exit-code.js`));
+          const executableBits = 0o111;
+          expect(stat.mode & executableBits).toEqual(executableBits);
+        }),
+      );
+    }
 
     test(
       `it should use the exact same device/inode for the same file from the same package`,
