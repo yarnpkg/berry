@@ -98,15 +98,17 @@ TypeScript support should then work out of the box with [nvim-lspconfig](https:/
 
 ### VSCode
 
-1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) extension, which is maintained by the Yarn team.
+1. `yarn add -D typescript` if you haven't already. For workspaces, install in the root directory.
 
-2. Run the following command, which will generate a `.vscode/settings.json` file:
+2. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) extension, which is maintained by the Yarn team.
+
+3. Run the following command, which will generate a `.vscode/settings.json` file:
 
 ```bash
 yarn dlx @yarnpkg/sdks vscode
 ```
 
-3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
+4. For safety reason VSCode requires you to explicitly activate the custom TS settings:
 
     1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
     2. Choose "Select TypeScript Version"
