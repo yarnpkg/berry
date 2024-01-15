@@ -1,4 +1,5 @@
 import {ppath, xfs} from '@yarnpkg/fslib';
+import {misc}       from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   for (const [description, args] of [[`with prefix`, [`run`]], [`without prefix`, []]]) {
@@ -168,20 +169,14 @@ describe(`Commands`, () => {
         },
         async ({path, run, source}) => {
           const {code, stdout, stderr} = await run(`run`, `--json`);
-          expect({code, stdout, stderr}).toMatchObject({
-            code: 0,
-            stderr: ``,
-            stdout: expect.stringMatching(JSON.stringify([
-              {
-                name: `"foo"`,
-                script: `"echo hello"`,
-              },
-              {
-                name: `"bar"`,
-                script: `"echo hi"`,
-              },
-            ])),
-          });
+
+          expect(misc.parseJsonStream(stdout)).toEqual([{
+            name: `foo`,
+            script: `echo hello`,
+          }, {
+            name: `bar`,
+            script: `echo hi`,
+          }]);
         },
       ),
     );
