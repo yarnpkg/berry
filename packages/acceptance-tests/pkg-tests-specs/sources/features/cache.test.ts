@@ -201,9 +201,9 @@ describe(`Cache`, () => {
 
   test(`it should not confuse the cache key when merging an upgraded cache key branch into a feature branch`, makeTemporaryEnv({
     dependencies: {
-      [`depA`]: `dep0@npm:no-deps@1.0.0`,
-      [`depB`]: `dep0@npm:no-deps@1.0.1`,
-      [`depC`]: `dep0@npm:no-deps@1.1.0`,
+      [`depA`]: `npm:no-deps@1.0.0`,
+      [`depB`]: `npm:no-deps@1.0.1`,
+      [`depC`]: `npm:no-deps@1.1.0`,
     },
   }, async ({path, run, source}) => {
     await run(`install`);
