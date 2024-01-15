@@ -5,7 +5,6 @@ import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}            
 import {PortablePath, npath, ppath, xfs}                                        from '@yarnpkg/fslib';
 import {Command, Option, Usage}                                                 from 'clipanion';
 import semver                                                                   from 'semver';
-import {URL}                                                                    from 'url';
 import {runInNewContext}                                                        from 'vm';
 
 import {getAvailablePlugins}                                                    from './list';

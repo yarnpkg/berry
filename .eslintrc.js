@@ -44,5 +44,17 @@ module.exports = {
         message: `Use 'httpUtils' instead`,
       },
     ],
+    'no-restricted-imports': [
+      `error`,
+      {
+        patterns: [
+          {
+            group: [`url`, `node:url`],
+            importNames: [`URL`],
+            message: `URL is a global, no need to import it`,
+          },
+        ],
+      },
+    ],
   },
 };
