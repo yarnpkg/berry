@@ -174,11 +174,11 @@ describe(`Commands`, () => {
             stdout: expect.stringMatching(JSON.stringify([
               {
                 name: `"foo"`,
-                value: `"echo hello"`,
+                script: `"echo hello"`,
               },
               {
                 name: `"bar"`,
-                value: `"echo hi"`,
+                script: `"echo hi"`,
               },
             ])),
           });
