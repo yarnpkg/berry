@@ -38,9 +38,9 @@ export default class RunIndexCommand extends BaseCommand {
         return Math.max(max, key.length);
       }, 0);
 
-      for (const [key, value] of scripts.entries()) {
-        report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(value, inspectConfig)}`);
-        report.reportJson({name: key, value});
+      for (const [key, script] of scripts.entries()) {
+        report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(script, inspectConfig)}`);
+        report.reportJson({name: key, script});
       }
     });
 
