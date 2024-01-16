@@ -168,7 +168,7 @@ describe(`Commands`, () => {
           },
         },
         async ({path, run, source}) => {
-          const {code, stdout, stderr} = await run(`run`, `--json`);
+          const {stdout} = await run(`run`, `--json`);
 
           expect(misc.parseJsonStream(stdout)).toEqual([{
             name: `foo`,
