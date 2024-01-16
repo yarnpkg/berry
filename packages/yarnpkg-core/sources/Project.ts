@@ -1969,23 +1969,6 @@ export class Project {
 
       manifest.bin = new Map(pkg.bin);
 
-      let entryChecksum: string | undefined;
-      const checksum = this.storedChecksums.get(pkg.locatorHash);
-      if (typeof checksum !== `undefined`) {
-        const cacheKeyIndex = checksum.indexOf(`/`);
-        if (cacheKeyIndex === -1)
-          throw new Error(`Assertion failed: Expected the checksum to reference its cache key`);
-
-        const entryCacheKey = checksum.slice(0, cacheKeyIndex);
-        const hash = checksum.slice(cacheKeyIndex + 1);
-
-        if (entryCacheKey === cacheKey) {
-          entryChecksum = hash;
-        } else {
-          entryChecksum = checksum;
-        }
-      }
-
       optimizedLockfile[key] = {
         ...manifest.exportTo({}, {
           compatibilityMode: false,
@@ -1994,7 +1977,7 @@ export class Project {
         linkType: pkg.linkType.toLowerCase(),
 
         resolution: structUtils.stringifyLocator(pkg),
-        checksum: entryChecksum,
+        checksum: this.storedChecksums.get(pkg.locatorHash),
 
         conditions: pkg.conditions || undefined,
       };

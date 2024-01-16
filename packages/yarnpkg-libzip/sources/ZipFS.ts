@@ -295,8 +295,12 @@ export class ZipFS extends BasePortableFakeFS {
         else if (rc > size)
           throw new Error(`Overread`);
 
-        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
-        return Buffer.from(memory);
+        let result = Buffer.from(this.libzip.HEAPU8.subarray(buffer, buffer + size));
+
+        if (process.env.YARN_IS_TEST_ENV && process.env.YARN_ZIP_DATA_EPILOGUE)
+          result = Buffer.concat([result, Buffer.from(process.env.YARN_ZIP_DATA_EPILOGUE)]);
+
+        return result;
       } finally {
         this.libzip.free(buffer);
       }
