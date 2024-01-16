@@ -31,7 +31,7 @@
     "github-markdown-css": "^5.1.0",
     "js-untar": "^2.0.0",
     "lodash": "^4.17.15",
-    "markdown-it": "^13.0.1",
+    "markdown-it": "^14.0.0",
     "markdown-it-br": "^1.0.0",
     "marked": "^5.1.1",
     "marked-base-url": "^1.0.1",
