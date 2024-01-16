@@ -4,7 +4,6 @@ import {Filename, PortablePath, ppath, xfs}                                     
 import {prompt}                                                                                                                              from 'enquirer';
 import pick                                                                                                                                  from 'lodash/pick';
 import semver                                                                                                                                from 'semver';
-import {URL}                                                                                                                                 from 'url';
 
 import {Hooks}                                                                                                                               from './index';
 import * as npmConfigUtils                                                                                                                   from './npmConfigUtils';
