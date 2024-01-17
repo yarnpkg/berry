@@ -178,7 +178,6 @@ describe(`Node_Modules`, () => {
           [`app`]: `link:./app`,
         },
         workspaces: [
-          `packages/*`,
           `app/plugins/*`,
         ],
       },
@@ -186,14 +185,6 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
-        await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
-          name: `workspace`,
-          version: `10.3.0-pre`,
-          dependencies: {
-            [`no-deps`]: `2.0.0`,
-          },
-        });
-
         await writeJson(npath.toPortablePath(`${path}/app/plugins/foo-plugin/package.json`), {
           name: `foo-plugin`,
           version: `1.0.0`,
@@ -208,7 +199,6 @@ describe(`Node_Modules`, () => {
       },
     ),
   );
-
 
   test(`should support replacement of regular dependency with portal: protocol dependency`,
     makeTemporaryEnv(
