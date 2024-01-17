@@ -169,6 +169,47 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should not treat link: dependencies as an inner workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`one-fixed-dep`]: `2.0.0`,
+          [`app`]: `link:./app`,
+        },
+        workspaces: [
+          `packages/*`,
+          `app/plugins/*`,
+        ],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
+          name: `workspace`,
+          version: `10.3.0-pre`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await writeJson(npath.toPortablePath(`${path}/app/plugins/foo-plugin/package.json`), {
+          name: `foo-plugin`,
+          version: `1.0.0`,
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(npath.toPortablePath(`${path}/app/node_modules`))).toBe(false);
+      },
+    ),
+  );
+
+
   test(`should support replacement of regular dependency with portal: protocol dependency`,
     makeTemporaryEnv(
       {
