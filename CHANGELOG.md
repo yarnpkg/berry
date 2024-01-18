@@ -8,6 +8,8 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+- Fixes `node-modules` linker `link:` dependencies mistreatment as inner workspaces, when they point to a parent folder of a workspace
+
 ## 4.0.1
 
 - Fixes creation of symlinks for `node-modules` linker when inner workspace depends on outer workspace
