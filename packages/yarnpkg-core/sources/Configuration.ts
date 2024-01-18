@@ -69,6 +69,7 @@ const IGNORED_ENV_VARIABLES = new Set([
   `injectNpmUser`,
   `injectNpmPassword`,
   `injectNpm2FaToken`,
+  `zipDataEpilogue`,
   `cacheCheckpointOverride`,
   `cacheVersionOverride`,
   `lockfileVersionOverride`,

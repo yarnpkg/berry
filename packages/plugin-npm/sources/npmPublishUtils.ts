@@ -4,7 +4,6 @@ import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
 import {packUtils}                from '@yarnpkg/plugin-pack';
 import {createHash}               from 'crypto';
 import ssri                       from 'ssri';
-import {URL}                      from 'url';
 
 import {normalizeRegistry}        from './npmConfigUtils';
 
