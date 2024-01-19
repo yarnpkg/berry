@@ -1,6 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}  from '@yarnpkg/cli';
 import {Configuration, Project, StreamReport} from '@yarnpkg/core';
 import {miscUtils}                            from '@yarnpkg/core';
+import {Option}                               from 'clipanion';
 import {inspect}                              from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -8,6 +9,10 @@ export default class RunIndexCommand extends BaseCommand {
   static paths = [
     [`run`],
   ];
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Format the output as an NDJSON stream`,
+  });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
@@ -19,6 +24,7 @@ export default class RunIndexCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      json: this.json,
     }, async report => {
       const scripts = workspace!.manifest.scripts;
       const keys = miscUtils.sortMap(scripts.keys(), key => key);
@@ -32,8 +38,9 @@ export default class RunIndexCommand extends BaseCommand {
         return Math.max(max, key.length);
       }, 0);
 
-      for (const [key, value] of scripts.entries()) {
-        report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(value, inspectConfig)}`);
+      for (const [key, script] of scripts.entries()) {
+        report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(script, inspectConfig)}`);
+        report.reportJson({name: key, script});
       }
     });
 
