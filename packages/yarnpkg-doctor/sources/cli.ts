@@ -1,6 +1,15 @@
 #!/usr/bin/env node
 
 import { getPluginConfiguration } from "@yarnpkg/cli";
+import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Cli, Command, Builtins, Option } from "clipanion";
+import globby from "globby";
+import micromatch from "micromatch";
+import { Module } from "module";
+import * as ts from "typescript";
+
+import * as ast from "./ast";
+
 import {
   Cache,
   Configuration,
@@ -18,14 +27,6 @@ import {
   ResolveOptions,
   FetchOptions,
 } from "@yarnpkg/core";
-import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
-import { Cli, Command, Builtins, Option } from "clipanion";
-import globby from "globby";
-import micromatch from "micromatch";
-import { Module } from "module";
-import * as ts from "typescript";
-
-import * as ast from "./ast";
 
 const BUILTINS = new Set([
   ...(Module.builtinModules || []),

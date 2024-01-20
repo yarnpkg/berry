@@ -1,5 +1,12 @@
 import { miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi } from "@yarnpkg/core";
 import { FetchResult, Locator, Package } from "@yarnpkg/core";
+import { AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { UsageError } from "clipanion";
+
+import { getPnpPath } from "./index";
+import * as jsInstallUtils from "./jsInstallUtils";
+import * as pnpUtils from "./pnpUtils";
+
 import {
   Linker,
   LinkOptions,
@@ -10,7 +17,6 @@ import {
   LinkType,
   Installer,
 } from "@yarnpkg/core";
-import { AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs } from "@yarnpkg/fslib";
 import {
   generateInlinedScript,
   generateSplitScript,
@@ -19,11 +25,6 @@ import {
   PnpSettings,
   getESMLoaderTemplate,
 } from "@yarnpkg/pnp";
-import { UsageError } from "clipanion";
-
-import { getPnpPath } from "./index";
-import * as jsInstallUtils from "./jsInstallUtils";
-import * as pnpUtils from "./pnpUtils";
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Contains native binaries

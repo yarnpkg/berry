@@ -1,3 +1,5 @@
+import { ppath } from "@yarnpkg/fslib";
+
 import {
   BuildDirective,
   BuildDirectiveType,
@@ -12,7 +14,6 @@ import {
   nodeUtils,
   structUtils,
 } from "@yarnpkg/core";
-import { ppath } from "@yarnpkg/fslib";
 
 export function checkManifestCompatibility(pkg: Package) {
   return structUtils.isPackageCompatible(pkg, nodeUtils.getArchitectureSet());

@@ -1,4 +1,11 @@
 import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { xfs, ppath, Filename, PortablePath } from "@yarnpkg/fslib";
+import { parseSyml, stringifySyml } from "@yarnpkg/parsers";
+import CI from "ci-info";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import semver from "semver";
+import * as t from "typanion";
+
 import {
   Configuration,
   Cache,
@@ -16,12 +23,6 @@ import {
   httpUtils,
   reportOptionDeprecations,
 } from "@yarnpkg/core";
-import { xfs, ppath, Filename, PortablePath } from "@yarnpkg/fslib";
-import { parseSyml, stringifySyml } from "@yarnpkg/parsers";
-import CI from "ci-info";
-import { Command, Option, Usage, UsageError } from "clipanion";
-import semver from "semver";
-import * as t from "typanion";
 
 const LOCKFILE_MIGRATION_RULES: Array<{
   selector: (version: number) => boolean;

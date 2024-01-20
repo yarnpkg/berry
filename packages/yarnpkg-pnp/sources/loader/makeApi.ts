@@ -5,6 +5,11 @@ import { fileURLToPath, pathToFileURL } from "url";
 import { inspect } from "util";
 
 import { packageExportsResolve, packageImportsResolve } from "../node/resolve.js";
+
+import { ErrorCode, makeError, getPathForDisplay } from "./internalTools";
+import { getOptionValue } from "./node-options.js";
+import * as nodeUtils from "./nodeUtils";
+
 import {
   PackageInformation,
   PackageLocator,
@@ -16,10 +21,6 @@ import {
   ResolveUnqualifiedOptions,
   ResolveRequestOptions,
 } from "../types";
-
-import { ErrorCode, makeError, getPathForDisplay } from "./internalTools";
-import { getOptionValue } from "./node-options.js";
-import * as nodeUtils from "./nodeUtils";
 
 export type MakeApiOptions = {
   allowDebug?: boolean;

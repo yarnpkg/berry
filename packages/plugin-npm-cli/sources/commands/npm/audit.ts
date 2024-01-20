@@ -1,4 +1,13 @@
 import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { structUtils } from "@yarnpkg/core";
+import { npmConfigUtils, npmHttpUtils } from "@yarnpkg/plugin-npm";
+import { Command, Option, Usage } from "clipanion";
+import micromatch from "micromatch";
+import * as t from "typanion";
+
+import * as npmAuditTypes from "../../npmAuditTypes";
+import * as npmAuditUtils from "../../npmAuditUtils";
+
 import {
   Configuration,
   Project,
@@ -11,14 +20,6 @@ import {
   Locator,
   miscUtils,
 } from "@yarnpkg/core";
-import { structUtils } from "@yarnpkg/core";
-import { npmConfigUtils, npmHttpUtils } from "@yarnpkg/plugin-npm";
-import { Command, Option, Usage } from "clipanion";
-import micromatch from "micromatch";
-import * as t from "typanion";
-
-import * as npmAuditTypes from "../../npmAuditTypes";
-import * as npmAuditUtils from "../../npmAuditUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmAuditCommand extends BaseCommand {

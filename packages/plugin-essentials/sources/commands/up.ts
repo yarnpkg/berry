@@ -1,6 +1,14 @@
 import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
 import { IdentHash, structUtils } from "@yarnpkg/core";
 import { Project, Workspace, InstallMode } from "@yarnpkg/core";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import { prompt } from "enquirer";
+import micromatch from "micromatch";
+import * as t from "typanion";
+
+import * as suggestUtils from "../suggestUtils";
+import { Hooks } from "..";
+
 import {
   Cache,
   Configuration,
@@ -10,13 +18,6 @@ import {
   MinimalResolveOptions,
   formatUtils,
 } from "@yarnpkg/core";
-import { Command, Option, Usage, UsageError } from "clipanion";
-import { prompt } from "enquirer";
-import micromatch from "micromatch";
-import * as t from "typanion";
-
-import * as suggestUtils from "../suggestUtils";
-import { Hooks } from "..";
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {

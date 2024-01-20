@@ -1,3 +1,6 @@
+import { formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions } from "@yarnpkg/core";
+import micromatch from "micromatch";
+
 import {
   Project,
   ResolveOptions,
@@ -10,8 +13,6 @@ import {
   Cache,
   DescriptorHash,
 } from "@yarnpkg/core";
-import { formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions } from "@yarnpkg/core";
-import micromatch from "micromatch";
 
 export type PackageUpdate = {
   descriptor: Descriptor;

@@ -1,15 +1,4 @@
 import { BigIntStats, DirentNoPath, ReaddirOptions, Stats } from "@yarnpkg/fslib";
-import {
-  Dirent,
-  Filename,
-  MkdirOptions,
-  ExtractHintOptions,
-  WatchFileCallback,
-  WatchFileOptions,
-  StatWatcher,
-  OpendirOptions,
-  Dir,
-} from "@yarnpkg/fslib";
 import { RmdirOptions } from "@yarnpkg/fslib";
 import { FSPath, NativePath, PortablePath, npath, ppath, opendir } from "@yarnpkg/fslib";
 import { WatchOptions, WatchCallback, Watcher } from "@yarnpkg/fslib";
@@ -23,6 +12,18 @@ import fs from "fs";
 import { WatchManager } from "./WatchManager";
 import { dynamicRequireNoCache } from "./dynamicRequire";
 import { resolveNodeModulesPath, ResolvedPath } from "./resolveNodeModulesPath";
+
+import {
+  Dirent,
+  Filename,
+  MkdirOptions,
+  ExtractHintOptions,
+  WatchFileCallback,
+  WatchFileOptions,
+  StatWatcher,
+  OpendirOptions,
+  Dir,
+} from "@yarnpkg/fslib";
 
 export type NodeModulesFSOptions = {
   realFs?: typeof fs;

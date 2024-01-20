@@ -4,6 +4,7 @@ import type { PnpApi } from "@yarnpkg/pnp";
 import { Command, Option, UsageError } from "clipanion";
 
 import { dynamicRequire } from "../dynamicRequire";
+
 import {
   generateSdk,
   validateIntegrations,

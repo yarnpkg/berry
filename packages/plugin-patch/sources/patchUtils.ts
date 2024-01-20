@@ -1,3 +1,9 @@
+import { npath, PortablePath, xfs, ppath, NativePath, CwdFS } from "@yarnpkg/fslib";
+
+import { CACHE_VERSION } from "./constants";
+import { Hooks as PatchHooks } from "./index";
+import { parsePatchFile } from "./tools/parse";
+
 import {
   Cache,
   structUtils,
@@ -14,11 +20,6 @@ import {
   semverUtils,
   hashUtils,
 } from "@yarnpkg/core";
-import { npath, PortablePath, xfs, ppath, NativePath, CwdFS } from "@yarnpkg/fslib";
-
-import { CACHE_VERSION } from "./constants";
-import { Hooks as PatchHooks } from "./index";
-import { parsePatchFile } from "./tools/parse";
 
 export { applyPatchFile } from "./tools/apply";
 export { parsePatchFile };

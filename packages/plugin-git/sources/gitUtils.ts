@@ -1,3 +1,12 @@
+import { Filename, npath, PortablePath, ppath, xfs } from "@yarnpkg/fslib";
+import { UsageError } from "clipanion";
+import GitUrlParse from "git-url-parse";
+import capitalize from "lodash/capitalize";
+import querystring from "querystring";
+import semver from "semver";
+
+import { normalizeRepoUrl } from "./utils/normalizeRepoUrl";
+
 import {
   Configuration,
   Hooks,
@@ -12,14 +21,6 @@ import {
   MessageName,
   formatUtils,
 } from "@yarnpkg/core";
-import { Filename, npath, PortablePath, ppath, xfs } from "@yarnpkg/fslib";
-import { UsageError } from "clipanion";
-import GitUrlParse from "git-url-parse";
-import capitalize from "lodash/capitalize";
-import querystring from "querystring";
-import semver from "semver";
-
-import { normalizeRepoUrl } from "./utils/normalizeRepoUrl";
 
 export { normalizeRepoUrl };
 

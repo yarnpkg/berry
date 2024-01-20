@@ -1,3 +1,7 @@
+import { Filename, PortablePath, setupCopyIndex, ppath, xfs, DirentNoPath } from "@yarnpkg/fslib";
+import { jsInstallUtils } from "@yarnpkg/plugin-pnp";
+import { UsageError } from "clipanion";
+
 import {
   Descriptor,
   FetchResult,
@@ -18,9 +22,6 @@ import {
   structUtils,
   WindowsLinkType,
 } from "@yarnpkg/core";
-import { Filename, PortablePath, setupCopyIndex, ppath, xfs, DirentNoPath } from "@yarnpkg/fslib";
-import { jsInstallUtils } from "@yarnpkg/plugin-pnp";
-import { UsageError } from "clipanion";
 
 export type PnpmCustomData = {
   locatorByPath: Map<PortablePath, string>;

@@ -1,4 +1,9 @@
 import { BaseCommand } from "@yarnpkg/cli";
+import { Option, Command } from "clipanion";
+import * as t from "typanion";
+
+import { resolveTag } from "./set/version";
+
 import {
   Configuration,
   MessageName,
@@ -10,10 +15,6 @@ import {
   parseMessageName,
   stringifyMessageName,
 } from "@yarnpkg/core";
-import { Option, Command } from "clipanion";
-import * as t from "typanion";
-
-import { resolveTag } from "./set/version";
 
 function getCodeName(code: string): string {
   return MessageName[parseMessageName(code)];

@@ -1,4 +1,8 @@
 import { BaseCommand } from "@yarnpkg/cli";
+import { npath } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
+import { inspect } from "util";
+
 import {
   Configuration,
   MessageName,
@@ -7,9 +11,6 @@ import {
   reportOptionDeprecations,
   treeUtils,
 } from "@yarnpkg/core";
-import { npath } from "@yarnpkg/fslib";
-import { Command, Option, Usage } from "clipanion";
-import { inspect } from "util";
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {

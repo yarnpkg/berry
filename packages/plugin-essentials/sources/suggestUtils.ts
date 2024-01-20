@@ -1,3 +1,7 @@
+import { formatUtils, structUtils, semverUtils } from "@yarnpkg/core";
+import { PortablePath, ppath, xfs } from "@yarnpkg/fslib";
+import semver from "semver";
+
 import {
   Cache,
   DescriptorHash,
@@ -12,9 +16,6 @@ import {
   ResolveOptions,
   Configuration,
 } from "@yarnpkg/core";
-import { formatUtils, structUtils, semverUtils } from "@yarnpkg/core";
-import { PortablePath, ppath, xfs } from "@yarnpkg/fslib";
-import semver from "semver";
 
 const WORKSPACE_PROTOCOL = `workspace:`;
 

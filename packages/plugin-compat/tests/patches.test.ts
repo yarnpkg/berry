@@ -1,3 +1,9 @@
+import { PortablePath, xfs, ppath } from "@yarnpkg/fslib";
+import NpmPlugin from "@yarnpkg/plugin-npm";
+import PatchPlugin from "@yarnpkg/plugin-patch";
+
+import CompatPlugin from "../sources/index";
+
 import {
   Configuration,
   Descriptor,
@@ -9,11 +15,6 @@ import {
   Cache,
   LocatorHash,
 } from "@yarnpkg/core";
-import { PortablePath, xfs, ppath } from "@yarnpkg/fslib";
-import NpmPlugin from "@yarnpkg/plugin-npm";
-import PatchPlugin from "@yarnpkg/plugin-patch";
-
-import CompatPlugin from "../sources/index";
 
 function getConfiguration(p: PortablePath) {
   return Configuration.create(

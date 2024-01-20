@@ -1,3 +1,13 @@
+import { MessageName, ReportError } from "@yarnpkg/core";
+import { Filename, PortablePath, ppath, xfs } from "@yarnpkg/fslib";
+import { prompt } from "enquirer";
+import pick from "lodash/pick";
+import semver from "semver";
+
+import { Hooks } from "./index";
+import * as npmConfigUtils from "./npmConfigUtils";
+import { MapLike } from "./npmConfigUtils";
+
 import {
   Configuration,
   Ident,
@@ -12,15 +22,6 @@ import {
   miscUtils,
   Cache,
 } from "@yarnpkg/core";
-import { MessageName, ReportError } from "@yarnpkg/core";
-import { Filename, PortablePath, ppath, xfs } from "@yarnpkg/fslib";
-import { prompt } from "enquirer";
-import pick from "lodash/pick";
-import semver from "semver";
-
-import { Hooks } from "./index";
-import * as npmConfigUtils from "./npmConfigUtils";
-import { MapLike } from "./npmConfigUtils";
 
 export enum AuthType {
   NO_AUTH,

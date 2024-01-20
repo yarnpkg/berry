@@ -1,3 +1,10 @@
+import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { parseSyml, stringifySyml } from "@yarnpkg/parsers";
+import { gitUtils } from "@yarnpkg/plugin-git";
+import { UsageError } from "clipanion";
+import omit from "lodash/omit";
+import semver from "semver";
+
 import {
   AllDependencies,
   miscUtils,
@@ -11,12 +18,6 @@ import {
   MessageName,
   WorkspaceResolver,
 } from "@yarnpkg/core";
-import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
-import { parseSyml, stringifySyml } from "@yarnpkg/parsers";
-import { gitUtils } from "@yarnpkg/plugin-git";
-import { UsageError } from "clipanion";
-import omit from "lodash/omit";
-import semver from "semver";
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP =

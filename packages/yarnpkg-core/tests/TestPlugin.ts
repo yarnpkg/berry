@@ -1,3 +1,6 @@
+import { PortablePath, xfs } from "@yarnpkg/fslib";
+import { ZipFS } from "@yarnpkg/libzip";
+
 import {
   Descriptor,
   Fetcher,
@@ -11,8 +14,6 @@ import {
   Resolver,
   structUtils,
 } from "@yarnpkg/core";
-import { PortablePath, xfs } from "@yarnpkg/fslib";
-import { ZipFS } from "@yarnpkg/libzip";
 
 export class UnboundDescriptorResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {

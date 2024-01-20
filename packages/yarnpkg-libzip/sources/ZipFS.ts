@@ -1,24 +1,5 @@
 import { Dirent, DirentNoPath, ReaddirOptions } from "@yarnpkg/fslib";
-import {
-  WatchOptions,
-  WatchCallback,
-  Watcher,
-  Dir,
-  Stats,
-  BigIntStats,
-  StatSyncOptions,
-  StatOptions,
-} from "@yarnpkg/fslib";
 import { FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions } from "@yarnpkg/fslib";
-import {
-  CreateReadStreamOptions,
-  CreateWriteStreamOptions,
-  BasePortableFakeFS,
-  ExtractHintOptions,
-  WatchFileCallback,
-  WatchFileOptions,
-  StatWatcher,
-} from "@yarnpkg/fslib";
 import { NodeFS } from "@yarnpkg/fslib";
 import { opendir } from "@yarnpkg/fslib";
 import { watchFile, unwatchFile, unwatchAllFiles } from "@yarnpkg/fslib";
@@ -31,6 +12,26 @@ import { types } from "util";
 import zlib from "zlib";
 
 import { getInstance } from "./instance";
+
+import {
+  WatchOptions,
+  WatchCallback,
+  Watcher,
+  Dir,
+  Stats,
+  BigIntStats,
+  StatSyncOptions,
+  StatOptions,
+} from "@yarnpkg/fslib";
+import {
+  CreateReadStreamOptions,
+  CreateWriteStreamOptions,
+  BasePortableFakeFS,
+  ExtractHintOptions,
+  WatchFileCallback,
+  WatchFileOptions,
+  StatWatcher,
+} from "@yarnpkg/fslib";
 
 export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export const DEFAULT_COMPRESSION_LEVEL: ZipCompression = `mixed`;

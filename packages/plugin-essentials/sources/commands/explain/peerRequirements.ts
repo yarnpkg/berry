@@ -1,4 +1,8 @@
 import { BaseCommand } from "@yarnpkg/cli";
+import { Command, Option } from "clipanion";
+import { Writable } from "stream";
+import * as t from "typanion";
+
 import {
   Configuration,
   MessageName,
@@ -9,9 +13,6 @@ import {
   formatUtils,
   PeerWarningType,
 } from "@yarnpkg/core";
-import { Command, Option } from "clipanion";
-import { Writable } from "stream";
-import * as t from "typanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {

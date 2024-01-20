@@ -4,6 +4,21 @@ import { useLocation } from "@docusaurus/router";
 import { DocsSidebarProvider } from "@docusaurus/theme-common/internal";
 import { HtmlClassNameProvider } from "@docusaurus/theme-common";
 import Editor from "@monaco-editor/react";
+import { normalizeRepoUrl } from "@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl";
+import clsx from "clsx";
+import gitUrlParse from "git-url-parse";
+import Select, { MenuListProps } from "react-select";
+import { FixedSizeList } from "react-window";
+import React, { Suspense, useReducer } from "react";
+import semver from "semver";
+import { useLocalStorage } from "usehooks-ts";
+
+import { usePackageInfo, useReleaseFile, useReleaseInfo, useReleaseReadme, useResolvedVersion } from "../lib/npmTools";
+import { Check, checks } from "../lib/packageChecks";
+import Layout from "../theme/DocPage/Layout/index";
+
+import styles from "./package.module.css";
+
 import {
   AlertIcon,
   ArrowLeftIcon,
@@ -19,20 +34,6 @@ import {
   PlayIcon,
   TagIcon,
 } from "@primer/octicons-react";
-import { normalizeRepoUrl } from "@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl";
-import clsx from "clsx";
-import gitUrlParse from "git-url-parse";
-import Select, { MenuListProps } from "react-select";
-import { FixedSizeList } from "react-window";
-import React, { Suspense, useReducer } from "react";
-import semver from "semver";
-import { useLocalStorage } from "usehooks-ts";
-
-import { usePackageInfo, useReleaseFile, useReleaseInfo, useReleaseReadme, useResolvedVersion } from "../lib/npmTools";
-import { Check, checks } from "../lib/packageChecks";
-import Layout from "../theme/DocPage/Layout/index";
-
-import styles from "./package.module.css";
 
 const SidebarEntry = ({ icon: Icon, name, extra }: { icon: React.FunctionComponent; name: string; extra?: string }) => (
   <div className={styles.sidebarEntry}>

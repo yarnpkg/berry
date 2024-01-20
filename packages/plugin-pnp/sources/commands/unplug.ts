@@ -1,4 +1,10 @@
 import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { structUtils, semverUtils } from "@yarnpkg/core";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import micromatch from "micromatch";
+
+import * as pnpUtils from "../pnpUtils";
+
 import {
   Cache,
   Configuration,
@@ -11,11 +17,6 @@ import {
   Workspace,
   miscUtils,
 } from "@yarnpkg/core";
-import { structUtils, semverUtils } from "@yarnpkg/core";
-import { Command, Option, Usage, UsageError } from "clipanion";
-import micromatch from "micromatch";
-
-import * as pnpUtils from "../pnpUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {

@@ -1,4 +1,10 @@
 import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { xfs } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import mm from "micromatch";
+
+import { Hooks } from "..";
+
 import {
   Configuration,
   Project,
@@ -15,11 +21,6 @@ import {
   Manifest,
   treeUtils,
 } from "@yarnpkg/core";
-import { xfs } from "@yarnpkg/fslib";
-import { Command, Option, Usage, UsageError } from "clipanion";
-import mm from "micromatch";
-
-import { Hooks } from "..";
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {

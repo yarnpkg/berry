@@ -1,4 +1,12 @@
 import { BaseCommand } from "@yarnpkg/cli";
+import { Filename, PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
+import { tmpdir } from "os";
+
+import { buildAndSavePlugin, BuildAndSavePluginsSpec } from "../../plugin/import/sources";
+import { getAvailablePlugins } from "../../plugin/list";
+import { setVersion } from "../version";
+
 import {
   Configuration,
   MessageName,
@@ -10,13 +18,6 @@ import {
   hashUtils,
   Project,
 } from "@yarnpkg/core";
-import { Filename, PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
-import { Command, Option, Usage } from "clipanion";
-import { tmpdir } from "os";
-
-import { buildAndSavePlugin, BuildAndSavePluginsSpec } from "../../plugin/import/sources";
-import { getAvailablePlugins } from "../../plugin/list";
-import { setVersion } from "../version";
 
 const PR_REGEXP = /^[0-9]+$/;
 const IS_WIN32 = process.platform === `win32`;

@@ -1,5 +1,10 @@
 import fs, { BigIntStats, Stats } from "fs";
 
+import { Dirent, SymlinkType, StatSyncOptions, StatOptions } from "./FakeFS";
+import { BasePortableFakeFS, WriteFileOptions } from "./FakeFS";
+import { MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher } from "./FakeFS";
+import { FSPath, PortablePath, Filename, ppath, npath, NativePath } from "./path";
+
 import {
   CreateReadStreamOptions,
   CreateWriteStreamOptions,
@@ -11,10 +16,6 @@ import {
   ReaddirOptions,
   DirentNoPath,
 } from "./FakeFS";
-import { Dirent, SymlinkType, StatSyncOptions, StatOptions } from "./FakeFS";
-import { BasePortableFakeFS, WriteFileOptions } from "./FakeFS";
-import { MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher } from "./FakeFS";
-import { FSPath, PortablePath, Filename, ppath, npath, NativePath } from "./path";
 
 function direntToPortable(dirent: Dirent<NativePath>): Dirent<PortablePath> {
   // We don't need to return a copy, we can just reuse the object the real fs returned

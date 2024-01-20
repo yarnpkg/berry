@@ -1,4 +1,9 @@
 import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
+
+import * as packUtils from "../packUtils";
+
 import {
   Cache,
   Configuration,
@@ -10,10 +15,6 @@ import {
   structUtils,
   ThrowReport,
 } from "@yarnpkg/core";
-import { npath, ppath, xfs } from "@yarnpkg/fslib";
-import { Command, Option, Usage } from "clipanion";
-
-import * as packUtils from "../packUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {

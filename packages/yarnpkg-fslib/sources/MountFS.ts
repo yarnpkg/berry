@@ -1,5 +1,12 @@
 import { BigIntStats, constants, Stats } from "fs";
 
+import { FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions } from "./FakeFS";
+import { Dirent, SymlinkType } from "./FakeFS";
+import { NodeFS } from "./NodeFS";
+import { watchFile, unwatchFile, unwatchAllFiles } from "./algorithms/watchFile";
+import * as errors from "./errors";
+import { Filename, FSPath, npath, PortablePath } from "./path";
+
 import {
   WatchOptions,
   WatchCallback,
@@ -9,8 +16,6 @@ import {
   ReaddirOptions,
   DirentNoPath,
 } from "./FakeFS";
-import { FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions } from "./FakeFS";
-import { Dirent, SymlinkType } from "./FakeFS";
 import {
   CreateReadStreamOptions,
   CreateWriteStreamOptions,
@@ -20,10 +25,6 @@ import {
   WatchFileCallback,
   StatWatcher,
 } from "./FakeFS";
-import { NodeFS } from "./NodeFS";
-import { watchFile, unwatchFile, unwatchAllFiles } from "./algorithms/watchFile";
-import * as errors from "./errors";
-import { Filename, FSPath, npath, PortablePath } from "./path";
 
 // Only file descriptors prefixed by those values will be forwarded to the MountFS
 // instances. Note that the highest MOUNT_MAGIC bit MUST NOT be set, otherwise the

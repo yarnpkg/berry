@@ -1,3 +1,11 @@
+import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { execFileSync, type SpawnSyncReturns } from "child_process";
+import { isCI } from "ci-info";
+import { Cli, UsageError } from "clipanion";
+
+import { pluginCommands } from "./pluginCommands";
+import { getPluginConfiguration } from "./tools/getPluginConfiguration";
+
 import {
   Configuration,
   CommandContext,
@@ -7,13 +15,6 @@ import {
   miscUtils,
   YarnVersion,
 } from "@yarnpkg/core";
-import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
-import { execFileSync, type SpawnSyncReturns } from "child_process";
-import { isCI } from "ci-info";
-import { Cli, UsageError } from "clipanion";
-
-import { pluginCommands } from "./pluginCommands";
-import { getPluginConfiguration } from "./tools/getPluginConfiguration";
 
 export type YarnCli = ReturnType<typeof getBaseCli>;
 

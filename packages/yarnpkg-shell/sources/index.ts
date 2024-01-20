@@ -1,13 +1,4 @@
 import { PortablePath, npath, ppath, FakeFS, NodeFS } from "@yarnpkg/fslib";
-import {
-  Argument,
-  ArgumentSegment,
-  CommandChain,
-  CommandLine,
-  ShellLine,
-  parseShell,
-  stringifyCommandChain,
-} from "@yarnpkg/parsers";
 import { EnvSegment, ArithmeticExpression, ArithmeticPrimary } from "@yarnpkg/parsers";
 import chalk from "chalk";
 import { homedir } from "os";
@@ -19,6 +10,16 @@ import { ShellError } from "./errors";
 import * as globUtils from "./globUtils";
 import { createOutputStreamsWithPrefix, makeBuiltin, makeProcess } from "./pipe";
 import { Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe } from "./pipe";
+
+import {
+  Argument,
+  ArgumentSegment,
+  CommandChain,
+  CommandLine,
+  ShellLine,
+  parseShell,
+  stringifyCommandChain,
+} from "@yarnpkg/parsers";
 
 export { EntryCommand };
 export { ShellError };

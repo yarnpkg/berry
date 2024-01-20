@@ -1,3 +1,9 @@
+import { PortablePath } from "@yarnpkg/fslib";
+import get from "lodash/get";
+import set from "lodash/set";
+import toPath from "lodash/toPath";
+import unset from "lodash/unset";
+
 import {
   Configuration,
   formatUtils,
@@ -8,11 +14,6 @@ import {
   treeUtils,
   Workspace,
 } from "@yarnpkg/core";
-import { PortablePath } from "@yarnpkg/fslib";
-import get from "lodash/get";
-import set from "lodash/set";
-import toPath from "lodash/toPath";
-import unset from "lodash/unset";
 
 export type ProcessResult = {
   manifestUpdates: Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>;

@@ -1,3 +1,7 @@
+import semver from "semver";
+
+import * as npmAuditTypes from "./npmAuditTypes";
+
 import {
   Project,
   Workspace,
@@ -9,9 +13,6 @@ import {
   Locator,
   LocatorHash,
 } from "@yarnpkg/core";
-import semver from "semver";
-
-import * as npmAuditTypes from "./npmAuditTypes";
 
 export const allSeverities = [
   npmAuditTypes.Severity.Info,
