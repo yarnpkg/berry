@@ -25,6 +25,7 @@ This rule warns when imported dependencies are not listed in a project/workspace
 Node allows you to import any package without having a version specified in your package.json. This can lead to subtle and hard to solve bugs.
 
 For example:
+
 1. Node might find a globally installed package and the project works on your machine. While other your colleagues might be missing the globally installed package or (worse) have an incompatible version installed.
 
 2. Or Node might find a transitive dependency (dependency of a dependency) and use that. If you remove or upgrade that dependency and it affects the transitive dependency then it can trigger all sorts of bugs.
@@ -101,5 +102,5 @@ Visit [the dedicated section](https://yarnpkg.com/migration/guide#dont-use-bundl
 
 ## Further reading
 
-* [Yarn 2 docs](https://yarnpkg.com)
-* [Introduction to `plug-n-play`](https://yarnpkg.com/features/pnp)
+- [Yarn 2 docs](https://yarnpkg.com)
+- [Introduction to `plug-n-play`](https://yarnpkg.com/features/pnp)

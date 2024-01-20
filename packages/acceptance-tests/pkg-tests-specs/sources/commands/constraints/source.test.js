@@ -1,8 +1,8 @@
 const {
-  fs: {writeFile},
+  fs: { writeFile },
 } = require(`pkg-tests-core`);
 
-const {environments} = require(`./environments`);
+const { environments } = require(`./environments`);
 
 const constraints = {
   [`empty constraints`]: ``,
@@ -17,7 +17,7 @@ describe(`Commands`, () => {
       for (const [scriptDescription, script] of Object.entries(constraints)) {
         test(
           `test (${environmentDescription} / ${scriptDescription})`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({ path, run, source }) => {
             await environment(path);
             await writeFile(`${path}/constraints.pro`, script);
 
@@ -26,22 +26,22 @@ describe(`Commands`, () => {
             let stderr;
 
             try {
-              ({code, stdout, stderr} = await run(`constraints`, `source`));
+              ({ code, stdout, stderr } = await run(`constraints`, `source`));
             } catch (error) {
-              ({code, stdout, stderr} = error);
+              ({ code, stdout, stderr } = error);
             }
 
-            expect({code, stdout, stderr}).toMatchSnapshot();
+            expect({ code, stdout, stderr }).toMatchSnapshot();
 
             try {
-              ({code, stdout, stderr} = await run(`constraints`, `source`, `--verbose`));
+              ({ code, stdout, stderr } = await run(`constraints`, `source`, `--verbose`));
             } catch (error) {
-              ({code, stdout, stderr} = error);
+              ({ code, stdout, stderr } = error);
             }
 
             stdout = stdout.replace(new RegExp(path, `g`), `WORKSPACE_ROOT`);
 
-            expect({code, stdout, stderr}).toMatchSnapshot();
+            expect({ code, stdout, stderr }).toMatchSnapshot();
           }),
         );
       }

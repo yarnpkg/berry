@@ -171,6 +171,7 @@ With Yarn PnP, most packages are kept within their zip archives rather than bein
 In some cases, however, keeping the package read-only may be difficult (such as when a package lists postinstall scripts - the build steps will often need to generate build artifacts, making read-only folders impractical). For those situations, Yarn can unpack specific packages and keep them into their own individual folders. Such packages are referred to as "unplugged".
 
 Packages are unplugged in a few scenarios:
+
 - explicitly by setting the `dependenciesMeta[].unplugged` field to `true`
 - explicitly when the package set its `preferUnplugged` field to `true`
 - implicitly when the package lists postinstall scripts
@@ -178,7 +179,7 @@ Packages are unplugged in a few scenarios:
 
 ### Virtual Package
 
-Because [peer-dependent packages](#peer-dependent-package) effectively define an *horizon* of possible dependency sets rather than a single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
+Because [peer-dependent packages](#peer-dependent-package) effectively define an _horizon_ of possible dependency sets rather than a single static set of dependencies, a peer-dependent package may have multiple dependency sets. When this happens, the package will need to be instantiated at least once for each such set.
 
 Since in Node-land the JS modules are instantiated based on their path (a file is never instantiated twice for any given path), and since PnP makes it so that packages are installed only once in any given project, the only way to instantiate those packages multiple times is to give them multiple paths while still referencing to the same on-disk location. That's where virtual packages come handy.
 

@@ -1,19 +1,19 @@
-import {npath}                                                              from '@yarnpkg/fslib';
-import chalk                                                                from 'chalk';
-import CI                                                                   from 'ci-info';
-import {ColorFormat, formatMarkdownish}                                     from 'clipanion';
-import micromatch                                                           from 'micromatch';
-import stripAnsi                                                            from 'strip-ansi';
-import {inspect}                                                            from 'util';
+import { npath } from "@yarnpkg/fslib";
+import chalk from "chalk";
+import CI from "ci-info";
+import { ColorFormat, formatMarkdownish } from "clipanion";
+import micromatch from "micromatch";
+import stripAnsi from "strip-ansi";
+import { inspect } from "util";
 
-import {Configuration, ConfigurationValueMap}                               from './Configuration';
-import {MessageName, stringifyMessageName}                                  from './MessageName';
-import {Report}                                                             from './Report';
-import * as miscUtils                                                       from './miscUtils';
-import * as structUtils                                                     from './structUtils';
-import {Descriptor, Locator, Ident, PackageExtension, PackageExtensionType} from './types';
+import { Configuration, ConfigurationValueMap } from "./Configuration";
+import { MessageName, stringifyMessageName } from "./MessageName";
+import { Report } from "./Report";
+import * as miscUtils from "./miscUtils";
+import * as structUtils from "./structUtils";
+import { Descriptor, Locator, Ident, PackageExtension, PackageExtensionType } from "./types";
 
-export {stripAnsi};
+export { stripAnsi };
 
 // We have to workaround a TS bug:
 // https://github.com/microsoft/TypeScript/issues/35329
@@ -64,10 +64,10 @@ export enum Style {
 }
 
 const chalkOptions = CI.GITHUB_ACTIONS
-  ? {level: 2}
+  ? { level: 2 }
   : chalk.supportsColor
-    ? {level: chalk.supportsColor.level}
-    : {level: 0};
+    ? { level: chalk.supportsColor.level }
+    : { level: 0 };
 
 export const supportsColor = chalkOptions.level !== 0;
 export const supportsHyperlinks = supportsColor && !CI.GITHUB_ACTIONS && !CI.CIRCLE && !CI.GITLAB;
@@ -113,11 +113,10 @@ function sizeToText(size: number) {
   const thresholds = [`KiB`, `MiB`, `GiB`, `TiB`];
 
   let power = thresholds.length;
-  while (power > 1 && size < 1024 ** power)
-    power -= 1;
+  while (power > 1 && size < 1024 ** power) power -= 1;
 
   const factor = 1024 ** power;
-  const value = Math.floor(size * 100 / factor) / 100;
+  const value = Math.floor((size * 100) / factor) / 100;
 
   return `${value} ${thresholds[power - 1]}`;
 }
@@ -138,7 +137,12 @@ const transforms = {
 
   [Type.INSPECT]: validateTransform({
     pretty: (configuration: Configuration, value: any) => {
-      return inspect(value, {depth: Infinity, colors: configuration.get(`enableColors`), compact: true, breakLength: Infinity});
+      return inspect(value, {
+        depth: Infinity,
+        colors: configuration.get(`enableColors`),
+        compact: true,
+        breakLength: Infinity,
+      });
     },
     json: (value: any) => {
       return value;
@@ -182,24 +186,25 @@ const transforms = {
   }),
 
   [Type.RESOLUTION]: validateTransform({
-    pretty: (configuration: Configuration, {descriptor, locator}: {descriptor: Descriptor, locator: Locator | null}) => {
+    pretty: (
+      configuration: Configuration,
+      { descriptor, locator }: { descriptor: Descriptor; locator: Locator | null },
+    ) => {
       return structUtils.prettyResolution(configuration, descriptor, locator);
     },
-    json: ({descriptor, locator}: {descriptor: Descriptor, locator: Locator | null}) => {
+    json: ({ descriptor, locator }: { descriptor: Descriptor; locator: Locator | null }) => {
       return {
         descriptor: structUtils.stringifyDescriptor(descriptor),
-        locator: locator !== null
-          ? structUtils.stringifyLocator(locator)
-          : null,
+        locator: locator !== null ? structUtils.stringifyLocator(locator) : null,
       };
     },
   }),
 
   [Type.DEPENDENT]: validateTransform({
-    pretty: (configuration: Configuration, {locator, descriptor}: {locator: Locator, descriptor: Descriptor}) => {
+    pretty: (configuration: Configuration, { locator, descriptor }: { locator: Locator; descriptor: Descriptor }) => {
       return structUtils.prettyDependent(configuration, locator, descriptor);
     },
-    json: ({locator, descriptor}: {locator: Locator, descriptor: Descriptor}) => {
+    json: ({ locator, descriptor }: { locator: Locator; descriptor: Descriptor }) => {
       return {
         locator: structUtils.stringifyLocator(locator),
         descriptor: structUtils.stringifyDescriptor(descriptor),
@@ -217,7 +222,9 @@ const transforms = {
         case PackageExtensionType.PeerDependencyMeta:
           return `${structUtils.prettyIdent(configuration, packageExtension.parentDescriptor)} ➤ ${applyColor(configuration, `peerDependenciesMeta`, Type.CODE)} ➤ ${structUtils.prettyIdent(configuration, structUtils.parseIdent(packageExtension.selector))} ➤ ${applyColor(configuration, packageExtension.key, Type.CODE)}`;
         default:
-          throw new Error(`Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`);
+          throw new Error(
+            `Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`,
+          );
       }
     },
     json: (packageExtension: PackageExtension) => {
@@ -229,7 +236,9 @@ const transforms = {
         case PackageExtensionType.PeerDependencyMeta:
           return `${structUtils.stringifyIdent(packageExtension.parentDescriptor)} >> ${packageExtension.selector} / ${packageExtension.key}`;
         default:
-          throw new Error(`Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`);
+          throw new Error(
+            `Assertion failed: Unsupported package extension type: ${(packageExtension as PackageExtension).type}`,
+          );
       }
     },
   }),
@@ -239,7 +248,11 @@ const transforms = {
       // Asserts that the setting is valid
       configuration.get(settingName);
 
-      return applyHyperlink(configuration, applyColor(configuration, settingName, Type.CODE), `https://yarnpkg.com/configuration/yarnrc#${settingName}`);
+      return applyHyperlink(
+        configuration,
+        applyColor(configuration, settingName, Type.CODE),
+        `https://yarnpkg.com/configuration/yarnrc#${settingName}`,
+      );
     },
     json: (settingName: string) => {
       return settingName;
@@ -297,10 +310,13 @@ const transforms = {
   }),
 
   [Type.MARKDOWN]: validateTransform({
-    pretty: (configuration: Configuration, {text, format, paragraphs}: {text: string, format: ColorFormat, paragraphs: boolean}) => {
-      return formatMarkdownish(text, {format, paragraphs});
+    pretty: (
+      configuration: Configuration,
+      { text, format, paragraphs }: { text: string; format: ColorFormat; paragraphs: boolean },
+    ) => {
+      return formatMarkdownish(text, { format, paragraphs });
     },
-    json: ({text}: {text: string, format: ColorFormat, paragraphs: boolean}) => {
+    json: ({ text }: { text: string; format: ColorFormat; paragraphs: boolean }) => {
       return text;
     },
   }),
@@ -327,12 +343,9 @@ const transforms = {
 
 type AllTransforms = typeof transforms;
 
-export type Source<T> = T extends keyof AllTransforms
-  ? Parameters<AllTransforms[T]['json']>[0] | null
-  : string | null;
+export type Source<T> = T extends keyof AllTransforms ? Parameters<AllTransforms[T]["json"]>[0] | null : string | null;
 
-export type Tuple<T extends Type = Type> =
-  readonly [Source<T>, T];
+export type Tuple<T extends Type = Type> = readonly [Source<T>, T];
 
 export type Field = {
   label: string;
@@ -344,37 +357,29 @@ export function tuple<T extends Type>(formatType: T, value: Source<T>): Tuple<T>
 }
 
 export function applyStyle(configuration: Configuration, text: string, flags: Style): string {
-  if (!configuration.get(`enableColors`))
-    return text;
+  if (!configuration.get(`enableColors`)) return text;
 
-  if (flags & Style.BOLD)
-    text = chalk.bold(text);
+  if (flags & Style.BOLD) text = chalk.bold(text);
 
   return text;
 }
 
 export function applyColor(configuration: Configuration, value: string, formatType: Type | string): string {
-  if (!configuration.get(`enableColors`))
-    return value;
+  if (!configuration.get(`enableColors`)) return value;
 
   const colorSpec = colors.get(formatType as Type);
-  if (colorSpec === null)
-    return value;
+  if (colorSpec === null) return value;
 
-  const color = typeof colorSpec === `undefined`
-    ? formatType
-    : chalkOptions.level >= 3
-      ? colorSpec[0]
-      : colorSpec[1];
+  const color = typeof colorSpec === `undefined` ? formatType : chalkOptions.level >= 3 ? colorSpec[0] : colorSpec[1];
 
-  const fn = typeof color === `number`
-    ? chalkInstance.ansi256(color)
-    : color.startsWith(`#`)
-      ? chalkInstance.hex(color)
-      : (chalkInstance as any)[color];
+  const fn =
+    typeof color === `number`
+      ? chalkInstance.ansi256(color)
+      : color.startsWith(`#`)
+        ? chalkInstance.hex(color)
+        : (chalkInstance as any)[color];
 
-  if (typeof fn !== `function`)
-    throw new Error(`Invalid format type ${color}`);
+  if (typeof fn !== `function`) throw new Error(`Invalid format type ${color}`);
 
   return fn(value);
 }
@@ -383,13 +388,11 @@ const isKonsole = !!process.env.KONSOLE_VERSION;
 
 export function applyHyperlink(configuration: Configuration, text: string, href: string) {
   // Only print hyperlinks if allowed per configuration
-  if (!configuration.get(`enableHyperlinks`))
-    return text;
+  if (!configuration.get(`enableHyperlinks`)) return text;
 
   // We use ESC as ST for Konsole because it doesn't support
   // the non-standard BEL character for hyperlinks
-  if (isKonsole)
-    return `\u001b]8;;${href}\u001b\\${text}\u001b]8;;\u001b\\`;
+  if (isKonsole) return `\u001b]8;;${href}\u001b\\${text}\u001b]8;;\u001b\\`;
 
   // We use BELL as ST because it seems that iTerm doesn't properly support
   // the \x1b\\ sequence described in the reference document
@@ -398,12 +401,14 @@ export function applyHyperlink(configuration: Configuration, text: string, href:
 }
 
 export function pretty<T extends Type>(configuration: Configuration, value: Source<T>, formatType: T | string): string {
-  if (value === null)
-    return applyColor(configuration, `null`, Type.NULL);
+  if (value === null) return applyColor(configuration, `null`, Type.NULL);
 
   if (Object.hasOwn(transforms, formatType)) {
     const transform = transforms[formatType as keyof typeof transforms];
-    const typedTransform = transform as Extract<typeof transform, {pretty: (configuration: Configuration, val: Source<T>) => any}>;
+    const typedTransform = transform as Extract<
+      typeof transform,
+      { pretty: (configuration: Configuration, val: Source<T>) => any }
+    >;
     return typedTransform.pretty(configuration, value);
   }
 
@@ -413,13 +418,17 @@ export function pretty<T extends Type>(configuration: Configuration, value: Sour
   return applyColor(configuration, value, formatType);
 }
 
-export function prettyList<T extends Type>(configuration: Configuration, values: Iterable<Source<T>>, formatType: T | string, {separator = `, `}: {separator?: string} = {}): string {
-  return [...values].map(value => pretty(configuration, value, formatType)).join(separator);
+export function prettyList<T extends Type>(
+  configuration: Configuration,
+  values: Iterable<Source<T>>,
+  formatType: T | string,
+  { separator = `, ` }: { separator?: string } = {},
+): string {
+  return [...values].map((value) => pretty(configuration, value, formatType)).join(separator);
 }
 
 export function json<T extends Type>(value: Source<T>, formatType: T | string): any {
-  if (value === null)
-    return null;
+  if (value === null) return null;
 
   if (Object.hasOwn(transforms, formatType)) {
     miscUtils.overrideType<keyof AllTransforms>(formatType);
@@ -432,10 +441,12 @@ export function json<T extends Type>(value: Source<T>, formatType: T | string): 
   return value;
 }
 
-export function jsonOrPretty<T extends Type>(outputJson: boolean, configuration: Configuration, [value, formatType]: Tuple<T>) {
-  return outputJson
-    ? json(value, formatType)
-    : pretty(configuration, value, formatType);
+export function jsonOrPretty<T extends Type>(
+  outputJson: boolean,
+  configuration: Configuration,
+  [value, formatType]: Tuple<T>,
+) {
+  return outputJson ? json(value, formatType) : pretty(configuration, value, formatType);
 }
 
 export function mark(configuration: Configuration) {
@@ -446,11 +457,15 @@ export function mark(configuration: Configuration) {
   };
 }
 
-export function prettyField(configuration: Configuration, {label, value: [value, formatType]}: Field) {
+export function prettyField(configuration: Configuration, { label, value: [value, formatType] }: Field) {
   return `${pretty(configuration, label, Type.CODE)}: ${pretty(configuration, value, formatType)}`;
 }
 
-export function prettyTruncatedLocatorList(configuration: Configuration, locators: Array<Locator>, recommendedLength: number) {
+export function prettyTruncatedLocatorList(
+  configuration: Configuration,
+  locators: Array<Locator>,
+  recommendedLength: number,
+) {
   const named: Array<[string, number]> = [];
   const locatorsCopy = [...locators];
 
@@ -461,8 +476,7 @@ export function prettyTruncatedLocatorList(configuration: Configuration, locator
     const asString = `${structUtils.prettyLocator(configuration, locator)}, `;
     const asLength = structUtils.prettyLocatorNoColors(locator).length + 2;
 
-    if (named.length > 0 && remainingLength < asLength)
-      break;
+    if (named.length > 0 && remainingLength < asLength) break;
 
     named.push([asString, asLength]);
     remainingLength -= asLength;
@@ -471,9 +485,13 @@ export function prettyTruncatedLocatorList(configuration: Configuration, locator
   }
 
   if (locatorsCopy.length === 0)
-    return named.map(([str]) => str).join(``)
-      // Don't forget the trailing ", "
-      .slice(0, -2);
+    return (
+      named
+        .map(([str]) => str)
+        .join(``)
+        // Don't forget the trailing ", "
+        .slice(0, -2)
+    );
 
   const mark = `X`.repeat(locatorsCopy.length.toString().length);
   const suffix = `and ${mark} more.`;
@@ -503,7 +521,7 @@ export enum LogLevel {
  * Add support support for the `logFilters` setting to the specified Report
  * instance.
  */
-export function addLogFilterSupport(report: Report, {configuration}: {configuration: Configuration}) {
+export function addLogFilterSupport(report: Report, { configuration }: { configuration: Configuration }) {
   const logFilters = configuration.get(`logFilters`);
 
   const logFiltersByCode = new Map<string, LogLevel | null>();
@@ -512,20 +530,17 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
   for (const filter of logFilters) {
     const level = filter.get(`level`);
-    if (typeof level === `undefined`)
-      continue;
+    if (typeof level === `undefined`) continue;
 
     const code = filter.get(`code`);
-    if (typeof code !== `undefined`)
-      logFiltersByCode.set(code, level);
+    if (typeof code !== `undefined`) logFiltersByCode.set(code, level);
 
     const text = filter.get(`text`);
-    if (typeof text !== `undefined`)
-      logFiltersByText.set(text, level);
+    if (typeof text !== `undefined`) logFiltersByText.set(text, level);
 
     const pattern = filter.get(`pattern`);
     if (typeof pattern !== `undefined`) {
-      logFiltersByPatternMatcher.push([micromatch.matcher(pattern, {contains: true}), level]);
+      logFiltersByPatternMatcher.push([micromatch.matcher(pattern, { contains: true }), level]);
     }
   }
 
@@ -533,13 +548,10 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
   logFiltersByPatternMatcher.reverse();
 
   const findLogLevel = (name: MessageName | null, text: string, defaultLevel: LogLevel) => {
-    if (name === null || name === MessageName.UNNAMED)
-      return defaultLevel;
+    if (name === null || name === MessageName.UNNAMED) return defaultLevel;
 
     // Avoid processing the string unless we know we'll actually need it
-    const strippedText = logFiltersByText.size > 0 || logFiltersByPatternMatcher.length > 0
-      ? stripAnsi(text)
-      : text;
+    const strippedText = logFiltersByText.size > 0 || logFiltersByPatternMatcher.length > 0 ? stripAnsi(text) : text;
 
     if (logFiltersByText.size > 0) {
       const level = logFiltersByText.get(strippedText);
@@ -573,17 +585,23 @@ export function addLogFilterSupport(report: Report, {configuration}: {configurat
 
   const routeMessage = function (report: Report, name: MessageName | null, text: string, level: LogLevel) {
     switch (findLogLevel(name, text, level)) {
-      case LogLevel.Info: {
-        reportInfo.call(report, name, text);
-      } break;
+      case LogLevel.Info:
+        {
+          reportInfo.call(report, name, text);
+        }
+        break;
 
-      case LogLevel.Warning: {
-        reportWarning.call(report, name ?? MessageName.UNNAMED, text);
-      } break;
+      case LogLevel.Warning:
+        {
+          reportWarning.call(report, name ?? MessageName.UNNAMED, text);
+        }
+        break;
 
-      case LogLevel.Error: {
-        reportError.call(report, name ?? MessageName.UNNAMED, text);
-      } break;
+      case LogLevel.Error:
+        {
+          reportError.call(report, name ?? MessageName.UNNAMED, text);
+        }
+        break;
     }
   };
 

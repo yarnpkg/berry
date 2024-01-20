@@ -1,17 +1,16 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report} from '@yarnpkg/core';
-import {Locator}                                                                      from '@yarnpkg/core';
-import {miscUtils, structUtils}                                                       from '@yarnpkg/core';
-import {ppath, xfs, CwdFS, PortablePath}                                              from '@yarnpkg/fslib';
-import {ZipFS}                                                                        from '@yarnpkg/libzip';
+import { Fetcher, FetchOptions, MinimalFetchOptions, ReportError, MessageName, Report } from "@yarnpkg/core";
+import { Locator } from "@yarnpkg/core";
+import { miscUtils, structUtils } from "@yarnpkg/core";
+import { ppath, xfs, CwdFS, PortablePath } from "@yarnpkg/fslib";
+import { ZipFS } from "@yarnpkg/libzip";
 
-import * as patchUtils                                                                from './patchUtils';
-import {UnmatchedHunkError}                                                           from './tools/UnmatchedHunkError';
-import {reportHunk}                                                                   from './tools/format';
+import * as patchUtils from "./patchUtils";
+import { UnmatchedHunkError } from "./tools/UnmatchedHunkError";
+import { reportHunk } from "./tools/format";
 
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!patchUtils.isPatchLocator(locator))
-      return false;
+    if (!patchUtils.isPatchLocator(locator)) return false;
 
     return true;
   }
@@ -25,7 +24,11 @@ export class PatchFetcher implements Fetcher {
 
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
-      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`),
+      onMiss: () =>
+        opts.report.reportCacheMiss(
+          locator,
+          `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the disk`,
+        ),
       loader: () => this.patchPackage(locator, opts),
       ...opts.cacheOptions,
     });
@@ -40,7 +43,7 @@ export class PatchFetcher implements Fetcher {
   }
 
   private async patchPackage(locator: Locator, opts: FetchOptions) {
-    const {parentLocator, sourceLocator, sourceVersion, patchPaths} = patchUtils.parseLocator(locator);
+    const { parentLocator, sourceLocator, sourceVersion, patchPaths } = patchUtils.parseLocator(locator);
     const patchFiles = await patchUtils.loadPatchFiles(parentLocator, patchPaths, opts);
 
     const tmpDir = await xfs.mktempPromise();
@@ -56,14 +59,16 @@ export class PatchFetcher implements Fetcher {
     });
 
     await miscUtils.releaseAfterUseAsync(async () => {
-      await initialCopy.copyPromise(prefixPath, sourceFetch.prefixPath, {baseFs: sourceFetch.packageFs, stableSort: true});
+      await initialCopy.copyPromise(prefixPath, sourceFetch.prefixPath, {
+        baseFs: sourceFetch.packageFs,
+        stableSort: true,
+      });
     }, sourceFetch.releaseFs);
 
     initialCopy.saveAndClose();
 
-    for (const {source, optional} of patchFiles) {
-      if (source === null)
-        continue;
+    for (const { source, optional } of patchFiles) {
+      if (source === null) continue;
 
       // Then for each patchfile, we open this copy anew, and try to apply the
       // changeset. We need to open it for each patchfile (rather than only a
@@ -83,18 +88,14 @@ export class PatchFetcher implements Fetcher {
           version: sourceVersion,
         });
       } catch (err) {
-        if (!(err instanceof UnmatchedHunkError))
-          throw err;
+        if (!(err instanceof UnmatchedHunkError)) throw err;
 
         const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
-        const suggestion = !enableInlineHunks && !optional
-          ? ` (set enableInlineHunks for details)`
-          : ``;
+        const suggestion = !enableInlineHunks && !optional ? ` (set enableInlineHunks for details)` : ``;
 
         const message = `${structUtils.prettyLocator(opts.project.configuration, locator)}: ${err.message}${suggestion}`;
         const reportExtra = (report: Report) => {
-          if (!enableInlineHunks)
-            return;
+          if (!enableInlineHunks) return;
 
           reportHunk(err.hunk, {
             configuration: opts.project.configuration,
@@ -107,7 +108,7 @@ export class PatchFetcher implements Fetcher {
         patchedPackage.discardAndClose();
 
         if (optional) {
-          opts.report.reportWarningOnce(MessageName.PATCH_HUNK_FAILED, message, {reportExtra});
+          opts.report.reportWarningOnce(MessageName.PATCH_HUNK_FAILED, message, { reportExtra });
           continue;
         } else {
           throw new ReportError(MessageName.PATCH_HUNK_FAILED, message, reportExtra);

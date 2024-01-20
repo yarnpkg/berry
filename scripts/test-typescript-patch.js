@@ -1,11 +1,8 @@
-const {createRequire} = require(`module`);
+const { createRequire } = require(`module`);
 const path = require(`path`);
 const ts = require(`typescript`);
 
-const tsconfigFile = ts.readJsonConfigFile(
-  require.resolve(`@yarnpkg/monorepo/package.json`),
-  ts.sys.readFile,
-);
+const tsconfigFile = ts.readJsonConfigFile(require.resolve(`@yarnpkg/monorepo/package.json`), ts.sys.readFile);
 
 const compilerOptions = ts.parseJsonSourceFileConfigFileContent(
   tsconfigFile,

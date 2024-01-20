@@ -1,13 +1,11 @@
-import {Plugin}     from '@yarnpkg/core';
+import { Plugin } from "@yarnpkg/core";
 
-import {PnpmLinker} from './PnpmLinker';
+import { PnpmLinker } from "./PnpmLinker";
 
-export {PnpmLinker};
+export { PnpmLinker };
 
 const plugin: Plugin = {
-  linkers: [
-    PnpmLinker,
-  ],
+  linkers: [PnpmLinker],
 };
 
 // eslint-disable-next-line arca/no-default-export

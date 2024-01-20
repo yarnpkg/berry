@@ -1,9 +1,9 @@
-import {FakeFS, PortablePath} from '@yarnpkg/fslib';
+import { FakeFS, PortablePath } from "@yarnpkg/fslib";
 
-import {Cache, CacheOptions}  from './Cache';
-import {Project}              from './Project';
-import {Report}               from './Report';
-import {LocatorHash, Locator} from './types';
+import { Cache, CacheOptions } from "./Cache";
+import { Project } from "./Project";
+import { Report } from "./Report";
+import { LocatorHash, Locator } from "./types";
 
 export type MinimalFetchOptions = {
   project: Project;

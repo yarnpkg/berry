@@ -35,6 +35,7 @@ All packages are uniquely referenced by **locators**. A locator is a combination
 ### Portability
 
 For portability reasons, all paths inside of the manifests:
+
 - must use the unix path format (`/` as separators).
 - must be relative to the manifest folder (so they are the same regardless of the location of the project on disk).
 
@@ -101,7 +102,7 @@ You may notice that various places use arrays of tuples in place of maps. This i
 :::
 
 import pnpSchema from '@yarnpkg/docusaurus/static/configuration/pnp.json';
-import theme     from 'prism-react-renderer/themes/vsDark';
+import theme from 'prism-react-renderer/themes/vsDark';
 import {JsonDoc} from 'react-json-doc';
 
 <JsonDoc theme={theme} extraTheme={{
@@ -137,19 +138,19 @@ PNP_RESOLVE(specifier, parentURL)
 
 2. If `specifier` is a Node.js builtin, then
 
-    1. Set `resolved` to `specifier` itself and return it
+   1. Set `resolved` to `specifier` itself and return it
 
 3. Otherwise, if `specifier` is either an absolute path or a path prefixed with "./" or "../", then
 
-    1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
+   1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
 
 4. Otherwise,
 
-    1. Note: `specifier` is now a bare identifier
+   1. Note: `specifier` is now a bare identifier
 
-    2. Let `unqualified` be [`RESOLVE_TO_UNQUALIFIED`](#resolve_to_unqualified)`(specifier, parentURL)`
+   2. Let `unqualified` be [`RESOLVE_TO_UNQUALIFIED`](#resolve_to_unqualified)`(specifier, parentURL)`
 
-    3. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(unqualified, parentURL)`
+   3. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(unqualified, parentURL)`
 
 ### RESOLVE_TO_UNQUALIFIED
 
@@ -165,13 +166,13 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
 4. If `manifest` is null, then
 
-    1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
+   1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
 
 5. Let `parentLocator` be [`FIND_LOCATOR`](#find_locator)`(manifest, parentURL)`
 
 6. If `parentLocator` is null, then
 
-    1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
+   1. Set `resolved` to [`NM_RESOLVE`](#nm_resolve)`(specifier, parentURL)` and return it
 
 7. Let `parentPkg` be [`GET_PACKAGE`](#get_package)`(manifest, parentLocator)`
 
@@ -179,15 +180,15 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
 9. If `referenceOrAlias` is **null** or **undefined**, then
 
-    1. If `manifest.enableTopLevelFallback` is **true**, then
+   1. If `manifest.enableTopLevelFallback` is **true**, then
 
-        1. If `parentLocator` **isn't** in `manifest.fallbackExclusionList`, then
+      1. If `parentLocator` **isn't** in `manifest.fallbackExclusionList`, then
 
-            1. Let `fallback` be [`RESOLVE_VIA_FALLBACK`](#resolve_via_fallback)`(manifest, ident)`
+         1. Let `fallback` be [`RESOLVE_VIA_FALLBACK`](#resolve_via_fallback)`(manifest, ident)`
 
-            2. If `fallback` is neither **null** nor **undefined**
+         2. If `fallback` is neither **null** nor **undefined**
 
-                1. Set `referenceOrAlias` to `fallback`
+            1. Set `referenceOrAlias` to `fallback`
 
 10. If `referenceOrAlias` is still **undefined**, then
 
@@ -227,7 +228,7 @@ GET_PACKAGE(manifest, locator)
 
 3. Return `pkg`
 
-    1. Note: `pkg` cannot be **undefined** here; all packages referenced in any of the Plug'n'Play data tables [**MUST**](#must) have a corresponding entry inside `packageRegistryData`.
+   1. Note: `pkg` cannot be **undefined** here; all packages referenced in any of the Plug'n'Play data tables [**MUST**](#must) have a corresponding entry inside `packageRegistryData`.
 
 ### FIND_LOCATOR
 
@@ -243,29 +244,29 @@ Note: The algorithm described here is quite inefficient. You should make sure to
 
 3. Let `relativeUrl` be the relative path between `manifest` and `moduleUrl`
 
-    1. Note: The relative path must not start with `./`; trim it if needed
+   1. Note: The relative path must not start with `./`; trim it if needed
 
 4. If `relativeUrl` matches `manifest.ignorePatternData`, then
 
-    1. Return **null**
+   1. Return **null**
 
 5. Let `relativeUrlWithDot` be `relativeUrl` prefixed with `./` or `../` as necessary
 
 6. For each `referenceMap` value in `manifest.packageRegistryData`
 
-    1. For each `registryPkg` value in `referenceMap`
+   1. For each `registryPkg` value in `referenceMap`
 
-        1. If `registryPkg.discardFromLookup` **isn't true**, then
+      1. If `registryPkg.discardFromLookup` **isn't true**, then
 
-            1. If `registryPkg.packageLocation.length` is greater than `bestLength`, then
+         1. If `registryPkg.packageLocation.length` is greater than `bestLength`, then
 
-                1. If `relativeUrl` starts with `registryPkg.packageLocation`, then
+            1. If `relativeUrl` starts with `registryPkg.packageLocation`, then
 
-                    1. Set `bestLength` to `registryPkg.packageLocation.length`
+               1. Set `bestLength` to `registryPkg.packageLocation.length`
 
-                    2. Set `bestLocator` to the current `registryPkg` locator
+               2. Set `bestLocator` to the current `registryPkg` locator
 
-6. Return `bestLocator`
+7. Return `bestLocator`
 
 ### RESOLVE_VIA_FALLBACK
 
@@ -279,13 +280,13 @@ RESOLVE_VIA_FALLBACK(manifest, ident)
 
 3. If `referenceOrAlias` is defined, then
 
-    1. Return it immediately
+   1. Return it immediately
 
 4. Otherwise,
 
-    1. Let `referenceOrAlias` be the entry from `manifest.fallbackPool` referenced by `ident`
+   1. Let `referenceOrAlias` be the entry from `manifest.fallbackPool` referenced by `ident`
 
-    2. Return it immediately, whether it's defined or not
+   2. Return it immediately, whether it's defined or not
 
 ### FIND_PNP_MANIFEST
 
@@ -317,21 +318,21 @@ FIND_CLOSEST_PNP_MANIFEST(url)
 
 4. If `pnpPath` exists on the filesystem, then
 
-    1. Let `pnpDataPath` be `directoryPath` concatenated with `/.pnp.data.json`
+   1. Let `pnpDataPath` be `directoryPath` concatenated with `/.pnp.data.json`
 
-    2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))`
+   2. Set `manifest` to `JSON.parse(readFile(pnpDataPath))`
 
-    3. Set `manifest.dirPath` to `directoryPath`
+   3. Set `manifest.dirPath` to `directoryPath`
 
-    4. Return `manifest`
+   4. Return `manifest`
 
 5. Otherwise, if `directoryPath` is `/`, then
 
-    1. Return **null**
+   1. Return **null**
 
 6. Otherwise,
 
-    1. Return [`FIND_PNP_MANIFEST`](#find_pnp_manifest)`(directoryPath)`
+   1. Return [`FIND_PNP_MANIFEST`](#find_pnp_manifest)`(directoryPath)`
 
 ### PARSE_BARE_IDENTIFIER
 
@@ -341,17 +342,17 @@ PARSE_BARE_IDENTIFIER(specifier)
 
 1. If `specifier` starts with "@", then
 
-    1. If `specifier` doesn't contain a "/" separator, then
+   1. If `specifier` doesn't contain a "/" separator, then
 
-        1. Throw an error
+      1. Throw an error
 
-    2. Otherwise,
+   2. Otherwise,
 
-        1. Set `ident` to the substring of `specifier` until the second "/" separator or the end of string, whatever happens first
+      1. Set `ident` to the substring of `specifier` until the second "/" separator or the end of string, whatever happens first
 
 2. Otherwise,
 
-    1. Set `ident` to the substring of `specifier` until the first "/" separator or the end of string, whatever happens first
+   1. Set `ident` to the substring of `specifier` until the first "/" separator or the end of string, whatever happens first
 
 3. Set `modulePath` to the substring of `specifier` starting from `ident.length`
 

@@ -1,5 +1,9 @@
 // waiting for Typescript support: https://github.com/microsoft/TypeScript/issues/48829
-const findLastIndex = <T>(array: Array<T>, predicate: (value: T, index: number, obj: Array<T>) => unknown, thisArg?: any) => {
+const findLastIndex = <T>(
+  array: Array<T>,
+  predicate: (value: T, index: number, obj: Array<T>) => unknown,
+  thisArg?: any,
+) => {
   const reversedArray = [...array];
   reversedArray.reverse();
   return reversedArray.findIndex(predicate, thisArg);
@@ -27,19 +31,16 @@ enum ValueType {
 }
 
 function getValueType(data: unknown) {
-  if (typeof data === `undefined`)
-    return ValueType.Undefined;
+  if (typeof data === `undefined`) return ValueType.Undefined;
 
-  if (isObject(data))
-    return ValueType.Object;
+  if (isObject(data)) return ValueType.Object;
 
-  if (Array.isArray(data))
-    return ValueType.Array;
+  if (Array.isArray(data)) return ValueType.Array;
 
   return ValueType.Literal;
 }
 
-function hasProperty<T extends string>(data: Record<string, unknown>, key: T): data is {[key in T]: unknown} {
+function hasProperty<T extends string>(data: Record<string, unknown>, key: T): data is { [key in T]: unknown } {
   return Object.hasOwn(data, key);
 }
 
@@ -48,23 +49,18 @@ function isConflictMarker(data: unknown): data is ConflictMarker {
 }
 
 function normalizeValue(data: unknown) {
-  if (typeof data === `undefined`)
-    return {onConflict: `default`, value: data};
+  if (typeof data === `undefined`) return { onConflict: `default`, value: data };
 
-  if (!isConflictMarker(data))
-    return {onConflict: `default`, value: data};
+  if (!isConflictMarker(data)) return { onConflict: `default`, value: data };
 
-  if (hasProperty(data, `value`))
-    return data;
+  if (hasProperty(data, `value`)) return data;
 
-  const {onConflict, ...value} = data;
-  return {onConflict, value};
+  const { onConflict, ...value } = data;
+  return { onConflict, value };
 }
 
 function getNormalized(data: unknown, key: string): ConflictMarkerWithValue {
-  const rawValue = isObject(data) && hasProperty(data, key)
-    ? data[key]
-    : undefined;
+  const rawValue = isObject(data) && hasProperty(data, key) ? data[key] : undefined;
 
   return normalizeValue(rawValue);
 }
@@ -88,19 +84,27 @@ function attachIdToTree(data: unknown, id: string): ResolvedRcFile {
   if (isObject(data)) {
     const result: Record<string, any> = {};
 
-    for (const key of Object.keys(data))
-      result[key] = attachIdToTree(data[key], id);
+    for (const key of Object.keys(data)) result[key] = attachIdToTree(data[key], id);
 
     return resolvedRcFile(id, result);
   }
 
   if (Array.isArray(data))
-    return resolvedRcFile(id, data.map(item => attachIdToTree(item, id)));
+    return resolvedRcFile(
+      id,
+      data.map((item) => attachIdToTree(item, id)),
+    );
 
   return resolvedRcFile(id, data);
 }
 
-function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, key: string, firstVisiblePosition: number, resolveAtPosition: number): ResolvedRcFile | null {
+function resolveValueAt(
+  rcFiles: Array<[string, unknown]>,
+  path: Array<string>,
+  key: string,
+  firstVisiblePosition: number,
+  resolveAtPosition: number,
+): ResolvedRcFile | null {
   let expectedValueType: ValueType | undefined;
 
   const relevantValues: Array<[string, unknown]> = [];
@@ -110,11 +114,10 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
 
   for (let t = resolveAtPosition - 1; t >= firstVisiblePosition; --t) {
     const [id, data] = rcFiles[t];
-    const {onConflict, value} = getNormalized(data, key);
+    const { onConflict, value } = getNormalized(data, key);
     const valueType = getValueType(value);
 
-    if (valueType === ValueType.Undefined)
-      continue;
+    if (valueType === ValueType.Undefined) continue;
 
     expectedValueType ??= valueType;
 
@@ -123,8 +126,7 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
       break;
     }
 
-    if (valueType === ValueType.Literal)
-      return resolvedRcFile(id, value);
+    if (valueType === ValueType.Literal) return resolvedRcFile(id, value);
 
     relevantValues.unshift([id, value]);
 
@@ -133,21 +135,24 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
       break;
     }
 
-    if (onConflict === `extend` && t === firstVisiblePosition)
-      firstVisiblePosition = 0;
+    if (onConflict === `extend` && t === firstVisiblePosition) firstVisiblePosition = 0;
 
     lastRelevantPosition = t;
   }
 
-  if (typeof expectedValueType === `undefined`)
-    return null;
+  if (typeof expectedValueType === `undefined`) return null;
 
   const source = relevantValues.map(([relevantId]) => relevantId).join(`, `);
   switch (expectedValueType) {
     case ValueType.Array:
-      return resolvedRcFile(source, new Array<unknown>().concat(...relevantValues.map(([id, value]) => (value as Array<unknown>).map(item => attachIdToTree(item, id)))));
+      return resolvedRcFile(
+        source,
+        new Array<unknown>().concat(
+          ...relevantValues.map(([id, value]) => (value as Array<unknown>).map((item) => attachIdToTree(item, id))),
+        ),
+      );
 
-    case ValueType.Object:{
+    case ValueType.Object: {
       const conglomerate = Object.assign({}, ...relevantValues.map(([, value]) => value));
       const keys = Object.keys(conglomerate);
       const result: Record<string, unknown> = {};
@@ -168,7 +173,13 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
         }
       } else {
         for (const key of keys) {
-          result[key] = resolveValueAt(nextIterationValues, path, key, currentResetPosition, nextIterationValues.length);
+          result[key] = resolveValueAt(
+            nextIterationValues,
+            path,
+            key,
+            currentResetPosition,
+            nextIterationValues.length,
+          );
         }
       }
 
@@ -189,7 +200,13 @@ function resolveValueAt(rcFiles: Array<[string, unknown]>, path: Array<string>, 
 // entry to the value and the final value.
 //
 export function resolveRcFiles(rcFiles: Array<[string, unknown]>) {
-  return resolveValueAt(rcFiles.map(([source, data]) => [source, {[`.`]: data}]), [], `.`, 0, rcFiles.length) as [string, Record<string, unknown>, symbol] | null;
+  return resolveValueAt(
+    rcFiles.map(([source, data]) => [source, { [`.`]: data }]),
+    [],
+    `.`,
+    0,
+    rcFiles.length,
+  ) as [string, Record<string, unknown>, symbol] | null;
 }
 
 export function getValue(value: unknown) {
@@ -199,13 +216,11 @@ export function getValue(value: unknown) {
 export function getValueByTree(valueBase: unknown): unknown {
   const value = isResolvedRcFile(valueBase) ? valueBase[1] : valueBase;
 
-  if (Array.isArray(value))
-    return value.map(v => getValueByTree(v));
+  if (Array.isArray(value)) return value.map((v) => getValueByTree(v));
 
   if (isObject(value)) {
-    const result: {[key: string]: unknown} = {};
-    for (const [propKey, propValue] of Object.entries(value))
-      result[propKey] = getValueByTree(propValue);
+    const result: { [key: string]: unknown } = {};
+    for (const [propKey, propValue] of Object.entries(value)) result[propKey] = getValueByTree(propValue);
     return result;
   }
 

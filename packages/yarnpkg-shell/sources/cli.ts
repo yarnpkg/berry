@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import {Cli, Builtins} from 'clipanion';
+import { Cli, Builtins } from "clipanion";
 
-import EntryCommand    from './commands/entry';
+import EntryCommand from "./commands/entry";
 
 const cli = new Cli({
   binaryLabel: `Yarn Shell`,

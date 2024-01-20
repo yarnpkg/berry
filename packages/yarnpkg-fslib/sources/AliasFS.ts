@@ -1,6 +1,6 @@
-import {FakeFS}          from './FakeFS';
-import {ProxiedFS}       from './ProxiedFS';
-import {Path, PathUtils} from './path';
+import { FakeFS } from "./FakeFS";
+import { ProxiedFS } from "./ProxiedFS";
+import { Path, PathUtils } from "./path";
 
 export type AliasFSOptions<P extends Path> = {
   baseFs: FakeFS<P>;
@@ -12,7 +12,7 @@ export class AliasFS<P extends Path> extends ProxiedFS<P, P> {
 
   protected readonly baseFs: FakeFS<P>;
 
-  constructor(target: P, {baseFs, pathUtils}: AliasFSOptions<P>) {
+  constructor(target: P, { baseFs, pathUtils }: AliasFSOptions<P>) {
     super(pathUtils);
 
     this.target = target;

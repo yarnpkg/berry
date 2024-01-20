@@ -1,10 +1,9 @@
-import {xfs, PortablePath, ppath} from '@yarnpkg/fslib';
+import { xfs, PortablePath, ppath } from "@yarnpkg/fslib";
 
 function computeCacheSize(cacheDir: PortablePath): number {
   let totalSize = 0;
   const zipFilenames = xfs.readdirSync(cacheDir);
-  for (const filename of zipFilenames)
-    totalSize += xfs.statSync(ppath.join(cacheDir, filename)).size;
+  for (const filename of zipFilenames) totalSize += xfs.statSync(ppath.join(cacheDir, filename)).size;
 
   return totalSize;
 }
@@ -19,7 +18,7 @@ describe(`Features`, () => {
             [`various-requires`]: `1.0.0`,
           },
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, ``);
           const cacheDir = `${path}/.yarn/cache` as PortablePath;
 
@@ -52,7 +51,7 @@ describe(`Features`, () => {
             [`various-requires`]: `1.0.0`,
           },
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `compressionLevel: 6\n`);
           const cacheDir = `${path}/.yarn/cache` as PortablePath;
 
@@ -60,7 +59,10 @@ describe(`Features`, () => {
 
           const level6CacheSize = computeCacheSize(cacheDir);
 
-          await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, `compressionLevel: 0\nchecksumBehavior: update\n`);
+          await xfs.writeFilePromise(
+            `${path}/.yarnrc.yml` as PortablePath,
+            `compressionLevel: 0\nchecksumBehavior: update\n`,
+          );
 
           await run(`install`);
 

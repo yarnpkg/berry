@@ -1,9 +1,9 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                   from '@yarnpkg/core';
-import {LinkType}                                                 from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                            from '@yarnpkg/core';
+import { Resolver, ResolveOptions, MinimalResolveOptions, Package } from "@yarnpkg/core";
+import { miscUtils, structUtils } from "@yarnpkg/core";
+import { LinkType } from "@yarnpkg/core";
+import { Descriptor, Locator, Manifest } from "@yarnpkg/core";
 
-import * as gitUtils                                              from './gitUtils';
+import * as gitUtils from "./gitUtils";
 
 export class GitResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -33,22 +33,28 @@ export class GitResolver implements Resolver {
     return [locator];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const splitRange = gitUtils.splitRepoUrl(descriptor.range);
 
-    const filtered = locators.filter(locator => {
-      if (locator.identHash !== descriptor.identHash)
-        return false;
+    const filtered = locators.filter((locator) => {
+      if (locator.identHash !== descriptor.identHash) return false;
 
       const splitReference = gitUtils.splitRepoUrl(locator.reference);
-      if (splitRange.repo !== splitReference.repo)
-        return false;
+      if (splitRange.repo !== splitReference.repo) return false;
 
       // We can only guarantee the coherence of commit selectors, since we have
       // no way to know whether HEAD used to be at the specified commits at
       // some point in time. Similarly, tags can be modified, so we can't rely
       // on them either.
-      if (splitRange.treeish.protocol === gitUtils.TreeishProtocols.Commit && splitRange.treeish.request !== splitReference.treeish.request)
+      if (
+        splitRange.treeish.protocol === gitUtils.TreeishProtocols.Commit &&
+        splitRange.treeish.request !== splitReference.treeish.request
+      )
         return false;
 
       return true;
@@ -67,7 +73,7 @@ export class GitResolver implements Resolver {
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+      return await Manifest.find(packageFetch.prefixPath, { baseFs: packageFetch.packageFs });
     }, packageFetch.releaseFs);
 
     return {

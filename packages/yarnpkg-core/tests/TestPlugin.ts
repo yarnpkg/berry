@@ -1,18 +1,28 @@
-import {Descriptor, Fetcher, FetchOptions, LinkType, Locator, MinimalResolveOptions, Package, Plugin, ResolveOptions, Resolver, structUtils} from '@yarnpkg/core';
-import {PortablePath, xfs}                                                                                                                   from '@yarnpkg/fslib';
-import {ZipFS}                                                                                                                               from '@yarnpkg/libzip';
+import {
+  Descriptor,
+  Fetcher,
+  FetchOptions,
+  LinkType,
+  Locator,
+  MinimalResolveOptions,
+  Package,
+  Plugin,
+  ResolveOptions,
+  Resolver,
+  structUtils,
+} from "@yarnpkg/core";
+import { PortablePath, xfs } from "@yarnpkg/fslib";
+import { ZipFS } from "@yarnpkg/libzip";
 
 export class UnboundDescriptorResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(`unbound:`))
-      return false;
+    if (!descriptor.range.startsWith(`unbound:`)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(`unbound:`))
-      return false;
+    if (!locator.reference.startsWith(`unbound:`)) return false;
 
     return true;
   }
@@ -33,11 +43,16 @@ export class UnboundDescriptorResolver implements Resolver {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const [locator] = await this.getCandidates(descriptor, dependencies, opts);
 
     return {
-      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      locators: locators.filter((candidate) => candidate.locatorHash === locator.locatorHash),
       sorted: false,
     };
   }
@@ -66,15 +81,13 @@ export class UnboundDescriptorResolver implements Resolver {
 
 export class ResolutionDependencyResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(`resdep:`))
-      return false;
+    if (!descriptor.range.startsWith(`resdep:`)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(`resdep:`))
-      return false;
+    if (!locator.reference.startsWith(`resdep:`)) return false;
 
     return true;
   }
@@ -88,9 +101,8 @@ export class ResolutionDependencyResolver implements Resolver {
   }
 
   getResolutionDependencies(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    const {selector} = structUtils.parseRange(descriptor.range);
-    if (selector === null)
-      throw new Error(`Assertion failed: The selector should not be null`);
+    const { selector } = structUtils.parseRange(descriptor.range);
+    if (selector === null) throw new Error(`Assertion failed: The selector should not be null`);
 
     return {
       dependency: structUtils.parseDescriptor(selector),
@@ -101,11 +113,16 @@ export class ResolutionDependencyResolver implements Resolver {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const [locator] = await this.getCandidates(descriptor, dependencies, opts);
 
     return {
-      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      locators: locators.filter((candidate) => candidate.locatorHash === locator.locatorHash),
       sorted: false,
     };
   }
@@ -133,11 +150,9 @@ export class ResolutionDependencyResolver implements Resolver {
 
 class NoopFetcher implements Fetcher {
   supports(locator: Locator) {
-    if (locator.reference.startsWith(`unbound:`))
-      return true;
+    if (locator.reference.startsWith(`unbound:`)) return true;
 
-    if (locator.reference.startsWith(`resdep:`))
-      return true;
+    if (locator.reference.startsWith(`resdep:`)) return true;
 
     return false;
   }
@@ -148,16 +163,14 @@ class NoopFetcher implements Fetcher {
 
   async fetch(locator: Locator, opts: FetchOptions) {
     const tempDir = await xfs.mktempPromise();
-    return {packageFs: new ZipFS(`${tempDir}/archive.zip` as PortablePath, {create: true}), prefixPath: PortablePath.dot};
+    return {
+      packageFs: new ZipFS(`${tempDir}/archive.zip` as PortablePath, { create: true }),
+      prefixPath: PortablePath.dot,
+    };
   }
 }
 
 export const TestPlugin: Plugin = {
-  resolvers: [
-    UnboundDescriptorResolver,
-    ResolutionDependencyResolver,
-  ],
-  fetchers: [
-    NoopFetcher,
-  ],
+  resolvers: [UnboundDescriptorResolver, ResolutionDependencyResolver],
+  fetchers: [NoopFetcher],
 };

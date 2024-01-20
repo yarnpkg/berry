@@ -3,7 +3,7 @@ describe(`Portable paths`, () => {
     let realPlatform: string;
 
     describe(`Platform ${platform}`, () => {
-      let npath: typeof import('../sources/path').npath;
+      let npath: typeof import("../sources/path").npath;
 
       beforeAll(() => {
         realPlatform = process.platform;

@@ -5,9 +5,7 @@ export type PackageImportsResolveOptions = {
   readFileSyncFn: (path: string) => string | undefined;
 };
 
-export function packageImportsResolve(
-  opts: PackageImportsResolveOptions
-): URL | string;
+export function packageImportsResolve(opts: PackageImportsResolveOptions): URL | string;
 
 export type PackageExportsResolveOptions = {
   packageJSONUrl: URL;

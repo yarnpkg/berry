@@ -5,7 +5,7 @@ A JavaScript implementation of a bash-like shell (we use it in Yarn 2 to provide
 ## Usage
 
 ```ts
-import {execute} from '@yarnpkg/shell';
+import { execute } from "@yarnpkg/shell";
 
 process.exitCode = await execute(`ls "$0" | wc -l`, [process.cwd()]);
 ```

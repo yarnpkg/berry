@@ -1,12 +1,12 @@
-import cjs                  from '@rollup/plugin-commonjs';
-import resolve              from '@rollup/plugin-node-resolve';
-import path                 from 'path';
-import esbuild              from 'rollup-plugin-esbuild';
-import {defineConfig}       from 'rollup';
-import semver               from 'semver';
-import {brotliCompressSync} from 'zlib';
+import cjs from "@rollup/plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import path from "path";
+import esbuild from "rollup-plugin-esbuild";
+import { defineConfig } from "rollup";
+import semver from "semver";
+import { brotliCompressSync } from "zlib";
 
-import pkg                  from './package.json';
+import pkg from "./package.json";
 
 /**
  * @returns {import('rollup').Plugin}
@@ -16,8 +16,7 @@ function wrapOutput() {
     name: `wrap-output`,
     generateBundle(options, bundle, isWrite) {
       const bundles = Object.keys(bundle);
-      if (bundles.length !== 1)
-        throw new Error(`Expected only one bundle, got ${bundles.length}`);
+      if (bundles.length !== 1) throw new Error(`Expected only one bundle, got ${bundles.length}`);
 
       const outputBundle = bundle[bundles[0]];
 
@@ -88,7 +87,7 @@ export default defineConfig([
           crypto: `undefined`,
         },
       }),
-      cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
+      cjs({ transformMixedEsModules: true, extensions: [`.js`, `.ts`] }),
       importURL(),
       wrapOutput(),
     ],
@@ -116,12 +115,12 @@ export default defineConfig([
           crypto: `undefined`,
         },
       }),
-      cjs({requireReturnsDefault: `preferred`}),
+      cjs({ requireReturnsDefault: `preferred` }),
       importURL(),
       wrapOutput(),
     ],
   },
-  ...[`index`, `microkernel`].map(name =>
+  ...[`index`, `microkernel`].map((name) =>
     defineConfig({
       input: `./sources/${name}.ts`,
       output: {
@@ -145,7 +144,7 @@ export default defineConfig([
             crypto: `undefined`,
           },
         }),
-        cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
+        cjs({ transformMixedEsModules: true, extensions: [`.js`, `.ts`] }),
       ],
     }),
   ),

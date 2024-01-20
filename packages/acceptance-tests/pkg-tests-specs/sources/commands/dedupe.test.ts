@@ -1,19 +1,22 @@
-import {ppath, xfs, Filename} from '@yarnpkg/fslib';
-import {tests}                from 'pkg-tests-core';
+import { ppath, xfs, Filename } from "@yarnpkg/fslib";
+import { tests } from "pkg-tests-core";
 
-const {setPackageWhitelist} = tests;
+const { setPackageWhitelist } = tests;
 
 describe(`Commands`, () => {
   describe(`dedupe`, () => {
     it(
       `should include a footer`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await setPackageWhitelist(new Map([
-          [`no-deps`, new Set([`1.0.0`])],
-          [`@types/is-number`, new Set([`1.0.0`])],
-        ]), async () => {
-          await run(`add`, `two-range-deps`);
-        });
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await setPackageWhitelist(
+          new Map([
+            [`no-deps`, new Set([`1.0.0`])],
+            [`@types/is-number`, new Set([`1.0.0`])],
+          ]),
+          async () => {
+            await run(`add`, `two-range-deps`);
+          },
+        );
 
         await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
 
@@ -27,7 +30,7 @@ describe(`Commands`, () => {
       describe(`highest`, () => {
         it(
           `should dedupe dependencies`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({ path, run, source }) => {
             await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
               await run(`add`, `one-range-dep`);
             });
@@ -55,7 +58,7 @@ describe(`Commands`, () => {
 
         it(
           `should dedupe dependencies to the highest possible version`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({ path, run, source }) => {
             await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
               await run(`add`, `one-range-dep`, `one-range-dep-too`);
             });
@@ -86,45 +89,54 @@ describe(`Commands`, () => {
 
         it(
           `should not throw on resolutions by npm-tag-resolver with __archiveUrl`,
-          makeTemporaryEnv({
-            dependencies: {[`no-deps`]: `latest`},
-          }, async ({path, run, source}) => {
-            await run(`install`);
-            await run(`add`, `one-range-dep`);
+          makeTemporaryEnv(
+            {
+              dependencies: { [`no-deps`]: `latest` },
+            },
+            async ({ path, run, source }) => {
+              await run(`install`);
+              await run(`add`, `one-range-dep`);
 
-            const lockFilePath = ppath.join(path, Filename.lockfile);
-            let lockContent = await xfs.readFilePromise(lockFilePath, `utf8`);
+              const lockFilePath = ppath.join(path, Filename.lockfile);
+              let lockContent = await xfs.readFilePromise(lockFilePath, `utf8`);
 
-            lockContent = lockContent.replace(`"no-deps@npm:2.0.0"`, `"no-deps@npm:2.0.0::__archiveUrl=https%3A%2F%2Fregistry.com%2Fno-deps-2.0.0.tgz"`);
-            await xfs.writeFilePromise(lockFilePath, lockContent);
+              lockContent = lockContent.replace(
+                `"no-deps@npm:2.0.0"`,
+                `"no-deps@npm:2.0.0::__archiveUrl=https%3A%2F%2Fregistry.com%2Fno-deps-2.0.0.tgz"`,
+              );
+              await xfs.writeFilePromise(lockFilePath, lockContent);
 
-            await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
-              code: 0,
-            });
-          }),
+              await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
+                code: 0,
+              });
+            },
+          ),
         );
 
         it(
           `should handle aliased packages`,
-          makeTemporaryEnv({
-            dependencies: {
-              [`no-deps`]: `npm:no-deps-bins@^1.0.0`,
-              [`one-range-dep`]: `1.0.0`,
+          makeTemporaryEnv(
+            {
+              dependencies: {
+                [`no-deps`]: `npm:no-deps-bins@^1.0.0`,
+                [`one-range-dep`]: `1.0.0`,
+              },
             },
-          }, async ({path, run, source}) => {
-            await run(`install`);
+            async ({ path, run, source }) => {
+              await run(`install`);
 
-            await run(`dedupe`);
+              await run(`dedupe`);
 
-            await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
-              code: 0,
-            });
+              await expect(run(`dedupe`, `--check`)).resolves.toMatchObject({
+                code: 0,
+              });
 
-            await expect(source(`require('no-deps')`)).resolves.toMatchObject({
-              name: `no-deps-bins`,
-              version: `1.0.0`,
-            });
-          }),
+              await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+                name: `no-deps-bins`,
+                version: `1.0.0`,
+              });
+            },
+          ),
         );
       });
     });
@@ -132,13 +144,16 @@ describe(`Commands`, () => {
     describe(`patterns`, () => {
       it(
         `should support selective dedupe (ident)`,
-        makeTemporaryEnv({}, async ({path, run, source}) => {
-          await setPackageWhitelist(new Map([
-            [`no-deps`, new Set([`1.0.0`])],
-            [`@types/is-number`, new Set([`1.0.0`])],
-          ]), async () => {
-            await run(`add`, `two-range-deps`);
-          });
+        makeTemporaryEnv({}, async ({ path, run, source }) => {
+          await setPackageWhitelist(
+            new Map([
+              [`no-deps`, new Set([`1.0.0`])],
+              [`@types/is-number`, new Set([`1.0.0`])],
+            ]),
+            async () => {
+              await run(`add`, `two-range-deps`);
+            },
+          );
 
           await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
 
@@ -159,13 +174,16 @@ describe(`Commands`, () => {
 
       it(
         `should support selective dedupe (scoped ident)`,
-        makeTemporaryEnv({}, async ({path, run, source}) => {
-          await setPackageWhitelist(new Map([
-            [`no-deps`, new Set([`1.0.0`])],
-            [`@types/is-number`, new Set([`1.0.0`])],
-          ]), async () => {
-            await run(`add`, `two-range-deps`);
-          });
+        makeTemporaryEnv({}, async ({ path, run, source }) => {
+          await setPackageWhitelist(
+            new Map([
+              [`no-deps`, new Set([`1.0.0`])],
+              [`@types/is-number`, new Set([`1.0.0`])],
+            ]),
+            async () => {
+              await run(`add`, `two-range-deps`);
+            },
+          );
 
           await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
 
@@ -186,13 +204,16 @@ describe(`Commands`, () => {
 
       it(
         `should support selective dedupe (ident glob)`,
-        makeTemporaryEnv({}, async ({path, run, source}) => {
-          await setPackageWhitelist(new Map([
-            [`no-deps`, new Set([`1.0.0`])],
-            [`@types/is-number`, new Set([`1.0.0`])],
-          ]), async () => {
-            await run(`add`, `two-range-deps`);
-          });
+        makeTemporaryEnv({}, async ({ path, run, source }) => {
+          await setPackageWhitelist(
+            new Map([
+              [`no-deps`, new Set([`1.0.0`])],
+              [`@types/is-number`, new Set([`1.0.0`])],
+            ]),
+            async () => {
+              await run(`add`, `two-range-deps`);
+            },
+          );
 
           await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
 
@@ -213,13 +234,16 @@ describe(`Commands`, () => {
 
       it(
         `should support selective dedupe (scoped ident glob)`,
-        makeTemporaryEnv({}, async ({path, run, source}) => {
-          await setPackageWhitelist(new Map([
-            [`no-deps`, new Set([`1.0.0`])],
-            [`@types/is-number`, new Set([`1.0.0`])],
-          ]), async () => {
-            await run(`add`, `two-range-deps`);
-          });
+        makeTemporaryEnv({}, async ({ path, run, source }) => {
+          await setPackageWhitelist(
+            new Map([
+              [`no-deps`, new Set([`1.0.0`])],
+              [`@types/is-number`, new Set([`1.0.0`])],
+            ]),
+            async () => {
+              await run(`add`, `two-range-deps`);
+            },
+          );
 
           await run(`add`, `no-deps@1.1.0`, `@types/is-number@2.0.0`);
 
@@ -243,7 +267,7 @@ describe(`Commands`, () => {
       describe(`-c,--check`, () => {
         it(
           `should reject with error code 1 when there are duplicates`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({ path, run, source }) => {
             await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
               await run(`add`, `one-range-dep`);
             });
@@ -258,7 +282,7 @@ describe(`Commands`, () => {
 
         it(
           `should resolve with error code 0 when there are no duplicates`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({ path, run, source }) => {
             await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
               await run(`add`, `one-range-dep`);
             });
@@ -274,7 +298,7 @@ describe(`Commands`, () => {
 
       test(
         `--json`,
-        makeTemporaryEnv({}, async ({path, run, source}) => {
+        makeTemporaryEnv({}, async ({ path, run, source }) => {
           await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
             await run(`add`, `one-range-dep`);
           });
@@ -282,7 +306,7 @@ describe(`Commands`, () => {
           await run(`add`, `no-deps@1.1.0`);
 
           // We also use the check flag so that the stdout doesn't include the install report
-          await run(`dedupe`, `--json`, `--check`).catch(({stdout}) => {
+          await run(`dedupe`, `--json`, `--check`).catch(({ stdout }) => {
             expect(JSON.parse(stdout.trim())).toMatchObject({
               descriptor: `no-deps@npm:^1.0.0`,
               currentResolution: `no-deps@npm:1.0.0`,
@@ -296,7 +320,7 @@ describe(`Commands`, () => {
 
       test(
         `-s,--strategy`,
-        makeTemporaryEnv({}, async ({path, run, source}) => {
+        makeTemporaryEnv({}, async ({ path, run, source }) => {
           await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
             await run(`add`, `one-range-dep`);
           });

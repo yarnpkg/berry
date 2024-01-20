@@ -1,4 +1,4 @@
-import {Manifest} from '../sources/Manifest';
+import { Manifest } from "../sources/Manifest";
 
 describe(`Manifest`, () => {
   it(`should handle byte order mark character`, async () => {
@@ -14,7 +14,7 @@ describe(`Manifest`, () => {
     it(`should add a scripts field if a script was newly added`, () => {
       const manifest = Manifest.fromText(`{}`);
       manifest.scripts.set(`foo`, `bar`);
-      expect(manifest.exportTo({}).scripts).toEqual({foo: `bar`});
+      expect(manifest.exportTo({}).scripts).toEqual({ foo: `bar` });
     });
 
     it(`should remove the scripts field if the last script was deleted`, () => {
@@ -42,7 +42,7 @@ describe(`Manifest`, () => {
 
     it(`should preserve bin map if a hash was specified`, () => {
       const manifest = Manifest.fromText(`{ "name": "name", "bin": { "bin1": "./bin1.js", "bin2": "./bin2.js" } }`);
-      expect(manifest.exportTo({}).bin).toEqual({bin1: `./bin1.js`, bin2: `./bin2.js`});
+      expect(manifest.exportTo({}).bin).toEqual({ bin1: `./bin1.js`, bin2: `./bin2.js` });
     });
 
     it(`should remove bin if an empty path was specified`, () => {
@@ -52,7 +52,7 @@ describe(`Manifest`, () => {
 
     it(`should remove entries from bin map if an empty path was specified`, () => {
       const manifest = Manifest.fromText(`{ "name": "name", "bin": { "bin1": " ", "bin2": "./bin2.js" } }`);
-      expect(manifest.exportTo({}).bin).toEqual({bin2: `./bin2.js`});
+      expect(manifest.exportTo({}).bin).toEqual({ bin2: `./bin2.js` });
     });
   });
 });

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import {Cli, Builtins}    from 'clipanion';
+import { Cli, Builtins } from "clipanion";
 
-import BuildBundleCommand from './commands/build/bundle';
-import BuildPluginCommand from './commands/build/plugin';
-import NewPluginCommand   from './commands/new/plugin';
+import BuildBundleCommand from "./commands/build/bundle";
+import BuildPluginCommand from "./commands/build/plugin";
+import NewPluginCommand from "./commands/new/plugin";
 
 const cli = new Cli({
   binaryLabel: `Yarn Builder`,

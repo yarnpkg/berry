@@ -1,46 +1,64 @@
 #!/usr/bin/env node
 
-import {getPluginConfiguration}                                                                                                                                                             from '@yarnpkg/cli';
-import {Cache, Configuration, Project, Report, Workspace, structUtils, Manifest, Descriptor, HardDependencies, ThrowReport, StreamReport, MessageName, Ident, ResolveOptions, FetchOptions} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                                                                                                                                    from '@yarnpkg/fslib';
-import {Cli, Command, Builtins, Option}                                                                                                                                                     from 'clipanion';
-import globby                                                                                                                                                                               from 'globby';
-import micromatch                                                                                                                                                                           from 'micromatch';
-import {Module}                                                                                                                                                                             from 'module';
-import * as ts                                                                                                                                                                              from 'typescript';
+import { getPluginConfiguration } from "@yarnpkg/cli";
+import {
+  Cache,
+  Configuration,
+  Project,
+  Report,
+  Workspace,
+  structUtils,
+  Manifest,
+  Descriptor,
+  HardDependencies,
+  ThrowReport,
+  StreamReport,
+  MessageName,
+  Ident,
+  ResolveOptions,
+  FetchOptions,
+} from "@yarnpkg/core";
+import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Cli, Command, Builtins, Option } from "clipanion";
+import globby from "globby";
+import micromatch from "micromatch";
+import { Module } from "module";
+import * as ts from "typescript";
 
-import * as ast                                                                                                                                                                             from './ast';
+import * as ast from "./ast";
 
 const BUILTINS = new Set([
   ...(Module.builtinModules || []),
-  ...(Module.builtinModules || []).map(mod => `node:${mod}`),
+  ...(Module.builtinModules || []).map((mod) => `node:${mod}`),
   `pnpapi`,
 ]);
 
 function probablyMinified(content: string) {
-  if (content.length > 1024 * 1024)
-    return true;
+  if (content.length > 1024 * 1024) return true;
 
   return false;
 }
 
-async function findFiles(pattern: string, cwd: PortablePath, {ignoredFolders = []}: {ignoredFolders?: Array<PortablePath>} = {}) {
+async function findFiles(
+  pattern: string,
+  cwd: PortablePath,
+  { ignoredFolders = [] }: { ignoredFolders?: Array<PortablePath> } = {},
+) {
   const files = await globby(pattern, {
     absolute: true,
     cwd: npath.fromPortablePath(cwd),
-    ignore: [`**/node_modules/**`, ...ignoredFolders.map(p => `${npath.fromPortablePath(p)}/**`)],
+    ignore: [`**/node_modules/**`, ...ignoredFolders.map((p) => `${npath.fromPortablePath(p)}/**`)],
     gitignore: true,
   });
 
-  return files.map(p => {
+  return files.map((p) => {
     return npath.toPortablePath(p);
   });
 }
 
 async function parseFile(p: PortablePath) {
   const content = await xfs.readFilePromise(p, `utf8`);
-  if (probablyMinified(content))
-    return null;
+  if (probablyMinified(content)) return null;
 
   return await ts.createSourceFile(
     npath.fromPortablePath(p),
@@ -60,12 +78,10 @@ function extractIdents(name: string) {
     const partWithQs = part.replace(/\?.*/, ``);
 
     const match = partWithQs.match(/^(?!\.{0,2}(\/|$))(@[^/]*\/)?([^/]+)/);
-    if (!match)
-      continue;
+    if (!match) continue;
 
     const ident = structUtils.tryParseIdent(match[0]);
-    if (!ident)
-      continue;
+    if (!ident) continue;
 
     idents.push(ident);
   }
@@ -73,112 +89,145 @@ function extractIdents(name: string) {
   return idents;
 }
 
-function isValidDependency(ident: Ident, {workspace}: {workspace: Workspace}) {
-  if (ident.identHash === workspace.anchoredLocator.identHash)
-    return true;
+function isValidDependency(ident: Ident, { workspace }: { workspace: Workspace }) {
+  if (ident.identHash === workspace.anchoredLocator.identHash) return true;
 
-  if (workspace.manifest.hasDependency(ident))
-    return true;
+  if (workspace.manifest.hasDependency(ident)) return true;
 
   return false;
 }
 
-function checkForUndeclaredDependency(workspace: Workspace, referenceNode: ts.Node, moduleName: string, {configuration, report}: {configuration: Configuration, report: Report}) {
-  if (BUILTINS.has(moduleName))
-    return;
+function checkForUndeclaredDependency(
+  workspace: Workspace,
+  referenceNode: ts.Node,
+  moduleName: string,
+  { configuration, report }: { configuration: Configuration; report: Report },
+) {
+  if (BUILTINS.has(moduleName)) return;
 
   const idents = extractIdents(moduleName);
 
   for (const ident of idents) {
-    if (isValidDependency(ident, {workspace}))
-      continue;
+    if (isValidDependency(ident, { workspace })) continue;
 
     const prettyLocation = ast.prettyNodeLocation(configuration, referenceNode);
-    report.reportError(MessageName.UNNAMED, `${prettyLocation}: Undeclared dependency on ${structUtils.prettyIdent(configuration, ident)}`);
+    report.reportError(
+      MessageName.UNNAMED,
+      `${prettyLocation}: Undeclared dependency on ${structUtils.prettyIdent(configuration, ident)}`,
+    );
   }
 }
 
-function checkForUnsafeWebpackLoaderAccess(workspace: Workspace, initializerNode: ts.Node, {configuration, report}: {configuration: Configuration, report: Report}) {
-  if (workspace.manifest.private)
-    return;
-  if (initializerNode.kind === ts.SyntaxKind.CallExpression && ast.getCallType(initializerNode as ts.CallExpression) !== null)
+function checkForUnsafeWebpackLoaderAccess(
+  workspace: Workspace,
+  initializerNode: ts.Node,
+  { configuration, report }: { configuration: Configuration; report: Report },
+) {
+  if (workspace.manifest.private) return;
+  if (
+    initializerNode.kind === ts.SyntaxKind.CallExpression &&
+    ast.getCallType(initializerNode as ts.CallExpression) !== null
+  )
     return;
 
   const prettyLocation = ast.prettyNodeLocation(configuration, initializerNode);
-  report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Webpack configs from non-private packages should avoid referencing loaders without require.resolve`);
+  report.reportWarning(
+    MessageName.UNNAMED,
+    `${prettyLocation}: Webpack configs from non-private packages should avoid referencing loaders without require.resolve`,
+  );
 }
 
-function checkForNodeModuleStrings(stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression, {configuration, report}: {configuration: Configuration, report: Report}) {
+function checkForNodeModuleStrings(
+  stringishNode: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | ts.TemplateExpression,
+  { configuration, report }: { configuration: Configuration; report: Report },
+) {
   const match = /node_modules(?!(\\{2}|\/)\.cache)/g.test(stringishNode.getText());
   if (match) {
     const prettyLocation = ast.prettyNodeLocation(configuration, stringishNode);
-    report.reportWarning(MessageName.UNNAMED, `${prettyLocation}: Strings should avoid referencing the node_modules directory (prefer require.resolve)`);
+    report.reportWarning(
+      MessageName.UNNAMED,
+      `${prettyLocation}: Strings should avoid referencing the node_modules directory (prefer require.resolve)`,
+    );
   }
 }
 
-function processFile(workspace: Workspace, file: ts.SourceFile, {configuration, report}: {configuration: Configuration, report: Report}) {
+function processFile(
+  workspace: Workspace,
+  file: ts.SourceFile,
+  { configuration, report }: { configuration: Configuration; report: Report },
+) {
   const importedModules = new Set<string>();
 
   const processNode = (node: ts.Node) => {
     switch (node.kind) {
-      case ts.SyntaxKind.ImportDeclaration: {
-        const decl = node as ts.ImportDeclaration;
+      case ts.SyntaxKind.ImportDeclaration:
+        {
+          const decl = node as ts.ImportDeclaration;
 
-        const importTarget = ast.extractStaticString(decl.moduleSpecifier)!;
-        checkForUndeclaredDependency(workspace, decl, importTarget, {configuration, report});
-      } break;
-
-      case ts.SyntaxKind.ExportDeclaration: {
-        const decl = node as ts.ExportDeclaration;
-        if (!decl.moduleSpecifier)
-          break;
-
-        const importTarget = ast.extractStaticString(decl.moduleSpecifier)!;
-        checkForUndeclaredDependency(workspace, decl, importTarget, {configuration, report});
-      } break;
-
-      case ts.SyntaxKind.CallExpression: {
-        const call = node as ts.CallExpression;
-
-        const callType = ast.getCallType(call);
-        if (callType === null)
-          break;
-
-        const staticImport = ast.extractStaticString(call.arguments[0]);
-        if (staticImport === null)
-          break;
-
-        checkForUndeclaredDependency(workspace, call, staticImport, {configuration, report});
-      } break;
-
-      case ts.SyntaxKind.PropertyAssignment: {
-        const property = node as ts.PropertyAssignment;
-
-        const name = ast.extractStaticName(property.name);
-        if (name === null)
-          break;
-
-        if (name === `use` || name === `loader`) {
-          checkForUnsafeWebpackLoaderAccess(workspace, property.initializer, {configuration, report});
+          const importTarget = ast.extractStaticString(decl.moduleSpecifier)!;
+          checkForUndeclaredDependency(workspace, decl, importTarget, { configuration, report });
         }
-      } break;
+        break;
 
-      case ts.SyntaxKind.StringLiteral: {
-        const stringNode = node as ts.StringLiteral;
-        checkForNodeModuleStrings(stringNode, {configuration, report});
-      } break;
+      case ts.SyntaxKind.ExportDeclaration:
+        {
+          const decl = node as ts.ExportDeclaration;
+          if (!decl.moduleSpecifier) break;
 
-      case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
-        const stringNode = node as ts.NoSubstitutionTemplateLiteral;
+          const importTarget = ast.extractStaticString(decl.moduleSpecifier)!;
+          checkForUndeclaredDependency(workspace, decl, importTarget, { configuration, report });
+        }
+        break;
 
-        checkForNodeModuleStrings(stringNode, {configuration, report});
-      } break;
+      case ts.SyntaxKind.CallExpression:
+        {
+          const call = node as ts.CallExpression;
 
-      case ts.SyntaxKind.TemplateExpression: {
-        const stringNode = node as ts.TemplateExpression;
+          const callType = ast.getCallType(call);
+          if (callType === null) break;
 
-        checkForNodeModuleStrings(stringNode, {configuration, report});
-      } break;
+          const staticImport = ast.extractStaticString(call.arguments[0]);
+          if (staticImport === null) break;
+
+          checkForUndeclaredDependency(workspace, call, staticImport, { configuration, report });
+        }
+        break;
+
+      case ts.SyntaxKind.PropertyAssignment:
+        {
+          const property = node as ts.PropertyAssignment;
+
+          const name = ast.extractStaticName(property.name);
+          if (name === null) break;
+
+          if (name === `use` || name === `loader`) {
+            checkForUnsafeWebpackLoaderAccess(workspace, property.initializer, { configuration, report });
+          }
+        }
+        break;
+
+      case ts.SyntaxKind.StringLiteral:
+        {
+          const stringNode = node as ts.StringLiteral;
+          checkForNodeModuleStrings(stringNode, { configuration, report });
+        }
+        break;
+
+      case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+        {
+          const stringNode = node as ts.NoSubstitutionTemplateLiteral;
+
+          checkForNodeModuleStrings(stringNode, { configuration, report });
+        }
+        break;
+
+      case ts.SyntaxKind.TemplateExpression:
+        {
+          const stringNode = node as ts.TemplateExpression;
+
+          checkForNodeModuleStrings(stringNode, { configuration, report });
+        }
+        break;
     }
 
     ts.forEachChild(node, processNode);
@@ -203,8 +252,7 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
 
   // @ts-expect-error
   let node: ts.Node = sourceFile.statements[0].expression;
-  if (!node)
-    throw new Error(`Invalid source tree`);
+  if (!node) throw new Error(`Invalid source tree`);
 
   for (let t = 0; t < accesses.length; ++t) {
     if (node.kind !== ts.SyntaxKind.ObjectLiteralExpression)
@@ -212,13 +260,12 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
 
     const literal = node as ts.ObjectLiteralExpression;
 
-    const property = literal.properties.find(property => {
+    const property = literal.properties.find((property) => {
       const name = property.name as ts.StringLiteral;
       return name.text === accesses[t];
     }) as ts.PropertyAssignment;
 
-    if (!node)
-      throw new Error(`Missing property "${accesses[t]}"`);
+    if (!node) throw new Error(`Missing property "${accesses[t]}"`);
 
     node = property.initializer;
   }
@@ -226,18 +273,27 @@ async function buildJsonNode(p: PortablePath, accesses: Array<string>) {
   return node;
 }
 
-async function checkForUnmetPeerDependency(workspace: Workspace, dependencyType: HardDependencies, via: Descriptor, peer: Descriptor, {configuration, report}: {configuration: Configuration, report: Report}) {
-  if (dependencyType === `dependencies` && workspace.manifest.hasConsumerDependency(peer))
-    return;
-  if (dependencyType === `devDependencies` && workspace.manifest.hasHardDependency(peer))
-    return;
-  if (workspace.manifest.name?.identHash === peer.identHash)
-    return;
+async function checkForUnmetPeerDependency(
+  workspace: Workspace,
+  dependencyType: HardDependencies,
+  via: Descriptor,
+  peer: Descriptor,
+  { configuration, report }: { configuration: Configuration; report: Report },
+) {
+  if (dependencyType === `dependencies` && workspace.manifest.hasConsumerDependency(peer)) return;
+  if (dependencyType === `devDependencies` && workspace.manifest.hasHardDependency(peer)) return;
+  if (workspace.manifest.name?.identHash === peer.identHash) return;
 
-  const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [dependencyType, structUtils.stringifyIdent(via)]);
+  const propertyNode = await buildJsonNode(ppath.join(workspace.cwd, Manifest.fileName), [
+    dependencyType,
+    structUtils.stringifyIdent(via),
+  ]);
   const prettyLocation = ast.prettyNodeLocation(configuration, propertyNode);
 
-  report.reportError(MessageName.UNNAMED, `${prettyLocation}: Unmet transitive peer dependency on ${structUtils.prettyDescriptor(configuration, peer)}, via ${structUtils.prettyDescriptor(configuration, via)}`);
+  report.reportError(
+    MessageName.UNNAMED,
+    `${prettyLocation}: Unmet transitive peer dependency on ${structUtils.prettyDescriptor(configuration, peer)}, via ${structUtils.prettyDescriptor(configuration, via)}`,
+  );
 }
 
 async function makeResolveFn(project: Project) {
@@ -249,19 +305,28 @@ async function makeResolveFn(project: Project) {
   const checksums = project.storedChecksums;
   const yarnReport = new ThrowReport();
 
-  const fetchOptions: FetchOptions = {project, fetcher, cache, checksums, report: yarnReport, cacheOptions: {skipIntegrityCheck: true}};
-  const resolveOptions: ResolveOptions = {...fetchOptions, resolver, fetchOptions};
+  const fetchOptions: FetchOptions = {
+    project,
+    fetcher,
+    cache,
+    checksums,
+    report: yarnReport,
+    cacheOptions: { skipIntegrityCheck: true },
+  };
+  const resolveOptions: ResolveOptions = { ...fetchOptions, resolver, fetchOptions };
 
   return async (descriptor: Descriptor) => {
     const candidates = await resolver.getCandidates(descriptor, {}, resolveOptions);
-    if (candidates.length === 0)
-      return null;
+    if (candidates.length === 0) return null;
 
     return await resolver.resolve(candidates[0], resolveOptions);
   };
 }
 
-async function processManifest(workspace: Workspace, {configuration, report}: {configuration: Configuration, report: Report}) {
+async function processManifest(
+  workspace: Workspace,
+  { configuration, report }: { configuration: Configuration; report: Report },
+) {
   const resolveFn = await makeResolveFn(workspace.project);
 
   for (const dependencyType of Manifest.hardDependencies) {
@@ -271,133 +336,152 @@ async function processManifest(workspace: Workspace, {configuration, report}: {c
       try {
         pkg = await resolveFn(viaDescriptor);
       } catch (error) {
-        report.reportWarning(MessageName.UNNAMED, `Resolving ${structUtils.prettyDescriptor(configuration, viaDescriptor)} errored with ${error.message}`);
+        report.reportWarning(
+          MessageName.UNNAMED,
+          `Resolving ${structUtils.prettyDescriptor(configuration, viaDescriptor)} errored with ${error.message}`,
+        );
         continue;
       }
 
       if (!pkg) {
-        report.reportWarning(MessageName.UNNAMED, `Couldn't find a valid resolution for ${structUtils.prettyDescriptor(configuration, viaDescriptor)}`);
+        report.reportWarning(
+          MessageName.UNNAMED,
+          `Couldn't find a valid resolution for ${structUtils.prettyDescriptor(configuration, viaDescriptor)}`,
+        );
         continue;
       }
 
       for (const peerDescriptor of pkg.peerDependencies.values()) {
         // No need to check optional peer dependencies at all
         const peerDependencyMeta = pkg.peerDependenciesMeta.get(structUtils.stringifyIdent(peerDescriptor));
-        if (typeof peerDependencyMeta !== `undefined` && peerDependencyMeta.optional)
-          continue;
+        if (typeof peerDependencyMeta !== `undefined` && peerDependencyMeta.optional) continue;
 
-        await checkForUnmetPeerDependency(workspace, dependencyType, viaDescriptor, peerDescriptor, {configuration, report});
+        await checkForUnmetPeerDependency(workspace, dependencyType, viaDescriptor, peerDescriptor, {
+          configuration,
+          report,
+        });
       }
     }
   }
 }
 
-async function processWorkspace(workspace: Workspace, {configuration, fileList, report}: {configuration: Configuration, fileList: Array<PortablePath>, report: Report}) {
+async function processWorkspace(
+  workspace: Workspace,
+  { configuration, fileList, report }: { configuration: Configuration; fileList: Array<PortablePath>; report: Report },
+) {
   const progress = StreamReport.progressViaCounter(fileList.length + 1);
   const reportedProgress = report.reportProgress(progress);
 
   for (const scriptName of workspace.manifest.scripts.keys())
     if (scriptName.match(/^(pre|post)(?!(install|pack)$)/) && !scriptName.match(/^prettier/))
-      report.reportWarning(MessageName.UNNAMED, `User scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called in sequence anymore; prefer calling prologues and epilogues explicitly`);
+      report.reportWarning(
+        MessageName.UNNAMED,
+        `User scripts prefixed with "pre" or "post" (like "${scriptName}") will not be called in sequence anymore; prefer calling prologues and epilogues explicitly`,
+      );
 
-  if (Array.isArray(workspace.manifest.raw.bundleDependencies) || Array.isArray(workspace.manifest.raw.bundledDependencies))
-    report.reportWarning(MessageName.UNNAMED, `The bundleDependencies (or bundledDependencies) field is not supported anymore; prefer using a bundler`);
+  if (
+    Array.isArray(workspace.manifest.raw.bundleDependencies) ||
+    Array.isArray(workspace.manifest.raw.bundledDependencies)
+  )
+    report.reportWarning(
+      MessageName.UNNAMED,
+      `The bundleDependencies (or bundledDependencies) field is not supported anymore; prefer using a bundler`,
+    );
 
   for (const p of fileList) {
     const parsed = await parseFile(p);
 
-    if (parsed !== null)
-      processFile(workspace, parsed, {configuration, report});
+    if (parsed !== null) processFile(workspace, parsed, { configuration, report });
 
     progress.tick();
   }
 
-  await processManifest(workspace, {configuration, report});
+  await processManifest(workspace, { configuration, report });
   progress.tick();
 
   await reportedProgress;
 }
 
 class EntryCommand extends Command {
-  cwd = Option.String({required: false});
+  cwd = Option.String({ required: false });
 
   async execute() {
     const cwd = npath.toPortablePath(npath.resolve(this.cwd ?? `.`));
 
-    const configuration = await Configuration.find(cwd, null, {strict: false});
+    const configuration = await Configuration.find(cwd, null, { strict: false });
 
     const allManifests = await findFiles(`**/package.json`, cwd);
-    const allManifestFolders = allManifests.map(p => ppath.dirname(p));
+    const allManifestFolders = allManifests.map((p) => ppath.dirname(p));
 
     const allFiles = await findFiles(`**/*.{ts,tsx,js,jsx}`, cwd);
 
     const pluginConfiguration = getPluginConfiguration();
 
     const findWorkspace = async (manifestCwd: PortablePath) => {
-      const configuration = await Configuration.find(manifestCwd, pluginConfiguration, {strict: false});
-      if (!configuration.projectCwd)
-        return null;
+      const configuration = await Configuration.find(manifestCwd, pluginConfiguration, { strict: false });
+      if (!configuration.projectCwd) return null;
 
-      const {project} = await Project.find(configuration, configuration.projectCwd);
+      const { project } = await Project.find(configuration, configuration.projectCwd);
       const workspace = project.tryWorkspaceByCwd(manifestCwd);
-      if (!workspace)
-        return null;
+      if (!workspace) return null;
 
       return workspace;
     };
 
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async report => {
-      report.reportInfo(MessageName.UNNAMED, `Found ${allManifestFolders.length} package(s) to process`);
-      report.reportInfo(MessageName.UNNAMED, `For a grand total of ${allFiles.length} file(s) to validate`);
+    const report = await StreamReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+      },
+      async (report) => {
+        report.reportInfo(MessageName.UNNAMED, `Found ${allManifestFolders.length} package(s) to process`);
+        report.reportInfo(MessageName.UNNAMED, `For a grand total of ${allFiles.length} file(s) to validate`);
 
-      const progress = StreamReport.progressViaCounter(allManifestFolders.length);
-      const reportedProgress = report.reportProgress(progress);
+        const progress = StreamReport.progressViaCounter(allManifestFolders.length);
+        const reportedProgress = report.reportProgress(progress);
 
-      try {
-        for (const manifestFolder of allManifestFolders) {
-          const manifestPath = ppath.join(manifestFolder, Manifest.fileName);
+        try {
+          for (const manifestFolder of allManifestFolders) {
+            const manifestPath = ppath.join(manifestFolder, Manifest.fileName);
 
-          report.reportSeparator();
+            report.reportSeparator();
 
-          try {
-            await report.startTimerPromise(manifestPath, async () => {
-              const workspace = await findWorkspace(manifestFolder);
-              if (!workspace)
-                return;
+            try {
+              await report.startTimerPromise(manifestPath, async () => {
+                const workspace = await findWorkspace(manifestFolder);
+                if (!workspace) return;
 
-              const patterns = [`${manifestFolder}/**`];
-              const ignore = [];
+                const patterns = [`${manifestFolder}/**`];
+                const ignore = [];
 
-              for (const otherManifestFolder of allManifestFolders) {
-                const sub = ppath.contains(manifestFolder, otherManifestFolder);
-                if (sub !== null && sub !== `.`) {
-                  ignore.push(`${otherManifestFolder}/**`);
+                for (const otherManifestFolder of allManifestFolders) {
+                  const sub = ppath.contains(manifestFolder, otherManifestFolder);
+                  if (sub !== null && sub !== `.`) {
+                    ignore.push(`${otherManifestFolder}/**`);
+                  }
                 }
-              }
 
-              const fileList = micromatch(allFiles, patterns, {ignore}) as Array<PortablePath>;
+                const fileList = micromatch(allFiles, patterns, { ignore }) as Array<PortablePath>;
 
-              await processWorkspace(workspace, {
-                configuration,
-                fileList,
-                report,
+                await processWorkspace(workspace, {
+                  configuration,
+                  fileList,
+                  report,
+                });
               });
-            });
-          } catch {}
+            } catch {}
 
-          progress.tick();
+            progress.tick();
+          }
+        } catch (error) {
+          reportedProgress.stop();
+          throw error;
         }
-      } catch (error) {
-        reportedProgress.stop();
-        throw error;
-      }
 
-      report.reportSeparator();
-      await reportedProgress;
-    });
+        report.reportSeparator();
+        await reportedProgress;
+      },
+    );
 
     return report.exitCode();
   }

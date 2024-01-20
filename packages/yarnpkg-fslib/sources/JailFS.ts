@@ -1,7 +1,7 @@
-import {FakeFS}              from './FakeFS';
-import {NodeFS}              from './NodeFS';
-import {ProxiedFS}           from './ProxiedFS';
-import {ppath, PortablePath} from './path';
+import { FakeFS } from "./FakeFS";
+import { NodeFS } from "./NodeFS";
+import { ProxiedFS } from "./ProxiedFS";
+import { ppath, PortablePath } from "./path";
 
 export type JailFSOptions = {
   baseFs?: FakeFS<PortablePath>;
@@ -14,7 +14,7 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
 
   protected readonly baseFs: FakeFS<PortablePath>;
 
-  constructor(target: PortablePath, {baseFs = new NodeFS()}: JailFSOptions = {}) {
+  constructor(target: PortablePath, { baseFs = new NodeFS() }: JailFSOptions = {}) {
     super(ppath);
 
     this.target = this.pathUtils.resolve(PortablePath.root, target);
@@ -37,11 +37,9 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
   protected mapToBase(p: PortablePath): PortablePath {
     const normalized = this.pathUtils.normalize(p);
 
-    if (this.pathUtils.isAbsolute(p))
-      return this.pathUtils.resolve(this.target, this.pathUtils.relative(JAIL_ROOT, p));
+    if (this.pathUtils.isAbsolute(p)) return this.pathUtils.resolve(this.target, this.pathUtils.relative(JAIL_ROOT, p));
 
-    if (normalized.match(/^\.\.\/?/))
-      throw new Error(`Resolving this path (${p}) would escape the jail`);
+    if (normalized.match(/^\.\.\/?/)) throw new Error(`Resolving this path (${p}) would escape the jail`);
 
     return this.pathUtils.resolve(this.target, p);
   }

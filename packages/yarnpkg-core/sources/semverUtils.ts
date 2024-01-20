@@ -1,6 +1,6 @@
-import semver from 'semver';
+import semver from "semver";
 
-export {SemVer} from 'semver';
+export { SemVer } from "semver";
 
 const satisfiesWithPrereleasesCache = new Map<string, semver.Range | null>();
 
@@ -18,15 +18,14 @@ const satisfiesWithPrereleasesCache = new Map<string, semver.Range | null>();
  * See https://github.com/yarnpkg/berry/issues/575 for more context.
  */
 export function satisfiesWithPrereleases(version: string | null, range: string, loose: boolean = false): boolean {
-  if (!version)
-    return false;
+  if (!version) return false;
 
   const key = `${range}${loose}`;
   let semverRange = satisfiesWithPrereleasesCache.get(key);
   if (typeof semverRange === `undefined`) {
     try {
       // eslint-disable-next-line no-restricted-properties
-      semverRange = new semver.Range(range, {includePrerelease: true, loose});
+      semverRange = new semver.Range(range, { includePrerelease: true, loose });
     } catch {
       return false;
     } finally {
@@ -43,20 +42,16 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
     return false;
   }
 
-  if (semverRange.test(semverVersion))
-    return true;
+  if (semverRange.test(semverVersion)) return true;
 
-  if (semverVersion.prerelease)
-    semverVersion.prerelease = [];
+  if (semverVersion.prerelease) semverVersion.prerelease = [];
 
   // A range has multiple sets of comparators. A version must satisfy all
   // comparators in a set and at least one set to satisfy the range.
-  return semverRange.set.some(comparatorSet => {
-    for (const comparator of comparatorSet)
-      if (comparator.semver.prerelease)
-        comparator.semver.prerelease = [];
+  return semverRange.set.some((comparatorSet) => {
+    for (const comparator of comparatorSet) if (comparator.semver.prerelease) comparator.semver.prerelease = [];
 
-    return comparatorSet.every(comparator => {
+    return comparatorSet.every((comparator) => {
       return comparator.test(semverVersion);
     });
   });
@@ -67,12 +62,10 @@ const rangesCache = new Map<string, semver.Range | null>();
  * A cached version of `new semver.Range(potentialRange)` that returns `null` on invalid ranges
  */
 export function validRange(potentialRange: string): semver.Range | null {
-  if (potentialRange.indexOf(`:`) !== -1)
-    return null;
+  if (potentialRange.indexOf(`:`) !== -1) return null;
 
   let range = rangesCache.get(potentialRange);
-  if (typeof range !== `undefined`)
-    return range;
+  if (typeof range !== `undefined`) return range;
 
   try {
     // eslint-disable-next-line no-restricted-properties
@@ -91,7 +84,8 @@ export function validRange(potentialRange: string): semver.Range | null {
  - allow the version to end with `(?:\s*)`
  - place the valid version in capture group one
  */
-const CLEAN_SEMVER_REGEXP = /^(?:[\sv=]*?)((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\s*)$/;
+const CLEAN_SEMVER_REGEXP =
+  /^(?:[\sv=]*?)((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)(?:\s*)$/;
 
 /**
  * Cleans the potential version by removing leading/trailing whitespace and '=v' prefix
@@ -109,20 +103,19 @@ export type Comparator = {
 
 export function getComparator(comparators: semver.Comparator): Comparator {
   // @ts-expect-error: The ANY symbol isn't well declared
-  if (comparators.semver === semver.Comparator.ANY)
-    return {gt: null, lt: null};
+  if (comparators.semver === semver.Comparator.ANY) return { gt: null, lt: null };
 
   switch (comparators.operator) {
     case ``:
-      return {gt: [`>=`, comparators.semver], lt: [`<=`, comparators.semver]};
+      return { gt: [`>=`, comparators.semver], lt: [`<=`, comparators.semver] };
 
     case `>`:
     case `>=`:
-      return {gt: [comparators.operator, comparators.semver], lt: null};
+      return { gt: [comparators.operator, comparators.semver], lt: null };
 
     case `<`:
     case `<=`:
-      return {gt: null, lt: [comparators.operator, comparators.semver]};
+      return { gt: null, lt: [comparators.operator, comparators.semver] };
 
     default: {
       throw new Error(`Assertion failed: Unexpected comparator operator (${comparators.operator})`);
@@ -131,17 +124,14 @@ export function getComparator(comparators: semver.Comparator): Comparator {
 }
 
 export function mergeComparators(comparators: Array<Comparator>) {
-  if (comparators.length === 0)
-    return null;
+  if (comparators.length === 0) return null;
 
   let maxGtComparator: Comparator[`gt`] | null = null;
   let minLtComparator: Comparator[`lt`] | null = null;
 
   for (const comparator of comparators) {
     if (comparator.gt) {
-      const cmp = maxGtComparator !== null
-        ? semver.compare(comparator.gt[1], maxGtComparator[1])
-        : null;
+      const cmp = maxGtComparator !== null ? semver.compare(comparator.gt[1], maxGtComparator[1]) : null;
 
       if (cmp === null || cmp > 0 || (cmp === 0 && comparator.gt[0] === `>`)) {
         maxGtComparator = comparator.gt;
@@ -149,9 +139,7 @@ export function mergeComparators(comparators: Array<Comparator>) {
     }
 
     if (comparator.lt) {
-      const cmp = minLtComparator !== null
-        ? semver.compare(comparator.lt[1], minLtComparator[1])
-        : null;
+      const cmp = minLtComparator !== null ? semver.compare(comparator.lt[1], minLtComparator[1]) : null;
 
       if (cmp === null || cmp < 0 || (cmp === 0 && comparator.lt[0] === `<`)) {
         minLtComparator = comparator.lt;
@@ -161,8 +149,7 @@ export function mergeComparators(comparators: Array<Comparator>) {
 
   if (maxGtComparator && minLtComparator) {
     const cmp = semver.compare(maxGtComparator[1], minLtComparator[1]);
-    if (cmp === 0 && (maxGtComparator[0] === `>` || minLtComparator[0] === `<`))
-      return null;
+    if (cmp === 0 && (maxGtComparator[0] === `>` || minLtComparator[0] === `<`)) return null;
 
     if (cmp > 0) {
       return null;
@@ -181,8 +168,7 @@ export function stringifyComparator(comparator: Comparator) {
       return comparator.gt[1].version;
 
     if (comparator.gt[0] === `>=` && comparator.lt[0] === `<`) {
-      if (comparator.lt[1].version === `${comparator.gt[1].major + 1}.0.0-0`)
-        return `^${comparator.gt[1].version}`;
+      if (comparator.lt[1].version === `${comparator.gt[1].major + 1}.0.0-0`) return `^${comparator.gt[1].version}`;
 
       if (comparator.lt[1].version === `${comparator.gt[1].major}.${comparator.gt[1].minor + 1}.0-0`) {
         return `~${comparator.gt[1].version}`;
@@ -192,21 +178,22 @@ export function stringifyComparator(comparator: Comparator) {
 
   const parts = [];
 
-  if (comparator.gt)
-    parts.push(comparator.gt[0] + comparator.gt[1].version);
-  if (comparator.lt)
-    parts.push(comparator.lt[0] + comparator.lt[1].version);
+  if (comparator.gt) parts.push(comparator.gt[0] + comparator.gt[1].version);
+  if (comparator.lt) parts.push(comparator.lt[0] + comparator.lt[1].version);
 
-  if (!parts.length)
-    return `*`;
+  if (!parts.length) return `*`;
 
   return parts.join(` `);
 }
 
 export function simplifyRanges(ranges: Array<string>) {
-  const parsedRanges = ranges.map(range => validRange(range)!.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
+  const parsedRanges = ranges.map((range) =>
+    validRange(range)!.set.map((comparators) => comparators.map((comparator) => getComparator(comparator))),
+  );
 
-  let alternatives = parsedRanges.shift()!.map(comparators => mergeComparators(comparators))
+  let alternatives = parsedRanges
+    .shift()!
+    .map((comparators) => mergeComparators(comparators))
     .filter((range): range is Comparator => range !== null);
 
   for (const parsedRange of parsedRanges) {
@@ -214,10 +201,7 @@ export function simplifyRanges(ranges: Array<string>) {
 
     for (const comparator of alternatives) {
       for (const refiners of parsedRange) {
-        const nextComparators = mergeComparators([
-          comparator,
-          ...refiners,
-        ]);
+        const nextComparators = mergeComparators([comparator, ...refiners]);
 
         if (nextComparators !== null) {
           nextAlternatives.push(nextComparators);
@@ -228,8 +212,7 @@ export function simplifyRanges(ranges: Array<string>) {
     alternatives = nextAlternatives;
   }
 
-  if (alternatives.length === 0)
-    return null;
+  if (alternatives.length === 0) return null;
 
-  return alternatives.map(comparator => stringifyComparator(comparator)).join(` || `);
+  return alternatives.map((comparator) => stringifyComparator(comparator)).join(` || `);
 }

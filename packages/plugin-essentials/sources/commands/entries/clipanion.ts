@@ -1,6 +1,6 @@
-import {BaseCommand}                            from '@yarnpkg/cli';
-import {Configuration}                          from '@yarnpkg/core';
-import {Cli, Definition as ClipanionDefinition} from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration } from "@yarnpkg/core";
+import { Cli, Definition as ClipanionDefinition } from "clipanion";
 
 type ExtendedDefinition = ClipanionDefinition & {
   plugin: {
@@ -11,16 +11,14 @@ type ExtendedDefinition = ClipanionDefinition & {
 
 // eslint-disable-next-line arca/no-default-export
 export default class ClipanionCommand extends BaseCommand {
-  static paths = [
-    [`--clipanion=definitions`],
-  ];
+  static paths = [[`--clipanion=definitions`]];
 
   async execute() {
-    const {plugins} = await Configuration.find(this.context.cwd, this.context.plugins);
+    const { plugins } = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const pluginDefinitions: Array<[string, Array<ClipanionDefinition>]>  = [];
+    const pluginDefinitions: Array<[string, Array<ClipanionDefinition>]> = [];
     for (const plugin of plugins) {
-      const {commands} = plugin[1];
+      const { commands } = plugin[1];
       if (commands) {
         const cli = Cli.from(commands);
         const definitions = cli.definitions();
@@ -39,12 +37,12 @@ export default class ClipanionCommand extends BaseCommand {
       const definitions = pluginDefinition[1];
 
       for (const definition of definitions) {
-        clipanionDefinitions
-          .find(clipanionDefinition => arePathsEqual(clipanionDefinition.path, definition.path))!
-          .plugin = {
-            name: pluginDefinition[0],
-            isDefault: defaultPlugins.includes(pluginDefinition[0]),
-          };
+        clipanionDefinitions.find((clipanionDefinition) =>
+          arePathsEqual(clipanionDefinition.path, definition.path),
+        )!.plugin = {
+          name: pluginDefinition[0],
+          isDefault: defaultPlugins.includes(pluginDefinition[0]),
+        };
       }
     }
 

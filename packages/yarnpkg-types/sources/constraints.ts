@@ -1,9 +1,6 @@
-export type PartialObject = {[key: string]: PartialObject} | string | number | null;
+export type PartialObject = { [key: string]: PartialObject } | string | number | null;
 
-export type DependencyType =
-  | `dependencies`
-  | `devDependencies`
-  | `peerDependencies`;
+export type DependencyType = `dependencies` | `devDependencies` | `peerDependencies`;
 
 export type Dependency = {
   /**

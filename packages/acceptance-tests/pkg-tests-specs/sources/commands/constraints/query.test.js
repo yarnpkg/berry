@@ -1,8 +1,8 @@
 const {
-  fs: {writeFile},
+  fs: { writeFile },
 } = require(`pkg-tests-core`);
 
-const {environments} = require(`./environments`);
+const { environments } = require(`./environments`);
 
 const queries = {
   [`single predicate`]: `dependency_type(DependencyType).`,
@@ -26,7 +26,7 @@ describe(`Commands`, () => {
   describe(`constraints query`, () => {
     test(
       `test without trailing .`,
-      makeTemporaryEnv({}, async({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -34,18 +34,18 @@ describe(`Commands`, () => {
         let stderr;
 
         try {
-          ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace_ident(_, WorkspaceName)`));
+          ({ code, stdout, stderr } = await run(`constraints`, `query`, `workspace_ident(_, WorkspaceName)`));
         } catch (error) {
-          ({code, stdout, stderr} = error);
+          ({ code, stdout, stderr } = error);
         }
 
-        expect({code, stdout, stderr}).toMatchSnapshot();
+        expect({ code, stdout, stderr }).toMatchSnapshot();
       }),
     );
 
     test(
       `test with a syntax error`,
-      makeTemporaryEnv({}, async({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -53,18 +53,18 @@ describe(`Commands`, () => {
         let stderr;
 
         try {
-          ({code, stdout, stderr} = await run(`constraints`, `query`, `*&%@$#$#!$@)`));
+          ({ code, stdout, stderr } = await run(`constraints`, `query`, `*&%@$#$#!$@)`));
         } catch (error) {
-          ({code, stdout, stderr} = error);
+          ({ code, stdout, stderr } = error);
         }
 
-        expect({code, stdout, stderr}).toMatchSnapshot();
+        expect({ code, stdout, stderr }).toMatchSnapshot();
       }),
     );
 
     test(
       `test with an unknown predicate`,
-      makeTemporaryEnv({}, async({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -72,18 +72,18 @@ describe(`Commands`, () => {
         let stderr;
 
         try {
-          ({code, stdout, stderr} = await run(`constraints`, `query`, `hello_word(X)`));
+          ({ code, stdout, stderr } = await run(`constraints`, `query`, `hello_word(X)`));
         } catch (error) {
-          ({code, stdout, stderr} = error);
+          ({ code, stdout, stderr } = error);
         }
 
-        expect({code, stdout, stderr}).toMatchSnapshot();
+        expect({ code, stdout, stderr }).toMatchSnapshot();
       }),
     );
 
     test(
       `test with an empty predicate`,
-      makeTemporaryEnv({}, async({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await environments[`one regular dependency`](path);
 
         let code;
@@ -91,12 +91,12 @@ describe(`Commands`, () => {
         let stderr;
 
         try {
-          ({code, stdout, stderr} = await run(`constraints`, `query`, `workspace()`));
+          ({ code, stdout, stderr } = await run(`constraints`, `query`, `workspace()`));
         } catch (error) {
-          ({code, stdout, stderr} = error);
+          ({ code, stdout, stderr } = error);
         }
 
-        expect({code, stdout, stderr}).toMatchSnapshot();
+        expect({ code, stdout, stderr }).toMatchSnapshot();
       }),
     );
 
@@ -104,7 +104,7 @@ describe(`Commands`, () => {
       for (const [queryDescription, query] of Object.entries(queries)) {
         test(
           `test (${environmentDescription} / ${queryDescription})`,
-          makeTemporaryEnv({}, async ({path, run, source}) => {
+          makeTemporaryEnv({}, async ({ path, run, source }) => {
             await environment(path);
             await writeFile(`${path}/constraints.pro`, constraintsFile);
 
@@ -113,12 +113,12 @@ describe(`Commands`, () => {
             let stderr;
 
             try {
-              ({code, stdout, stderr} = await run(`constraints`, `query`, query));
+              ({ code, stdout, stderr } = await run(`constraints`, `query`, query));
             } catch (error) {
-              ({code, stdout, stderr} = error);
+              ({ code, stdout, stderr } = error);
             }
 
-            expect({code, stdout, stderr}).toMatchSnapshot();
+            expect({ code, stdout, stderr }).toMatchSnapshot();
           }),
         );
       }

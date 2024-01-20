@@ -1,11 +1,9 @@
-import {BaseCommand}            from '@yarnpkg/cli';
-import {Command, Option, Usage} from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Command, Option, Usage } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class NodeCommand extends BaseCommand {
-  static paths = [
-    [`node`],
-  ];
+  static paths = [[`node`]];
 
   static usage: Usage = Command.Usage({
     description: `run node with the hook already setup`,
@@ -14,10 +12,7 @@ export default class NodeCommand extends BaseCommand {
 
       The Node process will use the exact same version of Node as the one used to run Yarn itself, which might be a good way to ensure that your commands always use a consistent Node version.
     `,
-    examples: [[
-      `Run a Node script`,
-      `$0 node ./my-script.js`,
-    ]],
+    examples: [[`Run a Node script`, `$0 node ./my-script.js`]],
   });
 
   args = Option.Proxy();

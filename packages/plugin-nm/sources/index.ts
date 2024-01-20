@@ -1,16 +1,16 @@
-import {Hooks, Plugin, SettingsType}        from '@yarnpkg/core';
-import {xfs}                                from '@yarnpkg/fslib';
-import {NodeModulesHoistingLimits}          from '@yarnpkg/nm';
+import { Hooks, Plugin, SettingsType } from "@yarnpkg/core";
+import { xfs } from "@yarnpkg/fslib";
+import { NodeModulesHoistingLimits } from "@yarnpkg/nm";
 
-import {NodeModulesLinker, NodeModulesMode} from './NodeModulesLinker';
-import {getGlobalHardlinksStore}            from './NodeModulesLinker';
-import {PnpLooseLinker}                     from './PnpLooseLinker';
+import { NodeModulesLinker, NodeModulesMode } from "./NodeModulesLinker";
+import { getGlobalHardlinksStore } from "./NodeModulesLinker";
+import { PnpLooseLinker } from "./PnpLooseLinker";
 
-export {NodeModulesLinker};
-export {NodeModulesMode};
-export {PnpLooseLinker};
+export { NodeModulesLinker };
+export { NodeModulesMode };
+export { PnpLooseLinker };
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     nmHoistingLimits: NodeModulesHoistingLimits;
     nmMode: NodeModulesMode;
@@ -20,7 +20,7 @@ declare module '@yarnpkg/core' {
 
 const plugin: Plugin<Hooks> = {
   hooks: {
-    cleanGlobalArtifacts: async configuration => {
+    cleanGlobalArtifacts: async (configuration) => {
       const globalHardlinksDirectory = getGlobalHardlinksStore(configuration);
       await xfs.removePromise(globalHardlinksDirectory);
     },
@@ -39,11 +39,7 @@ const plugin: Plugin<Hooks> = {
     nmMode: {
       description: `Defines in which measure Yarn must use hardlinks and symlinks when generated \`node_modules\` directories.`,
       type: SettingsType.STRING,
-      values: [
-        NodeModulesMode.CLASSIC,
-        NodeModulesMode.HARDLINKS_LOCAL,
-        NodeModulesMode.HARDLINKS_GLOBAL,
-      ],
+      values: [NodeModulesMode.CLASSIC, NodeModulesMode.HARDLINKS_LOCAL, NodeModulesMode.HARDLINKS_GLOBAL],
       default: NodeModulesMode.CLASSIC,
     },
     nmSelfReferences: {
@@ -52,10 +48,7 @@ const plugin: Plugin<Hooks> = {
       default: true,
     },
   },
-  linkers: [
-    NodeModulesLinker,
-    PnpLooseLinker,
-  ],
+  linkers: [NodeModulesLinker, PnpLooseLinker],
 };
 
 // eslint-disable-next-line arca/no-default-export

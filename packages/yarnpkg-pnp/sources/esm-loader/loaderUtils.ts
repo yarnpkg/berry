@@ -1,15 +1,14 @@
-import {NativePath}   from '@yarnpkg/fslib';
-import fs             from 'fs';
-import path           from 'path';
+import { NativePath } from "@yarnpkg/fslib";
+import fs from "fs";
+import path from "path";
 
-import * as nodeUtils from '../loader/nodeUtils';
+import * as nodeUtils from "../loader/nodeUtils";
 
 export async function tryReadFile(path: NativePath): Promise<string | null> {
   try {
     return await fs.promises.readFile(path, `utf8`);
   } catch (error) {
-    if (error.code === `ENOENT`)
-      return null;
+    if (error.code === `ENOENT`) return null;
 
     throw error;
   }
@@ -42,9 +41,7 @@ export function getFileFormat(filepath: string): string | null {
     case `.wasm`: {
       // TODO: Enable if --experimental-wasm-modules is present
       // Waiting on https://github.com/nodejs/node/issues/36935
-      throw new Error(
-        `Unknown file extension ".wasm" for ${filepath}`,
-      );
+      throw new Error(`Unknown file extension ".wasm" for ${filepath}`);
     }
     case `.json`: {
       return `json`;
@@ -52,22 +49,18 @@ export function getFileFormat(filepath: string): string | null {
     case `.js`: {
       const pkg = nodeUtils.readPackageScope(filepath);
       // assume CJS for files outside of a package boundary
-      if (!pkg)
-        return `commonjs`;
+      if (!pkg) return `commonjs`;
       return pkg.data.type ?? `commonjs`;
     }
     // Matching files beyond those handled above deviates from Node's default
     // --experimental-loader behavior but is required to work around
     // https://github.com/nodejs/node/issues/33226
     default: {
-      if (entrypointPath !== filepath)
-        return null;
+      if (entrypointPath !== filepath) return null;
       const pkg = nodeUtils.readPackageScope(filepath);
-      if (!pkg)
-        return `commonjs`;
+      if (!pkg) return `commonjs`;
       // prevent extensions beyond .mjs or .js from loading as ESM
-      if (pkg.data.type === `module`)
-        return null;
+      if (pkg.data.type === `module`) return null;
       return pkg.data.type ?? `commonjs`;
     }
   }

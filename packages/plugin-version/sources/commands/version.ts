@@ -1,15 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Configuration, Project}              from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}  from 'clipanion';
-import semver                                from 'semver';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Configuration, Project } from "@yarnpkg/core";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import semver from "semver";
 
-import * as versionUtils                     from '../versionUtils';
+import * as versionUtils from "../versionUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends BaseCommand {
-  static paths = [
-    [`version`],
-  ];
+  static paths = [[`version`]];
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
@@ -28,13 +26,10 @@ export default class VersionCommand extends BaseCommand {
 
       For more information about the \`--deferred\` flag, consult our documentation (https://yarnpkg.com/features/release-workflow#deferred-versioning).
     `,
-    examples: [[
-      `Immediately bump the version to the next major`,
-      `yarn version major`,
-    ], [
-      `Prepare the version to be bumped to the next major`,
-      `yarn version major --deferred`,
-    ]],
+    examples: [
+      [`Immediately bump the version to the next major`, `yarn version major`],
+      [`Prepare the version to be bumped to the next major`, `yarn version major --deferred`],
+    ],
   });
 
   deferred = Option.Boolean(`-d,--deferred`, {
@@ -49,16 +44,13 @@ export default class VersionCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     let deferred = configuration.get(`preferDeferredVersions`);
-    if (this.deferred)
-      deferred = true;
-    if (this.immediate)
-      deferred = false;
+    if (this.deferred) deferred = true;
+    if (this.immediate) deferred = false;
 
     const isSemver = semver.valid(this.strategy);
     const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
@@ -81,7 +73,9 @@ export default class VersionCommand extends BaseCommand {
 
       if (!isDeclined) {
         if (currentVersion === null)
-          throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+          throw new UsageError(
+            `Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`,
+          );
 
         if (typeof currentVersion !== `string` || !semver.valid(currentVersion)) {
           throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
@@ -98,17 +92,18 @@ export default class VersionCommand extends BaseCommand {
       if (typeof storedVersion !== `undefined` && releaseStrategy !== versionUtils.Decision.DECLINE) {
         const thisVersion = versionUtils.applyStrategy(workspace.manifest.version, releaseStrategy);
         if (semver.lt(thisVersion, storedVersion)) {
-          throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
+          throw new UsageError(
+            `Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`,
+          );
         }
       }
     }
 
-    const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
+    const versionFile = await versionUtils.openVersionFile(project, { allowEmpty: true });
     versionFile.releases.set(workspace, releaseStrategy as any);
     await versionFile.saveAll();
 
-    if (!deferred)
-      return await this.cli.run([`version`, `apply`]);
+    if (!deferred) return await this.cli.run([`version`, `apply`]);
 
     return 0;
   }

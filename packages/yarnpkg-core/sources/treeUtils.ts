@@ -1,8 +1,8 @@
-import {Writable}       from 'stream';
-import {asTree}         from 'treeify';
+import { Writable } from "stream";
+import { asTree } from "treeify";
 
-import {Configuration}  from './Configuration';
-import * as formatUtils from './formatUtils';
+import { Configuration } from "./Configuration";
+import * as formatUtils from "./formatUtils";
 
 export type TreeNode = {
   label?: string;
@@ -22,26 +22,22 @@ export type TreeifyNode = {
   [key: string]: TreeifyNode;
 };
 
-export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configuration: Configuration}) {
+export function treeNodeToTreeify(printTree: TreeNode, { configuration }: { configuration: Configuration }) {
   const target = {};
   let n = 0;
 
   const copyTree = (printNode: Array<TreeNode> | TreeMap, targetNode: TreeifyNode) => {
-    const iterator = Array.isArray(printNode)
-      ? printNode.entries()
-      : Object.entries(printNode);
+    const iterator = Array.isArray(printNode) ? printNode.entries() : Object.entries(printNode);
 
     for (const [key, child] of iterator) {
-      if (!child)
-        continue;
+      if (!child) continue;
 
-      const {label, value, children} = child;
+      const { label, value, children } = child;
 
       const finalParts = [];
       if (typeof label !== `undefined`)
         finalParts.push(formatUtils.applyStyle(configuration, label, formatUtils.Style.BOLD));
-      if (typeof value !== `undefined`)
-        finalParts.push(formatUtils.pretty(configuration, value[0], value[1]));
+      if (typeof value !== `undefined`) finalParts.push(formatUtils.pretty(configuration, value[0], value[1]));
       if (finalParts.length === 0)
         finalParts.push(formatUtils.applyStyle(configuration, `${key}`, formatUtils.Style.BOLD));
 
@@ -51,7 +47,7 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
       // the same label. To work around that, we prefix each label with a unique
       // string that we strip before output.
       const uniquePrefix = `\0${n++}\0`;
-      const createdNode = targetNode[`${uniquePrefix}${finalLabel}`] = {};
+      const createdNode = (targetNode[`${uniquePrefix}${finalLabel}`] = {});
 
       if (typeof children !== `undefined`) {
         copyTree(children, createdNode);
@@ -59,8 +55,7 @@ export function treeNodeToTreeify(printTree: TreeNode, {configuration}: {configu
     }
   };
 
-  if (typeof printTree.children === `undefined`)
-    throw new Error(`The root node must only contain children`);
+  if (typeof printTree.children === `undefined`) throw new Error(`The root node must only contain children`);
 
   copyTree(printTree.children, target);
   return target;
@@ -79,16 +74,11 @@ export function treeNodeToJson(printTree: TreeNode) {
       ? printNode.children.entries()
       : Object.entries(printNode.children ?? {});
 
-    const targetChildren: {[key: string]: any} = Array.isArray(printNode.children)
-      ? []
-      : {};
+    const targetChildren: { [key: string]: any } = Array.isArray(printNode.children) ? [] : {};
 
-    for (const [key, child] of iterator)
-      if (child)
-        targetChildren[cleanKey(key)] = copyTree(child);
+    for (const [key, child] of iterator) if (child) targetChildren[cleanKey(key)] = copyTree(child);
 
-    if (typeof printNode.value === `undefined`)
-      return targetChildren;
+    if (typeof printNode.value === `undefined`) return targetChildren;
 
     return {
       value: formatUtils.json(printNode.value[0], printNode.value[1]),
@@ -99,39 +89,46 @@ export function treeNodeToJson(printTree: TreeNode) {
   return copyTree(printTree);
 }
 
-export function emitList(values: Array<formatUtils.Tuple>, {configuration, stdout, json}: {configuration: Configuration, stdout: Writable, json: boolean}) {
-  const children = values.map(value => ({value}));
-  emitTree({children}, {configuration, stdout, json});
+export function emitList(
+  values: Array<formatUtils.Tuple>,
+  { configuration, stdout, json }: { configuration: Configuration; stdout: Writable; json: boolean },
+) {
+  const children = values.map((value) => ({ value }));
+  emitTree({ children }, { configuration, stdout, json });
 }
 
-export function emitTree(tree: TreeNode, {configuration, stdout, json, separators = 0}: {configuration: Configuration, stdout: Writable, json: boolean, separators?: number}) {
+export function emitTree(
+  tree: TreeNode,
+  {
+    configuration,
+    stdout,
+    json,
+    separators = 0,
+  }: { configuration: Configuration; stdout: Writable; json: boolean; separators?: number },
+) {
   if (json) {
-    const iterator = Array.isArray(tree.children)
-      ? tree.children.values()
-      : Object.values(tree.children ?? {});
+    const iterator = Array.isArray(tree.children) ? tree.children.values() : Object.values(tree.children ?? {});
 
-    for (const child of iterator)
-      if (child)
-        stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
+    for (const child of iterator) if (child) stdout.write(`${JSON.stringify(treeNodeToJson(child))}\n`);
 
     return;
   }
 
-  let treeOutput = asTree(treeNodeToTreeify(tree, {configuration}) as any, false, false);
+  let treeOutput = asTree(treeNodeToTreeify(tree, { configuration }) as any, false, false);
 
   treeOutput = treeOutput.replace(/\0[0-9]+\0/g, ``);
 
   // A slight hack to add line returns between two top-level entries
-  if (separators >= 1)
-    treeOutput = treeOutput.replace(/^([├└]─)/gm, `│\n$1`).replace(/^│\n/, ``);
+  if (separators >= 1) treeOutput = treeOutput.replace(/^([├└]─)/gm, `│\n$1`).replace(/^│\n/, ``);
 
   // Another one for the second level fields. We run it twice because in some pathological cases the regex matches would
   if (separators >= 2)
     for (let t = 0; t < 2; ++t)
-      treeOutput = treeOutput.replace(/^([│ ].{2}[├│ ].{2}[^\n]+\n)(([│ ]).{2}[├└].{2}[^\n]*\n[│ ].{2}[│ ].{2}[├└]─)/gm, `$1$3  │ \n$2`).replace(/^│\n/, ``);
+      treeOutput = treeOutput
+        .replace(/^([│ ].{2}[├│ ].{2}[^\n]+\n)(([│ ]).{2}[├└].{2}[^\n]*\n[│ ].{2}[│ ].{2}[├└]─)/gm, `$1$3  │ \n$2`)
+        .replace(/^│\n/, ``);
 
-  if (separators >= 3)
-    throw new Error(`Only the first two levels are accepted by treeUtils.emitTree`);
+  if (separators >= 3) throw new Error(`Only the first two levels are accepted by treeUtils.emitTree`);
 
   stdout.write(treeOutput);
 }

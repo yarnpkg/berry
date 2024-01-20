@@ -1,15 +1,23 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                        from '@yarnpkg/cli';
-import {Cache, Configuration, MessageName, Project, StreamReport, Workspace, formatUtils, structUtils, ThrowReport} from '@yarnpkg/core';
-import {npath, ppath, xfs}                                                                                          from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                                                                     from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import {
+  Cache,
+  Configuration,
+  MessageName,
+  Project,
+  StreamReport,
+  Workspace,
+  formatUtils,
+  structUtils,
+  ThrowReport,
+} from "@yarnpkg/core";
+import { npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
 
-import * as packUtils                                                                                               from '../packUtils';
+import * as packUtils from "../packUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class PackCommand extends BaseCommand {
-  static paths = [
-    [`pack`],
-  ];
+  static paths = [[`pack`]];
 
   static usage: Usage = Command.Usage({
     description: `generate a tarball from the active workspace`,
@@ -18,16 +26,11 @@ export default class PackCommand extends BaseCommand {
 
       If the \`-o,---out\` is set the archive will be created at the specified path. The \`%s\` and \`%v\` variables can be used within the path and will be respectively replaced by the package name and version.
     `,
-    examples: [[
-      `Create an archive from the active workspace`,
-      `yarn pack`,
-    ], [
-      `List the files that would be made part of the workspace's archive`,
-      `yarn pack --dry-run`,
-    ], [
-      `Name and output the archive in a dedicated folder`,
-      `yarn pack --out /artifacts/%s-%v.tgz`,
-    ]],
+    examples: [
+      [`Create an archive from the active workspace`, `yarn pack`],
+      [`List the files that would be made part of the workspace's archive`, `yarn pack --dry-run`],
+      [`Name and output the archive in a dedicated folder`, `yarn pack --out /artifacts/%s-%v.tgz`],
+    ],
   });
 
   installIfNeeded = Option.Boolean(`--install-if-needed`, false, {
@@ -47,14 +50,13 @@ export default class PackCommand extends BaseCommand {
   });
 
   // Legacy option
-  filename = Option.String(`--filename`, {hidden: true});
+  filename = Option.String(`--filename`, { hidden: true });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     if (await packUtils.hasPackScripts(workspace)) {
       if (this.installIfNeeded) {
@@ -69,48 +71,55 @@ export default class PackCommand extends BaseCommand {
 
     const out = this.out ?? this.filename;
 
-    const target = typeof out !== `undefined`
-      ? ppath.resolve(this.context.cwd, interpolateOutputName(out, {workspace}))
-      : ppath.resolve(workspace.cwd, `package.tgz`);
+    const target =
+      typeof out !== `undefined`
+        ? ppath.resolve(this.context.cwd, interpolateOutputName(out, { workspace }))
+        : ppath.resolve(workspace.cwd, `package.tgz`);
 
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      json: this.json,
-    }, async report => {
-      await packUtils.prepareForPack(workspace, {report}, async () => {
-        report.reportJson({base: npath.fromPortablePath(workspace.cwd)});
+    const report = await StreamReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+        json: this.json,
+      },
+      async (report) => {
+        await packUtils.prepareForPack(workspace, { report }, async () => {
+          report.reportJson({ base: npath.fromPortablePath(workspace.cwd) });
 
-        const files = await packUtils.genPackList(workspace);
+          const files = await packUtils.genPackList(workspace);
 
-        for (const file of files) {
-          report.reportInfo(null, npath.fromPortablePath(file));
-          report.reportJson({location: npath.fromPortablePath(file)});
-        }
+          for (const file of files) {
+            report.reportInfo(null, npath.fromPortablePath(file));
+            report.reportJson({ location: npath.fromPortablePath(file) });
+          }
+
+          if (!this.dryRun) {
+            const pack = await packUtils.genPackStream(workspace, files);
+            const write = xfs.createWriteStream(target);
+
+            pack.pipe(write);
+
+            await new Promise((resolve) => {
+              write.on(`finish`, resolve);
+            });
+          }
+        });
 
         if (!this.dryRun) {
-          const pack = await packUtils.genPackStream(workspace, files);
-          const write = xfs.createWriteStream(target);
-
-          pack.pipe(write);
-
-          await new Promise(resolve => {
-            write.on(`finish`, resolve);
-          });
+          report.reportInfo(
+            MessageName.UNNAMED,
+            `Package archive generated in ${formatUtils.pretty(configuration, target, formatUtils.Type.PATH)}`,
+          );
+          report.reportJson({ output: npath.fromPortablePath(target) });
         }
-      });
-
-      if (!this.dryRun) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive generated in ${formatUtils.pretty(configuration, target, formatUtils.Type.PATH)}`);
-        report.reportJson({output: npath.fromPortablePath(target)});
-      }
-    });
+      },
+    );
 
     return report.exitCode();
   }
 }
 
-function interpolateOutputName(name: string, {workspace}: {workspace: Workspace}) {
+function interpolateOutputName(name: string, { workspace }: { workspace: Workspace }) {
   const interpolated = name
     .replace(`%s`, prettyWorkspaceIdent(workspace))
     .replace(`%v`, prettyWorkspaceVersion(workspace));

@@ -1,8 +1,8 @@
-import {FakeFS}                                   from '@yarnpkg/fslib';
-import {GetMountPointFn, MountFS, MountFSOptions} from '@yarnpkg/fslib';
-import {PortablePath, ppath}                      from '@yarnpkg/fslib';
-import {Libzip}                                   from '@yarnpkg/libzip';
-import {ZipFS}                                    from '@yarnpkg/libzip';
+import { FakeFS } from "@yarnpkg/fslib";
+import { GetMountPointFn, MountFS, MountFSOptions } from "@yarnpkg/fslib";
+import { PortablePath, ppath } from "@yarnpkg/fslib";
+import { Libzip } from "@yarnpkg/libzip";
+import { ZipFS } from "@yarnpkg/libzip";
 
 /**
  * Extracts the archive part (ending in the first instance of `extension`) from a path.
@@ -11,34 +11,26 @@ import {ZipFS}                                    from '@yarnpkg/libzip';
  */
 export function getArchivePart(path: string, extension: string) {
   let idx = path.indexOf(extension);
-  if (idx <= 0)
-    return null;
+  if (idx <= 0) return null;
 
   let nextCharIdx = idx;
   while (idx >= 0) {
     nextCharIdx = idx + extension.length;
-    if (path[nextCharIdx] === ppath.sep)
-      break;
+    if (path[nextCharIdx] === ppath.sep) break;
 
     // Disallow files named ".zip"
-    if (path[idx - 1] === ppath.sep)
-      return null;
+    if (path[idx - 1] === ppath.sep) return null;
 
     idx = path.indexOf(extension, nextCharIdx);
   }
 
   // The path either has to end in ".zip" or contain an archive subpath (".zip/...")
-  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep)
-    return null;
+  if (path.length > nextCharIdx && path[nextCharIdx] !== ppath.sep) return null;
 
   return path.slice(0, nextCharIdx) as PortablePath;
 }
 
-export type ZipOpenFSOptions = Omit<MountFSOptions<ZipFS>,
-  | `factoryPromise`
-  | `factorySync`
-  | `getMountPoint`
-> & {
+export type ZipOpenFSOptions = Omit<MountFSOptions<ZipFS>, `factoryPromise` | `factorySync` | `getMountPoint`> & {
   libzip?: Libzip | (() => Libzip);
   readOnlyArchives?: boolean;
 
@@ -66,18 +58,19 @@ export class ZipOpenFS extends MountFS<ZipFS> {
     const fileExtensions = opts.fileExtensions;
     const readOnlyArchives = opts.readOnlyArchives;
 
-    const getMountPoint: GetMountPointFn = typeof fileExtensions === `undefined`
-      ? path => getArchivePart(path, `.zip`)
-      : path => {
-        for (const extension of fileExtensions!) {
-          const result = getArchivePart(path, extension);
-          if (result) {
-            return result;
-          }
-        }
+    const getMountPoint: GetMountPointFn =
+      typeof fileExtensions === `undefined`
+        ? (path) => getArchivePart(path, `.zip`)
+        : (path) => {
+            for (const extension of fileExtensions!) {
+              const result = getArchivePart(path, extension);
+              if (result) {
+                return result;
+              }
+            }
 
-        return null;
-      };
+            return null;
+          };
 
     const factorySync = (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
       return new ZipFS(p, {

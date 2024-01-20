@@ -1,4 +1,4 @@
-import {generatePrettyJson} from '../sources/generatePrettyJson';
+import { generatePrettyJson } from "../sources/generatePrettyJson";
 
 describe(`Pretty JSON`, () => {
   it(`should not add trailing comma for undefined value`, () => {

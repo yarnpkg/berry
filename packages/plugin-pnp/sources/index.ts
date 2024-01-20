@@ -1,16 +1,16 @@
-import {Hooks as CoreHooks, Plugin, Project, SettingsType, WindowsLinkType} from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs}                          from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                                from '@yarnpkg/plugin-stage';
-import {pathToFileURL}                                                      from 'url';
+import { Hooks as CoreHooks, Plugin, Project, SettingsType, WindowsLinkType } from "@yarnpkg/core";
+import { Filename, PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Hooks as StageHooks } from "@yarnpkg/plugin-stage";
+import { pathToFileURL } from "url";
 
-import {PnpLinker}                                                          from './PnpLinker';
-import UnplugCommand                                                        from './commands/unplug';
-import * as jsInstallUtils                                                  from './jsInstallUtils';
-import * as pnpUtils                                                        from './pnpUtils';
+import { PnpLinker } from "./PnpLinker";
+import UnplugCommand from "./commands/unplug";
+import * as jsInstallUtils from "./jsInstallUtils";
+import * as pnpUtils from "./pnpUtils";
 
-export {UnplugCommand};
-export {jsInstallUtils};
-export {pnpUtils};
+export { UnplugCommand };
+export { jsInstallUtils };
+export { pnpUtils };
 
 export const getPnpPath = (project: Project) => {
   return {
@@ -24,7 +24,11 @@ export const quotePathIfNeeded = (path: string) => {
   return /\s/.test(path) ? JSON.stringify(path) : path;
 };
 
-async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
+async function setupScriptEnvironment(
+  project: Project,
+  env: { [key: string]: string },
+  makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
+) {
   // We still support .pnp.js files to improve multi-project compatibility.
   // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
   // TODO: Support `-r` as an alias for `--require` (in all packages)
@@ -63,7 +67,7 @@ async function populateYarnPaths(project: Project, definePath: (path: PortablePa
   definePath(project.configuration.get(`pnpUnpluggedFolder`));
 }
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     nodeLinker: string;
     winLinkType: string;
@@ -91,10 +95,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
     winLinkType: {
       description: `Whether Yarn should use Windows Junctions or symlinks when creating links on Windows.`,
       type: SettingsType.STRING,
-      values: [
-        WindowsLinkType.JUNCTIONS,
-        WindowsLinkType.SYMLINKS,
-      ],
+      values: [WindowsLinkType.JUNCTIONS, WindowsLinkType.SYMLINKS],
       default: WindowsLinkType.JUNCTIONS,
     },
     pnpMode: {
@@ -134,15 +135,11 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       default: `./.yarn/unplugged`,
     },
   },
-  linkers: [
-    PnpLinker,
-  ],
-  commands: [
-    UnplugCommand,
-  ],
+  linkers: [PnpLinker],
+  commands: [UnplugCommand],
 };
 
-export {PnpInstaller, PnpLinker} from './PnpLinker';
+export { PnpInstaller, PnpLinker } from "./PnpLinker";
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

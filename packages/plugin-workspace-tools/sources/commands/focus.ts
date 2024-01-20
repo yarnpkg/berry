@@ -1,13 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError}                from '@yarnpkg/cli';
-import {Cache, Configuration, Manifest, Project, Workspace} from '@yarnpkg/core';
-import {structUtils}                                        from '@yarnpkg/core';
-import {Command, Option, Usage}                             from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Cache, Configuration, Manifest, Project, Workspace } from "@yarnpkg/core";
+import { structUtils } from "@yarnpkg/core";
+import { Command, Option, Usage } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesFocusCommand extends BaseCommand {
-  static paths = [
-    [`workspaces`, `focus`],
-  ];
+  static paths = [[`workspaces`, `focus`]];
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -37,7 +35,7 @@ export default class WorkspacesFocusCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     await project.restoreInstallState({
@@ -48,14 +46,15 @@ export default class WorkspacesFocusCommand extends BaseCommand {
     if (this.all) {
       requiredWorkspaces = new Set(project.workspaces);
     } else if (this.workspaces.length === 0) {
-      if (!workspace)
-        throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+      if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
       requiredWorkspaces = new Set([workspace]);
     } else {
-      requiredWorkspaces = new Set(this.workspaces.map(name => {
-        return project.getWorkspaceByIdent(structUtils.parseIdent(name));
-      }));
+      requiredWorkspaces = new Set(
+        this.workspaces.map((name) => {
+          return project.getWorkspaceByIdent(structUtils.parseIdent(name));
+        }),
+      );
     }
 
     // First we compute the dependency chain to see what workspaces are
@@ -69,8 +68,7 @@ export default class WorkspacesFocusCommand extends BaseCommand {
         for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
           const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
-          if (matchingWorkspace === null)
-            continue;
+          if (matchingWorkspace === null) continue;
 
           requiredWorkspaces.add(matchingWorkspace);
         }
@@ -99,12 +97,15 @@ export default class WorkspacesFocusCommand extends BaseCommand {
     // persist the project state on the disk (otherwise all workspaces would
     // lose their dependencies!).
 
-    return await project.installWithNewReport({
-      json: this.json,
-      stdout: this.context.stdout,
-    }, {
-      cache,
-      persistProject: false,
-    });
+    return await project.installWithNewReport(
+      {
+        json: this.json,
+        stdout: this.context.stdout,
+      },
+      {
+        cache,
+        persistProject: false,
+      },
+    );
   }
 }

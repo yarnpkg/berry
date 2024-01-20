@@ -1,6 +1,6 @@
-import {gitUtils}       from '@yarnpkg/plugin-git';
+import { gitUtils } from "@yarnpkg/plugin-git";
 
-import * as githubUtils from './githubUtils';
+import * as githubUtils from "./githubUtils";
 
 const VALID_PATTERNS = [
   `GitHubOrg/foo-bar.js`,

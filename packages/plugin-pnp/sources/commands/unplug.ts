@@ -1,16 +1,25 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                               from '@yarnpkg/cli';
-import {Cache, Configuration, Project, StreamReport, Package, MessageName, formatUtils, LocatorHash, Workspace, miscUtils} from '@yarnpkg/core';
-import {structUtils, semverUtils}                                                                                          from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                                                                                from 'clipanion';
-import micromatch                                                                                                          from 'micromatch';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import {
+  Cache,
+  Configuration,
+  Project,
+  StreamReport,
+  Package,
+  MessageName,
+  formatUtils,
+  LocatorHash,
+  Workspace,
+  miscUtils,
+} from "@yarnpkg/core";
+import { structUtils, semverUtils } from "@yarnpkg/core";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import micromatch from "micromatch";
 
-import * as pnpUtils                                                                                                       from '../pnpUtils';
+import * as pnpUtils from "../pnpUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnplugCommand extends BaseCommand {
-  static paths = [
-    [`unplug`],
-  ];
+  static paths = [[`unplug`]];
 
   static usage: Usage = Command.Usage({
     description: `force the unpacking of a list of packages`,
@@ -25,28 +34,18 @@ export default class UnplugCommand extends BaseCommand {
 
       This command accepts glob patterns inside the scope and name components (not the range). Make sure to escape the patterns to prevent your own shell from trying to expand them.
     `,
-    examples: [[
-      `Unplug the lodash dependency from the active workspace`,
-      `yarn unplug lodash`,
-    ], [
-      `Unplug all instances of lodash referenced by any workspace`,
-      `yarn unplug lodash -A`,
-    ], [
-      `Unplug all instances of lodash referenced by the active workspace and its dependencies`,
-      `yarn unplug lodash -R`,
-    ], [
-      `Unplug all instances of lodash, anywhere`,
-      `yarn unplug lodash -AR`,
-    ], [
-      `Unplug one specific version of lodash`,
-      `yarn unplug lodash@1.2.3`,
-    ], [
-      `Unplug all packages with the \`@babel\` scope`,
-      `yarn unplug '@babel/*'`,
-    ], [
-      `Unplug all packages (only for testing, not recommended)`,
-      `yarn unplug -R '*'`,
-    ]],
+    examples: [
+      [`Unplug the lodash dependency from the active workspace`, `yarn unplug lodash`],
+      [`Unplug all instances of lodash referenced by any workspace`, `yarn unplug lodash -A`],
+      [
+        `Unplug all instances of lodash referenced by the active workspace and its dependencies`,
+        `yarn unplug lodash -R`,
+      ],
+      [`Unplug all instances of lodash, anywhere`, `yarn unplug lodash -AR`],
+      [`Unplug one specific version of lodash`, `yarn unplug lodash@1.2.3`],
+      [`Unplug all packages with the \`@babel\` scope`, `yarn unplug '@babel/*'`],
+      [`Unplug all packages (only for testing, not recommended)`, `yarn unplug -R '*'`],
+    ],
   });
 
   all = Option.Boolean(`-A,--all`, false, {
@@ -65,11 +64,10 @@ export default class UnplugCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     if (configuration.get(`nodeLinker`) !== `pnp`)
       throw new UsageError(`This command can only be used if the \`nodeLinker\` option is set to \`pnp\``);
@@ -78,22 +76,21 @@ export default class UnplugCommand extends BaseCommand {
 
     const unreferencedPatterns = new Set(this.patterns);
 
-    const matchers = this.patterns.map(pattern => {
+    const matchers = this.patterns.map((pattern) => {
       const patternDescriptor = structUtils.parseDescriptor(pattern);
-      const pseudoDescriptor = patternDescriptor.range !== `unknown`
-        ? patternDescriptor
-        : structUtils.makeDescriptor(patternDescriptor, `*`);
+      const pseudoDescriptor =
+        patternDescriptor.range !== `unknown` ? patternDescriptor : structUtils.makeDescriptor(patternDescriptor, `*`);
 
       if (!semverUtils.validRange(pseudoDescriptor.range))
-        throw new UsageError(`The range of the descriptor patterns must be a valid semver range (${structUtils.prettyDescriptor(configuration, pseudoDescriptor)})`);
+        throw new UsageError(
+          `The range of the descriptor patterns must be a valid semver range (${structUtils.prettyDescriptor(configuration, pseudoDescriptor)})`,
+        );
 
       return (pkg: Package) => {
         const stringifiedIdent = structUtils.stringifyIdent(pkg);
-        if (!micromatch.isMatch(stringifiedIdent, structUtils.stringifyIdent(pseudoDescriptor)))
-          return false;
+        if (!micromatch.isMatch(stringifiedIdent, structUtils.stringifyIdent(pseudoDescriptor))) return false;
 
-        if (pkg.version && !semverUtils.satisfiesWithPrereleases(pkg.version, pseudoDescriptor.range))
-          return false;
+        if (pkg.version && !semverUtils.satisfiesWithPrereleases(pkg.version, pseudoDescriptor.range)) return false;
 
         unreferencedPatterns.delete(pattern);
 
@@ -104,10 +101,14 @@ export default class UnplugCommand extends BaseCommand {
     const getAllMatchingPackages = () => {
       const selection: Array<Package> = [];
 
+      // Note: We can safely skip virtual packages here, as the
+      // devirtualized copy will always exist inside storedPackages.
       for (const pkg of project.storedPackages.values())
-        // Note: We can safely skip virtual packages here, as the
-        // devirtualized copy will always exist inside storedPackages.
-        if (!project.tryWorkspaceByLocator(pkg) && !structUtils.isVirtualLocator(pkg) && matchers.some(matcher => matcher(pkg)))
+        if (
+          !project.tryWorkspaceByLocator(pkg) &&
+          !structUtils.isVirtualLocator(pkg) &&
+          matchers.some((matcher) => matcher(pkg))
+        )
           selection.push(pkg);
 
       return selection;
@@ -118,39 +119,32 @@ export default class UnplugCommand extends BaseCommand {
       const selection: Array<Package> = [];
 
       const traverse = (pkg: Package, depth: number) => {
-        if (seen.has(pkg.locatorHash))
-          return;
+        if (seen.has(pkg.locatorHash)) return;
 
         const isWorkspace = !!project.tryWorkspaceByLocator(pkg);
-        if (depth > 0 && !this.recursive && isWorkspace)
-          return;
+        if (depth > 0 && !this.recursive && isWorkspace) return;
 
         seen.add(pkg.locatorHash);
 
         // Note: We shouldn't skip virtual packages, as
         // we don't iterate over the devirtualized copies.
-        if (!project.tryWorkspaceByLocator(pkg) && matchers.some(matcher => matcher(pkg)))
-          selection.push(pkg);
+        if (!project.tryWorkspaceByLocator(pkg) && matchers.some((matcher) => matcher(pkg))) selection.push(pkg);
 
         // Don't recurse unless requested
-        if (depth > 0 && !this.recursive)
-          return;
+        if (depth > 0 && !this.recursive) return;
 
         for (const dependency of pkg.dependencies.values()) {
           const resolution = project.storedResolutions.get(dependency.descriptorHash);
-          if (!resolution)
-            throw new Error(`Assertion failed: The resolution should have been registered`);
+          if (!resolution) throw new Error(`Assertion failed: The resolution should have been registered`);
 
           const nextPkg = project.storedPackages.get(resolution);
-          if (!nextPkg)
-            throw new Error(`Assertion failed: The package should have been registered`);
+          if (!nextPkg) throw new Error(`Assertion failed: The package should have been registered`);
 
           traverse(nextPkg, depth + 1);
         }
       };
 
-      for (const workspace of roots)
-        traverse(workspace.anchoredPackage, 0);
+      for (const workspace of roots) traverse(workspace.anchoredPackage, 0);
 
       return selection;
     };
@@ -172,47 +166,61 @@ export default class UnplugCommand extends BaseCommand {
     }
 
     if (unreferencedPatterns.size > 1)
-      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by ${projectOrWorkspaces}`);
+      throw new UsageError(
+        `Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by ${projectOrWorkspaces}`,
+      );
     if (unreferencedPatterns.size > 0)
-      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by ${projectOrWorkspaces}`);
+      throw new UsageError(
+        `Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by ${projectOrWorkspaces}`,
+      );
 
-    selection = miscUtils.sortMap(selection, pkg => {
+    selection = miscUtils.sortMap(selection, (pkg) => {
       return structUtils.stringifyLocator(pkg);
     });
 
-    const unplugReport = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      json: this.json,
-    }, async report => {
-      for (const pkg of selection) {
-        const version = pkg.version ?? `unknown`;
+    const unplugReport = await StreamReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+        json: this.json,
+      },
+      async (report) => {
+        for (const pkg of selection) {
+          const version = pkg.version ?? `unknown`;
 
-        const dependencyMeta = project.topLevelWorkspace.manifest.ensureDependencyMeta(structUtils.makeDescriptor(pkg, version));
-        dependencyMeta.unplugged = true;
+          const dependencyMeta = project.topLevelWorkspace.manifest.ensureDependencyMeta(
+            structUtils.makeDescriptor(pkg, version),
+          );
+          dependencyMeta.unplugged = true;
 
-        report.reportInfo(MessageName.UNNAMED, `Will unpack ${structUtils.prettyLocator(configuration, pkg)} to ${formatUtils.pretty(configuration, pnpUtils.getUnpluggedPath(pkg, {configuration}), formatUtils.Type.PATH)}`);
-        report.reportJson({
-          locator: structUtils.stringifyLocator(pkg),
-          version,
-        });
-      }
+          report.reportInfo(
+            MessageName.UNNAMED,
+            `Will unpack ${structUtils.prettyLocator(configuration, pkg)} to ${formatUtils.pretty(configuration, pnpUtils.getUnpluggedPath(pkg, { configuration }), formatUtils.Type.PATH)}`,
+          );
+          report.reportJson({
+            locator: structUtils.stringifyLocator(pkg),
+            version,
+          });
+        }
 
-      await project.topLevelWorkspace.persistManifest();
+        await project.topLevelWorkspace.persistManifest();
 
-      if (!this.json) {
-        report.reportSeparator();
-      }
-    });
+        if (!this.json) {
+          report.reportSeparator();
+        }
+      },
+    );
 
-    if (unplugReport.hasErrors())
-      return unplugReport.exitCode();
+    if (unplugReport.hasErrors()) return unplugReport.exitCode();
 
-    return await project.installWithNewReport({
-      json: this.json,
-      stdout: this.context.stdout,
-    }, {
-      cache,
-    });
+    return await project.installWithNewReport(
+      {
+        json: this.json,
+        stdout: this.context.stdout,
+      },
+      {
+        cache,
+      },
+    );
   }
 }

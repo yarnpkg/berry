@@ -1,18 +1,18 @@
-import {Filename, npath, PortablePath, ppath} from '@yarnpkg/fslib';
-import {ZipFS}                                from '@yarnpkg/libzip';
+import { Filename, npath, PortablePath, ppath } from "@yarnpkg/fslib";
+import { ZipFS } from "@yarnpkg/libzip";
 
-import {hydratePnpFile}                       from '../sources';
+import { hydratePnpFile } from "../sources";
 
-import expectations                           from './testExpectations.json';
+import expectations from "./testExpectations.json";
 
 const projectRoot = `/path/to/project` as PortablePath;
 
 process.env.PNP_DEBUG_LEVEL = `0`;
 
-for (const {manifest, tests} of expectations) {
+for (const { manifest, tests } of expectations) {
   const fakeFs = new ZipFS();
 
-  fakeFs.mkdirSync(projectRoot, {recursive: true});
+  fakeFs.mkdirSync(projectRoot, { recursive: true });
 
   const pnpApiFile = ppath.join(projectRoot, Filename.pnpCjs);
   fakeFs.writeFileSync(pnpApiFile, `/* something */`);
@@ -22,7 +22,7 @@ for (const {manifest, tests} of expectations) {
 
   for (const test of tests) {
     it(test.it, async () => {
-      const pnpApi = await hydratePnpFile(pnpDataFile, {fakeFs, pnpapiResolution: pnpApiFile});
+      const pnpApi = await hydratePnpFile(pnpDataFile, { fakeFs, pnpapiResolution: pnpApiFile });
 
       const imported = test.imported;
       const importer = npath.fromPortablePath(test.importer);
@@ -33,9 +33,7 @@ for (const {manifest, tests} of expectations) {
         }).toThrow();
       } else {
         const resolution = pnpApi.resolveToUnqualified(imported, importer);
-        const expectation = test.expected !== null
-          ? npath.fromPortablePath(test.expected as PortablePath)
-          : null;
+        const expectation = test.expected !== null ? npath.fromPortablePath(test.expected as PortablePath) : null;
 
         expect(resolution).toEqual(expectation);
       }

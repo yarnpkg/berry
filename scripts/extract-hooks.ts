@@ -1,17 +1,12 @@
-import {Cli, Command, Option, UsageError} from 'clipanion';
-import fs                                 from 'fs';
-import path                               from 'path';
-import ts                                 from 'typescript';
+import { Cli, Command, Option, UsageError } from "clipanion";
+import fs from "fs";
+import path from "path";
+import ts from "typescript";
 
 async function parseFile(p: string) {
   const content = await fs.promises.readFile(p, `utf8`);
 
-  return ts.createSourceFile(
-    p,
-    content,
-    ts.ScriptTarget.ES2015,
-    /* setParentNodes */ true,
-  );
+  return ts.createSourceFile(p, content, ts.ScriptTarget.ES2015, /* setParentNodes */ true);
 }
 
 type HookDefinition = {
@@ -27,47 +22,57 @@ async function processFile(file: ts.SourceFile) {
 
   const processNode = (node: ts.Node) => {
     switch (node.kind) {
-      case ts.SyntaxKind.TypeAliasDeclaration: {
-        const typeAliasNode = node as ts.TypeAliasDeclaration;
-        if (typeAliasNode.name.getText() === `Hooks`) {
-          throw new UsageError(`Hooks should only be declared using interfaces, not type aliases (in ${file.fileName})`);
-        }
-      } break;
-
-      case ts.SyntaxKind.InterfaceDeclaration: {
-        const interfaceNode = node as ts.InterfaceDeclaration;
-        if (interfaceNode.name.getText() === `Hooks`) {
-          isInsideInterface = true;
-          ts.forEachChild(node, processNode);
-          isInsideInterface = false;
-        }
-      } break;
-
-      case ts.SyntaxKind.PropertySignature: {
-        const propertySignatureNode = node as ts.PropertySignature;
-        if (isInsideInterface) {
-          const type = propertySignatureNode.type;
-          if (type?.kind === ts.SyntaxKind.FunctionType) {
-            const {character} = file.getLineAndCharacterOfPosition(propertySignatureNode.getStart());
-            const removeIndent = (code: string) => code.replace(new RegExp(`^ {${character}}`, `gm`), ``);
-
-            // undocumented
-            const jsDoc = (propertySignatureNode as any).jsDoc;
-            const comment = jsDoc && jsDoc.length > 0 ? jsDoc[jsDoc.length - 1].comment : undefined;
-
-            hooks.push({
-              name: propertySignatureNode.name.getText(),
-              definition: removeIndent(propertySignatureNode.getText()),
-              comment,
-              file: file.fileName,
-            });
+      case ts.SyntaxKind.TypeAliasDeclaration:
+        {
+          const typeAliasNode = node as ts.TypeAliasDeclaration;
+          if (typeAliasNode.name.getText() === `Hooks`) {
+            throw new UsageError(
+              `Hooks should only be declared using interfaces, not type aliases (in ${file.fileName})`,
+            );
           }
         }
-      } break;
+        break;
 
-      default: {
-        ts.forEachChild(node, processNode);
-      } break;
+      case ts.SyntaxKind.InterfaceDeclaration:
+        {
+          const interfaceNode = node as ts.InterfaceDeclaration;
+          if (interfaceNode.name.getText() === `Hooks`) {
+            isInsideInterface = true;
+            ts.forEachChild(node, processNode);
+            isInsideInterface = false;
+          }
+        }
+        break;
+
+      case ts.SyntaxKind.PropertySignature:
+        {
+          const propertySignatureNode = node as ts.PropertySignature;
+          if (isInsideInterface) {
+            const type = propertySignatureNode.type;
+            if (type?.kind === ts.SyntaxKind.FunctionType) {
+              const { character } = file.getLineAndCharacterOfPosition(propertySignatureNode.getStart());
+              const removeIndent = (code: string) => code.replace(new RegExp(`^ {${character}}`, `gm`), ``);
+
+              // undocumented
+              const jsDoc = (propertySignatureNode as any).jsDoc;
+              const comment = jsDoc && jsDoc.length > 0 ? jsDoc[jsDoc.length - 1].comment : undefined;
+
+              hooks.push({
+                name: propertySignatureNode.name.getText(),
+                definition: removeIndent(propertySignatureNode.getText()),
+                comment,
+                file: file.fileName,
+              });
+            }
+          }
+        }
+        break;
+
+      default:
+        {
+          ts.forEachChild(node, processNode);
+        }
+        break;
     }
   };
 
@@ -86,7 +91,7 @@ async function execute(files: Array<string>) {
     for (const hook of fileHooks) {
       let existingDefinition = allHooks.get(hook.name);
       if (typeof existingDefinition === `undefined`)
-        allHooks.set(hook.name, existingDefinition = {...hook, file: undefined});
+        allHooks.set(hook.name, (existingDefinition = { ...hook, file: undefined }));
 
       if (existingDefinition.definition !== hook.definition)
         throw new UsageError(`Mismatched hook definitions for ${hook.name}`);
@@ -109,8 +114,7 @@ async function execute(files: Array<string>) {
   });
 
   for (const hook of allHooksArray)
-    if (typeof hook.comment === `undefined`)
-      throw new UsageError(`Undocumented hook ${hook.name}`);
+    if (typeof hook.comment === `undefined`) throw new UsageError(`Undocumented hook ${hook.name}`);
 
   return allHooksArray;
 }
@@ -127,8 +131,5 @@ if (require.main === module) {
         this.context.stdout.write(`${JSON.stringify(allHooks, null, 2)}\n`);
       }
     },
-  ]).runExit(
-    process.argv.slice(2),
-    Cli.defaultContext,
-  );
+  ]).runExit(process.argv.slice(2), Cli.defaultContext);
 }

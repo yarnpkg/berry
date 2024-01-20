@@ -1,15 +1,15 @@
-import {PortablePath, xfs} from '@yarnpkg/fslib';
-import {fs, tests}         from 'pkg-tests-core';
+import { PortablePath, xfs } from "@yarnpkg/fslib";
+import { fs, tests } from "pkg-tests-core";
 
-const {writeFile, writeJson} = fs;
+const { writeFile, writeJson } = fs;
 
 const getWorkspaces = async (run: tests.Run) => {
-  const {stdout} = await run(`workspaces`, `list`, `--json`);
+  const { stdout } = await run(`workspaces`, `list`, `--json`);
   const workspaces: Array<string> = stdout
     .trim()
     .split(`\n`)
-    .map(line => JSON.parse(line))
-    .map(({location}) => location);
+    .map((line) => JSON.parse(line))
+    .map(({ location }) => location);
 
   return workspaces;
 };
@@ -17,42 +17,36 @@ const getWorkspaces = async (run: tests.Run) => {
 describe(`Workspaces tests`, () => {
   test(
     `it should support basic glob patterns`,
-    makeTemporaryMonorepoEnv({
-      workspaces: [
-        `packages/*`,
-      ],
-    }, {
-      [`packages/foo`]: {},
-      [`packages/bar`]: {},
-      [`packages/baz`]: {},
-    }, async ({path, run, source}) => {
-      await expect(getWorkspaces(run)).resolves.toStrictEqual([
-        `.`,
-        `packages/bar`,
-        `packages/baz`,
-        `packages/foo`,
-      ]);
-    }),
+    makeTemporaryMonorepoEnv(
+      {
+        workspaces: [`packages/*`],
+      },
+      {
+        [`packages/foo`]: {},
+        [`packages/bar`]: {},
+        [`packages/baz`]: {},
+      },
+      async ({ path, run, source }) => {
+        await expect(getWorkspaces(run)).resolves.toStrictEqual([`.`, `packages/bar`, `packages/baz`, `packages/foo`]);
+      },
+    ),
   );
 
   test(
     `it should support negated glob patterns`,
-    makeTemporaryMonorepoEnv({
-      workspaces: [
-        `packages/*`,
-        `!packages/foo`,
-      ],
-    }, {
-      [`packages/foo`]: {},
-      [`packages/bar`]: {},
-      [`packages/baz`]: {},
-    }, async ({path, run, source}) => {
-      await expect(getWorkspaces(run)).resolves.toStrictEqual([
-        `.`,
-        `packages/bar`,
-        `packages/baz`,
-      ]);
-    }),
+    makeTemporaryMonorepoEnv(
+      {
+        workspaces: [`packages/*`, `!packages/foo`],
+      },
+      {
+        [`packages/foo`]: {},
+        [`packages/bar`]: {},
+        [`packages/baz`]: {},
+      },
+      async ({ path, run, source }) => {
+        await expect(getWorkspaces(run)).resolves.toStrictEqual([`.`, `packages/bar`, `packages/baz`]);
+      },
+    ),
   );
 
   test(
@@ -62,7 +56,7 @@ describe(`Workspaces tests`, () => {
         private: true,
         workspaces: [`packages/*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/packages/workspace-a/package.json` as PortablePath, {
           name: `workspace-a`,
           version: `1.0.0`,
@@ -93,7 +87,7 @@ describe(`Workspaces tests`, () => {
           [`workspace-b`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/packages/workspace-a/package.json` as PortablePath, {
           name: `workspace-a`,
           version: `1.0.0`,
@@ -147,7 +141,7 @@ describe(`Workspaces tests`, () => {
           [`workspace`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
@@ -188,7 +182,7 @@ describe(`Workspaces tests`, () => {
           [`workspace`]: `workspace:1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeFile(`${path}/.yarnrc.yml` as PortablePath, `enableTransparentWorkspaces: false\n`);
 
         await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
@@ -228,7 +222,7 @@ describe(`Workspaces tests`, () => {
         private: true,
         workspaces: [`packages/*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
@@ -243,7 +237,7 @@ describe(`Workspaces tests`, () => {
           run(`run`, `has-bin-entries`, `foo`, {
             cwd: `${path}/packages/workspace` as PortablePath,
           }),
-        ).resolves.toMatchObject({stdout: `foo\n`});
+        ).resolves.toMatchObject({ stdout: `foo\n` });
       },
     ),
   );
@@ -255,7 +249,7 @@ describe(`Workspaces tests`, () => {
         private: true,
         workspaces: [`packages/*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/packages/workspace/package.json` as PortablePath, {
           name: `workspace`,
           version: `1.0.0`,
@@ -266,36 +260,41 @@ describe(`Workspaces tests`, () => {
           },
         });
 
-        await writeFile(`${path}/packages/workspace/write.js` as PortablePath, `
+        await writeFile(
+          `${path}/packages/workspace/write.js` as PortablePath,
+          `
           require('fs').appendFileSync(process.argv[2], process.argv[3] + '\\n');
-        `);
+        `,
+        );
 
         await run(`install`);
 
-        await expect(xfs.readFilePromise(`${path}/packages/workspace/workspace.dat` as PortablePath, `utf8`)).resolves.toEqual([
-          `Preinstall\n`,
-          `Install\n`,
-          `Postinstall\n`,
-        ].join(``));
+        await expect(
+          xfs.readFilePromise(`${path}/packages/workspace/workspace.dat` as PortablePath, `utf8`),
+        ).resolves.toEqual([`Preinstall\n`, `Install\n`, `Postinstall\n`].join(``));
       },
     ),
   );
 
   test(
     `it should allow aliasing workspaces using relative paths`,
-    makeTemporaryMonorepoEnv({
-      workspaces: [`packages/*`],
-      dependencies: {
-        [`bar`]: `workspace:packages/foo`,
+    makeTemporaryMonorepoEnv(
+      {
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`bar`]: `workspace:packages/foo`,
+        },
       },
-    }, {
-      [`packages/foo`]: {
-        name: `foo`,
+      {
+        [`packages/foo`]: {
+          name: `foo`,
+        },
       },
-    }, async ({path, run, source}) => {
-      await run(`install`);
+      async ({ path, run, source }) => {
+        await run(`install`);
 
-      await expect(source(`require('bar/package.json').name`)).resolves.toEqual(`foo`);
-    }),
+        await expect(source(`require('bar/package.json').name`)).resolves.toEqual(`foo`);
+      },
+    ),
   );
 });

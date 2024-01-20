@@ -1,4 +1,4 @@
-import {xfs, ppath, Filename} from '@yarnpkg/fslib';
+import { xfs, ppath, Filename } from "@yarnpkg/fslib";
 
 describe(`Commands`, () => {
   describe(`version apply`, () => {
@@ -8,7 +8,7 @@ describe(`Commands`, () => {
         {
           version: `0.0.0`,
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await run(`version`, `patch`, `--deferred`);
 
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
@@ -35,11 +35,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [
-            `packages/*`,
-          ],
+          workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           const pkgA = ppath.join(path, `packages/pkg-a`);
           const pkgB = ppath.join(path, `packages/pkg-b`);
 
@@ -78,11 +76,9 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [
-            `packages/*`,
-          ],
+          workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           const pkgA = ppath.join(path, `packages/pkg-a`);
           const pkgB = ppath.join(path, `packages/pkg-b`);
 
@@ -126,7 +122,7 @@ describe(`Commands`, () => {
         {
           version: `0.0.0`,
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await run(`version`, `decline`, `--deferred`);
 
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
@@ -148,7 +144,7 @@ describe(`Commands`, () => {
         {
           version: `1.0.0`,
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await run(`version`, `3.4.5`, `--deferred`);
 
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
@@ -177,11 +173,9 @@ describe(`Commands`, () => {
         makeTemporaryEnv(
           {
             private: true,
-            workspaces: [
-              `packages/*`,
-            ],
+            workspaces: [`packages/*`],
           },
-          async ({path, run}) => {
+          async ({ path, run }) => {
             const pkgA = ppath.join(path, `packages/pkg-a`);
             const pkgB = ppath.join(path, `packages/pkg-b`);
 

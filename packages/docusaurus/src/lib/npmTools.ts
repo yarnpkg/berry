@@ -1,15 +1,13 @@
-import {normalizeRepoUrl}          from '@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl';
-import DOMPurify                   from 'dompurify';
-import gitUrlParse                 from 'git-url-parse';
+import { normalizeRepoUrl } from "@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl";
+import DOMPurify from "dompurify";
+import gitUrlParse from "git-url-parse";
 // @ts-expect-error
-import {Marked}                    from 'marked';
-import {useQuery}                  from 'react-query';
-import {resolve as resolveExports} from 'resolve.exports';
-import resolve                     from 'resolve';
+import { Marked } from "marked";
+import { useQuery } from "react-query";
+import { resolve as resolveExports } from "resolve.exports";
+import resolve from "resolve";
 
-export const STANDARD_EXTENSIONS = [
-  `.js`, `.cjs`, `.mjs`,
-];
+export const STANDARD_EXTENSIONS = [`.js`, `.cjs`, `.mjs`];
 
 export type PackageInfo = {
   error?: string;
@@ -56,12 +54,9 @@ export type ReleaseFile = {
   size: number;
 };
 
-export type PackageListingError =
-  | {type: `VersionNotFound`};
+export type PackageListingError = { type: `VersionNotFound` };
 
-export type WithErrors<T, TError extends {type: string}> =
-  | (T & {error?: null})
-  | { error: TError };
+export type WithErrors<T, TError extends { type: string }> = (T & { error?: null }) | { error: TError };
 
 export type PackageInfoQuery = ReturnType<typeof usePackageInfo>;
 export type ReleaseInfoQuery = ReturnType<typeof useReleaseInfo>;
@@ -78,8 +73,7 @@ export function usePackageInfo(name: string) {
 
 export function usePackageExists(name: string | null) {
   return useQuery([`packageExists`, name], async () => {
-    if (name === null)
-      return false;
+    if (name === null) return false;
 
     // eslint-disable-next-line no-restricted-globals
     const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}/package.json`);
@@ -88,13 +82,13 @@ export function usePackageExists(name: string | null) {
   });
 }
 
-export function useResolvedVersion({name, version}: {name: string, version: string | null}) {
+export function useResolvedVersion({ name, version }: { name: string; version: string | null }) {
   const pkgInfo = usePackageInfo(name);
 
   return version ?? pkgInfo[`dist-tags`].latest;
 }
 
-export function useReleaseInfo({name, version}: {name: string, version: string | null}): ReleaseInfo {
+export function useReleaseInfo({ name, version }: { name: string; version: string | null }): ReleaseInfo {
   const pkgInfo = usePackageInfo(name);
 
   const resolvedVersion = useResolvedVersion({
@@ -108,10 +102,9 @@ export function useReleaseInfo({name, version}: {name: string, version: string |
     const res = await req.json();
 
     const fileSet = new Set<string>();
-    for (const file of res.files)
-      fileSet.add(file.name);
+    for (const file of res.files) fileSet.add(file.name);
 
-    return {files: res.files as Array<ReleaseFile>, fileSet};
+    return { files: res.files as Array<ReleaseFile>, fileSet };
   }).data!;
 
   return {
@@ -122,10 +115,9 @@ export function useReleaseInfo({name, version}: {name: string, version: string |
   };
 }
 
-export function useReleaseFile({name, version}: {name: string, version: string}, path: string | null) {
+export function useReleaseFile({ name, version }: { name: string; version: string }, path: string | null) {
   return useQuery([`packageFile`, name, version, path], async () => {
-    if (path === null)
-      return null;
+    if (path === null) return null;
 
     // eslint-disable-next-line no-restricted-globals
     const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}@${version}${path}`);
@@ -135,7 +127,7 @@ export function useReleaseFile({name, version}: {name: string, version: string},
   }).data!;
 }
 
-export function useReleaseReadme({name, version}: {name: string, version: string}) {
+export function useReleaseReadme({ name, version }: { name: string; version: string }) {
   const pkgInfo = usePackageInfo(name);
 
   const files = useReleaseInfo({
@@ -143,11 +135,13 @@ export function useReleaseReadme({name, version}: {name: string, version: string
     version,
   });
 
-  const readmeFile = files.npm.readme ?? files.jsdelivr.files.find(entry => {
-    return entry.name.toLowerCase() === `/readme.md`;
-  });
+  const readmeFile =
+    files.npm.readme ??
+    files.jsdelivr.files.find((entry) => {
+      return entry.name.toLowerCase() === `/readme.md`;
+    });
 
-  const readmeContent = useReleaseFile({name, version}, readmeFile?.name ?? null);
+  const readmeContent = useReleaseFile({ name, version }, readmeFile?.name ?? null);
   const readmeText = readmeContent ?? files.npm.readme ?? pkgInfo.readme;
 
   const marked = new Marked();
@@ -156,7 +150,7 @@ export function useReleaseReadme({name, version}: {name: string, version: string
   domPurify.addHook(`uponSanitizeAttribute`, (node, data) => {
     if (data.attrName === `src` && !data.attrValue.startsWith(`//`) && !data.attrValue.includes(`:`)) {
       const url = new URL(data.attrValue, `https://example.org`).pathname;
-      if (files.jsdelivr.files.some(entry => entry.name === url)) {
+      if (files.jsdelivr.files.some((entry) => entry.name === url)) {
         data.attrValue = `https://cdn.jsdelivr.net/npm/${name}@${version}${url}`;
       } else if (files.npm.repository?.url) {
         const normalizedRepositoryUrl = normalizeRepoUrl(files.npm.repository.url);
@@ -179,23 +173,27 @@ export function useReleaseReadme({name, version}: {name: string, version: string
   return readmeHtmlSanitized;
 }
 
-function getResolutionFunction(releaseInfo: ReleaseInfo, {extensions = STANDARD_EXTENSIONS}: {extensions?: Array<string>} = {}) {
-  return (qualifier: string) => resolve.sync(qualifier, {
-    basedir: `/`,
-    includeCoreModules: true,
-    paths: [],
-    extensions,
-    isFile: path => releaseInfo.jsdelivr.files.some(file => file.name === path),
-    isDirectory: path => releaseInfo.jsdelivr.files.some(file => file.name.startsWith(`${path}/`)),
-    realpathSync: path => path,
-    readPackageSync: (_, path) => {
-      if (path === `/package.json`) {
-        return releaseInfo.npm;
-      } else {
-        throw new Error(`Failed`);
-      }
-    },
-  });
+function getResolutionFunction(
+  releaseInfo: ReleaseInfo,
+  { extensions = STANDARD_EXTENSIONS }: { extensions?: Array<string> } = {},
+) {
+  return (qualifier: string) =>
+    resolve.sync(qualifier, {
+      basedir: `/`,
+      includeCoreModules: true,
+      paths: [],
+      extensions,
+      isFile: (path) => releaseInfo.jsdelivr.files.some((file) => file.name === path),
+      isDirectory: (path) => releaseInfo.jsdelivr.files.some((file) => file.name.startsWith(`${path}/`)),
+      realpathSync: (path) => path,
+      readPackageSync: (_, path) => {
+        if (path === `/package.json`) {
+          return releaseInfo.npm;
+        } else {
+          throw new Error(`Failed`);
+        }
+      },
+    });
 }
 
 function resolveQualifier(releaseInfo: ReleaseInfo, qualifier: string) {
@@ -209,7 +207,14 @@ function resolveQualifier(releaseInfo: ReleaseInfo, qualifier: string) {
   }
 }
 
-export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions, extensions}: {mainFields: Array<string>, conditions: Array<string>, extensions?: Array<string>}) {
+export function useResolution(
+  { name, version }: { name: string; version: string },
+  {
+    mainFields,
+    conditions,
+    extensions,
+  }: { mainFields: Array<string>; conditions: Array<string>; extensions?: Array<string> },
+) {
   const releaseInfo = useReleaseInfo({
     name,
     version,
@@ -219,11 +224,9 @@ export function useResolution({name, version}: {name: string, version: string}, 
     conditions,
   })?.[0];
 
-  if (releaseInfo.npm.exports && !exportsResolution)
-    return null;
+  if (releaseInfo.npm.exports && !exportsResolution) return null;
 
-  if (exportsResolution)
-    return resolveQualifier(releaseInfo, exportsResolution);
+  if (exportsResolution) return resolveQualifier(releaseInfo, exportsResolution);
 
   for (const mainField of mainFields) {
     const resolution = resolveQualifier(releaseInfo, releaseInfo.npm[mainField] || `.`);

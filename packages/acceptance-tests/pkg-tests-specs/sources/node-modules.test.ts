@@ -1,14 +1,14 @@
-import {WindowsLinkType}                           from '@yarnpkg/core';
-import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
-
+import { WindowsLinkType } from "@yarnpkg/core";
+import { xfs, npath, PortablePath, ppath, Filename } from "@yarnpkg/fslib";
 
 const {
-  fs: {writeFile, writeJson, FsLinkType, determineLinkType},
-  tests: {testIf},
+  fs: { writeFile, writeJson, FsLinkType, determineLinkType },
+  tests: { testIf },
 } = require(`pkg-tests-core`);
 
 describe(`Node_Modules`, () => {
-  it(`should install one dependency`,
+  it(
+    `should install one dependency`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -18,7 +18,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(source(`require('resolve').sync('resolve')`)).resolves.toEqual(
@@ -40,7 +40,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(source(`require('has-symlinks/symlink')`)).resolves.toMatchObject({
@@ -65,7 +65,7 @@ describe(`Node_Modules`, () => {
         enableTransparentWorkspaces: false,
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeFile(
           npath.toPortablePath(`${path}/index.js`),
           `
@@ -107,7 +107,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/pkg/package.json`), {
           name: `pkg`,
           scripts: {
@@ -121,7 +121,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not fail if target bin link does not exist`,
+  test(
+    `should not fail if target bin link does not exist`,
     makeTemporaryEnv(
       {
         name: `pkg`,
@@ -130,7 +131,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await expect(run(`install`)).resolves.toBeTruthy();
         await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/pkg`))).rejects.toThrow();
 
@@ -149,7 +150,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should support dependency via link: protocol to a missing folder`,
+  test(
+    `should support dependency via link: protocol to a missing folder`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -159,7 +161,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeFile(npath.toPortablePath(`${path}/../one-fixed-dep.local/abc.js`), ``);
 
         await expect(run(`install`)).resolves.toBeTruthy();
@@ -169,7 +171,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not treat link: dependencies as an inner workspaces`,
+  test(
+    `should not treat link: dependencies as an inner workspaces`,
     makeTemporaryEnv(
       {
         private: true,
@@ -177,14 +180,12 @@ describe(`Node_Modules`, () => {
           [`one-fixed-dep`]: `2.0.0`,
           [`app`]: `link:./app`,
         },
-        workspaces: [
-          `app/plugins/*`,
-        ],
+        workspaces: [`app/plugins/*`],
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/app/plugins/foo-plugin/package.json`), {
           name: `foo-plugin`,
           version: `1.0.0`,
@@ -200,7 +201,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should support replacement of regular dependency with portal: protocol dependency`,
+  test(
+    `should support replacement of regular dependency with portal: protocol dependency`,
     makeTemporaryEnv(
       {
         private: true,
@@ -211,7 +213,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/../one-fixed-dep.local/package.json`), {
           name: `one-fixed-dep`,
           bin: `abc.js`,
@@ -231,13 +233,18 @@ describe(`Node_Modules`, () => {
         });
 
         await expect(run(`install`)).resolves.toBeTruthy();
-        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/../one-fixed-dep.local/node_modules`))).rejects.toThrow();
-        await expect(xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/one-fixed-dep`))).resolves.toBeDefined();
+        await expect(
+          xfs.lstatPromise(npath.toPortablePath(`${path}/../one-fixed-dep.local/node_modules`)),
+        ).rejects.toThrow();
+        await expect(
+          xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/.bin/one-fixed-dep`)),
+        ).resolves.toBeDefined();
       },
     ),
   );
 
-  test(`should return real cwd for scripts inside workspaces`,
+  test(
+    `should return real cwd for scripts inside workspaces`,
     makeTemporaryEnv(
       {
         private: true,
@@ -246,7 +253,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -257,12 +264,15 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        expect((await run(`run`, `ws:cwd`)).stdout.trim()).toEqual(npath.fromPortablePath(`${path}/packages/workspace`));
+        expect((await run(`run`, `ws:cwd`)).stdout.trim()).toEqual(
+          npath.fromPortablePath(`${path}/packages/workspace`),
+        );
       },
     ),
   );
 
-  test(`should not recreate folders when package is updated`,
+  test(
+    `should not recreate folders when package is updated`,
     makeTemporaryEnv(
       {
         private: true,
@@ -273,7 +283,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await expect(run(`install`)).resolves.toBeTruthy();
 
         const nmFolderInode = xfs.statSync(npath.toPortablePath(`${path}/node_modules`)).ino;
@@ -294,7 +304,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should skip linking incompatible package`,
+  test(
+    `should skip linking incompatible package`,
     makeTemporaryEnv(
       {
         private: true,
@@ -305,7 +316,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
@@ -320,7 +331,11 @@ describe(`Node_Modules`, () => {
         expect(stdout).not.toContain(`Shall not be run`);
 
         // We shouldn't show logs when a package is skipped because they get really spammy when a package has a lot of conditional deps
-        expect(stdout).not.toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, link skipped.`));
+        expect(stdout).not.toMatch(
+          new RegExp(
+            `dep@file:./dep.*The ${process.platform}-${process.arch} architecture is incompatible with this module, link skipped.`,
+          ),
+        );
 
         await expect(source(`require('dep')`)).rejects.toMatchObject({
           externalException: {
@@ -331,7 +346,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should support aliases`,
+  test(
+    `should support aliases`,
     makeTemporaryEnv(
       {
         private: true,
@@ -344,21 +360,23 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/packages/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
           dependencies: {
             [`no-deps`]: `npm:no-deps-bins@1.0.0`, // Should NOT be hoisted to the top
-            [`no-deps2`]: `npm:no-deps@2.0.0`,     // Should be hoisted to the top
+            [`no-deps2`]: `npm:no-deps@2.0.0`, // Should be hoisted to the top
           },
         });
-        await writeFile(`${path}/packages/workspace/index.js`,
+        await writeFile(
+          `${path}/packages/workspace/index.js`,
           `module.exports = require('./package.json');\n` +
-          `for (const key of ['dependencies', 'devDependencies', 'peerDependencies']) {\n` +
-          `    for (const dep of Object.keys(module.exports[key] || {})) {\n` +
-          `        module.exports[key][dep] = require(dep);\n` +
-          `    }}\n`);
+            `for (const key of ['dependencies', 'devDependencies', 'peerDependencies']) {\n` +
+            `    for (const dep of Object.keys(module.exports[key] || {})) {\n` +
+            `        module.exports[key][dep] = require(dep);\n` +
+            `    }}\n`,
+        );
 
         await run(`install`);
 
@@ -370,7 +388,9 @@ describe(`Node_Modules`, () => {
           name: `no-deps`,
           version: `2.0.0`,
         });
-        await expect(source(`require('workspace').dependencies['no-deps2'] === require('no-deps2')`)).resolves.toEqual(true);
+        await expect(source(`require('workspace').dependencies['no-deps2'] === require('no-deps2')`)).resolves.toEqual(
+          true,
+        );
         await expect(source(`require('workspace').dependencies['no-deps']`)).resolves.toEqual({
           bin: `./bin`,
           name: `no-deps-bins`,
@@ -380,7 +400,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not create duplicate copies of aliased packages`,
+  test(
+    `should not create duplicate copies of aliased packages`,
     makeTemporaryEnv(
       {
         private: true,
@@ -391,15 +412,18 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
-        expect(await xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).toBe(false);
+        expect(await xfs.existsPromise(`${path}/node_modules/no-deps2/node_modules/no-deps` as PortablePath)).toBe(
+          false,
+        );
       },
     ),
   );
 
-  test(`should not hoist package peer dependent on parent if conflict exists`,
+  test(
+    `should not hoist package peer dependent on parent if conflict exists`,
     // . -> dep -> conflict@2 -> unhoistable --> conflict
     //   -> conflict@1
     // `unhoistable` cannot be hoisted to the top, otherwise it will use wrong `conflict` version
@@ -414,7 +438,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/conflict1/package.json`), {
           name: `conflict`,
           version: `1.0.0`,
@@ -443,8 +467,10 @@ describe(`Node_Modules`, () => {
             conflict: `2.0.0`,
           },
         });
-        await writeFile(`${path}/packages/unhoistable/index.js`,
-          `module.exports = require('conflict/package.json').version`);
+        await writeFile(
+          `${path}/packages/unhoistable/index.js`,
+          `module.exports = require('conflict/package.json').version`,
+        );
 
         await run(`install`);
 
@@ -453,7 +479,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not produce orphaned symlinks on dependency removal having bin entries`,
+  test(
+    `should not produce orphaned symlinks on dependency removal having bin entries`,
     makeTemporaryEnv(
       {
         private: true,
@@ -465,7 +492,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/dep1/package.json`), {
           name: `dep1`,
           version: `1.0.0`,
@@ -489,7 +516,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should respect transitive peer dependencies`,
+  test(
+    `should respect transitive peer dependencies`,
     // . -> no-deps@1
     //   -> workspace -> peer-deps-lvl1 -> peer-deps-lvl2 --> no-deps
     //                                  --> no-deps
@@ -500,19 +528,19 @@ describe(`Node_Modules`, () => {
         private: true,
         workspaces: [`workspace`],
         dependencies: {
-          'no-deps': `1.0.0`,
+          "no-deps": `1.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
           dependencies: {
-            'peer-deps-lvl1': `1.0.0`,
-            'no-deps': `2.0.0`,
+            "peer-deps-lvl1": `1.0.0`,
+            "no-deps": `2.0.0`,
           },
         });
 
@@ -524,8 +552,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-
-  test(`should not hoist a single package past workspace hoist border`,
+  test(
+    `should not hoist a single package past workspace hoist border`,
     // . -> workspace -> dep
     // should be hoisted to:
     // . -> workspace -> dep
@@ -537,7 +565,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -563,7 +591,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should respect self references settings`,
+  test(
+    `should respect self references settings`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`, `ws2`],
@@ -572,7 +601,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmSelfReferences: false,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
           name: `ws1`,
           installConfig: {
@@ -591,7 +620,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not create self-reference symlinks for workspaces excluded from focus`,
+  test(
+    `should not create self-reference symlinks for workspaces excluded from focus`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`, `ws2`],
@@ -599,7 +629,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
           name: `ws1`,
         });
@@ -615,7 +645,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not create circular self-reference symlinks`,
+  test(
+    `should not create circular self-reference symlinks`,
     makeTemporaryEnv(
       {
         workspaces: [`ws`],
@@ -624,7 +655,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmHoistingLimits: `workspaces`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws/package.json`), {
           name: `ws`,
         });
@@ -636,7 +667,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should create circular symlinks when inner workspace depends on outer workspace`,
+  test(
+    `should create circular symlinks when inner workspace depends on outer workspace`,
     makeTemporaryEnv(
       {
         name: `foo`,
@@ -646,7 +678,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmHoistingLimits: `workspaces`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws/package.json`), {
           name: `ws`,
           dependencies: {
@@ -661,7 +693,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should not hoist multiple packages past workspace hoist border`,
+  test(
+    `should not hoist multiple packages past workspace hoist border`,
     // . -> workspace -> dep1 -> dep2
     // should be hoisted to:
     // . -> workspace -> dep1
@@ -677,7 +710,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmHoistingLimits: `workspaces`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -706,7 +739,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should support dependencies hoist border`,
+  test(
+    `should support dependencies hoist border`,
     // . -> workspace -> dep1 -> dep2 -> dep3
     // should be hoised to:
     // . -> workspace -> dep1 -> dep2
@@ -721,7 +755,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -757,14 +791,19 @@ describe(`Node_Modules`, () => {
         expect(await xfs.existsPromise(`${path}/node_modules/dep2` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/node_modules/dep3` as PortablePath)).toEqual(false);
         expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep2` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep3` as PortablePath)).toEqual(true);
+        expect(
+          await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep2` as PortablePath),
+        ).toEqual(true);
+        expect(
+          await xfs.existsPromise(`${path}/workspace/node_modules/dep1/node_modules/dep3` as PortablePath),
+        ).toEqual(true);
         expect(await xfs.existsPromise(`${path}/node_modules/workspace` as PortablePath)).toEqual(false);
       },
     ),
   );
 
-  test(`should create symlink if workspace is a dependency AND it has hoist borders at the same time`,
+  test(
+    `should create symlink if workspace is a dependency AND it has hoist borders at the same time`,
     makeTemporaryEnv(
       {
         private: true,
@@ -776,7 +815,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/workspace/package.json`), {
           name: `workspace`,
           version: `1.0.0`,
@@ -802,7 +841,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should warn about 'nohoist' usage and retain nohoist field in the manifest`,
+  test(
+    `should warn about 'nohoist' usage and retain nohoist field in the manifest`,
     makeTemporaryEnv(
       {
         private: true,
@@ -813,7 +853,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         const stdout = (await run(`install`)).stdout;
 
         expect(stdout).toMatch(new RegExp(`'nohoist' is deprecated.*`));
@@ -822,7 +862,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should inherit workspace peer dependencies from upper-level workspaces`,
+  test(
+    `should inherit workspace peer dependencies from upper-level workspaces`,
     // . -> foo(workspace) -> bar(workspace) --> no-deps@1
     //                     -> no-deps@1
     //   -> no-deps@2
@@ -834,25 +875,25 @@ describe(`Node_Modules`, () => {
         private: true,
         workspaces: [`foo`],
         dependencies: {
-          'no-deps': `2.0.0`,
+          "no-deps": `2.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
           name: `foo`,
           workspaces: [`bar`],
           dependencies: {
             bar: `workspace:*`,
-            'no-deps': `1.0.0`,
+            "no-deps": `1.0.0`,
           },
         });
         await writeJson(npath.toPortablePath(`${path}/foo/bar/package.json`), {
           name: `bar`,
           peerDependencies: {
-            'no-deps': `*`,
+            "no-deps": `*`,
           },
         });
 
@@ -864,7 +905,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should install dependencies in scoped workspaces`,
+  test(
+    `should install dependencies in scoped workspaces`,
     makeTemporaryEnv(
       {
         private: true,
@@ -873,12 +915,12 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
           name: `@scope/foo`,
           version: `1.0.0`,
           dependencies: {
-            'no-deps': `1.0.0`,
+            "no-deps": `1.0.0`,
           },
         });
 
@@ -890,7 +932,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should survive interrupted install`,
+  test(
+    `should survive interrupted install`,
     makeTemporaryEnv(
       {
         private: true,
@@ -899,11 +942,11 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
           name: `foo`,
           dependencies: {
-            'has-bin-entries': `1.0.0`,
+            "has-bin-entries": `1.0.0`,
           },
         });
 
@@ -914,33 +957,38 @@ describe(`Node_Modules`, () => {
 
         await run(`add`, `has-bin-entries@2.0.0`);
 
-        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+        expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(
+          true,
+        );
         expect(await xfs.existsPromise(`${path}/node_modules/has-bin-entries/index.js` as PortablePath)).toEqual(true);
-        expect(await xfs.existsPromise(`${path}/foo/node_modules/has-bin-entries/package.json` as PortablePath)).toEqual(true);
+        expect(
+          await xfs.existsPromise(`${path}/foo/node_modules/has-bin-entries/package.json` as PortablePath),
+        ).toEqual(true);
       },
     ),
   );
 
-  test(`should respect peerDependencies with defaults in workspaces`,
+  test(
+    `should respect peerDependencies with defaults in workspaces`,
     makeTemporaryEnv(
       {
         private: true,
         workspaces: [`foo`],
         dependencies: {
-          'has-bin-entries': `2.0.0`,
+          "has-bin-entries": `2.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(npath.toPortablePath(`${path}/foo/package.json`), {
           name: `foo`,
           peerDependencies: {
-            'has-bin-entries': `*`,
+            "has-bin-entries": `*`,
           },
           devDependencies: {
-            'has-bin-entries': `1.0.0`,
+            "has-bin-entries": `1.0.0`,
           },
         });
 
@@ -953,7 +1001,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should allow running binaries unrelated to incompatible package`,
+  test(
+    `should allow running binaries unrelated to incompatible package`,
     makeTemporaryEnv(
       {
         private: true,
@@ -965,7 +1014,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(ppath.resolve(path, `dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
@@ -983,18 +1032,20 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        await expect(run(`dep2`)).resolves.toMatchObject({stdout: `echo\n`});
+        await expect(run(`dep2`)).resolves.toMatchObject({ stdout: `echo\n` });
       },
     ),
   );
 
-  test(`should install dependencies from portals without modifying portal directory`,
-    makeTemporaryEnv({},
+  test(
+    `should install dependencies from portals without modifying portal directory`,
+    makeTemporaryEnv(
+      {},
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
-        await xfs.mktempPromise(async portalTarget => {
+      async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (portalTarget) => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             bin: `./index.js`,
@@ -1011,9 +1062,11 @@ describe(`Node_Modules`, () => {
             },
           });
 
-          const {stdout} = await run(`install`);
+          const { stdout } = await run(`install`);
 
-          await expect(xfs.readJsonPromise(`${path}/node_modules/portal/package.json` as PortablePath)).resolves.toMatchObject({
+          await expect(
+            xfs.readJsonPromise(`${path}/node_modules/portal/package.json` as PortablePath),
+          ).resolves.toMatchObject({
             name: `portal`,
           });
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
@@ -1023,17 +1076,20 @@ describe(`Node_Modules`, () => {
           expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
           expect((await xfs.lstatPromise(`${portalTarget}/index.js` as PortablePath)).mode).toEqual(binScriptMode);
         });
-      }),
+      },
+    ),
   );
 
-  test(`should still hoist direct dependencies from portal target to parent with nmHoistingLimits: dependencies`,
-    makeTemporaryEnv({},
+  test(
+    `should still hoist direct dependencies from portal target to parent with nmHoistingLimits: dependencies`,
+    makeTemporaryEnv(
+      {},
       {
         nodeLinker: `node-modules`,
         nmHoistingLimits: `dependencies`,
       },
-      async ({path, run, source}) => {
-        await xfs.mktempPromise(async portalTarget => {
+      async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (portalTarget) => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             dependencies: {
@@ -1046,7 +1102,7 @@ describe(`Node_Modules`, () => {
             },
           });
 
-          const {stdout} = await run(`install`);
+          const { stdout } = await run(`install`);
 
           await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
             version: `1.0.0`,
@@ -1055,31 +1111,34 @@ describe(`Node_Modules`, () => {
           expect(await xfs.existsPromise(`${portalTarget}/node_modules` as PortablePath)).toBeFalsy();
           expect(await xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).toBeFalsy();
         });
-      }),
+      },
+    ),
   );
 
-  test(`should error out on external portal requiring a dependency that conflicts with parent package`,
-    makeTemporaryEnv({},
+  test(
+    `should error out on external portal requiring a dependency that conflicts with parent package`,
+    makeTemporaryEnv(
+      {},
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget => {
+      async ({ path, run }) => {
+        await xfs.mktempPromise(async (portalTarget) => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             dependencies: {
-              'no-deps': `2.0.0`,
+              "no-deps": `2.0.0`,
             },
             peerDependencies: {
-              'no-deps-bins': `1.0.0`,
+              "no-deps-bins": `1.0.0`,
             },
           });
 
           await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
             dependencies: {
               portal: `portal:${portalTarget}`,
-              'no-deps': `1.0.0`,
-              'no-deps-bins': `1.0.0`,
+              "no-deps": `1.0.0`,
+              "no-deps-bins": `1.0.0`,
             },
           });
 
@@ -1090,29 +1149,34 @@ describe(`Node_Modules`, () => {
             stdout = e.stdout;
           }
 
-          expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`));
+          expect(stdout).toMatch(
+            new RegExp(`dependency no-deps@npm:2.0.0 conflicts with parent dependency no-deps@npm:1.0.0`),
+          );
         });
-      }),
+      },
+    ),
   );
 
-  test(`should error out if two same-parent portals have conflict between their direct dependencies`,
-    makeTemporaryEnv({},
+  test(
+    `should error out if two same-parent portals have conflict between their direct dependencies`,
+    makeTemporaryEnv(
+      {},
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget1 => {
-          await xfs.mktempPromise(async portalTarget2 => {
+      async ({ path, run }) => {
+        await xfs.mktempPromise(async (portalTarget1) => {
+          await xfs.mktempPromise(async (portalTarget2) => {
             await xfs.writeJsonPromise(`${portalTarget1}/package.json` as PortablePath, {
               name: `portal1`,
               dependencies: {
-                'no-deps': `2.0.0`,
+                "no-deps": `2.0.0`,
               },
             });
             await xfs.writeJsonPromise(`${portalTarget2}/package.json` as PortablePath, {
               name: `portal2`,
               dependencies: {
-                'no-deps': `1.0.0`,
+                "no-deps": `1.0.0`,
               },
             });
 
@@ -1130,30 +1194,37 @@ describe(`Node_Modules`, () => {
               stdout = e.stdout;
             }
 
-            expect(stdout).toMatch(new RegExp(`dependency no-deps@npm:1.0.0 conflicts with dependency no-deps@npm:2.0.0 from sibling portal portal1`));
+            expect(stdout).toMatch(
+              new RegExp(
+                `dependency no-deps@npm:1.0.0 conflicts with dependency no-deps@npm:2.0.0 from sibling portal portal1`,
+              ),
+            );
           });
         });
-      }),
+      },
+    ),
   );
 
-  test(`should not error out if one of two same-parent portals has unresolved peer dependency, while the other has resolved dependency with the same name`,
-    makeTemporaryEnv({},
+  test(
+    `should not error out if one of two same-parent portals has unresolved peer dependency, while the other has resolved dependency with the same name`,
+    makeTemporaryEnv(
+      {},
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget1 => {
-          await xfs.mktempPromise(async portalTarget2 => {
+      async ({ path, run }) => {
+        await xfs.mktempPromise(async (portalTarget1) => {
+          await xfs.mktempPromise(async (portalTarget2) => {
             await xfs.writeJsonPromise(`${portalTarget1}/package.json` as PortablePath, {
               name: `portal1`,
               peerDependencies: {
-                'no-deps': `2.0.0`,
+                "no-deps": `2.0.0`,
               },
             });
             await xfs.writeJsonPromise(`${portalTarget2}/package.json` as PortablePath, {
               name: `portal2`,
               dependencies: {
-                'no-deps': `1.0.0`,
+                "no-deps": `1.0.0`,
               },
             });
 
@@ -1167,7 +1238,8 @@ describe(`Node_Modules`, () => {
             await expect(run(`install`)).resolves.not.toThrow();
           });
         });
-      }),
+      },
+    ),
   );
 
   test(
@@ -1182,7 +1254,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(`${path}/dep/package.json`, {
           name: `dep`,
           scripts: {
@@ -1190,59 +1262,66 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        const {stdout} = await run(`install`);
+        const { stdout } = await run(`install`);
 
         expect(stdout).not.toContain(`YN0006`);
-      }),
-  );
-
-  test(`should not error out on internal portal requiring a dependency that conflicts with parent package`,
-    makeTemporaryEnv({
-      dependencies: {
-        portal: `portal:./portal`,
-        'no-deps': `1.0.0`,
       },
-    },
-    {
-      nodeLinker: `node-modules`,
-    },
-    async ({path, run}) => {
-      await writeJson(`${path}/portal/package.json` as PortablePath, {
-        name: `portal`,
-        dependencies: {
-          [`no-deps`]: `2.0.0`,
-        },
-      });
-
-      await expect(run(`install`)).resolves.not.toThrow();
-    }),
+    ),
   );
 
-  test(`should give a priority to direct portal dependencies over indirect regular dependencies`,
-    makeTemporaryEnv({},
+  test(
+    `should not error out on internal portal requiring a dependency that conflicts with parent package`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          portal: `portal:./portal`,
+          "no-deps": `1.0.0`,
+        },
+      },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget => {
+      async ({ path, run }) => {
+        await writeJson(`${path}/portal/package.json` as PortablePath, {
+          name: `portal`,
+          dependencies: {
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.not.toThrow();
+      },
+    ),
+  );
+
+  test(
+    `should give a priority to direct portal dependencies over indirect regular dependencies`,
+    makeTemporaryEnv(
+      {},
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({ path, run }) => {
+        await xfs.mktempPromise(async (portalTarget) => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             dependencies: {
-              'no-deps': `2.0.0`,
+              "no-deps": `2.0.0`,
             },
           });
 
           await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
             dependencies: {
               portal: `portal:${portalTarget}`,
-              'one-fixed-dep': `1.0.0`,
-              'one-range-dep': `1.0.0`,
+              "one-fixed-dep": `1.0.0`,
+              "one-range-dep": `1.0.0`,
             },
           });
 
           await expect(run(`install`)).resolves.not.toThrow();
         });
-      }),
+      },
+    ),
   );
 
   test(
@@ -1258,7 +1337,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmHoistingLimits: `workspaces`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(`${path}/workspace-a/package.json`, {
           workspaces: [`workspace-b`],
           dependencies: {
@@ -1275,8 +1354,12 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         await expect(xfs.existsPromise(`${path}/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
-        await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
-        await expect(xfs.existsPromise(`${path}/workspace-a/workspace-b/node_modules/no-deps` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/no-deps` as PortablePath)).resolves.toEqual(
+          true,
+        );
+        await expect(
+          xfs.existsPromise(`${path}/workspace-a/workspace-b/node_modules/no-deps` as PortablePath),
+        ).resolves.toEqual(true);
       },
     ),
   );
@@ -1299,7 +1382,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmHoistingLimits: `workspaces`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(`${path}/workspace-a/package.json`, {
           name: `workspace-a`,
           dependencies: {
@@ -1316,9 +1399,15 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        await expect(xfs.existsPromise(`${path}/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
-        await expect(xfs.existsPromise(`${path}/workspace-a/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
-        await expect(xfs.existsPromise(`${path}/workspace-b/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(true);
+        await expect(xfs.existsPromise(`${path}/node_modules/node-modules-path` as PortablePath)).resolves.toEqual(
+          true,
+        );
+        await expect(
+          xfs.existsPromise(`${path}/workspace-a/node_modules/node-modules-path` as PortablePath),
+        ).resolves.toEqual(true);
+        await expect(
+          xfs.existsPromise(`${path}/workspace-b/node_modules/node-modules-path` as PortablePath),
+        ).resolves.toEqual(true);
 
         const rootBinLocation = (await run(`run`, `w`)).stdout.trim();
         expect(rootBinLocation).not.toContain(`workspace-a`);
@@ -1329,7 +1418,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should honor transparently nmMode: hardlinks during subsequent installs`,
+  test(
+    `should honor transparently nmMode: hardlinks during subsequent installs`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`, `ws2`, `ws3`],
@@ -1337,7 +1427,7 @@ describe(`Node_Modules`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(`${path}/ws1/package.json`, {
           dependencies: {
             [`no-deps`]: `1.0.0`,
@@ -1359,22 +1449,29 @@ describe(`Node_Modules`, () => {
         await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks-local\n`);
         await run(`install`);
 
-        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({
+          nlink: 2,
+        });
 
         await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: classic\n`);
         await run(`install`);
 
-        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 1});
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({
+          nlink: 1,
+        });
 
         await writeFile(`${path}/.yarnrc.yml`, `nodeLinker: node-modules\nnmMode: hardlinks-local\n`);
         await run(`install`);
 
-        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({nlink: 2});
+        expect(await xfs.statPromise(`${path}/ws3/node_modules/no-deps/package.json` as PortablePath)).toMatchObject({
+          nlink: 2,
+        });
       },
     ),
   );
 
-  test(`should wire via hardlinks files having the same content when in nmMode: hardlinks-global`,
+  test(
+    `should wire via hardlinks files having the same content when in nmMode: hardlinks-global`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1386,7 +1483,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmMode: `hardlinks-global`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(ppath.resolve(path, `dep1/package.json`), {
           name: `dep1`,
           version: `1.0.0`,
@@ -1411,7 +1508,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should recover from changes to the store on next install in nmMode: hardlinks-global`,
+  test(
+    `should recover from changes to the store on next install in nmMode: hardlinks-global`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1422,7 +1520,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmMode: `hardlinks-global`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(ppath.resolve(path, `dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
@@ -1447,7 +1545,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should recover from changes to the store on next install in nmMode: hardlinks-global, when system clock is changed by the user`,
+  test(
+    `should recover from changes to the store on next install in nmMode: hardlinks-global, when system clock is changed by the user`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1458,7 +1557,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         nmMode: `hardlinks-global`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(ppath.resolve(path, `dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
@@ -1485,7 +1584,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  test(`should give priority to direct workspace dependencies over indirect regular dependencies`,
+  test(
+    `should give priority to direct workspace dependencies over indirect regular dependencies`,
     // Despite 'one-fixed-dep' and 'has-bin-entries' depend on 'no-deps:1.0.0',
     // the 'no-deps:2.0.0' should be hoisted to the top-level
     makeTemporaryEnv(
@@ -1498,7 +1598,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/ws1/package.json`, {
           dependencies: {
             [`no-deps`]: `2.0.0`,
@@ -1526,7 +1626,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         const appPath = ppath.join(path, `lib-1`);
         const libPath = ppath.join(path, `lib-2`);
 
@@ -1563,17 +1663,17 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should not create self-referencing symlinks for anonymous workspaces`,
+  it(
+    `should not create self-referencing symlinks for anonymous workspaces`,
     makeTemporaryEnv(
-      {
-      },
+      {},
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await run(`install`);
 
-        const entries = await xfs.readdirPromise(ppath.join(path, `node_modules`), {withFileTypes: true});
+        const entries = await xfs.readdirPromise(ppath.join(path, `node_modules`), { withFileTypes: true });
         let symlinkCount = 0;
         for (const entry of entries) {
           if (entry.isSymbolicLink()) {
@@ -1586,7 +1686,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should properly hoist nested workspaces`,
+  it(
+    `should properly hoist nested workspaces`,
     makeTemporaryEnv(
       {
         workspaces: [`ws`, `ws/nested1`, `ws/nested1/nested2`],
@@ -1599,7 +1700,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await xfs.mkdirpPromise(ppath.join(path, `ws/nested1/nested2`));
 
         await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}`), {
@@ -1628,7 +1729,9 @@ describe(`Node_Modules`, () => {
         await expect(source(`require('no-deps')`)).resolves.toMatchObject({
           version: `1.0.0`,
         });
-        await expect(source(`require('module').createRequire(require.resolve('nested1/package.json') + '/..')('no-deps')`)).resolves.toMatchObject({
+        await expect(
+          source(`require('module').createRequire(require.resolve('nested1/package.json') + '/..')('no-deps')`),
+        ).resolves.toMatchObject({
           version: `2.0.0`,
         });
       },
@@ -1640,13 +1743,13 @@ describe(`Node_Modules`, () => {
       {
         private: true,
         dependencies: {
-          'no-deps': `1.0.0`,
+          "no-deps": `1.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await xfs.writeFilePromise(ppath.resolve(path, `node_modules`), ``);
 
         await run(`install`);
@@ -1664,13 +1767,13 @@ describe(`Node_Modules`, () => {
       {
         private: true,
         dependencies: {
-          'no-deps': `1.0.0`,
+          "no-deps": `1.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         const nmDir = ppath.resolve(path, `node_modules`);
         const trueInstallDir = ppath.resolve(path, `target`);
         await xfs.mkdirPromise(trueInstallDir);
@@ -1684,7 +1787,8 @@ describe(`Node_Modules`, () => {
     );
   });
 
-  it(`should install project when portal is pointing to a workspace`,
+  it(
+    `should install project when portal is pointing to a workspace`,
     makeTemporaryEnv(
       {
         workspaces: [`ws1`, `ws2`],
@@ -1692,7 +1796,7 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await xfs.mkdirpPromise(ppath.join(path, `ws1`));
         await xfs.writeJsonPromise(ppath.join(path, `ws1/${Filename.manifest}`), {
           name: `ws1`,
@@ -1717,21 +1821,22 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should install project when portal is used from the child workspace and have conflicts with root workspace dependencies`,
+  it(
+    `should install project when portal is used from the child workspace and have conflicts with root workspace dependencies`,
     // portal dependencies should be hoisted first and only after that portal hoisting should happen, not vice versa
     // as a result the install in this case should finish successfully
     makeTemporaryEnv(
       {
         workspaces: [`ws`],
         dependencies: {
-          'no-deps': `1.0.0`,
+          "no-deps": `1.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget => {
+      async ({ path, run }) => {
+        await xfs.mktempPromise(async (portalTarget) => {
           await xfs.mkdirpPromise(ppath.join(path, `ws`));
           await xfs.writeJsonPromise(`${path}/ws/package.json` as PortablePath, {
             dependencies: {
@@ -1742,16 +1847,18 @@ describe(`Node_Modules`, () => {
           await xfs.writeJsonPromise(`${portalTarget}/package.json` as PortablePath, {
             name: `portal`,
             dependencies: {
-              'no-deps': `2.0.0`,
+              "no-deps": `2.0.0`,
             },
           });
 
           await expect(run(`install`)).resolves.not.toThrow();
         });
-      }),
+      },
+    ),
   );
 
-  it(`should reinstall and rebuild dependencies deleted by the user on the next install`,
+  it(
+    `should reinstall and rebuild dependencies deleted by the user on the next install`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1762,11 +1869,11 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
         await xfs.removePromise(`${path}/node_modules/one-dep-scripted` as PortablePath);
 
-        const {stdout} = await run(`install`);
+        const { stdout } = await run(`install`);
 
         // Yarn must reinstall and rebuild only the removed package
         expect(stdout).not.toMatch(new RegExp(`no-deps-scripted@npm:1.0.0 must be built`));
@@ -1780,7 +1887,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should only reinstall scoped dependencies deleted by the user on the next install`,
+  it(
+    `should only reinstall scoped dependencies deleted by the user on the next install`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1791,14 +1899,15 @@ describe(`Node_Modules`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await run(`install`);
 
         await xfs.removePromise(`${path}/node_modules/@types/is-number` as PortablePath);
         const inode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
 
         await run(`install`);
-        const nextInode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath)).ino;
+        const nextInode = (await xfs.statPromise(`${path}/node_modules/@types/no-deps/package.json` as PortablePath))
+          .ino;
 
         await expect(xfs.existsPromise(`${path}/node_modules/@types/is-number` as PortablePath));
         expect(nextInode).toEqual(inode);
@@ -1806,19 +1915,20 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  it(`should support portals to external workspaces`,
+  it(
+    `should support portals to external workspaces`,
     makeTemporaryEnv(
       {
         workspaces: [`ws`],
         dependencies: {
-          'no-deps': `1.0.0`,
+          "no-deps": `1.0.0`,
         },
       },
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run}) => {
-        await xfs.mktempPromise(async portalTarget => {
+      async ({ path, run }) => {
+        await xfs.mktempPromise(async (portalTarget) => {
           await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
             dependencies: {
               ws1: `^1.0.0`,
@@ -1852,17 +1962,19 @@ describe(`Node_Modules`, () => {
 
           await expect(run(`install`)).resolves.not.toThrow();
         });
-      }),
+      },
+    ),
   );
 
-  it(`should support supportedArchitectures`,
+  it(
+    `should support supportedArchitectures`,
     makeTemporaryEnv(
       {
         dependencies: {
           native: `1.0.0`,
         },
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
           nodeLinker: `node-modules`,
           supportedArchitectures: {
@@ -1871,7 +1983,7 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await expect(run(`install`)).resolves.toMatchObject({ code: 0 });
 
         await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
           `.yarn-state.yml`,
@@ -1879,10 +1991,12 @@ describe(`Node_Modules`, () => {
           `native-foo-x64`,
           `native-foo-x86`,
         ]);
-      }),
+      },
+    ),
   );
 
-  testIf(() => process.platform === `win32`,
+  testIf(
+    () => process.platform === `win32`,
     `'winLinkType: symlinks' on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
@@ -1892,7 +2006,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         winLinkType: WindowsLinkType.SYMLINKS,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
           name: `ws1`,
         });
@@ -1907,7 +2021,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  testIf(() => process.platform === `win32`,
+  testIf(
+    () => process.platform === `win32`,
     `'winLinkType: junctions' on Windows should use junctions in node_modules directories`,
     makeTemporaryEnv(
       {
@@ -1917,7 +2032,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         winLinkType: WindowsLinkType.JUNCTIONS,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
           name: `ws1`,
         });
@@ -1932,7 +2047,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  testIf(() => process.platform !== `win32`,
+  testIf(
+    () => process.platform !== `win32`,
     `'winLinkType: junctions' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
@@ -1942,7 +2058,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         winLinkType: WindowsLinkType.JUNCTIONS,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
           name: `ws1`,
         });
@@ -1958,7 +2074,8 @@ describe(`Node_Modules`, () => {
     ),
   );
 
-  testIf(() => process.platform !== `win32`,
+  testIf(
+    () => process.platform !== `win32`,
     `'winLinkType: symlinks' not-on Windows should use symlinks in node_modules directories`,
     makeTemporaryEnv(
       {
@@ -1968,7 +2085,7 @@ describe(`Node_Modules`, () => {
         nodeLinker: `node-modules`,
         winLinkType: WindowsLinkType.SYMLINKS,
       },
-      async ({path, run}) => {
+      async ({ path, run }) => {
         await writeJson(npath.toPortablePath(`${path}/ws1/package.json`), {
           name: `ws1`,
         });

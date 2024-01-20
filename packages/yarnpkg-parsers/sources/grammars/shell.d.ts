@@ -7,47 +7,54 @@
 // - A value argument is a combination of argument segments
 
 export type ArgumentSegment =
-  | {type: `text`, text: string}
-  | {type: `glob`, pattern: string}
-  | {type: `shell`, shell: ShellLine, quoted: boolean}
-  | {type: `variable`, name: string, defaultValue?: Array<ValueArgument>, alternativeValue?: Array<ValueArgument>, quoted: boolean}
-  | {type: `arithmetic`, arithmetic: ArithmeticExpression};
+  | { type: `text`; text: string }
+  | { type: `glob`; pattern: string }
+  | { type: `shell`; shell: ShellLine; quoted: boolean }
+  | {
+      type: `variable`;
+      name: string;
+      defaultValue?: Array<ValueArgument>;
+      alternativeValue?: Array<ValueArgument>;
+      quoted: boolean;
+    }
+  | { type: `arithmetic`; arithmetic: ArithmeticExpression };
 
-export type Argument =
-  | RedirectArgument
-  | ValueArgument;
+export type Argument = RedirectArgument | ValueArgument;
 
 export type RedirectArgument = {
   type: `redirection`;
-  subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`;
+  subtype: `>` | `<` | ">&" | "<&" | `>>` | `<<<`;
   fd: number | null;
   args: Array<ValueArgument>;
 };
 
-export type ValueArgument =
-  | {type: `argument`, segments: Array<ArgumentSegment>};
+export type ValueArgument = { type: `argument`; segments: Array<ArgumentSegment> };
 
 export type EnvSegment = {
   name: string;
   args: [] | [ValueArgument];
 };
 
-export type Command = {
-  type: `command`;
-  args: Array<Argument>;
-  envs: Array<EnvSegment>;
-} | {
-  type: `subshell`;
-  subshell: ShellLine;
-  args: Array<RedirectArgument>;
-} | {
-  type: `group`;
-  group: ShellLine;
-  args: Array<RedirectArgument>;
-} | {
-  type: `envs`;
-  envs: Array<EnvSegment>;
-};
+export type Command =
+  | {
+      type: `command`;
+      args: Array<Argument>;
+      envs: Array<EnvSegment>;
+    }
+  | {
+      type: `subshell`;
+      subshell: ShellLine;
+      args: Array<RedirectArgument>;
+    }
+  | {
+      type: `group`;
+      group: ShellLine;
+      args: Array<RedirectArgument>;
+    }
+  | {
+      type: `envs`;
+      envs: Array<EnvSegment>;
+    };
 
 export type CommandChain = Command & {
   then?: CommandChainThen;
@@ -69,17 +76,19 @@ export type CommandLineThen = {
 };
 
 export type ShellLine = Array<{
-  type: ';' | '&';
+  type: ";" | "&";
   command: CommandLine;
 }>;
 
-export type ArithmeticPrimary = {
-  type: `number`;
-  value: number;
-} | {
-  type: `variable`;
-  name: string;
-};
+export type ArithmeticPrimary =
+  | {
+      type: `number`;
+      value: number;
+    }
+  | {
+      type: `variable`;
+      name: string;
+    };
 
 export type ArithmeticOperatorExpression = {
   type: `multiplication` | `division` | `addition` | `subtraction`;
@@ -89,4 +98,4 @@ export type ArithmeticOperatorExpression = {
 
 export type ArithmeticExpression = ArithmeticPrimary | ArithmeticOperatorExpression;
 
-export declare const parse: (code: string, options: {isGlobPattern: (arg: string) => boolean}) => ShellLine;
+export declare const parse: (code: string, options: { isGlobPattern: (arg: string) => boolean }) => ShellLine;

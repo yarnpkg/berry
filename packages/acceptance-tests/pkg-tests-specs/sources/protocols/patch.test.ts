@@ -1,7 +1,7 @@
-import {xfs, ppath, Filename} from '@yarnpkg/fslib';
+import { xfs, ppath, Filename } from "@yarnpkg/fslib";
 
 const {
-  tests: {getPackageDirectoryPath},
+  tests: { getPackageDirectoryPath },
 } = require(`pkg-tests-core`);
 
 const NO_DEPS_PATCH = `diff --git a/index.js b/index.js
@@ -26,9 +26,9 @@ describe(`Protocols`, () => {
       `it should apply a patch on the original package`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+          dependencies: { [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
@@ -46,9 +46,9 @@ describe(`Protocols`, () => {
       `it should generate the same file twice in a row`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+          dependencies: { [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
@@ -71,9 +71,9 @@ describe(`Protocols`, () => {
       `it should generate the same file twice in a row (delayed)`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+          dependencies: { [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
@@ -84,7 +84,7 @@ describe(`Protocols`, () => {
           // At least three seconds because Zip archives are precise to two
           // seconds, not one. One extra second will ensure that the file
           // timestamps will always have a chance to tick.
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise((resolve) => setTimeout(resolve, 3000));
 
           await run(`install`);
 
@@ -105,7 +105,7 @@ describe(`Protocols`, () => {
             [`no-deps`]: `1.0.0`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
@@ -148,40 +148,37 @@ describe(`Protocols`, () => {
 
     test(
       `it should apply patches relative to the package`,
-      makeTemporaryEnv(
-        {},
-        async ({path, run, source}) => {
-          await xfs.mktempPromise(async fileTarget => {
-            await xfs.writeFilePromise(ppath.join(fileTarget, PATCH_NAME), NO_DEPS_PATCH);
-            await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
-            await xfs.writeJsonPromise(ppath.join(fileTarget, Filename.manifest), {
-              dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
-            });
-
-            await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
-              dependencies: {[`file`]: `file:${fileTarget}`},
-            });
-
-            await run(`install`);
-
-            await expect(source(`require('file')`)).resolves.toMatchObject({
-              name: `no-deps`,
-              version: `1.0.0`,
-              hello: `world`,
-            });
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (fileTarget) => {
+          await xfs.writeFilePromise(ppath.join(fileTarget, PATCH_NAME), NO_DEPS_PATCH);
+          await xfs.writeFilePromise(ppath.join(fileTarget, `index.js`), `module.exports = require('no-deps');`);
+          await xfs.writeJsonPromise(ppath.join(fileTarget, Filename.manifest), {
+            dependencies: { [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}` },
           });
-        },
-      ),
+
+          await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
+            dependencies: { [`file`]: `file:${fileTarget}` },
+          });
+
+          await run(`install`);
+
+          await expect(source(`require('file')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+            hello: `world`,
+          });
+        });
+      }),
     );
 
     test(
       `it should throw on invalid patch files`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+          dependencies: { [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}` },
         },
-        async ({path, run, source}) => {
-          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH, {encoding: `utf16le`});
+        async ({ path, run, source }) => {
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH, { encoding: `utf16le` });
 
           await expect(run(`install`)).rejects.toMatchObject({
             code: 1,
@@ -196,10 +193,12 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`no-deps`]: getPackageDirectoryPath(`no-deps`, `1.0.0`).then((pkgPath: any) => `patch:no-deps@${encodeURIComponent(`file:${pkgPath}`)}#${PATCH_NAME}`),
+            [`no-deps`]: getPackageDirectoryPath(`no-deps`, `1.0.0`).then(
+              (pkgPath: any) => `patch:no-deps@${encodeURIComponent(`file:${pkgPath}`)}#${PATCH_NAME}`,
+            ),
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           await run(`install`);
@@ -211,9 +210,9 @@ describe(`Protocols`, () => {
       `it should only compute the hash from the effects of the patch`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+          dependencies: { [`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
 
           // Sanity check, YN0013 must be printed when the package is fetched
@@ -230,7 +229,10 @@ describe(`Protocols`, () => {
           });
 
           // semver exclusivity doesn't change the effect of the patch so its hash should remain the same
-          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH.replace(/---/, `semver exclusivity *\n---`));
+          await xfs.writeFilePromise(
+            ppath.join(path, PATCH_NAME),
+            NO_DEPS_PATCH.replace(/---/, `semver exclusivity *\n---`),
+          );
           await expect(run(`install`)).resolves.toMatchObject({
             code: 0,
             stdout: expect.not.stringContaining(`YN0013`),

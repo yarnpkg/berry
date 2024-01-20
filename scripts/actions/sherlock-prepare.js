@@ -1,7 +1,9 @@
-const {execFile} = require(`child_process`);
-const {promises: {mkdir, writeFile}} = require(`fs`);
-const {resolve} = require(`path`);
-const {promisify} = require(`util`);
+const { execFile } = require(`child_process`);
+const {
+  promises: { mkdir, writeFile },
+} = require(`fs`);
+const { resolve } = require(`path`);
+const { promisify } = require(`util`);
 
 const execFileP = promisify(execFile);
 
@@ -15,9 +17,9 @@ const execFileP = promisify(execFile);
  *   },
  * });
  */
-global.packageJson = async (data, {cwd = `.`} = {}) => {
+global.packageJson = async (data, { cwd = `.` } = {}) => {
   const target = resolve(cwd);
-  await mkdir(target, {recursive: true});
+  await mkdir(target, { recursive: true });
 
   await writeFile(resolve(target, `package.json`), `${JSON.stringify(data, null, 2)}\n`);
   await writeFile(resolve(target, `index.js`), `module.exports = require('./package.json');`);
@@ -33,8 +35,8 @@ global.packageJson = async (data, {cwd = `.`} = {}) => {
  *   },
  * });
  */
-global.packageJsonAndInstall = async (data, {cwd = `.`} = {}) => {
-  await global.packageJson(data, {cwd});
+global.packageJsonAndInstall = async (data, { cwd = `.` } = {}) => {
+  await global.packageJson(data, { cwd });
   return await global.yarn(`install`);
 };
 
@@ -45,13 +47,18 @@ global.packageJsonAndInstall = async (data, {cwd = `.`} = {}) => {
  */
 global.yarn = async (...args) => {
   let opts;
-  if (typeof args[args.length - 1] === `object`)
-    opts = args.pop();
+  if (typeof args[args.length - 1] === `object`) opts = args.pop();
 
   let stdout;
   try {
-    ({stdout} = await execFileP(process.execPath, [`${__dirname}/../run-yarn.js`, ...args], {
-      env: {...process.env, YARN_ENABLE_COLORS: 0, YARN_IGNORE_PATH: 1, YARN_ENABLE_INLINE_BUILDS: 1, YARN_ENABLE_IMMUTABLE_INSTALLS: 0},
+    ({ stdout } = await execFileP(process.execPath, [`${__dirname}/../run-yarn.js`, ...args], {
+      env: {
+        ...process.env,
+        YARN_ENABLE_COLORS: 0,
+        YARN_IGNORE_PATH: 1,
+        YARN_ENABLE_INLINE_BUILDS: 1,
+        YARN_ENABLE_IMMUTABLE_INSTALLS: 0,
+      },
       ...opts,
     }));
   } catch (error) {
@@ -77,5 +84,12 @@ global.yarn = async (...args) => {
  * }`))
  */
 global.node = async (source, opts = {}) => {
-  return JSON.parse(await global.yarn(`node`, `-e`, `Promise.resolve().then(async () => ${source}).catch(err => err).then(res => console.log(JSON.stringify(res)))`, opts));
+  return JSON.parse(
+    await global.yarn(
+      `node`,
+      `-e`,
+      `Promise.resolve().then(async () => ${source}).catch(err => err).then(res => console.log(JSON.stringify(res)))`,
+      opts,
+    ),
+  );
 };

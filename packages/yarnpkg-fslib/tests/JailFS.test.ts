@@ -1,5 +1,5 @@
-import {JailFS}                             from '../sources/JailFS';
-import {xfs, ppath, PortablePath, Filename} from '../sources';
+import { JailFS } from "../sources/JailFS";
+import { xfs, ppath, PortablePath, Filename } from "../sources";
 
 describe(`JailFS`, () => {
   it(`should not throw an error when the accessed path is inside the target folder (relative)`, async () => {
@@ -30,6 +30,8 @@ describe(`JailFS`, () => {
     await xfs.mkdirpPromise(jailedFolder);
 
     const jailFs = new JailFS(jailedFolder);
-    await expect(jailFs.writeFilePromise(`../text.txt` as Filename, `Hello World`)).rejects.toThrow(`Resolving this path (../text.txt) would escape the jail`);
+    await expect(jailFs.writeFilePromise(`../text.txt` as Filename, `Hello World`)).rejects.toThrow(
+      `Resolving this path (../text.txt) would escape the jail`,
+    );
   });
 });

@@ -25,12 +25,15 @@ This plugin is included by default starting from Yarn 4.
 **gen-pkg.js**
 
 ```js
-const {buildDir} = execEnv;
+const { buildDir } = execEnv;
 
-fs.writeFileSync(path.join(buildDir, `package.json`), JSON.stringify({
-  name: `pkg`,
-  version: `1.0.0`,
-}));
+fs.writeFileSync(
+  path.join(buildDir, `package.json`),
+  JSON.stringify({
+    name: `pkg`,
+    version: `1.0.0`,
+  }),
+);
 
 fs.writeFileSync(path.join(buildDir, `index.js`), `module.exports = ${Date.now()};\n`);
 ```
@@ -68,31 +71,37 @@ You're free to do whatever you want inside `execEnv.tempDir` but, at the end of 
 Generate an hello world package:
 
 ```ts
-fs.writeFileSync(path.join(execEnv.buildDir, 'package.json'), JSON.stringify({
-  name: 'hello-world',
-  version: '1.0.0',
-}));
+fs.writeFileSync(
+  path.join(execEnv.buildDir, "package.json"),
+  JSON.stringify({
+    name: "hello-world",
+    version: "1.0.0",
+  }),
+);
 
-fs.writeFileSync(path.join(execEnv.buildDir, 'index.js'), `
+fs.writeFileSync(
+  path.join(execEnv.buildDir, "index.js"),
+  `
   module.exports = 'hello world!';
-`);
+`,
+);
 ```
 
 Clone a monorepo and build a specific package:
 
 ```ts
-const pathToRepo = path.join(execEnv.tempDir, 'repo');
-const pathToArchive = path.join(execEnv.tempDir, 'archive.tgz');
-const pathToSubpackage = path.join(pathToRepo, 'packages/foobar');
+const pathToRepo = path.join(execEnv.tempDir, "repo");
+const pathToArchive = path.join(execEnv.tempDir, "archive.tgz");
+const pathToSubpackage = path.join(pathToRepo, "packages/foobar");
 
 // Clone the repository
 child_process.execFileSync(`git`, [`clone`, `git@github.com:foo/bar`, pathToRepo]);
 
 // Install the dependencies
-child_process.execFileSync(`yarn`, [`install`], {cwd: pathToRepo});
+child_process.execFileSync(`yarn`, [`install`], { cwd: pathToRepo });
 
 // Pack a specific workspace
-child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], {cwd: pathToSubpackage});
+child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], { cwd: pathToSubpackage });
 
 // Send the package content into the build directory
 child_process.execFileSync(`tar`, [`-x`, `-z`, `--strip-components=1`, `-f`, pathToArchive, `-C`, execEnv.buildDir]);

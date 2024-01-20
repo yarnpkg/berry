@@ -1,9 +1,9 @@
-import {npath, NodeFS}  from '@yarnpkg/fslib';
+import { npath, NodeFS } from "@yarnpkg/fslib";
 
-import {diffFolders}    from '../sources/patchUtils';
-import {parsePatchFile} from '../sources/tools/parse';
+import { diffFolders } from "../sources/patchUtils";
+import { parsePatchFile } from "../sources/tools/parse";
 
-describe(`diffFolders`,  () => {
+describe(`diffFolders`, () => {
   const fs = new NodeFS();
   const fixtures = npath.join(__dirname, `fixtures`);
 

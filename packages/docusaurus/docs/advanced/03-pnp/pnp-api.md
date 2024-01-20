@@ -15,23 +15,23 @@ Every script running within a Plug'n'Play runtime environment has access to a sp
 
 ```ts
 export type PackageLocator = {
-  name: string,
-  reference: string,
+  name: string;
+  reference: string;
 };
 ```
 
 A package locator is an object describing one unique instance of a package in the dependency tree. The `name` field is guaranteed to be the name of the package itself, but the `reference` field should be considered an opaque string whose value may be whatever the PnP implementation decides to put there.
 
-Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets *both* `name` and `reference` to `null`. This special locator will always mirror the top-level package (which is generally the root of the repository, even when working with workspaces).
+Note that one package locator is different from the others: the top-level locator (available through `pnp.topLevel`, cf below) sets _both_ `name` and `reference` to `null`. This special locator will always mirror the top-level package (which is generally the root of the repository, even when working with workspaces).
 
 ### `PackageInformation`
 
 ```ts
 export type PackageInformation = {
-  packageLocation: string,
-  packageDependencies: Map<string, null | string | [string, string]>,
-  packagePeers: Set<string>,
-  linkType: 'HARD' | 'SOFT',
+  packageLocation: string;
+  packageDependencies: Map<string, null | string | [string, string]>;
+  packagePeers: Set<string>;
+  linkType: "HARD" | "SOFT";
 };
 ```
 
@@ -73,10 +73,10 @@ export function findPnpApi(lookupSource: URL | string): PnpApi | null;
 
 When called, this function will traverse the filesystem hierarchy starting from the given `lookupSource` in order to locate the closest `.pnp.cjs` file. It'll then load this file, register it inside the PnP loader internal store, and return the resulting API to you.
 
-Note that while you'll be able to resolve the dependencies by using the API returned to you, you'll need to make sure they are properly *loaded* on behalf of the project too, by using `createRequire`:
+Note that while you'll be able to resolve the dependencies by using the API returned to you, you'll need to make sure they are properly _loaded_ on behalf of the project too, by using `createRequire`:
 
 ```ts
-const {createRequire, findPnpApi} = require(`module`);
+const { createRequire, findPnpApi } = require(`module`);
 
 // We'll be able to inspect the dependencies of the module passed as first argument
 const targetModule = process.argv[2];
@@ -91,7 +91,7 @@ const instance = targetRequire(resolved); // <-- important! don't use `require`!
 Finally, it can be noted that `findPnpApi` isn't actually needed in most cases and we can do the same with just `createRequire` thanks to its `resolve` function:
 
 ```ts
-const {createRequire} = require(`module`);
+const { createRequire } = require(`module`);
 
 // We'll be able to inspect the dependencies of the module passed as first argument
 const targetModule = process.argv[2];
@@ -108,14 +108,14 @@ When operating under a Plug'n'Play environment, a new builtin module will appear
 
 Note that we've reserved the `pnpapi` package name on the npm registry, so there's no risk that anyone will be able to snatch the name for nefarious purposes. We might use it later to provide a polyfill for non-PnP environments (so that you'd be able to use the PnP API regardless of whether the project got installed via PnP or not), but as of now it's still an empty package.
 
-Note that the `pnpapi` builtin is *contextual*: while two packages from the same dependency tree are guaranteed to read the same one, two packages from different dependency trees will get different instances - each reflecting the dependency tree they belong to. This distinction doesn't often matter except sometimes for project generator (which typically run within their own dependency tree while also manipulating the project they're generating).
+Note that the `pnpapi` builtin is _contextual_: while two packages from the same dependency tree are guaranteed to read the same one, two packages from different dependency trees will get different instances - each reflecting the dependency tree they belong to. This distinction doesn't often matter except sometimes for project generator (which typically run within their own dependency tree while also manipulating the project they're generating).
 
 ## API Interface
 
 ### `VERSIONS`
 
 ```ts
-export const VERSIONS: {std: number, [key: string]: number};
+export const VERSIONS: { std: number; [key: string]: number };
 ```
 
 The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors. Versions will only be bumped when the signatures of the public API change.
@@ -125,7 +125,7 @@ The `VERSIONS` object contains a set of numbers that detail which version of the
 ### `topLevel`
 
 ```ts
-export const topLevel: {name: null, reference: null};
+export const topLevel: { name: null; reference: null };
 ```
 
 The `topLevel` object is a simple package locator pointing to the top-level package of the dependency tree. Note that even when using workspaces you'll still only have one single top-level for the entire project.
@@ -190,7 +190,11 @@ const physicalLocator = pnpApi.findPackageLocator(pnpApi.getPackageInformation(v
 ### `resolveToUnqualified(...)`
 
 ```ts
-export function resolveToUnqualified(request: string, issuer: string | null, opts?: {considerBuiltins?: boolean}): string | null;
+export function resolveToUnqualified(
+  request: string,
+  issuer: string | null,
+  opts?: { considerBuiltins?: boolean },
+): string | null;
 ```
 
 The `resolveToUnqualified` function is maybe the most important function exposed by the PnP API. Given a request (which may be a bare specifier like `lodash`, or an relative/absolute path like `./foo.js`) and the path of the file that issued the request, the PnP API will return an unqualified resolution.
@@ -216,7 +220,7 @@ This function will return `null` if the request is a builtin module, unless `con
 ### `resolveUnqualified(...)`
 
 ```ts
-export function resolveUnqualified(unqualified: string, opts?: {extensions?: string[]}): string;
+export function resolveUnqualified(unqualified: string, opts?: { extensions?: string[] }): string;
 ```
 
 The `resolveUnqualified` function is mostly provided as an helper; it reimplements the Node resolution for file extensions and folder indexes, but not the regular `node_modules` traversal. It makes it slightly easier to integrate PnP into some projects, although it isn't required in any way if you already have something that fits the bill.
@@ -286,11 +290,11 @@ The paths returned in the `PackageInformation` structures are in the native form
 To access such files, you can use the `@yarnpkg/fslib` project which abstracts the filesystem under a multi-layer architecture. For example, the following code would make it possible to access any path, regardless of whether they're stored within a zip archive or not:
 
 ```ts
-const {PosixFS, ZipOpenFS} = require(`@yarnpkg/fslib`);
+const { PosixFS, ZipOpenFS } = require(`@yarnpkg/fslib`);
 const libzip = require(`@yarnpkg/libzip`).getLibzipSync();
 
 // This will transparently open zip archives
-const zipOpenFs = new ZipOpenFS({libzip});
+const zipOpenFs = new ZipOpenFS({ libzip });
 
 // This will convert all paths into a Posix variant, required for cross-platform compatibility
 const crossFs = new PosixFS(zipOpenFs);
@@ -308,8 +312,7 @@ The following function implements a tree traversal in order to print the list of
 const pnp = require(`pnpapi`);
 const seen = new Set();
 
-const getKey = locator =>
-  JSON.stringify(locator);
+const getKey = (locator) => JSON.stringify(locator);
 
 const isPeerDependency = (pkg, parentPkg, name) =>
   getKey(pkg.packageDependencies.get(name)) === getKey(parentPkg.packageDependencies.get(name));
@@ -317,8 +320,7 @@ const isPeerDependency = (pkg, parentPkg, name) =>
 const traverseDependencyTree = (locator, parentPkg = null) => {
   // Prevent infinite recursion when A depends on B which depends on A
   const key = getKey(locator);
-  if (seen.has(key))
-    return;
+  if (seen.has(key)) return;
 
   const pkg = pnp.getPackageInformation(locator);
   console.assert(pkg, `The package information should be available`);
@@ -329,12 +331,10 @@ const traverseDependencyTree = (locator, parentPkg = null) => {
 
   for (const [name, referencish] of pkg.packageDependencies) {
     // Unmet peer dependencies
-    if (referencish === null)
-      continue;
+    if (referencish === null) continue;
 
     // Avoid iterating on peer dependencies - very expensive
-    if (parentPkg !== null && isPeerDependency(pkg, parentPkg, name))
-      continue;
+    if (parentPkg !== null && isPeerDependency(pkg, parentPkg, name)) continue;
 
     const childLocator = pnp.getLocator(name, referencish);
     traverseDependencyTree(childLocator, pkg);

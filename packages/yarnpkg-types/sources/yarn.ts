@@ -1,6 +1,6 @@
-import * as Constraints from './constraints';
+import * as Constraints from "./constraints";
 
-export {Constraints};
+export { Constraints };
 
 export type Config = {
   /**

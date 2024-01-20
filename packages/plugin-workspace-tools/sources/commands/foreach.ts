@@ -1,20 +1,18 @@
-import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils, nodeUtils}              from '@yarnpkg/core';
-import {gitUtils}                                                    from '@yarnpkg/plugin-git';
-import {Command, Option, Usage, UsageError}                          from 'clipanion';
-import micromatch                                                    from 'micromatch';
-import pLimit                                                        from 'p-limit';
-import {Writable}                                                    from 'stream';
-import {WriteStream}                                                 from 'tty';
-import * as t                                                        from 'typanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Configuration, LocatorHash, Project, scriptUtils, Workspace } from "@yarnpkg/core";
+import { DescriptorHash, MessageName, Report, StreamReport } from "@yarnpkg/core";
+import { formatUtils, miscUtils, structUtils, nodeUtils } from "@yarnpkg/core";
+import { gitUtils } from "@yarnpkg/plugin-git";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import micromatch from "micromatch";
+import pLimit from "p-limit";
+import { Writable } from "stream";
+import { WriteStream } from "tty";
+import * as t from "typanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
-  static paths = [
-    [`workspaces`, `foreach`],
-  ];
+  static paths = [[`workspaces`, `foreach`]];
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -46,25 +44,25 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
     `,
-    examples: [[
-      `Publish all packages`,
-      `yarn workspaces foreach -A npm publish --tolerate-republish`,
-    ], [
-      `Run the build script on all descendant packages`,
-      `yarn workspaces foreach -A run build`,
-    ], [
-      `Run the build script on current and all descendant packages in parallel, building package dependencies first`,
-      `yarn workspaces foreach -Apt run build`,
+    examples: [
+      [`Publish all packages`, `yarn workspaces foreach -A npm publish --tolerate-republish`],
+      [`Run the build script on all descendant packages`, `yarn workspaces foreach -A run build`],
+      [
+        `Run the build script on current and all descendant packages in parallel, building package dependencies first`,
+        `yarn workspaces foreach -Apt run build`,
+      ],
+      [
+        `Run the build script on several packages and all their dependencies, building dependencies first`,
+        `yarn workspaces foreach -Rpt --from '{workspace-a,workspace-b}' run build`,
+      ],
     ],
-    [
-      `Run the build script on several packages and all their dependencies, building dependencies first`,
-      `yarn workspaces foreach -Rpt --from '{workspace-a,workspace-b}' run build`,
-    ]],
   });
 
   static schema = [
-    t.hasKeyRelationship(`all`, t.KeyRelationship.Forbids, [`from`, `recursive`, `since`, `worktree`], {missingIf: `undefined`}),
-    t.hasAtLeastOneKey([`all`, `recursive`, `since`, `worktree`], {missingIf: `undefined`}),
+    t.hasKeyRelationship(`all`, t.KeyRelationship.Forbids, [`from`, `recursive`, `since`, `worktree`], {
+      missingIf: `undefined`,
+    }),
+    t.hasAtLeastOneKey([`all`, `recursive`, `since`, `worktree`], { missingIf: `undefined` }),
   ];
 
   from = Option.Array(`--from`, {
@@ -134,43 +132,44 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace: cwdWorkspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace: cwdWorkspace } = await Project.find(configuration, this.context.cwd);
 
-    if (!this.all && !cwdWorkspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!this.all && !cwdWorkspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState();
 
-    const command = this.cli.process([this.commandName, ...this.args]) as {path: Array<string>, scriptName?: string};
-    const scriptName = command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
-      ? command.scriptName
-      : null;
+    const command = this.cli.process([this.commandName, ...this.args]) as { path: Array<string>; scriptName?: string };
+    const scriptName =
+      command.path.length === 1 && command.path[0] === `run` && typeof command.scriptName !== `undefined`
+        ? command.scriptName
+        : null;
 
     if (command.path.length === 0)
-      throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
+      throw new UsageError(
+        `Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`,
+      );
 
     const log = (msg: string) => {
-      if (!this.dryRun)
-        return;
+      if (!this.dryRun) return;
 
       this.context.stdout.write(`${msg}\n`);
     };
 
     const getFromWorkspaces = () => {
-      const matchers = this.from!.map(pattern => micromatch.matcher(pattern));
+      const matchers = this.from!.map((pattern) => micromatch.matcher(pattern));
 
-      return project.workspaces.filter(workspace => {
+      return project.workspaces.filter((workspace) => {
         const ident = structUtils.stringifyIdent(workspace.anchoredLocator);
         const cwd = workspace.relativeCwd;
 
-        return matchers.some(match => match(ident) || match(cwd));
+        return matchers.some((match) => match(ident) || match(cwd));
       });
     };
 
     let selection: Array<Workspace> = [];
     if (this.since) {
       log(`Option --since is set; selecting the changed workspaces as root for workspace selection`);
-      selection = Array.from(await gitUtils.fetchChangedWorkspaces({ref: this.since, project}));
+      selection = Array.from(await gitUtils.fetchChangedWorkspaces({ ref: this.since, project }));
     } else {
       if (this.from) {
         log(`Option --from is set; selecting the specified workspaces`);
@@ -200,23 +199,20 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (this.recursive) {
       if (this.since) {
         log(`Option --recursive --since is set; recursively selecting all dependent workspaces`);
-        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependents()]).flat());
+        extra = new Set(selection.map((workspace) => [...workspace.getRecursiveWorkspaceDependents()]).flat());
       } else {
         log(`Option --recursive is set; recursively selecting all transitive dependencies`);
-        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependencies()]).flat());
+        extra = new Set(selection.map((workspace) => [...workspace.getRecursiveWorkspaceDependencies()]).flat());
       }
     } else if (this.worktree) {
       log(`Option --worktree is set; recursively selecting all nested workspaces`);
-      extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceChildren()]).flat());
+      extra = new Set(selection.map((workspace) => [...workspace.getRecursiveWorkspaceChildren()]).flat());
     } else {
       extra = null;
     }
 
     if (extra !== null) {
-      selection = [...new Set([
-        ...selection,
-        ...extra,
-      ])];
+      selection = [...new Set([...selection, ...extra])];
 
       if (this.dryRun) {
         for (const workspace of extra) {
@@ -251,15 +247,22 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       // Prevents infinite loop in the case of configuring a script as such:
       // "lint": "yarn workspaces foreach --all lint"
-      if (scriptName === configuration.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd)
-        continue;
+      if (scriptName === configuration.env.npm_lifecycle_event && workspace.cwd === cwdWorkspace!.cwd) continue;
 
-      if (this.include.length > 0 && !micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.include) && !micromatch.isMatch(workspace.relativeCwd, this.include)) {
+      if (
+        this.include.length > 0 &&
+        !micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.include) &&
+        !micromatch.isMatch(workspace.relativeCwd, this.include)
+      ) {
         log(`Excluding ${workspace.relativeCwd} because it doesn't match the --include filter`);
         continue;
       }
 
-      if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude))) {
+      if (
+        this.exclude.length > 0 &&
+        (micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.exclude) ||
+          micromatch.isMatch(workspace.relativeCwd, this.exclude))
+      ) {
         log(`Excluding ${workspace.relativeCwd} because it matches the --include filter`);
         continue;
       }
@@ -272,18 +275,17 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       workspaces.push(workspace);
     }
 
-    if (this.dryRun)
-      return 0;
+    if (this.dryRun) return 0;
 
     // Default to maximum verbosity in terminal environments.
     const verbosity = this.verbose ?? ((this.context.stdout as WriteStream).isTTY ? Infinity : 0);
     const label = verbosity > 0;
     const timing = verbosity > 1;
 
-    const concurrency = this.parallel ?
-      (this.jobs === `unlimited`
+    const concurrency = this.parallel
+      ? this.jobs === `unlimited`
         ? Infinity
-        : Number(this.jobs) || Math.ceil(nodeUtils.availableParallelism() / 2))
+        : Number(this.jobs) || Math.ceil(nodeUtils.availableParallelism() / 2)
       : 1;
 
     // No need to parallelize if we were explicitly asked for one job
@@ -301,142 +303,150 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
     let abortNextCommands = false;
 
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      includePrefix: false,
-    }, async report => {
-      const runCommand = async (workspace: Workspace, {commandIndex}: {commandIndex: number}) => {
-        if (abortNextCommands)
-          return -1;
+    const report = await StreamReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+        includePrefix: false,
+      },
+      async (report) => {
+        const runCommand = async (workspace: Workspace, { commandIndex }: { commandIndex: number }) => {
+          if (abortNextCommands) return -1;
 
-        if (!parallel && timing && commandIndex > 1)
-          report.reportSeparator();
+          if (!parallel && timing && commandIndex > 1) report.reportSeparator();
 
-        const prefix = getPrefix(workspace, {configuration, label, commandIndex});
+          const prefix = getPrefix(workspace, { configuration, label, commandIndex });
 
-        const [stdout, stdoutEnd] = createStream(report, {prefix, interlaced});
-        const [stderr, stderrEnd] = createStream(report, {prefix, interlaced});
+          const [stdout, stdoutEnd] = createStream(report, { prefix, interlaced });
+          const [stderr, stderrEnd] = createStream(report, { prefix, interlaced });
 
-        try {
-          if (timing)
-            report.reportInfo(null, `${prefix ? `${prefix} ` : ``}Process started`);
+          try {
+            if (timing) report.reportInfo(null, `${prefix ? `${prefix} ` : ``}Process started`);
 
-          const start = Date.now();
+            const start = Date.now();
 
-          const exitCode = (await this.cli.run([this.commandName, ...this.args], {
-            cwd: workspace.cwd,
-            stdout,
-            stderr,
-          })) || 0;
+            const exitCode =
+              (await this.cli.run([this.commandName, ...this.args], {
+                cwd: workspace.cwd,
+                stdout,
+                stderr,
+              })) || 0;
 
-          stdout.end();
-          stderr.end();
+            stdout.end();
+            stderr.end();
 
-          await stdoutEnd;
-          await stderrEnd;
+            await stdoutEnd;
+            await stderrEnd;
 
-          const end = Date.now();
-          if (timing) {
-            const timerMessage = configuration.get(`enableTimers`) ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}` : ``;
-            report.reportInfo(null, `${prefix ? `${prefix} ` : ``}Process exited (exit code ${exitCode})${timerMessage}`);
+            const end = Date.now();
+            if (timing) {
+              const timerMessage = configuration.get(`enableTimers`)
+                ? `, completed in ${formatUtils.pretty(configuration, end - start, formatUtils.Type.DURATION)}`
+                : ``;
+              report.reportInfo(
+                null,
+                `${prefix ? `${prefix} ` : ``}Process exited (exit code ${exitCode})${timerMessage}`,
+              );
+            }
+
+            if (exitCode === 130) {
+              // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
+              // the signal but chose to exit, we should exit as well.
+              abortNextCommands = true;
+              finalExitCode = exitCode;
+            }
+
+            return exitCode;
+          } catch (err) {
+            stdout.end();
+            stderr.end();
+
+            await stdoutEnd;
+            await stderrEnd;
+
+            throw err;
           }
+        };
 
-          if (exitCode === 130) {
-            // Process exited with the SIGINT signal, aka ctrl+c. Since the process didn't handle
-            // the signal but chose to exit, we should exit as well.
-            abortNextCommands = true;
-            finalExitCode = exitCode;
-          }
+        for (const workspace of workspaces) needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
 
-          return exitCode;
-        } catch (err) {
-          stdout.end();
-          stderr.end();
+        while (needsProcessing.size > 0) {
+          if (report.hasErrors()) break;
 
-          await stdoutEnd;
-          await stderrEnd;
+          const commandPromises = [];
 
-          throw err;
-        }
-      };
+          for (const [identHash, workspace] of needsProcessing) {
+            // If we are already running the command on that workspace, skip
+            if (processing.has(workspace.anchoredDescriptor.descriptorHash)) continue;
 
-      for (const workspace of workspaces)
-        needsProcessing.set(workspace.anchoredLocator.locatorHash, workspace);
+            let isRunnable = true;
 
-      while (needsProcessing.size > 0) {
-        if (report.hasErrors())
-          break;
+            if (this.topological || this.topologicalDev) {
+              const resolvedSet = this.topologicalDev
+                ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])
+                : workspace.manifest.dependencies;
 
-        const commandPromises = [];
+              for (const descriptor of resolvedSet.values()) {
+                const workspace = project.tryWorkspaceByDescriptor(descriptor);
+                isRunnable = workspace === null || !needsProcessing.has(workspace.anchoredLocator.locatorHash);
 
-        for (const [identHash, workspace] of needsProcessing) {
-          // If we are already running the command on that workspace, skip
-          if (processing.has(workspace.anchoredDescriptor.descriptorHash))
-            continue;
-
-          let isRunnable = true;
-
-          if (this.topological || this.topologicalDev) {
-            const resolvedSet = this.topologicalDev
-              ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])
-              : workspace.manifest.dependencies;
-
-            for (const descriptor of resolvedSet.values()) {
-              const workspace = project.tryWorkspaceByDescriptor(descriptor);
-              isRunnable = workspace === null || !needsProcessing.has(workspace.anchoredLocator.locatorHash);
-
-              if (!isRunnable) {
-                break;
+                if (!isRunnable) {
+                  break;
+                }
               }
+            }
+
+            if (!isRunnable) continue;
+
+            processing.add(workspace.anchoredDescriptor.descriptorHash);
+
+            commandPromises.push(
+              limit(async () => {
+                const exitCode = await runCommand(workspace, {
+                  commandIndex: ++commandCount,
+                });
+
+                needsProcessing.delete(identHash);
+                processing.delete(workspace.anchoredDescriptor.descriptorHash);
+
+                return exitCode;
+              }),
+            );
+
+            // If we're not executing processes in parallel we can just wait for it
+            // to finish outside of this loop (it'll then reenter it anyway)
+            if (!parallel) {
+              break;
             }
           }
 
-          if (!isRunnable)
-            continue;
+          if (commandPromises.length === 0) {
+            const cycle = Array.from(needsProcessing.values())
+              .map((workspace) => {
+                return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
+              })
+              .join(`, `);
 
-          processing.add(workspace.anchoredDescriptor.descriptorHash);
+            report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
+            return;
+          }
 
-          commandPromises.push(limit(async () => {
-            const exitCode = await runCommand(workspace, {
-              commandIndex: ++commandCount,
-            });
+          const exitCodes: Array<number> = await Promise.all(commandPromises);
+          const errorCode = exitCodes.find((code) => code !== 0);
 
-            needsProcessing.delete(identHash);
-            processing.delete(workspace.anchoredDescriptor.descriptorHash);
+          // The order in which the exit codes will be processed is fairly
+          // opaque, so better just return a generic "1" for determinism.
+          if (finalExitCode === null) finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
 
-            return exitCode;
-          }));
-
-          // If we're not executing processes in parallel we can just wait for it
-          // to finish outside of this loop (it'll then reenter it anyway)
-          if (!parallel) {
-            break;
+          if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
+            report.reportError(
+              MessageName.UNNAMED,
+              `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`,
+            );
           }
         }
-
-        if (commandPromises.length === 0) {
-          const cycle = Array.from(needsProcessing.values()).map(workspace => {
-            return structUtils.prettyLocator(configuration, workspace.anchoredLocator);
-          }).join(`, `);
-
-          report.reportError(MessageName.CYCLIC_DEPENDENCIES, `Dependency cycle detected (${cycle})`);
-          return;
-        }
-
-        const exitCodes: Array<number> = await Promise.all(commandPromises);
-        const errorCode = exitCodes.find(code => code !== 0);
-
-        // The order in which the exit codes will be processed is fairly
-        // opaque, so better just return a generic "1" for determinism.
-        if (finalExitCode === null)
-          finalExitCode = typeof errorCode !== `undefined` ? 1 : finalExitCode;
-
-        if ((this.topological || this.topologicalDev) && typeof errorCode !== `undefined`) {
-          report.reportError(MessageName.UNNAMED, `The command failed for workspaces that are depended upon by other workspaces; can't satisfy the dependency graph`);
-        }
-      }
-    });
+      },
+    );
 
     if (finalExitCode !== null) {
       return finalExitCode;
@@ -446,27 +456,28 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   }
 }
 
-
-function createStream(report: Report, {prefix, interlaced}: {prefix: string | null, interlaced: boolean}): [Writable, Promise<boolean>] {
+function createStream(
+  report: Report,
+  { prefix, interlaced }: { prefix: string | null; interlaced: boolean },
+): [Writable, Promise<boolean>] {
   const streamReporter = report.createStreamReporter(prefix);
 
   const defaultStream = new miscUtils.DefaultStream();
-  defaultStream.pipe(streamReporter, {end: false});
+  defaultStream.pipe(streamReporter, { end: false });
   defaultStream.on(`finish`, () => {
     streamReporter.end();
   });
 
-  const promise = new Promise<boolean>(resolve => {
+  const promise = new Promise<boolean>((resolve) => {
     streamReporter.on(`finish`, () => {
       resolve(defaultStream.active);
     });
   });
 
-  if (interlaced)
-    return [defaultStream, promise];
+  if (interlaced) return [defaultStream, promise];
 
   const streamBuffer = new miscUtils.BufferStream();
-  streamBuffer.pipe(defaultStream, {end: false});
+  streamBuffer.pipe(defaultStream, { end: false });
   streamBuffer.on(`finish`, () => {
     defaultStream.end();
   });
@@ -480,9 +491,8 @@ type GetPrefixOptions = {
   label: boolean;
 };
 
-function getPrefix(workspace: Workspace, {configuration, commandIndex, label}: GetPrefixOptions) {
-  if (!label)
-    return null;
+function getPrefix(workspace: Workspace, { configuration, commandIndex, label }: GetPrefixOptions) {
+  if (!label) return null;
 
   const name = structUtils.stringifyIdent(workspace.anchoredLocator);
 

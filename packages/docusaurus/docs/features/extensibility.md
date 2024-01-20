@@ -23,11 +23,9 @@ Plugins are, in essence, small scripts listed in your configuration that Yarn wi
 
 - **Plugins can register to some events.** Yarn has a concept known as "hooks", where events are periodically triggered during the lifecycle of the package manager. Plugins can register to those hooks in order to add their own logic depending on what the core allows. For example, the `afterAllInstalled` hook will be called each time an install is performed.
 
-
 ## How to write a plugin?
 
 We have a tutorial for this! Head over to [Plugin Tutorial](/advanced/plugin-tutorial).
-
 
 :::tip
 You'll want to use the Yarn API from your hooks and commands - learning it may look scary, but you have access to the best examples there is: Yarn itself!

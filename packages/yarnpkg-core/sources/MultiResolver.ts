@@ -1,12 +1,12 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from './Resolver';
-import * as structUtils                                  from './structUtils';
-import {Descriptor, Locator, Package}                    from './types';
+import { Resolver, ResolveOptions, MinimalResolveOptions } from "./Resolver";
+import * as structUtils from "./structUtils";
+import { Descriptor, Locator, Package } from "./types";
 
 export class MultiResolver implements Resolver {
   private readonly resolvers: Array<Resolver>;
 
   constructor(resolvers: Array<Resolver | null>) {
-    this.resolvers = resolvers.filter(resolver => resolver) as Array<Resolver>;
+    this.resolvers = resolvers.filter((resolver) => resolver) as Array<Resolver>;
   }
 
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -45,7 +45,12 @@ export class MultiResolver implements Resolver {
     return await resolver.getCandidates(descriptor, dependencies, opts);
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const resolver = this.getResolverByDescriptor(descriptor, opts);
 
     return resolver.getSatisfying(descriptor, dependencies, locators, opts);
@@ -58,37 +63,39 @@ export class MultiResolver implements Resolver {
   }
 
   private tryResolverByDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
+    const resolver = this.resolvers.find((resolver) => resolver.supportsDescriptor(descriptor, opts));
 
-    if (!resolver)
-      return null;
+    if (!resolver) return null;
 
     return resolver;
   }
 
   private getResolverByDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    const resolver = this.resolvers.find(resolver => resolver.supportsDescriptor(descriptor, opts));
+    const resolver = this.resolvers.find((resolver) => resolver.supportsDescriptor(descriptor, opts));
 
     if (!resolver)
-      throw new Error(`${structUtils.prettyDescriptor(opts.project.configuration, descriptor)} isn't supported by any available resolver`);
+      throw new Error(
+        `${structUtils.prettyDescriptor(opts.project.configuration, descriptor)} isn't supported by any available resolver`,
+      );
 
     return resolver;
   }
 
   private tryResolverByLocator(locator: Locator, opts: MinimalResolveOptions) {
-    const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
+    const resolver = this.resolvers.find((resolver) => resolver.supportsLocator(locator, opts));
 
-    if (!resolver)
-      return null;
+    if (!resolver) return null;
 
     return resolver;
   }
 
   private getResolverByLocator(locator: Locator, opts: MinimalResolveOptions) {
-    const resolver = this.resolvers.find(resolver => resolver.supportsLocator(locator, opts));
+    const resolver = this.resolvers.find((resolver) => resolver.supportsLocator(locator, opts));
 
     if (!resolver)
-      throw new Error(`${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available resolver`);
+      throw new Error(
+        `${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available resolver`,
+      );
 
     return resolver;
   }

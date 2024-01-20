@@ -1,5 +1,5 @@
-import {miscUtils}                  from '@yarnpkg/core';
-import {PortablePath, npath, ppath} from '@yarnpkg/fslib';
+import { miscUtils } from "@yarnpkg/core";
+import { PortablePath, npath, ppath } from "@yarnpkg/fslib";
 
 const HEADER_REGEXP = /^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@.*/;
 
@@ -20,8 +20,7 @@ export function getPath(p: string) {
 
 export function parseHunkHeaderLine(headerLine: string): HunkHeader {
   const match = headerLine.trim().match(HEADER_REGEXP);
-  if (!match)
-    throw new Error(`Bad header line: '${headerLine}'`);
+  if (!match) throw new Error(`Bad header line: '${headerLine}'`);
 
   return {
     original: {
@@ -38,9 +37,7 @@ export function parseHunkHeaderLine(headerLine: string): HunkHeader {
 export const NON_EXECUTABLE_FILE_MODE = 0o644;
 export const EXECUTABLE_FILE_MODE = 0o755;
 
-type FileMode =
-  | typeof NON_EXECUTABLE_FILE_MODE
-  | typeof EXECUTABLE_FILE_MODE;
+type FileMode = typeof NON_EXECUTABLE_FILE_MODE | typeof EXECUTABLE_FILE_MODE;
 
 export enum PatchMutationType {
   Context = `context`,
@@ -96,19 +93,11 @@ type FileCreation = {
   hash: string | null;
 };
 
-export type PatchFilePart =
-  | FilePatch
-  | FileDeletion
-  | FileCreation
-  | FileRename
-  | FileModeChange;
+export type PatchFilePart = FilePatch | FileDeletion | FileCreation | FileRename | FileModeChange;
 
-export type ParsedPatchFile =
-  Array<PatchFilePart>;
+export type ParsedPatchFile = Array<PatchFilePart>;
 
-type State =
-  | `parsing header`
-  | `parsing hunks`;
+type State = `parsing header` | `parsing hunks`;
 
 type FileDeets = {
   semverExclusivity: string | null;
@@ -154,7 +143,7 @@ const emptyHunk = (headerLine: string): Hunk => ({
   parts: [],
 });
 
-const hunkLinetypes: {[k: string]: PatchMutationPart['type'] | `pragma` | `header`} = {
+const hunkLinetypes: { [k: string]: PatchMutationPart["type"] | `pragma` | `header` } = {
   [`@`]: `header`,
   [`-`]: PatchMutationType.Deletion,
   [`+`]: PatchMutationType.Insertion,
@@ -200,12 +189,10 @@ function parsePatchLines(lines: Array<string>) {
         currentFilePatch.hunks = [];
         i -= 1;
       } else if (line.startsWith(`diff --git `)) {
-        if (currentFilePatch && currentFilePatch.diffLineFromPath)
-          commitFilePatch();
+        if (currentFilePatch && currentFilePatch.diffLineFromPath) commitFilePatch();
 
         const match = line.match(/^diff --git a\/(.*?) b\/(.*?)\s*$/);
-        if (!match)
-          throw new Error(`Bad diff line: ${line}`);
+        if (!match) throw new Error(`Bad diff line: ${line}`);
 
         currentFilePatch.diffLineFromPath = match[1];
         currentFilePatch.diffLineToPath = match[2];
@@ -223,8 +210,7 @@ function parsePatchLines(lines: Array<string>) {
         currentFilePatch.renameTo = line.slice(`rename to `.length).trim();
       } else if (line.startsWith(`index `)) {
         const match = line.match(/(\w+)\.\.(\w+)/);
-        if (!match)
-          continue;
+        if (!match) continue;
 
         currentFilePatch.beforeHash = match[1];
         currentFilePatch.afterHash = match[2];
@@ -239,63 +225,69 @@ function parsePatchLines(lines: Array<string>) {
       // parsing hunks
       const lineType = hunkLinetypes[line[0]] || null;
       switch (lineType) {
-        case `header`: {
-          commitHunk();
-          currentHunk = emptyHunk(line);
-        } break;
+        case `header`:
+          {
+            commitHunk();
+            currentHunk = emptyHunk(line);
+          }
+          break;
 
-        case null: {
-          // unrecognized, bail out
-          state = `parsing header`;
-          commitFilePatch();
-          i -= 1;
-        } break;
+        case null:
+          {
+            // unrecognized, bail out
+            state = `parsing header`;
+            commitFilePatch();
+            i -= 1;
+          }
+          break;
 
-        case `pragma`: {
-          if (!line.startsWith(`\\ No newline at end of file`))
-            throw new Error(`Unrecognized pragma in patch file: ${line}`);
+        case `pragma`:
+          {
+            if (!line.startsWith(`\\ No newline at end of file`))
+              throw new Error(`Unrecognized pragma in patch file: ${line}`);
 
-          if (!currentHunkMutationPart)
-            throw new Error(`Bad parser state: No newline at EOF pragma encountered without context`);
+            if (!currentHunkMutationPart)
+              throw new Error(`Bad parser state: No newline at EOF pragma encountered without context`);
 
-          currentHunkMutationPart.noNewlineAtEndOfFile = true;
-        } break;
+            currentHunkMutationPart.noNewlineAtEndOfFile = true;
+          }
+          break;
 
         case PatchMutationType.Context:
         case PatchMutationType.Deletion:
-        case PatchMutationType.Insertion: {
-          if (!currentHunk)
-            throw new Error(`Bad parser state: Hunk lines encountered before hunk header`);
+        case PatchMutationType.Insertion:
+          {
+            if (!currentHunk) throw new Error(`Bad parser state: Hunk lines encountered before hunk header`);
 
-          if (currentHunkMutationPart && currentHunkMutationPart.type !== lineType) {
-            currentHunk.parts.push(currentHunkMutationPart);
-            currentHunkMutationPart = null;
+            if (currentHunkMutationPart && currentHunkMutationPart.type !== lineType) {
+              currentHunk.parts.push(currentHunkMutationPart);
+              currentHunkMutationPart = null;
+            }
+
+            if (!currentHunkMutationPart) {
+              currentHunkMutationPart = {
+                type: lineType,
+                lines: [],
+                noNewlineAtEndOfFile: false,
+              };
+            }
+
+            currentHunkMutationPart.lines.push(line.slice(1));
           }
+          break;
 
-          if (!currentHunkMutationPart) {
-            currentHunkMutationPart = {
-              type: lineType,
-              lines: [],
-              noNewlineAtEndOfFile: false,
-            };
+        default:
+          {
+            miscUtils.assertNever(lineType);
           }
-
-          currentHunkMutationPart.lines.push(line.slice(1));
-        } break;
-
-        default: {
-          miscUtils.assertNever(lineType);
-        } break;
+          break;
       }
     }
   }
 
   commitFilePatch();
 
-  for (const {hunks} of result)
-    if (hunks)
-      for (const hunk of hunks)
-        verifyHunkIntegrity(hunk);
+  for (const { hunks } of result) if (hunks) for (const hunk of hunks) verifyHunkIntegrity(hunk);
 
   return result;
 }
@@ -333,58 +325,65 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
 
     let destinationFilePath: string | null = null;
     switch (type) {
-      case `rename`: {
-        if (!renameFrom || !renameTo)
-          throw new Error(`Bad parser state: rename from & to not given`);
+      case `rename`:
+        {
+          if (!renameFrom || !renameTo) throw new Error(`Bad parser state: rename from & to not given`);
 
-        result.push({
-          type: `rename`,
-          semverExclusivity,
-          fromPath: getPath(renameFrom),
-          toPath: getPath(renameTo),
-        });
+          result.push({
+            type: `rename`,
+            semverExclusivity,
+            fromPath: getPath(renameFrom),
+            toPath: getPath(renameTo),
+          });
 
-        destinationFilePath = renameTo;
-      } break;
+          destinationFilePath = renameTo;
+        }
+        break;
 
-      case `file deletion`: {
-        const path = diffLineFromPath || fromPath;
-        if (!path)
-          throw new Error(`Bad parse state: no path given for file deletion`);
+      case `file deletion`:
+        {
+          const path = diffLineFromPath || fromPath;
+          if (!path) throw new Error(`Bad parse state: no path given for file deletion`);
 
-        result.push({
-          type: `file deletion`,
-          semverExclusivity,
-          hunk: (hunks && hunks[0]) || null,
-          path: getPath(path),
-          mode: parseFileMode(deletedFileMode!),
-          hash: beforeHash,
-        });
-      } break;
+          result.push({
+            type: `file deletion`,
+            semverExclusivity,
+            hunk: (hunks && hunks[0]) || null,
+            path: getPath(path),
+            mode: parseFileMode(deletedFileMode!),
+            hash: beforeHash,
+          });
+        }
+        break;
 
-      case `file creation`: {
-        const path = diffLineToPath || toPath;
-        if (!path)
-          throw new Error(`Bad parse state: no path given for file creation`);
+      case `file creation`:
+        {
+          const path = diffLineToPath || toPath;
+          if (!path) throw new Error(`Bad parse state: no path given for file creation`);
 
-        result.push({
-          type: `file creation`,
-          semverExclusivity,
-          hunk: (hunks && hunks[0]) || null,
-          path: getPath(path),
-          mode: parseFileMode(newFileMode!),
-          hash: afterHash,
-        });
-      } break;
+          result.push({
+            type: `file creation`,
+            semverExclusivity,
+            hunk: (hunks && hunks[0]) || null,
+            path: getPath(path),
+            mode: parseFileMode(newFileMode!),
+            hash: afterHash,
+          });
+        }
+        break;
 
       case `patch`:
-      case `mode change`: {
-        destinationFilePath = toPath || diffLineToPath;
-      } break;
+      case `mode change`:
+        {
+          destinationFilePath = toPath || diffLineToPath;
+        }
+        break;
 
-      default: {
-        miscUtils.assertNever(type);
-      } break;
+      default:
+        {
+          miscUtils.assertNever(type);
+        }
+        break;
     }
 
     if (destinationFilePath && oldMode && newMode && oldMode !== newMode) {
@@ -427,8 +426,7 @@ function parseFileMode(mode: string): FileMode {
 export function parsePatchFile(file: string): ParsedPatchFile {
   const lines = file.split(/\n/g);
 
-  if (lines[lines.length - 1] === ``)
-    lines.pop();
+  if (lines[lines.length - 1] === ``) lines.pop();
 
   return interpretParsedPatchFile(parsePatchLines(lines));
 }
@@ -438,29 +436,39 @@ export function verifyHunkIntegrity(hunk: Hunk) {
   let originalLength = 0;
   let patchedLength = 0;
 
-  for (const {type, lines} of hunk.parts) {
+  for (const { type, lines } of hunk.parts) {
     switch (type) {
-      case PatchMutationType.Context: {
-        patchedLength += lines.length;
-        originalLength += lines.length;
-      } break;
+      case PatchMutationType.Context:
+        {
+          patchedLength += lines.length;
+          originalLength += lines.length;
+        }
+        break;
 
-      case PatchMutationType.Deletion: {
-        originalLength += lines.length;
-      } break;
+      case PatchMutationType.Deletion:
+        {
+          originalLength += lines.length;
+        }
+        break;
 
-      case PatchMutationType.Insertion: {
-        patchedLength += lines.length;
-      } break;
+      case PatchMutationType.Insertion:
+        {
+          patchedLength += lines.length;
+        }
+        break;
 
-      default: {
-        miscUtils.assertNever(type);
-      } break;
+      default:
+        {
+          miscUtils.assertNever(type);
+        }
+        break;
     }
   }
 
   if (originalLength !== hunk.header.original.length || patchedLength !== hunk.header.patched.length) {
-    const format = (n: number) => n < 0 ? n : `+${n}`;
-    throw new Error(`hunk header integrity check failed (expected @@ ${format(hunk.header.original.length)} ${format(hunk.header.patched.length)} @@, got @@ ${format(originalLength)} ${format(patchedLength)} @@)`);
+    const format = (n: number) => (n < 0 ? n : `+${n}`);
+    throw new Error(
+      `hunk header integrity check failed (expected @@ ${format(hunk.header.original.length)} ${format(hunk.header.patched.length)} @@, got @@ ${format(originalLength)} ${format(patchedLength)} @@)`,
+    );
   }
 }

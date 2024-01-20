@@ -12,18 +12,16 @@
  * (which also provides a safe-guard in case virtual descriptors ever make their way into the dedupe algorithm).
  */
 
-import {BaseCommand}                                              from '@yarnpkg/cli';
-import {Configuration, Project, Cache, StreamReport, InstallMode} from '@yarnpkg/core';
-import {Command, Option}                                          from 'clipanion';
-import * as t                                                     from 'typanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration, Project, Cache, StreamReport, InstallMode } from "@yarnpkg/core";
+import { Command, Option } from "clipanion";
+import * as t from "typanion";
 
-import * as dedupeUtils                                           from '../dedupeUtils';
+import * as dedupeUtils from "../dedupeUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class DedupeCommand extends BaseCommand {
-  static paths = [
-    [`dedupe`],
-  ];
+  static paths = [[`dedupe`]];
 
   static usage = Command.Usage({
     description: `deduplicate dependencies with overlapping ranges`,
@@ -56,22 +54,13 @@ export default class DedupeCommand extends BaseCommand {
 
       **Example:** If \`foo@^2.3.4\` (a dependency of a dependency) has already been resolved to \`foo@2.3.4\`, running \`yarn add foo@2.10.14\` will cause Yarn to install \`foo@2.10.14\` because the existing resolution doesn't satisfy the range \`2.10.14\`. This behavior can lead to (sometimes) unwanted duplication, since now the lockfile contains 2 separate resolutions for the 2 \`foo\` descriptors, even though they have overlapping ranges, which means that the lockfile can be simplified so that both descriptors resolve to \`foo@2.10.14\`.
     `,
-    examples: [[
-      `Dedupe all packages`,
-      `$0 dedupe`,
-    ], [
-      `Dedupe all packages using a specific strategy`,
-      `$0 dedupe --strategy highest`,
-    ], [
-      `Dedupe a specific package`,
-      `$0 dedupe lodash`,
-    ], [
-      `Dedupe all packages with the \`@babel/*\` scope`,
-      `$0 dedupe '@babel/*'`,
-    ], [
-      `Check for duplicates (can be used as a CI step)`,
-      `$0 dedupe --check`,
-    ]],
+    examples: [
+      [`Dedupe all packages`, `$0 dedupe`],
+      [`Dedupe all packages using a specific strategy`, `$0 dedupe --strategy highest`],
+      [`Dedupe a specific package`, `$0 dedupe lodash`],
+      [`Dedupe all packages with the \`@babel/*\` scope`, `$0 dedupe '@babel/*'`],
+      [`Check for duplicates (can be used as a CI step)`, `$0 dedupe --check`],
+    ],
   });
 
   strategy = Option.String(`-s,--strategy`, dedupeUtils.Strategy.HIGHEST, {
@@ -96,7 +85,7 @@ export default class DedupeCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project} = await Project.find(configuration, this.context.cwd);
+    const { project } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
     await project.restoreInstallState({
@@ -104,28 +93,38 @@ export default class DedupeCommand extends BaseCommand {
     });
 
     let dedupedPackageCount: number = 0;
-    const dedupeReport = await StreamReport.start({
-      configuration,
-      includeFooter: false,
-      stdout: this.context.stdout,
-      json: this.json,
-    }, async report => {
-      dedupedPackageCount = await dedupeUtils.dedupe(project, {strategy: this.strategy, patterns: this.patterns, cache, report});
-    });
+    const dedupeReport = await StreamReport.start(
+      {
+        configuration,
+        includeFooter: false,
+        stdout: this.context.stdout,
+        json: this.json,
+      },
+      async (report) => {
+        dedupedPackageCount = await dedupeUtils.dedupe(project, {
+          strategy: this.strategy,
+          patterns: this.patterns,
+          cache,
+          report,
+        });
+      },
+    );
 
-    if (dedupeReport.hasErrors())
-      return dedupeReport.exitCode();
+    if (dedupeReport.hasErrors()) return dedupeReport.exitCode();
 
     if (this.check) {
       return dedupedPackageCount ? 1 : 0;
     } else {
-      return await project.installWithNewReport({
-        json: this.json,
-        stdout: this.context.stdout,
-      }, {
-        cache,
-        mode: this.mode,
-      });
+      return await project.installWithNewReport(
+        {
+          json: this.json,
+          stdout: this.context.stdout,
+        },
+        {
+          cache,
+          mode: this.mode,
+        },
+      );
     }
   }
 }

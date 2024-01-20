@@ -54,7 +54,7 @@
 
 // Replacement for node's internal 'internal/options' module
 
-import arg from 'arg';
+import arg from "arg";
 
 export function getOptionValue(opt) {
   parseOptions();
@@ -65,7 +65,7 @@ let options;
 function parseOptions() {
   if (!options) {
     options = {
-      '--conditions': [],
+      "--conditions": [],
       ...parseArgv(getNodeOptionsEnvArgv()),
       ...parseArgv(process.execArgv),
     };
@@ -75,19 +75,19 @@ function parseOptions() {
 function parseArgv(argv) {
   return arg(
     {
-      '--conditions': [String],
-      '-C': '--conditions',
+      "--conditions": [String],
+      "-C": "--conditions",
     },
     {
       argv,
       permissive: true,
-    }
+    },
   );
 }
 
 function getNodeOptionsEnvArgv() {
   const errors = [];
-  const envArgv = ParseNodeOptionsEnvVar(process.env.NODE_OPTIONS || '', errors);
+  const envArgv = ParseNodeOptionsEnvVar(process.env.NODE_OPTIONS || "", errors);
   if (errors.length !== 0) {
     // TODO: handle errors somehow
   }
@@ -104,14 +104,14 @@ function ParseNodeOptionsEnvVar(node_options, errors) {
     let c = node_options[index];
 
     // Backslashes escape the following character
-    if (c === '\\' && is_in_string) {
+    if (c === "\\" && is_in_string) {
       if (index + 1 === node_options.length) {
-        errors.push('invalid value for NODE_OPTIONS ' + '(invalid escape)\n');
+        errors.push("invalid value for NODE_OPTIONS " + "(invalid escape)\n");
         return env_argv;
       } else {
         c = node_options[++index];
       }
-    } else if (c === ' ' && !is_in_string) {
+    } else if (c === " " && !is_in_string) {
       will_start_new_arg = true;
       continue;
     } else if (c === '"') {
@@ -128,7 +128,7 @@ function ParseNodeOptionsEnvVar(node_options, errors) {
   }
 
   if (is_in_string) {
-    errors.push('invalid value for NODE_OPTIONS ' + '(unterminated string)\n');
+    errors.push("invalid value for NODE_OPTIONS " + "(unterminated string)\n");
   }
   return env_argv;
 }

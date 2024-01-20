@@ -1,10 +1,10 @@
 /* eslint-disable */
 
-declare module 'tau-prolog' {
+declare module "tau-prolog" {
   namespace tau {
     namespace type {
-      type _Value = Var|Num|Term<number, string>|Substitution|State|Rule;
-      type Value = Var|Num|Term<number, string>;
+      type _Value = Var | Num | Term<number, string> | Substitution | State | Rule;
+      type Value = Var | Num | Term<number, string>;
 
       class Var {
         // private property to ensure types don't overlap
@@ -14,7 +14,7 @@ declare module 'tau-prolog' {
 
         public constructor(id: string);
 
-        public unify(obj: _Value, occurs_check: boolean): Substitution|null;
+        public unify(obj: _Value, occurs_check: boolean): Substitution | null;
 
         public clone(): this;
 
@@ -26,7 +26,7 @@ declare module 'tau-prolog' {
 
         public apply(subs: Substitution): this;
 
-        public compare(other: this): -1|0|1;
+        public compare(other: this): -1 | 0 | 1;
       }
 
       class Num {
@@ -39,7 +39,7 @@ declare module 'tau-prolog' {
 
         public constructor(value: number, is_float?: boolean);
 
-        public unify(obj: _Value, occurs_check: boolean): Substitution|null;
+        public unify(obj: _Value, occurs_check: boolean): Substitution | null;
 
         public clone(): this;
 
@@ -51,7 +51,7 @@ declare module 'tau-prolog' {
 
         public apply(subs: Substitution): this;
 
-        public compare(other: this): -1|0|1;
+        public compare(other: this): -1 | 0 | 1;
       }
 
       class Term<Arity extends number, Indicator extends string> {
@@ -62,11 +62,11 @@ declare module 'tau-prolog' {
 
         public readonly id: string;
 
-        public readonly args: Value[]&{length: Arity};
+        public readonly args: Value[] & { length: Arity };
 
         public constructor(id: string, args?: Value[], ref?: number);
 
-        public unify(obj: _Value, occurs_check: boolean): Substitution|null;
+        public unify(obj: _Value, occurs_check: boolean): Substitution | null;
 
         public clone(): this;
 
@@ -84,9 +84,9 @@ declare module 'tau-prolog' {
 
         public search(expr: Term<number, string>): boolean;
 
-        public compare(other: this): -1|0|1;
+        public compare(other: this): -1 | 0 | 1;
 
-        public toJavaScript(): string|number|(string|number)[];
+        public toJavaScript(): string | number | (string | number)[];
       }
 
       class Substitution {
@@ -112,7 +112,7 @@ declare module 'tau-prolog' {
 
         public readonly substitution: Substitution;
 
-        public readonly parent: State|null;
+        public readonly parent: State | null;
 
         public constructor(goal?: Term<number, string>, subs?: Substitution, parent?: State);
 
@@ -127,12 +127,11 @@ declare module 'tau-prolog' {
 
         public readonly head: Term<number, string>;
 
-        public readonly body: Term<number, string>|null;
+        public readonly body: Term<number, string> | null;
 
         public readonly dynamic: boolean;
 
-        public constructor(
-          head: Term<number, string>, body: Term<number, string>|null, dynamic?: boolean);
+        public constructor(head: Term<number, string>, body: Term<number, string> | null, dynamic?: boolean);
 
         public clone(): this;
 
@@ -161,18 +160,17 @@ declare module 'tau-prolog' {
 
         public consult(program: string): void;
 
-        public query(query: string): true | Term<1, 'throw'>;
+        public query(query: string): true | Term<1, "throw">;
 
         public answer(callback: (answer: Answer) => void): void;
 
-        public answers(callback: (answer: Answer) => void, maxCount?: number, after?: () => void):
-        void;
+        public answers(callback: (answer: Answer) => void, maxCount?: number, after?: () => void): void;
 
-        public add_rule(rule: Rule, options?: {from?: string}): true;
+        public add_rule(rule: Rule, options?: { from?: string }): true;
 
         public prepend(states: State[]): void;
 
-        public throw_error(error: Term<1, 'error'>): void;
+        public throw_error(error: Term<1, "error">): void;
 
         public success(state: State, parent?: State): void;
       }
@@ -198,23 +196,22 @@ declare module 'tau-prolog' {
 
         public answer(callback: (answer: Answer) => void): void;
 
-        public answers(callback: (answer: Answer) => void, maxCount?: number, after?: () => void):
-        void;
+        public answers(callback: (answer: Answer) => void, maxCount?: number, after?: () => void): void;
 
-        public add_rule(rule: Rule, options?: {from?: string}): true;
+        public add_rule(rule: Rule, options?: { from?: string }): true;
 
         public prepend(states: State[]): void;
 
-        public throw_error(error: Term<1, 'error'>): void;
+        public throw_error(error: Term<1, "error">): void;
 
         public success(state: State, parent?: State): void;
       }
 
       interface PredicateFn {
-        (thread: Thread, point: State, atom: Term<number, string>): void|true;
+        (thread: Thread, point: State, atom: Term<number, string>): void | true;
       }
 
-      type Predicate = Rule[]|PredicateFn;
+      type Predicate = Rule[] | PredicateFn;
 
       class Module {
         public readonly id: string;
@@ -232,32 +229,36 @@ declare module 'tau-prolog' {
 
       function is_atom(obj: any): obj is Term<0, string>;
 
-      function is_module(obj: any): obj is Term<1, 'module/1'>;
+      function is_module(obj: any): obj is Term<1, "module/1">;
 
-      function is_error(obj: any): obj is Term<1, 'throw/1'>;
+      function is_error(obj: any): obj is Term<1, "throw/1">;
 
-      function is_instantiated_list(obj: any): obj is Term<2, './2'>;
+      function is_instantiated_list(obj: any): obj is Term<2, "./2">;
     }
 
     namespace error {
-      function existence(type: string, object: type.Term<number, string>|string, indicator: string):
-      type.Term<1, 'error'>;
-      function type(expected: string, found: type.Term<number, string>, indicator: string):
-      type.Term<1, 'error'>;
-      function instantiation(indicator: string): type.Term<1, 'error'>;
-      function domain(expected: string, found: type.Term<number, string>, indicator: string):
-      type.Term<1, 'error'>;
-      function representation(flag: string, indicator: string): type.Term<1, 'error'>;
+      function existence(
+        type: string,
+        object: type.Term<number, string> | string,
+        indicator: string,
+      ): type.Term<1, "error">;
+      function type(expected: string, found: type.Term<number, string>, indicator: string): type.Term<1, "error">;
+      function instantiation(indicator: string): type.Term<1, "error">;
+      function domain(expected: string, found: type.Term<number, string>, indicator: string): type.Term<1, "error">;
+      function representation(flag: string, indicator: string): type.Term<1, "error">;
       function permission(
-        operation: string, type: string, found: type.Term<number, string>, indicator: string):
-      type.Term<1, 'error'>;
-      function evaluation(error: string, indicator: string): type.Term<1, 'error'>;
+        operation: string,
+        type: string,
+        found: type.Term<number, string>,
+        indicator: string,
+      ): type.Term<1, "error">;
+      function evaluation(error: string, indicator: string): type.Term<1, "error">;
       function syntax(
-        token: undefined|
-        {value: string, line: number, column: number, matches: string[], start: number},
+        token: undefined | { value: string; line: number; column: number; matches: string[]; start: number },
         expected: string,
-        last: boolean): type.Term<1, 'error'>;
-      function syntax_by_predicate(expected: string, indicator: string): type.Term<1, 'error'>;
+        last: boolean,
+      ): type.Term<1, "error">;
+      function syntax_by_predicate(expected: string, indicator: string): type.Term<1, "error">;
     }
 
     interface Answer {
@@ -269,7 +270,7 @@ declare module 'tau-prolog' {
     interface Link {
       id: string;
 
-      toJavaScript(): string|number|(string|number)[];
+      toJavaScript(): string | number | (string | number)[];
     }
 
     function format_answer(answer: Answer): string;

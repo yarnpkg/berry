@@ -11,7 +11,7 @@ import {TerminalCode} from '@yarnpkg/docusaurus/src/components/TerminalCode';
 
 Yarn will automatically interpret the content of `.env.yarn` files, and inject them within all commands run by `yarn run`. This behavior can be configured through the use of the [`injectEnvironmentFiles`](/configuration/yarnrc#injectEnvironmentFiles) setting.
 
-Note that you can also configure files that will be loaded but *only if present*; making it possible to write conditional imports such as:
+Note that you can also configure files that will be loaded but _only if present_; making it possible to write conditional imports such as:
 
 ```yaml
 injectEnvironmentFiles:
@@ -36,7 +36,7 @@ Yarn implements and maintains a Posix-like shell interpreter that supports all o
 <TerminalCode command={`NODE_ENV=production webpack`}/>
 
 :::info
-We say it's a Posix-like interpreter rather than a Posix-compatible interpreter because it doesn't implement some of the most complex features that aren't useful in the context of the `scripts` field. For instance, multi-line flow control structures such as `while` aren't supported. 
+We say it's a Posix-like interpreter rather than a Posix-compatible interpreter because it doesn't implement some of the most complex features that aren't useful in the context of the `scripts` field. For instance, multi-line flow control structures such as `while` aren't supported.
 :::
 
 ## Script arguments

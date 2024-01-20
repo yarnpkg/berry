@@ -1,16 +1,14 @@
-import {BaseCommand}                                                                       from '@yarnpkg/cli';
-import {Configuration, Project, Manifest, treeUtils, miscUtils, StreamReport, MessageName} from '@yarnpkg/core';
-import {formatUtils}                                                                       from '@yarnpkg/core';
-import {Command, Option, Usage}                                                            from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration, Project, Manifest, treeUtils, miscUtils, StreamReport, MessageName } from "@yarnpkg/core";
+import { formatUtils } from "@yarnpkg/core";
+import { Command, Option, Usage } from "clipanion";
 
-import {ModernEngine}                                                                      from '../ModernEngine';
-import * as constraintUtils                                                                from '../constraintUtils';
+import { ModernEngine } from "../ModernEngine";
+import * as constraintUtils from "../constraintUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConstraintsCheckCommand extends BaseCommand {
-  static paths = [
-    [`constraints`],
-  ];
+  static paths = [[`constraints`]];
 
   static usage: Usage = Command.Usage({
     category: `Constraints-related commands`,
@@ -22,13 +20,10 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
       For more information as to how to write constraints, please consult our dedicated page on our website: https://yarnpkg.com/features/constraints.
     `,
-    examples: [[
-      `Check that all constraints are satisfied`,
-      `yarn constraints`,
-    ], [
-      `Autofix all unmet constraints`,
-      `yarn constraints --fix`,
-    ]],
+    examples: [
+      [`Check that all constraints are satisfied`, `yarn constraints`],
+      [`Autofix all unmet constraints`, `yarn constraints --fix`],
+    ],
   });
 
   fix = Option.Boolean(`--fix`, false, {
@@ -41,7 +36,7 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project} = await Project.find(configuration, this.context.cwd);
+    const { project } = await Project.find(configuration, this.context.cwd);
 
     await project.restoreInstallState();
 
@@ -51,7 +46,7 @@ export default class ConstraintsCheckCommand extends BaseCommand {
     if (userConfig?.constraints) {
       engine = new ModernEngine(project);
     } else {
-      const {Constraints} = await import(`../Constraints`);
+      const { Constraints } = await import(`../Constraints`);
       engine = await Constraints.find(project);
     }
 
@@ -62,13 +57,9 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
     for (let t = this.fix ? 10 : 1; t > 0; --t) {
       const result = await engine.process();
-      if (!result)
-        break;
+      if (!result) break;
 
-      const {
-        changedWorkspaces,
-        remainingErrors,
-      } = constraintUtils.applyEngineReport(project, result, {
+      const { changedWorkspaces, remainingErrors } = constraintUtils.applyEngineReport(project, result, {
         fix: this.fix,
       });
 
@@ -85,10 +76,9 @@ export default class ConstraintsCheckCommand extends BaseCommand {
 
       await Promise.all(updates);
 
-      if (changedWorkspaces.size > 0 && t > 1)
-        continue;
+      if (changedWorkspaces.size > 0 && t > 1) continue;
 
-      root = constraintUtils.convertReportToRoot(remainingErrors, {configuration});
+      root = constraintUtils.convertReportToRoot(remainingErrors, { configuration });
 
       hasFixableErrors = false;
       allFixableErrors = true;
@@ -104,26 +94,28 @@ export default class ConstraintsCheckCommand extends BaseCommand {
       }
     }
 
-    if (root.children.length === 0)
-      return 0;
+    if (root.children.length === 0) return 0;
 
     if (hasFixableErrors) {
       const message = allFixableErrors
         ? `Those errors can all be fixed by running ${formatUtils.pretty(configuration, `yarn constraints --fix`, formatUtils.Type.CODE)}`
         : `Errors prefixed by '⚙' can be fixed by running ${formatUtils.pretty(configuration, `yarn constraints --fix`, formatUtils.Type.CODE)}`;
 
-      await StreamReport.start({
-        configuration,
-        stdout: this.context.stdout,
-        includeNames: false,
-        includeFooter: false,
-      }, async report => {
-        report.reportInfo(MessageName.UNNAMED, message);
-        report.reportSeparator();
-      });
+      await StreamReport.start(
+        {
+          configuration,
+          stdout: this.context.stdout,
+          includeNames: false,
+          includeFooter: false,
+        },
+        async (report) => {
+          report.reportInfo(MessageName.UNNAMED, message);
+          report.reportSeparator();
+        },
+      );
     }
 
-    root.children = miscUtils.sortMap(root.children, node => {
+    root.children = miscUtils.sortMap(root.children, (node) => {
       return node.value![1];
     });
 

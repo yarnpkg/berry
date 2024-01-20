@@ -31,6 +31,7 @@ Features in `master` can be tried out by running `yarn set version from sources`
   - `yarn init` and `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible (when they detect `COREPACK_ROOT` in your environment variables).
 
   - `yarn init` will no longer use zero-install by default. You still can enable it, but it should make it easier to start one-of projects without having to rewrite the configuration afterwards.
+
     - As a result, `enableGlobalCache` now defaults to `true`. If your project uses Zero-Installs, the first `yarn install` you run after migrating to 4.0 will automatically set `enableGlobalCache: false` in your local `.yarnrc.yml`.
 
   - `yarn workspaces foreach` now requires one of `--all`, `--recursive`, `--since`, or `--worktree` to be explicitly specified; the previous default was `--worktree`, but it was rarely what users expected.
@@ -38,11 +39,13 @@ Features in `master` can be tried out by running `yarn set version from sources`
   - `compressionLevel` now defaults to `0` rather than `mixed`. It's been proved significantly faster on installs, and the size impact was reasonable enough to change the default. Note that it benefits you **even if you use Zero-Installs**: as per our tests, a zero-compression is actually easier to handle for Git (you can see by yourself with those examples using [`compressionLevel: 0`](https://github.com/yarnpkg/example-repo-zip0) vs [`compressionLevel: mixed`](https://github.com/yarnpkg/example-repo-zipn)).
     - To avoid making the upgrade too disruptive, Yarn will check whether Zero-Installs are enabled the first time you run `yarn install` after migrating from 3.6 to 4.0. If you do, it will automatically set the old default (`compressionLevel: mixed`) in your `.yarnrc.yml` file. You can then remove it whenever you feel ready to actually change the compression settings.
 
-- All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
+- All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for _official_ plugins (you still need to do it for third-party plugins, of course).
+
   - This doesn't change anything to the plugin API we provide, which will keep being maintained.
   - Yarn still has a modular architecture and uses the exact same APIs as contrib plugins; all that changes is how we distribute our own features.
 
 - Yarn's UI during installs has been greatly improved:
+
   - Packages added and removed from the lockfile are now explicitly reported.
   - Fluctuations in the project cache size are now reported as a single line.
   - Unactionable warnings (`node-gyp` and transitive peer dependency errors) have been removed.
@@ -51,11 +54,13 @@ Features in `master` can be tried out by running `yarn set version from sources`
   - Deprecation checks have been moved to `yarn npm audit`.
 
 - Some settings were renamed or removed:
+
   - `caFilePath` is now `httpsCaFilePath`
   - `preferAggregateCacheInfo` has been removed (it's now always on)
   - `pnpDataPath` has been removed to adhere to our new [PnP specification](https://yarnpkg.com/advanced/pnp-spec). For consistency, all PnP files will now be hardcoded to a single value so that third-party tools can implement the PnP specification without relying on the Yarn configuration.
 
 - The `yarn npm audit` command has been reimplemented:
+
   - The audit registry must now implement the `/-/npm/v1/security/advisories/bulk` endpoint.
   - The `npmAuditRegistry` can be used to temporarily route audit queries to the npm registry.
   - Deprecations are now returned by default. To silence them, use `yarn npm audit ! --no-deprecations`.
@@ -99,6 +104,7 @@ The following changes only affect people writing Yarn plugins:
 - `versionUtils.{fetchBase,fetchRoot,fetchChangedFiles}` have been moved from `@yarnpkg/plugin-version` to `@yarnpkg/plugin-git`. Use `gitUtils.{fetchBase,fetchRoot,fetchChangedFiles}` instead.
 
 - For consistency reasons:
+
   - `Link{Resolver,Fetcher}` have been renamed to `Portal{Resolver,Fetcher}`
   - `RawLink{Resolver,Fetcher}` have been renamed to `Link{Resolver,Fetcher}`
 
@@ -113,6 +119,7 @@ The following changes only affect people writing Yarn plugins:
 - `forgettableNames` & `forgettableBufferSize` have been removed (the only messages using them have been removed, making the forgettable logs implementation obsolete).
 
 - `workspace.locator` has been removed. You can instead use:
+
   - `workspace.anchoredLocator` to get the locator that's used throughout the dependency tree.
   - `workspace.manifest.version` to get the workspace version.
 
@@ -395,6 +402,7 @@ Various improvements have been made in the core to improve performance. Addition
 - Workspaces now get self-references even when under the `node-modules` linker (just like how it already worked with the `pnp` linker). This means that a workspace called `foo` can now safely assume that calls to `require('foo/package.json')` will always work, removing the need for [absolute aliases](https://nextjs.org/docs/advanced-features/module-path-aliases) in the majority of cases.
 
 - The node-modules linker now does its best to support the `portal:` protocol. This support comes with two important limitations:
+
   - Projects that make use of such dependencies will have to be run with the `--preserve-symlinks` Node option if they wish to access their dependencies.
   - Because Yarn installs will never modify files outside of the project due to security reasons, sub-dependencies of packages with `portal:` must be hoisted outside of the portal. Failing that (for example if the portal package depends on something incompatible with the version hoisted via another package), the linker will produce an error and abandon the install.
 
@@ -504,7 +512,7 @@ yarn set version 2.4.0
 
 - Warnings are now reported when `packageExtensions` rules are either unused or redundant with the original package definition.
 
-- Potentially breaking, but it was intended this way from the start: the `packageExtensions` field cannot be used to *replace* dependencies anymore (only to add missing ones). Prefer using the `resolutions` field to replace existing ones.
+- Potentially breaking, but it was intended this way from the start: the `packageExtensions` field cannot be used to _replace_ dependencies anymore (only to add missing ones). Prefer using the `resolutions` field to replace existing ones.
 
 - Progress bars are rendered less often, which should help performances on some terminals.
 
@@ -569,6 +577,7 @@ yarn set version 2.3.1
 ```
 
 ### CLI
+
 - Take into account peer dependency defaults when inheriting workspace peer dependencies in the node_modules linker
 
 ## 2.3.0
@@ -689,7 +698,7 @@ yarn set version 2.1.0
 
 ### Ecosystem
 
-- Packages can now declare they they *need* to be unpacked in order to be functional using the new `"preferUnplugged": true` field in the manifest. This will hurt the experience of your users (your project will be the only one that will require hard installs), so please refrain using this field unless there's no other choice.
+- Packages can now declare they they _need_ to be unpacked in order to be functional using the new `"preferUnplugged": true` field in the manifest. This will hurt the experience of your users (your project will be the only one that will require hard installs), so please refrain using this field unless there's no other choice.
 
 ### New commands
 
@@ -783,109 +792,109 @@ Remember that a [migration guide](https://yarnpkg.com/getting-started/migration)
 
 ### Notable fixes
 
-  - Using `yarn link` will now properly resolve peer dependencies based on the package that requires the linked package rather than the dependencies installed in the linked project folder.
+- Using `yarn link` will now properly resolve peer dependencies based on the package that requires the linked package rather than the dependencies installed in the linked project folder.
 
-  - Packages will now only be built when one of their dependencies is changed in some way. Note that this includes both direct dependencies and transitive dependencies, which might trigger unintuitive rebuilds in some case (for example, since `node-sass` depends on `lodash.assign`, upgrading `lodash.assign` will trigger a rebuild). This will be improved in a later release by introducing a new `runtime` field for the `dependenciesMeta` object that will exclude the package from the build key computation (feel free to start setting this flag as of now, even if it won't have any effect until then).
+- Packages will now only be built when one of their dependencies is changed in some way. Note that this includes both direct dependencies and transitive dependencies, which might trigger unintuitive rebuilds in some case (for example, since `node-sass` depends on `lodash.assign`, upgrading `lodash.assign` will trigger a rebuild). This will be improved in a later release by introducing a new `runtime` field for the `dependenciesMeta` object that will exclude the package from the build key computation (feel free to start setting this flag as of now, even if it won't have any effect until then).
 
-  - Registry hostnames finally aren't part of the lockfile anymore. It means that you can switch the registry at any time by changing the `npmRegistryServer` settings. One unfortunate limitation is that this doesn't apply to registries that use non-standard paths for their archives (ie `/@scope/name/-/name-version.tgz`). One such example is NPM Enterprise, which will see the full path being stored in the lockfile.
+- Registry hostnames finally aren't part of the lockfile anymore. It means that you can switch the registry at any time by changing the `npmRegistryServer` settings. One unfortunate limitation is that this doesn't apply to registries that use non-standard paths for their archives (ie `/@scope/name/-/name-version.tgz`). One such example is NPM Enterprise, which will see the full path being stored in the lockfile.
 
-  - The `--immutable` option (new name for `--frozen-lockfile`) will now properly report when the lockfile would be changed because of entry removals (it would previously only reject new entries, not removals).
+- The `--immutable` option (new name for `--frozen-lockfile`) will now properly report when the lockfile would be changed because of entry removals (it would previously only reject new entries, not removals).
 
 ### Notable changes
 
-  - We dropped support for Node 8, which has reached its end of life in December.
+- We dropped support for Node 8, which has reached its end of life in December.
 
-  - Accessing registries through http is now forbidden by default (Yarn will throw an exception and require to use https instead). This can be overruled on a per-hostname basis by using [`unsafeHttpWhitelist`](https://yarnpkg.com/configuration/yarnrc#unsafeHttpWhitelist).
+- Accessing registries through http is now forbidden by default (Yarn will throw an exception and require to use https instead). This can be overruled on a per-hostname basis by using [`unsafeHttpWhitelist`](https://yarnpkg.com/configuration/yarnrc#unsafeHttpWhitelist).
 
-  - The meaning of `devDependencies` is slightly altered. Until then dev dependencies were described as "dependencies we only use in development". Given that we now advocate for all your packages to be stored within the repository (in order to guarantee reproducible builds), this doesn't really make sense anymore. As a result, our description of dev dependencies is now "dependencies that aren't installed by the package consumers". It doesn't really change anything else than the name, but the more you know.
+- The meaning of `devDependencies` is slightly altered. Until then dev dependencies were described as "dependencies we only use in development". Given that we now advocate for all your packages to be stored within the repository (in order to guarantee reproducible builds), this doesn't really make sense anymore. As a result, our description of dev dependencies is now "dependencies that aren't installed by the package consumers". It doesn't really change anything else than the name, but the more you know.
 
-      - One particular note is that you cannot install production dependencies only at the moment. We plan to add back this feature at a later time, but given that enabling [Zero-Installs](https://yarnpkg.com/features/zero-installs) would cause your repository to contain all your packages anyway (prod & dev), this feature isn't deemed as important as it used to be.
+  - One particular note is that you cannot install production dependencies only at the moment. We plan to add back this feature at a later time, but given that enabling [Zero-Installs](https://yarnpkg.com/features/zero-installs) would cause your repository to contain all your packages anyway (prod & dev), this feature isn't deemed as important as it used to be.
 
-  - Running `yarn link <package>` now has a semi-permanent effect in that `<package>` will be added as a dependency of your active workspace (using the new `portal:` protocol). Apart from that the workflow stays the same, meaning that running `yarn link` somewhere will add the local path to the local registry, and `yarn link <package>` will add a dependency to the previously linked package.
+- Running `yarn link <package>` now has a semi-permanent effect in that `<package>` will be added as a dependency of your active workspace (using the new `portal:` protocol). Apart from that the workflow stays the same, meaning that running `yarn link` somewhere will add the local path to the local registry, and `yarn link <package>` will add a dependency to the previously linked package.
 
-      - To disable such a link, just remove its `resolution` entry and run `yarn install` again.
+  - To disable such a link, just remove its `resolution` entry and run `yarn install` again.
 
-  - The Yarn configuration has been revamped and *will not read the `.npmrc` files anymore.* This used to cause a lot of confusion as to where the configuration was coming from, so the logic is now very simple: Yarn will look in the current directory and all its ancestors for `.yarnrc.yml` files.
+- The Yarn configuration has been revamped and _will not read the `.npmrc` files anymore._ This used to cause a lot of confusion as to where the configuration was coming from, so the logic is now very simple: Yarn will look in the current directory and all its ancestors for `.yarnrc.yml` files.
 
-      - Note that the configuration files are now called `.yarnrc.yml` and thus are expected to be valid YAML. The available settings are listed [here](https://yarnpkg.com/configuration/yarnrc).
+  - Note that the configuration files are now called `.yarnrc.yml` and thus are expected to be valid YAML. The available settings are listed [here](https://yarnpkg.com/configuration/yarnrc).
 
-  - The lockfiles now generated should be compatible with Yaml, while staying compatible with old-style lockfiles. Old-style lockfiles will be automatically migrated, but that will require some round-trips to the registry to obtain more information that wasn't stored previously, so the first install will be slightly slower.
+- The lockfiles now generated should be compatible with Yaml, while staying compatible with old-style lockfiles. Old-style lockfiles will be automatically migrated, but that will require some round-trips to the registry to obtain more information that wasn't stored previously, so the first install will be slightly slower.
 
-  - The cache files are now zip instead of tgz. This has an impact on cold install performances, because the currently available registries don't support it, which requires us to convert it on our side. Zero-Install is one way to offset this cost, and we're hoping that registries will consider offering zip as an option in the future.
+- The cache files are now zip instead of tgz. This has an impact on cold install performances, because the currently available registries don't support it, which requires us to convert it on our side. Zero-Install is one way to offset this cost, and we're hoping that registries will consider offering zip as an option in the future.
 
-      - We chose zip because of its perfect combination in terms of tooling ubiquity and random access performances (tgz would require to decompress the whole archive to access a single file).
+  - We chose zip because of its perfect combination in terms of tooling ubiquity and random access performances (tgz would require to decompress the whole archive to access a single file).
 
 ### Package manifests (`package.json`)
 
 To see a comprehensive documentation about each possible field, please check our [documentation](https://yarnpkg.com/configuration/manifest).
 
-  - Two new fields are now supported in the `publishConfig` key of your manifests: the `main`, `bin`, and `module` fields will be used to replace the value of their respective top-level counterparts in the manifest shipped along with the generated file.
+- Two new fields are now supported in the `publishConfig` key of your manifests: the `main`, `bin`, and `module` fields will be used to replace the value of their respective top-level counterparts in the manifest shipped along with the generated file.
 
-    - The `typings` and `types` fields will also be replaced if you use the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript).
+  - The `typings` and `types` fields will also be replaced if you use the [TypeScript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript).
 
-  - Two new fields are now supported at the root of the manifest: `dependenciesMeta` and `peerDependenciesMeta` (`peerDependenciesMeta` actually was supported in Yarn 1 as well, but `dependenciesMeta` is a new addition). These fields are meant to store dependency settings unique to each package.
+- Two new fields are now supported at the root of the manifest: `dependenciesMeta` and `peerDependenciesMeta` (`peerDependenciesMeta` actually was supported in Yarn 1 as well, but `dependenciesMeta` is a new addition). These fields are meant to store dependency settings unique to each package.
 
-    - Both of these new fields, and all settings the support, are entirely optional. Yarn will keep doing what you expect if they're not there - they're just a mechanism to expose more fine-grained settings.
+  - Both of these new fields, and all settings the support, are entirely optional. Yarn will keep doing what you expect if they're not there - they're just a mechanism to expose more fine-grained settings.
 
-    - Some of those settings can only be declared in the project top-level manifest and will be ignored anywhere else (for example `built`), while others will have a per-package effect (for example `optional`). As a rule of thumb, `dependenciesMeta` settings are always project-wide (and thus are only taken into account in the top-level package.json) while `peerDependenciesMeta` settings are package-specific.
+  - Some of those settings can only be declared in the project top-level manifest and will be ignored anywhere else (for example `built`), while others will have a per-package effect (for example `optional`). As a rule of thumb, `dependenciesMeta` settings are always project-wide (and thus are only taken into account in the top-level package.json) while `peerDependenciesMeta` settings are package-specific.
 
-    - The `dependenciesMeta` field covers dependencies declared in either of the `dependencies` and `devDependencies` fields.
+  - The `dependenciesMeta` field covers dependencies declared in either of the `dependencies` and `devDependencies` fields.
 
-    - The `dependenciesMeta` field accepts two types of keys: either a generic package name (`lodash`), or a specialized package **version** (`lodash@1.2.3`). This later syntax only works for the top-level manifest and *will thus be ignored when seen in a dependency / transitive dependency*.
+  - The `dependenciesMeta` field accepts two types of keys: either a generic package name (`lodash`), or a specialized package **version** (`lodash@1.2.3`). This later syntax only works for the top-level manifest and _will thus be ignored when seen in a dependency / transitive dependency_.
 
-  - The `dependenciesMeta[].comment` field is expected to be a string field. Even though it isn't actually used anywhere at the moment, we suggest you to write comments regarding the reason why some packages are used here rather than anywhere else. This might prove useful for plugin authors.
+- The `dependenciesMeta[].comment` field is expected to be a string field. Even though it isn't actually used anywhere at the moment, we suggest you to write comments regarding the reason why some packages are used here rather than anywhere else. This might prove useful for plugin authors.
 
-  - The `dependenciesMeta[].built` field is a boolean flag; setting it to `false` will cause the package manager to ignore this package when considering the list of packages that need to be built. If the project uses `enable-scripts: false`, the warning that would have traditionally been emitted will be downgraded into a simple notice. This settings is project-wide.
+- The `dependenciesMeta[].built` field is a boolean flag; setting it to `false` will cause the package manager to ignore this package when considering the list of packages that need to be built. If the project uses `enable-scripts: false`, the warning that would have traditionally been emitted will be downgraded into a simple notice. This settings is project-wide.
 
-  - The `peerDependenciesMeta[].optional` field is a boolean flag; setting it to `true` will stop the package manager from emitting a warning when the specified peer dependency is missing (you typically want to use it if you provide optional integrations with specific third-party packages and don't want to pollute your users' installs with a bunch of irrelevant warnings). This settings is package-specific.
+- The `peerDependenciesMeta[].optional` field is a boolean flag; setting it to `true` will stop the package manager from emitting a warning when the specified peer dependency is missing (you typically want to use it if you provide optional integrations with specific third-party packages and don't want to pollute your users' installs with a bunch of irrelevant warnings). This settings is package-specific.
 
-  - The `resolutions` field no longer support the glob syntax within its patterns, as it was redundant with its own glob-less syntax and caused unnecessary confusion.
+- The `resolutions` field no longer support the glob syntax within its patterns, as it was redundant with its own glob-less syntax and caused unnecessary confusion.
 
-    ```diff-json
-    {
-      "resolutions": {
-    -    "**/@babel/core": "7.5.5",
-    +    "@babel/core": "7.5.5",
-      }
+  ```diff-json
+  {
+    "resolutions": {
+  -    "**/@babel/core": "7.5.5",
+  +    "@babel/core": "7.5.5",
     }
-    ```
+  }
+  ```
 
 ### Workspaces
 
-  - Workspaces can now be referenced using the special `workspace:` protocol. This protocol accepts either a relative path to the workspace, or a semver range that will be compared against the `version` fields from candidate workspaces.
+- Workspaces can now be referenced using the special `workspace:` protocol. This protocol accepts either a relative path to the workspace, or a semver range that will be compared against the `version` fields from candidate workspaces.
 
-  - Workspaces don't have to specify a version anymore. If referenced through the `workspace:` resolver, the engine will assume that they have the version `0.0.0` (which makes `workspace:*` a good way to say "shut up and take my workspace").
+- Workspaces don't have to specify a version anymore. If referenced through the `workspace:` resolver, the engine will assume that they have the version `0.0.0` (which makes `workspace:*` a good way to say "shut up and take my workspace").
 
-    - That being said, workspaces referenced through the `workspace:` protocol will see their referenced changed at pack-time *if the target workspace defines a version*. An error will be thrown otherwise and the package won't be packable.
+  - That being said, workspaces referenced through the `workspace:` protocol will see their referenced changed at pack-time _if the target workspace defines a version_. An error will be thrown otherwise and the package won't be packable.
 
-  - Workspaces can now contain sub-workspaces. This follow the same restriction than before, meaning that any workspace that wishes to expose sub-workspaces must be declared `private: true`.
+- Workspaces can now contain sub-workspaces. This follow the same restriction than before, meaning that any workspace that wishes to expose sub-workspaces must be declared `private: true`.
 
 ### CLI
 
-  - The npm-specific commands (such as `yarn login` or `yarn publish`) have been moved into a specific namespace (`yarn npm login` / `yarn npm publish`). This doesn't affect the `yarn pack` command which is considered generic enough for the top-level.
+- The npm-specific commands (such as `yarn login` or `yarn publish`) have been moved into a specific namespace (`yarn npm login` / `yarn npm publish`). This doesn't affect the `yarn pack` command which is considered generic enough for the top-level.
 
-  - Running `yarn <path> add ...` will run the `add` command into the location pointed by `<path>`. This is true for any command. The only limitation is that `<path>` must be either be `.`, `..`, or must contain a slash (in order to disambiguate with script and command names).
+- Running `yarn <path> add ...` will run the `add` command into the location pointed by `<path>`. This is true for any command. The only limitation is that `<path>` must be either be `.`, `..`, or must contain a slash (in order to disambiguate with script and command names).
 
-  - Running `yarn add -P <package>` will use `*` by default instead of resolving a new range for `<package>`. This change only affects peer dependencies (`-P`), and can be disabled by manually specifying the range (`yarn add -P lodash@^4.0.0`).
+- Running `yarn add -P <package>` will use `*` by default instead of resolving a new range for `<package>`. This change only affects peer dependencies (`-P`), and can be disabled by manually specifying the range (`yarn add -P lodash@^4.0.0`).
 
-  - Running `yarn add <package> -i` will now make suggestions based on the dependencies from your other workspaces. This behavior can be made a default by setting `preferInteractive` to `true` in your settings.
+- Running `yarn add <package> -i` will now make suggestions based on the dependencies from your other workspaces. This behavior can be made a default by setting `preferInteractive` to `true` in your settings.
 
-  - Running `yarn foo:bar` will run the `foo:bar` script regardless of what workspace declares it as long as only one workspace declares it. *This change only affects scripts whose names contains at least one colon.*
+- Running `yarn foo:bar` will run the `foo:bar` script regardless of what workspace declares it as long as only one workspace declares it. _This change only affects scripts whose names contains at least one colon._
 
-  - Running `yarn remove -A <package>` will remove `<package>` from all the dependency sets from all your workspaces, regardless of what your cwd is.
+- Running `yarn remove -A <package>` will remove `<package>` from all the dependency sets from all your workspaces, regardless of what your cwd is.
 
-  - Running `yarn set resolution <package> <resolution>` will force the resolver to use a specific resolution for the given package descriptor. Note that the descriptor passed as parameter must be exactly the same as the one you want to override. This command is a handy tool to manually optimize some ranges that could benefit from overlapping.
+- Running `yarn set resolution <package> <resolution>` will force the resolver to use a specific resolution for the given package descriptor. Note that the descriptor passed as parameter must be exactly the same as the one you want to override. This command is a handy tool to manually optimize some ranges that could benefit from overlapping.
 
-  - Running `yarn up <package>` will upgrade `<package>` in all of your workspaces at once (only if they already use the specified package - those that don't won't see it being added). Adding the `-i` flag will also cause Yarn to ask you to confirm for each workspace.
+- Running `yarn up <package>` will upgrade `<package>` in all of your workspaces at once (only if they already use the specified package - those that don't won't see it being added). Adding the `-i` flag will also cause Yarn to ask you to confirm for each workspace.
 
-  - Running `yarn config --why` will tell you the source for each value in your configuration. We recommend using it when you're not sure to understand why Yarn would have a particular settings.
+- Running `yarn config --why` will tell you the source for each value in your configuration. We recommend using it when you're not sure to understand why Yarn would have a particular settings.
 
-  - Running `yarn pack` will no longer always include *nested* README, CHANGELOG, LICENSE or LICENCE files (note that those files will still be included if found at the root of the workspace being packed, as is usually the case). If you rely on this ([somewhat unintended](https://github.com/npm/npm-packlist/blob/270f534bc70dfb1d316682226332fd05e75e1b14/index.js#L162-L168)) behavior you can add those files manually to the `files` field of your `package.json`.
+- Running `yarn pack` will no longer always include _nested_ README, CHANGELOG, LICENSE or LICENCE files (note that those files will still be included if found at the root of the workspace being packed, as is usually the case). If you rely on this ([somewhat unintended](https://github.com/npm/npm-packlist/blob/270f534bc70dfb1d316682226332fd05e75e1b14/index.js#L162-L168)) behavior you can add those files manually to the `files` field of your `package.json`.
 
-  - The `yarn upgrade-interactive` command has been moved into a plugin that needs to be installed through `yarn plugin import interactive-tools`. It's also been rewritten, and we'll keep improving over time.
+- The `yarn upgrade-interactive` command has been moved into a plugin that needs to be installed through `yarn plugin import interactive-tools`. It's also been rewritten, and we'll keep improving over time.
 
 ### Miscellaneous
 
-  - A new protocol is now supported, `portal:`. Portals are very much like `link:` in that they directly point to a location on the disk, but unlike links they also take into account the dependencies of the target location (whereas links don't care about these). To give you a better idea, portals are what you use when you want to target a *package*, whereas links are what you use when you want to target a non-package folder (for example your `src` directory, or similar).
+- A new protocol is now supported, `portal:`. Portals are very much like `link:` in that they directly point to a location on the disk, but unlike links they also take into account the dependencies of the target location (whereas links don't care about these). To give you a better idea, portals are what you use when you want to target a _package_, whereas links are what you use when you want to target a non-package folder (for example your `src` directory, or similar).
 
-  - A new protocol is now supported, `patch:`. The patch protocol can be used to automatically apply changes to the sources of a package. It's very similar to [`patch-package`](https://github.com/ds300/patch-package), but is directly integrated within Yarn (including its cache and checksum systems).
+- A new protocol is now supported, `patch:`. The patch protocol can be used to automatically apply changes to the sources of a package. It's very similar to [`patch-package`](https://github.com/ds300/patch-package), but is directly integrated within Yarn (including its cache and checksum systems).

@@ -1,4 +1,4 @@
-import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
+import { NativePath, PortablePath, Path } from "@yarnpkg/fslib";
 
 // Note: most of those types are useless for most users. Just check the
 // PnpSettings and PnpApi types at the end and you'll be fine.
@@ -7,11 +7,12 @@ import {NativePath, PortablePath, Path} from '@yarnpkg/fslib';
 // within the state files (hence why they only use JSON datatypes).
 
 export enum LinkType {
-  HARD = `HARD`, SOFT = `SOFT`,
+  HARD = `HARD`,
+  SOFT = `SOFT`,
 }
 
-export type PhysicalPackageLocator = {name: string, reference: string};
-export type TopLevelPackageLocator = {name: null, reference: null};
+export type PhysicalPackageLocator = { name: string; reference: string };
+export type TopLevelPackageLocator = { name: null; reference: null };
 
 export type PackageLocator = PhysicalPackageLocator | TopLevelPackageLocator;
 
@@ -23,8 +24,20 @@ export type DependencyTarget =
   // A missing peer dependency
   | null;
 
-export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, DependencyTarget>, packagePeers: Set<string>, linkType: LinkType, discardFromLookup: boolean};
-export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, DependencyTarget]>, packagePeers?: Array<string>, linkType: LinkType, discardFromLookup?: boolean};
+export type PackageInformation<P extends Path> = {
+  packageLocation: P;
+  packageDependencies: Map<string, DependencyTarget>;
+  packagePeers: Set<string>;
+  linkType: LinkType;
+  discardFromLookup: boolean;
+};
+export type PackageInformationData<P extends Path> = {
+  packageLocation: P;
+  packageDependencies: Array<[string, DependencyTarget]>;
+  packagePeers?: Array<string>;
+  linkType: LinkType;
+  discardFromLookup?: boolean;
+};
 
 export type PackageStore = Map<string | null, PackageInformation<PortablePath>>;
 export type PackageStoreData = Array<[string | null, PackageInformationData<PortablePath>]>;
@@ -53,7 +66,7 @@ export type RuntimeState = {
   fallbackExclusionList: Map<string, Set<string>>;
   fallbackPool: Map<string, DependencyTarget>;
   ignorePattern: RegExp | null;
-  packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>;
+  packageLocatorsByLocations: Map<PortablePath, { locator: PhysicalPackageLocator; discardFromLookup: boolean }>;
   packageRegistry: PackageRegistry;
   dependencyTreeRoots: Array<PhysicalPackageLocator>;
 };
@@ -97,21 +110,23 @@ export type ResolveUnqualifiedOptions = {
   conditions?: Set<string>;
 };
 
-export type ResolveRequestOptions =
-  ResolveToUnqualifiedOptions &
-  ResolveUnqualifiedOptions;
+export type ResolveRequestOptions = ResolveToUnqualifiedOptions & ResolveUnqualifiedOptions;
 
 export type PnpApi = {
-  VERSIONS: {std: number, [key: string]: number};
+  VERSIONS: { std: number; [key: string]: number };
 
-  topLevel: {name: null, reference: null};
+  topLevel: { name: null; reference: null };
   getLocator: (name: string, referencish: string | [string, string]) => PhysicalPackageLocator;
 
   getDependencyTreeRoots: () => Array<PhysicalPackageLocator>;
   getPackageInformation: (locator: PackageLocator) => PackageInformation<NativePath> | null;
   findPackageLocator: (location: NativePath) => PhysicalPackageLocator | null;
 
-  resolveToUnqualified: (request: string, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => NativePath | null;
+  resolveToUnqualified: (
+    request: string,
+    issuer: NativePath | null,
+    opts?: ResolveToUnqualifiedOptions,
+  ) => NativePath | null;
   resolveUnqualified: (unqualified: NativePath, opts?: ResolveUnqualifiedOptions) => NativePath;
   resolveRequest: (request: string, issuer: NativePath | null, opts?: ResolveRequestOptions) => NativePath | null;
 

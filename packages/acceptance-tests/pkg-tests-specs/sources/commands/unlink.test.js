@@ -1,14 +1,14 @@
-import {npath, xfs} from '@yarnpkg/fslib';
+import { npath, xfs } from "@yarnpkg/fslib";
 
 const {
-  fs: {writeJson},
+  fs: { writeJson },
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`unlink`, () => {
     test(
       `it should allow to unlink a project from another one`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-package/package.json`, {
@@ -36,7 +36,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           const tmp = await xfs.mktempPromise();
 
           await writeJson(`${tmp}/my-package-a/package.json`, {
@@ -59,22 +59,26 @@ describe(`Commands`, () => {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              },
+            }),
+          );
 
           await run(`unlink`, `${tmp}/my-package-b`, {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+              },
+            }),
+          );
         },
       ),
     );
@@ -86,7 +90,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           const tmp = await xfs.mktempPromise();
 
           await writeJson(`${tmp}/my-package-a/package.json`, {
@@ -109,23 +113,27 @@ describe(`Commands`, () => {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              },
+            }),
+          );
 
           await run(`unlink`, `--all`, {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toEqual(expect.objectContaining({
-            resolutions: expect.objectContaining({
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toEqual(
+            expect.objectContaining({
+              resolutions: expect.objectContaining({
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              }),
             }),
-          }));
+          );
         },
       ),
     );
@@ -137,7 +145,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           const tmp = await xfs.mktempPromise();
 
           await writeJson(`${tmp}/my-package-a/package.json`, {
@@ -160,34 +168,40 @@ describe(`Commands`, () => {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              },
+            }),
+          );
 
           await run(`unlink`, `my-*-b`, {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-            },
-          }));
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+              },
+            }),
+          );
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+              },
+            }),
+          );
         },
       ),
     );
 
     test(
       `it should allow to unlink all workspaces specified from another project`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
@@ -210,21 +224,25 @@ describe(`Commands`, () => {
         await run(`link`, `${tmp}/my-workspace`, `--all`);
         await run(`link`, `${tmp}/my-package`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-          resolutions: {
-            [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
-            [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
-            [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
-          },
-        }));
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+          expect.objectContaining({
+            resolutions: {
+              [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
+              [`workspace-a`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-a`)}`,
+              [`workspace-b`]: `portal:${npath.toPortablePath(`${tmp}/my-workspace/packages/workspace-b`)}`,
+            },
+          }),
+        );
 
         await run(`unlink`, `${tmp}/my-workspace`, `--all`);
 
-        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-          resolutions: {
-            [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
-          },
-        }));
+        await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+          expect.objectContaining({
+            resolutions: {
+              [`my-package`]: `portal:${npath.toPortablePath(`${tmp}/my-package`)}`,
+            },
+          }),
+        );
       }),
     );
 
@@ -235,7 +253,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           const tmp = await xfs.mktempPromise();
 
           await writeJson(`${path}/packages/workspace/package.json`, {
@@ -252,31 +270,37 @@ describe(`Commands`, () => {
             });
           }
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
-              [`my-package-c`]: `portal:${npath.toPortablePath(`${tmp}/my-package-c`)}`,
-              [`my-package-d`]: `portal:${npath.toPortablePath(`${tmp}/my-package-d`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+                [`my-package-c`]: `portal:${npath.toPortablePath(`${tmp}/my-package-c`)}`,
+                [`my-package-d`]: `portal:${npath.toPortablePath(`${tmp}/my-package-d`)}`,
+              },
+            }),
+          );
 
           await run(`unlink`, `my-package-{a,b}`, `${tmp}/my-package-d`, {
             cwd: `${path}/packages/workspace`,
           });
 
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-c`]: `portal:${npath.toPortablePath(`${tmp}/my-package-c`)}`,
-            },
-          }));
-          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toEqual(expect.objectContaining({
-            resolutions: {
-              [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
-              [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
-              [`my-package-d`]: `portal:${npath.toPortablePath(`${tmp}/my-package-d`)}`,
-            },
-          }));
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-c`]: `portal:${npath.toPortablePath(`${tmp}/my-package-c`)}`,
+              },
+            }),
+          );
+          await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.not.toEqual(
+            expect.objectContaining({
+              resolutions: {
+                [`my-package-a`]: `portal:${npath.toPortablePath(`${tmp}/my-package-a`)}`,
+                [`my-package-b`]: `portal:${npath.toPortablePath(`${tmp}/my-package-b`)}`,
+                [`my-package-d`]: `portal:${npath.toPortablePath(`${tmp}/my-package-d`)}`,
+              },
+            }),
+          );
         },
       ),
     );

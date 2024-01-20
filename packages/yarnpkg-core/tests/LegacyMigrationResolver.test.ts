@@ -1,7 +1,7 @@
-import {IMPORTED_PATTERNS} from '../sources/LegacyMigrationResolver';
+import { IMPORTED_PATTERNS } from "../sources/LegacyMigrationResolver";
 
 describe(`LegacyMigrationResolver`, () => {
-  const tests: Array<{version: string, resolved: string, expected: string}> = [
+  const tests: Array<{ version: string; resolved: string; expected: string }> = [
     // http registries
     {
       version: `4.17.21`,
@@ -64,7 +64,7 @@ describe(`LegacyMigrationResolver`, () => {
     },
   ];
 
-  for (const {expected, resolved, version} of tests) {
+  for (const { expected, resolved, version } of tests) {
     it(`should match ${resolved} to ${expected}`, () => {
       let reference;
       for (const [pattern, matcher] of IMPORTED_PATTERNS) {

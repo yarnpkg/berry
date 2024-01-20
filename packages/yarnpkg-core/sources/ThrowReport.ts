@@ -1,13 +1,11 @@
-import {MessageName}                          from './MessageName';
-import {Report, SectionOptions, TimerOptions} from './Report';
-import {Locator}                              from './types';
+import { MessageName } from "./MessageName";
+import { Report, SectionOptions, TimerOptions } from "./Report";
+import { Locator } from "./types";
 
 export class ThrowReport extends Report {
-  reportCacheHit(locator: Locator) {
-  }
+  reportCacheHit(locator: Locator) {}
 
-  reportCacheMiss(locator: Locator) {
-  }
+  reportCacheMiss(locator: Locator) {}
 
   startSectionSync<T>(opts: SectionOptions, cb: () => T) {
     return cb();
@@ -31,19 +29,15 @@ export class ThrowReport extends Report {
     return await realCb();
   }
 
-  reportSeparator() {
-  }
+  reportSeparator() {}
 
-  reportInfo(name: MessageName | null, text: string) {
-  }
+  reportInfo(name: MessageName | null, text: string) {}
 
-  reportWarning(name: MessageName, text: string) {
-  }
+  reportWarning(name: MessageName, text: string) {}
 
-  reportError(name: MessageName, text: string) {
-  }
+  reportError(name: MessageName, text: string) {}
 
-  reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
+  reportProgress(progress: AsyncIterable<{ progress: number; title?: string }>) {
     const promise = Promise.resolve().then(async () => {
       // eslint-disable-next-line no-empty-pattern
       for await (const {} of progress) {
@@ -55,7 +49,7 @@ export class ThrowReport extends Report {
       // Nothing to stop
     };
 
-    return {...promise, stop};
+    return { ...promise, stop };
   }
 
   reportJson(data: any) {
@@ -66,6 +60,5 @@ export class ThrowReport extends Report {
     // Just ignore the fold output
   }
 
-  async finalize() {
-  }
+  async finalize() {}
 }

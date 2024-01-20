@@ -1,103 +1,105 @@
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+const { npath, xfs } = require(`@yarnpkg/fslib`);
 const {
-  exec: {execFile},
-  fs: {writeFile},
+  exec: { execFile },
+  fs: { writeFile },
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`stage`, () => {
     test(
       `it should stage the initial files`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await execFile(`git`, [`init`], {cwd: path});
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await execFile(`git`, [`init`], { cwd: path });
 
-        await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: [
-            `${npath.fromPortablePath(`${path}/package.json`)}\n`,
-          ].join(``),
+        await expect(run(`stage`, `-n`, { cwd: path })).resolves.toMatchObject({
+          stdout: [`${npath.fromPortablePath(`${path}/package.json`)}\n`].join(``),
         });
       }),
     );
 
     test(
       `it should not stage non-yarn files`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await execFile(`git`, [`init`], {cwd: path});
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await execFile(`git`, [`init`], { cwd: path });
 
         await writeFile(`${path}/index.js`, `module.exports = 42;\n`);
 
-        await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: [
-            `${npath.fromPortablePath(`${path}/package.json`)}\n`,
-          ].join(``),
+        await expect(run(`stage`, `-n`, { cwd: path })).resolves.toMatchObject({
+          stdout: [`${npath.fromPortablePath(`${path}/package.json`)}\n`].join(``),
         });
       }),
     );
 
     test(
       `it should stage the cache folder`,
-      makeTemporaryEnv({
-        dependencies: {
-          [`no-deps`]: `1.0.0`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
         },
-      }, async ({path, run, source}) => {
-        await run(`install`);
+        async ({ path, run, source }) => {
+          await run(`install`);
 
-        await execFile(`git`, [`init`], {cwd: path});
+          await execFile(`git`, [`init`], { cwd: path });
 
-        await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: [
-            `${npath.fromPortablePath(`${path}/.pnp.cjs`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/global/metadata/npm/3fb1ad/localhost/no-deps.json`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-0c0.zip`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-af041f19ff.zip`)}\n`,
-            `${npath.fromPortablePath(`${path}/package.json`)}\n`,
-            `${npath.fromPortablePath(`${path}/yarn.lock`)}\n`,
-          ].join(``),
-        });
-      }),
+          await expect(run(`stage`, `-n`, { cwd: path })).resolves.toMatchObject({
+            stdout: [
+              `${npath.fromPortablePath(`${path}/.pnp.cjs`)}\n`,
+              `${npath.fromPortablePath(`${path}/.yarn/global/metadata/npm/3fb1ad/localhost/no-deps.json`)}\n`,
+              `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-0c0.zip`)}\n`,
+              `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
+              `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-af041f19ff.zip`)}\n`,
+              `${npath.fromPortablePath(`${path}/package.json`)}\n`,
+              `${npath.fromPortablePath(`${path}/yarn.lock`)}\n`,
+            ].join(``),
+          });
+        },
+      ),
     );
 
     test(
       `it should commit with right messages`,
-      makeTemporaryEnv({
-        name: `my-commit-package`,
-        dependencies: {
-          [`deps1`]: `1.0.0`,
-          [`deps2`]: `2.0.0`,
-        },
-      }, async ({path, run, source}) => {
-        await execFile(`git`, [`init`], {cwd: path});
-
-        // Otherwise we can't always commit
-        await execFile(`git`, [`config`, `user.name`, `John Doe`], {cwd: path});
-        await execFile(`git`, [`config`, `user.email`, `john.doe@example.org`], {cwd: path});
-        await execFile(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: path});
-
-        await xfs.mkdirPromise(`${path}/new-package`);
-        await run(`${path}/new-package`, `init`);
-
-        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `chore(yarn): Creates my-commit-package (and one other)\n`,
-        });
-
-        await execFile(`git`, [`add`, `.`], {cwd: path});
-        await execFile(`git`, [`commit`, `-m`, `wip`], {cwd: path});
-
-        await xfs.removePromise(`${path}/new-package/package.json`);
-        await xfs.writeJsonPromise(`${path}/package.json`, {
+      makeTemporaryEnv(
+        {
           name: `my-commit-package`,
           dependencies: {
-            [`deps1`]: `2.0.0`,
-            [`deps3`]: `2.0.0`,
+            [`deps1`]: `1.0.0`,
+            [`deps2`]: `2.0.0`,
           },
-        });
+        },
+        async ({ path, run, source }) => {
+          await execFile(`git`, [`init`], { cwd: path });
 
-        await expect(run(`stage`, `-c`, `-n`, {cwd: path})).resolves.toMatchObject({
-          stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`,
-        });
-      }),
+          // Otherwise we can't always commit
+          await execFile(`git`, [`config`, `user.name`, `John Doe`], { cwd: path });
+          await execFile(`git`, [`config`, `user.email`, `john.doe@example.org`], { cwd: path });
+          await execFile(`git`, [`config`, `commit.gpgSign`, `false`], { cwd: path });
+
+          await xfs.mkdirPromise(`${path}/new-package`);
+          await run(`${path}/new-package`, `init`);
+
+          await expect(run(`stage`, `-c`, `-n`, { cwd: path })).resolves.toMatchObject({
+            stdout: `chore(yarn): Creates my-commit-package (and one other)\n`,
+          });
+
+          await execFile(`git`, [`add`, `.`], { cwd: path });
+          await execFile(`git`, [`commit`, `-m`, `wip`], { cwd: path });
+
+          await xfs.removePromise(`${path}/new-package/package.json`);
+          await xfs.writeJsonPromise(`${path}/package.json`, {
+            name: `my-commit-package`,
+            dependencies: {
+              [`deps1`]: `2.0.0`,
+              [`deps3`]: `2.0.0`,
+            },
+          });
+
+          await expect(run(`stage`, `-c`, `-n`, { cwd: path })).resolves.toMatchObject({
+            stdout: `chore(yarn): Deletes new-package, adds deps3, removes deps2, updates deps1 to 2.0.0\n`,
+          });
+        },
+      ),
     );
   });
 });

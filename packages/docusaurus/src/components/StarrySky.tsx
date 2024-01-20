@@ -1,11 +1,11 @@
-import React, {useEffect, useRef} from 'react';
-import * as THREE                 from 'three';
+import React, { useEffect, useRef } from "react";
+import * as THREE from "three";
 
-import styles                     from './StarrySky.module.css';
+import styles from "./StarrySky.module.css";
 
 const r = 1000;
 const FACTOR = 4;
-const SPEED = .2;
+const SPEED = 0.2;
 
 // https://karthikkaranth.me/blog/generating-random-points-in-a-sphere/
 function getPoint() {
@@ -24,14 +24,14 @@ function getPoint() {
   const y = r * sinPhi * sinTheta;
   const z = r * cosPhi;
 
-  return {x, y, z};
+  return { x, y, z };
 }
 
 function getRandomParticelPos(particleCount: number) {
   const arr = new Float32Array(particleCount * 3);
 
   for (let i = 0; i < particleCount; i++) {
-    const {x, y, z} = getPoint();
+    const { x, y, z } = getPoint();
 
     arr[i + 0] = x * r;
     arr[i + 1] = y * r;
@@ -47,14 +47,13 @@ function resizeRendererToDisplaySize(renderer: THREE.Renderer) {
   const height = canvas.clientHeight;
   const needResize = canvas.width !== width || canvas.height !== height;
 
-  if (needResize)
-    renderer.setSize(width, height, false);
+  if (needResize) renderer.setSize(width, height, false);
 
   return needResize;
 }
 
 function installSky(canvas: HTMLCanvasElement) {
-  const renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true});
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   const scene = new THREE.Scene();
 
   // light source
@@ -72,20 +71,11 @@ function installSky(canvas: HTMLCanvasElement) {
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
   // Geometry
-  const geometrys = [
-    new THREE.BufferGeometry(),
-    new THREE.BufferGeometry(),
-  ];
+  const geometrys = [new THREE.BufferGeometry(), new THREE.BufferGeometry()];
 
-  geometrys[0].setAttribute(
-    `position`,
-    new THREE.BufferAttribute(getRandomParticelPos(350 * FACTOR), 3),
-  );
+  geometrys[0].setAttribute(`position`, new THREE.BufferAttribute(getRandomParticelPos(350 * FACTOR), 3));
 
-  geometrys[1].setAttribute(
-    `position`,
-    new THREE.BufferAttribute(getRandomParticelPos(1500 * FACTOR), 3),
-  );
+  geometrys[1].setAttribute(`position`, new THREE.BufferAttribute(getRandomParticelPos(1500 * FACTOR), 3));
 
   const loader = new THREE.TextureLoader();
 
@@ -121,8 +111,8 @@ function installSky(canvas: HTMLCanvasElement) {
     aggregatedTime += Math.min(time - (lastTime ?? time), 1000 / 60);
     lastTime = time;
 
-    container.rotation.x = (aggregatedTime / 1000) * Math.PI / 80 * SPEED;
-    container.rotation.y = (aggregatedTime / 1000) * Math.PI / 80 * SPEED;
+    container.rotation.x = (((aggregatedTime / 1000) * Math.PI) / 80) * SPEED;
+    container.rotation.y = (((aggregatedTime / 1000) * Math.PI) / 80) * SPEED;
 
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
@@ -148,7 +138,5 @@ export function StarrySky() {
     return installSky(canvasRef.current!);
   }, []);
 
-  return (
-    <canvas className={styles.canvas} ref={canvasRef}/>
-  );
+  return <canvas className={styles.canvas} ref={canvasRef} />;
 }

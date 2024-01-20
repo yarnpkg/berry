@@ -1,14 +1,14 @@
-import {PortablePath, npath, ppath, xfs, Filename} from '@yarnpkg/fslib';
-import fastGlob                                    from 'fast-glob';
+import { PortablePath, npath, ppath, xfs, Filename } from "@yarnpkg/fslib";
+import fastGlob from "fast-glob";
 
-import {HardDependencies, Manifest}                from './Manifest';
-import {Project}                                   from './Project';
-import {WorkspaceResolver}                         from './WorkspaceResolver';
-import * as formatUtils                            from './formatUtils';
-import * as hashUtils                              from './hashUtils';
-import * as semverUtils                            from './semverUtils';
-import * as structUtils                            from './structUtils';
-import {Descriptor, Locator}                       from './types';
+import { HardDependencies, Manifest } from "./Manifest";
+import { Project } from "./Project";
+import { WorkspaceResolver } from "./WorkspaceResolver";
+import * as formatUtils from "./formatUtils";
+import * as hashUtils from "./hashUtils";
+import * as semverUtils from "./semverUtils";
+import * as structUtils from "./structUtils";
+import { Descriptor, Locator } from "./types";
 
 export class Workspace {
   public readonly project: Project;
@@ -28,19 +28,24 @@ export class Workspace {
   // @ts-expect-error: This variable is set during the setup process
   public manifest: Manifest;
 
-  constructor(workspaceCwd: PortablePath, {project}: {project: Project}) {
+  constructor(workspaceCwd: PortablePath, { project }: { project: Project }) {
     this.project = project;
     this.cwd = workspaceCwd;
   }
 
   async setup() {
-    this.manifest = await Manifest.tryFind(this.cwd) ?? new Manifest();
+    this.manifest = (await Manifest.tryFind(this.cwd)) ?? new Manifest();
 
     // We use ppath.relative to guarantee that the default hash will be consistent even if the project is installed on different OS / path
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.relativeCwd = ppath.relative(this.project.cwd, this.cwd) || PortablePath.dot;
 
-    const ident = this.manifest.name ? this.manifest.name : structUtils.makeIdent(null, `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substring(0, 6)}`);
+    const ident = this.manifest.name
+      ? this.manifest.name
+      : structUtils.makeIdent(
+          null,
+          `${this.computeCandidateName()}-${hashUtils.makeHash<string>(this.relativeCwd).substring(0, 6)}`,
+        );
 
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredDescriptor = structUtils.makeDescriptor(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
@@ -48,10 +53,9 @@ export class Workspace {
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredLocator = structUtils.makeLocator(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
-    const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
+    const patterns = this.manifest.workspaceDefinitions.map(({ pattern }) => pattern);
 
-    if (patterns.length === 0)
-      return;
+    if (patterns.length === 0) return;
 
     const relativeCwds = await fastGlob(patterns, {
       cwd: npath.fromPortablePath(this.cwd),
@@ -78,7 +82,9 @@ export class Workspace {
   get anchoredPackage() {
     const pkg = this.project.storedPackages.get(this.anchoredLocator.locatorHash);
     if (!pkg)
-      throw new Error(`Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.project.configuration, this)} (${formatUtils.pretty(this.project.configuration, ppath.join(this.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`);
+      throw new Error(
+        `Assertion failed: Expected workspace ${structUtils.prettyWorkspace(this.project.configuration, this)} (${formatUtils.pretty(this.project.configuration, ppath.join(this.cwd, Filename.manifest), formatUtils.Type.PATH)}) to have been resolved. Run "yarn install" to update the lockfile`,
+      );
 
     return pkg;
   }
@@ -86,13 +92,9 @@ export class Workspace {
   accepts(range: string) {
     const protocolIndex = range.indexOf(`:`);
 
-    const protocol = protocolIndex !== -1
-      ? range.slice(0, protocolIndex + 1)
-      : null;
+    const protocol = protocolIndex !== -1 ? range.slice(0, protocolIndex + 1) : null;
 
-    const pathname = protocolIndex !== -1
-      ? range.slice(protocolIndex + 1)
-      : range;
+    const pathname = protocolIndex !== -1 ? range.slice(protocolIndex + 1) : range;
 
     if (protocol === WorkspaceResolver.protocol && ppath.normalize(pathname as PortablePath) === this.relativeCwd)
       return true;
@@ -101,17 +103,13 @@ export class Workspace {
       return true;
 
     const semverRange = semverUtils.validRange(pathname);
-    if (!semverRange)
-      return false;
+    if (!semverRange) return false;
 
-    if (protocol === WorkspaceResolver.protocol)
-      return semverRange.test(this.manifest.version ?? `0.0.0`);
+    if (protocol === WorkspaceResolver.protocol) return semverRange.test(this.manifest.version ?? `0.0.0`);
 
-    if (!this.project.configuration.get(`enableTransparentWorkspaces`))
-      return false;
+    if (!this.project.configuration.get(`enableTransparentWorkspaces`)) return false;
 
-    if (this.manifest.version !== null)
-      return semverRange.test(this.manifest.version);
+    if (this.manifest.version !== null) return semverRange.test(this.manifest.version);
 
     return false;
   }
@@ -132,7 +130,9 @@ export class Workspace {
    *
    * @returns all the workspaces marked as dependencies
    */
-  getRecursiveWorkspaceDependencies({dependencies = Manifest.hardDependencies}: {dependencies?: Array<HardDependencies>} = {}) {
+  getRecursiveWorkspaceDependencies({
+    dependencies = Manifest.hardDependencies,
+  }: { dependencies?: Array<HardDependencies> } = {}) {
     const workspaceList = new Set<Workspace>();
 
     const visitWorkspace = (workspace: Workspace) => {
@@ -144,8 +144,7 @@ export class Workspace {
         // at least it's consistent.
         for (const descriptor of workspace.manifest[dependencyType].values()) {
           const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
-          if (foundWorkspace === null || workspaceList.has(foundWorkspace))
-            continue;
+          if (foundWorkspace === null || workspaceList.has(foundWorkspace)) continue;
 
           workspaceList.add(foundWorkspace);
           visitWorkspace(foundWorkspace);
@@ -165,15 +164,20 @@ export class Workspace {
    *
    * @returns all the workspaces marked as dependents
    */
-  getRecursiveWorkspaceDependents({dependencies = Manifest.hardDependencies}: {dependencies?: Array<HardDependencies>} = {}) {
+  getRecursiveWorkspaceDependents({
+    dependencies = Manifest.hardDependencies,
+  }: { dependencies?: Array<HardDependencies> } = {}) {
     const workspaceList = new Set<Workspace>();
 
     const visitWorkspace = (workspace: Workspace) => {
       for (const projectWorkspace of this.project.workspaces) {
-        const isDependent = dependencies.some(dependencyType => {
-          return [...projectWorkspace.manifest[dependencyType].values()].some(descriptor => {
+        const isDependent = dependencies.some((dependencyType) => {
+          return [...projectWorkspace.manifest[dependencyType].values()].some((descriptor) => {
             const foundWorkspace = this.project.tryWorkspaceByDescriptor(descriptor);
-            return foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator);
+            return (
+              foundWorkspace !== null &&
+              structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator)
+            );
           });
         });
 

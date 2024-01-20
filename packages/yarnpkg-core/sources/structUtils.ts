@@ -1,17 +1,17 @@
-import {Filename, PortablePath}                 from '@yarnpkg/fslib';
-import querystring                              from 'querystring';
-import semver                                   from 'semver';
-import {makeParser}                             from 'tinylogic';
+import { Filename, PortablePath } from "@yarnpkg/fslib";
+import querystring from "querystring";
+import semver from "semver";
+import { makeParser } from "tinylogic";
 
-import {Configuration}                          from './Configuration';
-import {Workspace}                              from './Workspace';
-import * as formatUtils                         from './formatUtils';
-import * as hashUtils                           from './hashUtils';
-import * as miscUtils                           from './miscUtils';
-import * as nodeUtils                           from './nodeUtils';
-import * as structUtils                         from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash} from './types';
-import {Ident, Descriptor, Locator, Package}    from './types';
+import { Configuration } from "./Configuration";
+import { Workspace } from "./Workspace";
+import * as formatUtils from "./formatUtils";
+import * as hashUtils from "./hashUtils";
+import * as miscUtils from "./miscUtils";
+import * as nodeUtils from "./nodeUtils";
+import * as structUtils from "./structUtils";
+import { IdentHash, DescriptorHash, LocatorHash } from "./types";
+import { Ident, Descriptor, Locator, Package } from "./types";
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
@@ -26,10 +26,9 @@ const conditionParser = makeParser(CONDITION_REGEX);
  * @param name The name of the package
  */
 export function makeIdent(scope: string | null, name: string): Ident {
-  if (scope?.startsWith(`@`))
-    throw new Error(`Invalid scope: don't prefix it with '@'`);
+  if (scope?.startsWith(`@`)) throw new Error(`Invalid scope: don't prefix it with '@'`);
 
-  return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
+  return { identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name };
 }
 
 /**
@@ -39,7 +38,13 @@ export function makeIdent(scope: string | null, name: string): Ident {
  * @param range The range to attach (eg. `^1.0.0`)
  */
 export function makeDescriptor(ident: Ident, range: string): Descriptor {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: hashUtils.makeHash<DescriptorHash>(ident.identHash, range), range};
+  return {
+    identHash: ident.identHash,
+    scope: ident.scope,
+    name: ident.name,
+    descriptorHash: hashUtils.makeHash<DescriptorHash>(ident.identHash, range),
+    range,
+  };
 }
 
 /**
@@ -49,7 +54,13 @@ export function makeDescriptor(ident: Ident, range: string): Descriptor {
  * @param reference The reference to attach (eg. `1.0.0`)
  */
 export function makeLocator(ident: Ident, reference: string): Locator {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference};
+  return {
+    identHash: ident.identHash,
+    scope: ident.scope,
+    name: ident.name,
+    locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference),
+    reference,
+  };
 }
 
 /**
@@ -63,7 +74,7 @@ export function makeLocator(ident: Ident, reference: string): Locator {
  * @param source The data structure to convert into an ident.
  */
 export function convertToIdent(source: Descriptor | Locator | Package): Ident {
-  return {identHash: source.identHash, scope: source.scope, name: source.name};
+  return { identHash: source.identHash, scope: source.scope, name: source.name };
 }
 
 /**
@@ -76,7 +87,13 @@ export function convertToIdent(source: Descriptor | Locator | Package): Ident {
  * @param descriptor The descriptor to convert into a locator.
  */
 export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
-  return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash as unknown as LocatorHash, reference: descriptor.range};
+  return {
+    identHash: descriptor.identHash,
+    scope: descriptor.scope,
+    name: descriptor.name,
+    locatorHash: descriptor.descriptorHash as unknown as LocatorHash,
+    reference: descriptor.range,
+  };
 }
 
 /**
@@ -88,7 +105,13 @@ export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
  * @param locator The locator to convert into a descriptor.
  */
 export function convertLocatorToDescriptor(locator: Locator): Descriptor {
-  return {identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash as unknown as DescriptorHash, range: locator.reference};
+  return {
+    identHash: locator.identHash,
+    scope: locator.scope,
+    name: locator.name,
+    descriptorHash: locator.locatorHash as unknown as DescriptorHash,
+    range: locator.reference,
+  };
 }
 
 /**
@@ -102,7 +125,13 @@ export function convertLocatorToDescriptor(locator: Locator): Descriptor {
  * @param pkg The package to convert into a locator.
  */
 export function convertPackageToLocator(pkg: Package): Locator {
-  return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
+  return {
+    identHash: pkg.identHash,
+    scope: pkg.scope,
+    name: pkg.name,
+    locatorHash: pkg.locatorHash,
+    reference: pkg.reference,
+  };
 }
 
 /**
@@ -153,8 +182,7 @@ export function copyPackage(pkg: Package) {
  * @param entropy A hash that provides uniqueness to this virtualized descriptor (normally a locator hash)
  */
 export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): Descriptor {
-  if (entropy.includes(`#`))
-    throw new Error(`Invalid entropy`);
+  if (entropy.includes(`#`)) throw new Error(`Invalid entropy`);
 
   return makeDescriptor(descriptor, `virtual:${entropy}#${descriptor.range}`);
 }
@@ -166,8 +194,7 @@ export function virtualizeDescriptor(descriptor: Descriptor, entropy: string): D
  * @param entropy A hash that provides uniqueness to this virtualized package (normally a locator hash)
  */
 export function virtualizePackage(pkg: Package, entropy: string): Package {
-  if (entropy.includes(`#`))
-    throw new Error(`Invalid entropy`);
+  if (entropy.includes(`#`)) throw new Error(`Invalid entropy`);
 
   return renamePackage(pkg, makeLocator(pkg, `virtual:${entropy}#${pkg.reference}`));
 }
@@ -192,8 +219,7 @@ const VIRTUAL_PREFIX_REGEXP = /^[^#]*#/;
  * Returns a new devirtualized descriptor based on a virtualized descriptor
  */
 export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
-  if (!isVirtualDescriptor(descriptor))
-    throw new Error(`Not a virtual descriptor`);
+  if (!isVirtualDescriptor(descriptor)) throw new Error(`Not a virtual descriptor`);
 
   return makeDescriptor(descriptor, descriptor.range.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
@@ -203,8 +229,7 @@ export function devirtualizeDescriptor(descriptor: Descriptor): Descriptor {
  * @param locator the locator
  */
 export function devirtualizeLocator(locator: Locator): Locator {
-  if (!isVirtualLocator(locator))
-    throw new Error(`Not a virtual descriptor`);
+  if (!isVirtualLocator(locator)) throw new Error(`Not a virtual descriptor`);
 
   return makeLocator(locator, locator.reference.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
@@ -213,8 +238,7 @@ export function devirtualizeLocator(locator: Locator): Locator {
  * Returns a descriptor guaranteed to be devirtualized
  */
 export function ensureDevirtualizedDescriptor(descriptor: Descriptor): Descriptor {
-  if (!isVirtualDescriptor(descriptor))
-    return descriptor;
+  if (!isVirtualDescriptor(descriptor)) return descriptor;
 
   return makeDescriptor(descriptor, descriptor.range.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
@@ -224,8 +248,7 @@ export function ensureDevirtualizedDescriptor(descriptor: Descriptor): Descripto
  * @param locator the locator
  */
 export function ensureDevirtualizedLocator(locator: Locator): Locator {
-  if (!isVirtualLocator(locator))
-    return locator;
+  if (!isVirtualLocator(locator)) return locator;
 
   return makeLocator(locator, locator.reference.replace(VIRTUAL_PREFIX_REGEXP, ``));
 }
@@ -244,9 +267,8 @@ export function ensureDevirtualizedLocator(locator: Locator): Locator {
  * @param descriptor The original descriptor
  * @param params The parameters to encode in the range
  */
-export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: string}) {
-  if (descriptor.range.includes(`::`))
-    return descriptor;
+export function bindDescriptor(descriptor: Descriptor, params: { [key: string]: string }) {
+  if (descriptor.range.includes(`::`)) return descriptor;
 
   return makeDescriptor(descriptor, `${descriptor.range}::${querystring.stringify(params)}`);
 }
@@ -266,9 +288,8 @@ export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: s
  * @param params The parameters to encode in the reference
  */
 
-export function bindLocator(locator: Locator, params: {[key: string]: string}) {
-  if (locator.reference.includes(`::`))
-    return locator;
+export function bindLocator(locator: Locator, params: { [key: string]: string }) {
+  if (locator.reference.includes(`::`)) return locator;
 
   return makeLocator(locator, `${locator.reference}::${querystring.stringify(params)}`);
 }
@@ -300,21 +321,16 @@ export function areLocatorsEqual(a: Locator, b: Locator) {
  * is not the same as equality, as the references may be different.
  */
 export function areVirtualPackagesEquivalent(a: Package, b: Package) {
-  if (!isVirtualLocator(a))
-    throw new Error(`Invalid package type`);
-  if (!isVirtualLocator(b))
-    throw new Error(`Invalid package type`);
+  if (!isVirtualLocator(a)) throw new Error(`Invalid package type`);
+  if (!isVirtualLocator(b)) throw new Error(`Invalid package type`);
 
-  if (!areIdentsEqual(a, b))
-    return false;
+  if (!areIdentsEqual(a, b)) return false;
 
-  if (a.dependencies.size !== b.dependencies.size)
-    return false;
+  if (a.dependencies.size !== b.dependencies.size) return false;
 
   for (const dependencyDescriptorA of a.dependencies.values()) {
     const dependencyDescriptorB = b.dependencies.get(dependencyDescriptorA.identHash);
-    if (!dependencyDescriptorB)
-      return false;
+    if (!dependencyDescriptorB) return false;
 
     if (!areDescriptorsEqual(dependencyDescriptorA, dependencyDescriptorB)) {
       return false;
@@ -333,8 +349,7 @@ export function areVirtualPackagesEquivalent(a: Package, b: Package) {
  */
 export function parseIdent(string: string): Ident {
   const ident = tryParseIdent(string);
-  if (!ident)
-    throw new Error(`Invalid ident (${string})`);
+  if (!ident) throw new Error(`Invalid ident (${string})`);
 
   return ident;
 }
@@ -350,14 +365,11 @@ const IDENT_REGEXP = /^(?:@([^/]+?)\/)?([^@/]+)$/;
  */
 export function tryParseIdent(string: string): Ident | null {
   const match = string.match(IDENT_REGEXP);
-  if (!match)
-    return null;
+  if (!match) return null;
 
   const [, scope, name] = match;
 
-  const realScope = typeof scope !== `undefined`
-    ? scope
-    : null;
+  const realScope = typeof scope !== `undefined` ? scope : null;
 
   return makeIdent(realScope, name);
 }
@@ -372,8 +384,7 @@ export function tryParseIdent(string: string): Ident | null {
  */
 export function parseDescriptor(string: string, strict: boolean = false): Descriptor {
   const descriptor = tryParseDescriptor(string, strict);
-  if (!descriptor)
-    throw new Error(`Invalid descriptor (${string})`);
+  if (!descriptor) throw new Error(`Invalid descriptor (${string})`);
 
   return descriptor;
 }
@@ -390,24 +401,16 @@ const DESCRIPTOR_REGEX_LOOSE = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/;
  * @param strict If `false`, the range is optional (`unknown` will be used as fallback)
  */
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
-  const match = strict
-    ? string.match(DESCRIPTOR_REGEX_STRICT)
-    : string.match(DESCRIPTOR_REGEX_LOOSE);
+  const match = strict ? string.match(DESCRIPTOR_REGEX_STRICT) : string.match(DESCRIPTOR_REGEX_LOOSE);
 
-  if (!match)
-    return null;
+  if (!match) return null;
 
   const [, scope, name, range] = match;
-  if (range === `unknown`)
-    throw new Error(`Invalid range (${string})`);
+  if (range === `unknown`) throw new Error(`Invalid range (${string})`);
 
-  const realScope = typeof scope !== `undefined`
-    ? scope
-    : null;
+  const realScope = typeof scope !== `undefined` ? scope : null;
 
-  const realRange = typeof range !== `undefined`
-    ? range
-    : `unknown`;
+  const realRange = typeof range !== `undefined` ? range : `unknown`;
 
   return makeDescriptor(makeIdent(realScope, name), realRange);
 }
@@ -422,8 +425,7 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
  */
 export function parseLocator(string: string, strict: boolean = false): Locator {
   const locator = tryParseLocator(string, strict);
-  if (!locator)
-    throw new Error(`Invalid locator (${string})`);
+  if (!locator) throw new Error(`Invalid locator (${string})`);
 
   return locator;
 }
@@ -440,24 +442,16 @@ const LOCATOR_REGEX_LOOSE = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/;
  * @param strict If `false`, the reference is optional (`unknown` will be used as fallback)
  */
 export function tryParseLocator(string: string, strict: boolean = false): Locator | null {
-  const match = strict
-    ? string.match(LOCATOR_REGEX_STRICT)
-    : string.match(LOCATOR_REGEX_LOOSE);
+  const match = strict ? string.match(LOCATOR_REGEX_STRICT) : string.match(LOCATOR_REGEX_LOOSE);
 
-  if (!match)
-    return null;
+  if (!match) return null;
 
   const [, scope, name, reference] = match;
-  if (reference === `unknown`)
-    throw new Error(`Invalid reference (${string})`);
+  if (reference === `unknown`) throw new Error(`Invalid reference (${string})`);
 
-  const realScope = typeof scope !== `undefined`
-    ? scope
-    : null;
+  const realScope = typeof scope !== `undefined` ? scope : null;
 
-  const realReference = typeof reference !== `undefined`
-    ? reference
-    : `unknown`;
+  const realReference = typeof reference !== `undefined` ? reference : `unknown`;
 
   return makeLocator(makeIdent(realScope, name), realReference);
 }
@@ -473,11 +467,11 @@ type ParseRangeOptions = {
   parseSelector?: boolean;
 };
 
-type ParseRangeReturnType<Opts extends ParseRangeOptions> =
-  & ({params: Opts extends {requireBindings: true} ? querystring.ParsedUrlQuery : querystring.ParsedUrlQuery | null})
-  & ({protocol: Opts extends {requireProtocol: true | string} ? string : string | null})
-  & ({source: Opts extends {requireSource: true} ? string : string | null})
-  & ({selector: Opts extends {parseSelector: true} ? querystring.ParsedUrlQuery : string});
+type ParseRangeReturnType<Opts extends ParseRangeOptions> = {
+  params: Opts extends { requireBindings: true } ? querystring.ParsedUrlQuery : querystring.ParsedUrlQuery | null;
+} & { protocol: Opts extends { requireProtocol: true | string } ? string : string | null } & {
+  source: Opts extends { requireSource: true } ? string : string | null;
+} & { selector: Opts extends { parseSelector: true } ? querystring.ParsedUrlQuery : string };
 
 const RANGE_REGEX = /^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/;
 
@@ -494,36 +488,23 @@ const RANGE_REGEX = /^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?
  */
 export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> {
   const match = range.match(RANGE_REGEX);
-  if (match === null)
-    throw new Error(`Invalid range (${range})`);
+  if (match === null) throw new Error(`Invalid range (${range})`);
 
-  const protocol = typeof match[1] !== `undefined`
-    ? match[1]
-    : null;
+  const protocol = typeof match[1] !== `undefined` ? match[1] : null;
 
   if (typeof opts?.requireProtocol === `string` && protocol !== opts!.requireProtocol)
     throw new Error(`Invalid protocol (${protocol})`);
-  else if (opts?.requireProtocol && protocol === null)
-    throw new Error(`Missing protocol (${protocol})`);
+  else if (opts?.requireProtocol && protocol === null) throw new Error(`Missing protocol (${protocol})`);
 
-  const source = typeof match[3] !== `undefined`
-    ? decodeURIComponent(match[2])
-    : null;
+  const source = typeof match[3] !== `undefined` ? decodeURIComponent(match[2]) : null;
 
-  if (opts?.requireSource && source === null)
-    throw new Error(`Missing source (${range})`);
+  if (opts?.requireSource && source === null) throw new Error(`Missing source (${range})`);
 
-  const rawSelector = typeof match[3] !== `undefined`
-    ? decodeURIComponent(match[3])
-    : decodeURIComponent(match[2]);
+  const rawSelector = typeof match[3] !== `undefined` ? decodeURIComponent(match[3]) : decodeURIComponent(match[2]);
 
-  const selector = (opts?.parseSelector)
-    ? querystring.parse(rawSelector)
-    : rawSelector;
+  const selector = opts?.parseSelector ? querystring.parse(rawSelector) : rawSelector;
 
-  const params = typeof match[4] !== `undefined`
-    ? querystring.parse(match[4])
-    : null;
+  const params = typeof match[4] !== `undefined` ? querystring.parse(match[4]) : null;
 
   return {
     // @ts-expect-error
@@ -548,7 +529,10 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
  * itself is optional (for instance we don't need it for npm packages, but we
  * do for git dependencies).
  */
-export function tryParseRange<Opts extends ParseRangeOptions>(range: string, opts?: Opts): ParseRangeReturnType<Opts> | null {
+export function tryParseRange<Opts extends ParseRangeOptions>(
+  range: string,
+  opts?: Opts,
+): ParseRangeReturnType<Opts> | null {
   try {
     return parseRange(range, opts);
   } catch {
@@ -562,19 +546,18 @@ export function tryParseRange<Opts extends ParseRangeOptions>(range: string, opt
  * function wraps `parseRange` to automatically extract the parent locator
  * from the bindings and return it along with the selector.
  */
-export function parseFileStyleRange(range: string, {protocol}: {protocol: string}) {
-  const {selector, params} = parseRange(range, {
+export function parseFileStyleRange(range: string, { protocol }: { protocol: string }) {
+  const { selector, params } = parseRange(range, {
     requireProtocol: protocol,
     requireBindings: true,
   });
 
-  if (typeof params.locator !== `string`)
-    throw new Error(`Assertion failed: Invalid bindings for ${range}`);
+  if (typeof params.locator !== `string`) throw new Error(`Assertion failed: Invalid bindings for ${range}`);
 
   const parentLocator = parseLocator(params.locator, true);
   const path = selector as PortablePath;
 
-  return {parentLocator, path};
+  return { parentLocator, path };
 }
 
 function encodeUnsafeCharacters(str: string) {
@@ -585,8 +568,7 @@ function encodeUnsafeCharacters(str: string) {
 }
 
 function hasParams(params: querystring.ParsedUrlQuery | null): params is querystring.ParsedUrlQuery {
-  if (params === null)
-    return false;
+  if (params === null) return false;
 
   return Object.entries(params).length > 0;
 }
@@ -595,18 +577,25 @@ function hasParams(params: querystring.ParsedUrlQuery | null): params is queryst
  * Turn the components returned by `parseRange` back into a string. Check
  * `parseRange` for more details.
  */
-export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
+export function makeRange({
+  protocol,
+  source,
+  selector,
+  params,
+}: {
+  protocol: string | null;
+  source: string | null;
+  selector: string;
+  params: querystring.ParsedUrlQuery | null;
+}) {
   let range = ``;
 
-  if (protocol !== null)
-    range += `${protocol}`;
-  if (source !== null)
-    range += `${encodeUnsafeCharacters(source)}#`;
+  if (protocol !== null) range += `${protocol}`;
+  if (source !== null) range += `${encodeUnsafeCharacters(source)}#`;
 
   range += encodeUnsafeCharacters(selector);
 
-  if (hasParams(params))
-    range += `::${querystring.stringify(params)}`;
+  if (hasParams(params)) range += `::${querystring.stringify(params)}`;
 
   return range;
 }
@@ -618,13 +607,11 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
  * this function strips them from a range.
  */
 export function convertToManifestRange(range: string) {
-  const {params, protocol, source, selector} = parseRange(range);
+  const { params, protocol, source, selector } = parseRange(range);
 
-  for (const name in params)
-    if (name.startsWith(`__`))
-      delete params[name];
+  for (const name in params) if (name.startsWith(`__`)) delete params[name];
 
-  return makeRange({protocol, source, params, selector});
+  return makeRange({ protocol, source, params, selector });
 }
 
 /**
@@ -677,17 +664,13 @@ const TRAILING_COLON_REGEX = /:$/;
  * Returns a string from a locator, formatted as a slug (eg. `@types-lodash-npm-1.0.0-abcdef1234`).
  */
 export function slugifyLocator(locator: Locator) {
-  const {protocol, selector} = parseRange(locator.reference);
+  const { protocol, selector } = parseRange(locator.reference);
 
-  const humanProtocol = protocol !== null
-    ? protocol.replace(TRAILING_COLON_REGEX, ``)
-    : `exotic`;
+  const humanProtocol = protocol !== null ? protocol.replace(TRAILING_COLON_REGEX, ``) : `exotic`;
 
   const humanVersion = semver.valid(selector);
 
-  const humanReference = humanVersion !== null
-    ? `${humanProtocol}-${humanVersion}`
-    : `${humanProtocol}`;
+  const humanReference = humanVersion !== null ? `${humanProtocol}-${humanVersion}` : `${humanProtocol}`;
 
   // 10 hex characters means that 47 different entries have 10^-9 chances of
   // causing a hash collision. Since this hash is joined with the package name
@@ -795,10 +778,7 @@ export function prettyLocatorNoColors(locator: Locator) {
  * Sorts a list of descriptors, first by their idents then by their ranges.
  */
 export function sortDescriptors(descriptors: Iterable<Descriptor>) {
-  return miscUtils.sortMap(descriptors, [
-    descriptor => stringifyIdent(descriptor),
-    descriptor => descriptor.range,
-  ]);
+  return miscUtils.sortMap(descriptors, [(descriptor) => stringifyIdent(descriptor), (descriptor) => descriptor.range]);
 }
 
 /**
@@ -820,10 +800,12 @@ export function prettyWorkspace(configuration: Configuration, workspace: Workspa
  * @param descriptor The descriptor to pretty print
  * @param locator The locator is resolves to
  */
-export function prettyResolution(configuration: Configuration, descriptor: Descriptor, locator: Locator | null): string {
-  const devirtualizedDescriptor = isVirtualDescriptor(descriptor)
-    ? devirtualizeDescriptor(descriptor)
-    : descriptor;
+export function prettyResolution(
+  configuration: Configuration,
+  descriptor: Descriptor,
+  locator: Locator | null,
+): string {
+  const devirtualizedDescriptor = isVirtualDescriptor(descriptor) ? devirtualizeDescriptor(descriptor) : descriptor;
 
   if (locator === null) {
     return `${structUtils.prettyDescriptor(configuration, devirtualizedDescriptor)} → ${formatUtils.mark(configuration).Cross}`;
@@ -869,10 +851,9 @@ export function getIdentVendorPath(ident: Ident) {
  * Returns whether the given package is compatible with the specified environment.
  */
 export function isPackageCompatible(pkg: Package, architectures: nodeUtils.ArchitectureSet) {
-  if (!pkg.conditions)
-    return true;
+  if (!pkg.conditions) return true;
 
-  return conditionParser(pkg.conditions, specifier => {
+  return conditionParser(pkg.conditions, (specifier) => {
     const [, name, value] = specifier.match(CONDITION_REGEX)!;
     const supported = architectures[name as keyof typeof architectures];
 

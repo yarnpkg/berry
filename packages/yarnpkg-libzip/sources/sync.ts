@@ -1,8 +1,8 @@
-import {setFactory, getInstance} from './instance';
-import createModule              from './libzipSync';
-import {makeInterface}           from './makeInterface';
+import { setFactory, getInstance } from "./instance";
+import createModule from "./libzipSync";
+import { makeInterface } from "./makeInterface";
 
-export * from './common';
+export * from "./common";
 
 setFactory(() => {
   const emZip = createModule();
@@ -17,4 +17,4 @@ export async function getLibzipPromise() {
   return getInstance();
 }
 
-export type {Libzip} from './makeInterface';
+export type { Libzip } from "./makeInterface";

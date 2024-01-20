@@ -5,21 +5,23 @@ navbarCheck.style.cssText = `position: absolute; top: 0; left: 0; right: 0; z-in
 
 const intersectionObserver = new IntersectionObserver(
   ([e]) => document.documentElement.classList.toggle(`navbar--is-fixed`, e.intersectionRatio < 1),
-  {threshold: [1]},
+  { threshold: [1] },
 );
 
 document.addEventListener(`scroll`, () => {
-  if (!navbarCheck.parentNode)
-    document.body.appendChild(navbarCheck);
+  if (!navbarCheck.parentNode) document.body.appendChild(navbarCheck);
   intersectionObserver.observe(navbarCheck);
 });
 
 // ---
 
-(function(h, o, u, n, d) {
-  h = h[d] = h[d] || {q: [], onReady(c) {
-    h.q.push(c);
-  }};
+(function (h, o, u, n, d) {
+  h = h[d] = h[d] || {
+    q: [],
+    onReady(c) {
+      h.q.push(c);
+    },
+  };
 
   d = o.createElement(u);
   d.async = 1;
@@ -30,8 +32,7 @@ document.addEventListener(`scroll`, () => {
 })(window, document, `script`, `https://www.datadoghq-browser-agent.com/eu1/v4/datadog-rum.js`, `DD_RUM`);
 
 window.DD_RUM.onReady(() => {
-  if (window.location.hostname === `localhost`)
-    return;
+  if (window.location.hostname === `localhost`) return;
 
   window.DD_RUM.init({
     clientToken: `pub1a6a8297806619f54ea9bcd09db65a1d`,

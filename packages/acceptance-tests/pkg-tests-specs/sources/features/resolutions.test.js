@@ -1,8 +1,8 @@
-import {xfs} from '@yarnpkg/fslib';
+import { xfs } from "@yarnpkg/fslib";
 
 const {
-  fs: {writeFile, writeJson},
-  tests: {getPackageArchivePath, getPackageDirectoryPath},
+  fs: { writeFile, writeJson },
+  tests: { getPackageArchivePath, getPackageDirectoryPath },
 } = require(`pkg-tests-core`);
 
 describe(`Features`, () => {
@@ -18,7 +18,7 @@ describe(`Features`, () => {
             [`no-deps`]: `2.0.0`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
@@ -47,7 +47,7 @@ describe(`Features`, () => {
             [`one-range-dep/no-deps`]: `2.0.0`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
@@ -87,7 +87,7 @@ describe(`Features`, () => {
             [`no-deps@1.0.0`]: `2.0.0`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
@@ -120,7 +120,7 @@ describe(`Features`, () => {
             [`no-deps`]: `portal:./my-package`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await writeFile(`${path}/my-package/index.js`, `module.exports = 42;\n`);
           await writeJson(`${path}/my-package/package.json`, {
             name: `no-deps`,
@@ -148,8 +148,8 @@ describe(`Features`, () => {
             [`**/no-deps`]: `1.2.0`,
           },
         },
-        async ({path, run, source}) => {
-          const {stdout} = await run(`install`);
+        async ({ path, run, source }) => {
+          const { stdout } = await run(`install`);
 
           expect(stdout).toContain(`YN0057`);
         },
@@ -167,7 +167,7 @@ describe(`Features`, () => {
             [`no-deps`]: getPackageArchivePath(`no-deps`, `2.0.0`),
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
@@ -195,7 +195,7 @@ describe(`Features`, () => {
             [`no-deps`]: getPackageDirectoryPath(`no-deps`, `2.0.0`),
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
@@ -223,7 +223,7 @@ describe(`Features`, () => {
             [`no-deps`]: getPackageDirectoryPath(`no-deps`, `2.0.0`),
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({

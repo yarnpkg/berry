@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import {Cli, Builtins} from 'clipanion';
+import { Cli, Builtins } from "clipanion";
 
-import SdkCommand      from './commands/SdkCommand';
+import SdkCommand from "./commands/SdkCommand";
 
 const cli = new Cli({
   binaryLabel: `Yarn SDKs`,

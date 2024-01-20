@@ -1,8 +1,8 @@
-import {FetchOptions, FetchResult, Locator, Plugin, SettingsType} from '@yarnpkg/core';
+import { FetchOptions, FetchResult, Locator, Plugin, SettingsType } from "@yarnpkg/core";
 
-import {GitFetcher}                                               from './GitFetcher';
-import {GitResolver}                                              from './GitResolver';
-import * as gitUtils                                              from './gitUtils';
+import { GitFetcher } from "./GitFetcher";
+import { GitResolver } from "./GitResolver";
+import * as gitUtils from "./gitUtils";
 
 export interface Hooks {
   /**
@@ -22,7 +22,7 @@ export interface Hooks {
   ) => Promise<FetchResult | null>;
 }
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     changesetBaseRefs: Array<string>;
     changesetIgnorePatterns: Array<string>;
@@ -51,17 +51,13 @@ const plugin: Plugin = {
       default: 2,
     },
   },
-  fetchers: [
-    GitFetcher,
-  ],
-  resolvers: [
-    GitResolver,
-  ],
+  fetchers: [GitFetcher],
+  resolvers: [GitResolver],
 };
 
-export {gitUtils};
-export {GitFetcher};
-export {GitResolver};
+export { gitUtils };
+export { GitFetcher };
+export { GitResolver };
 
 // eslint-disable-next-line arca/no-default-export
 export default plugin;

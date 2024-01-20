@@ -3,8 +3,7 @@ name: "\U0001F4AB Feature request"
 about: Propose a concrete new feature
 title: "[Feature]"
 labels: enhancement
-assignees: ''
-
+assignees: ""
 ---
 
 <!--

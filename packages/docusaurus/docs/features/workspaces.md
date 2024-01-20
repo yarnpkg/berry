@@ -37,9 +37,7 @@ To declare a workspace, all you have to do is add a `workspaces` array to the ro
 
 ```json
 {
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": ["packages/*"]
 }
 ```
 
@@ -65,12 +63,12 @@ Packages from monorepos often need to depend on each other - for example when yo
 
 The `workspace:` protocol accepts either a regular semver range, or the special `^` / `~` / `*` tokens. Whatever the value is won't change how Yarn will resolve the dependency (it will only ever care about the dependency name), but it will affect what the dependency will look like after the package gets published via `yarn npm publish`. For example, if the following ranges are used against a workspace whose `version` field is set to `3.2.1`:
 
-| Initial range | Range after publish |
-| --- | --- |
-| `workspace:^3.0.0` | `^3.0.0` |
-| `workspace:^` | `^3.2.1` |
-| `workspace:~` | `~3.2.1` |
-| `workspace:*` | `=3.2.1` |
+| Initial range      | Range after publish |
+| ------------------ | ------------------- |
+| `workspace:^3.0.0` | `^3.0.0`            |
+| `workspace:^`      | `^3.2.1`            |
+| `workspace:~`      | `~3.2.1`            |
+| `workspace:*`      | `=3.2.1`            |
 
 ### Focused installs
 

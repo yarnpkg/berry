@@ -1,10 +1,10 @@
-import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
+import { Filename, npath, ppath, xfs } from "@yarnpkg/fslib";
 
 describe(`Commands`, () => {
   describe(`exec`, () => {
     test(
       `it should preserve the exit code`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await run(`install`);
         await expect(run(`exec`, `run`, `foo`)).rejects.toMatchObject({
           code: 1,
@@ -15,7 +15,7 @@ describe(`Commands`, () => {
 
     test(
       `it should allow running shell scripts`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await run(`install`);
         await expect(run(`exec`, `echo $(pwd)/package.json`)).resolves.toMatchObject({
           code: 0,
@@ -26,7 +26,7 @@ describe(`Commands`, () => {
 
     test(
       `it should inject binaries the workspace has access to`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         await xfs.mkdirPromise(ppath.join(path, `bin`));
         await xfs.writeFilePromise(ppath.join(path, `bin/index.js`), `console.log(42)`);
         await xfs.writeJsonPromise(ppath.join(path, `bin`, Filename.manifest), {

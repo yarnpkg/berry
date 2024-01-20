@@ -1,13 +1,13 @@
-import {execUtils, Manifest, structUtils, IdentHash, Descriptor} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, Filename}                    from '@yarnpkg/fslib';
+import { execUtils, Manifest, structUtils, IdentHash, Descriptor } from "@yarnpkg/core";
+import { PortablePath, npath, ppath, Filename } from "@yarnpkg/fslib";
 
-import * as stageUtils                                           from '../stageUtils';
+import * as stageUtils from "../stageUtils";
 
 const MESSAGE_MARKER = `Commit generated via \`yarn stage\``;
 const COMMIT_DEPTH = 11;
 
 async function getLastCommitHash(cwd: PortablePath) {
-  const {code, stdout} = await execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], {cwd});
+  const { code, stdout } = await execUtils.execvp(`git`, [`log`, `-1`, `--pretty=format:%H`], { cwd });
 
   if (code === 0) {
     return stdout.trim();
@@ -19,22 +19,31 @@ async function getLastCommitHash(cwd: PortablePath) {
 async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.FileAction>) {
   const actions: Array<[stageUtils.ActionType, string]> = [];
 
-  const modifiedPkgJsonFiles = changes.filter(change => {
+  const modifiedPkgJsonFiles = changes.filter((change) => {
     return ppath.basename(change.path) === `package.json`;
   });
 
-  for (const {action, path} of modifiedPkgJsonFiles) {
+  for (const { action, path } of modifiedPkgJsonFiles) {
     const relativePath = ppath.relative(cwd, path);
 
     if (action === stageUtils.ActionType.MODIFY) {
       const commitHash = await getLastCommitHash(cwd);
-      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
+      const { stdout: prevSource } = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {
+        cwd,
+        strict: true,
+      });
 
       const prevManifest = await Manifest.fromText(prevSource);
       const currManifest = await Manifest.fromFile(path);
 
-      const allCurrDeps: Map<IdentHash, Descriptor> = new Map([...currManifest.dependencies, ...currManifest.devDependencies]);
-      const allPrevDeps: Map<IdentHash, Descriptor> = new Map([...prevManifest.dependencies, ...prevManifest.devDependencies]);
+      const allCurrDeps: Map<IdentHash, Descriptor> = new Map([
+        ...currManifest.dependencies,
+        ...currManifest.devDependencies,
+      ]);
+      const allPrevDeps: Map<IdentHash, Descriptor> = new Map([
+        ...prevManifest.dependencies,
+        ...prevManifest.devDependencies,
+      ]);
 
       for (const [indentHash, value] of allPrevDeps) {
         const pkgName = structUtils.stringifyIdent(value);
@@ -63,7 +72,10 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
       }
     } else if (action === stageUtils.ActionType.DELETE) {
       const commitHash = await getLastCommitHash(cwd);
-      const {stdout: prevSource} = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {cwd, strict: true});
+      const { stdout: prevSource } = await execUtils.execvp(`git`, [`show`, `${commitHash}:${relativePath}`], {
+        cwd,
+        strict: true,
+      });
 
       // Deleted package.json; we need to load it from its past sources
       const manifest = await Manifest.fromText(prevSource);
@@ -78,11 +90,9 @@ async function genCommitMessage(cwd: PortablePath, changes: Array<stageUtils.Fil
     }
   }
 
-  const {code, stdout} = await execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], {cwd});
+  const { code, stdout } = await execUtils.execvp(`git`, [`log`, `-${COMMIT_DEPTH}`, `--pretty=format:%s`], { cwd });
 
-  const lines = code === 0
-    ? stdout.split(/\n/g).filter((line: string) => line !== ``)
-    : [];
+  const lines = code === 0 ? stdout.split(/\n/g).filter((line: string) => line !== ``) : [];
 
   const consensus = stageUtils.findConsensus(lines);
   const message = stageUtils.genCommitMessage(consensus, actions);
@@ -104,44 +114,56 @@ const stagedPrefixes = {
 
 export const Driver = {
   async findRoot(cwd: PortablePath) {
-    return await stageUtils.findVcsRoot(cwd, {marker: `.git` as Filename});
+    return await stageUtils.findVcsRoot(cwd, { marker: `.git` as Filename });
   },
 
-  async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>, opts?: { staged?: boolean }) {
-    const {stdout} = await execUtils.execvp(`git`, [`status`, `-s`], {cwd, strict: true});
+  async filterChanges(
+    cwd: PortablePath,
+    yarnRoots: Set<PortablePath>,
+    yarnNames: Set<string>,
+    opts?: { staged?: boolean },
+  ) {
+    const { stdout } = await execUtils.execvp(`git`, [`status`, `-s`], { cwd, strict: true });
     const lines = stdout.toString().split(/\n/g);
 
     const changePrefix = opts?.staged ? stagedPrefixes : unstagedPrefixes;
 
-    const changes = ([] as Array<stageUtils.FileAction>).concat(...lines.map((line: string) => {
-      if (line === ``)
-        return [];
+    const changes = ([] as Array<stageUtils.FileAction>).concat(
+      ...lines.map((line: string) => {
+        if (line === ``) return [];
 
-      const prefix = line.slice(0, 3);
-      const path = ppath.resolve(cwd, line.slice(3) as PortablePath);
+        const prefix = line.slice(0, 3);
+        const path = ppath.resolve(cwd, line.slice(3) as PortablePath);
 
-      // New directories need to be expanded to their content
-      if (!opts?.staged && prefix === `?? ` && line.endsWith(`/`)) {
-        return stageUtils.expandDirectory(path).map(path => ({
-          action: stageUtils.ActionType.CREATE,
-          path,
-        }));
-      } else {
-        const actions = [stageUtils.ActionType.CREATE, stageUtils.ActionType.MODIFY, stageUtils.ActionType.DELETE] as const;
-        const action = actions.find(action => changePrefix[action].includes(prefix));
-
-        if (action !== undefined) {
-          return [{
-            action,
+        // New directories need to be expanded to their content
+        if (!opts?.staged && prefix === `?? ` && line.endsWith(`/`)) {
+          return stageUtils.expandDirectory(path).map((path) => ({
+            action: stageUtils.ActionType.CREATE,
             path,
-          }];
+          }));
+        } else {
+          const actions = [
+            stageUtils.ActionType.CREATE,
+            stageUtils.ActionType.MODIFY,
+            stageUtils.ActionType.DELETE,
+          ] as const;
+          const action = actions.find((action) => changePrefix[action].includes(prefix));
+
+          if (action !== undefined) {
+            return [
+              {
+                action,
+                path,
+              },
+            ];
+          }
+
+          return [];
         }
+      }),
+    );
 
-        return [];
-      }
-    }));
-
-    return changes.filter(change => {
+    return changes.filter((change) => {
       return stageUtils.isYarnFile(change.path, {
         roots: yarnRoots,
         names: yarnNames,
@@ -154,21 +176,24 @@ export const Driver = {
   },
 
   async makeStage(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
-    const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
+    const localPaths = changeList.map((file) => npath.fromPortablePath(file.path));
 
-    await execUtils.execvp(`git`, [`add`, `--`, ...localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`add`, `--`, ...localPaths], { cwd, strict: true });
   },
 
   async makeCommit(cwd: PortablePath, changeList: Array<stageUtils.FileAction>, commitMessage: string) {
-    const localPaths = changeList.map(file => npath.fromPortablePath(file.path));
+    const localPaths = changeList.map((file) => npath.fromPortablePath(file.path));
 
-    await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], {cwd, strict: true});
-    await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`add`, `-N`, `--`, ...localPaths], { cwd, strict: true });
+    await execUtils.execvp(`git`, [`commit`, `-m`, `${commitMessage}\n\n${MESSAGE_MARKER}\n`, `--`, ...localPaths], {
+      cwd,
+      strict: true,
+    });
   },
 
   async makeReset(cwd: PortablePath, changeList: Array<stageUtils.FileAction>) {
-    const localPaths = changeList.map(path => npath.fromPortablePath(path.path));
+    const localPaths = changeList.map((path) => npath.fromPortablePath(path.path));
 
-    await execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], {cwd, strict: true});
+    await execUtils.execvp(`git`, [`reset`, `HEAD`, `--`, ...localPaths], { cwd, strict: true });
   },
 };

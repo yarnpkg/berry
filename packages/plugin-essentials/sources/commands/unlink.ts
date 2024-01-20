@@ -1,33 +1,24 @@
-import {BaseCommand, WorkspaceRequiredError}                   from '@yarnpkg/cli';
-import {Cache, Configuration, miscUtils, Project, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                                          from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                    from 'clipanion';
-import micromatch                                              from 'micromatch';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Cache, Configuration, miscUtils, Project, structUtils } from "@yarnpkg/core";
+import { npath, ppath } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import micromatch from "micromatch";
 
 // eslint-disable-next-line arca/no-default-export
 export default class UnlinkCommand extends BaseCommand {
-  static paths = [
-    [`unlink`],
-  ];
+  static paths = [[`unlink`]];
 
   static usage: Usage = Command.Usage({
     description: `disconnect the local project from another one`,
     details: `
       This command will remove any resolutions in the project-level manifest that would have been added via a yarn link with similar arguments.
     `,
-    examples: [[
-      `Unregister a remote workspace in the current project`,
-      `$0 unlink ~/ts-loader`,
-    ], [
-      `Unregister all workspaces from a remote project in the current project`,
-      `$0 unlink ~/jest --all`,
-    ], [
-      `Unregister all previously linked workspaces`,
-      `$0 unlink --all`,
-    ], [
-      `Unregister all workspaces matching a glob`,
-      `$0 unlink '@babel/*' 'pkg-{a,b}'`,
-    ]],
+    examples: [
+      [`Unregister a remote workspace in the current project`, `$0 unlink ~/ts-loader`],
+      [`Unregister all workspaces from a remote project in the current project`, `$0 unlink ~/jest --all`],
+      [`Unregister all previously linked workspaces`, `$0 unlink --all`],
+      [`Unregister all workspaces matching a glob`, `$0 unlink '@babel/*' 'pkg-{a,b}'`],
+    ],
   });
 
   all = Option.Boolean(`-A,--all`, false, {
@@ -38,17 +29,16 @@ export default class UnlinkCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const topLevelWorkspace = project.topLevelWorkspace;
     const workspacesToUnlink = new Set<string>();
 
     if (this.leadingArguments.length === 0 && this.all) {
-      for (const {pattern, reference} of topLevelWorkspace.manifest.resolutions) {
+      for (const { pattern, reference } of topLevelWorkspace.manifest.resolutions) {
         if (reference.startsWith(`portal:`)) {
           workspacesToUnlink.add(pattern.descriptor.fullName);
         }
@@ -59,11 +49,13 @@ export default class UnlinkCommand extends BaseCommand {
       for (const leadingArgument of this.leadingArguments) {
         const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(leadingArgument));
         if (miscUtils.isPathLike(leadingArgument)) {
-          const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {useRc: false, strict: false});
-          const {project: project2, workspace: workspace2} = await Project.find(configuration2, absoluteDestination);
+          const configuration2 = await Configuration.find(absoluteDestination, this.context.plugins, {
+            useRc: false,
+            strict: false,
+          });
+          const { project: project2, workspace: workspace2 } = await Project.find(configuration2, absoluteDestination);
 
-          if (!workspace2)
-            throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
+          if (!workspace2) throw new WorkspaceRequiredError(project2.cwd, absoluteDestination);
 
           if (this.all) {
             for (const workspace of project2.workspaces)
@@ -80,7 +72,9 @@ export default class UnlinkCommand extends BaseCommand {
             workspacesToUnlink.add(structUtils.stringifyIdent(workspace2.anchoredLocator));
           }
         } else {
-          const fullNames = [...topLevelWorkspace.manifest.resolutions.map(({pattern}) => pattern.descriptor.fullName)];
+          const fullNames = [
+            ...topLevelWorkspace.manifest.resolutions.map(({ pattern }) => pattern.descriptor.fullName),
+          ];
           for (const fullName of micromatch(fullNames, leadingArgument)) {
             workspacesToUnlink.add(fullName);
           }
@@ -88,15 +82,18 @@ export default class UnlinkCommand extends BaseCommand {
       }
     }
 
-    topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({pattern}) => {
+    topLevelWorkspace.manifest.resolutions = topLevelWorkspace.manifest.resolutions.filter(({ pattern }) => {
       return !workspacesToUnlink.has(pattern.descriptor.fullName);
     });
 
-    return await project.installWithNewReport({
-      stdout: this.context.stdout,
-      quiet: this.context.quiet,
-    }, {
-      cache,
-    });
+    return await project.installWithNewReport(
+      {
+        stdout: this.context.stdout,
+        quiet: this.context.quiet,
+      },
+      {
+        cache,
+      },
+    );
   }
 }

@@ -1,11 +1,11 @@
-import {Writable}                             from 'stream';
+import { Writable } from "stream";
 
-import {Configuration}                        from './Configuration';
-import {MessageName}                          from './MessageName';
-import {Report, SectionOptions, TimerOptions} from './Report';
-import {formatNameWithHyperlink}              from './StreamReport';
-import * as formatUtils                       from './formatUtils';
-import {Locator}                              from './types';
+import { Configuration } from "./Configuration";
+import { MessageName } from "./MessageName";
+import { Report, SectionOptions, TimerOptions } from "./Report";
+import { formatNameWithHyperlink } from "./StreamReport";
+import * as formatUtils from "./formatUtils";
+import { Locator } from "./types";
 
 export type LightReportOptions = {
   configuration: Configuration;
@@ -34,10 +34,10 @@ export class LightReport extends Report {
 
   private errorCount: number = 0;
 
-  constructor({configuration, stdout, suggestInstall = true}: LightReportOptions) {
+  constructor({ configuration, stdout, suggestInstall = true }: LightReportOptions) {
     super();
 
-    formatUtils.addLogFilterSupport(this, {configuration});
+    formatUtils.addLogFilterSupport(this, { configuration });
 
     this.configuration = configuration;
     this.stdout = stdout;
@@ -52,11 +52,9 @@ export class LightReport extends Report {
     return this.hasErrors() ? 1 : 0;
   }
 
-  reportCacheHit(locator: Locator) {
-  }
+  reportCacheHit(locator: Locator) {}
 
-  reportCacheMiss(locator: Locator) {
-  }
+  reportCacheMiss(locator: Locator) {}
 
   startSectionSync<T>(opts: SectionOptions, cb: () => T) {
     return cb();
@@ -80,21 +78,20 @@ export class LightReport extends Report {
     return await realCb();
   }
 
-  reportSeparator() {
-  }
+  reportSeparator() {}
 
-  reportInfo(name: MessageName | null, text: string) {
-  }
+  reportInfo(name: MessageName | null, text: string) {}
 
-  reportWarning(name: MessageName, text: string) {
-  }
+  reportWarning(name: MessageName, text: string) {}
 
   reportError(name: MessageName, text: string) {
     this.errorCount += 1;
-    this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${text}\n`);
+    this.stdout.write(
+      `${formatUtils.pretty(this.configuration, `➤`, `redBright`)} ${this.formatNameWithHyperlink(name)}: ${text}\n`,
+    );
   }
 
-  reportProgress(progress: AsyncIterable<{progress: number, title?: string}>) {
+  reportProgress(progress: AsyncIterable<{ progress: number; title?: string }>) {
     const promise = Promise.resolve().then(async () => {
       // eslint-disable-next-line no-empty-pattern
       for await (const {} of progress) {
@@ -106,7 +103,7 @@ export class LightReport extends Report {
       // Nothing to stop
     };
 
-    return {...promise, stop};
+    return { ...promise, stop };
   }
 
   reportJson(data: any) {
@@ -120,10 +117,14 @@ export class LightReport extends Report {
   async finalize() {
     if (this.errorCount > 0) {
       this.stdout.write(`\n`);
-      this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`);
+      this.stdout.write(
+        `${formatUtils.pretty(this.configuration, `➤`, `redBright`)} Errors happened when preparing the environment required to run this command.\n`,
+      );
 
       if (this.suggestInstall) {
-        this.stdout.write(`${formatUtils.pretty(this.configuration, `➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "yarn install" might help.\n`);
+        this.stdout.write(
+          `${formatUtils.pretty(this.configuration, `➤`, `redBright`)} This might be caused by packages being missing from the lockfile, in which case running "yarn install" might help.\n`,
+        );
       }
     }
   }

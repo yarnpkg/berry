@@ -1,10 +1,10 @@
-import {Filename}                from '@yarnpkg/fslib';
+import { Filename } from "@yarnpkg/fslib";
 
-import {generatePrettyJson}      from './generatePrettyJson';
-import {generateSerializedState} from './generateSerializedState';
-import getTemplate               from './hook';
-import {SerializedState}         from './types';
-import {PnpSettings}             from './types';
+import { generatePrettyJson } from "./generatePrettyJson";
+import { generateSerializedState } from "./generateSerializedState";
+import getTemplate from "./hook";
+import { SerializedState } from "./types";
+import { PnpSettings } from "./types";
 
 export function generateLoader(shebang: string | null | undefined, loader: string) {
   return [
@@ -23,12 +23,7 @@ function generateJsonString(data: SerializedState) {
 }
 
 function generateStringLiteral(value: string) {
-  return `'${
-    value
-      .replace(/\\/g, `\\\\`)
-      .replace(/'/g, `\\'`)
-      .replace(/\n/g, `\\\n`)
-  }'`;
+  return `'${value.replace(/\\/g, `\\\\`).replace(/'/g, `\\'`).replace(/\n/g, `\\\n`)}'`;
 }
 
 function generateInlinedSetup(data: SerializedState) {
@@ -61,11 +56,11 @@ export function generateInlinedScript(settings: PnpSettings): string {
   return loaderFile;
 }
 
-export function generateSplitScript(settings: PnpSettings): {dataFile: string, loaderFile: string} {
+export function generateSplitScript(settings: PnpSettings): { dataFile: string; loaderFile: string } {
   const data = generateSerializedState(settings);
 
   const setup = generateSplitSetup();
   const loaderFile = generateLoader(settings.shebang, setup);
 
-  return {dataFile: generateJsonString(data), loaderFile};
+  return { dataFile: generateJsonString(data), loaderFile };
 }

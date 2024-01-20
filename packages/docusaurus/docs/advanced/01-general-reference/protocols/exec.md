@@ -27,11 +27,11 @@ Because of this restriction, and because generators will pretty much always need
 
 In order to let the script knows about the various predefined folders involved in the generation process, Yarn will inject a special `execEnv` global variable available to the script. This object's [interface](/api/plugin-exec/interface/ExecEnv) is defined as such:
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `tempDir` | `string` | Absolute path of an empty temporary directory that the script is free to use. Automatically created before the script is invoked. |
+| Property   | Type     | Description                                                                                                                                         |
+| ---------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tempDir`  | `string` | Absolute path of an empty temporary directory that the script is free to use. Automatically created before the script is invoked.                   |
 | `buildDir` | `string` | Absolute path of an empty directory where the script is expected to generate the package files. Automatically created before the script is invoked. |
-| `locator` | `string` | Stringified [locator](/advanced/lexicon#locator) identifying the generator package. |
+| `locator`  | `string` | Stringified [locator](/advanced/lexicon#locator) identifying the generator package.                                                                 |
 
 You're free to do whatever you want inside `execEnv.tempDir` but, at the end of the execution, Yarn will expect `execEnv.buildDir` to contain the files that can be compressed into an archive and stored within the cache.
 
@@ -40,31 +40,37 @@ You're free to do whatever you want inside `execEnv.tempDir` but, at the end of 
 Generate an hello world package:
 
 ```ts
-fs.writeFileSync(path.join(execEnv.buildDir, 'package.json'), JSON.stringify({
-  name: 'hello-world',
-  version: '1.0.0',
-}));
+fs.writeFileSync(
+  path.join(execEnv.buildDir, "package.json"),
+  JSON.stringify({
+    name: "hello-world",
+    version: "1.0.0",
+  }),
+);
 
-fs.writeFileSync(path.join(execEnv.buildDir, 'index.js'), `
+fs.writeFileSync(
+  path.join(execEnv.buildDir, "index.js"),
+  `
   module.exports = 'hello world!';
-`);
+`,
+);
 ```
 
 Clone a monorepo and build a specific package:
 
 ```ts
-const pathToRepo = path.join(execEnv.tempDir, 'repo');
-const pathToArchive = path.join(execEnv.tempDir, 'archive.tgz');
-const pathToSubpackage = path.join(pathToRepo, 'packages/foobar');
+const pathToRepo = path.join(execEnv.tempDir, "repo");
+const pathToArchive = path.join(execEnv.tempDir, "archive.tgz");
+const pathToSubpackage = path.join(pathToRepo, "packages/foobar");
 
 // Clone the repository
 child_process.execFileSync(`git`, [`clone`, `git@github.com:foo/bar`, pathToRepo]);
 
 // Install the dependencies
-child_process.execFileSync(`yarn`, [`install`], {cwd: pathToRepo});
+child_process.execFileSync(`yarn`, [`install`], { cwd: pathToRepo });
 
 // Pack a specific workspace
-child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], {cwd: pathToSubpackage});
+child_process.execFileSync(`yarn`, [`pack`, `--out`, pathToArchive], { cwd: pathToSubpackage });
 
 // Send the package content into the build directory
 child_process.execFileSync(`tar`, [`-x`, `-z`, `--strip-components=1`, `-f`, pathToArchive, `-C`, execEnv.buildDir]);

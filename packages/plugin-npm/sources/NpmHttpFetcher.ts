@@ -1,22 +1,19 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {Locator}                                    from '@yarnpkg/core';
-import {structUtils, tgzUtils}                      from '@yarnpkg/core';
-import semver                                       from 'semver';
+import { Fetcher, FetchOptions, MinimalFetchOptions } from "@yarnpkg/core";
+import { Locator } from "@yarnpkg/core";
+import { structUtils, tgzUtils } from "@yarnpkg/core";
+import semver from "semver";
 
-import {PROTOCOL}                                   from './constants';
-import * as npmHttpUtils                            from './npmHttpUtils';
+import { PROTOCOL } from "./constants";
+import * as npmHttpUtils from "./npmHttpUtils";
 
 export class NpmHttpFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!locator.reference.startsWith(PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(PROTOCOL)) return false;
 
-    const {selector, params} = structUtils.parseRange(locator.reference);
-    if (!semver.valid(selector))
-      return false;
+    const { selector, params } = structUtils.parseRange(locator.reference);
+    if (!semver.valid(selector)) return false;
 
-    if (params === null || typeof params.__archiveUrl !== `string`)
-      return false;
+    if (params === null || typeof params.__archiveUrl !== `string`) return false;
 
     return true;
   }
@@ -30,7 +27,11 @@ export class NpmHttpFetcher implements Fetcher {
 
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
-      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote server`),
+      onMiss: () =>
+        opts.report.reportCacheMiss(
+          locator,
+          `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote server`,
+        ),
       loader: () => this.fetchFromNetwork(locator, opts),
       ...opts.cacheOptions,
     });
@@ -44,7 +45,7 @@ export class NpmHttpFetcher implements Fetcher {
   }
 
   async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
-    const {params} = structUtils.parseRange(locator.reference);
+    const { params } = structUtils.parseRange(locator.reference);
     if (params === null || typeof params.__archiveUrl !== `string`)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);
 

@@ -1,13 +1,11 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Cache, Configuration, IdentHash}     from '@yarnpkg/core';
-import {ThrowReport, structUtils, Project}   from '@yarnpkg/core';
-import {Command, Option, Usage}              from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Cache, Configuration, IdentHash } from "@yarnpkg/core";
+import { ThrowReport, structUtils, Project } from "@yarnpkg/core";
+import { Command, Option, Usage } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class RebuildCommand extends BaseCommand {
-  static paths = [
-    [`rebuild`],
-  ];
+  static paths = [[`rebuild`]];
 
   static usage: Usage = Command.Usage({
     description: `rebuild the project's native packages`,
@@ -18,28 +16,23 @@ export default class RebuildCommand extends BaseCommand {
 
       By default all packages will be rebuilt, but you can filter the list by specifying the names of the packages you want to clear from memory.
     `,
-    examples: [[
-      `Rebuild all packages`,
-      `$0 rebuild`,
-    ], [
-      `Rebuild fsevents only`,
-      `$0 rebuild fsevents`,
-    ]],
+    examples: [
+      [`Rebuild all packages`, `$0 rebuild`],
+      [`Rebuild fsevents only`, `$0 rebuild fsevents`],
+    ],
   });
 
   idents = Option.Rest();
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     const filteredIdents = new Set<IdentHash>();
-    for (const identStr of this.idents)
-      filteredIdents.add(structUtils.parseIdent(identStr).identHash);
+    for (const identStr of this.idents) filteredIdents.add(structUtils.parseIdent(identStr).identHash);
 
     await project.restoreInstallState({
       restoreResolutions: false,
@@ -62,11 +55,14 @@ export default class RebuildCommand extends BaseCommand {
       project.skippedBuilds.clear();
     }
 
-    return await project.installWithNewReport({
-      stdout: this.context.stdout,
-      quiet: this.context.quiet,
-    }, {
-      cache,
-    });
+    return await project.installWithNewReport(
+      {
+        stdout: this.context.stdout,
+        quiet: this.context.quiet,
+      },
+      {
+        cache,
+      },
+    );
   }
 }

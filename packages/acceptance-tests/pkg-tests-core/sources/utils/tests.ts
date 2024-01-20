@@ -1,36 +1,34 @@
-import {miscUtils, semverUtils}                    from '@yarnpkg/core';
-import {PortablePath, npath, xfs, ppath, Filename} from '@yarnpkg/fslib';
-import {npmAuditTypes}                             from '@yarnpkg/plugin-npm-cli';
-import assert                                      from 'assert';
-import crypto                                      from 'crypto';
-import finalhandler                                from 'finalhandler';
-import https                                       from 'https';
-import {IncomingMessage, ServerResponse}           from 'http';
-import http                                        from 'http';
-import invariant                                   from 'invariant';
-import {AddressInfo}                               from 'net';
-import os                                          from 'os';
-import pem                                         from 'pem';
-import semver                                      from 'semver';
-import serveStatic                                 from 'serve-static';
-import stream                                      from 'stream';
-import * as t                                      from 'typanion';
-import {promisify}                                 from 'util';
-import {v5 as uuidv5}                              from 'uuid';
-import {Gzip}                                      from 'zlib';
+import { miscUtils, semverUtils } from "@yarnpkg/core";
+import { PortablePath, npath, xfs, ppath, Filename } from "@yarnpkg/fslib";
+import { npmAuditTypes } from "@yarnpkg/plugin-npm-cli";
+import assert from "assert";
+import crypto from "crypto";
+import finalhandler from "finalhandler";
+import https from "https";
+import { IncomingMessage, ServerResponse } from "http";
+import http from "http";
+import invariant from "invariant";
+import { AddressInfo } from "net";
+import os from "os";
+import pem from "pem";
+import semver from "semver";
+import serveStatic from "serve-static";
+import stream from "stream";
+import * as t from "typanion";
+import { promisify } from "util";
+import { v5 as uuidv5 } from "uuid";
+import { Gzip } from "zlib";
 
-import {ExecResult}                                from './exec';
-import * as fsUtils                                from './fs';
+import { ExecResult } from "./exec";
+import * as fsUtils from "./fs";
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
 // Testing things inside a big-endian container takes forever
-export const TEST_TIMEOUT = os.endianness() === `BE`
-  ? 150000
-  : 75000;
+export const TEST_TIMEOUT = os.endianness() === `BE` ? 150000 : 75000;
 
-export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
+export type PackageEntry = Map<string, { path: string; packageJson: Record<string, any> }>;
 export type PackageRegistry = Map<string, PackageEntry>;
 
 interface RunDriverOptions extends Record<string, any> {
@@ -40,11 +38,7 @@ interface RunDriverOptions extends Record<string, any> {
   env?: Record<string, string | undefined>;
 }
 
-export type PackageRunDriver = (
-  path: PortablePath,
-  args: Array<string>,
-  opts: RunDriverOptions,
-) => Promise<ExecResult>;
+export type PackageRunDriver = (path: PortablePath, args: Array<string>, opts: RunDriverOptions) => Promise<ExecResult>;
 
 export enum RequestType {
   Login = `login`,
@@ -56,36 +50,43 @@ export enum RequestType {
   BulkAdvisories = `bulkAdvisories`,
 }
 
-export type Request = {
-  registry?: string;
-  type: RequestType.Login;
-  username: string;
-} | {
-  registry?: string;
-  type: RequestType.PackageInfo;
-  scope?: string;
-  localName: string;
-} | {
-  registry?: string;
-  type: RequestType.PackageTarball;
-  scope?: string;
-  localName: string;
-  version?: string;
-} | {
-  registry?: string;
-  type: RequestType.Whoami;
-  login: Login;
-} | {
-  type: RequestType.Repository;
-} | {
-  registry?: string;
-  type: RequestType.Publish;
-  scope?: string;
-  localName: string;
-} | {
-  registry?: string;
-  type: RequestType.BulkAdvisories;
-};
+export type Request =
+  | {
+      registry?: string;
+      type: RequestType.Login;
+      username: string;
+    }
+  | {
+      registry?: string;
+      type: RequestType.PackageInfo;
+      scope?: string;
+      localName: string;
+    }
+  | {
+      registry?: string;
+      type: RequestType.PackageTarball;
+      scope?: string;
+      localName: string;
+      version?: string;
+    }
+  | {
+      registry?: string;
+      type: RequestType.Whoami;
+      login: Login;
+    }
+  | {
+      type: RequestType.Repository;
+    }
+  | {
+      registry?: string;
+      type: RequestType.Publish;
+      scope?: string;
+      localName: string;
+    }
+  | {
+      registry?: string;
+      type: RequestType.BulkAdvisories;
+    };
 
 export class Login {
   username: string;
@@ -100,7 +101,7 @@ export class Login {
     encoded: string;
   };
 
-  constructor(username: string, {otp, notice}: {otp?: boolean, notice?: boolean} = {}) {
+  constructor(username: string, { otp, notice }: { otp?: boolean; notice?: boolean } = {}) {
     this.username = username;
     this.password = crypto.createHash(`sha1`).update(username).digest(`hex`);
 
@@ -118,60 +119,75 @@ export class Login {
 }
 
 export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
-  [`vulnerable`, [{
-    id: 1,
-    url: `https://example.com/advisories/1`,
-    title: `Something is wrong`,
-    severity: npmAuditTypes.Severity.High,
-    vulnerable_versions: `<1.1.0`,
-  }]],
-  [`vulnerable-peer-deps`, [{
-    id: 2,
-    url: `https://example.com/advisories/2`,
-    title: `Something else is wrong`,
-    severity: npmAuditTypes.Severity.High,
-    vulnerable_versions: `<1.1.0`,
-  }]],
-  [`vulnerable-many`, [{
-    id: 3,
-    url: `https://example.com/advisories/3`,
-    title: `Something is wrong`,
-    severity: npmAuditTypes.Severity.High,
-    vulnerable_versions: `<1.1.0`,
-  }, {
-    id: 4,
-    url: `https://example.com/advisories/4`,
-    title: `Something is still wrong`,
-    severity: npmAuditTypes.Severity.High,
-    vulnerable_versions: `<1.1.0`,
-  }, {
-    id: 5,
-    url: `https://example.com/advisories/5`,
-    title: `Something is always wrong`,
-    severity: npmAuditTypes.Severity.High,
-    vulnerable_versions: `<1.1.0`,
-  }]],
+  [
+    `vulnerable`,
+    [
+      {
+        id: 1,
+        url: `https://example.com/advisories/1`,
+        title: `Something is wrong`,
+        severity: npmAuditTypes.Severity.High,
+        vulnerable_versions: `<1.1.0`,
+      },
+    ],
+  ],
+  [
+    `vulnerable-peer-deps`,
+    [
+      {
+        id: 2,
+        url: `https://example.com/advisories/2`,
+        title: `Something else is wrong`,
+        severity: npmAuditTypes.Severity.High,
+        vulnerable_versions: `<1.1.0`,
+      },
+    ],
+  ],
+  [
+    `vulnerable-many`,
+    [
+      {
+        id: 3,
+        url: `https://example.com/advisories/3`,
+        title: `Something is wrong`,
+        severity: npmAuditTypes.Severity.High,
+        vulnerable_versions: `<1.1.0`,
+      },
+      {
+        id: 4,
+        url: `https://example.com/advisories/4`,
+        title: `Something is still wrong`,
+        severity: npmAuditTypes.Severity.High,
+        vulnerable_versions: `<1.1.0`,
+      },
+      {
+        id: 5,
+        url: `https://example.com/advisories/5`,
+        title: `Something is always wrong`,
+        severity: npmAuditTypes.Severity.High,
+        vulnerable_versions: `<1.1.0`,
+      },
+    ],
+  ],
 ]);
 
 export const validLogins = {
   fooUser: new Login(`foo-user`),
   barUser: new Login(`bar-user`),
-  otpUser: new Login(`otp-user`, {otp: true}),
-  otpUserWithNotice: new Login(`otp-user-with-notice`, {otp: true, notice: true}),
+  otpUser: new Login(`otp-user`, { otp: true }),
+  otpUserWithNotice: new Login(`otp-user-with-notice`, { otp: true, notice: true }),
 } as const;
 
 let whitelist = new Map();
 let recording: Array<Request> | null = null;
 
 export function sortJson<T>(data: Iterable<T>): Array<T> {
-  return miscUtils.sortMap(data, request => {
+  return miscUtils.sortMap(data, (request) => {
     return JSON.stringify(request);
   });
 }
 
-export const startRegistryRecording = async (
-  fn: () => Promise<void>,
-) => {
+export const startRegistryRecording = async (fn: () => Promise<void>) => {
   const currentRecording: Array<Request> = [];
   recording = currentRecording;
 
@@ -183,10 +199,7 @@ export const startRegistryRecording = async (
   }
 };
 
-export const setPackageWhitelist = async (
-  packages: Map<string, Set<string>>,
-  fn: () => Promise<void>,
-) => {
+export const setPackageWhitelist = async (packages: Map<string, Set<string>>, fn: () => Promise<void>) => {
   whitelist = packages;
   try {
     await fn();
@@ -198,24 +211,21 @@ export const setPackageWhitelist = async (
 let packageRegistryPromise: Promise<PackageRegistry> | null = null;
 
 export const getPackageRegistry = (): Promise<PackageRegistry> => {
-  if (packageRegistryPromise)
-    return packageRegistryPromise;
+  if (packageRegistryPromise) return packageRegistryPromise;
 
   return (packageRegistryPromise = (async () => {
     const packageRegistry = new Map();
     const packagesDir = npath.toPortablePath(`${require(`pkg-tests-fixtures`)}/packages`);
 
-    for (const packageName of (await xfs.readdirPromise(packagesDir))) {
+    for (const packageName of await xfs.readdirPromise(packagesDir)) {
       const packageFile = ppath.join(packagesDir, packageName, Filename.manifest);
       const packageJson = await xfs.readJsonPromise(packageFile);
 
-      const {name, version} = packageJson;
-      if (name.startsWith(`git-`))
-        continue;
+      const { name, version } = packageJson;
+      if (name.startsWith(`git-`)) continue;
 
       let packageEntry = packageRegistry.get(name);
-      if (!packageEntry)
-        packageRegistry.set(name, (packageEntry = new Map()));
+      if (!packageEntry) packageRegistry.set(name, (packageEntry = new Map()));
 
       packageEntry.set(version, {
         path: ppath.dirname(packageFile),
@@ -235,12 +245,10 @@ export const getPackageEntry = async (name: string): Promise<PackageEntry | unde
 
 export const getPackageArchiveStream = async (name: string, version: string): Promise<Gzip> => {
   const packageEntry = await getPackageEntry(name);
-  if (!packageEntry)
-    throw new Error(`Unknown package "${name}"`);
+  if (!packageEntry) throw new Error(`Unknown package "${name}"`);
 
   const packageVersionEntry = packageEntry.get(version);
-  if (!packageVersionEntry)
-    throw new Error(`Unknown version "${version}" for package "${name}"`);
+  if (!packageVersionEntry) throw new Error(`Unknown version "${version}" for package "${name}"`);
 
   return fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {
     virtualPath: npath.toPortablePath(`/package`),
@@ -249,12 +257,10 @@ export const getPackageArchiveStream = async (name: string, version: string): Pr
 
 export const getPackageArchivePath = async (name: string, version: string): Promise<PortablePath> => {
   const packageEntry = await getPackageEntry(name);
-  if (!packageEntry)
-    throw new Error(`Unknown package "${name}"`);
+  if (!packageEntry) throw new Error(`Unknown package "${name}"`);
 
   const packageVersionEntry = packageEntry.get(version);
-  if (!packageVersionEntry)
-    throw new Error(`Unknown version "${version}" for package "${name}"`);
+  if (!packageVersionEntry) throw new Error(`Unknown version "${version}" for package "${name}"`);
 
   const tmpDir = await xfs.mktempPromise();
   const archivePath = ppath.join(tmpDir, `${name}-${version}.tar.gz`);
@@ -266,10 +272,7 @@ export const getPackageArchivePath = async (name: string, version: string): Prom
   return archivePath;
 };
 
-export const getPackageArchiveHash = async (
-  name: string,
-  version: string,
-): Promise<string | Buffer> => {
+export const getPackageArchiveHash = async (name: string, version: string): Promise<string | Buffer> => {
   const archiveStream = await getPackageArchiveStream(name, version);
   const hash = crypto.createHash(`sha1`);
 
@@ -278,17 +281,12 @@ export const getPackageArchiveHash = async (
   return hash.digest(`hex`);
 };
 
-export const getPackageHttpArchivePath = async (
-  name: string,
-  version: string,
-): Promise<string> => {
+export const getPackageHttpArchivePath = async (name: string, version: string): Promise<string> => {
   const packageEntry = await getPackageEntry(name);
-  if (!packageEntry)
-    throw new Error(`Unknown package "${name}"`);
+  if (!packageEntry) throw new Error(`Unknown package "${name}"`);
 
   const packageVersionEntry = packageEntry.get(version);
-  if (!packageVersionEntry)
-    throw new Error(`Unknown version "${version}" for package "${name}"`);
+  if (!packageVersionEntry) throw new Error(`Unknown version "${version}" for package "${name}"`);
 
   const localName = name.replace(/^@[^/]+\//, ``);
 
@@ -298,17 +296,12 @@ export const getPackageHttpArchivePath = async (
   return archiveUrl;
 };
 
-export const getPackageDirectoryPath = async (
-  name: string,
-  version: string,
-): Promise<string> => {
+export const getPackageDirectoryPath = async (name: string, version: string): Promise<string> => {
   const packageEntry = await getPackageEntry(name);
-  if (!packageEntry)
-    throw new Error(`Unknown package "${name}"`);
+  if (!packageEntry) throw new Error(`Unknown package "${name}"`);
 
   const packageVersionEntry = packageEntry.get(version);
-  if (!packageVersionEntry)
-    throw new Error(`Unknown version "${version}" for package "${name}"`);
+  if (!packageVersionEntry) throw new Error(`Unknown version "${version}" for package "${name}"`);
 
   return packageVersionEntry.path;
 };
@@ -316,36 +309,41 @@ export const getPackageDirectoryPath = async (
 const packageServerUrls: {
   http: Promise<string> | null;
   https: Promise<string> | null;
-} = {http: null, https: null};
+} = { http: null, https: null };
 
-export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
+export const startPackageServer = (
+  { type }: { type: keyof typeof packageServerUrls } = { type: `http` },
+): Promise<string> => {
   const serverUrl = packageServerUrls[type];
-  if (serverUrl !== null)
-    return serverUrl;
+  if (serverUrl !== null) return serverUrl;
 
   const applyOtpValidation = (req: IncomingMessage, res: ServerResponse, user: Login) => {
     const otp = req.headers[`npm-otp`];
-    if (user.npmOtpToken === null || otp === user.npmOtpToken)
-      return true;
+    if (user.npmOtpToken === null || otp === user.npmOtpToken) return true;
 
     res.writeHead(401, {
       [`Content-Type`]: `application/json`,
       [`www-authenticate`]: `OTP`,
-      ...user.npmOtpNotice && {
+      ...(user.npmOtpNotice && {
         [`npm-notice`]: user.npmOtpNotice,
-      },
+      }),
     });
 
     res.end();
     return false;
   };
 
-  const processors: {[requestType in RequestType]: (parsedRequest: Request, request: IncomingMessage, response: ServerResponse) => Promise<void>} = {
+  const processors: {
+    [requestType in RequestType]: (
+      parsedRequest: Request,
+      request: IncomingMessage,
+      response: ServerResponse,
+    ) => Promise<void>;
+  } = {
     async [RequestType.PackageInfo](parsedRequest, _, response) {
-      if (parsedRequest.type !== RequestType.PackageInfo)
-        throw new Error(`Assertion failed: Invalid request type`);
+      if (parsedRequest.type !== RequestType.PackageInfo) throw new Error(`Assertion failed: Invalid request type`);
 
-      const {scope, localName} = parsedRequest;
+      const { scope, localName } = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       const packageEntry = await getPackageEntry(name);
@@ -357,10 +355,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       let versions = Array.from(packageEntry.keys());
 
       const whitelistedVersions = whitelist.get(name);
-      if (whitelistedVersions)
-        versions = versions.filter(version => whitelistedVersions.has(version));
+      if (whitelistedVersions) versions = versions.filter((version) => whitelistedVersions.has(version));
 
-      const allDistTags = versions.map(version => {
+      const allDistTags = versions.map((version) => {
         const packageVersionEntry = packageEntry.get(version);
         invariant(packageVersionEntry, `This can only exist`);
 
@@ -370,18 +367,19 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       const distTags = allDistTags[0];
 
       // If a package defines dist-tags, all of its versions must define the same dist-tags
-      for (const versionDistTags of allDistTags.slice(1))
-        assert.deepStrictEqual(versionDistTags, distTags);
+      for (const versionDistTags of allDistTags.slice(1)) assert.deepStrictEqual(versionDistTags, distTags);
 
       if (typeof distTags === `object` && distTags !== null && !Object.hasOwn(distTags, `latest`))
-        throw new Error(`Assertion failed: The package "${name}" must define a "latest" dist-tag too if it defines any dist-tags`);
+        throw new Error(
+          `Assertion failed: The package "${name}" must define a "latest" dist-tag too if it defines any dist-tags`,
+        );
 
       const data = JSON.stringify({
         name,
         versions: Object.assign(
           {},
           ...(await Promise.all(
-            versions.map(async version => {
+            versions.map(async (version) => {
               const packageVersionEntry = packageEntry.get(version);
               invariant(packageVersionEntry, `This can only exist`);
 
@@ -389,9 +387,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
                 [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
                   dist: {
                     shasum: await getPackageArchiveHash(name, version),
-                    tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
-                      ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
-                      : await getPackageHttpArchivePath(name, version),
+                    tarball:
+                      localName === `unconventional-tarball` || localName === `private-unconventional-tarball`
+                        ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
+                        : await getPackageHttpArchivePath(name, version),
                   },
                 }),
               };
@@ -404,15 +403,14 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         },
       });
 
-      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.writeHead(200, { [`Content-Type`]: `application/json` });
       response.end(data);
     },
 
     async [RequestType.PackageTarball](parsedRequest, request, response) {
-      if (parsedRequest.type !== RequestType.PackageTarball)
-        throw new Error(`Assertion failed: Invalid request type`);
+      if (parsedRequest.type !== RequestType.PackageTarball) throw new Error(`Assertion failed: Invalid request type`);
 
-      const {scope, localName, version} = parsedRequest;
+      const { scope, localName, version } = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       const packageEntry = await getPackageEntry(name);
@@ -433,28 +431,28 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       });
 
       await stream.promises.pipeline(
-        fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {virtualPath: npath.toPortablePath(`/package`)}),
+        fsUtils.packToStream(npath.toPortablePath(packageVersionEntry.path), {
+          virtualPath: npath.toPortablePath(`/package`),
+        }),
         response,
       );
     },
 
     async [RequestType.Whoami](parsedRequest, request, response) {
-      if (parsedRequest.type !== RequestType.Whoami)
-        throw new Error(`Assertion failed: Invalid request type`);
+      if (parsedRequest.type !== RequestType.Whoami) throw new Error(`Assertion failed: Invalid request type`);
 
       const data = JSON.stringify({
         username: parsedRequest.login.username,
       });
 
-      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.writeHead(200, { [`Content-Type`]: `application/json` });
       response.end(data);
     },
 
     async [RequestType.Login](parsedRequest, request, response) {
-      if (parsedRequest.type !== RequestType.Login)
-        throw new Error(`Assertion failed: Invalid request type`);
+      if (parsedRequest.type !== RequestType.Login) throw new Error(`Assertion failed: Invalid request type`);
 
-      const user = [...Object.values(validLogins)].find(user => {
+      const user = [...Object.values(validLogins)].find((user) => {
         return user.username === parsedRequest.username;
       });
 
@@ -463,12 +461,11 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         return;
       }
 
-      if (!applyOtpValidation(request, response, user))
-        return;
+      if (!applyOtpValidation(request, response, user)) return;
 
       let rawData = ``;
 
-      request.on(`data`, chunk => rawData += chunk);
+      request.on(`data`, (chunk) => (rawData += chunk));
       request.on(`end`, () => {
         let body;
         try {
@@ -480,9 +477,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         if (body.name !== user.username || body.password !== user.password)
           return processError(response, 401, `Unauthorized`);
 
-        const data = JSON.stringify({token: user.npmAuthToken});
+        const data = JSON.stringify({ token: user.npmAuthToken });
 
-        response.writeHead(200, {[`Content-Type`]: `application/json`});
+        response.writeHead(200, { [`Content-Type`]: `application/json` });
 
         return response.end(data);
       });
@@ -493,15 +490,14 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     },
 
     async [RequestType.Publish](parsedRequest, request, response) {
-      if (parsedRequest.type !== RequestType.Publish)
-        throw new Error(`Assertion failed: Invalid request type`);
+      if (parsedRequest.type !== RequestType.Publish) throw new Error(`Assertion failed: Invalid request type`);
 
-      const {scope, localName} = parsedRequest;
+      const { scope, localName } = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
       let rawData = ``;
 
-      request.on(`data`, chunk => rawData += chunk);
+      request.on(`data`, (chunk) => (rawData += chunk));
       request.on(`end`, () => {
         let body;
         try {
@@ -520,18 +516,17 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         if (typeof body.versions[version].gitHead !== `undefined` && name === `githead-forbidden`)
           return processError(response, 400, `Unexpected gitHead`);
 
-        response.writeHead(200, {[`Content-Type`]: `application/json`});
+        response.writeHead(200, { [`Content-Type`]: `application/json` });
         return response.end(rawData);
       });
     },
 
     async [RequestType.BulkAdvisories](parsedRequest, request, response) {
-      if (parsedRequest.type !== RequestType.BulkAdvisories)
-        throw new Error(`Assertion failed: Invalid request type`);
+      if (parsedRequest.type !== RequestType.BulkAdvisories) throw new Error(`Assertion failed: Invalid request type`);
 
       let rawData = ``;
 
-      request.on(`data`, chunk => rawData += chunk);
+      request.on(`data`, (chunk) => (rawData += chunk));
       request.on(`end`, () => {
         let body;
         try {
@@ -547,7 +542,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           const advisories = [];
 
           for (const advisory of ADVISORIES.get(packageName) ?? [])
-            if (versions.some(version => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
+            if (versions.some((version) => semverUtils.satisfiesWithPrereleases(version, advisory.vulnerable_versions)))
               advisories.push(advisory);
 
           if (advisories.length > 0) {
@@ -555,7 +550,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           }
         }
 
-        response.writeHead(200, {[`Content-Type`]: `application/json`});
+        response.writeHead(200, { [`Content-Type`]: `application/json` });
         return response.end(JSON.stringify(result));
       });
     },
@@ -567,8 +562,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
   };
 
   const processError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
-    if (statusCode !== 404 && statusCode !== 401)
-      console.error(errorMessage);
+    if (statusCode !== 404 && statusCode !== 401) console.error(errorMessage);
 
     sendError(res, statusCode, errorMessage);
   };
@@ -583,10 +577,10 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         type: RequestType.Repository,
       };
     } else {
-      let registry: {registry: string} | undefined;
+      let registry: { registry: string } | undefined;
       if ((match = url.match(/^\/registry\/([a-z]+)\//))) {
         url = url.slice(match[0].length - 1);
-        registry = {registry: match[1]};
+        registry = { registry: match[1] };
       }
 
       if ((match = url.match(/^\/-\/user\/org\.couchdb\.user:(.+)/))) {
@@ -674,7 +668,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
     validAuthorizations.set(`Basic ${user.npmAuthIdent.encoded}`, user);
   }
 
-  return packageServerUrls[type] = new Promise((resolve, reject) => {
+  return (packageServerUrls[type] = new Promise((resolve, reject) => {
     const listener: http.RequestListener = (req, res) =>
       void (async () => {
         try {
@@ -684,10 +678,9 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
             return;
           }
 
-          if (recording !== null)
-            recording.push(parsedRequest);
+          if (recording !== null) recording.push(parsedRequest);
 
-          const {authorization} = req.headers;
+          const { authorization } = req.headers;
           if (authorization != null) {
             const user = validAuthorizations.get(authorization);
             if (!user) {
@@ -695,8 +688,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
               return;
             }
 
-            if (!applyOtpValidation(req, res, user))
-              return;
+            if (!applyOtpValidation(req, res, user)) return;
 
             if (parsedRequest.type === RequestType.Whoami) {
               parsedRequest.login = user;
@@ -718,11 +710,14 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       if (type === `https`) {
         const certs = await getHttpsCertificates();
 
-        server = https.createServer({
-          cert: certs.server.certificate,
-          key: certs.server.clientKey,
-          ca: certs.ca.certificate,
-        }, listener);
+        server = https.createServer(
+          {
+            cert: certs.server.certificate,
+            key: certs.server.clientKey,
+            ca: certs.ca.certificate,
+          },
+          listener,
+        );
       } else if (type === `http`) {
         server = http.createServer(listener);
       } else {
@@ -732,11 +727,11 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       // We don't want the server to prevent the process from exiting
       server.unref();
       server.listen(() => {
-        const {port} = server.address() as AddressInfo;
+        const { port } = server.address() as AddressInfo;
         resolve(`${type}://localhost:${port}`);
       });
     })();
-  });
+  }));
 };
 
 export interface PackageDriver {
@@ -748,14 +743,7 @@ export interface PackageDriver {
 export type Run = (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>;
 export type Source = (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>;
 
-export type RunFunction = (
-  {path, run, source}:
-  {
-    path: PortablePath;
-    run: Run;
-    source: Source;
-  }
-) => Promise<void>;
+export type RunFunction = ({ path, run, source }: { path: PortablePath; run: Run; source: Source }) => Promise<void>;
 
 export const generatePkgDriver = ({
   getName,
@@ -802,15 +790,17 @@ export const generatePkgDriver = ({
         }
 
         // Writes a new package.json file into our temporary directory
-        await xfs.writeJsonPromise(npath.toPortablePath(`${path}/package.json`), await deepResolve(cleanupPackageJson(packageJson)));
+        await xfs.writeJsonPromise(
+          npath.toPortablePath(`${path}/package.json`),
+          await deepResolve(cleanupPackageJson(packageJson)),
+        );
 
         const run = async (...args: Array<any>) => {
           let callDefinition = {};
 
-          if (args.length > 0 && typeof args[args.length - 1] === `object`)
-            callDefinition = args.pop();
+          if (args.length > 0 && typeof args[args.length - 1] === `object`) callDefinition = args.pop();
 
-          const {stdout, stderr, ...rest} = await runDriver(path, args, {
+          const { stdout, stderr, ...rest } = await runDriver(path, args, {
             registryUrl,
             ...definition,
             ...subDefinition,
@@ -824,7 +814,10 @@ export const generatePkgDriver = ({
           };
         };
 
-        const source = async (script: string, callDefinition: Record<string, any> = {}): Promise<Record<string, any>> => {
+        const source = async (
+          script: string,
+          callDefinition: Record<string, any> = {},
+        ): Promise<Record<string, any>> => {
           const scriptWrapper = `
             Promise.resolve().then(async () => ${script}).then(result => {
               return {type: 'success', result};
@@ -855,7 +848,7 @@ export const generatePkgDriver = ({
           }
 
           if (data.type === `failure`) {
-            throw {externalException: data.result};
+            throw { externalException: data.result };
           } else {
             return data.result;
           }
@@ -868,11 +861,11 @@ export const generatePkgDriver = ({
           if (process.env.TEST_IGNORE_TIMEOUT_FAILURES) {
             let timer: NodeJS.Timeout | undefined;
             await Promise.race([
-              new Promise(resolve => {
+              new Promise((resolve) => {
                 // Resolve 1s ahead of the jest timeout
                 timer = setTimeout(resolve, TEST_TIMEOUT - 1000);
               }),
-              fn!({path, run, source}),
+              fn!({ path, run, source }),
             ]).finally(() => {
               if (timer) {
                 clearTimeout(timer);
@@ -880,7 +873,7 @@ export const generatePkgDriver = ({
             });
             return;
           }
-          await fn!({path, run, source});
+          await fn!({ path, run, source });
         } catch (error) {
           error.message = `Temporary fixture folder: ${npath.fromPortablePath(path)}\n\n${error.message}`;
           throw error;
@@ -893,7 +886,7 @@ export const generatePkgDriver = ({
     };
 
     makeTemporaryEnv.withConfig = (subDefinition: Record<string, any>) => {
-      return withConfig({...definition, ...subDefinition});
+      return withConfig({ ...definition, ...subDefinition });
     };
 
     return makeTemporaryEnv;
@@ -902,8 +895,12 @@ export const generatePkgDriver = ({
   return withConfig({});
 };
 
-export const testIf = (condition: () => boolean, name: string,
-  execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
+export const testIf = (
+  condition: () => boolean,
+  name: string,
+  execute?: jest.ProvidesCallback | undefined,
+  timeout?: number | undefined,
+) => {
   if (condition()) {
     test(name, execute, timeout);
   }
@@ -915,20 +912,21 @@ let httpsCertificates: {
 };
 
 export const getHttpsCertificates = async () => {
-  if (httpsCertificates)
-    return httpsCertificates;
+  if (httpsCertificates) return httpsCertificates;
 
-  const createCSR = promisify<pem.CSRCreationOptions, { csr: string, clientKey: string }>(pem.createCSR);
-  const createCertificate = promisify<pem.CertificateCreationOptions, pem.CertificateCreationResult>(pem.createCertificate);
+  const createCSR = promisify<pem.CSRCreationOptions, { csr: string; clientKey: string }>(pem.createCSR);
+  const createCertificate = promisify<pem.CertificateCreationOptions, pem.CertificateCreationResult>(
+    pem.createCertificate,
+  );
 
-  const {csr, clientKey} = await createCSR({commonName: `yarn`});
+  const { csr, clientKey } = await createCSR({ commonName: `yarn` });
   const caCertificate = await createCertificate({
     csr,
     clientKey,
     selfSigned: true,
   });
 
-  const serverCSRResult = await createCSR({commonName: `localhost`});
+  const serverCSRResult = await createCSR({ commonName: `localhost` });
 
   const serverCertificate = await createCertificate({
     csr: serverCSRResult.csr,
@@ -938,5 +936,5 @@ export const getHttpsCertificates = async () => {
     days: 365,
   });
 
-  return (httpsCertificates = {server: serverCertificate, ca: caCertificate});
+  return (httpsCertificates = { server: serverCertificate, ca: caCertificate });
 };

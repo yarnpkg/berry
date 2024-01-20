@@ -1,17 +1,19 @@
-const {createRequire} = require(`module`);
+const { createRequire } = require(`module`);
 const webpack = createRequire(require.resolve(`@docusaurus/core/package.json`))(`webpack`);
 
 // docusaurus-plugin/src/index.js
-module.exports = function(context, options) {
+module.exports = function (context, options) {
   return {
     name: `docusaurus-plugin`,
     configureWebpack(config, isServer, utils) {
       return {
         module: {
-          rules: [{
-            test: /\.term\.dat$/,
-            use: [require.resolve(`./src/webpack/ansi-loader.js`)],
-          }],
+          rules: [
+            {
+              test: /\.term\.dat$/,
+              use: [require.resolve(`./src/webpack/ansi-loader.js`)],
+            },
+          ],
         },
         resolve: {
           fallback: {

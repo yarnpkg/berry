@@ -1,6 +1,6 @@
-import {PortablePath, xfs, npath, FakeFS} from '@yarnpkg/fslib';
-import {createHash, BinaryLike}           from 'crypto';
-import fastGlob                           from 'fast-glob';
+import { PortablePath, xfs, npath, FakeFS } from "@yarnpkg/fslib";
+import { createHash, BinaryLike } from "crypto";
+import fastGlob from "fast-glob";
 
 export function makeHash<T extends string = string>(...args: Array<BinaryLike | null>): T {
   const hash = createHash(`sha512`);
@@ -19,13 +19,15 @@ export function makeHash<T extends string = string>(...args: Array<BinaryLike | 
     }
   }
 
-  if (acc)
-    hash.update(acc);
+  if (acc) hash.update(acc);
 
   return hash.digest(`hex`) as T;
 }
 
-export async function checksumFile(path: PortablePath, {baseFs, algorithm}: {baseFs: FakeFS<PortablePath>, algorithm: string} = {baseFs: xfs, algorithm: `sha512`}) {
+export async function checksumFile(
+  path: PortablePath,
+  { baseFs, algorithm }: { baseFs: FakeFS<PortablePath>; algorithm: string } = { baseFs: xfs, algorithm: `sha512` },
+) {
   const fd = await baseFs.openPromise(path, `r`);
 
   try {
@@ -44,7 +46,7 @@ export async function checksumFile(path: PortablePath, {baseFs, algorithm}: {bas
   }
 }
 
-export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath}) {
+export async function checksumPattern(pattern: string, { cwd }: { cwd: PortablePath }) {
   // Note: We use a two-pass glob instead of using globby with the expandDirectories
   // option, because the native implementation is broken.
   //
@@ -55,7 +57,7 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
     onlyDirectories: true,
   });
 
-  const dirPatterns = dirListing.map(entry => {
+  const dirPatterns = dirListing.map((entry) => {
     return `${entry}/**/*`;
   });
 
@@ -67,23 +69,22 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
   // fast-glob returns results in arbitrary order
   listing.sort();
 
-  const hashes = await Promise.all(listing.map(async entry => {
-    const parts: Array<Buffer> = [Buffer.from(entry)];
+  const hashes = await Promise.all(
+    listing.map(async (entry) => {
+      const parts: Array<Buffer> = [Buffer.from(entry)];
 
-    const p = npath.toPortablePath(entry);
-    const stat = await xfs.lstatPromise(p);
+      const p = npath.toPortablePath(entry);
+      const stat = await xfs.lstatPromise(p);
 
-    if (stat.isSymbolicLink())
-      parts.push(Buffer.from(await xfs.readlinkPromise(p)));
-    else if (stat.isFile())
-      parts.push(await xfs.readFilePromise(p));
+      if (stat.isSymbolicLink()) parts.push(Buffer.from(await xfs.readlinkPromise(p)));
+      else if (stat.isFile()) parts.push(await xfs.readFilePromise(p));
 
-    return parts.join(`\u0000`);
-  }));
+      return parts.join(`\u0000`);
+    }),
+  );
 
   const hash = createHash(`sha512`);
-  for (const sub of hashes)
-    hash.update(sub);
+  for (const sub of hashes) hash.update(sub);
 
   return hash.digest(`hex`);
 }

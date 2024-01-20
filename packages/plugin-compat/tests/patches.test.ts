@@ -1,16 +1,30 @@
-import {Configuration, Descriptor, Project, ResolveOptions, ThrowReport, structUtils, Locator, Cache, LocatorHash} from '@yarnpkg/core';
-import {PortablePath, xfs, ppath}                                                                                  from '@yarnpkg/fslib';
-import NpmPlugin                                                                                                   from '@yarnpkg/plugin-npm';
-import PatchPlugin                                                                                                 from '@yarnpkg/plugin-patch';
+import {
+  Configuration,
+  Descriptor,
+  Project,
+  ResolveOptions,
+  ThrowReport,
+  structUtils,
+  Locator,
+  Cache,
+  LocatorHash,
+} from "@yarnpkg/core";
+import { PortablePath, xfs, ppath } from "@yarnpkg/fslib";
+import NpmPlugin from "@yarnpkg/plugin-npm";
+import PatchPlugin from "@yarnpkg/plugin-patch";
 
-import CompatPlugin                                                                                                from '../sources/index';
+import CompatPlugin from "../sources/index";
 
 function getConfiguration(p: PortablePath) {
-  return Configuration.create(p, p, new Map([
-    [`@yarnpkg/plugin-compat`, CompatPlugin],
-    [`@yarnpkg/plugin-npm`, NpmPlugin],
-    [`@yarnpkg/plugin-patch`, PatchPlugin],
-  ]));
+  return Configuration.create(
+    p,
+    p,
+    new Map([
+      [`@yarnpkg/plugin-compat`, CompatPlugin],
+      [`@yarnpkg/plugin-npm`, NpmPlugin],
+      [`@yarnpkg/plugin-patch`, PatchPlugin],
+    ]),
+  );
 }
 
 async function createProject(configuration: Configuration, p: PortablePath, manifest: object = {}) {
@@ -20,12 +34,12 @@ async function createProject(configuration: Configuration, p: PortablePath, mani
 }
 
 async function getDescriptorCandidates(descriptor: Descriptor) {
-  return await xfs.mktempPromise(async dir => {
+  return await xfs.mktempPromise(async (dir) => {
     const configuration = getConfiguration(dir);
-    const {project} = await createProject(configuration, dir);
+    const { project } = await createProject(configuration, dir);
 
     const resolver = configuration.makeResolver();
-    const resolveOptions: ResolveOptions = {project, resolver, report: new ThrowReport()};
+    const resolveOptions: ResolveOptions = { project, resolver, report: new ThrowReport() };
 
     const normalizedDescriptor = configuration.normalizeDependency(descriptor);
     const candidates = await resolver.getCandidates(normalizedDescriptor, {}, resolveOptions);
@@ -40,14 +54,13 @@ async function getDescriptorCandidates(descriptor: Descriptor) {
 const testedCandidates: Set<LocatorHash> = new Set();
 
 async function testCandidate(locator: Locator) {
-  if (testedCandidates.has(locator.locatorHash))
-    return;
+  if (testedCandidates.has(locator.locatorHash)) return;
 
   testedCandidates.add(locator.locatorHash);
 
-  await xfs.mktempPromise(async dir => {
+  await xfs.mktempPromise(async (dir) => {
     const configuration = getConfiguration(dir);
-    const {project} = await createProject(configuration, dir, {
+    const { project } = await createProject(configuration, dir, {
       dependencies: {
         [structUtils.stringifyIdent(locator)]: locator.reference,
       },
@@ -80,48 +93,36 @@ async function testCandidate(locator: Locator) {
 const TEST_TIMEOUT = 100000000;
 
 const TEST_RANGES: Array<[string, Array<string>]> = [
-  [
-    `fsevents`, [
-      `^1`,
-      `^2.1`,
-      `latest`,
-    ],
-  ], [
-    `resolve`, [
-      `>=1.9`,
-      `latest`,
-      `next`,
-    ],
-  ], [
-    `typescript`, [
-      `>=3.2`,
-      `latest`,
-      `next`,
-    ],
-  ],
+  [`fsevents`, [`^1`, `^2.1`, `latest`]],
+  [`resolve`, [`>=1.9`, `latest`, `next`]],
+  [`typescript`, [`>=3.2`, `latest`, `next`]],
 ];
 
 describe(`patches`, () => {
   describe.each(TEST_RANGES)(`%s`, (stringifiedIdent, ranges) => {
     const ident = structUtils.parseIdent(stringifiedIdent);
 
-    it.each(ranges)(`should work with ${stringifiedIdent}@%s`, async range => {
-      const descriptor = structUtils.makeDescriptor(ident, range);
-      const candidates = await getDescriptorCandidates(descriptor);
+    it.each(ranges)(
+      `should work with ${stringifiedIdent}@%s`,
+      async (range) => {
+        const descriptor = structUtils.makeDescriptor(ident, range);
+        const candidates = await getDescriptorCandidates(descriptor);
 
-      const errors = [];
+        const errors = [];
 
-      for (const candidate of candidates) {
-        try {
-          await testCandidate(candidate);
-        } catch (error) {
-          errors.push(`--- ${structUtils.stringifyLocator(candidate)} ---\n${error.stack}`);
+        for (const candidate of candidates) {
+          try {
+            await testCandidate(candidate);
+          } catch (error) {
+            errors.push(`--- ${structUtils.stringifyLocator(candidate)} ---\n${error.stack}`);
+          }
         }
-      }
 
-      if (errors.length > 0) {
-        throw new Error(errors.join(`\n`));
-      }
-    }, TEST_TIMEOUT);
+        if (errors.length > 0) {
+          throw new Error(errors.join(`\n`));
+        }
+      },
+      TEST_TIMEOUT,
+    );
   });
 });

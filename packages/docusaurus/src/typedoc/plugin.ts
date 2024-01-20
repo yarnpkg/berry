@@ -1,6 +1,6 @@
-import {miscUtils}                                                                             from '@yarnpkg/core';
-import pnpApi                                                                                  from 'pnpapi';
-import {Application, Converter, DeclarationReflection, ProjectReflection, SignatureReflection} from 'typedoc';
+import { miscUtils } from "@yarnpkg/core";
+import pnpApi from "pnpapi";
+import { Application, Converter, DeclarationReflection, ProjectReflection, SignatureReflection } from "typedoc";
 
 function resolveVirtual(path: string) {
   return pnpApi.resolveVirtual(path)?.replaceAll(`\\`, `/`) ?? path;
@@ -9,7 +9,7 @@ function resolveVirtual(path: string) {
 function remapPaths(context, ref: DeclarationReflection | ProjectReflection | SignatureReflection) {
   if (`sources` in ref && ref.sources !== undefined) {
     const seen = new Set<string>();
-    ref.sources = miscUtils.mapAndFilter(ref.sources, source => {
+    ref.sources = miscUtils.mapAndFilter(ref.sources, (source) => {
       source.fileName = resolveVirtual(source.fileName);
       source.fullFileName = resolveVirtual(source.fullFileName);
 

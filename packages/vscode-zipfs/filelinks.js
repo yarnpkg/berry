@@ -14,5 +14,4 @@ const TEST_PATHS = [
   `.yarn/cache/@algolia-cache-browser-local-storage-npm-4.2.0-ce650cb25f-654f9bc1af.zip/node_modules/@algolia/cache-browser-local-storage/package.json:10:10`,
 ];
 
-for (const testFile of TEST_PATHS)
-  console.log(`"${path.resolve(__dirname, `../../${testFile}`)}"`);
+for (const testFile of TEST_PATHS) console.log(`"${path.resolve(__dirname, `../../${testFile}`)}"`);

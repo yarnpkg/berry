@@ -1,17 +1,17 @@
-import {Plugin, Project, SettingsType} from '@yarnpkg/core';
-import {PortablePath}                  from '@yarnpkg/fslib';
+import { Plugin, Project, SettingsType } from "@yarnpkg/core";
+import { PortablePath } from "@yarnpkg/fslib";
 
-import {PatchFetcher}                  from './PatchFetcher';
-import {PatchResolver}                 from './PatchResolver';
-import PatchCommitCommand              from './commands/patchCommit';
-import PatchCommand                    from './commands/patch';
-import * as patchUtils                 from './patchUtils';
+import { PatchFetcher } from "./PatchFetcher";
+import { PatchResolver } from "./PatchResolver";
+import PatchCommitCommand from "./commands/patchCommit";
+import PatchCommand from "./commands/patch";
+import * as patchUtils from "./patchUtils";
 
-export {PatchFetcher};
-export {PatchResolver};
-export {PatchCommitCommand};
-export {PatchCommand};
-export {patchUtils};
+export { PatchFetcher };
+export { PatchResolver };
+export { PatchCommitCommand };
+export { PatchCommand };
+export { patchUtils };
 
 export interface Hooks {
   /**
@@ -19,13 +19,10 @@ export interface Hooks {
    * syntax: `patch:builtin<name>`. This is for instance how the TypeScript
    * patch is automatically registered.
    */
-  getBuiltinPatch?: (
-    project: Project,
-    name: string,
-  ) => Promise<string | null | void>;
+  getBuiltinPatch?: (project: Project, name: string) => Promise<string | null | void>;
 }
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     enableInlineHunks: boolean;
     patchFolder: PortablePath;
@@ -45,16 +42,9 @@ const plugin: Plugin = {
       default: `./.yarn/patches`,
     },
   },
-  commands: [
-    PatchCommitCommand,
-    PatchCommand,
-  ],
-  fetchers: [
-    PatchFetcher,
-  ],
-  resolvers: [
-    PatchResolver,
-  ],
+  commands: [PatchCommitCommand, PatchCommand],
+  fetchers: [PatchFetcher],
+  resolvers: [PatchResolver],
 };
 
 // eslint-disable-next-line arca/no-default-export

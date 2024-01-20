@@ -1,14 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                           from '@yarnpkg/cli';
-import {Configuration, Project, Ident, structUtils, formatUtils, treeUtils, miscUtils} from '@yarnpkg/core';
-import {ppath, Filename, npath}                                                        from '@yarnpkg/fslib';
-import {npmHttpUtils}                                                                  from '@yarnpkg/plugin-npm';
-import {Command, UsageError, Usage, Option}                                            from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Configuration, Project, Ident, structUtils, formatUtils, treeUtils, miscUtils } from "@yarnpkg/core";
+import { ppath, Filename, npath } from "@yarnpkg/fslib";
+import { npmHttpUtils } from "@yarnpkg/plugin-npm";
+import { Command, UsageError, Usage, Option } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmTagListCommand extends BaseCommand {
-  static paths = [
-    [`npm`, `tag`, `list`],
-  ];
+  static paths = [[`npm`, `tag`, `list`]];
 
   static usage: Usage = Command.Usage({
     category: `Npm-related commands`,
@@ -18,31 +16,29 @@ export default class NpmTagListCommand extends BaseCommand {
 
       If the package is not specified, Yarn will default to the current workspace.
     `,
-    examples: [[
-      `List all tags of package \`my-pkg\``,
-      `yarn npm tag list my-pkg`,
-    ]],
+    examples: [[`List all tags of package \`my-pkg\``, `yarn npm tag list my-pkg`]],
   });
 
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });
 
-  package = Option.String({required: false});
+  package = Option.String({ required: false });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
 
     let ident: Ident;
     if (typeof this.package !== `undefined`) {
       ident = structUtils.parseIdent(this.package);
     } else {
-      if (!workspace)
-        throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+      if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
       if (!workspace.manifest.name)
-        throw new UsageError(`Missing 'name' field in ${npath.fromPortablePath(ppath.join(workspace.cwd, Filename.manifest))}`);
+        throw new UsageError(
+          `Missing 'name' field in ${npath.fromPortablePath(ppath.join(workspace.cwd, Filename.manifest))}`,
+        );
 
       ident = workspace.manifest.name;
     }

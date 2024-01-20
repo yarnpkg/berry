@@ -1,9 +1,9 @@
-import {FakeFS, PortablePath} from '@yarnpkg/fslib';
-import {dirname}              from 'path';
+import { FakeFS, PortablePath } from "@yarnpkg/fslib";
+import { dirname } from "path";
 
-import {hydrateRuntimeState}  from './loader/hydrateRuntimeState';
-import {makeApi}              from './loader/makeApi';
-import {SerializedState}      from './types';
+import { hydrateRuntimeState } from "./loader/hydrateRuntimeState";
+import { makeApi } from "./loader/makeApi";
+import { SerializedState } from "./types";
 
 // Note that using those functions is typically NOT needed! The PnP API is
 // designed to be consumed directly from within Node - meaning that depending
@@ -24,7 +24,10 @@ import {SerializedState}      from './types';
 // real use case is to access the PnP API without running the risk of executing
 // third-party Javascript code.
 
-export async function hydratePnpFile(location: PortablePath, {fakeFs, pnpapiResolution}: {fakeFs: FakeFS<PortablePath>, pnpapiResolution: string}) {
+export async function hydratePnpFile(
+  location: PortablePath,
+  { fakeFs, pnpapiResolution }: { fakeFs: FakeFS<PortablePath>; pnpapiResolution: string },
+) {
   const source = await fakeFs.readFilePromise(location, `utf8`);
 
   return hydratePnpSource(source, {
@@ -34,7 +37,10 @@ export async function hydratePnpFile(location: PortablePath, {fakeFs, pnpapiReso
   });
 }
 
-export function hydratePnpSource(source: string, {basePath, fakeFs, pnpapiResolution}: {basePath: string, fakeFs: FakeFS<PortablePath>, pnpapiResolution: string}) {
+export function hydratePnpSource(
+  source: string,
+  { basePath, fakeFs, pnpapiResolution }: { basePath: string; fakeFs: FakeFS<PortablePath>; pnpapiResolution: string },
+) {
   const data = JSON.parse(source) as SerializedState;
 
   const runtimeState = hydrateRuntimeState(data, {

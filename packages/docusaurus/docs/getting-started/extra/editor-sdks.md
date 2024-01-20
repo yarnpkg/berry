@@ -40,19 +40,18 @@ yarn dlx @yarnpkg/sdks
 ## Tools currently supported
 
 :::caution
-The `yarn dlx @yarnpkg/sdks` command will look at the content of your *root* `package.json` to figure out the SDKs you need  - it won't look at the dependencies from any other workspaces.
+The `yarn dlx @yarnpkg/sdks` command will look at the content of your _root_ `package.json` to figure out the SDKs you need - it won't look at the dependencies from any other workspaces.
 :::
 
-| Supported extension | Enabled if ... is found in your `package.json` dependencies |
-|---|---|
-| Builtin VSCode TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
-| [astro-vscode](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode) | [astro](https://astro.build/) |
-| [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
-| [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
-| [relay](https://marketplace.visualstudio.com/items?itemName=meta.relay) | [relay](https://relay.dev/)
+| Supported extension                                                                           | Enabled if ... is found in your `package.json` dependencies |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Builtin VSCode TypeScript Server                                                              | [typescript](https://yarnpkg.com/package/typescript)        |
+| [astro-vscode](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode)  | [astro](https://astro.build/)                               |
+| [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)   | [eslint](https://yarnpkg.com/package/eslint)                |
+| [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier)            |
+| [relay](https://marketplace.visualstudio.com/items?itemName=meta.relay)                       | [relay](https://relay.dev/)                                 |
 
 If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-sdks/sources/generateSdk.ts)
-
 
 ## Editor setup
 
@@ -108,8 +107,8 @@ yarn dlx @yarnpkg/sdks vscode
 
 3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
 
-    1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
-    2. Choose "Select TypeScript Version"
-    3. Pick "Use Workspace Version"
+   1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
+   2. Choose "Select TypeScript Version"
+   3. Pick "Use Workspace Version"
 
 Your VSCode project is now configured to use the exact same version of TypeScript as the one you usually use, except that it will be able to properly resolve the type definitions.

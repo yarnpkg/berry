@@ -1,23 +1,20 @@
-import {Configuration, Fetcher, FetchOptions, MinimalFetchOptions} from '@yarnpkg/core';
-import {structUtils, tgzUtils, semverUtils}                        from '@yarnpkg/core';
-import {Locator, MessageName, ReportError}                         from '@yarnpkg/core';
-import semver                                                      from 'semver';
+import { Configuration, Fetcher, FetchOptions, MinimalFetchOptions } from "@yarnpkg/core";
+import { structUtils, tgzUtils, semverUtils } from "@yarnpkg/core";
+import { Locator, MessageName, ReportError } from "@yarnpkg/core";
+import semver from "semver";
 
-import {PROTOCOL}                                                  from './constants';
-import * as npmConfigUtils                                         from './npmConfigUtils';
-import * as npmHttpUtils                                           from './npmHttpUtils';
+import { PROTOCOL } from "./constants";
+import * as npmConfigUtils from "./npmConfigUtils";
+import * as npmHttpUtils from "./npmHttpUtils";
 
 export class NpmSemverFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!locator.reference.startsWith(PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(PROTOCOL)) return false;
 
     const url = new URL(locator.reference);
 
-    if (!semver.valid(url.pathname))
-      return false;
-    if (url.searchParams.has(`__archiveUrl`))
-      return false;
+    if (!semver.valid(url.pathname)) return false;
+    if (url.searchParams.has(`__archiveUrl`)) return false;
 
     return true;
   }
@@ -31,7 +28,11 @@ export class NpmSemverFetcher implements Fetcher {
 
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
-      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`),
+      onMiss: () =>
+        opts.report.reportCacheMiss(
+          locator,
+          `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from the remote registry`,
+        ),
       loader: () => this.fetchFromNetwork(locator, opts),
       ...opts.cacheOptions,
     });
@@ -70,8 +71,8 @@ export class NpmSemverFetcher implements Fetcher {
     });
   }
 
-  static isConventionalTarballUrl(locator: Locator, url: string, {configuration}: {configuration: Configuration}) {
-    let registry = npmConfigUtils.getScopeRegistry(locator.scope, {configuration});
+  static isConventionalTarballUrl(locator: Locator, url: string, { configuration }: { configuration: Configuration }) {
+    let registry = npmConfigUtils.getScopeRegistry(locator.scope, { configuration });
     const path = NpmSemverFetcher.getLocatorUrl(locator);
 
     // From time to time the npm registry returns http urls instead of https 🤡
@@ -81,10 +82,8 @@ export class NpmSemverFetcher implements Fetcher {
     registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
     url = url.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
 
-    if (url === registry + path)
-      return true;
-    if (url === registry + path.replace(/%2f/g, `/`))
-      return true;
+    if (url === registry + path) return true;
+    if (url === registry + path.replace(/%2f/g, `/`)) return true;
 
     return false;
   }
@@ -92,7 +91,10 @@ export class NpmSemverFetcher implements Fetcher {
   static getLocatorUrl(locator: Locator) {
     const version = semverUtils.clean(locator.reference.slice(PROTOCOL.length));
     if (version === null)
-      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
+      throw new ReportError(
+        MessageName.RESOLVER_NOT_FOUND,
+        `The npm semver resolver got selected, but the version isn't semver`,
+      );
 
     return `${npmHttpUtils.getIdentUrl(locator)}/-/${locator.name}-${version}.tgz`;
   }

@@ -1,5 +1,5 @@
-import SdkCommand    from './commands/SdkCommand';
-import * as sdkUtils from './sdkUtils';
+import SdkCommand from "./commands/SdkCommand";
+import * as sdkUtils from "./sdkUtils";
 
-export {SdkCommand};
-export {sdkUtils};
+export { SdkCommand };
+export { sdkUtils };

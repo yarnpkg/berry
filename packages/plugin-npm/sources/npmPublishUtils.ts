@@ -1,11 +1,11 @@
-import {execUtils, Ident}         from '@yarnpkg/core';
-import {Workspace, structUtils}   from '@yarnpkg/core';
-import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
-import {packUtils}                from '@yarnpkg/plugin-pack';
-import {createHash}               from 'crypto';
-import ssri                       from 'ssri';
+import { execUtils, Ident } from "@yarnpkg/core";
+import { Workspace, structUtils } from "@yarnpkg/core";
+import { PortablePath, xfs, npath } from "@yarnpkg/fslib";
+import { packUtils } from "@yarnpkg/plugin-pack";
+import { createHash } from "crypto";
+import ssri from "ssri";
 
-import {normalizeRegistry}        from './npmConfigUtils';
+import { normalizeRegistry } from "./npmConfigUtils";
 
 type PublishAdditionalParams = {
   access: string | undefined;
@@ -14,7 +14,11 @@ type PublishAdditionalParams = {
   gitHead?: string;
 };
 
-export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: PublishAdditionalParams) {
+export async function makePublishBody(
+  workspace: Workspace,
+  buffer: Buffer,
+  { access, tag, registry, gitHead }: PublishAdditionalParams,
+) {
   const ident = workspace.manifest.name!;
   const version = workspace.manifest.version!;
 
@@ -76,9 +80,8 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
 
 export async function getGitHead(workingDir: PortablePath) {
   try {
-    const {stdout} = await execUtils.execvp(`git`, [`rev-parse`, `--revs-only`, `HEAD`], {cwd: workingDir});
-    if (stdout.trim() === ``)
-      return undefined;
+    const { stdout } = await execUtils.execvp(`git`, [`rev-parse`, `--revs-only`, `HEAD`], { cwd: workingDir });
+    if (stdout.trim() === ``) return undefined;
     return stdout.trim();
   } catch {
     return undefined;
@@ -91,17 +94,14 @@ export function getPublishAccess(workspace: Workspace, ident: Ident): string {
   if (workspace.manifest.publishConfig && typeof workspace.manifest.publishConfig.access === `string`)
     return workspace.manifest.publishConfig.access;
 
-  if (configuration.get(`npmPublishAccess`) !== null)
-    return configuration.get(`npmPublishAccess`)!;
+  if (configuration.get(`npmPublishAccess`) !== null) return configuration.get(`npmPublishAccess`)!;
 
-  const access = ident.scope
-    ? `restricted`
-    : `public`;
+  const access = ident.scope ? `restricted` : `public`;
 
   return access;
 }
 
-export async function getReadmeContent(workspace: Workspace): Promise<string>  {
+export async function getReadmeContent(workspace: Workspace): Promise<string> {
   const readmePath = npath.toPortablePath(`${workspace.cwd}/README.md`);
 
   const ident = workspace.manifest.name!;

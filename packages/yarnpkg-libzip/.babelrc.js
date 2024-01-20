@@ -1,5 +1,3 @@
 module.exports = {
-  ignore: [
-    `./sources/libzip.js`,
-  ],
+  ignore: [`./sources/libzip.js`],
 };

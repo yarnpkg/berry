@@ -1,7 +1,7 @@
-import {npath}                  from '@yarnpkg/fslib';
-import {Command, Option, Usage} from 'clipanion';
+import { npath } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
 
-import {execute}                from '../index';
+import { execute } from "../index";
 
 // eslint-disable-next-line arca/no-default-export
 export default class EntryCommand extends Command {
@@ -18,22 +18,16 @@ export default class EntryCommand extends Command {
 
       For a list of features, visit: https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-shell/README.md.
     `,
-    examples: [[
-      `Run a simple command`,
-      `$0 echo Hello`,
-    ], [
-      `Run a command with a glob pattern`,
-      `$0 echo '*.js'`,
-    ], [
-      `Run a command with a redirection`,
-      `$0 echo Hello World '>' hello.txt`,
-    ], [
-      `Run a command with an escaped glob pattern (The double escape is needed in Unix shells)`,
-      `$0 echo '"*.js"'`,
-    ], [
-      `Run a command with a variable (Double quotes are needed in Unix shells, to prevent them from expanding the variable)`,
-      `$0 "GREETING=Hello echo $GREETING World"`,
-    ]],
+    examples: [
+      [`Run a simple command`, `$0 echo Hello`],
+      [`Run a command with a glob pattern`, `$0 echo '*.js'`],
+      [`Run a command with a redirection`, `$0 echo Hello World '>' hello.txt`],
+      [`Run a command with an escaped glob pattern (The double escape is needed in Unix shells)`, `$0 echo '"*.js"'`],
+      [
+        `Run a command with a variable (Double quotes are needed in Unix shells, to prevent them from expanding the variable)`,
+        `$0 "GREETING=Hello echo $GREETING World"`,
+      ],
+    ],
   };
 
   cwd = Option.String(`--cwd`, process.cwd(), {
@@ -46,9 +40,7 @@ export default class EntryCommand extends Command {
   async execute() {
     // We assume that all arguments have to be processed by our shell,
     // not by the user's shell
-    const command = this.args.length > 0
-      ? `${this.commandName} ${this.args.join(` `)}`
-      : this.commandName;
+    const command = this.args.length > 0 ? `${this.commandName} ${this.args.join(` `)}` : this.commandName;
 
     return await execute(command, [], {
       cwd: npath.toPortablePath(this.cwd),

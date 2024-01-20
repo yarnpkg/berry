@@ -1,7 +1,7 @@
-import {Filename, PortablePath, Watcher, WatchCallback} from '@yarnpkg/fslib';
-import {EventEmitter}                                   from 'events';
+import { Filename, PortablePath, Watcher, WatchCallback } from "@yarnpkg/fslib";
+import { EventEmitter } from "events";
 
-import {ResolvedPath}                                   from './resolveNodeModulesPath';
+import { ResolvedPath } from "./resolveNodeModulesPath";
 
 class WatchEventEmitter extends EventEmitter {
   private dirWatchers: DirectoryWatcherMap;
@@ -38,7 +38,7 @@ export class WatchManager extends EventEmitter {
   public registerWatcher(watchPath: PortablePath, dirList: Set<Filename>, callback: WatchCallback): WatchEventEmitter {
     let dirWatcher = this.dirWatchers.get(watchPath);
     if (!dirWatcher) {
-      dirWatcher = {eventEmitters: new Map(), dirEntries: dirList};
+      dirWatcher = { eventEmitters: new Map(), dirEntries: dirList };
       this.dirWatchers.set(watchPath, dirWatcher);
     }
     const watcherId = this.lastWatcherId++;

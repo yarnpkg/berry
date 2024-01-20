@@ -1,34 +1,43 @@
 module.exports = {
-  plugins: [
-    `@typescript-eslint`,
-    `arca`,
-  ],
+  plugins: [`@typescript-eslint`, `arca`],
 
   rules: {
-    '@typescript-eslint/array-type': [`error`, {
-      default: `generic`,
-    }],
-
-    '@typescript-eslint/naming-convention': [`error`, {
-      selector: `default`,
-      format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
-      filter: {
-        regex: `^(__.*|__non_webpack_require__|npm(_[a-z]+)+)$`,
-        match: false,
+    "@typescript-eslint/array-type": [
+      `error`,
+      {
+        default: `generic`,
       },
-      leadingUnderscore: `allow`,
-    }],
+    ],
 
-    '@typescript-eslint/quotes': [`error`, `backtick`],
+    "@typescript-eslint/naming-convention": [
+      `error`,
+      {
+        selector: `default`,
+        format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
+        filter: {
+          regex: `^(__.*|__non_webpack_require__|npm(_[a-z]+)+)$`,
+          match: false,
+        },
+        leadingUnderscore: `allow`,
+      },
+    ],
 
-    'arca/import-ordering': [2, {
-      hoistOneliners: true,
-    }],
+    "@typescript-eslint/quotes": [`error`, `backtick`],
 
-    'arca/newline-after-import-section': [2, {
-      enableOnelinerSections: true,
-    }],
+    "arca/import-ordering": [
+      2,
+      {
+        hoistOneliners: true,
+      },
+    ],
 
-    'no-irregular-whitespace': 2,
+    "arca/newline-after-import-section": [
+      2,
+      {
+        enableOnelinerSections: true,
+      },
+    ],
+
+    "no-irregular-whitespace": 2,
   },
 };

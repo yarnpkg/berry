@@ -1,22 +1,21 @@
-import cjs                  from '@rollup/plugin-commonjs';
-import json                 from '@rollup/plugin-json';
-import resolve              from '@rollup/plugin-node-resolve';
-import path                 from 'path';
-import esbuild              from 'rollup-plugin-esbuild';
-import {terser}             from 'rollup-plugin-terser';
-import {defineConfig}       from 'rollup';
-import semver               from 'semver';
-import {brotliCompressSync} from 'zlib';
+import cjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
+import resolve from "@rollup/plugin-node-resolve";
+import path from "path";
+import esbuild from "rollup-plugin-esbuild";
+import { terser } from "rollup-plugin-terser";
+import { defineConfig } from "rollup";
+import semver from "semver";
+import { brotliCompressSync } from "zlib";
 
-import pkg                  from './package.json';
+import pkg from "./package.json";
 
 function wrapOutput() {
   return {
     name: `wrap-output`,
     generateBundle(options, bundle, isWrite) {
       const bundles = Object.keys(bundle);
-      if (bundles.length !== 1)
-        throw new Error(`Expected only one bundle, got ${bundles.length}`);
+      if (bundles.length !== 1) throw new Error(`Expected only one bundle, got ${bundles.length}`);
 
       const outputBundle = bundle[bundles[0]];
 
@@ -53,8 +52,8 @@ export default defineConfig({
         crypto: `undefined`,
       },
     }),
-    cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
-    terser({ecma: 2019}),
+    cjs({ transformMixedEsModules: true, extensions: [`.js`, `.ts`] }),
+    terser({ ecma: 2019 }),
     wrapOutput(),
   ],
 });

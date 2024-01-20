@@ -1,9 +1,14 @@
-import {npmHttpUtils}      from '@yarnpkg/plugin-npm';
+import { npmHttpUtils } from "@yarnpkg/plugin-npm";
 
-import {makeConfiguration} from './_makeConfiguration';
+import { makeConfiguration } from "./_makeConfiguration";
 
 describe(`npmHttpUtils.get`, () => {
-  for (const registry of [`https://example.org`, `https://example.org/`, `https://example.org/foo`, `https://example.org/foo/`]) {
+  for (const registry of [
+    `https://example.org`,
+    `https://example.org/`,
+    `https://example.org/foo`,
+    `https://example.org/foo/`,
+  ]) {
     for (const path of [`/bar`]) {
       const expected = registry.replace(/\/+$/, ``) + path;
 
@@ -17,7 +22,7 @@ describe(`npmHttpUtils.get`, () => {
           async wrapNetworkRequest(executor, extra) {
             actualTarget = extra.target.toString();
 
-            return () => Promise.resolve({body: {}, headers: {}, statusCode: 200});
+            return () => Promise.resolve({ body: {}, headers: {}, statusCode: 200 });
           },
         });
 

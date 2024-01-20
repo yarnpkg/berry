@@ -38,7 +38,7 @@ body:
         });
         ```
     validations:
-        required: true
+      required: true
 
   - type: textarea
     attributes:
@@ -55,7 +55,7 @@ body:
           Yarn: 3.0.0-rc.5 - /path/to/yarn
           npm: 6.14.11 - /path/to/npm
     validations:
-        required: true
+      required: true
 
   - type: textarea
     attributes:

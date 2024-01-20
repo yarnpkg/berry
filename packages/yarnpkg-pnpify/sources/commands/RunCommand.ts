@@ -1,15 +1,12 @@
-import {execUtils}       from '@yarnpkg/core';
-import {npath}           from '@yarnpkg/fslib';
-import {Command, Option} from 'clipanion';
+import { execUtils } from "@yarnpkg/core";
+import { npath } from "@yarnpkg/fslib";
+import { Command, Option } from "clipanion";
 
-import {dynamicRequire}  from '../dynamicRequire';
+import { dynamicRequire } from "../dynamicRequire";
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends Command {
-  static paths = [
-    [`run`],
-    Command.Default,
-  ];
+  static paths = [[`run`], Command.Default];
 
   static usage = Command.Usage({
     description: `run a command with a virtual node_modules folder`,
@@ -20,10 +17,7 @@ export default class RunCommand extends Command {
 
       For more details on PnPify, please consult the dedicated page from our website: https://yarnpkg.com/advanced/pnpify.
     `,
-    examples: [[
-      `Run Angular using PnPify`,
-      `$0 ng build`,
-    ]],
+    examples: [[`Run Angular using PnPify`, `$0 ng build`]],
   });
 
   cwd = Option.String(`--cwd`, process.cwd(), {
@@ -34,15 +28,16 @@ export default class RunCommand extends Command {
   args = Option.Proxy();
 
   async execute() {
-    let {NODE_OPTIONS} = process.env;
-    NODE_OPTIONS = `${NODE_OPTIONS || ``} --require ${JSON.stringify(dynamicRequire.resolve(`@yarnpkg/pnpify`))}`.trim();
+    let { NODE_OPTIONS } = process.env;
+    NODE_OPTIONS =
+      `${NODE_OPTIONS || ``} --require ${JSON.stringify(dynamicRequire.resolve(`@yarnpkg/pnpify`))}`.trim();
 
-    const {code} = await execUtils.pipevp(this.commandName, this.args, {
+    const { code } = await execUtils.pipevp(this.commandName, this.args, {
       cwd: npath.toPortablePath(this.cwd),
       stderr: this.context.stderr,
       stdin: this.context.stdin,
       stdout: this.context.stdout,
-      env: {...process.env, NODE_OPTIONS},
+      env: { ...process.env, NODE_OPTIONS },
     });
 
     return code;

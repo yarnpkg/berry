@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {execSync} = require(`child_process`);
+const { execSync } = require(`child_process`);
 
 console.log(`Your global Yarn binary isn't recent enough; please upgrade to 1.17.2 or higher.`);
 
@@ -15,7 +15,6 @@ try {
   info = null;
 }
 
-if (info !== null)
-  console.log(info);
+if (info !== null) console.log(info);
 
 process.exitCode = 1;

@@ -1,11 +1,11 @@
-import cjs            from '@rollup/plugin-commonjs';
-import resolve        from '@rollup/plugin-node-resolve';
-import path           from 'path';
-import esbuild        from 'rollup-plugin-esbuild';
-import {defineConfig} from 'rollup';
-import semver         from 'semver';
+import cjs from "@rollup/plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import path from "path";
+import esbuild from "rollup-plugin-esbuild";
+import { defineConfig } from "rollup";
+import semver from "semver";
 
-import pkg            from './package.json';
+import pkg from "./package.json";
 
 const mode = process.env.NODE_ENV || `production`;
 
@@ -34,8 +34,8 @@ export default async () =>
           crypto: `undefined`,
         },
       }),
-      cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
-      mode === `production` && (await import(`rollup-plugin-terser`)).terser({ecma: 2019}),
+      cjs({ transformMixedEsModules: true, extensions: [`.js`, `.ts`] }),
+      mode === `production` && (await import(`rollup-plugin-terser`)).terser({ ecma: 2019 }),
     ],
     external: [`vscode`],
   });

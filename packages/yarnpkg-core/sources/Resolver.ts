@@ -1,7 +1,7 @@
-import {FetchOptions}                 from './Fetcher';
-import {Project}                      from './Project';
-import {Report}                       from './Report';
-import {Descriptor, Locator, Package} from './types';
+import { FetchOptions } from "./Fetcher";
+import { Project } from "./Project";
+import { Report } from "./Report";
+import { Descriptor, Locator, Package } from "./types";
 
 export type MinimalResolveOptions = {
   project: Project;
@@ -120,7 +120,11 @@ export interface Resolver {
    * @param dependencies The resolution dependencies and their resolutions.
    * @param opts The resolution options.
    */
-  getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions): Promise<Array<Locator>>;
+  getCandidates(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    opts: ResolveOptions,
+  ): Promise<Array<Locator>>;
 
   /**
    * This function will, given a descriptor and a list of locators,
@@ -146,7 +150,12 @@ export interface Resolver {
    * @param locators The candidate locators.
    * @param opts The resolution options.
    */
-  getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions): Promise<{
+  getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ): Promise<{
     locators: Array<Locator>;
     sorted: boolean;
   }>;

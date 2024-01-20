@@ -17,7 +17,7 @@
     "importHelpers": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
   },
   "exclude": [
     "packages/*/lib",
@@ -27,6 +27,6 @@
     "packages/gatsby",
     "packages/docusaurus",
     "packages/docusaurus/build",
-    "packages/yarnpkg-libzip/artifacts"
-  ]
+    "packages/yarnpkg-libzip/artifacts",
+  ],
 }

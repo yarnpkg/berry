@@ -1,18 +1,23 @@
-import {MessageName}              from './MessageName';
-import {Plugin}                   from './Plugin';
-import {Project}                  from './Project';
-import {Resolver, ResolveOptions} from './Resolver';
-import {Workspace}                from './Workspace';
-import * as structUtils           from './structUtils';
-import {Descriptor, Locator}      from './types';
+import { MessageName } from "./MessageName";
+import { Plugin } from "./Plugin";
+import { Project } from "./Project";
+import { Resolver, ResolveOptions } from "./Resolver";
+import { Workspace } from "./Workspace";
+import * as structUtils from "./structUtils";
+import { Descriptor, Locator } from "./types";
 
 export const CorePlugin: Plugin = {
   hooks: {
-    reduceDependency: (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
-      for (const {pattern, reference} of project.topLevelWorkspace.manifest.resolutions) {
+    reduceDependency: (
+      dependency: Descriptor,
+      project: Project,
+      locator: Locator,
+      initialDependency: Descriptor,
+      { resolver, resolveOptions }: { resolver: Resolver; resolveOptions: ResolveOptions },
+    ) => {
+      for (const { pattern, reference } of project.topLevelWorkspace.manifest.resolutions) {
         if (pattern.from) {
-          if (pattern.from.fullName !== structUtils.stringifyIdent(locator))
-            continue;
+          if (pattern.from.fullName !== structUtils.stringifyIdent(locator)) continue;
 
           const normalizedFrom = project.configuration.normalizeLocator(
             structUtils.makeLocator(
@@ -27,8 +32,7 @@ export const CorePlugin: Plugin = {
         }
 
         /* All `resolutions` field entries have a descriptor*/ {
-          if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
-            continue;
+          if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency)) continue;
 
           const normalizedDescriptor = project.configuration.normalizeDependency(
             structUtils.makeDescriptor(
@@ -54,28 +58,38 @@ export const CorePlugin: Plugin = {
       return dependency;
     },
 
-    validateProject: async (project: Project, report: {
-      reportWarning: (name: MessageName, text: string) => void;
-      reportError: (name: MessageName, text: string) => void;
-    }) => {
+    validateProject: async (
+      project: Project,
+      report: {
+        reportWarning: (name: MessageName, text: string) => void;
+        reportError: (name: MessageName, text: string) => void;
+      },
+    ) => {
       for (const workspace of project.workspaces) {
         const workspaceName = structUtils.prettyWorkspace(project.configuration, workspace);
 
-        await project.configuration.triggerHook(hooks => {
-          return hooks.validateWorkspace;
-        }, workspace, {
-          reportWarning: (name: MessageName, text: string) => report.reportWarning(name, `${workspaceName}: ${text}`),
-          reportError: (name: MessageName, text: string) => report.reportError(name, `${workspaceName}: ${text}`),
-        });
+        await project.configuration.triggerHook(
+          (hooks) => {
+            return hooks.validateWorkspace;
+          },
+          workspace,
+          {
+            reportWarning: (name: MessageName, text: string) => report.reportWarning(name, `${workspaceName}: ${text}`),
+            reportError: (name: MessageName, text: string) => report.reportError(name, `${workspaceName}: ${text}`),
+          },
+        );
       }
     },
 
-    validateWorkspace: async (workspace: Workspace, report: {
-      reportWarning: (name: MessageName, text: string) => void;
-      reportError: (name: MessageName, text: string) => void;
-    }) => {
+    validateWorkspace: async (
+      workspace: Workspace,
+      report: {
+        reportWarning: (name: MessageName, text: string) => void;
+        reportError: (name: MessageName, text: string) => void;
+      },
+    ) => {
       // Validate manifest
-      const {manifest} = workspace;
+      const { manifest } = workspace;
 
       if (manifest.resolutions.length && workspace.cwd !== workspace.project.cwd)
         manifest.errors.push(new Error(`Resolutions field will be ignored`));

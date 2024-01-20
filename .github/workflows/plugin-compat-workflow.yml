@@ -1,26 +1,26 @@
 on:
   push:
     branches:
-    - master
+      - master
     paths:
-    - 'packages/plugin-compat/**'
-    - '!packages/plugin-compat/sources/extensions.ts'
+      - "packages/plugin-compat/**"
+      - "!packages/plugin-compat/sources/extensions.ts"
   pull_request:
     paths:
-    - 'packages/plugin-compat/**'
-    - '!packages/plugin-compat/sources/extensions.ts'
+      - "packages/plugin-compat/**"
+      - "!packages/plugin-compat/sources/extensions.ts"
 
-name: 'plugin-compat'
+name: "plugin-compat"
 jobs:
   plugin-compat:
-    name: 'Testing plugin-compat'
+    name: "Testing plugin-compat"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Run the plugin-compat tests'
-      run: |
-        node ./scripts/run-yarn.js test:plugin-compat
+      - name: "Run the plugin-compat tests"
+        run: |
+          node ./scripts/run-yarn.js test:plugin-compat

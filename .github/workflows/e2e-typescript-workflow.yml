@@ -1,77 +1,77 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-typescript-workflow.yml
-    - packages/plugin-compat/sources/patches/typescript.patch.ts
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-typescript-workflow.yml
+      - packages/plugin-compat/sources/patches/typescript.patch.ts
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E TypeScript'
+name: "E2E TypeScript"
 jobs:
   chore:
-    name: 'Validating TypeScript'
+    name: "Validating TypeScript"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Checking some behaviors against the latest TypeScript'
-      run: |
-        yarn up typescript
-        yarn node ./scripts/test-typescript-patch.js
+      - name: "Checking some behaviors against the latest TypeScript"
+        run: |
+          yarn up typescript
+          yarn node ./scripts/test-typescript-patch.js
 
-    - name: 'Installing all versions of TS'
-      run: |
-        source scripts/e2e-setup-ci.sh
+      - name: "Installing all versions of TS"
+        run: |
+          source scripts/e2e-setup-ci.sh
 
-        yarn init -p
-        yarn add \
-          v35@npm:typescript@3.5 \
-          v36@npm:typescript@3.6 \
-          v37@npm:typescript@3.7 \
-          v38@npm:typescript@3.8 \
-          beta@npm:typescript@beta
+          yarn init -p
+          yarn add \
+            v35@npm:typescript@3.5 \
+            v36@npm:typescript@3.6 \
+            v37@npm:typescript@3.7 \
+            v38@npm:typescript@3.8 \
+            beta@npm:typescript@beta
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
 
-        yarn init -p
-        yarn add typescript
+          yarn init -p
+          yarn add typescript
 
-        yarn add ts-pnp left-pad @types/left-pad
+          yarn add ts-pnp left-pad @types/left-pad
 
-        echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true, "lib": ["es2015"]}}' > tsconfig.json
+          echo '{"compilerOptions": {"baseUrl": ".", "strict": true, "esModuleInterop": true, "lib": ["es2015"]}}' > tsconfig.json
 
-        echo "const foo: number = 42;" | tee file.ts
-        yarn tsc --noEmit
+          echo "const foo: number = 42;" | tee file.ts
+          yarn tsc --noEmit
 
-        echo "const foo: number = 'error';" | tee file.ts
-        ! yarn tsc --noEmit
+          echo "const foo: number = 'error';" | tee file.ts
+          ! yarn tsc --noEmit
 
-        echo "import {resolveModuleName} from 'ts-pnp'; const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
-        yarn tsc --noEmit
+          echo "import {resolveModuleName} from 'ts-pnp'; const foo: (...args: any[]) => any = resolveModuleName;" | tee file.ts
+          yarn tsc --noEmit
 
-        echo "import {resolveModuleName} from 'ts-pnp'; const foo: number = resolveModuleName;" | tee file.ts
-        ! yarn tsc --noEmit
+          echo "import {resolveModuleName} from 'ts-pnp'; const foo: number = resolveModuleName;" | tee file.ts
+          ! yarn tsc --noEmit
 
-        echo "import leftPad from 'left-pad'; const foo: string = leftPad('hello', 42, ' ');" | tee file.ts
-        yarn tsc --noEmit
+          echo "import leftPad from 'left-pad'; const foo: string = leftPad('hello', 42, ' ');" | tee file.ts
+          yarn tsc --noEmit
 
-        echo "import leftPad from 'left-pad'; const foo: number = leftPad('hello', 42, ' ');" | tee file.ts
-        ! yarn tsc --noEmit
+          echo "import leftPad from 'left-pad'; const foo: number = leftPad('hello', 42, ' ');" | tee file.ts
+          ! yarn tsc --noEmit
 
-        echo "process.exit(42);" | tee file.ts
-        ! yarn tsc --noEmit
+          echo "process.exit(42);" | tee file.ts
+          ! yarn tsc --noEmit
 
-        yarn add @types/node
+          yarn add @types/node
 
-        echo "process.exit(42);" | tee file.ts
-        yarn tsc --noEmit
+          echo "process.exit(42);" | tee file.ts
+          yarn tsc --noEmit

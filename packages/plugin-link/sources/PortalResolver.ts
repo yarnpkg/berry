@@ -1,22 +1,20 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {miscUtils, structUtils}                          from '@yarnpkg/core';
-import {npath}                                           from '@yarnpkg/fslib';
+import { Resolver, ResolveOptions, MinimalResolveOptions } from "@yarnpkg/core";
+import { Descriptor, Locator, Manifest, Package } from "@yarnpkg/core";
+import { LinkType } from "@yarnpkg/core";
+import { miscUtils, structUtils } from "@yarnpkg/core";
+import { npath } from "@yarnpkg/fslib";
 
-import {PORTAL_PROTOCOL}                                 from './constants';
+import { PORTAL_PROTOCOL } from "./constants";
 
 export class PortalResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(PORTAL_PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(PORTAL_PROTOCOL)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(PORTAL_PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(PORTAL_PROTOCOL)) return false;
 
     return true;
   }
@@ -41,11 +39,16 @@ export class PortalResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${PORTAL_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const [locator] = await this.getCandidates(descriptor, dependencies, opts);
 
     return {
-      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      locators: locators.filter((candidate) => candidate.locatorHash === locator.locatorHash),
       sorted: false,
     };
   }
@@ -57,7 +60,7 @@ export class PortalResolver implements Resolver {
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+      return await Manifest.find(packageFetch.prefixPath, { baseFs: packageFetch.packageFs });
     }, packageFetch.releaseFs);
 
     return {

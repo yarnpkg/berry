@@ -48,11 +48,11 @@ project
 
 Depending on your situation, multiple options are possible:
 
-* The author of `packageA` can fix this problem by adding a peer dependency on `packagePeer`. If relevant, they can use [optional peer dependencies](https://yarnpkg.com/configuration/manifest#peerDependenciesMeta.optional) to this effect.
+- The author of `packageA` can fix this problem by adding a peer dependency on `packagePeer`. If relevant, they can use [optional peer dependencies](https://yarnpkg.com/configuration/manifest#peerDependenciesMeta.optional) to this effect.
 
-* The author of `packageB` can fix this problem by marking the `packagePeer` peer dependency as optional - but only if the peer dependency is actually optional, of course!
+- The author of `packageB` can fix this problem by marking the `packagePeer` peer dependency as optional - but only if the peer dependency is actually optional, of course!
 
-* The author of `project` can fix this problem by manually overriding the `packageA` and/or `packageB` definitions via the [`packageExtensions` config option](/configuration/yarnrc#packageExtensions).
+- The author of `project` can fix this problem by manually overriding the `packageA` and/or `packageB` definitions via the [`packageExtensions` config option](/configuration/yarnrc#packageExtensions).
 
 To understand more about this issue, check out [this blog post](https://dev.to/arcanis/implicit-transitive-peer-dependencies-ed0).
 
@@ -90,11 +90,11 @@ Soft links are when the package manager doesn't own the package source. An examp
 
 There are a few workarounds:
 
-  - Using `file:` instead of `portal:` will cause a hard link to be used instead of a soft link. The other side of the coin will be that the packages will be copied into the cache as well, meaning that changing the package source will require you to run `YARN_UPDATE_FILE_CACHE=1 yarn install` for your changes to be taken into account.
+- Using `file:` instead of `portal:` will cause a hard link to be used instead of a soft link. The other side of the coin will be that the packages will be copied into the cache as well, meaning that changing the package source will require you to run `YARN_UPDATE_FILE_CACHE=1 yarn install` for your changes to be taken into account.
 
-  - You can manually run `yarn run postinstall` (or whatever is named your build script) from the directory of the affected packages. This requires you to know in which order they'll have to be called, but is generally the safest option.
+- You can manually run `yarn run postinstall` (or whatever is named your build script) from the directory of the affected packages. This requires you to know in which order they'll have to be called, but is generally the safest option.
 
-  - You can simply abstain from using build scripts with soft links. While this suggestion might seem like a bad case of "fix a problem by not encountering the problem", consider that build scripts in development might not be of the best effect from a developer experience perspective - they usually mean that you'll need to run a script before being able to see your changes, which is often not what you seek.
+- You can simply abstain from using build scripts with soft links. While this suggestion might seem like a bad case of "fix a problem by not encountering the problem", consider that build scripts in development might not be of the best effect from a developer experience perspective - they usually mean that you'll need to run a script before being able to see your changes, which is often not what you seek.
 
 ## YN0007 - `MUST_BUILD`
 
@@ -174,9 +174,9 @@ The checksum of a package from the cache doesn't match what the lockfile expects
 
 This situation usually happens after you've modified the zip archives from your cache by editing the files it contains for debug purposes. Use one of the three following commands in order to bypass it:
 
-  - `YARN_CHECKSUM_BEHAVIOR=reset` will remove the files from the cache and download them again
-  - `YARN_CHECKSUM_BEHAVIOR=update` will update the lockfile to contain the new checksum
-  - `YARN_CHECKSUM_BEHAVIOR=ignore` will use the existing files but won't update the lockfile
+- `YARN_CHECKSUM_BEHAVIOR=reset` will remove the files from the cache and download them again
+- `YARN_CHECKSUM_BEHAVIOR=update` will update the lockfile to contain the new checksum
+- `YARN_CHECKSUM_BEHAVIOR=ignore` will use the existing files but won't update the lockfile
 
 ## YN0019 - `UNUSED_CACHE_ENTRY`
 
@@ -274,7 +274,7 @@ This error is triggered when Git conflict tokens are found within the `yarn.lock
 
 ## YN0047 - `AUTOMERGE_IMMUTABLE`
 
-This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode  (`yarn install --immutable`).
+This error is triggered when Git conflict tokens are found within the `yarn.lock` file while Yarn is executing under the immutable mode (`yarn install --immutable`).
 
 When under this mode, Yarn isn't allowed to edit any file, not even for automatically resolving conflicts. This mode is typically used on CI to ensure that your projects are always in a correct state before being merged into the trunk.
 
@@ -294,7 +294,7 @@ The automerge logic is pretty simple: it will take the lockfile from the pulled 
 
 This error is triggered when passing options to a CLI command through its arguments (for example `--cache-folder`).
 
-Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using `--cache-folder` on all your commands or just the install). CLI options will now only be used to control the *one-time-behaviors* of a particular command (like `--verbose`).
+Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using `--cache-folder` on all your commands or just the install). CLI options will now only be used to control the _one-time-behaviors_ of a particular command (like `--verbose`).
 
 **Special note for Netlify users:** Netlify currently [automatically passes](https://github.com/netlify/build-image/blob/f9c7f9a87c10314e4d65b121d45d68dc976817a2/run-build-functions.sh#L109) the `--cache-folder` option to Yarn, and you cannot disable it. For this reason we decided to make it a warning rather than an error when we detect that Yarn is running on Netlify (we still ignore the flag). We suggest upvoting [the relevant issue](https://github.com/netlify/build-image/issues/319) on their repository, as we're likely to remove this special case in a future major release.
 

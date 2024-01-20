@@ -1,5 +1,5 @@
 .html {
-  --ifm-menu-link-padding-vertical: .6rem;
+  --ifm-menu-link-padding-vertical: 0.6rem;
 }
 
 .html [class~="menu__link--active"]:not(:hover) {
@@ -98,7 +98,7 @@
   border-top: var(--ifm-table-border-width) solid var(--ifm-table-border-color);
 }
 
-.reportTableContainer tr:nth-of-type(1) td:nth-of-type(-n+2) {
+.reportTableContainer tr:nth-of-type(1) td:nth-of-type(-n + 2) {
   border: none;
 }
 
@@ -122,7 +122,7 @@
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-.reportTableContainer tr:nth-of-type(n+2) {
+.reportTableContainer tr:nth-of-type(n + 2) {
   pointer-events: all;
 }
 

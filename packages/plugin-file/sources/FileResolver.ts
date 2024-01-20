@@ -1,28 +1,25 @@
-import {miscUtils, structUtils, hashUtils, Package}      from '@yarnpkg/core';
-import {LinkType}                                        from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                   from '@yarnpkg/core';
-import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
+import { miscUtils, structUtils, hashUtils, Package } from "@yarnpkg/core";
+import { LinkType } from "@yarnpkg/core";
+import { Descriptor, Locator, Manifest } from "@yarnpkg/core";
+import { Resolver, ResolveOptions, MinimalResolveOptions } from "@yarnpkg/core";
 
-import {FILE_REGEXP, PROTOCOL}                           from './constants';
-import * as fileUtils                                    from './fileUtils';
+import { FILE_REGEXP, PROTOCOL } from "./constants";
+import * as fileUtils from "./fileUtils";
 
 // We use this for the folders to be regenerated without bumping the whole cache
 const CACHE_VERSION = 2;
 
 export class FileResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (descriptor.range.match(FILE_REGEXP))
-      return true;
+    if (descriptor.range.match(FILE_REGEXP)) return true;
 
-    if (!descriptor.range.startsWith(PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(PROTOCOL)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(PROTOCOL)) return false;
 
     return true;
   }
@@ -48,12 +45,12 @@ export class FileResolver implements Resolver {
     if (!opts.fetchOptions)
       throw new Error(`Assertion failed: This resolver cannot be used unless a fetcher is configured`);
 
-    const {path, parentLocator} = fileUtils.parseSpec(descriptor.range);
-    if (parentLocator === null)
-      throw new Error(`Assertion failed: The descriptor should have been bound`);
+    const { path, parentLocator } = fileUtils.parseSpec(descriptor.range);
+    if (parentLocator === null) throw new Error(`Assertion failed: The descriptor should have been bound`);
 
     const archiveBuffer = await fileUtils.makeBufferFromLocator(
-      structUtils.makeLocator(descriptor,
+      structUtils.makeLocator(
+        descriptor,
         structUtils.makeRange({
           protocol: PROTOCOL,
           source: path,
@@ -63,19 +60,24 @@ export class FileResolver implements Resolver {
           },
         }),
       ),
-      {protocol: PROTOCOL, fetchOptions: opts.fetchOptions},
+      { protocol: PROTOCOL, fetchOptions: opts.fetchOptions },
     );
 
     const folderHash = hashUtils.makeHash(`${CACHE_VERSION}`, archiveBuffer).slice(0, 6);
 
-    return [fileUtils.makeLocator(descriptor, {parentLocator, path, hash: folderHash, protocol: PROTOCOL})];
+    return [fileUtils.makeLocator(descriptor, { parentLocator, path, hash: folderHash, protocol: PROTOCOL })];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const [locator] = await this.getCandidates(descriptor, dependencies, opts);
 
     return {
-      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      locators: locators.filter((candidate) => candidate.locatorHash === locator.locatorHash),
       sorted: false,
     };
   }
@@ -87,7 +89,7 @@ export class FileResolver implements Resolver {
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+      return await Manifest.find(packageFetch.prefixPath, { baseFs: packageFetch.packageFs });
     }, packageFetch.releaseFs);
 
     return {

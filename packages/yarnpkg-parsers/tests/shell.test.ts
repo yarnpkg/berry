@@ -1,4 +1,4 @@
-import {parseShell, stringifyShell} from '../sources';
+import { parseShell, stringifyShell } from "../sources";
 
 const VALID_COMMANDS = [
   `echo {`,
@@ -11,11 +11,7 @@ const VALID_COMMANDS = [
   `echo foo;`,
 
   // Redirections
-  ...[
-    `echo foo >& 1`,
-    `echo foo >&1`,
-    `echo foo 2> bar`,
-  ],
+  ...[`echo foo >& 1`, `echo foo >&1`, `echo foo 2> bar`],
 
   // Groups
   ...[
@@ -69,7 +65,6 @@ const INVALID_COMMANDS = [
   `& echo foo`,
 ];
 
-
 const DOUBLE_QUOTE_STRING_ESCAPE_TESTS: Array<[string, string]> = [
   [`\\\n`, ``],
   [`\\\\`, `\\`],
@@ -108,31 +103,35 @@ describe(`Shell parser`, () => {
   describe(`Redirections`, () => {
     describe(`fd`, () => {
       it(`shouldn't parse fds that aren't single digits as part of the redirection`, () => {
-        expect(parseShell(`echo 10> /dev/null`)).toStrictEqual([expect.objectContaining({
-          command: expect.objectContaining({
-            chain: expect.objectContaining({
-              args: [
-                expect.anything(),
-                {type: `argument`, segments: [{type: `text`, text: `10`}]},
-                expect.objectContaining({fd: null}),
-              ],
+        expect(parseShell(`echo 10> /dev/null`)).toStrictEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              chain: expect.objectContaining({
+                args: [
+                  expect.anything(),
+                  { type: `argument`, segments: [{ type: `text`, text: `10` }] },
+                  expect.objectContaining({ fd: null }),
+                ],
+              }),
             }),
           }),
-        })]);
+        ]);
       });
 
       it(`shouldn't parse fds that aren't directly next to the redirection as part of the redirection`, () => {
-        expect(parseShell(`echo 1 > /dev/null`)).toStrictEqual([expect.objectContaining({
-          command: expect.objectContaining({
-            chain: expect.objectContaining({
-              args: [
-                expect.anything(),
-                {type: `argument`, segments: [{type: `text`, text: `1`}]},
-                expect.objectContaining({fd: null}),
-              ],
+        expect(parseShell(`echo 1 > /dev/null`)).toStrictEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              chain: expect.objectContaining({
+                args: [
+                  expect.anything(),
+                  { type: `argument`, segments: [{ type: `text`, text: `1` }] },
+                  expect.objectContaining({ fd: null }),
+                ],
+              }),
             }),
           }),
-        })]);
+        ]);
       });
     });
   });
@@ -140,31 +139,29 @@ describe(`Shell parser`, () => {
   describe(`Strings`, () => {
     it(`should parse double quoted strings correctly`, () => {
       for (const [original, raw] of DOUBLE_QUOTE_STRING_ESCAPE_TESTS) {
-        expect(parseShell(`echo "${original}"`)).toStrictEqual([expect.objectContaining({
-          command: expect.objectContaining({
-            chain: expect.objectContaining({
-              args: [
-                expect.anything(),
-                {type: `argument`, segments: [{type: `text`, text: raw}]},
-              ],
+        expect(parseShell(`echo "${original}"`)).toStrictEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              chain: expect.objectContaining({
+                args: [expect.anything(), { type: `argument`, segments: [{ type: `text`, text: raw }] }],
+              }),
             }),
           }),
-        })]);
+        ]);
       }
     });
 
     it(`should parse ANSI-C strings correctly`, () => {
       for (const [original, raw] of ANSI_C_STRING_ESCAPE_TESTS) {
-        expect(parseShell(`echo $'${original}'`)).toStrictEqual([expect.objectContaining({
-          command: expect.objectContaining({
-            chain: expect.objectContaining({
-              args: [
-                expect.anything(),
-                {type: `argument`, segments: [{type: `text`, text: raw}]},
-              ],
+        expect(parseShell(`echo $'${original}'`)).toStrictEqual([
+          expect.objectContaining({
+            command: expect.objectContaining({
+              chain: expect.objectContaining({
+                args: [expect.anything(), { type: `argument`, segments: [{ type: `text`, text: raw }] }],
+              }),
             }),
           }),
-        })]);
+        ]);
       }
     });
   });

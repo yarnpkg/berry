@@ -1,10 +1,12 @@
-import os                                     from 'os';
+import os from "os";
 
-import {NodeFS}                               from './NodeFS';
-import {Filename, PortablePath, npath, ppath} from './path';
+import { NodeFS } from "./NodeFS";
+import { Filename, PortablePath, npath, ppath } from "./path";
 
 function getTempName(prefix: string) {
-  const hash = Math.ceil(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
+  const hash = Math.ceil(Math.random() * 0x100000000)
+    .toString(16)
+    .padStart(8, `0`);
 
   return `${prefix}${hash}` as Filename;
 }
@@ -37,8 +39,7 @@ let tmpEnv: {
 } | null = null;
 
 function initTmpEnv() {
-  if (tmpEnv)
-    return tmpEnv;
+  if (tmpEnv) return tmpEnv;
 
   const tmpdir = npath.toPortablePath(os.tmpdir());
   const realTmpdir = xfs.realpathSync(tmpdir);
@@ -47,10 +48,10 @@ function initTmpEnv() {
     xfs.rmtempSync();
   });
 
-  return tmpEnv = {
+  return (tmpEnv = {
     tmpdir,
     realTmpdir,
-  };
+  });
 }
 
 export const xfs: XFS = Object.assign(new NodeFS(), {
@@ -59,7 +60,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   mktempSync<T>(this: XFS, cb?: (p: PortablePath) => T) {
-    const {tmpdir, realTmpdir} = initTmpEnv();
+    const { tmpdir, realTmpdir } = initTmpEnv();
 
     while (true) {
       const name = getTempName(`xfs-`);
@@ -77,8 +78,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       const realP = ppath.join(realTmpdir, name);
       tmpdirs.add(realP);
 
-      if (typeof cb === `undefined`)
-        return realP;
+      if (typeof cb === `undefined`) return realP;
 
       try {
         return cb(realP);
@@ -96,7 +96,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   async mktempPromise<T>(this: XFS, cb?: (p: PortablePath) => Promise<T>) {
-    const {tmpdir, realTmpdir} = initTmpEnv();
+    const { tmpdir, realTmpdir } = initTmpEnv();
 
     while (true) {
       const name = getTempName(`xfs-`);
@@ -114,8 +114,7 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
       const realP = ppath.join(realTmpdir, name);
       tmpdirs.add(realP);
 
-      if (typeof cb === `undefined`)
-        return realP;
+      if (typeof cb === `undefined`) return realP;
 
       try {
         return await cb(realP);
@@ -133,14 +132,16 @@ export const xfs: XFS = Object.assign(new NodeFS(), {
   },
 
   async rmtempPromise() {
-    await Promise.all(Array.from(tmpdirs.values()).map(async p => {
-      try {
-        await xfs.removePromise(p, {maxRetries: 0});
-        tmpdirs.delete(p);
-      } catch {
-        // Too bad if there's an error
-      }
-    }));
+    await Promise.all(
+      Array.from(tmpdirs.values()).map(async (p) => {
+        try {
+          await xfs.removePromise(p, { maxRetries: 0 });
+          tmpdirs.delete(p);
+        } catch {
+          // Too bad if there's an error
+        }
+      }),
+    );
   },
 
   rmtempSync() {

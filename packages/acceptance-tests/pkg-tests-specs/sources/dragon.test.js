@@ -1,7 +1,7 @@
-import {xfs, npath, ppath} from '@yarnpkg/fslib';
+import { xfs, npath, ppath } from "@yarnpkg/fslib";
 
 const {
-  fs: {writeFile, writeJson},
+  fs: { writeFile, writeJson },
 } = require(`pkg-tests-core`);
 
 // Here be dragons. The biggest and baddest tests, that just can't be described in a single line of summary. Because
@@ -20,7 +20,7 @@ describe(`Dragon tests`, () => {
           [`dragon-test-1-e`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // This test assumes the following:
         //
         // . -> D@1.0.0 -> C@1.0.0 -> B@1.0.0 -> A@1.0.0
@@ -66,7 +66,7 @@ describe(`Dragon tests`, () => {
           [`dragon-test-2-a`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // This test assumes the following:
         //
         // . -> A@workspace -> B@workspace -> no-deps@* (peer dep)
@@ -125,7 +125,7 @@ describe(`Dragon tests`, () => {
           [`dragon-test-3-a`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // This test assumes the following:
         //
         // . -> A -> B -> A@* (peer dep)
@@ -147,11 +147,9 @@ describe(`Dragon tests`, () => {
     makeTemporaryEnv(
       {
         private: true,
-        workspaces: [
-          `my-workspace`,
-        ],
+        workspaces: [`my-workspace`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // This test assume that we have a workspace that has a dependency listed in both its
         // peer dependencies and its dev dependencies, and that it itself has a peer
         // depencency. In those circumstances, we've had issues where the peer dependency
@@ -172,9 +170,11 @@ describe(`Dragon tests`, () => {
 
         await run(`install`);
 
-        await expect(source(`require('peer-deps')`, {
-          cwd: `${path}/my-workspace`,
-        })).resolves.toMatchObject({
+        await expect(
+          source(`require('peer-deps')`, {
+            cwd: `${path}/my-workspace`,
+          }),
+        ).resolves.toMatchObject({
           name: `peer-deps`,
           version: `1.0.0`,
           peerDependencies: {
@@ -193,11 +193,9 @@ describe(`Dragon tests`, () => {
     makeTemporaryEnv(
       {
         private: true,
-        workspaces: [
-          `packages/*`,
-        ],
+        workspaces: [`packages/*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // This test is related to the way Yarn is resolving peer dependencies
         // into virtual packages (check our documentation for more details). In
         // short, we create copies of packages when they have peer dependencies,
@@ -269,11 +267,9 @@ describe(`Dragon tests`, () => {
     makeTemporaryEnv(
       {
         private: true,
-        workspaces: [
-          `packages/*`,
-        ],
+        workspaces: [`packages/*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // Virtual packages are deduplicated, so that if multiple ones share
         // the same set of dependencies they end up being unified into one.
         // In order to do this, we track which package depends on which one
@@ -351,7 +347,8 @@ describe(`Dragon tests`, () => {
     ),
   );
 
-  test(`it should pass the dragon test 7`,
+  test(
+    `it should pass the dragon test 7`,
     makeTemporaryEnv(
       {
         private: true,
@@ -362,7 +359,7 @@ describe(`Dragon tests`, () => {
           [`dragon-test-7-c`]: `3.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // node-modules linker should support hoisting the same package in different places of the tree in different ways
         //
         // . -> A -> B@X -> C@X
@@ -379,24 +376,36 @@ describe(`Dragon tests`, () => {
         //   -> C@Z
         //
         // Two B@X instances should be hoisted differently in the tree
-        await writeFile(npath.toPortablePath(`${path}/.yarnrc.yml`), `
+        await writeFile(
+          npath.toPortablePath(`${path}/.yarnrc.yml`),
+          `
           nodeLinker: "node-modules"
-        `);
+        `,
+        );
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
         // All fixtures export/reexport `dragon-test-7-c` version, we expect that version 1.0.0 will be used by both `dragon-test-7-b` instances
-        await expect(source(`require('dragon-test-7-a') + ':' + require('dragon-test-7-d')`)).resolves.toEqual(`1.0.0:1.0.0`);
+        await expect(source(`require('dragon-test-7-a') + ':' + require('dragon-test-7-d')`)).resolves.toEqual(
+          `1.0.0:1.0.0`,
+        );
 
         // C@X should not be hoisted from . -> A -> B@X
-        await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`)).resolves.toBeTruthy();
+        await expect(
+          xfs.existsPromise(
+            `${path}/node_modules/dragon-test-7-a/node_modules/dragon-test-7-b/node_modules/dragon-test-7-c`,
+          ),
+        ).resolves.toBeTruthy();
         // C@X should be hoisted from . -> D -> B@X
-        await expect(xfs.existsPromise(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`)).resolves.toBeFalsy();
+        await expect(
+          xfs.existsPromise(`${path}/node_modules/dragon-test-7-d/node_modules/dragon-test-7-b/node_modules`),
+        ).resolves.toBeFalsy();
       },
     ),
   );
 
-  test(`it should pass the dragon test 8`,
+  test(
+    `it should pass the dragon test 8`,
     makeTemporaryEnv(
       {
         private: true,
@@ -407,7 +416,7 @@ describe(`Dragon tests`, () => {
           [`dragon-test-8-d`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // We want to deduplicate all the virtual instances as long as their
         // effective dependencies are the same. However, in order to do that,
         // we need to run the deduping recursively since deduping one package
@@ -440,12 +449,15 @@ describe(`Dragon tests`, () => {
 
         await expect(run(`install`)).resolves.toBeTruthy();
 
-        await expect(source(`require('dragon-test-8-a').dependencies['dragon-test-8-b'] === require('dragon-test-8-b')`)).resolves.toEqual(true);
+        await expect(
+          source(`require('dragon-test-8-a').dependencies['dragon-test-8-b'] === require('dragon-test-8-b')`),
+        ).resolves.toEqual(true);
       },
     ),
   );
 
-  test(`it should pass the dragon test 9`,
+  test(
+    `it should pass the dragon test 9`,
     makeTemporaryEnv(
       {
         private: true,
@@ -455,7 +467,7 @@ describe(`Dragon tests`, () => {
           [`no-deps`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // We don't want to dedupe virtual descriptors with different
         // base idents being resolved to the same virtual package.
         // We should instead preserve the different descriptors and
@@ -489,15 +501,14 @@ describe(`Dragon tests`, () => {
     ),
   );
 
-  test(`it should pass the dragon test 10`,
+  test(
+    `it should pass the dragon test 10`,
     makeTemporaryEnv(
       {
         private: true,
-        workspaces: [
-          `packages/*`,
-        ],
+        workspaces: [`packages/*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // We've hit an interesting pattern - while the parameters aren't
         // entirely understood, the gist is that because workspaces have
         // multiple 'perspectives' (depending on whether they are accessed
@@ -542,7 +553,11 @@ describe(`Dragon tests`, () => {
 
         // The virtual descriptors should be different but the virtual package should be the same
         const cPath = npath.fromPortablePath(ppath.join(path, `packages/c/package.json`));
-        await expect(source(`(createRequire = require('module').createRequire, createRequire(createRequire(${JSON.stringify(cPath)}).resolve('b/package.json')).resolve('c/package.json'))`)).resolves.toEqual(cPath);
+        await expect(
+          source(
+            `(createRequire = require('module').createRequire, createRequire(createRequire(${JSON.stringify(cPath)}).resolve('b/package.json')).resolve('c/package.json'))`,
+          ),
+        ).resolves.toEqual(cPath);
       },
     ),
   );
@@ -551,7 +566,8 @@ describe(`Dragon tests`, () => {
     [`pnp`, true],
     [`pnpm`, true],
   ]) {
-    test(`it should pass the dragon test 11 with "nodeLinker: ${nodeLinker}"`,
+    test(
+      `it should pass the dragon test 11 with "nodeLinker: ${nodeLinker}"`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -561,7 +577,7 @@ describe(`Dragon tests`, () => {
         {
           nodeLinker,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           //
           // . -> aliased (dragon-test-11-a) -> dragon-test-11-b --> dragon-test-11-a
           //                                 --> does-not-matter
@@ -583,7 +599,8 @@ describe(`Dragon tests`, () => {
           // The node-modules linker can't fullfil these requirements for aliased packages,
           // without resorting to symlinks and a layout resembling pnpm for aliased dependencies,
           // which will be too different from the classic node_modules layout for all the other dependencies.
-          await expect(source(`
+          await expect(
+            source(`
             (() => {
               const {createRequire} = require(\`module\`);
 
@@ -595,7 +612,8 @@ describe(`Dragon tests`, () => {
 
               return rootInstance === dragonTest11BInstance;
             })()
-        `)).resolves.toEqual(shouldHaveAccessToTheSameInstance);
+        `),
+          ).resolves.toEqual(shouldHaveAccessToTheSameInstance);
         },
       ),
     );
@@ -605,12 +623,9 @@ describe(`Dragon tests`, () => {
     `it should pass the dragon test 12`,
     makeTemporaryEnv(
       {
-        workspaces: [
-          `pkg-a`,
-          `pkg-b`,
-        ],
+        workspaces: [`pkg-a`, `pkg-b`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         // This dragon test represents the following scenario:
         //
         // .

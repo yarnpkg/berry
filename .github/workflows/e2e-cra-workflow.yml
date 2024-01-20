@@ -1,50 +1,50 @@
 #
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-cra-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-cra-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E CRA'
+name: "E2E CRA"
 jobs:
   chore:
-    name: 'Validating Create-React-App'
+    name: "Validating Create-React-App"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
-        yarn dlx create-react-app my-cra && cd my-cra
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
+          yarn dlx create-react-app my-cra && cd my-cra
 
-        # TODO: Remove when create-react-app fixes their ESLint setup
-        yarn add -D eslint-config-react-app eslint
+          # TODO: Remove when create-react-app fixes their ESLint setup
+          yarn add -D eslint-config-react-app eslint
 
-        yarn build
-        yarn test
+          yarn build
+          yarn test
 
-    - name: 'Running the TypeScript integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
-        yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
+      - name: "Running the TypeScript integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
+          yarn dlx create-react-app my-cra-ts --template typescript && cd my-cra-ts
 
-        # TODO: Remove when create-react-app fixes their ESLint setup
-        yarn add -D eslint-config-react-app eslint
+          # TODO: Remove when create-react-app fixes their ESLint setup
+          yarn add -D eslint-config-react-app eslint
 
-        # TODO: Remove when https://github.com/facebook/create-react-app/pull/11751 is released
-        yarn add -D @types/testing-library__jest-dom@5
+          # TODO: Remove when https://github.com/facebook/create-react-app/pull/11751 is released
+          yarn add -D @types/testing-library__jest-dom@5
 
-        yarn build
-        yarn test
-      if: |
-        success() || failure()
+          yarn build
+          yarn test
+        if: |
+          success() || failure()

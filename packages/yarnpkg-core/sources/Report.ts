@@ -1,9 +1,9 @@
-import throttle               from 'lodash/throttle';
-import {PassThrough}          from 'stream';
-import {StringDecoder}        from 'string_decoder';
+import throttle from "lodash/throttle";
+import { PassThrough } from "stream";
+import { StringDecoder } from "string_decoder";
 
-import {MessageName}          from './MessageName';
-import {Locator, LocatorHash} from './types';
+import { MessageName } from "./MessageName";
+import { Locator, LocatorHash } from "./types";
 
 const TITLE_PROGRESS_FPS = 15;
 
@@ -11,7 +11,11 @@ export class ReportError extends Error {
   public reportCode: MessageName;
   public originalError?: Error;
 
-  constructor(code: MessageName, message: string, public reportExtra?: (report: Report) => void) {
+  constructor(
+    code: MessageName,
+    message: string,
+    public reportExtra?: (report: Report) => void,
+  ) {
     super(message);
 
     this.reportCode = code;
@@ -38,7 +42,7 @@ export type SectionOptions = {
   skipIfEmpty?: boolean;
 };
 
-export type TimerOptions = Pick<SectionOptions, 'skipIfEmpty'>;
+export type TimerOptions = Pick<SectionOptions, "skipIfEmpty">;
 
 export abstract class Report {
   cacheHits = new Set<LocatorHash>();
@@ -73,7 +77,7 @@ export abstract class Report {
   abstract reportInfo(name: MessageName | null, text: string): void;
   abstract reportWarning(name: MessageName, text: string): void;
   abstract reportError(name: MessageName, text: string): void;
-  abstract reportProgress(progress: AsyncIterable<ProgressDefinition>): Promise<void> & {stop: () => void};
+  abstract reportProgress(progress: AsyncIterable<ProgressDefinition>): Promise<void> & { stop: () => void };
   abstract reportJson(data: any): void;
   abstract reportFold(title: string, text: string): void;
 
@@ -83,14 +87,14 @@ export abstract class Report {
     let current = 0;
 
     let unlock: () => void;
-    let lock = new Promise<void>(resolve => {
+    let lock = new Promise<void>((resolve) => {
       unlock = resolve;
     });
 
     const set = (n: number) => {
       const thisUnlock = unlock;
 
-      lock = new Promise<void>(resolve => {
+      lock = new Promise<void>((resolve) => {
         unlock = resolve;
       });
 
@@ -102,7 +106,7 @@ export abstract class Report {
       set(current + 1);
     };
 
-    const gen = (async function * () {
+    const gen = (async function* () {
       while (current < max) {
         await lock;
         yield {
@@ -126,14 +130,14 @@ export abstract class Report {
     let currentTitle: string | undefined;
 
     let unlock: () => void;
-    let lock = new Promise<void>(resolve => {
+    let lock = new Promise<void>((resolve) => {
       unlock = resolve;
     });
 
     const setTitle: (title: string) => void = throttle((title: string) => {
       const thisUnlock = unlock;
 
-      lock = new Promise<void>(resolve => {
+      lock = new Promise<void>((resolve) => {
         unlock = resolve;
       });
 
@@ -141,7 +145,7 @@ export abstract class Report {
       thisUnlock();
     }, 1000 / TITLE_PROGRESS_FPS);
 
-    const gen = (async function * () {
+    const gen = (async function* () {
       while (true) {
         await lock;
         yield {
@@ -160,7 +164,10 @@ export abstract class Report {
     };
   }
 
-  async startProgressPromise<T, P extends ProgressIterable>(progressIt: P, cb: (progressIt: P) => Promise<T>): Promise<T> {
+  async startProgressPromise<T, P extends ProgressIterable>(
+    progressIt: P,
+    cb: (progressIt: P) => Promise<T>,
+  ): Promise<T> {
     const reportedProgress = this.reportProgress(progressIt);
 
     try {
@@ -180,7 +187,7 @@ export abstract class Report {
     }
   }
 
-  reportInfoOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {
+  reportInfoOnce(name: MessageName, text: string, opts?: { key?: any; reportExtra?: (report: Report) => void }) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedInfos.has(key)) {
@@ -191,7 +198,7 @@ export abstract class Report {
     }
   }
 
-  reportWarningOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {
+  reportWarningOnce(name: MessageName, text: string, opts?: { key?: any; reportExtra?: (report: Report) => void }) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedWarnings.has(key)) {
@@ -202,7 +209,7 @@ export abstract class Report {
     }
   }
 
-  reportErrorOnce(name: MessageName, text: string, opts?: {key?: any, reportExtra?: (report: Report) => void}) {
+  reportErrorOnce(name: MessageName, text: string, opts?: { key?: any; reportExtra?: (report: Report) => void }) {
     const key = opts && opts.key ? opts.key : text;
 
     if (!this.reportedErrors.has(key)) {
@@ -215,9 +222,9 @@ export abstract class Report {
 
   reportExceptionOnce(error: Error | ReportError) {
     if (isReportError(error)) {
-      this.reportErrorOnce(error.reportCode, error.message, {key: error, reportExtra: error.reportExtra});
+      this.reportErrorOnce(error.reportCode, error.message, { key: error, reportExtra: error.reportExtra });
     } else {
-      this.reportErrorOnce(MessageName.EXCEPTION, error.stack || error.message, {key: error});
+      this.reportErrorOnce(MessageName.EXCEPTION, error.stack || error.message, { key: error });
     }
   }
 
@@ -227,7 +234,7 @@ export abstract class Report {
 
     let buffer = ``;
 
-    stream.on(`data`, chunk => {
+    stream.on(`data`, (chunk) => {
       let chunkStr = decoder.write(chunk);
       let lineIndex;
 

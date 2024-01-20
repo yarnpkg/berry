@@ -1,11 +1,10 @@
-import {LocatorHash, Manifest, miscUtils, nodeUtils, Project, structUtils, Workspace} from '@yarnpkg/core';
-import {Yarn}                                                                         from '@yarnpkg/types';
+import { LocatorHash, Manifest, miscUtils, nodeUtils, Project, structUtils, Workspace } from "@yarnpkg/core";
+import { Yarn } from "@yarnpkg/types";
 
-import * as constraintUtils                                                           from './constraintUtils';
+import * as constraintUtils from "./constraintUtils";
 
 export class ModernEngine implements constraintUtils.Engine {
-  constructor(private project: Project) {
-  }
+  constructor(private project: Project) {}
 
   private createEnvironment() {
     const workspaceIndex = new constraintUtils.Index<Yarn.Constraints.Workspace>([`cwd`, `ident`]);
@@ -21,7 +20,7 @@ export class ModernEngine implements constraintUtils.Engine {
     const workspaceItems = new Map<Workspace, Yarn.Constraints.Workspace>();
 
     for (const pkg of this.project.storedPackages.values()) {
-      const peerDependencies = Array.from(pkg.peerDependencies.values(), descriptor => {
+      const peerDependencies = Array.from(pkg.peerDependencies.values(), (descriptor) => {
         return [structUtils.stringifyIdent(descriptor), descriptor.range] as const;
       });
 
@@ -30,25 +29,30 @@ export class ModernEngine implements constraintUtils.Engine {
         ident: structUtils.stringifyIdent(pkg),
         version: pkg.version,
         dependencies: new Map(),
-        peerDependencies: new Map(peerDependencies.filter(([ident]) => pkg.peerDependenciesMeta.get(ident)?.optional !== true)),
-        optionalPeerDependencies: new Map(peerDependencies.filter(([ident]) => pkg.peerDependenciesMeta.get(ident)?.optional === true)),
+        peerDependencies: new Map(
+          peerDependencies.filter(([ident]) => pkg.peerDependenciesMeta.get(ident)?.optional !== true),
+        ),
+        optionalPeerDependencies: new Map(
+          peerDependencies.filter(([ident]) => pkg.peerDependenciesMeta.get(ident)?.optional === true),
+        ),
       });
     }
 
     for (const pkg of this.project.storedPackages.values()) {
       const packageItem = packageItems.get(pkg.locatorHash)!;
 
-      packageItem.dependencies = new Map(Array.from(pkg.dependencies.values(), descriptor => {
-        const resolution = this.project.storedResolutions.get(descriptor.descriptorHash);
-        if (typeof resolution === `undefined`)
-          throw new Error(`Assertion failed: The resolution should have been registered`);
+      packageItem.dependencies = new Map(
+        Array.from(pkg.dependencies.values(), (descriptor) => {
+          const resolution = this.project.storedResolutions.get(descriptor.descriptorHash);
+          if (typeof resolution === `undefined`)
+            throw new Error(`Assertion failed: The resolution should have been registered`);
 
-        const pkg = packageItems.get(resolution);
-        if (typeof pkg === `undefined`)
-          throw new Error(`Assertion failed: The package should have been registered`);
+          const pkg = packageItems.get(resolution);
+          if (typeof pkg === `undefined`) throw new Error(`Assertion failed: The package should have been registered`);
 
-        return [structUtils.stringifyIdent(descriptor), pkg] as const;
-      }));
+          return [structUtils.stringifyIdent(descriptor), pkg] as const;
+        }),
+      );
 
       packageItem.dependencies.delete(packageItem.ident);
     }
@@ -58,10 +62,13 @@ export class ModernEngine implements constraintUtils.Engine {
       const manifest = workspace.manifest.exportTo({});
 
       const pkg = packageItems.get(workspace.anchoredLocator.locatorHash);
-      if (typeof pkg === `undefined`)
-        throw new Error(`Assertion failed: The package should have been registered`);
+      if (typeof pkg === `undefined`) throw new Error(`Assertion failed: The package should have been registered`);
 
-      const setFn = (path: Array<string> | string, value: any, {caller = nodeUtils.getCaller()}: {caller?: nodeUtils.Caller | null} = {}) => {
+      const setFn = (
+        path: Array<string> | string,
+        value: any,
+        { caller = nodeUtils.getCaller() }: { caller?: nodeUtils.Caller | null } = {},
+      ) => {
         const normalizedPath = constraintUtils.normalizePath(path);
 
         const workspaceUpdates = miscUtils.getMapWithDefault(result.manifestUpdates, workspace.cwd);
@@ -75,7 +82,7 @@ export class ModernEngine implements constraintUtils.Engine {
       };
 
       const unsetFn = (path: Array<string> | string) => {
-        return setFn(path, undefined, {caller: nodeUtils.getCaller()});
+        return setFn(path, undefined, { caller: nodeUtils.getCaller() });
       };
 
       const errorFn = (message: string) => {
@@ -99,11 +106,11 @@ export class ModernEngine implements constraintUtils.Engine {
           const ident = structUtils.stringifyIdent(descriptor);
 
           const deleteFn = () => {
-            setFn([dependencyType, ident], undefined, {caller: nodeUtils.getCaller()});
+            setFn([dependencyType, ident], undefined, { caller: nodeUtils.getCaller() });
           };
 
           const updateFn = (range: string) => {
-            setFn([dependencyType, ident], range, {caller: nodeUtils.getCaller()});
+            setFn([dependencyType, ident], range, { caller: nodeUtils.getCaller() });
           };
 
           let resolutionItem: Yarn.Constraints.Package | null = null;
@@ -147,8 +154,7 @@ export class ModernEngine implements constraintUtils.Engine {
 
     for (const pkg of this.project.storedPackages.values()) {
       const workspace = this.project.tryWorkspaceByLocator(pkg);
-      if (!workspace)
-        continue;
+      if (!workspace) continue;
 
       const workspaceItem = workspaceItems.get(workspace);
       if (typeof workspaceItem === `undefined`)
@@ -177,29 +183,28 @@ export class ModernEngine implements constraintUtils.Engine {
         workspace: ((filter?: Yarn.Constraints.WorkspaceFilter) => {
           return env.workspaces.find(filter)[0] ?? null;
         }) as any,
-        workspaces: filter => {
+        workspaces: (filter) => {
           return env.workspaces.find(filter);
         },
 
         dependency: ((filter?: Yarn.Constraints.DependencyFilter) => {
           return env.dependencies.find(filter)[0] ?? null;
         }) as any,
-        dependencies: filter => {
+        dependencies: (filter) => {
           return env.dependencies.find(filter);
         },
 
         package: ((filter?: Yarn.Constraints.PackageFilter) => {
           return env.packages.find(filter)[0] ?? null;
         }) as any,
-        packages: filter => {
+        packages: (filter) => {
           return env.packages.find(filter);
         },
       },
     };
 
     const userConfig = await this.project.loadUserConfig();
-    if (!userConfig?.constraints)
-      return null;
+    if (!userConfig?.constraints) return null;
 
     await userConfig.constraints(context);
 

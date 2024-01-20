@@ -1,6 +1,6 @@
-import {PortablePath}                       from '@yarnpkg/fslib';
+import { PortablePath } from "@yarnpkg/fslib";
 
-import {DependencyMeta, PeerDependencyMeta} from './Manifest';
+import { DependencyMeta, PeerDependencyMeta } from "./Manifest";
 
 /**
  * Unique hash of a package descriptor. Used as key in various places so that
@@ -188,9 +188,9 @@ export enum PackageExtensionStatus {
 }
 
 export type PackageExtension = (
-  | {type: PackageExtensionType.Dependency, descriptor: Descriptor}
-  | {type: PackageExtensionType.PeerDependency, descriptor: Descriptor}
-  | {type: PackageExtensionType.PeerDependencyMeta, selector: string, key: keyof PeerDependencyMeta, value: any}
+  | { type: PackageExtensionType.Dependency; descriptor: Descriptor }
+  | { type: PackageExtensionType.PeerDependency; descriptor: Descriptor }
+  | { type: PackageExtensionType.PeerDependencyMeta; selector: string; key: keyof PeerDependencyMeta; value: any }
 ) & {
   status: PackageExtensionStatus;
   userProvided: boolean;

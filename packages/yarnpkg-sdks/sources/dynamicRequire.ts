@@ -1,4 +1,4 @@
-import {npath, PortablePath} from '@yarnpkg/fslib';
+import { npath, PortablePath } from "@yarnpkg/fslib";
 
 // This file is copied from miscUtils.ts - make sure your changes are synced there
 
