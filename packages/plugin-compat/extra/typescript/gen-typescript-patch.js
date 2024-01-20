@@ -465,6 +465,7 @@ async function main() {
 
   const jsPatchFile = path.join(__dirname, `../../sources/patches/typescript.patch.ts`);
   await execFile(`node`, [path.join(__dirname, `../createPatch.js`), aggregatePatchFile, jsPatchFile]);
+  await execFile(`yarn`, [`run`, `-T`, `prettier`, `--write`, jsPatchFile]);
 
   // Remove old patches
   const patchFilesSet = new Set(patches.map(patch => patch.patchFile));

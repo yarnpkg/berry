@@ -23,3 +23,6 @@ git diff --no-index "$TEMP_DIR"/orig/package "$TEMP_DIR"/patched/package \
   > "$TEMP_DIR"/patch.tmp
 
 node "$THIS_DIR/../createPatch.js" "$TEMP_DIR"/patch.tmp "$THIS_DIR"/../../sources/patches/resolve.patch.ts
+
+cd "$THIS_DIR"
+yarn run -T prettier --write "$THIS_DIR"/../../sources/patches/resolve.patch.ts
