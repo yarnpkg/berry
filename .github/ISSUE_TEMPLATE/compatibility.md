@@ -3,8 +3,7 @@ name: "\U0001F47E Compatibility"
 about: For packages that don't work.
 title: "[Compatibility]"
 labels: compatibility
-assignees: ''
-
+assignees: ""
 ---
 
 **DO NOT OPEN COMPATIBILITY ISSUES**

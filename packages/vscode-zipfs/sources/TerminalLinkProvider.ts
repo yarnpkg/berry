@@ -1,5 +1,5 @@
-import {npath}     from '@yarnpkg/fslib';
-import * as vscode from 'vscode';
+import { npath } from "@yarnpkg/fslib";
+import * as vscode from "vscode";
 
 type Link = vscode.TerminalLink & { data: string };
 
@@ -20,7 +20,7 @@ const SELECTOR_PATTERNS = [
   /\((\d+)\)/,
 ];
 
-const COMBINED_SELECTORS = SELECTOR_PATTERNS.map(selector => `(${selector.source})`).join(`|`);
+const COMBINED_SELECTORS = SELECTOR_PATTERNS.map((selector) => `(${selector.source})`).join(`|`);
 const FILEPATH_MATCHER = /(([A-Za-z]:)?\/.*((__virtual__)|(\$\$virtual)|(\.zip)).*\.[\w:]+)/.source;
 
 const FILE_SELECTOR_MATCHER = `(${FILEPATH_MATCHER})(${COMBINED_SELECTORS})?`;

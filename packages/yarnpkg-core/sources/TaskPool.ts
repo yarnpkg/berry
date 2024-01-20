@@ -1,10 +1,10 @@
-import pLimit, {Limit} from 'p-limit';
-import {Worker}        from 'worker_threads';
+import pLimit, { Limit } from "p-limit";
+import { Worker } from "worker_threads";
 
 const kTaskInfo = Symbol(`kTaskInfo`);
 
 type PoolWorker<TOut> = Worker & {
-  [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
+  [kTaskInfo]: null | { resolve: (value: TOut) => void; reject: (reason?: any) => void };
 };
 
 export interface TaskPool<TIn, TOut> {
@@ -14,7 +14,10 @@ export interface TaskPool<TIn, TOut> {
 export class AsyncPool<TIn, TOut> implements TaskPool<TIn, TOut> {
   private limit: Limit;
 
-  constructor(private fn: (data: TIn) => Promise<TOut>, opts: {poolSize: number}) {
+  constructor(
+    private fn: (data: TIn) => Promise<TOut>,
+    opts: { poolSize: number },
+  ) {
     this.limit = pLimit(opts.poolSize);
   }
 
@@ -30,7 +33,10 @@ export class WorkerPool<TIn, TOut> implements TaskPool<TIn, TOut> {
 
   private limit: Limit;
 
-  constructor(private source: string, opts: {poolSize: number}) {
+  constructor(
+    private source: string,
+    opts: { poolSize: number },
+  ) {
     this.limit = pLimit(opts.poolSize);
 
     this.cleanupInterval = setInterval(() => {
@@ -57,8 +63,7 @@ export class WorkerPool<TIn, TOut> implements TaskPool<TIn, TOut> {
     }) as PoolWorker<TOut>;
 
     worker.on(`message`, (result: TOut) => {
-      if (!worker[kTaskInfo])
-        throw new Error(`Assertion failed: Worker sent a result without having a task assigned`);
+      if (!worker[kTaskInfo]) throw new Error(`Assertion failed: Worker sent a result without having a task assigned`);
 
       worker[kTaskInfo]!.resolve(result);
       worker[kTaskInfo] = null;
@@ -67,14 +72,13 @@ export class WorkerPool<TIn, TOut> implements TaskPool<TIn, TOut> {
       this.workers.push(worker);
     });
 
-    worker.on(`error`, err => {
+    worker.on(`error`, (err) => {
       worker[kTaskInfo]?.reject(err);
       worker[kTaskInfo] = null;
     });
 
-    worker.on(`exit`, code => {
-      if (code !== 0)
-        worker[kTaskInfo]?.reject(new Error(`Worker exited with code ${code}`));
+    worker.on(`exit`, (code) => {
+      if (code !== 0) worker[kTaskInfo]?.reject(new Error(`Worker exited with code ${code}`));
 
       worker[kTaskInfo] = null;
     });
@@ -88,7 +92,7 @@ export class WorkerPool<TIn, TOut> implements TaskPool<TIn, TOut> {
       worker.ref();
 
       return new Promise<TOut>((resolve, reject) => {
-        worker[kTaskInfo] = {resolve, reject};
+        worker[kTaskInfo] = { resolve, reject };
         worker.postMessage(data);
       });
     });

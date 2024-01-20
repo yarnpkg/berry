@@ -1,18 +1,18 @@
-import {PortablePath}                                                                         from '@yarnpkg/fslib';
-import {CommandClass}                                                                         from 'clipanion';
-import {Writable, Readable}                                                                   from 'stream';
+import { PortablePath } from "@yarnpkg/fslib";
+import { CommandClass } from "clipanion";
+import { Writable, Readable } from "stream";
 
-import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
-import {Fetcher}                                                                              from './Fetcher';
-import {Linker}                                                                               from './Linker';
-import {MessageName}                                                                          from './MessageName';
-import {Project, InstallOptions}                                                              from './Project';
-import {Resolver, ResolveOptions}                                                             from './Resolver';
-import {Workspace}                                                                            from './Workspace';
-import * as httpUtils                                                                         from './httpUtils';
-import {Locator, Descriptor}                                                                  from './types';
+import { PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData } from "./Configuration";
+import { Fetcher } from "./Fetcher";
+import { Linker } from "./Linker";
+import { MessageName } from "./MessageName";
+import { Project, InstallOptions } from "./Project";
+import { Resolver, ResolveOptions } from "./Resolver";
+import { Workspace } from "./Workspace";
+import * as httpUtils from "./httpUtils";
+import { Locator, Descriptor } from "./types";
 
-type ProcessEnvironment = {[key: string]: string};
+type ProcessEnvironment = { [key: string]: string };
 
 export type CommandContext = {
   cwd: PortablePath;
@@ -26,15 +26,15 @@ export type CommandContext = {
 };
 
 export interface FetcherPlugin {
-  new(): Fetcher;
+  new (): Fetcher;
 }
 
 export interface LinkerPlugin {
-  new(): Linker;
+  new (): Linker;
 }
 
 export interface ResolverPlugin {
-  new(): Resolver;
+  new (): Resolver;
 }
 
 export type WrapNetworkRequestInfo = httpUtils.Options & {
@@ -80,7 +80,15 @@ export interface Hooks {
     project: Project,
     locator: Locator,
     scriptName: string,
-    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
+    extra: {
+      script: string;
+      args: Array<string>;
+      cwd: PortablePath;
+      env: ProcessEnvironment;
+      stdin: Readable | null;
+      stdout: Writable;
+      stderr: Writable;
+    },
   ) => Promise<() => Promise<number>>;
 
   /**
@@ -91,7 +99,7 @@ export interface Hooks {
    */
   wrapNetworkRequest?: (
     executor: () => Promise<httpUtils.Response>,
-    extra: WrapNetworkRequestInfo
+    extra: WrapNetworkRequestInfo,
   ) => Promise<() => Promise<httpUtils.Response>>;
 
   /**
@@ -99,10 +107,7 @@ export interface Hooks {
    * to detect whether packages must be rebuilt (typically when the Node
    * version changes).
    */
-  globalHashGeneration?: (
-    project: Project,
-    contributeHash: (data: string | Buffer) => void,
-  ) => Promise<void>;
+  globalHashGeneration?: (project: Project, contributeHash: (data: string | Buffer) => void) => Promise<void>;
 
   /**
    * Called during the resolution, once for each resolved package and each of
@@ -120,17 +125,14 @@ export interface Hooks {
     project: Project,
     locator: Locator,
     initialDependency: Descriptor,
-    extra: {resolver: Resolver, resolveOptions: ResolveOptions},
+    extra: { resolver: Resolver; resolveOptions: ResolveOptions },
   ) => Promise<Descriptor>;
 
   /**
    * Called after the `install` method from the `Project` class successfully
    * completed.
    */
-  afterAllInstalled?: (
-    project: Project,
-    options: InstallOptions
-  ) => void;
+  afterAllInstalled?: (project: Project, options: InstallOptions) => void;
 
   /**
    * Called during the `Validation step` of the `install` method from the
@@ -141,7 +143,7 @@ export interface Hooks {
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
+    },
   ) => void;
 
   /**
@@ -153,7 +155,7 @@ export interface Hooks {
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
+    },
   ) => void;
 
   /**
@@ -165,25 +167,20 @@ export interface Hooks {
     report: {
       reportWarning: (name: MessageName, text: string) => void;
       reportError: (name: MessageName, text: string) => void;
-    }
+    },
   ) => void;
 
   /**
    * Used to notify the core of all the potential artifacts of the available
    * linkers.
    */
-  populateYarnPaths?: (
-    project: Project,
-    definePath: (path: PortablePath | null) => void,
-  ) => Promise<void>;
+  populateYarnPaths?: (project: Project, definePath: (path: PortablePath | null) => void) => Promise<void>;
 
   /**
    * Called when the user requests to clean the global cache. Plugins should
    * use this hook to remove their own global artifacts.
    */
-  cleanGlobalArtifacts?: (
-    configuration: Configuration,
-  ) => Promise<void>;
+  cleanGlobalArtifacts?: (configuration: Configuration) => Promise<void>;
 }
 
 export type Plugin<PluginHooks = any> = {

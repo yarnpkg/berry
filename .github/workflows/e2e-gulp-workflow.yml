@@ -1,36 +1,36 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-gulp-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-gulp-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E Gulp'
+name: "E2E Gulp"
 jobs:
   chore:
-    name: 'Validating Gulp'
+    name: "Validating Gulp"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Run Gulp E2E test'
-      run: |
-        source scripts/e2e-setup-ci.sh
-        yarn init -p
-        yarn add -D gulp
+      - name: "Run Gulp E2E test"
+        run: |
+          source scripts/e2e-setup-ci.sh
+          yarn init -p
+          yarn add -D gulp
 
-        # Test running Gulp with a simple default task.
-        echo "const gulp = require('gulp'); const defaultTaskPrintCheck = (cb) => { console.log('Success: ran gulp task'); cb(); }; exports.default = defaultTaskPrintCheck;" | tee gulpfile.js
-        yarn gulp
+          # Test running Gulp with a simple default task.
+          echo "const gulp = require('gulp'); const defaultTaskPrintCheck = (cb) => { console.log('Success: ran gulp task'); cb(); }; exports.default = defaultTaskPrintCheck;" | tee gulpfile.js
+          yarn gulp
 
-        # Test using the Gulp API and run public task via CLI.
-        echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptFile = gulp.src('./gulpfile.js'); if (scriptFile) { console.log('Success: used gulp API import.'); } cb(); }; exports.testGulpAPI = testGulpAPI;" | tee gulpfile.js
-        yarn gulp testGulpAPI
+          # Test using the Gulp API and run public task via CLI.
+          echo "const gulp = require('gulp'); const testGulpAPI = (cb) => { const scriptFile = gulp.src('./gulpfile.js'); if (scriptFile) { console.log('Success: used gulp API import.'); } cb(); }; exports.testGulpAPI = testGulpAPI;" | tee gulpfile.js
+          yarn gulp testGulpAPI

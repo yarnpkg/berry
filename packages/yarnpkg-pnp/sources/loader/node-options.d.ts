@@ -1,1 +1,1 @@
-export function getOptionValue(key: '--conditions'): string[]
+export function getOptionValue(key: "--conditions"): string[];

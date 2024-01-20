@@ -1,17 +1,23 @@
-import {GetMountPointFn, MountFS, MountFSOptions, NodeFS, patchFs, PortablePath, PosixFS} from '@yarnpkg/fslib';
-import fs                                                                                 from 'fs';
+import { GetMountPointFn, MountFS, MountFSOptions, NodeFS, patchFs, PortablePath, PosixFS } from "@yarnpkg/fslib";
+import fs from "fs";
 
-import {ZipFS}                                                                            from './ZipFS';
+import { ZipFS } from "./ZipFS";
 
 export type MemoryDriveOpts = {
   typeCheck?: number | null;
 };
 
-export function mountMemoryDrive(origFs: typeof fs, mountPoint: PortablePath, source: Buffer | null = Buffer.alloc(0), opts?: MemoryDriveOpts) {
+export function mountMemoryDrive(
+  origFs: typeof fs,
+  mountPoint: PortablePath,
+  source: Buffer | null = Buffer.alloc(0),
+  opts?: MemoryDriveOpts,
+) {
   const archive = new ZipFS(source);
 
   const getMountPoint: GetMountPointFn = (p: PortablePath) => {
-    const detectedMountPoint = p === mountPoint || p.startsWith(`${mountPoint}/`) ? p.slice(0, mountPoint.length) as PortablePath : null;
+    const detectedMountPoint =
+      p === mountPoint || p.startsWith(`${mountPoint}/`) ? (p.slice(0, mountPoint.length) as PortablePath) : null;
     return detectedMountPoint;
   };
 
@@ -26,7 +32,7 @@ export function mountMemoryDrive(origFs: typeof fs, mountPoint: PortablePath, so
   // We must copy the fs into a local, because otherwise
   // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
   // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
-  const localFs: typeof fs = {...origFs};
+  const localFs: typeof fs = { ...origFs };
   const nodeFs = new NodeFS(localFs);
 
   const mountFs = new MountFS({

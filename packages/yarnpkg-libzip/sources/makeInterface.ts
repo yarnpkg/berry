@@ -1,4 +1,4 @@
-import type {LibzipEmscriptenModule} from './emscripten';
+import type { LibzipEmscriptenModule } from "./emscripten";
 
 const number64 = [
   `number`, // low
@@ -42,123 +42,141 @@ export enum Errors {
   ZIP_ER_COMPRESSED_DATA = 31,
 }
 
-export const makeInterface = (emZip: LibzipEmscriptenModule) => ({
-  // Those are getters because they can change after memory growth
-  get HEAPU8() {
-    return emZip.HEAPU8;
-  },
+export const makeInterface = (emZip: LibzipEmscriptenModule) =>
+  ({
+    // Those are getters because they can change after memory growth
+    get HEAPU8() {
+      return emZip.HEAPU8;
+    },
 
-  errors: Errors,
+    errors: Errors,
 
-  SEEK_SET: 0,
-  SEEK_CUR: 1,
-  SEEK_END: 2,
+    SEEK_SET: 0,
+    SEEK_CUR: 1,
+    SEEK_END: 2,
 
-  ZIP_CHECKCONS: 4,
-  ZIP_EXCL: 2,
-  ZIP_RDONLY: 16,
+    ZIP_CHECKCONS: 4,
+    ZIP_EXCL: 2,
+    ZIP_RDONLY: 16,
 
-  ZIP_FL_OVERWRITE: 8192,
-  ZIP_FL_COMPRESSED: 4,
+    ZIP_FL_OVERWRITE: 8192,
+    ZIP_FL_COMPRESSED: 4,
 
-  ZIP_OPSYS_DOS: 0x00,
-  ZIP_OPSYS_AMIGA: 0x01,
-  ZIP_OPSYS_OPENVMS: 0x02,
-  ZIP_OPSYS_UNIX: 0x03,
-  ZIP_OPSYS_VM_CMS: 0x04,
-  ZIP_OPSYS_ATARI_ST: 0x05,
-  ZIP_OPSYS_OS_2: 0x06,
-  ZIP_OPSYS_MACINTOSH: 0x07,
-  ZIP_OPSYS_Z_SYSTEM: 0x08,
-  ZIP_OPSYS_CPM: 0x09,
-  ZIP_OPSYS_WINDOWS_NTFS: 0x0a,
-  ZIP_OPSYS_MVS: 0x0b,
-  ZIP_OPSYS_VSE: 0x0c,
-  ZIP_OPSYS_ACORN_RISC: 0x0d,
-  ZIP_OPSYS_VFAT: 0x0e,
-  ZIP_OPSYS_ALTERNATE_MVS: 0x0f,
-  ZIP_OPSYS_BEOS: 0x10,
-  ZIP_OPSYS_TANDEM: 0x11,
-  ZIP_OPSYS_OS_400: 0x12,
-  ZIP_OPSYS_OS_X: 0x13,
+    ZIP_OPSYS_DOS: 0x00,
+    ZIP_OPSYS_AMIGA: 0x01,
+    ZIP_OPSYS_OPENVMS: 0x02,
+    ZIP_OPSYS_UNIX: 0x03,
+    ZIP_OPSYS_VM_CMS: 0x04,
+    ZIP_OPSYS_ATARI_ST: 0x05,
+    ZIP_OPSYS_OS_2: 0x06,
+    ZIP_OPSYS_MACINTOSH: 0x07,
+    ZIP_OPSYS_Z_SYSTEM: 0x08,
+    ZIP_OPSYS_CPM: 0x09,
+    ZIP_OPSYS_WINDOWS_NTFS: 0x0a,
+    ZIP_OPSYS_MVS: 0x0b,
+    ZIP_OPSYS_VSE: 0x0c,
+    ZIP_OPSYS_ACORN_RISC: 0x0d,
+    ZIP_OPSYS_VFAT: 0x0e,
+    ZIP_OPSYS_ALTERNATE_MVS: 0x0f,
+    ZIP_OPSYS_BEOS: 0x10,
+    ZIP_OPSYS_TANDEM: 0x11,
+    ZIP_OPSYS_OS_400: 0x12,
+    ZIP_OPSYS_OS_X: 0x13,
 
-  ZIP_CM_DEFAULT: -1,
-  ZIP_CM_STORE: 0,
-  ZIP_CM_DEFLATE: 8,
+    ZIP_CM_DEFAULT: -1,
+    ZIP_CM_STORE: 0,
+    ZIP_CM_DEFLATE: 8,
 
-  uint08S: emZip._malloc(1),
-  uint32S: emZip._malloc(4),
+    uint08S: emZip._malloc(1),
+    uint32S: emZip._malloc(4),
 
-  malloc: emZip._malloc,
-  free: emZip._free,
+    malloc: emZip._malloc,
+    free: emZip._free,
 
-  getValue: emZip.getValue,
+    getValue: emZip.getValue,
 
-  openFromSource: emZip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
-  close: emZip.cwrap(`zip_close`, `number`, [`number`]),
-  discard: emZip.cwrap(`zip_discard`, null, [`number`]),
+    openFromSource: emZip.cwrap(`zip_open_from_source`, `number`, [`number`, `number`, `number`]),
+    close: emZip.cwrap(`zip_close`, `number`, [`number`]),
+    discard: emZip.cwrap(`zip_discard`, null, [`number`]),
 
-  getError: emZip.cwrap(`zip_get_error`, `number`, [`number`]),
-  getName: emZip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
-  getNumEntries: emZip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
+    getError: emZip.cwrap(`zip_get_error`, `number`, [`number`]),
+    getName: emZip.cwrap(`zip_get_name`, `string`, [`number`, `number`, `number`]),
+    getNumEntries: emZip.cwrap(`zip_get_num_entries`, `number`, [`number`, `number`]),
 
-  delete: emZip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
+    delete: emZip.cwrap(`zip_delete`, `number`, [`number`, `number`]),
 
-  statIndex: emZip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
+    statIndex: emZip.cwrap(`zip_stat_index`, `number`, [`number`, ...number64, `number`, `number`]),
 
-  fopenIndex: emZip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
+    fopenIndex: emZip.cwrap(`zip_fopen_index`, `number`, [`number`, ...number64, `number`]),
 
-  fread: emZip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
-  fclose: emZip.cwrap(`zip_fclose`, `number`, [`number`]),
+    fread: emZip.cwrap(`zip_fread`, `number`, [`number`, `number`, `number`, `number`]),
+    fclose: emZip.cwrap(`zip_fclose`, `number`, [`number`]),
 
-  dir: {
-    add: emZip.cwrap(`zip_dir_add`, `number`, [`number`, `string`]),
-  },
+    dir: {
+      add: emZip.cwrap(`zip_dir_add`, `number`, [`number`, `string`]),
+    },
 
-  file: {
-    add: emZip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
-    getError: emZip.cwrap(`zip_file_get_error`, `number`, [`number`]),
-    getExternalAttributes: emZip.cwrap(`zip_file_get_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setExternalAttributes: emZip.cwrap(`zip_file_set_external_attributes`, `number`, [`number`, ...number64, `number`, `number`, `number`]),
-    setMtime: emZip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
-    setCompression: emZip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
-  },
+    file: {
+      add: emZip.cwrap(`zip_file_add`, `number`, [`number`, `string`, `number`, `number`]),
+      getError: emZip.cwrap(`zip_file_get_error`, `number`, [`number`]),
+      getExternalAttributes: emZip.cwrap(`zip_file_get_external_attributes`, `number`, [
+        `number`,
+        ...number64,
+        `number`,
+        `number`,
+        `number`,
+      ]),
+      setExternalAttributes: emZip.cwrap(`zip_file_set_external_attributes`, `number`, [
+        `number`,
+        ...number64,
+        `number`,
+        `number`,
+        `number`,
+      ]),
+      setMtime: emZip.cwrap(`zip_file_set_mtime`, `number`, [`number`, ...number64, `number`, `number`]),
+      setCompression: emZip.cwrap(`zip_set_file_compression`, `number`, [`number`, ...number64, `number`, `number`]),
+    },
 
-  ext: {
-    countSymlinks: emZip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`]),
-  },
+    ext: {
+      countSymlinks: emZip.cwrap(`zip_ext_count_symlinks`, `number`, [`number`]),
+    },
 
-  error: {
-    initWithCode: emZip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
-    strerror: emZip.cwrap(`zip_error_strerror`, `string`, [`number`]),
-  },
+    error: {
+      initWithCode: emZip.cwrap(`zip_error_init_with_code`, null, [`number`, `number`]),
+      strerror: emZip.cwrap(`zip_error_strerror`, `string`, [`number`]),
+    },
 
-  name: {
-    locate: emZip.cwrap(`zip_name_locate`, `number`, [`number`, `string`, `number`]),
-  },
+    name: {
+      locate: emZip.cwrap(`zip_name_locate`, `number`, [`number`, `string`, `number`]),
+    },
 
-  source: {
-    fromUnattachedBuffer: emZip.cwrap(`zip_source_buffer_create`, `number`, [`number`, ...number64, `number`, `number`]),
-    fromBuffer: emZip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
-    free: emZip.cwrap(`zip_source_free`, null, [`number`]),
-    keep: emZip.cwrap(`zip_source_keep`, null, [`number`]),
-    open: emZip.cwrap(`zip_source_open`, `number`, [`number`]),
-    close: emZip.cwrap(`zip_source_close`, `number`, [`number`]),
-    seek: emZip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
-    tell: emZip.cwrap(`zip_source_tell`, `number`, [`number`]),
-    read: emZip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
-    error: emZip.cwrap(`zip_source_error`, `number`, [`number`]),
-  },
+    source: {
+      fromUnattachedBuffer: emZip.cwrap(`zip_source_buffer_create`, `number`, [
+        `number`,
+        ...number64,
+        `number`,
+        `number`,
+      ]),
+      fromBuffer: emZip.cwrap(`zip_source_buffer`, `number`, [`number`, `number`, ...number64, `number`]),
+      free: emZip.cwrap(`zip_source_free`, null, [`number`]),
+      keep: emZip.cwrap(`zip_source_keep`, null, [`number`]),
+      open: emZip.cwrap(`zip_source_open`, `number`, [`number`]),
+      close: emZip.cwrap(`zip_source_close`, `number`, [`number`]),
+      seek: emZip.cwrap(`zip_source_seek`, `number`, [`number`, ...number64, `number`]),
+      tell: emZip.cwrap(`zip_source_tell`, `number`, [`number`]),
+      read: emZip.cwrap(`zip_source_read`, `number`, [`number`, `number`, `number`]),
+      error: emZip.cwrap(`zip_source_error`, `number`, [`number`]),
+    },
 
-  struct: {
-    statS: emZip.cwrap(`zipstruct_statS`, `number`, []),
-    statSize: emZip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
-    statCompSize: emZip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
-    statCompMethod: emZip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
-    statMtime: emZip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
-    statCrc: emZip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
+    struct: {
+      statS: emZip.cwrap(`zipstruct_statS`, `number`, []),
+      statSize: emZip.cwrap(`zipstruct_stat_size`, `number`, [`number`]),
+      statCompSize: emZip.cwrap(`zipstruct_stat_comp_size`, `number`, [`number`]),
+      statCompMethod: emZip.cwrap(`zipstruct_stat_comp_method`, `number`, [`number`]),
+      statMtime: emZip.cwrap(`zipstruct_stat_mtime`, `number`, [`number`]),
+      statCrc: emZip.cwrap(`zipstruct_stat_crc`, `number`, [`number`]),
 
-    errorS: emZip.cwrap(`zipstruct_errorS`, `number`, []),
-    errorCodeZip: emZip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`]),
-  },
-} as const);
+      errorS: emZip.cwrap(`zipstruct_errorS`, `number`, []),
+      errorCodeZip: emZip.cwrap(`zipstruct_error_code_zip`, `number`, [`number`]),
+    },
+  }) as const;

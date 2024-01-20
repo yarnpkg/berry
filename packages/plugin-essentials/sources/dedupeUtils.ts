@@ -1,6 +1,18 @@
-import {Project, ResolveOptions, ThrowReport, Resolver, miscUtils, Descriptor, Package, Report, Cache, DescriptorHash} from '@yarnpkg/core';
-import {formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions}                          from '@yarnpkg/core';
-import micromatch                                                                                                      from 'micromatch';
+import { formatUtils, structUtils, IdentHash, LocatorHash, MessageName, Fetcher, FetchOptions } from "@yarnpkg/core";
+import micromatch from "micromatch";
+
+import {
+  Project,
+  ResolveOptions,
+  ThrowReport,
+  Resolver,
+  miscUtils,
+  Descriptor,
+  Package,
+  Report,
+  Cache,
+  DescriptorHash,
+} from "@yarnpkg/core";
 
 export type PackageUpdate = {
   descriptor: Descriptor;
@@ -9,12 +21,16 @@ export type PackageUpdate = {
   resolvedPackage: Package;
 };
 
-export type Algorithm = (project: Project, patterns: Array<string>, opts: {
-  resolver: Resolver;
-  resolveOptions: ResolveOptions;
-  fetcher: Fetcher;
-  fetchOptions: FetchOptions;
-}) => Promise<Array<Promise<PackageUpdate>>>;
+export type Algorithm = (
+  project: Project,
+  patterns: Array<string>,
+  opts: {
+    resolver: Resolver;
+    resolveOptions: ResolveOptions;
+    fetcher: Fetcher;
+    fetchOptions: FetchOptions;
+  },
+) => Promise<Array<Promise<PackageUpdate>>>;
 
 export enum Strategy {
   /**
@@ -30,7 +46,7 @@ export enum Strategy {
 export const acceptedStrategies = new Set(Object.values(Strategy));
 
 const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
-  highest: async (project, patterns, {resolver, fetcher, resolveOptions, fetchOptions}) => {
+  highest: async (project, patterns, { resolver, fetcher, resolveOptions, fetchOptions }) => {
     const locatorsByIdent = new Map<IdentHash, Set<LocatorHash>>();
     for (const [descriptorHash, locatorHash] of project.storedResolutions) {
       const descriptor = project.storedDescriptors.get(descriptorHash);
@@ -41,11 +57,10 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
     }
 
     const deferredMap = new Map<DescriptorHash, miscUtils.Deferred<PackageUpdate>>(
-      miscUtils.mapAndFilter(project.storedDescriptors.values(), descriptor => {
+      miscUtils.mapAndFilter(project.storedDescriptors.values(), (descriptor) => {
         // We only care about resolutions that are stored in the lockfile
         // (we shouldn't accidentally try deduping virtual packages)
-        if (structUtils.isVirtualDescriptor(descriptor))
-          return miscUtils.mapAndFilter.skip;
+        if (structUtils.isVirtualDescriptor(descriptor)) return miscUtils.mapAndFilter.skip;
 
         return [descriptor.descriptorHash, miscUtils.makeDeferred()];
       }),
@@ -64,75 +79,79 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
       if (typeof currentPackage === `undefined`)
         throw new Error(`Assertion failed: The package (${currentResolution}) should have been registered`);
 
-      Promise.resolve().then(async () => {
-        const dependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
+      Promise.resolve()
+        .then(async () => {
+          const dependencies = resolver.getResolutionDependencies(descriptor, resolveOptions);
 
-        const resolvedDependencies = Object.fromEntries(
-          await miscUtils.allSettledSafe(
-            Object.entries(dependencies).map(async ([dependencyName, dependency]) => {
-              const dependencyDeferred = deferredMap.get(dependency.descriptorHash);
-              if (typeof dependencyDeferred === `undefined`)
-                throw new Error(`Assertion failed: The descriptor (${dependency.descriptorHash}) should have been registered`);
+          const resolvedDependencies = Object.fromEntries(
+            await miscUtils.allSettledSafe(
+              Object.entries(dependencies).map(async ([dependencyName, dependency]) => {
+                const dependencyDeferred = deferredMap.get(dependency.descriptorHash);
+                if (typeof dependencyDeferred === `undefined`)
+                  throw new Error(
+                    `Assertion failed: The descriptor (${dependency.descriptorHash}) should have been registered`,
+                  );
 
-              const dedupeResult = await dependencyDeferred.promise;
-              if (!dedupeResult)
-                throw new Error(`Assertion failed: Expected the dependency to have been through the dedupe process itself`);
+                const dedupeResult = await dependencyDeferred.promise;
+                if (!dedupeResult)
+                  throw new Error(
+                    `Assertion failed: Expected the dependency to have been through the dedupe process itself`,
+                  );
 
-              return [dependencyName, dedupeResult.updatedPackage];
-            }),
-          ),
-        );
+                return [dependencyName, dedupeResult.updatedPackage];
+              }),
+            ),
+          );
 
-        if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
-          return currentPackage;
+          if (patterns.length && !micromatch.isMatch(structUtils.stringifyIdent(descriptor), patterns))
+            return currentPackage;
 
-        // No need to try deduping packages that are not persisted,
-        // they will be resolved again anyways
-        if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
-          return currentPackage;
+          // No need to try deduping packages that are not persisted,
+          // they will be resolved again anyways
+          if (!resolver.shouldPersistResolution(currentPackage, resolveOptions)) return currentPackage;
 
-        const candidateHashes = locatorsByIdent.get(descriptor.identHash);
-        if (typeof candidateHashes === `undefined`)
-          throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
+          const candidateHashes = locatorsByIdent.get(descriptor.identHash);
+          if (typeof candidateHashes === `undefined`)
+            throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
 
-        // No need to choose when there's only one possibility
-        if (candidateHashes.size === 1)
-          return currentPackage;
+          // No need to choose when there's only one possibility
+          if (candidateHashes.size === 1) return currentPackage;
 
-        const candidates = [...candidateHashes].map(locatorHash => {
-          const pkg = project.originalPackages.get(locatorHash);
-          if (typeof pkg === `undefined`)
-            throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
+          const candidates = [...candidateHashes].map((locatorHash) => {
+            const pkg = project.originalPackages.get(locatorHash);
+            if (typeof pkg === `undefined`)
+              throw new Error(`Assertion failed: The package (${locatorHash}) should have been registered`);
 
-          return pkg;
+            return pkg;
+          });
+
+          const satisfying = await resolver.getSatisfying(descriptor, resolvedDependencies, candidates, resolveOptions);
+
+          const bestLocator = satisfying.locators?.[0];
+          if (typeof bestLocator === `undefined` || !satisfying.sorted) return currentPackage;
+
+          const updatedPackage = project.originalPackages.get(bestLocator.locatorHash);
+          if (typeof updatedPackage === `undefined`)
+            throw new Error(`Assertion failed: The package (${bestLocator.locatorHash}) should have been registered`);
+
+          return updatedPackage;
+        })
+        .then(async (updatedPackage) => {
+          const resolvedPackage = await project.preparePackage(updatedPackage, { resolver, resolveOptions });
+
+          deferred.resolve({
+            descriptor,
+            currentPackage,
+            updatedPackage,
+            resolvedPackage,
+          });
+        })
+        .catch((error) => {
+          deferred.reject(error);
         });
-
-        const satisfying = await resolver.getSatisfying(descriptor, resolvedDependencies, candidates, resolveOptions);
-
-        const bestLocator = satisfying.locators?.[0];
-        if (typeof bestLocator === `undefined` || !satisfying.sorted)
-          return currentPackage;
-
-        const updatedPackage = project.originalPackages.get(bestLocator.locatorHash);
-        if (typeof updatedPackage === `undefined`)
-          throw new Error(`Assertion failed: The package (${bestLocator.locatorHash}) should have been registered`);
-
-        return updatedPackage;
-      }).then(async updatedPackage => {
-        const resolvedPackage = await project.preparePackage(updatedPackage, {resolver, resolveOptions});
-
-        deferred.resolve({
-          descriptor,
-          currentPackage,
-          updatedPackage,
-          resolvedPackage,
-        });
-      }).catch(error => {
-        deferred.reject(error);
-      });
     }
 
-    return [...deferredMap.values()].map(deferred => {
+    return [...deferredMap.values()].map((deferred) => {
       return deferred.promise;
     });
   },
@@ -145,8 +164,8 @@ export type DedupeOptions = {
   report: Report;
 };
 
-export async function dedupe(project: Project, {strategy, patterns, cache, report}: DedupeOptions) {
-  const {configuration} = project;
+export async function dedupe(project: Project, { strategy, patterns, cache, report }: DedupeOptions) {
+  const { configuration } = project;
   const throwReport = new ThrowReport();
 
   const resolver = configuration.makeResolver();
@@ -171,7 +190,7 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
 
   return await report.startTimerPromise(`Deduplication step`, async () => {
     const algorithm = DEDUPE_ALGORITHMS[strategy];
-    const dedupePromises = await algorithm(project, patterns, {resolver, resolveOptions, fetcher, fetchOptions});
+    const dedupePromises = await algorithm(project, patterns, { resolver, resolveOptions, fetcher, fetchOptions });
 
     const progress = Report.progressViaCounter(dedupePromises.length);
     await report.reportProgress(progress);
@@ -179,25 +198,24 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
     let dedupedPackageCount = 0;
 
     await Promise.all(
-      dedupePromises.map(dedupePromise =>
+      dedupePromises.map((dedupePromise) =>
         dedupePromise
-          .then(dedupe => {
-            if (dedupe === null || dedupe.currentPackage.locatorHash === dedupe.updatedPackage.locatorHash)
-              return;
+          .then((dedupe) => {
+            if (dedupe === null || dedupe.currentPackage.locatorHash === dedupe.updatedPackage.locatorHash) return;
 
             dedupedPackageCount++;
 
-            const {descriptor, currentPackage, updatedPackage} = dedupe;
+            const { descriptor, currentPackage, updatedPackage } = dedupe;
 
             report.reportInfo(
               MessageName.UNNAMED,
-              `${
-                structUtils.prettyDescriptor(configuration, descriptor)
-              } can be deduped from ${
-                structUtils.prettyLocator(configuration, currentPackage)
-              } to ${
-                structUtils.prettyLocator(configuration, updatedPackage)
-              }`,
+              `${structUtils.prettyDescriptor(
+                configuration,
+                descriptor,
+              )} can be deduped from ${structUtils.prettyLocator(
+                configuration,
+                currentPackage,
+              )} to ${structUtils.prettyLocator(configuration, updatedPackage)}`,
             );
 
             report.reportJson({
@@ -214,13 +232,17 @@ export async function dedupe(project: Project, {strategy, patterns, cache, repor
 
     let packages: string;
     switch (dedupedPackageCount) {
-      case 0: {
-        packages = `No packages`;
-      } break;
+      case 0:
+        {
+          packages = `No packages`;
+        }
+        break;
 
-      case 1: {
-        packages = `One package`;
-      } break;
+      case 1:
+        {
+          packages = `One package`;
+        }
+        break;
 
       default: {
         packages = `${dedupedPackageCount} packages`;

@@ -1,22 +1,22 @@
-import {Plugin, SettingsType, miscUtils, Configuration, Ident} from '@yarnpkg/core';
+import { Plugin, SettingsType, miscUtils, Configuration, Ident } from "@yarnpkg/core";
 
-import {NpmHttpFetcher}                                        from './NpmHttpFetcher';
-import {NpmRemapResolver}                                      from './NpmRemapResolver';
-import {NpmSemverFetcher}                                      from './NpmSemverFetcher';
-import {NpmSemverResolver}                                     from './NpmSemverResolver';
-import {NpmTagResolver}                                        from './NpmTagResolver';
-import * as npmConfigUtils                                     from './npmConfigUtils';
-import * as npmHttpUtils                                       from './npmHttpUtils';
-import * as npmPublishUtils                                    from './npmPublishUtils';
+import { NpmHttpFetcher } from "./NpmHttpFetcher";
+import { NpmRemapResolver } from "./NpmRemapResolver";
+import { NpmSemverFetcher } from "./NpmSemverFetcher";
+import { NpmSemverResolver } from "./NpmSemverResolver";
+import { NpmTagResolver } from "./NpmTagResolver";
+import * as npmConfigUtils from "./npmConfigUtils";
+import * as npmHttpUtils from "./npmHttpUtils";
+import * as npmPublishUtils from "./npmPublishUtils";
 
-export {npmConfigUtils};
-export {npmHttpUtils};
-export {npmPublishUtils};
-export {NpmHttpFetcher};
-export {NpmRemapResolver};
-export {NpmSemverFetcher};
-export {NpmSemverResolver};
-export {NpmTagResolver};
+export { npmConfigUtils };
+export { npmHttpUtils };
+export { npmPublishUtils };
+export { NpmHttpFetcher };
+export { NpmRemapResolver };
+export { NpmSemverFetcher };
+export { NpmSemverResolver };
+export { NpmTagResolver };
 
 export interface Hooks {
   /**
@@ -24,12 +24,12 @@ export interface Hooks {
    * You can use this mechanism to dynamically query a CLI for the credentials for a
    * specific registry.
    */
-  getNpmAuthenticationHeader?: (currentHeader: string | undefined, registry: string, {
-    configuration,
-    ident,
-  }: { configuration: Configuration, ident?: Ident }) => Promise<string | undefined>;
+  getNpmAuthenticationHeader?: (
+    currentHeader: string | undefined,
+    registry: string,
+    { configuration, ident }: { configuration: Configuration; ident?: Ident },
+  ) => Promise<string | undefined>;
 }
-
 
 const authSettings = {
   npmAlwaysAuth: {
@@ -67,7 +67,7 @@ const registrySettings = {
   },
 };
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     npmAlwaysAuth: boolean;
     npmAuthIdent: string | null;
@@ -77,19 +77,25 @@ declare module '@yarnpkg/core' {
     npmPublishRegistry: string | null;
     npmRegistryServer: string;
 
-    npmScopes:  Map<string, miscUtils.ToMapValue<{
-      npmAlwaysAuth: boolean;
-      npmAuthIdent: string | null;
-      npmAuthToken: string | null;
+    npmScopes: Map<
+      string,
+      miscUtils.ToMapValue<{
+        npmAlwaysAuth: boolean;
+        npmAuthIdent: string | null;
+        npmAuthToken: string | null;
 
-      npmPublishRegistry: string | null;
-      npmRegistryServer: string;
-    }>>;
-    npmRegistries: Map<string, miscUtils.ToMapValue<{
-      npmAlwaysAuth: boolean;
-      npmAuthIdent: string | null;
-      npmAuthToken: string | null;
-    }>>;
+        npmPublishRegistry: string | null;
+        npmRegistryServer: string;
+      }>
+    >;
+    npmRegistries: Map<
+      string,
+      miscUtils.ToMapValue<{
+        npmAlwaysAuth: boolean;
+        npmAuthIdent: string | null;
+        npmAuthToken: string | null;
+      }>
+    >;
   }
 }
 
@@ -124,15 +130,8 @@ const plugin: Plugin = {
       },
     },
   },
-  fetchers: [
-    NpmHttpFetcher,
-    NpmSemverFetcher,
-  ],
-  resolvers: [
-    NpmRemapResolver,
-    NpmSemverResolver,
-    NpmTagResolver,
-  ],
+  fetchers: [NpmHttpFetcher, NpmSemverFetcher],
+  resolvers: [NpmRemapResolver, NpmSemverResolver, NpmTagResolver],
 };
 
 // eslint-disable-next-line arca/no-default-export

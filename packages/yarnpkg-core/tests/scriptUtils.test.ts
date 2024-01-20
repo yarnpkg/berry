@@ -1,6 +1,6 @@
-import {Filename,  npath,  ppath, xfs} from '@yarnpkg/fslib';
+import { Filename, npath, ppath, xfs } from "@yarnpkg/fslib";
 
-import * as scriptUtils                from '../sources/scriptUtils';
+import * as scriptUtils from "../sources/scriptUtils";
 
 describe(`scriptUtils`, () => {
   describe(`detectPackageManager`, () => {
@@ -23,24 +23,27 @@ describe(`scriptUtils`, () => {
       pnpm: scriptUtils.PackageManager.Pnpm,
     };
 
-    it.each(Object.keys(expectations))(`should pass expectations with %p in packageManager property in manifest`, async packageManager => {
-      await xfs.mktempPromise(async dir => {
-        await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {
-          name: `foo`,
-          packageManager,
-        });
+    it.each(Object.keys(expectations))(
+      `should pass expectations with %p in packageManager property in manifest`,
+      async (packageManager) => {
+        await xfs.mktempPromise(async (dir) => {
+          await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {
+            name: `foo`,
+            packageManager,
+          });
 
-        const pm = await scriptUtils.detectPackageManager(dir);
-        expect(pm?.packageManager).toBe(expectations[packageManager]);
-      });
-    });
+          const pm = await scriptUtils.detectPackageManager(dir);
+          expect(pm?.packageManager).toBe(expectations[packageManager]);
+        });
+      },
+    );
   });
 
   describe(`isNodeScript`, () => {
     const binariesFolder = ppath.join(npath.toPortablePath(__dirname), `../fixtures/binaries`);
     const binaryNames = xfs.readdirSync(binariesFolder);
 
-    it.each(binaryNames)(`should detect %s as a binary`, name => {
+    it.each(binaryNames)(`should detect %s as a binary`, (name) => {
       expect(scriptUtils.isNodeScript(ppath.join(binariesFolder, name)));
     });
 

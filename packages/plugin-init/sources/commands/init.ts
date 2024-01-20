@@ -1,14 +1,12 @@
-import {BaseCommand}                                              from '@yarnpkg/cli';
-import {Configuration, Manifest, miscUtils, Project, YarnVersion} from '@yarnpkg/core';
-import {execUtils, scriptUtils, structUtils}                      from '@yarnpkg/core';
-import {xfs, ppath, Filename}                                     from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration, Manifest, miscUtils, Project, YarnVersion } from "@yarnpkg/core";
+import { execUtils, scriptUtils, structUtils } from "@yarnpkg/core";
+import { xfs, ppath, Filename } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class InitCommand extends BaseCommand {
-  static paths = [
-    [`init`],
-  ];
+  static paths = [[`init`]];
 
   static usage: Usage = Command.Usage({
     description: `create a new package`,
@@ -23,19 +21,12 @@ export default class InitCommand extends BaseCommand {
 
       The initial settings of the manifest can be changed by using the \`initScope\` and \`initFields\` configuration values. Additionally, Yarn will generate an EditorConfig file whose rules can be altered via \`initEditorConfig\`, and will initialize a Git repository in the current directory.
     `,
-    examples: [[
-      `Create a new package in the local directory`,
-      `yarn init`,
-    ], [
-      `Create a new private package in the local directory`,
-      `yarn init -p`,
-    ], [
-      `Create a new package and store the Yarn release inside`,
-      `yarn init -i=latest`,
-    ], [
-      `Create a new private package and defines it as a workspace root`,
-      `yarn init -w`,
-    ]],
+    examples: [
+      [`Create a new package in the local directory`, `yarn init`],
+      [`Create a new private package in the local directory`, `yarn init -p`],
+      [`Create a new package and store the Yarn release inside`, `yarn init -i=latest`],
+      [`Create a new private package and defines it as a workspace root`, `yarn init -w`],
+    ],
   });
 
   private = Option.Boolean(`-p,--private`, false, {
@@ -56,17 +47,14 @@ export default class InitCommand extends BaseCommand {
   });
 
   // Options that only mattered on v1
-  usev2 = Option.Boolean(`-2`, false, {hidden: true});
-  yes = Option.Boolean(`-y,--yes`, {hidden: true});
+  usev2 = Option.Boolean(`-2`, false, { hidden: true });
+  yes = Option.Boolean(`-y,--yes`, { hidden: true });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const install = typeof this.install === `string`
-      ? this.install
-      : this.usev2 || this.install === true
-        ? `latest`
-        : null;
+    const install =
+      typeof this.install === `string` ? this.install : this.usev2 || this.install === true ? `latest` : null;
 
     if (install !== null) {
       return await this.executeProxy(configuration, install);
@@ -79,34 +67,27 @@ export default class InitCommand extends BaseCommand {
     if (configuration.projectCwd !== null && configuration.projectCwd !== this.context.cwd)
       throw new UsageError(`Cannot use the --install flag from within a project subdirectory`);
 
-    if (!xfs.existsSync(this.context.cwd))
-      await xfs.mkdirPromise(this.context.cwd, {recursive: true});
+    if (!xfs.existsSync(this.context.cwd)) await xfs.mkdirPromise(this.context.cwd, { recursive: true });
 
     const lockfilePath = ppath.join(this.context.cwd, Filename.lockfile);
-    if (!xfs.existsSync(lockfilePath))
-      await xfs.writeFilePromise(lockfilePath, ``);
+    if (!xfs.existsSync(lockfilePath)) await xfs.writeFilePromise(lockfilePath, ``);
 
-    const versionExitCode = await this.cli.run([`set`, `version`, version], {quiet: true});
-    if (versionExitCode !== 0)
-      return versionExitCode;
+    const versionExitCode = await this.cli.run([`set`, `version`, version], { quiet: true });
+    if (versionExitCode !== 0) return versionExitCode;
 
     const args: Array<string> = [];
-    if (this.private)
-      args.push(`-p`);
-    if (this.workspace)
-      args.push(`-w`);
-    if (this.name)
-      args.push(`-n=${this.name}`);
-    if (this.yes)
-      args.push(`-y`);
+    if (this.private) args.push(`-p`);
+    if (this.workspace) args.push(`-w`);
+    if (this.name) args.push(`-n=${this.name}`);
+    if (this.yes) args.push(`-y`);
 
-    return await xfs.mktempPromise(async binFolder => {
-      const {code} = await execUtils.pipevp(`yarn`, [`init`, ...args], {
+    return await xfs.mktempPromise(async (binFolder) => {
+      const { code } = await execUtils.pipevp(`yarn`, [`init`, ...args], {
         cwd: this.context.cwd,
         stdin: this.context.stdin,
         stdout: this.context.stdout,
         stderr: this.context.stderr,
-        env: await scriptUtils.makeScriptEnv({binFolder}),
+        env: await scriptUtils.makeScriptEnv({ binFolder }),
       });
 
       return code;
@@ -121,8 +102,7 @@ export default class InitCommand extends BaseCommand {
       existingProject = null;
     }
 
-    if (!xfs.existsSync(this.context.cwd))
-      await xfs.mkdirPromise(this.context.cwd, {recursive: true});
+    if (!xfs.existsSync(this.context.cwd)) await xfs.mkdirPromise(this.context.cwd, { recursive: true });
 
     const original = await Manifest.tryFind(this.context.cwd);
     const manifest = original ?? new Manifest();
@@ -130,21 +110,21 @@ export default class InitCommand extends BaseCommand {
     const fields = Object.fromEntries(configuration.get(`initFields`).entries());
     manifest.load(fields);
 
-    manifest.name = manifest.name
-      ?? structUtils.makeIdent(configuration.get(`initScope`), this.name ?? ppath.basename(this.context.cwd));
+    manifest.name =
+      manifest.name ??
+      structUtils.makeIdent(configuration.get(`initScope`), this.name ?? ppath.basename(this.context.cwd));
 
-    manifest.packageManager = YarnVersion && miscUtils.isTaggedYarnVersion(YarnVersion)
-      ? `yarn@${YarnVersion}`
-      : null;
+    manifest.packageManager = YarnVersion && miscUtils.isTaggedYarnVersion(YarnVersion) ? `yarn@${YarnVersion}` : null;
 
-    if ((!original && this.workspace) || this.private)
-      manifest.private = true;
+    if ((!original && this.workspace) || this.private) manifest.private = true;
 
     if (this.workspace && manifest.workspaceDefinitions.length === 0) {
-      await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages`), {recursive: true});
-      manifest.workspaceDefinitions = [{
-        pattern: `packages/*`,
-      }];
+      await xfs.mkdirPromise(ppath.join(this.context.cwd, `packages`), { recursive: true });
+      manifest.workspaceDefinitions = [
+        {
+          pattern: `packages/*`,
+        },
+      ];
     }
 
     const serialized: any = {};
@@ -155,9 +135,7 @@ export default class InitCommand extends BaseCommand {
       automaticNewlines: true,
     });
 
-    const changedPaths = [
-      manifestPath,
-    ];
+    const changedPaths = [manifestPath];
 
     const readmePath = ppath.join(this.context.cwd, `README.md`);
     if (!xfs.existsSync(readmePath)) {
@@ -188,9 +166,11 @@ export default class InitCommand extends BaseCommand {
         `.pnp.*`,
       ];
 
-      const gitignoreBody = gitignoreLines.map(line => {
-        return `${line}\n`;
-      }).join(``);
+      const gitignoreBody = gitignoreLines
+        .map((line) => {
+          return `${line}\n`;
+        })
+        .join(``);
 
       const gitignorePath = ppath.join(this.context.cwd, `.gitignore`);
       if (!xfs.existsSync(gitignorePath)) {
@@ -205,9 +185,11 @@ export default class InitCommand extends BaseCommand {
         `/.pnp.*              binary linguist-generated`,
       ];
 
-      const gitattributesBody = gitattributesLines.map(line => {
-        return `${line}\n`;
-      }).join(``);
+      const gitattributesBody = gitattributesLines
+        .map((line) => {
+          return `${line}\n`;
+        })
+        .join(``);
 
       const gitattributesPath = ppath.join(this.context.cwd, `.gitattributes`);
       if (!xfs.existsSync(gitattributesPath)) {
@@ -233,7 +215,7 @@ export default class InitCommand extends BaseCommand {
       for (const [selector, props] of Object.entries(editorConfigProperties)) {
         editorConfigBody += `\n[${selector}]\n`;
         for (const [propName, propValue] of Object.entries(props)) {
-          const snakeCaseName = propName.replace(/[A-Z]/g, $0 => `_${$0.toLowerCase()}`);
+          const snakeCaseName = propName.replace(/[A-Z]/g, ($0) => `_${$0.toLowerCase()}`);
           editorConfigBody += `${snakeCaseName} = ${propValue}\n`;
         }
       }

@@ -1,5 +1,5 @@
 function makeError(code: string, message: string) {
-  return Object.assign(new Error(`${code}: ${message}`), {code});
+  return Object.assign(new Error(`${code}: ${message}`), { code });
 }
 
 export function EBUSY(message: string) {

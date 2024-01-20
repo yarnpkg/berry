@@ -1,9 +1,9 @@
-import {VirtualFS, npath}               from '@yarnpkg/fslib';
-import fs                               from 'fs';
-import {fileURLToPath, pathToFileURL}   from 'url';
+import { VirtualFS, npath } from "@yarnpkg/fslib";
+import fs from "fs";
+import { fileURLToPath, pathToFileURL } from "url";
 
-import {WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
-import * as loaderUtils                 from '../loaderUtils';
+import { WATCH_MODE_MESSAGE_USES_ARRAYS } from "../loaderFlags";
+import * as loaderUtils from "../loaderUtils";
 
 // The default `load` doesn't support reading from zip files
 export async function load(
@@ -11,23 +11,23 @@ export async function load(
   context: {
     format: string | null | undefined;
     importAssertions?: {
-      type?: 'json';
+      type?: "json";
     };
   },
   nextLoad: typeof load,
-): Promise<{ format: string, source?: string, shortCircuit: boolean }> {
+): Promise<{ format: string; source?: string; shortCircuit: boolean }> {
   const url = loaderUtils.tryParseURL(urlString);
-  if (url?.protocol !== `file:`)
-    return nextLoad(urlString, context, nextLoad);
+  if (url?.protocol !== `file:`) return nextLoad(urlString, context, nextLoad);
 
   const filePath = fileURLToPath(url);
 
   const format = loaderUtils.getFileFormat(filePath);
-  if (!format)
-    return nextLoad(urlString, context, nextLoad);
+  if (!format) return nextLoad(urlString, context, nextLoad);
 
   if (format === `json` && context.importAssertions?.type !== `json`) {
-    const err = new TypeError(`[ERR_IMPORT_ASSERTION_TYPE_MISSING]: Module "${urlString}" needs an import assertion of type "json"`) as TypeError & { code: string };
+    const err = new TypeError(
+      `[ERR_IMPORT_ASSERTION_TYPE_MISSING]: Module "${urlString}" needs an import assertion of type "json"`,
+    ) as TypeError & { code: string };
     err.code = `ERR_IMPORT_ASSERTION_TYPE_MISSING`;
     throw err;
   }
@@ -38,12 +38,10 @@ export async function load(
     // we technically only need to do this for virtual files but in the
     // event that ever changes we report everything.
     const pathToSend = pathToFileURL(
-      npath.fromPortablePath(
-        VirtualFS.resolveVirtual(npath.toPortablePath(filePath)),
-      ),
+      npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filePath))),
     ).href;
     process.send({
-      'watch:import': WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend,
+      "watch:import": WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend,
     });
   }
 

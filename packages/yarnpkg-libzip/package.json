@@ -36,10 +36,6 @@
     "url": "ssh://git@github.com/yarnpkg/berry.git",
     "directory": "packages/yarnpkg-libzip"
   },
-  "devDependencies": {
-    "@types/prettier": "1.19.0",
-    "prettier": "^1.19.1"
-  },
   "dependencies": {
     "@types/emscripten": "^1.39.6",
     "@yarnpkg/fslib": "workspace:^",

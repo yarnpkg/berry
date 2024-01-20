@@ -1,15 +1,13 @@
-import {Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver, Package} from '@yarnpkg/core';
-import {structUtils}                                                                   from '@yarnpkg/core';
+import { Descriptor, Locator, MinimalResolveOptions, ResolveOptions, Resolver, Package } from "@yarnpkg/core";
+import { structUtils } from "@yarnpkg/core";
 
-import {PROTOCOL}                                                                      from './constants';
+import { PROTOCOL } from "./constants";
 
 export class NpmRemapResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(PROTOCOL)) return false;
 
-    if (!structUtils.tryParseDescriptor(descriptor.range.slice(PROTOCOL.length), true))
-      return false;
+    if (!structUtils.tryParseDescriptor(descriptor.range.slice(PROTOCOL.length), true)) return false;
 
     return true;
   }
@@ -44,7 +42,12 @@ export class NpmRemapResolver implements Resolver {
     return await opts.resolver.getCandidates(nextDescriptor, dependencies, opts);
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const nextDescriptor = opts.project.configuration.normalizeDependency(
       structUtils.parseDescriptor(descriptor.range.slice(PROTOCOL.length), true),
     );

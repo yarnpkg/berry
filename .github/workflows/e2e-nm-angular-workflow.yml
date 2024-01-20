@@ -1,57 +1,57 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-nm-angular-workflow.yml
-    - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-nm/sources/hoist.ts
-    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
-    - packages/plugin-nm/sources/NodeModulesLinker.ts
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-nm-angular-workflow.yml
+      - scripts/e2e-setup-ci.sh
+      - packages/yarnpkg-nm/sources/hoist.ts
+      - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
+      - packages/plugin-nm/sources/NodeModulesLinker.ts
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-nm-angular-workflow.yml
-    - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-nm/sources/hoist.ts
-    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
-    - packages/plugin-nm/sources/NodeModulesLinker.ts
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-nm-angular-workflow.yml
+      - scripts/e2e-setup-ci.sh
+      - packages/yarnpkg-nm/sources/hoist.ts
+      - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
+      - packages/plugin-nm/sources/NodeModulesLinker.ts
 
-name: 'E2E NM Angular'
+name: "E2E NM Angular"
 jobs:
   chore:
     strategy:
       matrix:
         platform:
-        - ubuntu-latest
-        - windows-latest
+          - ubuntu-latest
+          - windows-latest
 
-    name: 'Validating Angular install via node-modules linker on ${{matrix.platform}}'
+    name: "Validating Angular install via node-modules linker on ${{matrix.platform}}"
     runs-on: ${{matrix.platform}}
 
     steps:
-    - name: Enable git longpaths
-      run: git config --global core.longpaths true
+      - name: Enable git longpaths
+        run: git config --global core.longpaths true
 
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh nm
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh nm
 
-        # TODO: Angular should be fixed to detect the correct package manager to install with
-        # but for now we need to specify it
-        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
+          # TODO: Angular should be fixed to detect the correct package manager to install with
+          # but for now we need to specify it
+          yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
 
-        cd berry-angular
+          cd berry-angular
 
-        yarn ng build --aot
-      shell: bash
-      env:
-        YARN_ENABLE_GLOBAL_CACHE: true
-        YARN_COMPRESSION_LEVEL: 0
+          yarn ng build --aot
+        shell: bash
+        env:
+          YARN_ENABLE_GLOBAL_CACHE: true
+          YARN_COMPRESSION_LEVEL: 0

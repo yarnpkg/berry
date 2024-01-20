@@ -1,7 +1,7 @@
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+const { npath, xfs } = require(`@yarnpkg/fslib`);
 
 const {
-  fs: {writeFile, writeJson},
+  fs: { writeFile, writeJson },
 } = require(`pkg-tests-core`);
 
 describe(`Require tests`, () => {
@@ -9,9 +9,9 @@ describe(`Require tests`, () => {
     `it should cache the loaded modules`,
     makeTemporaryEnv(
       {
-        dependencies: {[`no-deps`]: `1.0.0`},
+        dependencies: { [`no-deps`]: `1.0.0` },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(
@@ -27,9 +27,9 @@ describe(`Require tests`, () => {
     `it should expose the cached modules into require.cache`,
     makeTemporaryEnv(
       {
-        dependencies: {[`no-deps`]: `1.0.0`},
+        dependencies: { [`no-deps`]: `1.0.0` },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(
@@ -43,9 +43,9 @@ describe(`Require tests`, () => {
     `it should allow resetting a loaded module by deleting its entry from require.cache`,
     makeTemporaryEnv(
       {
-        dependencies: {[`no-deps`]: `1.0.0`},
+        dependencies: { [`no-deps`]: `1.0.0` },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(
@@ -59,37 +59,31 @@ describe(`Require tests`, () => {
 
   test(
     `it should correctly resolve native requires`,
-    makeTemporaryEnv(
-      {},
-      async ({path, run, source}) => {
-        await run(`install`);
+    makeTemporaryEnv({}, async ({ path, run, source }) => {
+      await run(`install`);
 
-        await expect(source(`require('fs').existsSync ? true : false`)).resolves.toEqual(true);
-      },
-    ),
+      await expect(source(`require('fs').existsSync ? true : false`)).resolves.toEqual(true);
+    }),
   );
 
   test(
     `it should correctly resolve relative requires`,
-    makeTemporaryEnv(
-      {},
-      async ({path, run, source}) => {
-        await writeFile(`${path}/foo.js`, `module.exports = 42;\n`);
+    makeTemporaryEnv({}, async ({ path, run, source }) => {
+      await writeFile(`${path}/foo.js`, `module.exports = 42;\n`);
 
-        await run(`install`);
+      await run(`install`);
 
-        await expect(source(`require('./foo.js')`)).resolves.toEqual(42);
-      },
-    ),
+      await expect(source(`require('./foo.js')`)).resolves.toEqual(42);
+    }),
   );
 
   test(
     `it should correctly resolve deep requires`,
     makeTemporaryEnv(
       {
-        dependencies: {[`various-requires`]: `1.0.0`},
+        dependencies: { [`various-requires`]: `1.0.0` },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(source(`require('various-requires/alternative-index.js')`)).resolves.toEqual(42);
@@ -105,7 +99,7 @@ describe(`Require tests`, () => {
           [`various-requires`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(source(`require('various-requires/relative-require.js')`)).resolves.toEqual(42);
@@ -115,7 +109,7 @@ describe(`Require tests`, () => {
 
   test(
     `it should load the index.js file when loading from a folder`,
-    makeTemporaryEnv({}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({ path, run, source }) => {
       await run(`install`);
 
       const tmp = await xfs.mktempPromise();
@@ -128,7 +122,7 @@ describe(`Require tests`, () => {
 
   test(
     `it should resolve the .js extension`,
-    makeTemporaryEnv({}, async ({path, run, source}) => {
+    makeTemporaryEnv({}, async ({ path, run, source }) => {
       await run(`install`);
 
       const tmp = await xfs.mktempPromise();
@@ -147,7 +141,7 @@ describe(`Require tests`, () => {
           [`invalid-main`]: `1.0.0`,
         },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await run(`install`);
 
         await expect(source(`require("invalid-main")`)).resolves.toMatchObject({
@@ -162,9 +156,9 @@ describe(`Require tests`, () => {
     `it should support require(require.resolve(...))`,
     makeTemporaryEnv(
       {
-        dependencies: {[`custom-dep-a`]: `file:./custom-dep-a`},
+        dependencies: { [`custom-dep-a`]: `file:./custom-dep-a` },
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeFile(
           `${path}/custom-dep-a/index.js`,
           `module.exports = require('custom-dep-b')(require.resolve('no-deps'))`,
@@ -172,11 +166,11 @@ describe(`Require tests`, () => {
         await writeJson(`${path}/custom-dep-a/package.json`, {
           name: `custom-dep-a`,
           version: `1.0.0`,
-          dependencies: {[`custom-dep-b`]: `file:../custom-dep-b`, [`no-deps`]: `1.0.0`},
+          dependencies: { [`custom-dep-b`]: `file:../custom-dep-b`, [`no-deps`]: `1.0.0` },
         });
 
         await writeFile(`${path}/custom-dep-b/index.js`, `module.exports = path => require(path)`);
-        await writeJson(`${path}/custom-dep-b/package.json`, {name: `custom-dep-b`, version: `1.0.0`});
+        await writeJson(`${path}/custom-dep-b/package.json`, { name: `custom-dep-b`, version: `1.0.0` });
 
         await run(`install`);
 
@@ -195,17 +189,17 @@ describe(`Require tests`, () => {
         private: true,
         workspaces: [`workspace-*`],
       },
-      async ({path, run, source}) => {
+      async ({ path, run, source }) => {
         await writeJson(`${path}/workspace-a/package.json`, {
           name: `workspace-a`,
           version: `1.0.0`,
-          dependencies: {[`no-deps`]: `1.0.0`},
+          dependencies: { [`no-deps`]: `1.0.0` },
         });
 
         await writeJson(`${path}/workspace-b/package.json`, {
           name: `workspace-b`,
           version: `1.0.0`,
-          dependencies: {[`no-deps`]: `2.0.0`, [`one-fixed-dep`]: `1.0.0`},
+          dependencies: { [`no-deps`]: `2.0.0`, [`one-fixed-dep`]: `1.0.0` },
         });
 
         await run(`install`);

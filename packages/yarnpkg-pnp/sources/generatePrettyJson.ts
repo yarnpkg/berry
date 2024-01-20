@@ -182,8 +182,7 @@ function generateExpandedArray(data: Array<any>, state: PrettyJsonState, indent:
   for (let t = 0, T = data.length; t < T; ++t) {
     result += nextIndent + generateNext(String(t), data[t], state, nextIndent).replace(/^ +/, ``);
 
-    if (t + 1 < T)
-      result += `,`;
+    if (t + 1 < T) result += `,`;
 
     result += `\n`;
   }
@@ -194,7 +193,7 @@ function generateExpandedArray(data: Array<any>, state: PrettyJsonState, indent:
   return result;
 }
 
-function generateCollapsedObject(data: {[key: string]: any}, state: PrettyJsonState, indent: string) {
+function generateCollapsedObject(data: { [key: string]: any }, state: PrettyJsonState, indent: string) {
   const keys = Object.keys(data);
 
   let result = ``;
@@ -205,11 +204,9 @@ function generateCollapsedObject(data: {[key: string]: any}, state: PrettyJsonSt
     const key = keys[t];
     const value = data[key];
 
-    if (typeof value === `undefined`)
-      continue;
+    if (typeof value === `undefined`) continue;
 
-    if (keysPrinted !== 0)
-      result += `, `;
+    if (keysPrinted !== 0) result += `, `;
 
     result += JSON.stringify(key);
     result += `: `;
@@ -222,7 +219,7 @@ function generateCollapsedObject(data: {[key: string]: any}, state: PrettyJsonSt
   return result;
 }
 
-function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonState, indent: string) {
+function generateExpandedObject(data: { [key: string]: any }, state: PrettyJsonState, indent: string) {
   const keys = Object.keys(data);
   const nextIndent = `${indent}  `;
 
@@ -236,8 +233,7 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
     const key = keys[t];
     const value = data[key];
 
-    if (typeof value === `undefined`)
-      continue;
+    if (typeof value === `undefined`) continue;
 
     if (keysPrinted !== 0) {
       result += `,`;
@@ -251,8 +247,7 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
     keysPrinted += 1;
   }
 
-  if (keysPrinted !== 0)
-    result += `\n`;
+  if (keysPrinted !== 0) result += `\n`;
 
   result += indent;
   result += `}`;
@@ -261,14 +256,14 @@ function generateExpandedObject(data: {[key: string]: any}, state: PrettyJsonSta
 }
 
 function generateNext(key: string, data: any, state: PrettyJsonState, indent: string) {
-  const {next} = prettyJsonMachine[state];
+  const { next } = prettyJsonMachine[state];
   const nextState = next[key] || next[`*`];
 
   return generate(data, nextState, indent);
 }
 
 function generate(data: any, state: PrettyJsonState, indent: string) {
-  const {collapsed} = prettyJsonMachine[state];
+  const { collapsed } = prettyJsonMachine[state];
 
   if (Array.isArray(data)) {
     if (collapsed) {

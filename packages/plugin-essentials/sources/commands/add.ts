@@ -1,20 +1,18 @@
-import {BaseCommand, WorkspaceRequiredError}                                     from '@yarnpkg/cli';
-import {Cache, Configuration, Descriptor, formatUtils, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, Workspace, Ident, InstallMode}                                  from '@yarnpkg/core';
-import {structUtils}                                                             from '@yarnpkg/core';
-import {PortablePath}                                                            from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                      from 'clipanion';
-import {prompt}                                                                  from 'enquirer';
-import * as t                                                                    from 'typanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Cache, Configuration, Descriptor, formatUtils, LightReport, MessageName } from "@yarnpkg/core";
+import { Project, Workspace, Ident, InstallMode } from "@yarnpkg/core";
+import { structUtils } from "@yarnpkg/core";
+import { PortablePath } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import { prompt } from "enquirer";
+import * as t from "typanion";
 
-import * as suggestUtils                                                         from '../suggestUtils';
-import {Hooks}                                                                   from '..';
+import * as suggestUtils from "../suggestUtils";
+import { Hooks } from "..";
 
 // eslint-disable-next-line arca/no-default-export
 export default class AddCommand extends BaseCommand {
-  static paths = [
-    [`add`],
-  ];
+  static paths = [[`add`]];
 
   static usage: Usage = Command.Usage({
     description: `add dependencies to the project`,
@@ -45,25 +43,26 @@ export default class AddCommand extends BaseCommand {
 
       For a compilation of all the supported protocols, please consult the dedicated page from our website: https://yarnpkg.com/protocols.
     `,
-    examples: [[
-      `Add a regular package to the current workspace`,
-      `$0 add lodash`,
-    ], [
-      `Add a specific version for a package to the current workspace`,
-      `$0 add lodash@1.2.3`,
-    ], [
-      `Add a package from a GitHub repository (the master branch) to the current workspace using a URL`,
-      `$0 add lodash@https://github.com/lodash/lodash`,
-    ], [
-      `Add a package from a GitHub repository (the master branch) to the current workspace using the GitHub protocol`,
-      `$0 add lodash@github:lodash/lodash`,
-    ], [
-      `Add a package from a GitHub repository (the master branch) to the current workspace using the GitHub protocol (shorthand)`,
-      `$0 add lodash@lodash/lodash`,
-    ], [
-      `Add a package from a specific branch of a GitHub repository to the current workspace using the GitHub protocol (shorthand)`,
-      `$0 add lodash-es@lodash/lodash#es`,
-    ]],
+    examples: [
+      [`Add a regular package to the current workspace`, `$0 add lodash`],
+      [`Add a specific version for a package to the current workspace`, `$0 add lodash@1.2.3`],
+      [
+        `Add a package from a GitHub repository (the master branch) to the current workspace using a URL`,
+        `$0 add lodash@https://github.com/lodash/lodash`,
+      ],
+      [
+        `Add a package from a GitHub repository (the master branch) to the current workspace using the GitHub protocol`,
+        `$0 add lodash@github:lodash/lodash`,
+      ],
+      [
+        `Add a package from a GitHub repository (the master branch) to the current workspace using the GitHub protocol (shorthand)`,
+        `$0 add lodash@lodash/lodash`,
+      ],
+      [
+        `Add a package from a specific branch of a GitHub repository to the current workspace using the GitHub protocol (shorthand)`,
+        `$0 add lodash-es@lodash/lodash#es`,
+      ],
+    ],
   });
 
   json = Option.Boolean(`--json`, false, {
@@ -115,17 +114,16 @@ export default class AddCommand extends BaseCommand {
     validator: t.isEnum(InstallMode),
   });
 
-  silent = Option.Boolean(`--silent`, {hidden: true});
+  silent = Option.Boolean(`--silent`, { hidden: true });
 
   packages = Option.Rest();
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState({
       restoreResolutions: false,
@@ -138,122 +136,148 @@ export default class AddCommand extends BaseCommand {
     const modifier = suggestUtils.getModifier(this, project);
 
     const strategies = [
-      reuse ?
-        suggestUtils.Strategy.REUSE
-        : undefined,
+      reuse ? suggestUtils.Strategy.REUSE : undefined,
 
       suggestUtils.Strategy.PROJECT,
 
-      this.cached ?
-        suggestUtils.Strategy.CACHE
-        : undefined,
+      this.cached ? suggestUtils.Strategy.CACHE : undefined,
 
       suggestUtils.Strategy.LATEST,
     ].filter((strategy): strategy is suggestUtils.Strategy => typeof strategy !== `undefined`);
 
-    const maxResults = interactive
-      ? Infinity
-      : 1;
+    const maxResults = interactive ? Infinity : 1;
 
-    const allSuggestions = await Promise.all(this.packages.map(async pseudoDescriptor => {
-      const request = pseudoDescriptor.match(/^\.{0,2}\//)
-        ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {cwd: this.context.cwd, workspace})
-        : structUtils.tryParseDescriptor(pseudoDescriptor);
+    const allSuggestions = await Promise.all(
+      this.packages.map(async (pseudoDescriptor) => {
+        const request = pseudoDescriptor.match(/^\.{0,2}\//)
+          ? await suggestUtils.extractDescriptorFromPath(pseudoDescriptor as PortablePath, {
+              cwd: this.context.cwd,
+              workspace,
+            })
+          : structUtils.tryParseDescriptor(pseudoDescriptor);
 
-      const unsupportedPrefix = pseudoDescriptor.match(/^(https?:|git@github)/);
-      if (unsupportedPrefix)
-        throw new UsageError(`It seems you are trying to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, formatUtils.Type.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, formatUtils.Type.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), formatUtils.Type.DESCRIPTOR)}`);
+        const unsupportedPrefix = pseudoDescriptor.match(/^(https?:|git@github)/);
+        if (unsupportedPrefix)
+          throw new UsageError(
+            `It seems you are trying to add a package using a ${formatUtils.pretty(configuration, `${unsupportedPrefix[0]}...`, formatUtils.Type.RANGE)} url; we now require package names to be explicitly specified.\nTry running the command again with the package name prefixed: ${formatUtils.pretty(configuration, `yarn add`, formatUtils.Type.CODE)} ${formatUtils.pretty(configuration, structUtils.makeDescriptor(structUtils.makeIdent(null, `my-package`), `${unsupportedPrefix[0]}...`), formatUtils.Type.DESCRIPTOR)}`,
+          );
 
-      if (!request)
-        throw new UsageError(`The ${formatUtils.pretty(configuration, pseudoDescriptor, formatUtils.Type.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`);
+        if (!request)
+          throw new UsageError(
+            `The ${formatUtils.pretty(configuration, pseudoDescriptor, formatUtils.Type.CODE)} string didn't match the required format (package-name@range). Did you perhaps forget to explicitly reference the package name?`,
+          );
 
-      const targetList = suggestTargetList(workspace, request, {
-        dev: this.dev,
-        peer: this.peer,
-        preferDev: this.preferDev,
-        optional: this.optional,
-      });
-
-      const results = await Promise.all(targetList.map(async target => {
-        const suggestedDescriptors = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
-        return {request, suggestedDescriptors, target};
-      }));
-
-      return results;
-    })).then(results => results.flat());
-
-    const checkReport = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      suggestInstall: false,
-    }, async report => {
-      for (const {request, suggestedDescriptors: {suggestions, rejections}} of allSuggestions) {
-        const nonNullSuggestions = suggestions.filter(suggestion => {
-          return suggestion.descriptor !== null;
+        const targetList = suggestTargetList(workspace, request, {
+          dev: this.dev,
+          peer: this.peer,
+          preferDev: this.preferDev,
+          optional: this.optional,
         });
 
-        if (nonNullSuggestions.length === 0) {
-          const [firstError] = rejections;
-          if (typeof firstError === `undefined`)
-            throw new Error(`Assertion failed: Expected an error to have been set`);
+        const results = await Promise.all(
+          targetList.map(async (target) => {
+            const suggestedDescriptors = await suggestUtils.getSuggestedDescriptors(request, {
+              project,
+              workspace,
+              cache,
+              fixed,
+              target,
+              modifier,
+              strategies,
+              maxResults,
+            });
+            return { request, suggestedDescriptors, target };
+          }),
+        );
 
-          if (!project.configuration.get(`enableNetwork`))
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`);
-          else
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`);
+        return results;
+      }),
+    ).then((results) => results.flat());
 
-          report.reportSeparator();
-          report.reportExceptionOnce(firstError);
+    const checkReport = await LightReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+        suggestInstall: false,
+      },
+      async (report) => {
+        for (const {
+          request,
+          suggestedDescriptors: { suggestions, rejections },
+        } of allSuggestions) {
+          const nonNullSuggestions = suggestions.filter((suggestion) => {
+            return suggestion.descriptor !== null;
+          });
+
+          if (nonNullSuggestions.length === 0) {
+            const [firstError] = rejections;
+            if (typeof firstError === `undefined`)
+              throw new Error(`Assertion failed: Expected an error to have been set`);
+
+            if (!project.configuration.get(`enableNetwork`))
+              report.reportError(
+                MessageName.CANT_SUGGEST_RESOLUTIONS,
+                `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range (note: network resolution has been disabled)`,
+              );
+            else
+              report.reportError(
+                MessageName.CANT_SUGGEST_RESOLUTIONS,
+                `${structUtils.prettyDescriptor(configuration, request)} can't be resolved to a satisfying range`,
+              );
+
+            report.reportSeparator();
+            report.reportExceptionOnce(firstError);
+          }
         }
-      }
-    });
+      },
+    );
 
-    if (checkReport.hasErrors())
-      return checkReport.exitCode();
+    if (checkReport.hasErrors()) return checkReport.exitCode();
 
     let askedQuestions = false;
 
-    const afterWorkspaceDependencyAdditionList: Array<[
-      Workspace,
-      suggestUtils.Target,
-      Descriptor,
-      Array<suggestUtils.Strategy>,
-    ]> = [];
+    const afterWorkspaceDependencyAdditionList: Array<
+      [Workspace, suggestUtils.Target, Descriptor, Array<suggestUtils.Strategy>]
+    > = [];
 
-    const afterWorkspaceDependencyReplacementList: Array<[
-      Workspace,
-      suggestUtils.Target,
-      Descriptor,
-      Descriptor,
-    ]> = [];
+    const afterWorkspaceDependencyReplacementList: Array<[Workspace, suggestUtils.Target, Descriptor, Descriptor]> = [];
 
-    for (const {suggestedDescriptors: {suggestions}, target} of allSuggestions) {
+    for (const {
+      suggestedDescriptors: { suggestions },
+      target,
+    } of allSuggestions) {
       let selected: Descriptor;
 
-      const nonNullSuggestions = suggestions.filter(suggestion => {
+      const nonNullSuggestions = suggestions.filter((suggestion) => {
         return suggestion.descriptor !== null;
       }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
-      const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
+      const areAllTheSame = nonNullSuggestions.every((suggestion) =>
+        structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor),
+      );
 
       if (nonNullSuggestions.length === 1 || areAllTheSame) {
         selected = firstSuggestedDescriptor;
       } else {
         askedQuestions = true;
-        ({answer: selected} = await prompt({
+        ({ answer: selected } = await prompt({
           type: `select`,
           name: `answer`,
           message: `Which range do you want to use?`,
-          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
-            name,
-            hint: reason,
-            descriptor,
-          } : {
-            name,
-            hint: reason,
-            disabled: true,
-          }),
+          choices: suggestions.map(({ descriptor, name, reason }) =>
+            descriptor
+              ? {
+                  name,
+                  hint: reason,
+                  descriptor,
+                }
+              : {
+                  name,
+                  hint: reason,
+                  disabled: true,
+                },
+          ),
           onCancel: () => process.exit(130),
           result(name: string) {
             // @ts-expect-error: The enquirer types don't include find
@@ -267,10 +291,7 @@ export default class AddCommand extends BaseCommand {
       const current = workspace.manifest[target].get(selected.identHash);
 
       if (typeof current === `undefined` || current.descriptorHash !== selected.descriptorHash) {
-        workspace.manifest[target].set(
-          selected.identHash,
-          selected,
-        );
+        workspace.manifest[target].set(selected.identHash, selected);
 
         if (this.optional) {
           if (target === `dependencies`) {
@@ -287,19 +308,9 @@ export default class AddCommand extends BaseCommand {
         }
 
         if (typeof current === `undefined`) {
-          afterWorkspaceDependencyAdditionList.push([
-            workspace,
-            target,
-            selected,
-            strategies,
-          ]);
+          afterWorkspaceDependencyAdditionList.push([workspace, target, selected, strategies]);
         } else {
-          afterWorkspaceDependencyReplacementList.push([
-            workspace,
-            target,
-            current,
-            selected,
-          ]);
+          afterWorkspaceDependencyReplacementList.push([workspace, target, current, selected]);
         }
       }
     }
@@ -314,56 +325,66 @@ export default class AddCommand extends BaseCommand {
       afterWorkspaceDependencyReplacementList,
     );
 
-    if (askedQuestions)
-      this.context.stdout.write(`\n`);
+    if (askedQuestions) this.context.stdout.write(`\n`);
 
-    return await project.installWithNewReport({
-      json: this.json,
-      stdout: this.context.stdout,
-      quiet: this.context.quiet,
-    }, {
-      cache,
-      mode: this.mode,
-    });
+    return await project.installWithNewReport(
+      {
+        json: this.json,
+        stdout: this.context.stdout,
+        quiet: this.context.quiet,
+      },
+      {
+        cache,
+        mode: this.mode,
+      },
+    );
   }
 }
 
-function suggestTargetList(workspace: Workspace, ident: Ident, {dev, peer, preferDev, optional}: {dev: boolean, peer: boolean, preferDev: boolean, optional: boolean}) {
+function suggestTargetList(
+  workspace: Workspace,
+  ident: Ident,
+  { dev, peer, preferDev, optional }: { dev: boolean; peer: boolean; preferDev: boolean; optional: boolean },
+) {
   const hasRegular = workspace.manifest[suggestUtils.Target.REGULAR].has(ident.identHash);
   const hasDev = workspace.manifest[suggestUtils.Target.DEVELOPMENT].has(ident.identHash);
   const hasPeer = workspace.manifest[suggestUtils.Target.PEER].has(ident.identHash);
 
   if ((dev || peer) && hasRegular)
-    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a regular dependency - remove the -D,-P flags or remove it from your dependencies first`);
+    throw new UsageError(
+      `Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a regular dependency - remove the -D,-P flags or remove it from your dependencies first`,
+    );
   if (!dev && !peer && hasPeer)
-    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - use either of -D or -P, or remove it from your peer dependencies first`);
+    throw new UsageError(
+      `Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - use either of -D or -P, or remove it from your peer dependencies first`,
+    );
 
   if (optional && hasDev)
-    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a dev dependency - remove the -O flag or remove it from your dev dependencies first`);
+    throw new UsageError(
+      `Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a dev dependency - remove the -O flag or remove it from your dev dependencies first`,
+    );
 
   if (optional && !peer && hasPeer)
-    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - remove the -O flag or add the -P flag or remove it from your peer dependencies first`);
+    throw new UsageError(
+      `Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" is already listed as a peer dependency - remove the -O flag or add the -P flag or remove it from your peer dependencies first`,
+    );
 
   if ((dev || preferDev) && optional)
-    throw new UsageError(`Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" cannot simultaneously be a dev dependency and an optional dependency`);
+    throw new UsageError(
+      `Package "${structUtils.prettyIdent(workspace.project.configuration, ident)}" cannot simultaneously be a dev dependency and an optional dependency`,
+    );
 
   // When the program executes this line, the command is expected to be legal
   const targetList = [];
-  if (peer)
-    targetList.push(suggestUtils.Target.PEER);
-  if (dev || preferDev)
-    targetList.push(suggestUtils.Target.DEVELOPMENT);
-  if (optional)
-    targetList.push(suggestUtils.Target.REGULAR);
+  if (peer) targetList.push(suggestUtils.Target.PEER);
+  if (dev || preferDev) targetList.push(suggestUtils.Target.DEVELOPMENT);
+  if (optional) targetList.push(suggestUtils.Target.REGULAR);
 
   // The user explicitly define the targets
-  if (targetList.length > 0)
-    return targetList;
+  if (targetList.length > 0) return targetList;
 
   // The user does not define the targets, find it from the `workspace.manifest`
-  if (hasDev)
-    return [suggestUtils.Target.DEVELOPMENT];
-  if (hasPeer)
-    return [suggestUtils.Target.PEER];
+  if (hasDev) return [suggestUtils.Target.DEVELOPMENT];
+  if (hasPeer) return [suggestUtils.Target.PEER];
   return [suggestUtils.Target.REGULAR];
 }

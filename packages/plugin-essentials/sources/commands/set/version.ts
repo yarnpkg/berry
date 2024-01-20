@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                          from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
-import {PortablePath, ppath, xfs, npath}                                                      from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
-import semver                                                                                 from 'semver';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError } from "@yarnpkg/core";
+import { execUtils, formatUtils, httpUtils, miscUtils, semverUtils } from "@yarnpkg/core";
+import { PortablePath, ppath, xfs, npath } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import semver from "semver";
 
 export type Tags = {
   latest: Record<string, string>;
@@ -12,9 +12,7 @@ export type Tags = {
 
 // eslint-disable-next-line arca/no-default-export
 export default class SetVersionCommand extends BaseCommand {
-  static paths = [
-    [`set`, `version`],
-  ];
+  static paths = [[`set`, `version`]];
 
   static usage: Usage = Command.Usage({
     description: `lock the Yarn version used by the project`,
@@ -40,34 +38,17 @@ export default class SetVersionCommand extends BaseCommand {
 
       - \`self\` -> the version used to invoke the command
     `,
-    examples: [[
-      `Download the latest release from the Yarn repository`,
-      `$0 set version latest`,
-    ], [
-      `Download the latest canary release from the Yarn repository`,
-      `$0 set version canary`,
-    ], [
-      `Download the latest classic release from the Yarn repository`,
-      `$0 set version classic`,
-    ], [
-      `Download the most recent Yarn 3 build`,
-      `$0 set version 3.x`,
-    ], [
-      `Download a specific Yarn 2 build`,
-      `$0 set version 2.0.0-rc.30`,
-    ], [
-      `Switch back to a specific Yarn 1 release`,
-      `$0 set version 1.22.1`,
-    ], [
-      `Use a release from the local filesystem`,
-      `$0 set version ./yarn.cjs`,
-    ], [
-      `Use a release from a URL`,
-      `$0 set version https://repo.yarnpkg.com/3.1.0/packages/yarnpkg-cli/bin/yarn.js`,
-    ], [
-      `Download the version used to invoke the command`,
-      `$0 set version self`,
-    ]],
+    examples: [
+      [`Download the latest release from the Yarn repository`, `$0 set version latest`],
+      [`Download the latest canary release from the Yarn repository`, `$0 set version canary`],
+      [`Download the latest classic release from the Yarn repository`, `$0 set version classic`],
+      [`Download the most recent Yarn 3 build`, `$0 set version 3.x`],
+      [`Download a specific Yarn 2 build`, `$0 set version 2.0.0-rc.30`],
+      [`Switch back to a specific Yarn 1 release`, `$0 set version 1.22.1`],
+      [`Use a release from the local filesystem`, `$0 set version ./yarn.cjs`],
+      [`Use a release from a URL`, `$0 set version https://repo.yarnpkg.com/3.1.0/packages/yarnpkg-cli/bin/yarn.js`],
+      [`Download the version used to invoke the command`, `$0 set version self`],
+    ],
   });
 
   useYarnPath = Option.Boolean(`--yarn-path`, {
@@ -84,8 +65,7 @@ export default class SetVersionCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     if (this.onlyIfNeeded && configuration.get(`yarnPath`)) {
       const yarnPathSource = configuration.sources.get(`yarnPath`) as PortablePath | undefined;
-      if (!yarnPathSource)
-        throw new Error(`Assertion failed: Expected 'yarnPath' to have a source`);
+      if (!yarnPathSource) throw new Error(`Assertion failed: Expected 'yarnPath' to have a source`);
 
       const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
       if (ppath.contains(projectCwd, yarnPathSource)) {
@@ -95,7 +75,9 @@ export default class SetVersionCommand extends BaseCommand {
 
     const getBundlePath = () => {
       if (typeof YarnVersion === `undefined`)
-        throw new UsageError(`The --install flag can only be used without explicit version specifier from the Yarn CLI`);
+        throw new UsageError(
+          `The --install flag can only be used without explicit version specifier from the Yarn CLI`,
+        );
 
       return `file://${process.argv[1]}`;
     };
@@ -106,79 +88,100 @@ export default class SetVersionCommand extends BaseCommand {
     };
 
     const getRef = (url: string, version: string) => {
-      return {version, url: url.replace(/\{\}/g, version)};
+      return { version, url: url.replace(/\{\}/g, version) };
     };
 
-    if (this.version === `self`)
-      bundleRef = {url: getBundlePath(), version: YarnVersion ?? `self`};
+    if (this.version === `self`) bundleRef = { url: getBundlePath(), version: YarnVersion ?? `self` };
     else if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
-      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `stable`));
+      bundleRef = getRef(
+        `https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`,
+        await resolveTag(configuration, `stable`),
+      );
     else if (this.version === `canary`)
-      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `canary`));
+      bundleRef = getRef(
+        `https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`,
+        await resolveTag(configuration, `canary`),
+      );
     else if (this.version === `classic`)
-      bundleRef = {url: `https://classic.yarnpkg.com/latest.js`, version: `classic`};
-    else if (this.version.match(/^https?:/))
-      bundleRef = {url: this.version, version: `remote`};
+      bundleRef = { url: `https://classic.yarnpkg.com/latest.js`, version: `classic` };
+    else if (this.version.match(/^https?:/)) bundleRef = { url: this.version, version: `remote` };
     else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
-      bundleRef = {url: `file://${ppath.resolve(npath.toPortablePath(this.version))}`, version: `file`};
+      bundleRef = { url: `file://${ppath.resolve(npath.toPortablePath(this.version))}`, version: `file` };
     else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, this.version);
     else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
       bundleRef = getRef(`https://github.com/yarnpkg/yarn/releases/download/v{}/yarn-{}.js`, this.version);
     else if (semverUtils.validRange(this.version))
-      bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveRange(configuration, this.version));
-    else
-      throw new UsageError(`Invalid version descriptor "${this.version}"`);
+      bundleRef = getRef(
+        `https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`,
+        await resolveRange(configuration, this.version),
+      );
+    else throw new UsageError(`Invalid version descriptor "${this.version}"`);
 
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      includeLogs: !this.context.quiet,
-    }, async (report: StreamReport) => {
-      const fetchBuffer = async () => {
-        const filePrefix = `file://`;
+    const report = await StreamReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+        includeLogs: !this.context.quiet,
+      },
+      async (report: StreamReport) => {
+        const fetchBuffer = async () => {
+          const filePrefix = `file://`;
 
-        if (bundleRef.url.startsWith(filePrefix)) {
-          report.reportInfo(MessageName.UNNAMED, `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.PATH)}`);
-          return await xfs.readFilePromise(bundleRef.url.slice(filePrefix.length) as PortablePath);
-        } else {
-          report.reportInfo(MessageName.UNNAMED, `Downloading ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.URL)}`);
-          return await httpUtils.get(bundleRef.url, {configuration});
-        }
-      };
+          if (bundleRef.url.startsWith(filePrefix)) {
+            report.reportInfo(
+              MessageName.UNNAMED,
+              `Retrieving ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.PATH)}`,
+            );
+            return await xfs.readFilePromise(bundleRef.url.slice(filePrefix.length) as PortablePath);
+          } else {
+            report.reportInfo(
+              MessageName.UNNAMED,
+              `Downloading ${formatUtils.pretty(configuration, bundleRef.url, formatUtils.Type.URL)}`,
+            );
+            return await httpUtils.get(bundleRef.url, { configuration });
+          }
+        };
 
-      await setVersion(configuration, bundleRef.version, fetchBuffer, {report, useYarnPath: this.useYarnPath});
-    });
+        await setVersion(configuration, bundleRef.version, fetchBuffer, { report, useYarnPath: this.useYarnPath });
+      },
+    );
 
     return report.exitCode();
   }
 }
 
 export async function resolveRange(configuration: Configuration, request: string) {
-  const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
+  const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, { configuration, jsonResponse: true });
 
-  const candidates = data.tags.filter(version => semverUtils.satisfiesWithPrereleases(version, request));
+  const candidates = data.tags.filter((version) => semverUtils.satisfiesWithPrereleases(version, request));
   if (candidates.length === 0)
-    throw new UsageError(`No matching release found for range ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)}.`);
+    throw new UsageError(
+      `No matching release found for range ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)}.`,
+    );
 
   // The tags on the website are sorted by semver descending
   return candidates[0];
 }
 
 export async function resolveTag(configuration: Configuration, request: `stable` | `canary`) {
-  const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true});
+  const data: Tags = await httpUtils.get(`https://repo.yarnpkg.com/tags`, { configuration, jsonResponse: true });
   if (!data.latest[request])
     throw new UsageError(`Tag ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)} not found`);
 
   return data.latest[request];
 }
 
-export async function setVersion(configuration: Configuration, bundleVersion: string | null, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
+export async function setVersion(
+  configuration: Configuration,
+  bundleVersion: string | null,
+  fetchBuffer: () => Promise<Buffer>,
+  { report, useYarnPath }: { report: Report; useYarnPath?: boolean },
+) {
   let bundleBuffer: Buffer;
 
   const ensureBuffer = async () => {
-    if (typeof bundleBuffer === `undefined`)
-      bundleBuffer = await fetchBuffer();
+    if (typeof bundleBuffer === `undefined`) bundleBuffer = await fetchBuffer();
 
     return bundleBuffer;
   };
@@ -186,18 +189,24 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   if (bundleVersion === null) {
     const bundleBuffer = await ensureBuffer();
 
-    await xfs.mktempPromise(async tmpDir => {
+    await xfs.mktempPromise(async (tmpDir) => {
       const temporaryPath = ppath.join(tmpDir, `yarn.cjs`);
       await xfs.writeFilePromise(temporaryPath, bundleBuffer!);
 
-      const {stdout} = await execUtils.execvp(process.execPath, [npath.fromPortablePath(temporaryPath), `--version`], {
-        cwd: tmpDir,
-        env: {...configuration.env, YARN_IGNORE_PATH: `1`},
-      });
+      const { stdout } = await execUtils.execvp(
+        process.execPath,
+        [npath.fromPortablePath(temporaryPath), `--version`],
+        {
+          cwd: tmpDir,
+          env: { ...configuration.env, YARN_IGNORE_PATH: `1` },
+        },
+      );
 
       bundleVersion = stdout.trim();
       if (!semver.valid(bundleVersion)) {
-        throw new Error(`Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`);
+        throw new Error(
+          `Invalid semver version. ${formatUtils.pretty(configuration, `yarn --version`, formatUtils.Type.CODE)} returned:\n${bundleVersion}`,
+        );
       }
     });
   }
@@ -216,23 +225,32 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
   if (useYarnPath === false) {
     if (absolutelyMustUseYarnPath)
-      throw new ReportError(MessageName.UNNAMED, `You explicitly opted out of yarnPath usage in your command line, but the version you specified cannot be represented by Corepack`);
+      throw new ReportError(
+        MessageName.UNNAMED,
+        `You explicitly opted out of yarnPath usage in your command line, but the version you specified cannot be represented by Corepack`,
+      );
 
     probablyShouldUseYarnPath = false;
   } else if (!probablyShouldUseYarnPath && !process.env.COREPACK_ROOT) {
-    report.reportWarning(MessageName.UNNAMED, `You don't seem to have ${formatUtils.applyHyperlink(configuration, `Corepack`, `https://nodejs.org/api/corepack.html`)} enabled; we'll have to rely on ${formatUtils.applyHyperlink(configuration, `yarnPath`, `https://yarnpkg.com/configuration/yarnrc#yarnPath`)} instead`);
+    report.reportWarning(
+      MessageName.UNNAMED,
+      `You don't seem to have ${formatUtils.applyHyperlink(configuration, `Corepack`, `https://nodejs.org/api/corepack.html`)} enabled; we'll have to rely on ${formatUtils.applyHyperlink(configuration, `yarnPath`, `https://yarnpkg.com/configuration/yarnrc#yarnPath`)} instead`,
+    );
     probablyShouldUseYarnPath = true;
   }
 
   if (probablyShouldUseYarnPath) {
     const bundleBuffer = await ensureBuffer();
 
-    report.reportInfo(MessageName.UNNAMED, `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`);
+    report.reportInfo(
+      MessageName.UNNAMED,
+      `Saving the new release in ${formatUtils.pretty(configuration, displayPath, `magenta`)}`,
+    );
 
     await xfs.removePromise(ppath.dirname(absolutePath));
-    await xfs.mkdirPromise(ppath.dirname(absolutePath), {recursive: true});
+    await xfs.mkdirPromise(ppath.dirname(absolutePath), { recursive: true });
 
-    await xfs.writeFilePromise(absolutePath, bundleBuffer, {mode: 0o755});
+    await xfs.writeFilePromise(absolutePath, bundleBuffer, { mode: 0o755 });
 
     await Configuration.updateConfiguration(projectCwd, {
       yarnPath: ppath.relative(projectCwd, absolutePath),
@@ -250,8 +268,8 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
   manifest.packageManager = `yarn@${
     isTaggedYarnVersion
       ? bundleVersion!
-      // If the version isn't tagged, we use the latest stable version as the wrapper
-      : await resolveTag(configuration, `stable`)
+      : // If the version isn't tagged, we use the latest stable version as the wrapper
+        await resolveTag(configuration, `stable`)
   }`;
 
   const data = {};

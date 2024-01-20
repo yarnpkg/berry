@@ -1,86 +1,86 @@
-import {Descriptor, Plugin, SettingsType, Package, formatUtils} from '@yarnpkg/core';
-import {Workspace}                                              from '@yarnpkg/core';
-import {isCI}                                                   from 'ci-info';
+import { Descriptor, Plugin, SettingsType, Package, formatUtils } from "@yarnpkg/core";
+import { Workspace } from "@yarnpkg/core";
+import { isCI } from "ci-info";
 
-import AddCommand                                               from './commands/add';
-import BinCommand                                               from './commands/bin';
-import CacheCleanCommand                                        from './commands/cache/clean';
-import ConfigGetCommand                                         from './commands/config/get';
-import ConfigSetCommand                                         from './commands/config/set';
-import ConfigUnsetCommand                                       from './commands/config/unset';
-import ConfigCommand                                            from './commands/config';
-import DedupeCommand                                            from './commands/dedupe';
-import ClipanionCommand                                         from './commands/entries/clipanion';
-import HelpCommand                                              from './commands/entries/help';
-import EntryCommand                                             from './commands/entries/run';
-import VersionCommand                                           from './commands/entries/version';
-import ExecCommand                                              from './commands/exec';
-import ExplainPeerRequirementsCommand                           from './commands/explain/peerRequirements';
-import ExplainCommand                                           from './commands/explain';
-import InfoCommand                                              from './commands/info';
-import YarnCommand                                              from './commands/install';
-import LinkCommand                                              from './commands/link';
-import NodeCommand                                              from './commands/node';
-import PluginCheckCommand                                       from './commands/plugin/check';
-import PluginImportSourcesCommand                               from './commands/plugin/import/sources';
-import PluginImportCommand                                      from './commands/plugin/import';
-import PluginListCommand                                        from './commands/plugin/list';
-import PluginRemoveCommand                                      from './commands/plugin/remove';
-import PluginRuntimeCommand                                     from './commands/plugin/runtime';
-import RebuildCommand                                           from './commands/rebuild';
-import RemoveCommand                                            from './commands/remove';
-import RunIndexCommand                                          from './commands/runIndex';
-import RunCommand                                               from './commands/run';
-import SetResolutionCommand                                     from './commands/set/resolution';
-import SetVersionSourcesCommand                                 from './commands/set/version/sources';
-import SetVersionCommand                                        from './commands/set/version';
-import UnlinkCommand                                            from './commands/unlink';
-import UpCommand                                                from './commands/up';
-import WhyCommand                                               from './commands/why';
-import WorkspacesListCommand                                    from './commands/workspaces/list';
-import WorkspaceCommand                                         from './commands/workspace';
-import * as dedupeUtils                                         from './dedupeUtils';
-import * as suggestUtils                                        from './suggestUtils';
+import AddCommand from "./commands/add";
+import BinCommand from "./commands/bin";
+import CacheCleanCommand from "./commands/cache/clean";
+import ConfigGetCommand from "./commands/config/get";
+import ConfigSetCommand from "./commands/config/set";
+import ConfigUnsetCommand from "./commands/config/unset";
+import ConfigCommand from "./commands/config";
+import DedupeCommand from "./commands/dedupe";
+import ClipanionCommand from "./commands/entries/clipanion";
+import HelpCommand from "./commands/entries/help";
+import EntryCommand from "./commands/entries/run";
+import VersionCommand from "./commands/entries/version";
+import ExecCommand from "./commands/exec";
+import ExplainPeerRequirementsCommand from "./commands/explain/peerRequirements";
+import ExplainCommand from "./commands/explain";
+import InfoCommand from "./commands/info";
+import YarnCommand from "./commands/install";
+import LinkCommand from "./commands/link";
+import NodeCommand from "./commands/node";
+import PluginCheckCommand from "./commands/plugin/check";
+import PluginImportSourcesCommand from "./commands/plugin/import/sources";
+import PluginImportCommand from "./commands/plugin/import";
+import PluginListCommand from "./commands/plugin/list";
+import PluginRemoveCommand from "./commands/plugin/remove";
+import PluginRuntimeCommand from "./commands/plugin/runtime";
+import RebuildCommand from "./commands/rebuild";
+import RemoveCommand from "./commands/remove";
+import RunIndexCommand from "./commands/runIndex";
+import RunCommand from "./commands/run";
+import SetResolutionCommand from "./commands/set/resolution";
+import SetVersionSourcesCommand from "./commands/set/version/sources";
+import SetVersionCommand from "./commands/set/version";
+import UnlinkCommand from "./commands/unlink";
+import UpCommand from "./commands/up";
+import WhyCommand from "./commands/why";
+import WorkspacesListCommand from "./commands/workspaces/list";
+import WorkspaceCommand from "./commands/workspace";
+import * as dedupeUtils from "./dedupeUtils";
+import * as suggestUtils from "./suggestUtils";
 
-export {AddCommand};
-export {BinCommand};
-export {CacheCleanCommand};
-export {ConfigGetCommand};
-export {ConfigSetCommand};
-export {ConfigUnsetCommand};
-export {ConfigCommand};
-export {DedupeCommand};
-export {ClipanionCommand};
-export {HelpCommand};
-export {EntryCommand};
-export {VersionCommand};
-export {ExecCommand};
-export {ExplainPeerRequirementsCommand};
-export {ExplainCommand};
-export {InfoCommand};
-export {YarnCommand};
-export {LinkCommand};
-export {NodeCommand};
-export {PluginImportSourcesCommand};
-export {PluginCheckCommand};
-export {PluginImportCommand};
-export {PluginListCommand};
-export {PluginRemoveCommand};
-export {PluginRuntimeCommand};
-export {RebuildCommand};
-export {RemoveCommand};
-export {RunIndexCommand};
-export {RunCommand};
-export {SetResolutionCommand};
-export {SetVersionSourcesCommand};
-export {SetVersionCommand};
-export {UnlinkCommand};
-export {UpCommand};
-export {WhyCommand};
-export {WorkspacesListCommand};
-export {WorkspaceCommand};
-export {dedupeUtils};
-export {suggestUtils};
+export { AddCommand };
+export { BinCommand };
+export { CacheCleanCommand };
+export { ConfigGetCommand };
+export { ConfigSetCommand };
+export { ConfigUnsetCommand };
+export { ConfigCommand };
+export { DedupeCommand };
+export { ClipanionCommand };
+export { HelpCommand };
+export { EntryCommand };
+export { VersionCommand };
+export { ExecCommand };
+export { ExplainPeerRequirementsCommand };
+export { ExplainCommand };
+export { InfoCommand };
+export { YarnCommand };
+export { LinkCommand };
+export { NodeCommand };
+export { PluginImportSourcesCommand };
+export { PluginCheckCommand };
+export { PluginImportCommand };
+export { PluginListCommand };
+export { PluginRemoveCommand };
+export { PluginRuntimeCommand };
+export { RebuildCommand };
+export { RemoveCommand };
+export { RunIndexCommand };
+export { RunCommand };
+export { SetResolutionCommand };
+export { SetVersionSourcesCommand };
+export { SetVersionCommand };
+export { UnlinkCommand };
+export { UpCommand };
+export { WhyCommand };
+export { WorkspacesListCommand };
+export { WorkspaceCommand };
+export { dedupeUtils };
+export { suggestUtils };
 
 export interface Hooks {
   /**
@@ -93,7 +93,7 @@ export interface Hooks {
     workspace: Workspace,
     target: suggestUtils.Target,
     descriptor: Descriptor,
-    strategies: Array<suggestUtils.Strategy>
+    strategies: Array<suggestUtils.Strategy>,
   ) => Promise<void>;
 
   /**
@@ -133,11 +133,14 @@ export interface Hooks {
   fetchPackageInfo?: (
     pkg: Package,
     extra: Set<string>,
-    registerData: (namespace: string, data: Array<formatUtils.Tuple> | {[key: string]: formatUtils.Tuple | undefined}) => void,
+    registerData: (
+      namespace: string,
+      data: Array<formatUtils.Tuple> | { [key: string]: formatUtils.Tuple | undefined },
+    ) => void,
   ) => Promise<void>;
 }
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     enableImmutableInstalls: boolean;
     // Can't use Modifier here because there are actually two instances of this module:

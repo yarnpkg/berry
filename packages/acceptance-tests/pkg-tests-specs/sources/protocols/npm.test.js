@@ -1,4 +1,4 @@
-import {xfs} from '@yarnpkg/fslib';
+import { xfs } from "@yarnpkg/fslib";
 
 describe(`Protocols`, () => {
   describe(`npm:`, () => {
@@ -6,9 +6,9 @@ describe(`Protocols`, () => {
       `it should allow renaming packages`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `npm:one-fixed-dep@1.0.0`},
+          dependencies: { [`no-deps`]: `npm:one-fixed-dep@1.0.0` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
@@ -23,9 +23,9 @@ describe(`Protocols`, () => {
       `it should allow prefixing semver ranges with "v"`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps`]: `npm:v1.0.0`},
+          dependencies: { [`no-deps`]: `npm:v1.0.0` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
@@ -40,9 +40,9 @@ describe(`Protocols`, () => {
       `it should allow semver ranges with build metadata`,
       makeTemporaryEnv(
         {
-          dependencies: {[`no-deps-build-metadata`]: `npm:1.0.0+123`},
+          dependencies: { [`no-deps-build-metadata`]: `npm:1.0.0+123` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('no-deps-build-metadata')`)).resolves.toMatchObject({
@@ -57,9 +57,9 @@ describe(`Protocols`, () => {
       `it should allow fetching packages that have an unconventional url (semver)`,
       makeTemporaryEnv(
         {
-          dependencies: {[`unconventional-tarball`]: `1.0.0`},
+          dependencies: { [`unconventional-tarball`]: `1.0.0` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
@@ -77,9 +77,9 @@ describe(`Protocols`, () => {
       `it should allow fetching packages that have an unconventional url (tag)`,
       makeTemporaryEnv(
         {
-          dependencies: {[`unconventional-tarball`]: `latest`},
+          dependencies: { [`unconventional-tarball`]: `latest` },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
@@ -95,7 +95,7 @@ describe(`Protocols`, () => {
 
     test(
       `it should allow fetching packages that have an unconventional url without specifying version`,
-      makeTemporaryEnv({}, async ({run, source}) => {
+      makeTemporaryEnv({}, async ({ run, source }) => {
         await run(`add`, `unconventional-tarball`);
 
         await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
@@ -109,9 +109,11 @@ describe(`Protocols`, () => {
       `it should allow fetching packages that have an unconventional url (fragment)`,
       makeTemporaryEnv(
         {
-          dependencies: {[`unconventional-tarball`]: `https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz#fragment`},
+          dependencies: {
+            [`unconventional-tarball`]: `https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz#fragment`,
+          },
         },
-        async ({path, run, source, registryUrl}) => {
+        async ({ path, run, source, registryUrl }) => {
           await run(`install`);
 
           await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
@@ -129,9 +131,11 @@ describe(`Protocols`, () => {
       `it should allow fetching packages that have an unconventional url (query)`,
       makeTemporaryEnv(
         {
-          dependencies: {[`unconventional-tarball`]: `https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz?auth=1234`},
+          dependencies: {
+            [`unconventional-tarball`]: `https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz?auth=1234`,
+          },
         },
-        async ({path, run, source, registryUrl}) => {
+        async ({ path, run, source, registryUrl }) => {
           await run(`install`);
 
           await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({

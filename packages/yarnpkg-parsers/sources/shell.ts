@@ -1,24 +1,46 @@
-import {Argument, ArgumentSegment, ArithmeticExpression, Command, CommandChain, CommandChainThen, CommandLine, CommandLineThen, EnvSegment, parse, RedirectArgument, ShellLine, ValueArgument} from './grammars/shell';
+import {
+  Argument,
+  ArgumentSegment,
+  ArithmeticExpression,
+  Command,
+  CommandChain,
+  CommandChainThen,
+  CommandLine,
+  CommandLineThen,
+  EnvSegment,
+  parse,
+  RedirectArgument,
+  ShellLine,
+  ValueArgument,
+} from "./grammars/shell";
 
-export function parseShell(source: string, options: {isGlobPattern: (arg: string) => boolean} = {isGlobPattern: () => false}): ShellLine {
+export function parseShell(
+  source: string,
+  options: { isGlobPattern: (arg: string) => boolean } = { isGlobPattern: () => false },
+): ShellLine {
   try {
     return parse(source, options);
   } catch (error) {
     if (error.location)
-      error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
+      error.message = error.message.replace(
+        /(\.)?$/,
+        ` (line ${error.location.start.line}, column ${error.location.start.column})$1`,
+      );
     throw error;
   }
 }
 
-export function stringifyShellLine(shellLine: ShellLine, {endSemicolon = false}: {endSemicolon?: boolean} = {}): string {
+export function stringifyShellLine(
+  shellLine: ShellLine,
+  { endSemicolon = false }: { endSemicolon?: boolean } = {},
+): string {
   return shellLine
-    .map(({command, type}, index) => `${
-      stringifyCommandLine(command)
-    }${
-      type === `;`
-        ? (index !== shellLine.length - 1 || endSemicolon ? `;` : ``)
-        : ` &`
-    }`)
+    .map(
+      ({ command, type }, index) =>
+        `${stringifyCommandLine(command)}${
+          type === `;` ? (index !== shellLine.length - 1 || endSemicolon ? `;` : ``) : ` &`
+        }`,
+    )
     .join(` `);
 }
 
@@ -41,16 +63,16 @@ export function stringifyCommandChainThen(commandChainThen: CommandChainThen): s
 export function stringifyCommand(command: Command): string {
   switch (command.type) {
     case `command`:
-      return `${command.envs.length > 0 ? `${command.envs.map(env => stringifyEnvSegment(env)).join(` `)} ` : ``}${command.args.map(argument => stringifyArgument(argument)).join(` `)}`;
+      return `${command.envs.length > 0 ? `${command.envs.map((env) => stringifyEnvSegment(env)).join(` `)} ` : ``}${command.args.map((argument) => stringifyArgument(argument)).join(` `)}`;
 
     case `subshell`:
-      return `(${stringifyShellLine(command.subshell)})${command.args.length > 0 ? ` ${command.args.map(argument => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
+      return `(${stringifyShellLine(command.subshell)})${command.args.length > 0 ? ` ${command.args.map((argument) => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
 
     case `group`:
-      return `{ ${stringifyShellLine(command.group, {/* Bash compat */ endSemicolon: true})} }${command.args.length > 0 ? ` ${command.args.map(argument => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
+      return `{ ${stringifyShellLine(command.group, { /* Bash compat */ endSemicolon: true })} }${command.args.length > 0 ? ` ${command.args.map((argument) => stringifyRedirectArgument(argument)).join(` `)}` : ``}`;
 
     case `envs`:
-      return command.envs.map(env => stringifyEnvSegment(env)).join(` `);
+      return command.envs.map((env) => stringifyEnvSegment(env)).join(` `);
 
     default:
       throw new Error(`Unsupported command type:  "${(command as any).type}"`);
@@ -75,11 +97,11 @@ export function stringifyArgument(argument: Argument): string {
 }
 
 export function stringifyRedirectArgument(argument: RedirectArgument): string {
-  return `${argument.subtype} ${argument.args.map(argument => stringifyValueArgument(argument)).join(` `)}`;
+  return `${argument.subtype} ${argument.args.map((argument) => stringifyValueArgument(argument)).join(` `)}`;
 }
 
 export function stringifyValueArgument(argument: ValueArgument): string {
-  return argument.segments.map(segment => stringifyArgumentSegment(segment)).join(``);
+  return argument.segments.map((segment) => stringifyArgumentSegment(segment)).join(``);
 }
 
 const ESCAPED_CONTROL_CHARS = new Map([
@@ -109,19 +131,14 @@ const getEscapedDblChar = (match: string) => {
 };
 
 export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): string {
-  const doubleQuoteIfRequested = (string: string, quote: boolean) => quote
-    ? `"${string}"`
-    : string;
+  const doubleQuoteIfRequested = (string: string, quote: boolean) => (quote ? `"${string}"` : string);
 
   const quoteIfNeeded = (text: string) => {
-    if (text === ``)
-      return `''`;
+    if (text === ``) return `''`;
 
-    if (!text.match(/[()}<>$|&;"'\n\t ]/))
-      return text;
+    if (!text.match(/[()}<>$|&;"'\n\t ]/)) return text;
 
-    if (!text.match(/['\t\p{C}]/u))
-      return `'${text}'`;
+    if (!text.match(/['\t\p{C}]/u)) return `'${text}'`;
 
     if (!text.match(/'/)) {
       return `$'${text.replace(/[\t\p{C}]/u, getEscapedControlChar)}'`;
@@ -147,10 +164,10 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
             ? `\${${argumentSegment.name}}`
             : argumentSegment.alternativeValue.length === 0
               ? `\${${argumentSegment.name}:+}`
-              : `\${${argumentSegment.name}:+${argumentSegment.alternativeValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`
+              : `\${${argumentSegment.name}:+${argumentSegment.alternativeValue.map((argument) => stringifyValueArgument(argument)).join(` `)}}`
           : argumentSegment.defaultValue.length === 0
             ? `\${${argumentSegment.name}:-}`
-            : `\${${argumentSegment.name}:-${argumentSegment.defaultValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`,
+            : `\${${argumentSegment.name}:-${argumentSegment.defaultValue.map((argument) => stringifyValueArgument(argument)).join(` `)}}`,
         argumentSegment.quoted,
       );
 
@@ -163,7 +180,7 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
 }
 
 export function stringifyArithmeticExpression(argument: ArithmeticExpression): string {
-  const getOperator = (type: ArithmeticExpression['type']) => {
+  const getOperator = (type: ArithmeticExpression["type"]) => {
     switch (type) {
       case `addition`:
         return `+`;
@@ -178,10 +195,13 @@ export function stringifyArithmeticExpression(argument: ArithmeticExpression): s
     }
   };
 
-  const parenthesizeIfRequested = (string: string, parenthesize: boolean) => parenthesize ? `( ${string} )` : string;
+  const parenthesizeIfRequested = (string: string, parenthesize: boolean) => (parenthesize ? `( ${string} )` : string);
   const stringifyAndParenthesizeIfNeeded = (expression: ArithmeticExpression) =>
     // Right now we parenthesize all arithmetic operator expressions because it's easier
-    parenthesizeIfRequested(stringifyArithmeticExpression(expression), ![`number`, `variable`].includes(expression.type));
+    parenthesizeIfRequested(
+      stringifyArithmeticExpression(expression),
+      ![`number`, `variable`].includes(expression.type),
+    );
 
   switch (argument.type) {
     case `number`:
@@ -196,4 +216,4 @@ export function stringifyArithmeticExpression(argument: ArithmeticExpression): s
 }
 
 // For symmetry
-export {stringifyShellLine as stringifyShell};
+export { stringifyShellLine as stringifyShell };

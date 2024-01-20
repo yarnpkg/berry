@@ -22,7 +22,7 @@ Open in a text editor a new file called `plugin-hello-world.js`, and type the fo
 ```js
 module.exports = {
   name: `plugin-hello-world`,
-  factory: require => ({
+  factory: (require) => ({
     // What is this `require` function, you ask? It's a `require`
     // implementation provided by Yarn core that allows you to
     // access various packages (such as @yarnpkg/core) without
@@ -34,7 +34,7 @@ module.exports = {
     // Of course, the regular `require` implementation remains
     // available, so feel free to use the `require` you need for
     // your use case!
-  })
+  }),
 };
 ```
 
@@ -60,8 +60,8 @@ Plugins can also register their own commands. To do this, we just have to write 
 ```js
 module.exports = {
   name: `plugin-hello-world`,
-  factory: require => {
-    const {BaseCommand} = require(`@yarnpkg/cli`);
+  factory: (require) => {
+    const { BaseCommand } = require(`@yarnpkg/cli`);
 
     class HelloWorldCommand extends BaseCommand {
       static paths = [[`hello`]];
@@ -72,11 +72,9 @@ module.exports = {
     }
 
     return {
-      commands: [
-        HelloWorldCommand,
-      ],
+      commands: [HelloWorldCommand],
     };
-  }
+  },
 };
 ```
 
@@ -85,9 +83,9 @@ Now, try to run `yarn hello`. You'll see your message appear! Note that you can 
 ```js
 module.exports = {
   name: `plugin-addition`,
-  factory: require => {
-    const {BaseCommand} = require(`@yarnpkg/cli`);
-    const {Command, Option} = require(`clipanion`);
+  factory: (require) => {
+    const { BaseCommand } = require(`@yarnpkg/cli`);
+    const { Command, Option } = require(`clipanion`);
     const t = require(`typanion`);
 
     class AdditionCommand extends BaseCommand {
@@ -99,14 +97,11 @@ module.exports = {
         details: `
           This command will print a nice message.
         `,
-        examples: [[
-          `Add two numbers together`,
-          `yarn addition 42 10`,
-        ]],
+        examples: [[`Add two numbers together`, `yarn addition 42 10`]],
       });
 
-      a = Option.String({validator: t.isNumber()});
-      b = Option.String({validator: t.isNumber()});
+      a = Option.String({ validator: t.isNumber() });
+      b = Option.String({ validator: t.isNumber() });
 
       async execute() {
         this.context.stdout.write(`${this.a}+${this.b}=${this.a + this.b}\n`);
@@ -114,9 +109,7 @@ module.exports = {
     }
 
     return {
-      commands: [
-        AdditionCommand,
-      ],
+      commands: [AdditionCommand],
     };
   },
 };
@@ -129,13 +122,13 @@ Plugins can register to various events in the Yarn lifetime, and provide them ad
 ```js
 module.exports = {
   name: `plugin-hello-world`,
-  factory: require => ({
+  factory: (require) => ({
     hooks: {
       setupScriptEnvironment(project, scriptEnv) {
         scriptEnv.HELLO_WORLD = `my first plugin!`;
       },
     },
-  })
+  }),
 };
 ```
 
@@ -155,8 +148,8 @@ const util = require(`util`);
 
 module.exports = {
   name: `plugin-project-info`,
-  factory: require => {
-    const {structUtils} = require(`@yarnpkg/core`);
+  factory: (require) => {
+    const { structUtils } = require(`@yarnpkg/core`);
 
     return {
       default: {
@@ -164,20 +157,20 @@ module.exports = {
           afterAllInstalled(project) {
             let descriptorCount = 0;
             for (const descriptor of project.storedDescriptors.values())
-              if (!structUtils.isVirtualDescriptor(descriptor))
-                descriptorCount += 1;
+              if (!structUtils.isVirtualDescriptor(descriptor)) descriptorCount += 1;
 
             let packageCount = 0;
             for (const pkg of project.storedPackages.values())
-              if (!structUtils.isVirtualLocator(pkg))
-                packageCount += 1;
+              if (!structUtils.isVirtualLocator(pkg)) packageCount += 1;
 
-            console.log(`This project contains ${descriptorCount} different descriptors that resolve to ${packageCount} packages`);
-          }
-        }
-      }
+            console.log(
+              `This project contains ${descriptorCount} different descriptors that resolve to ${packageCount} packages`,
+            );
+          },
+        },
+      },
     };
-  }
+  },
 };
 ```
 

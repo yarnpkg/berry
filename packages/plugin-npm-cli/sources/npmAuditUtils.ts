@@ -1,7 +1,18 @@
-import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator, LocatorHash} from '@yarnpkg/core';
-import semver                                                                                                 from  'semver';
+import semver from "semver";
 
-import * as npmAuditTypes                                                                                     from './npmAuditTypes';
+import * as npmAuditTypes from "./npmAuditTypes";
+
+import {
+  Project,
+  Workspace,
+  formatUtils,
+  structUtils,
+  treeUtils,
+  Descriptor,
+  miscUtils,
+  Locator,
+  LocatorHash,
+} from "@yarnpkg/core";
 
 export const allSeverities = [
   npmAuditTypes.Severity.Info,
@@ -12,8 +23,7 @@ export const allSeverities = [
 ];
 
 export function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<npmAuditTypes.Severity> {
-  if (typeof severity === `undefined`)
-    return new Set(allSeverities);
+  if (typeof severity === `undefined`) return new Set(allSeverities);
 
   const severityIndex = allSeverities.indexOf(severity);
   const severities = allSeverities.slice(severityIndex);
@@ -23,10 +33,10 @@ export function getSeverityInclusions(severity?: npmAuditTypes.Severity): Set<np
 
 export function getReportTree(result: npmAuditTypes.AuditExtendedResponse) {
   const auditTreeChildren: treeUtils.TreeMap = {};
-  const auditTree: treeUtils.TreeNode = {children: auditTreeChildren};
+  const auditTree: treeUtils.TreeNode = { children: auditTreeChildren };
 
-  for (const [packageName, advisories] of miscUtils.sortMap(Object.entries(result), advisory => advisory[0])) {
-    for (const advisory of miscUtils.sortMap(advisories, advisory => `${advisory.id}`)) {
+  for (const [packageName, advisories] of miscUtils.sortMap(Object.entries(result), (advisory) => advisory[0])) {
+    for (const advisory of miscUtils.sortMap(advisories, (advisory) => `${advisory.id}`)) {
       auditTreeChildren[`${packageName}/${advisory.id}`] = {
         value: formatUtils.tuple(formatUtils.Type.IDENT, structUtils.parseIdent(packageName)),
         children: {
@@ -52,15 +62,17 @@ export function getReportTree(result: npmAuditTypes.AuditExtendedResponse) {
           },
           [`Tree Versions`]: {
             label: `Tree Versions`,
-            children: [...advisory.versions].sort(semver.compare).map(version => ({
+            children: [...advisory.versions].sort(semver.compare).map((version) => ({
               value: formatUtils.tuple(formatUtils.Type.REFERENCE, version),
             })),
           },
           Dependents: {
             label: `Dependents`,
-            children: miscUtils.sortMap(advisory.dependents, locator => structUtils.stringifyLocator(locator)).map(locator => ({
-              value: formatUtils.tuple(formatUtils.Type.LOCATOR, locator),
-            })),
+            children: miscUtils
+              .sortMap(advisory.dependents, (locator) => structUtils.stringifyLocator(locator))
+              .map((locator) => ({
+                value: formatUtils.tuple(formatUtils.Type.LOCATOR, locator),
+              })),
           },
         },
       };
@@ -75,37 +87,36 @@ export type TopLevelDependency = {
   dependency: Descriptor;
 };
 
-export function getTopLevelDependencies(project: Project, workspace: Workspace, {all, environment}: {all: boolean, environment: npmAuditTypes.Environment}) {
+export function getTopLevelDependencies(
+  project: Project,
+  workspace: Workspace,
+  { all, environment }: { all: boolean; environment: npmAuditTypes.Environment },
+) {
   const topLevelDependencies: Array<TopLevelDependency> = [];
 
-  const workspaces = all
-    ? project.workspaces
-    : [workspace];
+  const workspaces = all ? project.workspaces : [workspace];
 
-  const includeDependencies = [
-    npmAuditTypes.Environment.All,
-    npmAuditTypes.Environment.Production,
-  ].includes(environment);
+  const includeDependencies = [npmAuditTypes.Environment.All, npmAuditTypes.Environment.Production].includes(
+    environment,
+  );
 
-  const includeDevDependencies = [
-    npmAuditTypes.Environment.All,
-    npmAuditTypes.Environment.Development,
-  ].includes(environment);
+  const includeDevDependencies = [npmAuditTypes.Environment.All, npmAuditTypes.Environment.Development].includes(
+    environment,
+  );
 
   for (const workspace of workspaces) {
     for (const dependency of workspace.anchoredPackage.dependencies.values()) {
       const isDevDependency = workspace.manifest.devDependencies.has(dependency.identHash);
-      if (isDevDependency ? !includeDevDependencies : !includeDependencies)
-        continue;
+      if (isDevDependency ? !includeDevDependencies : !includeDependencies) continue;
 
-      topLevelDependencies.push({workspace, dependency});
+      topLevelDependencies.push({ workspace, dependency });
     }
   }
 
   return topLevelDependencies;
 }
 
-export function getPackages(project: Project, roots: Array<TopLevelDependency>, {recursive}: {recursive: boolean}) {
+export function getPackages(project: Project, roots: Array<TopLevelDependency>, { recursive }: { recursive: boolean }) {
   const packages = new Map<string, Map<string, Array<Locator>>>();
 
   const traversed = new Set<LocatorHash>();
@@ -116,14 +127,11 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     if (typeof resolution === `undefined`)
       throw new Error(`Assertion failed: The resolution should have been registered`);
 
-    if (!traversed.has(resolution))
-      traversed.add(resolution);
-    else
-      return;
+    if (!traversed.has(resolution)) traversed.add(resolution);
+    else return;
 
     const pkg = project.storedPackages.get(resolution);
-    if (typeof pkg === `undefined`)
-      throw new Error(`Assertion failed: The package should have been registered`);
+    if (typeof pkg === `undefined`) throw new Error(`Assertion failed: The package should have been registered`);
 
     const devirtualizedLocator = structUtils.ensureDevirtualizedLocator(pkg);
 
@@ -141,8 +149,7 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     }
   };
 
-  for (const {workspace, dependency} of roots)
-    queue.push([workspace.anchoredLocator, dependency]);
+  for (const { workspace, dependency } of roots) queue.push([workspace.anchoredLocator, dependency]);
 
   while (queue.length > 0) {
     const [pkg, dependency] = queue.shift()!;

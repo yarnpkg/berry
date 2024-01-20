@@ -28,7 +28,7 @@
   }
 
   .html:not(:global(.navbar--is-fixed)) :global(.navbar) svg {
-    opacity: .8;
+    opacity: 0.8;
   }
 
   .html:not(:global(.navbar--is-fixed)) :global(.navbar .navbar__logo) {
@@ -64,7 +64,7 @@
   bottom: 0;
   z-index: 10;
 
-  background: linear-gradient(180deg, rgba(9,11,31,0) 0%, rgba(9,11,31,0) 95%, rgba(9,11,31,1) 100%);
+  background: linear-gradient(180deg, rgba(9, 11, 31, 0) 0%, rgba(9, 11, 31, 0) 95%, rgba(9, 11, 31, 1) 100%);
 
   pointer-events: none;
 }

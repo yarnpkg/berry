@@ -1,6 +1,6 @@
-import {Filename, npath} from '@yarnpkg/fslib';
+import { Filename, npath } from "@yarnpkg/fslib";
 
-import {WatchManager}    from '../sources/WatchManager';
+import { WatchManager } from "../sources/WatchManager";
 
 describe(`WatchManager`, () => {
   const manager = new WatchManager();

@@ -1,23 +1,21 @@
-import {BaseCommand}                                                    from '@yarnpkg/cli';
-import {structUtils, hashUtils, Report, CommandContext, YarnVersion}    from '@yarnpkg/core';
-import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs, Filename}                      from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                         from 'clipanion';
-import {tmpdir}                                                         from 'os';
+import { BaseCommand } from "@yarnpkg/cli";
+import { structUtils, hashUtils, Report, CommandContext, YarnVersion } from "@yarnpkg/core";
+import { Configuration, MessageName, Project, ReportError, StreamReport } from "@yarnpkg/core";
+import { PortablePath, npath, ppath, xfs, Filename } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
+import { tmpdir } from "os";
 
-import {prepareRepo, runWorkflow}                                       from '../../set/version/sources';
-import {savePlugin}                                                     from '../import';
-import {getAvailablePlugins}                                            from '../list';
+import { prepareRepo, runWorkflow } from "../../set/version/sources";
+import { savePlugin } from "../import";
+import { getAvailablePlugins } from "../list";
 
-const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [
-  [`yarn`, `build:${pluginName}`, ...noMinify ? [`--no-minify`] : [], `|`],
+const buildWorkflow = ({ pluginName, noMinify }: { noMinify: boolean; pluginName: string }, target: PortablePath) => [
+  [`yarn`, `build:${pluginName}`, ...(noMinify ? [`--no-minify`] : []), `|`],
 ];
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginImportSourcesCommand extends BaseCommand {
-  static paths = [
-    [`plugin`, `import`, `from`, `sources`],
-  ];
+  static paths = [[`plugin`, `import`, `from`, `sources`]];
 
   static usage: Usage = Command.Usage({
     category: `Plugin-related commands`,
@@ -27,13 +25,10 @@ export default class PluginImportSourcesCommand extends BaseCommand {
 
       The plugins can be referenced by their short name if sourced from the official Yarn repository.
     `,
-    examples: [[
-      `Build and activate the "@yarnpkg/plugin-exec" plugin`,
-      `$0 plugin import from sources @yarnpkg/plugin-exec`,
-    ], [
-      `Build and activate the "@yarnpkg/plugin-exec" plugin (shorthand)`,
-      `$0 plugin import from sources exec`,
-    ]],
+    examples: [
+      [`Build and activate the "@yarnpkg/plugin-exec" plugin`, `$0 plugin import from sources @yarnpkg/plugin-exec`],
+      [`Build and activate the "@yarnpkg/plugin-exec" plugin (shorthand)`, `$0 plugin import from sources exec`],
+    ],
   });
 
   installPath = Option.String(`--path`, {
@@ -61,29 +56,40 @@ export default class PluginImportSourcesCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
-    const target = typeof this.installPath !== `undefined`
-      ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
-      : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources`, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
+    const target =
+      typeof this.installPath !== `undefined`
+        ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
+        : ppath.resolve(
+            npath.toPortablePath(tmpdir()),
+            `yarnpkg-sources`,
+            hashUtils.makeHash(this.repository).slice(0, 6) as Filename,
+          );
 
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-    }, async report => {
-      const {project} = await Project.find(configuration, this.context.cwd);
+    const report = await StreamReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+      },
+      async (report) => {
+        const { project } = await Project.find(configuration, this.context.cwd);
 
-      const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
-      const identStr = structUtils.stringifyIdent(ident);
-      const data = await getAvailablePlugins(configuration, YarnVersion);
+        const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
+        const identStr = structUtils.stringifyIdent(ident);
+        const data = await getAvailablePlugins(configuration, YarnVersion);
 
-      if (!Object.hasOwn(data, identStr))
-        throw new ReportError(MessageName.PLUGIN_NAME_NOT_FOUND, `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be built and imported from sources.`);
+        if (!Object.hasOwn(data, identStr))
+          throw new ReportError(
+            MessageName.PLUGIN_NAME_NOT_FOUND,
+            `Couldn't find a plugin named "${identStr}" on the remote registry. Note that only the plugins referenced on our website (https://github.com/yarnpkg/berry/blob/master/plugins.yml) can be built and imported from sources.`,
+          );
 
-      const pluginSpec = identStr;
+        const pluginSpec = identStr;
 
-      await prepareRepo(this, {configuration, report, target});
+        await prepareRepo(this, { configuration, report, target });
 
-      await buildAndSavePlugin(pluginSpec, this, {project, report, target});
-    });
+        await buildAndSavePlugin(pluginSpec, this, { project, report, target });
+      },
+    );
 
     return report.exitCode();
   }
@@ -94,24 +100,34 @@ export type BuildAndSavePluginsSpec = {
   noMinify: boolean;
 };
 
-export async function buildAndSavePlugin(pluginSpec: string, {context, noMinify}: BuildAndSavePluginsSpec, {project, report, target}: {project: Project, report: Report, target: PortablePath}) {
+export async function buildAndSavePlugin(
+  pluginSpec: string,
+  { context, noMinify }: BuildAndSavePluginsSpec,
+  { project, report, target }: { project: Project; report: Report; target: PortablePath },
+) {
   const pluginName = pluginSpec.replace(/@yarnpkg\//, ``);
 
-  const {configuration} = project;
+  const { configuration } = project;
 
   report.reportSeparator();
   report.reportInfo(MessageName.UNNAMED, `Building a fresh ${pluginName}`);
   report.reportSeparator();
 
-  await runWorkflow(buildWorkflow({
-    pluginName,
-    noMinify,
-  }, target), {configuration, context, target});
+  await runWorkflow(
+    buildWorkflow(
+      {
+        pluginName,
+        noMinify,
+      },
+      target,
+    ),
+    { configuration, context, target },
+  );
 
   report.reportSeparator();
 
   const pluginPath = ppath.resolve(target, `packages/${pluginName}/bundles/${pluginSpec}.js`);
   const pluginBuffer = await xfs.readFilePromise(pluginPath);
 
-  await savePlugin(pluginSpec, pluginBuffer, {project, report});
+  await savePlugin(pluginSpec, pluginBuffer, { project, report });
 }

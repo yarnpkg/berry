@@ -1,4 +1,4 @@
-import path from 'path';
+import path from "path";
 
 enum PathType {
   File,
@@ -41,9 +41,7 @@ export type TolerateLiterals<T> = {
 
 export type ValidateLiteral<T> =
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  T extends `${infer X}`
-    ? T
-    : never;
+  T extends `${infer X}` ? T : never;
 
 export interface PortablePathGenerics {
   join<T extends Array<string>>(...segments: TolerateLiterals<T>): PortablePath;
@@ -57,9 +55,7 @@ export const npath: PathUtils<NativePath> & ConvertUtils = Object.create(path) a
 export const ppath: PathUtils<PortablePath> & PortablePathGenerics = Object.create(path.posix) as any;
 
 npath.cwd = () => process.cwd();
-ppath.cwd = process.platform === `win32`
-  ? () => toPortablePath(process.cwd())
-  : process.cwd as () => PortablePath;
+ppath.cwd = process.platform === `win32` ? () => toPortablePath(process.cwd()) : (process.cwd as () => PortablePath);
 
 if (process.platform === `win32`) {
   ppath.resolve = (...segments: Array<PortablePath | Filename>) => {
@@ -75,11 +71,9 @@ const contains = function <T extends Path>(pathUtils: PathUtils<T>, from: T, to:
   from = pathUtils.normalize(from);
   to = pathUtils.normalize(to);
 
-  if (from === to)
-    return `.` as T;
+  if (from === to) return `.` as T;
 
-  if (!from.endsWith(pathUtils.sep))
-    from = (from + pathUtils.sep) as T;
+  if (!from.endsWith(pathUtils.sep)) from = (from + pathUtils.sep) as T;
 
   if (to.startsWith(from)) {
     return to.slice(from.length) as T;
@@ -148,12 +142,10 @@ const UNC_PORTABLE_PATH_REGEXP = /^\/unc\/(\.dot\/)?(.*)$/;
 // And transform to "N:\berry\scripts\plugin-pack.js"
 function fromPortablePathWin32(p: Path): NativePath {
   let portablePathMatch, uncPortablePathMatch;
-  if ((portablePathMatch = p.match(PORTABLE_PATH_REGEXP)))
-    p = portablePathMatch[1];
+  if ((portablePathMatch = p.match(PORTABLE_PATH_REGEXP))) p = portablePathMatch[1];
   else if ((uncPortablePathMatch = p.match(UNC_PORTABLE_PATH_REGEXP)))
     p = `\\\\${uncPortablePathMatch[1] ? `.\\` : ``}${uncPortablePathMatch[2]}`;
-  else
-    return p as NativePath;
+  else return p as NativePath;
 
   return p.replace(/\//g, `\\`);
 }
@@ -164,25 +156,22 @@ function toPortablePathWin32(p: Path): PortablePath {
   p = p.replace(/\\/g, `/`);
 
   let windowsPathMatch, uncWindowsPathMatch;
-  if ((windowsPathMatch = p.match(WINDOWS_PATH_REGEXP)))
-    p = `/${windowsPathMatch[1]}`;
+  if ((windowsPathMatch = p.match(WINDOWS_PATH_REGEXP))) p = `/${windowsPathMatch[1]}`;
   else if ((uncWindowsPathMatch = p.match(UNC_WINDOWS_PATH_REGEXP)))
     p = `/unc/${uncWindowsPathMatch[1] ? `.dot/` : ``}${uncWindowsPathMatch[2]}`;
 
   return p as PortablePath;
 }
 
-const toPortablePath = process.platform === `win32`
-  ? toPortablePathWin32
-  : (p: Path) => p as PortablePath;
+const toPortablePath = process.platform === `win32` ? toPortablePathWin32 : (p: Path) => p as PortablePath;
 
-const fromPortablePath = process.platform === `win32`
-  ? fromPortablePathWin32
-  : (p: Path) => p as NativePath;
+const fromPortablePath = process.platform === `win32` ? fromPortablePathWin32 : (p: Path) => p as NativePath;
 
 npath.fromPortablePath = fromPortablePath;
 npath.toPortablePath = toPortablePath;
 
 export function convertPath<P extends Path>(targetPathUtils: PathUtils<P>, sourcePath: Path): P {
-  return (targetPathUtils === (npath as PathUtils<NativePath>) ? fromPortablePath(sourcePath) : toPortablePath(sourcePath)) as P;
+  return (
+    targetPathUtils === (npath as PathUtils<NativePath>) ? fromPortablePath(sourcePath) : toPortablePath(sourcePath)
+  ) as P;
 }

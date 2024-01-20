@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const {EOL} = require(`os`);
+const { EOL } = require(`os`);
 const path = require(`path`);
 const ts = require(`typescript`);
 
@@ -12,15 +12,19 @@ function compile(tsConfigPath, folder, ...opts) {
   const emitDeclarationOnly = opts.includes(`--emitDeclarationOnly`);
   const inline = opts.includes(`--inline`);
 
-  const parsedConfig = ts.parseJsonConfigFileContent({
-    extends: tsConfigPath,
-    compilerOptions: {
-      rootDir: `sources`,
-      outDir: inline ? `sources` : `lib`,
-      emitDeclarationOnly,
+  const parsedConfig = ts.parseJsonConfigFileContent(
+    {
+      extends: tsConfigPath,
+      compilerOptions: {
+        rootDir: `sources`,
+        outDir: inline ? `sources` : `lib`,
+        emitDeclarationOnly,
+      },
+      include: [`sources/**/*.ts`, `sources/**/*.tsx`],
     },
-    include: [`sources/**/*.ts`, `sources/**/*.tsx`],
-  }, ts.sys, folder);
+    ts.sys,
+    folder,
+  );
 
   const program = ts.createProgram({
     options: parsedConfig.options,
@@ -38,16 +42,15 @@ exports.compile = compile;
  * @param {readonly import('typescript').Diagnostic[]} allDiagnostics
  */
 function reportErrors(allDiagnostics) {
-  const errorsAndWarnings = allDiagnostics.filter(d => {
+  const errorsAndWarnings = allDiagnostics.filter((d) => {
     return d.category !== ts.DiagnosticCategory.Message;
   });
 
-  if (errorsAndWarnings.length === 0)
-    return 0;
+  if (errorsAndWarnings.length === 0) return 0;
 
   const formatDiagnosticsHost = {
     getCurrentDirectory: () => path.dirname(__dirname),
-    getCanonicalFileName: fileName => fileName,
+    getCanonicalFileName: (fileName) => fileName,
     getNewLine: () => EOL,
   };
 

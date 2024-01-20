@@ -1,4 +1,4 @@
-import { ObjectPrototypeHasOwnProperty } from './primordials.js';
+import { ObjectPrototypeHasOwnProperty } from "./primordials.js";
 
 export function filterOwnProperties(source, keys) {
   const filtered = Object.create(null);

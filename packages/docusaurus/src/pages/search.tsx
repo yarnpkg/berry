@@ -1,17 +1,17 @@
-import Link                                                       from '@docusaurus/Link';
-import {useHistory, useLocation}                                  from '@docusaurus/router';
-import useDocusaurusContext                                       from '@docusaurus/useDocusaurusContext';
-import {CodeIcon, FileDirectoryIcon}                              from '@primer/octicons-react';
-import Layout                                                     from '@theme/Layout';
-import clsx                                                       from 'clsx';
-import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch-hooks-web';
-import Skeleton                                                   from 'react-loading-skeleton';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import Link from "@docusaurus/Link";
+import { useHistory, useLocation } from "@docusaurus/router";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { CodeIcon, FileDirectoryIcon } from "@primer/octicons-react";
+import Layout from "@theme/Layout";
+import clsx from "clsx";
+import { InstantSearch, useHits, useSearchBox } from "react-instantsearch-hooks-web";
+import Skeleton from "react-loading-skeleton";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import {searchClient}                                             from '../lib/searchClient';
+import { searchClient } from "../lib/searchClient";
 
-import indexStyles                                                from './index.module.css';
-import styles                                                     from './search.module.css';
+import indexStyles from "./index.module.css";
+import styles from "./search.module.css";
 
 type SearchResult = {
   title: string;
@@ -19,23 +19,23 @@ type SearchResult = {
   description: JSX.Element;
 };
 
-const SPONSORS = [{
-  name: `WorkOS`,
-  image: `https://assets-global.website-files.com/621f54116cab10f6e9215d8b/621f548d3bca3b62c4bfe1c2_Favicon%2032x32.png`,
-  link: `https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github`,
-  extra: `, the all-in-one solution for enterprise-ready apps`,
-}];
+const SPONSORS = [
+  {
+    name: `WorkOS`,
+    image: `https://assets-global.website-files.com/621f54116cab10f6e9215d8b/621f548d3bca3b62c4bfe1c2_Favicon%2032x32.png`,
+    link: `https://workos.com/?utm_campaign=github_repo&utm_medium=referral&utm_content=berry&utm_source=github`,
+    extra: `, the all-in-one solution for enterprise-ready apps`,
+  },
+];
 
 // eslint-disable-next-line arca/no-default-export
 export default function Packages(): JSX.Element {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
 
   return (
-    <Layout
-      title={`Package search`}
-      description={siteConfig.tagline}>
+    <Layout title={`Package search`} description={siteConfig.tagline}>
       <InstantSearch indexName={`npm-search`} searchClient={searchClient}>
-        <SearchInterface/>
+        <SearchInterface />
       </InstantSearch>
     </Layout>
   );
@@ -51,28 +51,31 @@ const defaultRequests = [
   `webpack`,
   `ts-node`,
   `typanion`,
-].map(objectId => ({
+].map((objectId) => ({
   indexName: `npm-search`,
   objectID: objectId,
 }));
 
 function useHitsWithDefaults(query: string): Array<any> {
-  const {hits} = useHits({escapeHTML: false});
+  const { hits } = useHits({ escapeHTML: false });
   const [defaults, setDefaults] = useState<Array<any> | null>(null);
 
   useEffect(() => {
-    searchClient.customRequest({method: `POST`, path: `/1/indexes/*/objects`}, {
-      data: {requests: defaultRequests},
-    }).then(({results}: any) => {
-      setDefaults(results);
-    });
+    searchClient
+      .customRequest(
+        { method: `POST`, path: `/1/indexes/*/objects` },
+        {
+          data: { requests: defaultRequests },
+        },
+      )
+      .then(({ results }: any) => {
+        setDefaults(results);
+      });
   }, []);
 
-  if (query)
-    return hits;
+  if (query) return hits;
 
-  if (!defaults)
-    return defaultRequests.map((_, index) => ({rev: `!${index}`}));
+  if (!defaults) return defaultRequests.map((_, index) => ({ rev: `!${index}` }));
 
   return defaults;
 }
@@ -84,13 +87,12 @@ function SearchInterface() {
   const refreshRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
 
   const queryHook = useCallback((query: string, hook: (value: string) => void) => {
-    if (refreshRef.current !== null)
-      cancelAnimationFrame(refreshRef.current);
+    if (refreshRef.current !== null) cancelAnimationFrame(refreshRef.current);
 
     refreshRef.current = requestAnimationFrame(() => hook(query));
   }, []);
 
-  const {query, refine} = useSearchBox({queryHook});
+  const { query, refine } = useSearchBox({ queryHook });
   const hits = useHitsWithDefaults(query);
 
   useEffect(() => {
@@ -115,20 +117,29 @@ function SearchInterface() {
     return SPONSORS[Math.floor(Math.random() * SPONSORS.length)];
   }, []);
 
-  return <>
-    <div className={styles.searchContainer}>
-      <SearchBar/>
-    </div>
-    <div className={clsx(styles.searchContainer, styles.sponsors)}>
-      The Yarn project is sponsored on <a href={`https://opencollective.com/yarnpkg`}>OpenCollective</a> by <a className={styles.sponsor} href={sponsor.link}><img src={sponsor.image} style={{height: `1.2rem`}}/><span>{sponsor.name}</span></a>{sponsor.extra}. Thanks to them!
-    </div>
-    <div className={clsx(styles.searchContainer, styles.searchResults)}>
-      <div className={`row`}>
-        {hits.map(hit => <SearchResult key={hit.rev} query={query} hit={hit}/>)}
+  return (
+    <>
+      <div className={styles.searchContainer}>
+        <SearchBar />
       </div>
-    </div>
-    <div/>
-  </>;
+      <div className={clsx(styles.searchContainer, styles.sponsors)}>
+        The Yarn project is sponsored on <a href={`https://opencollective.com/yarnpkg`}>OpenCollective</a> by{" "}
+        <a className={styles.sponsor} href={sponsor.link}>
+          <img src={sponsor.image} style={{ height: `1.2rem` }} />
+          <span>{sponsor.name}</span>
+        </a>
+        {sponsor.extra}. Thanks to them!
+      </div>
+      <div className={clsx(styles.searchContainer, styles.searchResults)}>
+        <div className={`row`}>
+          {hits.map((hit) => (
+            <SearchResult key={hit.rev} query={query} hit={hit} />
+          ))}
+        </div>
+      </div>
+      <div />
+    </>
+  );
 }
 
 function SearchBar() {
@@ -145,7 +156,13 @@ function SearchBar() {
   };
 
   return (
-    <input className={clsx(indexStyles.search, styles.search)} autoFocus={true} placeholder={`Search packages (i.e. babel, webpack, react, ...)`} value={query} onChange={handleChange}/>
+    <input
+      className={clsx(indexStyles.search, styles.search)}
+      autoFocus={true}
+      placeholder={`Search packages (i.e. babel, webpack, react, ...)`}
+      value={query}
+      onChange={handleChange}
+    />
   );
 }
 
@@ -163,37 +180,43 @@ function getDownloadBucket(dl: number) {
   }
 }
 
-function SearchResult({query, hit}: any) {
-  const downloadBucket = hit.downloadsLast30Days
-    ? getDownloadBucket(hit.downloadsLast30Days)
-    : null;
+function SearchResult({ query, hit }: any) {
+  const downloadBucket = hit.downloadsLast30Days ? getDownloadBucket(hit.downloadsLast30Days) : null;
 
-  const dlBadge = downloadBucket !== null && <div className={styles.badge}>
-    <img src={`/img/ico-${downloadBucket}.svg`}/>
-    <div>{hit.humanDownloadsLast30Days}</div>
-  </div>;
+  const dlBadge = downloadBucket !== null && (
+    <div className={styles.badge}>
+      <img src={`/img/ico-${downloadBucket}.svg`} />
+      <div>{hit.humanDownloadsLast30Days}</div>
+    </div>
+  );
 
-  const versionBadge = hit.version && <div className={styles.badge} style={{marginLeft: `auto`, marginRight: 0}}>
-    {hit.version}
-  </div>;
+  const versionBadge = hit.version && (
+    <div className={styles.badge} style={{ marginLeft: `auto`, marginRight: 0 }}>
+      {hit.version}
+    </div>
+  );
 
-  const typeBadge = hit.types
-    ? hit.types.ts === `included`
-      ? <div className={styles.badge} style={{background: `#0380d9`, color: `#ffffff`}}>TS</div>
-      : hit.types.definitelyTyped
-        ? <div className={styles.badge} style={{background: `#03c4d9`, color: `#ffffff`}}>DT</div>
-        : <div className={styles.badge} style={{background: `#cccccc`, color: `#ffffff`}}>NT</div>
-    : null;
+  const typeBadge = hit.types ? (
+    hit.types.ts === `included` ? (
+      <div className={styles.badge} style={{ background: `#0380d9`, color: `#ffffff` }}>
+        TS
+      </div>
+    ) : hit.types.definitelyTyped ? (
+      <div className={styles.badge} style={{ background: `#03c4d9`, color: `#ffffff` }}>
+        DT
+      </div>
+    ) : (
+      <div className={styles.badge} style={{ background: `#cccccc`, color: `#ffffff` }}>
+        NT
+      </div>
+    )
+  ) : null;
 
-  const listing = hit.name
-    ? `/package?q=${encodeURIComponent(query)}&name=${encodeURIComponent(hit.name)}`
-    : null;
+  const listing = hit.name ? `/package?q=${encodeURIComponent(query)}&name=${encodeURIComponent(hit.name)}` : null;
 
   const title = hit.name && hit.owner?.name && (
     <div className={styles.resultTitle}>
-      <h3 className={`text--truncate`}>
-        {hit.name}
-      </h3>
+      <h3 className={`text--truncate`}>{hit.name}</h3>
       <div className={styles.resultBy}>
         {` `}by {hit.owner?.name}
       </div>
@@ -203,7 +226,7 @@ function SearchResult({query, hit}: any) {
   return (
     <div className={clsx(`col col--4`, styles.resultCell)}>
       <div className={styles.result}>
-        {listing && <Link className={styles.resultLink} href={listing}/>}
+        {listing && <Link className={styles.resultLink} href={listing} />}
         <div className={styles.resultAside}>
           <div className={styles.resultBadges}>
             {typeBadge}
@@ -211,27 +234,25 @@ function SearchResult({query, hit}: any) {
             {versionBadge}
           </div>
           <div className={styles.resultTools}>
-            <Tool icon={FileDirectoryIcon} href={listing}/>
-            <Tool icon={CodeIcon} href={hit.name && `https://npm.runkit.com/${hit.name}`}/>
+            <Tool icon={FileDirectoryIcon} href={listing} />
+            <Tool icon={CodeIcon} href={hit.name && `https://npm.runkit.com/${hit.name}`} />
           </div>
         </div>
         <div className={styles.resultMain}>
-          {title ?? <Skeleton/>}
-          <div className={styles.resultDescription}>
-            {title ? hit.description : <Skeleton count={2}/>}
-          </div>
+          {title ?? <Skeleton />}
+          <div className={styles.resultDescription}>{title ? hit.description : <Skeleton count={2} />}</div>
         </div>
       </div>
     </div>
   );
 }
 
-function Tool({icon: Icon, href}: any) {
+function Tool({ icon: Icon, href }: any) {
   const Component = href ? `a` : `div`;
 
   return (
     <Component className={styles.tool} href={href} target={href?.startsWith(`https:`) ? `_blank` : undefined}>
-      <Icon/>
+      <Icon />
     </Component>
   );
 }

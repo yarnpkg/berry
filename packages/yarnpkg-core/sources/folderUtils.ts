@@ -1,5 +1,5 @@
-import {PortablePath, npath, ppath} from '@yarnpkg/fslib';
-import {homedir}                    from 'os';
+import { PortablePath, npath, ppath } from "@yarnpkg/fslib";
+import { homedir } from "os";
 
 export function getDefaultGlobalFolder() {
   if (process.platform === `win32`) {

@@ -1,6 +1,6 @@
-import fs                            from 'fs';
+import fs from "fs";
 
-import {HAS_LAZY_LOADED_TRANSLATORS} from './loaderFlags';
+import { HAS_LAZY_LOADED_TRANSLATORS } from "./loaderFlags";
 
 //#region ESM to CJS support
 if (!HAS_LAZY_LOADED_TRANSLATORS) {
@@ -29,7 +29,7 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
           // which says it can be a number which matches the implementation.
           flag: args[1],
         });
-      } catch { }
+      } catch {}
 
       return originalReadFile.apply(this, args);
     };
@@ -85,7 +85,7 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
             // birthtime sec
             // birthtime ns
           ]);
-        } catch { }
+        } catch {}
       }
 
       return originalfstat.apply(this, args);

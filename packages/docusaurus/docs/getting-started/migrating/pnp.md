@@ -69,7 +69,7 @@ We only cover VSCode here, but we have a dedicated [documentation page](/getting
 :::
 
 :::caution
-Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the *top level* of the project (rather than in an arbitrary workspace).
+Make sure that `typescript`, `eslint`, `prettier`, ... all dependencies typically used by your IDE extensions are listed at the _top level_ of the project (rather than in an arbitrary workspace).
 :::
 
 1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) VSCode extension.

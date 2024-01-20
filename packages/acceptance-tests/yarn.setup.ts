@@ -1,7 +1,7 @@
-import 'jest-json';
-import {tests} from 'pkg-tests-core';
+import "jest-json";
+import { tests } from "pkg-tests-core";
 
-const {startPackageServer, getPackageRegistry} = tests;
+const { startPackageServer, getPackageRegistry } = tests;
 
 jest.setTimeout(tests.TEST_TIMEOUT);
 

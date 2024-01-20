@@ -1,4 +1,4 @@
-import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
+import { Filename, PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
 
 async function setupWorkspaces(path: PortablePath) {
   const docsFolder = `${path}/docs` as PortablePath;
@@ -8,8 +8,8 @@ async function setupWorkspaces(path: PortablePath) {
 
   await xfs.mkdirPromise(docsFolder);
 
-  await xfs.mkdirPromise(componentAFolder, {recursive: true});
-  await xfs.mkdirPromise(componentBFolder, {recursive: true});
+  await xfs.mkdirPromise(componentAFolder, { recursive: true });
+  await xfs.mkdirPromise(componentBFolder, { recursive: true });
 
   await xfs.writeJsonPromise(ppath.join(docsFolder, Filename.manifest), {
     name: `docs`,
@@ -52,7 +52,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`docs`, `components/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupWorkspaces(path);
 
           let code;
@@ -61,12 +61,12 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspace`, `component-a`, `print`));
+            ({ code, stdout, stderr } = await run(`workspace`, `component-a`, `print`));
           } catch (error) {
-            ({code, stdout, stderr} = error);
+            ({ code, stdout, stderr } = error);
           }
 
-          await expect({code, stdout, stderr}).toMatchSnapshot();
+          await expect({ code, stdout, stderr }).toMatchSnapshot();
         },
       ),
     );
@@ -78,12 +78,14 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`docs`, `components/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupWorkspaces(path);
 
           await run(`install`);
 
-          await expect(run(`workspace`, `component-a`, `run`, `printInitCwd`, {cwd: ppath.join(path, `docs`)})).resolves.toMatchObject({
+          await expect(
+            run(`workspace`, `component-a`, `run`, `printInitCwd`, { cwd: ppath.join(path, `docs`) }),
+          ).resolves.toMatchObject({
             stdout: `${npath.join(npath.fromPortablePath(path), `components/component-a`)}\n`,
           });
         },
@@ -97,7 +99,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`docs`, `components/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupWorkspaces(path);
 
           let code;
@@ -106,12 +108,12 @@ describe(`Commands`, () => {
 
           try {
             await run(`install`);
-            ({code, stdout, stderr} = await run(`workspace`, `component-a`, `print`));
+            ({ code, stdout, stderr } = await run(`workspace`, `component-a`, `print`));
           } catch (error) {
-            ({code, stdout, stderr} = error);
+            ({ code, stdout, stderr } = error);
           }
 
-          await expect({code, stdout, stderr}).toMatchSnapshot();
+          await expect({ code, stdout, stderr }).toMatchSnapshot();
         },
       ),
     );

@@ -1,14 +1,12 @@
-import {BaseCommand, WorkspaceRequiredError}                                  from '@yarnpkg/cli';
-import {Configuration, MessageName, miscUtils, Project, stringifyMessageName} from '@yarnpkg/core';
-import {scriptUtils, structUtils, formatUtils}                                from '@yarnpkg/core';
-import {NativePath, ppath, xfs, npath}                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                               from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Configuration, MessageName, miscUtils, Project, stringifyMessageName } from "@yarnpkg/core";
+import { scriptUtils, structUtils, formatUtils } from "@yarnpkg/core";
+import { NativePath, ppath, xfs, npath } from "@yarnpkg/fslib";
+import { Command, Option, Usage } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class DlxCommand extends BaseCommand {
-  static paths = [
-    [`dlx`],
-  ];
+  static paths = [[`dlx`]];
 
   static usage: Usage = Command.Usage({
     description: `run a package in a temporary environment`,
@@ -19,13 +17,13 @@ export default class DlxCommand extends BaseCommand {
 
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,
-    examples: [[
-      `Use create-react-app to create a new React app`,
-      `yarn dlx create-react-app ./my-app`,
-    ], [
-      `Install multiple packages for a single command`,
-      `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
-    ]],
+    examples: [
+      [`Use create-react-app to create a new React app`, `yarn dlx create-react-app ./my-app`],
+      [
+        `Install multiple packages for a single command`,
+        `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
+      ],
+    ],
   });
 
   packages = Option.Array(`-p,--package`, {
@@ -43,7 +41,7 @@ export default class DlxCommand extends BaseCommand {
     // Disable telemetry to prevent each `dlx` call from counting as a project
     Configuration.telemetry = null;
 
-    return await xfs.mktempPromise(async baseDir => {
+    return await xfs.mktempPromise(async (baseDir) => {
       const tmpDir = ppath.join(baseDir, `dlx-${process.pid}`);
       await xfs.mkdirPromise(tmpDir);
 
@@ -57,7 +55,9 @@ export default class DlxCommand extends BaseCommand {
       // project it's run in has enableGlobalCache set to false, otherwise we risk running into
       // `Unable to locate pnpapi ... is controlled by multiple pnpapi instances` errors when
       // running something like `yarn dlx sb init`
-      const enableGlobalCache = !(await Configuration.find(this.context.cwd, null, {strict: false})).get(`enableGlobalCache`);
+      const enableGlobalCache = !(await Configuration.find(this.context.cwd, null, { strict: false })).get(
+        `enableGlobalCache`,
+      );
 
       const dlxConfiguration = {
         enableGlobalCache,
@@ -71,21 +71,17 @@ export default class DlxCommand extends BaseCommand {
         ],
       };
 
-      const sourceYarnrc = projectCwd !== null
-        ? ppath.join(projectCwd, `.yarnrc.yml`)
-        : null;
+      const sourceYarnrc = projectCwd !== null ? ppath.join(projectCwd, `.yarnrc.yml`) : null;
 
       if (sourceYarnrc !== null && xfs.existsSync(sourceYarnrc)) {
         await xfs.copyFilePromise(sourceYarnrc, targetYarnrc);
 
-        await Configuration.updateConfiguration(tmpDir, current => {
+        await Configuration.updateConfiguration(tmpDir, (current) => {
           const nextConfiguration = miscUtils.toMerged(current, dlxConfiguration);
 
           if (Array.isArray(current.plugins)) {
             nextConfiguration.plugins = current.plugins.map((plugin: any) => {
-              const sourcePath: NativePath = typeof plugin === `string`
-                ? plugin
-                : plugin.path;
+              const sourcePath: NativePath = typeof plugin === `string` ? plugin : plugin.path;
 
               const remapPath = npath.isAbsolute(sourcePath)
                 ? sourcePath
@@ -94,7 +90,7 @@ export default class DlxCommand extends BaseCommand {
               if (typeof plugin === `string`) {
                 return remapPath;
               } else {
-                return {path: remapPath, spec: plugin.spec};
+                return { path: remapPath, spec: plugin.spec };
               }
             });
           }
@@ -109,18 +105,15 @@ export default class DlxCommand extends BaseCommand {
 
       let command = structUtils.parseDescriptor(this.command).name;
 
-      const addExitCode = await this.cli.run([`add`, `--fixed`, `--`, ...pkgs], {cwd: tmpDir, quiet: this.quiet});
-      if (addExitCode !== 0)
-        return addExitCode;
+      const addExitCode = await this.cli.run([`add`, `--fixed`, `--`, ...pkgs], { cwd: tmpDir, quiet: this.quiet });
+      if (addExitCode !== 0) return addExitCode;
 
-      if (!this.quiet)
-        this.context.stdout.write(`\n`);
+      if (!this.quiet) this.context.stdout.write(`\n`);
 
       const configuration = await Configuration.find(tmpDir, this.context.plugins);
-      const {project, workspace} = await Project.find(configuration, tmpDir);
+      const { project, workspace } = await Project.find(configuration, tmpDir);
 
-      if (workspace === null)
-        throw new WorkspaceRequiredError(project.cwd, tmpDir);
+      if (workspace === null) throw new WorkspaceRequiredError(project.cwd, tmpDir);
 
       await project.restoreInstallState();
 

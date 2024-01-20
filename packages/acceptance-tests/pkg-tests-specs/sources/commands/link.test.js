@@ -1,14 +1,14 @@
-import {Filename, npath, xfs} from '@yarnpkg/fslib';
+import { Filename, npath, xfs } from "@yarnpkg/fslib";
 
 const {
-  fs: {writeJson},
+  fs: { writeJson },
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
   describe(`link`, () => {
     test(
       `it should allow to link a project with another one`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-package/package.json`, {
@@ -32,7 +32,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           const tmp = await xfs.mktempPromise();
 
           await writeJson(`${tmp}/my-package/package.json`, {
@@ -58,7 +58,7 @@ describe(`Commands`, () => {
 
     test(
       `it should allow to link all workspaces from another project`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
@@ -87,7 +87,7 @@ describe(`Commands`, () => {
 
     test(
       `it should not link the private workspaces by default`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
@@ -122,7 +122,7 @@ describe(`Commands`, () => {
 
     test(
       `it should link the private workspaces if the right flag is used`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {
@@ -152,14 +152,14 @@ describe(`Commands`, () => {
 
     test(
       `it should not load the link target config in strict mode`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mktempPromise(async target => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (target) => {
           await Promise.all([
-            xfs.writeJsonPromise(`${target}/package.json`, {name: `portal-target`}),
+            xfs.writeJsonPromise(`${target}/package.json`, { name: `portal-target` }),
             xfs.writeFilePromise(`${target}/${Filename.rc}`, `unknownConfig: 42`),
           ]);
 
-          await expect(run(`link`, target)).resolves.toMatchObject({code: 0});
+          await expect(run(`link`, target)).resolves.toMatchObject({ code: 0 });
 
           await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
             resolutions: {
@@ -172,15 +172,15 @@ describe(`Commands`, () => {
 
     test(
       `it should not load plugins from the link target`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mktempPromise(async target => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (target) => {
           await Promise.all([
-            xfs.writeJsonPromise(`${target}/package.json`, {name: `portal-target`}),
+            xfs.writeJsonPromise(`${target}/package.json`, { name: `portal-target` }),
             xfs.writeFilePromise(`${target}/${Filename.rc}`, `plugins:\n  - path: ./foo.js`),
             xfs.writeFilePromise(`${target}/foo.js`, `throw new Error(42)`),
           ]);
 
-          await expect(run(`link`, target)).resolves.toMatchObject({code: 0});
+          await expect(run(`link`, target)).resolves.toMatchObject({ code: 0 });
 
           await expect(xfs.readJsonPromise(`${path}/package.json`)).resolves.toMatchObject({
             resolutions: {
@@ -197,7 +197,7 @@ describe(`Commands`, () => {
         {
           name: `foo`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await expect(run(`link`, path)).rejects.toMatchObject({
             code: 1,
             stdout: expect.stringContaining(`Can't link the project to itself`),
@@ -208,7 +208,7 @@ describe(`Commands`, () => {
 
     test(
       `it should allow linking multiple workspaces`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const tmp = await xfs.mktempPromise();
 
         await writeJson(`${tmp}/my-workspace/package.json`, {

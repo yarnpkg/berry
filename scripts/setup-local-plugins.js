@@ -3,12 +3,10 @@ const micromatch = require(`micromatch`);
 const path = require(`path`);
 const semver = require(`semver`);
 
-const {version} = require(`@yarnpkg/cli/package.json`);
+const { version } = require(`@yarnpkg/cli/package.json`);
 
 // Exposes the CLI version as like for the bundle
-global.YARN_VERSION = semver.prerelease(version) !== null
-  ? `${version}.dev`
-  : `${version}-dev`;
+global.YARN_VERSION = semver.prerelease(version) !== null ? `${version}.dev` : `${version}-dev`;
 
 const PACKAGES = path.normalize(`${__dirname}/../packages`);
 
@@ -18,16 +16,18 @@ const DYNAMIC_LIBS_MODULE = require.resolve(`${PACKAGES}/yarnpkg-cli/sources/too
 // Inject the plugins in the runtime. With Webpack that would be through
 // val-loader which would execute pluginConfiguration.raw.js, so in Node
 // we need to do something similar and mutate the require cache.
-require.cache[PLUGIN_CONFIGURATION_MODULE] = {exports: {getPluginConfiguration}};
+require.cache[PLUGIN_CONFIGURATION_MODULE] = { exports: { getPluginConfiguration } };
 
 function getPluginConfiguration() {
   const folders = fs.readdirSync(PACKAGES);
 
-  const pluginFolders = folders.filter(folder => {
-    if (!folder.startsWith(`plugin-`))
-      return false;
+  const pluginFolders = folders.filter((folder) => {
+    if (!folder.startsWith(`plugin-`)) return false;
 
-    if (process.env.BLACKLIST && micromatch.match([folder, folder.replace(`plugin-`, ``)], process.env.BLACKLIST).length > 0) {
+    if (
+      process.env.BLACKLIST &&
+      micromatch.match([folder, folder.replace(`plugin-`, ``)], process.env.BLACKLIST).length > 0
+    ) {
       console.warn(`Disabled blacklisted plugin ${folder}`);
       return false;
     }
@@ -56,9 +56,8 @@ function getPluginConfiguration() {
     pluginConfiguration.modules.set(`@yarnpkg/${folder}`, require(`${PACKAGES}/${folder}`));
   }
 
-  const {getDynamicLibs} = require(DYNAMIC_LIBS_MODULE);
-  for (const [name, module] of getDynamicLibs())
-    pluginConfiguration.modules.set(name, module);
+  const { getDynamicLibs } = require(DYNAMIC_LIBS_MODULE);
+  for (const [name, module] of getDynamicLibs()) pluginConfiguration.modules.set(name, module);
 
   return pluginConfiguration;
 }

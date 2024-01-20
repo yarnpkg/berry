@@ -12,9 +12,7 @@ if (process.versions.pnp)
   // TODO: make Yarn support quoted PnP requires in NODE_OPTIONS
   process.env.NODE_OPTIONS = `${process.env.NODE_OPTIONS || ``} --require ${require.resolve(`pnpapi`)}`;
 
-const resolveVirtual = process.versions.pnp
-  ? require(`pnpapi`).resolveVirtual
-  : undefined;
+const resolveVirtual = process.versions.pnp ? require(`pnpapi`).resolveVirtual : undefined;
 
 // esbuild only supports major.minor.patch, no pre-release (nightly) specifier is allowed
 // so we reduce the version down to major.minor
@@ -35,8 +33,7 @@ try {
 } catch {}
 
 function persistCache() {
-  if (!cache.isDirty)
-    return;
+  if (!cache.isDirty) return;
 
   cache.isDirty = false;
 
@@ -45,14 +42,17 @@ function persistCache() {
     files: cache.files,
   });
 
-  fs.mkdirSync(path.dirname(cachePath), {recursive: true});
+  fs.mkdirSync(path.dirname(cachePath), { recursive: true });
 
   const tmpPath = cachePath + crypto.randomBytes(8).toString(`hex`);
-  fs.writeFileSync(tmpPath, zlib.brotliCompressSync(data, {
-    params: {
-      [zlib.constants.BROTLI_PARAM_QUALITY]: 4,
-    },
-  }));
+  fs.writeFileSync(
+    tmpPath,
+    zlib.brotliCompressSync(data, {
+      params: {
+        [zlib.constants.BROTLI_PARAM_QUALITY]: 4,
+      },
+    }),
+  );
 
   fs.renameSync(tmpPath, cachePath);
 }
@@ -66,8 +66,7 @@ function compileFile(sourceCode, filename) {
   filename = resolveVirtual?.(filename) ?? filename;
 
   const cacheEntry = cache.files.get(filename);
-  if (cacheEntry?.source === sourceCode)
-    return cacheEntry.code;
+  if (cacheEntry?.source === sourceCode) return cacheEntry.code;
 
   const res = esbuild.transformSync(sourceCode, {
     target: `node${NODE_VERSION}`,
@@ -77,7 +76,7 @@ function compileFile(sourceCode, filename) {
     platform: `node`,
     format: `cjs`,
     supported: {
-      'dynamic-import': false,
+      "dynamic-import": false,
     },
   });
 
@@ -95,7 +94,10 @@ pirates.addHook(compileFile, {
   matcher(p) {
     if (p?.endsWith(`.js`)) {
       const normalizedP = p.replace(/\\/g, `/`);
-      return normalizedP.includes(`packages/yarnpkg-pnp/sources/node`) || normalizedP.endsWith(`packages/yarnpkg-pnp/sources/loader/node-options.js`);
+      return (
+        normalizedP.includes(`packages/yarnpkg-pnp/sources/node`) ||
+        normalizedP.endsWith(`packages/yarnpkg-pnp/sources/loader/node-options.js`)
+      );
     }
 
     return true;

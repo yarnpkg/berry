@@ -1,8 +1,8 @@
-import type {BigIntStats, ReadStream, StatOptions, Stats, WriteStream, WriteVResult} from 'fs';
-import {createInterface}                                                             from 'readline';
+import type { BigIntStats, ReadStream, StatOptions, Stats, WriteStream, WriteVResult } from "fs";
+import { createInterface } from "readline";
 
-import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}              from '../FakeFS';
-import type {Path}                                                                   from '../path';
+import type { CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS } from "../FakeFS";
+import type { Path } from "../path";
 
 // Types copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/9e2e5af93f9cc2cf434a96e3249a573100e87351/types/node/v16
 // Implementation based on https://github.com/nodejs/node/blob/10493b48c7edb227c13a493d0a2c75efe878d7e9/lib/internal/fs/promises.js#L124-L336
@@ -44,7 +44,6 @@ interface Abortable {
   signal?: AbortSignal | undefined;
 }
 
-
 type WriteArgsBuffer<TBuffer extends Uint8Array> = [
   buffer: TBuffer,
   offset?: number | null,
@@ -52,11 +51,7 @@ type WriteArgsBuffer<TBuffer extends Uint8Array> = [
   position?: number | null,
 ];
 
-type WriteArgsString = [
-  data: string,
-  position?: number | null,
-  encoding?: BufferEncoding | null,
-];
+type WriteArgsString = [data: string, position?: number | null, encoding?: BufferEncoding | null];
 
 const kBaseFs = Symbol(`kBaseFs`);
 const kFd = Symbol(`kFd`);
@@ -91,7 +86,7 @@ export class FileHandle<P extends Path> {
     try {
       this[kRef](this.appendFile);
       const encoding = (typeof options === `string` ? options : options?.encoding) ?? undefined;
-      return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? {encoding} : undefined);
+      return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? { encoding } : undefined);
     } finally {
       this[kUnref]();
     }
@@ -116,11 +111,11 @@ export class FileHandle<P extends Path> {
   }
 
   createReadStream(options?: CreateReadStreamOptions): ReadStream {
-    return this[kBaseFs].createReadStream(null, {...options, fd: this.fd});
+    return this[kBaseFs].createReadStream(null, { ...options, fd: this.fd });
   }
 
   createWriteStream(options?: CreateWriteStreamOptions): WriteStream {
-    return this[kBaseFs].createWriteStream(null, {...options, fd: this.fd});
+    return this[kBaseFs].createWriteStream(null, { ...options, fd: this.fd });
   }
 
   // FIXME: Missing FakeFS version
@@ -138,7 +133,7 @@ export class FileHandle<P extends Path> {
     buffer: Buffer,
     offset?: number | null,
     length?: number | null,
-    position?: number | null
+    position?: number | null,
   ): Promise<FileReadResult<Buffer>>;
   async read(
     bufferOrOptions?: Buffer | FileReadOptions<Buffer>,
@@ -186,23 +181,23 @@ export class FileHandle<P extends Path> {
     options?: {
       encoding?: null | undefined;
       flag?: OpenMode | undefined;
-    } | null
+    } | null,
   ): Promise<Buffer>;
   readFile(
     options:
-    | {
-      encoding: BufferEncoding;
-      flag?: OpenMode | undefined;
-    }
-    | BufferEncoding
+      | {
+          encoding: BufferEncoding;
+          flag?: OpenMode | undefined;
+        }
+      | BufferEncoding,
   ): Promise<string>;
   async readFile(
     options?:
-    | (ObjectEncodingOptions & {
-      flag?: OpenMode | undefined;
-    })
-    | BufferEncoding
-    | null,
+      | (ObjectEncodingOptions & {
+          flag?: OpenMode | undefined;
+        })
+      | BufferEncoding
+      | null,
   ): Promise<string | Buffer> {
     try {
       this[kRef](this.readFile);
@@ -223,12 +218,12 @@ export class FileHandle<P extends Path> {
   stat(
     opts?: StatOptions & {
       bigint?: false | undefined;
-    }
+    },
   ): Promise<Stats>;
   stat(
     opts: StatOptions & {
       bigint: true;
-    }
+    },
   ): Promise<BigIntStats>;
   async stat(opts?: StatOptions): Promise<Stats | BigIntStats> {
     try {
@@ -266,20 +261,30 @@ export class FileHandle<P extends Path> {
     }
   }
 
-  async write(...args: WriteArgsString): Promise<{ bytesWritten: number, buffer: string }>;
-  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer>): Promise<{ bytesWritten: number, buffer: TBuffer }>;
-  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer> | WriteArgsString): Promise<{ bytesWritten: number, buffer: string | TBuffer }> {
+  async write(...args: WriteArgsString): Promise<{ bytesWritten: number; buffer: string }>;
+  async write<TBuffer extends Uint8Array>(
+    ...args: WriteArgsBuffer<TBuffer>
+  ): Promise<{ bytesWritten: number; buffer: TBuffer }>;
+  async write<TBuffer extends Uint8Array>(
+    ...args: WriteArgsBuffer<TBuffer> | WriteArgsString
+  ): Promise<{ bytesWritten: number; buffer: string | TBuffer }> {
     try {
       this[kRef](this.write);
       if (ArrayBuffer.isView(args[0])) {
         const [buffer, offset, length, position] = args as WriteArgsBuffer<TBuffer>;
-        const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer as unknown as Buffer, offset ?? undefined, length ?? undefined, position ?? undefined);
-        return {bytesWritten, buffer};
+        const bytesWritten = await this[kBaseFs].writePromise(
+          this.fd,
+          buffer as unknown as Buffer,
+          offset ?? undefined,
+          length ?? undefined,
+          position ?? undefined,
+        );
+        return { bytesWritten, buffer };
       } else {
         const [data, position, encoding] = args as WriteArgsString;
         // @ts-expect-error - FIXME: Types/implementation need to be updated in FakeFS
         const bytesWritten = await this[kBaseFs].writePromise(this.fd, data, position, encoding);
-        return {bytesWritten, buffer: data};
+        return { bytesWritten, buffer: data };
       }
     } finally {
       this[kUnref]();
@@ -333,15 +338,14 @@ export class FileHandle<P extends Path> {
         this[kClosePromise] = undefined;
       });
     } else {
-      this[kClosePromise] =
-        new Promise<void>((resolve, reject) => {
-          this[kCloseResolve] = resolve;
-          this[kCloseReject] = reject;
-        }).finally(() => {
-          this[kClosePromise] = undefined;
-          this[kCloseReject] = undefined;
-          this[kCloseResolve] = undefined;
-        });
+      this[kClosePromise] = new Promise<void>((resolve, reject) => {
+        this[kCloseResolve] = resolve;
+        this[kCloseReject] = reject;
+      }).finally(() => {
+        this[kClosePromise] = undefined;
+        this[kCloseReject] = undefined;
+        this[kCloseResolve] = undefined;
+      });
     }
 
     return this[kClosePromise];

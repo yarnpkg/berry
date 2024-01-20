@@ -1,4 +1,4 @@
-import * as urlUtils from '../sources/urlUtils';
+import * as urlUtils from "../sources/urlUtils";
 
 const EXPECTATIONS: Array<[string, boolean]> = [
   [`https://example.org/package.tar.gz`, true],

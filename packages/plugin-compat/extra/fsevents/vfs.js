@@ -3,8 +3,7 @@ const path = require(`path`);
 let pnpApi = null;
 try {
   pnpApi = require(`pnpapi`);
-} catch {
-}
+} catch {}
 
 function getVirtualLookupFn(pnpApi) {
   const reverseMap = new Map();
@@ -14,8 +13,7 @@ function getVirtualLookupFn(pnpApi) {
     console.assert(pkg, `The package information should be available`);
 
     const resolvedLocation = pnpApi.resolveVirtual(pkg.packageLocation);
-    if (resolvedLocation === null)
-      continue;
+    if (resolvedLocation === null) continue;
 
     const aliases = reverseMap.get(resolvedLocation) || [resolvedLocation];
     reverseMap.set(resolvedLocation, aliases);
@@ -26,13 +24,12 @@ function getVirtualLookupFn(pnpApi) {
     return b.length - a.length;
   });
 
-  return p => {
-    const prefix = keys.find(candidate => p.startsWith(candidate));
-    if (typeof prefix === `undefined`)
-      return [p];
+  return (p) => {
+    const prefix = keys.find((candidate) => p.startsWith(candidate));
+    if (typeof prefix === `undefined`) return [p];
 
     const sub = p.substr(prefix.length);
-    return reverseMap.get(prefix).map(alias => {
+    return reverseMap.get(prefix).map((alias) => {
       return alias + sub;
     });
   };

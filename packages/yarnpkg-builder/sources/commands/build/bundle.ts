@@ -1,17 +1,17 @@
-import {getDynamicLibs}                                                     from '@yarnpkg/cli';
-import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from '@yarnpkg/core';
-import {npath, ppath, xfs}                                                  from '@yarnpkg/fslib';
-import chalk                                                                from 'chalk';
-import cp                                                                   from 'child_process';
-import {Command, Option, Usage}                                             from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild';
-import {createRequire}                                                      from 'module';
-import path                                                                 from 'path';
-import semver                                                               from 'semver';
-import {promisify}                                                          from 'util';
+import { getDynamicLibs } from "@yarnpkg/cli";
+import { StreamReport, MessageName, Configuration, formatUtils, structUtils } from "@yarnpkg/core";
+import { npath, ppath, xfs } from "@yarnpkg/fslib";
+import chalk from "chalk";
+import cp from "child_process";
+import { Command, Option, Usage } from "clipanion";
+import { build, Plugin } from "esbuild";
+import { createRequire } from "module";
+import path from "path";
+import semver from "semver";
+import { promisify } from "util";
 
-import pkg                                                                  from '../../../package.json';
-import {findPlugins}                                                        from '../../tools/findPlugins';
+import pkg from "../../../package.json";
+import { findPlugins } from "../../tools/findPlugins";
 
 const execFile = promisify(cp.execFile);
 
@@ -21,7 +21,7 @@ const pkgJsonVersion = (basedir: string): string => {
 
 const suggestHash = async (basedir: string) => {
   try {
-    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%h`, `--date=short`], {cwd: basedir});
+    const unique = await execFile(`git`, [`show`, `-s`, `--pretty=format:%ad.%h`, `--date=short`], { cwd: basedir });
     return `git.${unique.stdout.trim().replace(/-/g, ``).replace(`.`, `.hash-`)}`;
   } catch {
     return null;
@@ -30,9 +30,7 @@ const suggestHash = async (basedir: string) => {
 
 // eslint-disable-next-line arca/no-default-export
 export default class BuildBundleCommand extends Command {
-  static paths = [
-    [`build`, `bundle`],
-  ];
+  static paths = [[`build`, `bundle`]];
 
   static usage: Usage = Command.Usage({
     description: `build the local bundle`,
@@ -41,13 +39,10 @@ export default class BuildBundleCommand extends Command {
 
       For more details about the build process, please consult the \`@yarnpkg/builder\` README: https://github.com/yarnpkg/berry/blob/HEAD/packages/yarnpkg-builder/README.md.
     `,
-    examples: [[
-      `Build the local bundle`,
-      `$0 build bundle`,
-    ], [
-      `Build the local development bundle`,
-      `$0 build bundle --no-minify`,
-    ]],
+    examples: [
+      [`Build the local bundle`, `$0 build bundle`],
+      [`Build the local development bundle`, `$0 build bundle --no-minify`],
+    ],
   });
 
   profile = Option.String(`--profile`, `standard`, {
@@ -76,92 +71,96 @@ export default class BuildBundleCommand extends Command {
 
     const configuration = Configuration.create(portableBaseDir);
 
-    const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
+    const plugins = findPlugins({
+      basedir,
+      profile: this.profile,
+      plugins: this.plugins.map((plugin) => path.resolve(plugin)),
+    });
     const modules = [...getDynamicLibs().keys()].concat(plugins);
     const output = ppath.join(portableBaseDir, `bundles/yarn.js`);
 
     let version = pkgJsonVersion(basedir);
 
-    const hash = !this.noGitHash
-      ? await suggestHash(basedir)
-      : null;
+    const hash = !this.noGitHash ? await suggestHash(basedir) : null;
 
-    if (hash !== null)
-      version = semver.prerelease(version) !== null
-        ? `${version}.${hash}`
-        : `${version}-${hash}`;
+    if (hash !== null) version = semver.prerelease(version) !== null ? `${version}.${hash}` : `${version}-${hash}`;
 
-    const report = await StreamReport.start({
-      configuration,
-      includeFooter: false,
-      stdout: this.context.stdout,
-    }, async report => {
-      await report.startTimerPromise(`Building the CLI`, async () => {
-        const valLoad = (p: string, values: any) => {
-          const fn = require(p.replace(/.ts$/, `.val.js`));
-          return fn(values).code;
-        };
+    const report = await StreamReport.start(
+      {
+        configuration,
+        includeFooter: false,
+        stdout: this.context.stdout,
+      },
+      async (report) => {
+        await report.startTimerPromise(`Building the CLI`, async () => {
+          const valLoad = (p: string, values: any) => {
+            const fn = require(p.replace(/.ts$/, `.val.js`));
+            return fn(values).code;
+          };
 
-        const valLoader: Plugin = {
-          name: `val-loader`,
-          setup(build) {
-            build.onLoad({filter: /[\\/]getPluginConfiguration\.ts$/}, async args => ({
-              contents: valLoad(args.path, {modules, plugins}),
-              loader: `default`,
-            }));
-          },
-        };
+          const valLoader: Plugin = {
+            name: `val-loader`,
+            setup(build) {
+              build.onLoad({ filter: /[\\/]getPluginConfiguration\.ts$/ }, async (args) => ({
+                contents: valLoad(args.path, { modules, plugins }),
+                loader: `default`,
+              }));
+            },
+          };
 
-        const res = await build({
-          banner: {
-            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
-          },
-          entryPoints: [path.join(basedir, `sources/cli.ts`)],
-          bundle: true,
-          define: {
-            YARN_VERSION: JSON.stringify(version),
-            ...(this.noMinify ? {} : {
-              // For React
-              'process.env.NODE_ENV': JSON.stringify(`production`),
-              // For ink
-              'process.env.DEV': JSON.stringify(`false`),
-              // mkdirp
-              'process.env.__TESTING_MKDIRP_PLATFORM__': `false`,
-              'process.env.__TESTING_MKDIRP_NODE_VERSION__': `false`,
-              'process.env.__FAKE_PLATFORM__': `false`,
-            }),
-          },
-          outfile: npath.fromPortablePath(output),
-          // Default extensions + .mjs
-          resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
-          logLevel: `silent`,
-          format: `iife`,
-          platform: `node`,
-          plugins: [valLoader],
-          minify: !this.noMinify,
-          sourcemap: this.sourceMap ? `inline` : false,
-          target: `node${semver.minVersion(pkg.engines.node)!.version}`,
+          const res = await build({
+            banner: {
+              js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+            },
+            entryPoints: [path.join(basedir, `sources/cli.ts`)],
+            bundle: true,
+            define: {
+              YARN_VERSION: JSON.stringify(version),
+              ...(this.noMinify
+                ? {}
+                : {
+                    // For React
+                    "process.env.NODE_ENV": JSON.stringify(`production`),
+                    // For ink
+                    "process.env.DEV": JSON.stringify(`false`),
+                    // mkdirp
+                    "process.env.__TESTING_MKDIRP_PLATFORM__": `false`,
+                    "process.env.__TESTING_MKDIRP_NODE_VERSION__": `false`,
+                    "process.env.__FAKE_PLATFORM__": `false`,
+                  }),
+            },
+            outfile: npath.fromPortablePath(output),
+            // Default extensions + .mjs
+            resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
+            logLevel: `silent`,
+            format: `iife`,
+            platform: `node`,
+            plugins: [valLoader],
+            minify: !this.noMinify,
+            sourcemap: this.sourceMap ? `inline` : false,
+            target: `node${semver.minVersion(pkg.engines.node)!.version}`,
+          });
+
+          for (const warning of res.warnings) {
+            if (warning.location !== null) continue;
+
+            report.reportWarning(MessageName.UNNAMED, warning.text);
+          }
+
+          for (const warning of res.warnings) {
+            if (warning.location === null) continue;
+
+            report.reportWarning(
+              MessageName.UNNAMED,
+              `${warning.location.file}:${warning.location.line}:${warning.location.column}`,
+            );
+            report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
+          }
+
+          await xfs.chmodPromise(output, 0o755);
         });
-
-        for (const warning of res.warnings) {
-          if (warning.location !== null)
-            continue;
-
-          report.reportWarning(MessageName.UNNAMED, warning.text);
-        }
-
-
-        for (const warning of res.warnings) {
-          if (warning.location === null)
-            continue;
-
-          report.reportWarning(MessageName.UNNAMED, `${warning.location.file}:${warning.location.line}:${warning.location.column}`);
-          report.reportWarning(MessageName.UNNAMED, `   ↳ ${warning.text}`);
-        }
-
-        await xfs.chmodPromise(output, 0o755);
-      });
-    });
+      },
+    );
 
     report.reportSeparator();
 
@@ -171,17 +170,29 @@ export default class BuildBundleCommand extends Command {
       report.reportError(MessageName.EXCEPTION, `${Mark.Cross} Failed to build the CLI`);
     } else {
       report.reportInfo(null, `${Mark.Check} Done building the CLI!`);
-      report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
-      report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, (await xfs.statPromise(output)).size, formatUtils.Type.SIZE)}`);
-      report.reportInfo(null, `${Mark.Question} Bundle version: ${formatUtils.pretty(configuration, version, formatUtils.Type.REFERENCE)}`);
+      report.reportInfo(
+        null,
+        `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`,
+      );
+      report.reportInfo(
+        null,
+        `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, (await xfs.statPromise(output)).size, formatUtils.Type.SIZE)}`,
+      );
+      report.reportInfo(
+        null,
+        `${Mark.Question} Bundle version: ${formatUtils.pretty(configuration, version, formatUtils.Type.REFERENCE)}`,
+      );
 
       report.reportSeparator();
 
       const basedirReq = createRequire(`${basedir}/package.json`);
 
       for (const plugin of plugins) {
-        const {name} = basedirReq(`${plugin}/package.json`);
-        report.reportInfo(null, `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(name))}`);
+        const { name } = basedirReq(`${plugin}/package.json`);
+        report.reportInfo(
+          null,
+          `${chalk.yellow(`→`)} ${structUtils.prettyIdent(configuration, structUtils.parseIdent(name))}`,
+        );
       }
     }
 

@@ -33,8 +33,8 @@ For example, the following `yarn.config.cjs` will enforce that all `react` depen
 
 ```ts
 module.exports = {
-  async constraints({Yarn}) {
-    for (const dep of Yarn.dependencies({ ident: 'react' })) {
+  async constraints({ Yarn }) {
+    for (const dep of Yarn.dependencies({ ident: "react" })) {
       dep.update(`18.0.0`);
     }
   },
@@ -45,9 +45,9 @@ And the following will enforce that the `engines.node` field is properly set in 
 
 ```ts
 module.exports = {
-  async constraints({Yarn}) {
+  async constraints({ Yarn }) {
     for (const workspace of Yarn.workspaces()) {
-      workspace.set('engines.node', `20.0.0`);
+      workspace.set("engines.node", `20.0.0`);
     }
   },
 };
@@ -61,8 +61,8 @@ Because of this declarative model, you don't need to check the actual values you
 
 ```ts
 module.exports = {
-  async constraints({Yarn}) {
-    for (const dep of Yarn.dependencies({ ident: 'ts-node' })) {
+  async constraints({ Yarn }) {
+    for (const dep of Yarn.dependencies({ ident: "ts-node" })) {
       // No need to check for the actual value! Just always call `update`.
       if (dep.range !== `18.0.0`) {
         dep.update(`18.0.0`);
@@ -84,10 +84,10 @@ Then, in your `yarn.config.cjs` file, import the types, in particular the `defin
 
 ```ts
 /** @type {import('@yarnpkg/types')} */
-const { defineConfig } = require('@yarnpkg/types');
+const { defineConfig } = require("@yarnpkg/types");
 
 module.exports = defineConfig({
-  async constraints({Yarn}) {
+  async constraints({ Yarn }) {
     // `Yarn` is now well-typed ✨
   },
 });
@@ -128,22 +128,20 @@ This code ensures that no two workspaces in your project can list the same packa
 // @ts-check
 
 /** @type {import('@yarnpkg/types')} */
-const {defineConfig} = require(`@yarnpkg/types`);
+const { defineConfig } = require(`@yarnpkg/types`);
 
 /**
  * This rule will enforce that a workspace MUST depend on the same version of
  * a dependency as the one used by the other workspaces.
- * 
+ *
  * @param {Context} context
  */
-function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
+function enforceConsistentDependenciesAcrossTheProject({ Yarn }) {
   for (const dependency of Yarn.dependencies()) {
-    if (dependency.type === `peerDependencies`)
-      continue;
+    if (dependency.type === `peerDependencies`) continue;
 
-    for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === `peerDependencies`)
-        continue;
+    for (const otherDependency of Yarn.dependencies({ ident: dependency.ident })) {
+      if (otherDependency.type === `peerDependencies`) continue;
 
       dependency.update(otherDependency.range);
     }
@@ -151,7 +149,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
 }
 
 module.exports = defineConfig({
-  constraints: async ctx => {
+  constraints: async (ctx) => {
     enforceConsistentDependenciesAcrossTheProject(ctx);
   },
 });

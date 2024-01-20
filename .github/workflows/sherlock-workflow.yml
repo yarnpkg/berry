@@ -1,43 +1,43 @@
 on: [issues]
 
 env:
-  node-version: '18.x'
+  node-version: "18.x"
 
-name: 'Sherlock for Yarn'
+name: "Sherlock for Yarn"
 jobs:
   issue:
-    name: 'Running Sherlock'
+    name: "Running Sherlock"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: 'Use Node.js ${{ env.node-version }}'
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.node-version }}
+      - name: "Use Node.js ${{ env.node-version }}"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.node-version }}
 
-    - name: 'Always use the latest sherlock'
-      run: |
-        node ./scripts/run-yarn.js add @arcanis/sherlock
-      shell: bash
+      - name: "Always use the latest sherlock"
+        run: |
+          node ./scripts/run-yarn.js add @arcanis/sherlock
+        shell: bash
 
-    - name: 'Sherlock Payload'
-      id: sherlock-payload
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'sherlock payload'
+      - name: "Sherlock Payload"
+        id: sherlock-payload
+        uses: ./scripts/actions/local-yarn-command
+        with:
+          args: "sherlock payload"
 
-    - name: 'Sherlock Execution'
-      if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'sherlock exec'
+      - name: "Sherlock Execution"
+        if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
+        uses: ./scripts/actions/local-yarn-command
+        with:
+          args: "sherlock exec"
 
-    - name: 'Sherlock Reporting'
-      if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
-      uses: ./scripts/actions/local-yarn-command
-      with:
-        args: 'sherlock report'
-      env:
-        GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}
+      - name: "Sherlock Reporting"
+        if: ${{steps.sherlock-payload.outputs.outcome == 'success'}}
+        uses: ./scripts/actions/local-yarn-command
+        with:
+          args: "sherlock report"
+        env:
+          GITHUB_TOKEN: ${{secrets.YARNBOT_TOKEN}}

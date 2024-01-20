@@ -11,7 +11,8 @@
  *
  * Ref: https://greggod.medium.com/css-do-not-put-height-100-on-the-body-html-e36bda3551b3
  */
-html, body {
+html,
+body {
   height: auto !important;
 
   --ifm-code-padding-horizontal: 0.2rem;
@@ -22,7 +23,7 @@ body {
 }
 
 html {
-  background-image: url('/img/yarn-bg-black.webp');
+  background-image: url("/img/yarn-bg-black.webp");
   background-size: 100% 100%;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -216,8 +217,8 @@ html.search-page-wrapper .row {
 
 .navbar a[target] svg {
   display: inline-block;
-  margin-left: .6rem;
-  opacity: .2;
+  margin-left: 0.6rem;
+  opacity: 0.2;
 }
 
 .footer__links {
@@ -250,12 +251,12 @@ html.search-page-wrapper .row {
 }
 
 .terminal-code pre {
-  --prism-background-color: #393A34 !important;
+  --prism-background-color: #393a34 !important;
   --prism-color: #f6f8fa !important;
 }
 
 pre {
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 .footer {
@@ -286,13 +287,13 @@ pre {
 /* You can override the default Infima variables here. */
 :root {
   --ifm-font-family-base: "PT Sans";
-  --ifm-color-primary:  #514C87;
-  --ifm-color-primary-dark: #29285E;
-  --ifm-color-primary-darker: #26265C;
-  --ifm-color-primary-darkest: #1F2054;
-  --ifm-color-primary-light: #7B73B2;
-  --ifm-color-primary-lighter: #A69DDF;
-  --ifm-color-primary-lightest: #D4C9FF;
+  --ifm-color-primary: #514c87;
+  --ifm-color-primary-dark: #29285e;
+  --ifm-color-primary-darker: #26265c;
+  --ifm-color-primary-darkest: #1f2054;
+  --ifm-color-primary-light: #7b73b2;
+  --ifm-color-primary-lighter: #a69ddf;
+  --ifm-color-primary-lightest: #d4c9ff;
   --ifm-menu-link-padding-vertical: 1rem;
   --ifm-menu-link-padding-horizontal: 1rem;
   --ifm-navbar-height: 60px;
@@ -310,7 +311,7 @@ a {
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+[data-theme="dark"] {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;

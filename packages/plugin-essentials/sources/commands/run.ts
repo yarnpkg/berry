@@ -1,13 +1,11 @@
-import {BaseCommand, pluginCommands}        from '@yarnpkg/cli';
-import {Configuration, Project, Workspace}  from '@yarnpkg/core';
-import {scriptUtils, structUtils}           from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError} from 'clipanion';
+import { BaseCommand, pluginCommands } from "@yarnpkg/cli";
+import { Configuration, Project, Workspace } from "@yarnpkg/core";
+import { scriptUtils, structUtils } from "@yarnpkg/core";
+import { Command, Option, Usage, UsageError } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class RunCommand extends BaseCommand {
-  static paths = [
-    [`run`],
-  ];
+  static paths = [[`run`]];
 
   static usage: Usage = Command.Usage({
     description: `run a script defined in the package.json`,
@@ -22,16 +20,11 @@ export default class RunCommand extends BaseCommand {
 
       Whatever happens, the cwd of the spawned process will be the workspace that declares the script (which makes it possible to call commands cross-workspaces using the third syntax).
     `,
-    examples: [[
-      `Run the tests from the local workspace`,
-      `$0 run test`,
-    ], [
-      `Same thing, but without the "run" keyword`,
-      `$0 test`,
-    ], [
-      `Inspect Webpack while running`,
-      `$0 run --inspect-brk webpack`,
-    ]],
+    examples: [
+      [`Run the tests from the local workspace`, `$0 run test`],
+      [`Same thing, but without the "run" keyword`, `$0 test`],
+      [`Inspect Webpack while running`, `$0 run --inspect-brk webpack`],
+    ],
   });
 
   inspect = Option.String(`--inspect`, false, {
@@ -61,31 +54,34 @@ export default class RunCommand extends BaseCommand {
   // this anymore, but many workflows use `yarn run --silent` to make sure that
   // they don't get this header, and it makes sense to support it as well (even
   // if it's a no-op in our case).
-  silent = Option.Boolean(`--silent`, {hidden: true});
+  silent = Option.Boolean(`--silent`, { hidden: true });
 
   scriptName = Option.String();
   args = Option.Proxy();
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace, locator} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace, locator } = await Project.find(configuration, this.context.cwd);
 
     await project.restoreInstallState();
 
-    const effectiveLocator = this.topLevel
-      ? project.topLevelWorkspace.anchoredLocator
-      : locator;
+    const effectiveLocator = this.topLevel ? project.topLevelWorkspace.anchoredLocator : locator;
 
     // First we check to see whether a script exist inside the current package
     // for the given name
 
-    if (!this.binariesOnly && await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, {project}))
-      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {project, stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+    if (!this.binariesOnly && (await scriptUtils.hasPackageScript(effectiveLocator, this.scriptName, { project })))
+      return await scriptUtils.executePackageScript(effectiveLocator, this.scriptName, this.args, {
+        project,
+        stdin: this.context.stdin,
+        stdout: this.context.stdout,
+        stderr: this.context.stderr,
+      });
 
     // If we can't find it, we then check whether one of the dependencies of the
     // current package exports a binary with the requested name
 
-    const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project});
+    const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, { project });
     const binary = binaries.get(this.scriptName);
 
     if (binary) {
@@ -107,8 +103,7 @@ export default class RunCommand extends BaseCommand {
         }
       }
 
-      if (this.require)
-        nodeArgs.push(`--require=${this.require}`);
+      if (this.require) nodeArgs.push(`--require=${this.require}`);
 
       return await scriptUtils.executePackageAccessibleBinary(effectiveLocator, this.scriptName, this.args, {
         cwd: this.context.cwd,
@@ -130,35 +125,52 @@ export default class RunCommand extends BaseCommand {
     // not workspaces). No particular reason except maybe security concerns.
 
     if (!this.topLevel && !this.binariesOnly && workspace && this.scriptName.includes(`:`)) {
-      const candidateWorkspaces = await Promise.all(project.workspaces.map(async workspace => {
-        return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
-      }));
+      const candidateWorkspaces = await Promise.all(
+        project.workspaces.map(async (workspace) => {
+          return workspace.manifest.scripts.has(this.scriptName) ? workspace : null;
+        }),
+      );
 
-      const filteredWorkspaces = candidateWorkspaces.filter(workspace => {
+      const filteredWorkspaces = candidateWorkspaces.filter((workspace) => {
         return workspace !== null;
       }) as Array<Workspace>;
 
       if (filteredWorkspaces.length === 1) {
-        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {stdin: this.context.stdin, stdout: this.context.stdout, stderr: this.context.stderr});
+        return await scriptUtils.executeWorkspaceScript(filteredWorkspaces[0], this.scriptName, this.args, {
+          stdin: this.context.stdin,
+          stdout: this.context.stdout,
+          stderr: this.context.stderr,
+        });
       }
     }
 
     if (this.topLevel) {
       if (this.scriptName === `node-gyp`) {
-        throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}). This typically happens because some package depends on "node-gyp" to build itself, but didn't list it in their dependencies. To fix that, please run "yarn add node-gyp" into your top-level workspace. You also can open an issue on the repository of the specified package to suggest them to use an optional peer dependency.`);
+        throw new UsageError(
+          `Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}). This typically happens because some package depends on "node-gyp" to build itself, but didn't list it in their dependencies. To fix that, please run "yarn add node-gyp" into your top-level workspace. You also can open an issue on the repository of the specified package to suggest them to use an optional peer dependency.`,
+        );
       } else {
-        throw new UsageError(`Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`);
+        throw new UsageError(
+          `Couldn't find a script name "${this.scriptName}" in the top-level (used by ${structUtils.prettyLocator(configuration, locator)}).`,
+        );
       }
     } else {
       if (this.scriptName === `global`)
-        throw new UsageError(`The 'yarn global' commands have been removed in 2.x - consider using 'yarn dlx' or a third-party plugin instead`);
+        throw new UsageError(
+          `The 'yarn global' commands have been removed in 2.x - consider using 'yarn dlx' or a third-party plugin instead`,
+        );
 
       const userCommand = [this.scriptName].concat(this.args);
 
       for (const [pluginName, candidates] of pluginCommands)
         for (const candidate of candidates)
-          if (userCommand.length >= candidate.length && JSON.stringify(userCommand.slice(0, candidate.length)) === JSON.stringify(candidate))
-            throw new UsageError(`Couldn't find a script named "${this.scriptName}", but a matching command can be found in the ${pluginName} plugin. You can install it with "yarn plugin import ${pluginName}".`);
+          if (
+            userCommand.length >= candidate.length &&
+            JSON.stringify(userCommand.slice(0, candidate.length)) === JSON.stringify(candidate)
+          )
+            throw new UsageError(
+              `Couldn't find a script named "${this.scriptName}", but a matching command can be found in the ${pluginName} plugin. You can install it with "yarn plugin import ${pluginName}".`,
+            );
 
       throw new UsageError(`Couldn't find a script named "${this.scriptName}".`);
     }

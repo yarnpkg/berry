@@ -1,21 +1,17 @@
-import {npath}     from '@yarnpkg/fslib';
-import {delimiter} from 'path';
+import { npath } from "@yarnpkg/fslib";
+import { delimiter } from "path";
 
-import * as exec   from './exec';
-import * as tests  from './tests';
+import * as exec from "./exec";
+import * as tests from "./tests";
 
-const {generatePkgDriver} = tests;
-const {execFile} = exec;
+const { generatePkgDriver } = tests;
+const { execFile } = exec;
 
 const mte = generatePkgDriver({
   getName() {
     return `yarn`;
   },
-  async runDriver(
-    path,
-    [command, ...args],
-    {cwd, execArgv = [], projectFolder, registryUrl, env, ...config},
-  ) {
+  async runDriver(path, [command, ...args], { cwd, execArgv = [], projectFolder, registryUrl, env, ...config }) {
     const rcEnv: Record<string, any> = {};
     for (const [key, value] of Object.entries(config))
       rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`;`) : value;
@@ -23,9 +19,7 @@ const mte = generatePkgDriver({
     const nativePath = npath.fromPortablePath(path);
     const nativeHomePath = npath.dirname(nativePath);
 
-    const cwdArgs = typeof projectFolder !== `undefined`
-      ? [projectFolder]
-      : [];
+    const cwdArgs = typeof projectFolder !== `undefined` ? [projectFolder] : [];
 
     const yarnBinary = process.env.TEST_FROM_SOURCES
       ? require.resolve(`${__dirname}/../../../../../scripts/run-yarn.js`)

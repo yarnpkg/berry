@@ -7,6 +7,7 @@ module.exports = {
     `./rules/errors`,
     `./rules/style`,
     `./rules/typescript`,
+    `eslint-config-prettier`,
   ].map(require.resolve),
 
   parser: require.resolve(`@typescript-eslint/parser`),

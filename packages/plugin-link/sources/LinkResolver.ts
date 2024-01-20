@@ -1,22 +1,20 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
-import {Descriptor, Locator}                                      from '@yarnpkg/core';
-import {LinkType}                                                 from '@yarnpkg/core';
-import {structUtils}                                              from '@yarnpkg/core';
-import {npath}                                                    from '@yarnpkg/fslib';
+import { Resolver, ResolveOptions, MinimalResolveOptions, Package } from "@yarnpkg/core";
+import { Descriptor, Locator } from "@yarnpkg/core";
+import { LinkType } from "@yarnpkg/core";
+import { structUtils } from "@yarnpkg/core";
+import { npath } from "@yarnpkg/fslib";
 
-import {LINK_PROTOCOL}                                            from './constants';
+import { LINK_PROTOCOL } from "./constants";
 
 export class LinkResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(LINK_PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(LINK_PROTOCOL)) return false;
 
     return true;
   }
 
   supportsLocator(locator: Locator, opts: MinimalResolveOptions) {
-    if (!locator.reference.startsWith(LINK_PROTOCOL))
-      return false;
+    if (!locator.reference.startsWith(LINK_PROTOCOL)) return false;
 
     return true;
   }
@@ -41,11 +39,16 @@ export class LinkResolver implements Resolver {
     return [structUtils.makeLocator(descriptor, `${LINK_PROTOCOL}${npath.toPortablePath(path)}`)];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const [locator] = await this.getCandidates(descriptor, dependencies, opts);
 
     return {
-      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      locators: locators.filter((candidate) => candidate.locatorHash === locator.locatorHash),
       sorted: false,
     };
   }

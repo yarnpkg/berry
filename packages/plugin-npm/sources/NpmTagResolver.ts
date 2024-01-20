@@ -1,19 +1,17 @@
-import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, TAG_REGEXP} from '@yarnpkg/core';
-import {structUtils}                                                                           from '@yarnpkg/core';
-import {Descriptor, Locator, Package}                                                          from '@yarnpkg/core';
-import semver                                                                                  from 'semver';
+import { ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOptions, TAG_REGEXP } from "@yarnpkg/core";
+import { structUtils } from "@yarnpkg/core";
+import { Descriptor, Locator, Package } from "@yarnpkg/core";
+import semver from "semver";
 
-import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
-import {PROTOCOL}                                                                              from './constants';
-import * as npmHttpUtils                                                                       from './npmHttpUtils';
+import { NpmSemverFetcher } from "./NpmSemverFetcher";
+import { PROTOCOL } from "./constants";
+import * as npmHttpUtils from "./npmHttpUtils";
 
 export class NpmTagResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
-    if (!descriptor.range.startsWith(PROTOCOL))
-      return false;
+    if (!descriptor.range.startsWith(PROTOCOL)) return false;
 
-    if (!TAG_REGEXP.test(descriptor.range.slice(PROTOCOL.length)))
-      return false;
+    if (!TAG_REGEXP.test(descriptor.range.slice(PROTOCOL.length))) return false;
 
     return true;
   }
@@ -57,27 +55,43 @@ export class NpmTagResolver implements Resolver {
 
     const archiveUrl = registryData.versions[version].dist.tarball;
 
-    if (NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {configuration: opts.project.configuration})) {
+    if (
+      NpmSemverFetcher.isConventionalTarballUrl(versionLocator, archiveUrl, {
+        configuration: opts.project.configuration,
+      })
+    ) {
       return [versionLocator];
     } else {
-      return [structUtils.bindLocator(versionLocator, {__archiveUrl: archiveUrl})];
+      return [structUtils.bindLocator(versionLocator, { __archiveUrl: archiveUrl })];
     }
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const filtered: Array<Locator> = [];
 
     for (const locator of locators) {
-      if (locator.identHash !== descriptor.identHash)
-        continue;
+      if (locator.identHash !== descriptor.identHash) continue;
 
-      const parsedRange = structUtils.tryParseRange(locator.reference, {requireProtocol: PROTOCOL});
-      if (!parsedRange || !semver.valid(parsedRange.selector))
-        continue;
+      const parsedRange = structUtils.tryParseRange(locator.reference, { requireProtocol: PROTOCOL });
+      if (!parsedRange || !semver.valid(parsedRange.selector)) continue;
 
       if (parsedRange.params?.__archiveUrl) {
-        const newRange = structUtils.makeRange({protocol: PROTOCOL, selector: parsedRange.selector, source: null, params: null});
-        const [resolvedLocator] = await opts.resolver.getCandidates(structUtils.makeDescriptor(descriptor, newRange), dependencies, opts);
+        const newRange = structUtils.makeRange({
+          protocol: PROTOCOL,
+          selector: parsedRange.selector,
+          source: null,
+          params: null,
+        });
+        const [resolvedLocator] = await opts.resolver.getCandidates(
+          structUtils.makeDescriptor(descriptor, newRange),
+          dependencies,
+          opts,
+        );
         if (locator.reference !== resolvedLocator.reference) {
           continue;
         }

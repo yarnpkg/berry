@@ -7,37 +7,41 @@ require(`@yarnpkg/monorepo/scripts/setup-local-plugins`);
 const fs = require(`fs`);
 const path = require(`path`);
 
-const {YarnVersion} = require(`@yarnpkg/core`);
+const { YarnVersion } = require(`@yarnpkg/core`);
 
 const fastGlob = require(`fast-glob`);
 const lightCodeTheme = require(`prism-react-renderer/themes/github`);
 const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
 
-const {miscUtils} = require(`@yarnpkg/core`);
+const { miscUtils } = require(`@yarnpkg/core`);
 
 const commandLineHighlight = require(`./src/remark/commandLineHighlight`);
 const autoLink = require(`./src/remark/autoLink`);
 
 const remarkPlugins = [
   commandLineHighlight.plugin(),
-  autoLink.plugin([{
-    sourceType: `json-schema`,
-    path: require.resolve(`./static/configuration/manifest.json`),
-    urlGenerator: name => `/configuration/manifest#${name}`,
-  }, {
-    sourceType: `json-schema`,
-    path: require.resolve(`./static/configuration/yarnrc.json`),
-    urlGenerator: name => `/configuration/yarnrc#${name}`,
-  }]),
+  autoLink.plugin([
+    {
+      sourceType: `json-schema`,
+      path: require.resolve(`./static/configuration/manifest.json`),
+      urlGenerator: (name) => `/configuration/manifest#${name}`,
+    },
+    {
+      sourceType: `json-schema`,
+      path: require.resolve(`./static/configuration/yarnrc.json`),
+      urlGenerator: (name) => `/configuration/yarnrc#${name}`,
+    },
+  ]),
 ];
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: `Yarn`,
   tagline: `Yarn, the modern JavaScript package manager`,
-  url: process.env.DEPLOY_PRIME_URL !== `https://master--yarn4.netlify.app`
-    ? process.env.DEPLOY_PRIME_URL ?? `https://yarnpkg.com`
-    : `https://yarnpkg.com`,
+  url:
+    process.env.DEPLOY_PRIME_URL !== `https://master--yarn4.netlify.app`
+      ? process.env.DEPLOY_PRIME_URL ?? `https://yarnpkg.com`
+      : `https://yarnpkg.com`,
   baseUrl: `/`,
   // TODO: Switch back to `throw`
   onBrokenLinks: `warn`,
@@ -60,13 +64,12 @@ const config = {
       {
         projectRoot: path.join(__dirname, `../..`),
         packages: miscUtils.mapAndFilter(
-          fastGlob.sync([`packages/{yarnpkg,plugin}-*`], {cwd: `../..`, onlyDirectories: true}),
-          workspacePath => {
+          fastGlob.sync([`packages/{yarnpkg,plugin}-*`], { cwd: `../..`, onlyDirectories: true }),
+          (workspacePath) => {
             let category = `Generic Packages`;
             if (workspacePath === `packages/yarnpkg-builder` || workspacePath === `packages/yarnpkg-cli`)
               category = `Yarn Packages`;
-            else if (workspacePath.startsWith(`packages/plugin-`))
-              category = `Default Plugins`;
+            else if (workspacePath.startsWith(`packages/plugin-`)) category = `Default Plugins`;
 
             /** @type {Map<string, import('docusaurus-plugin-typedoc-api/lib/types').PackageEntryConfig>} */
             const entries = new Map();
@@ -82,33 +85,28 @@ const config = {
                 } else if (key.startsWith(`.`)) {
                   // "exports": { "./path": "./path/to.ts" }
                   const isIndex = key === `.`;
-                  entries.set(
-                    isIndex ? `index` : key.slice(2),
-                    {path: value, label: isIndex ? `Main Entrypoint` : `Entrypoint: ${key.slice(2)}`},
-                  );
+                  entries.set(isIndex ? `index` : key.slice(2), {
+                    path: value,
+                    label: isIndex ? `Main Entrypoint` : `Entrypoint: ${key.slice(2)}`,
+                  });
                 } else {
                   // "exports": { "condition": "./path/to.ts" }
                   const isDefault = key === `default`;
-                  entries.set(
-                    isDefault ? `index` : `[${key}]`,
-                    {path: value, label: isDefault ? `Default Entrypoint` : `Condition: ${key}`},
-                  );
+                  entries.set(isDefault ? `index` : `[${key}]`, {
+                    path: value,
+                    label: isDefault ? `Default Entrypoint` : `Condition: ${key}`,
+                  });
                 }
               }
             }
             const manifest = require(path.join(`../..`, workspacePath, `package.json`));
-            if (!manifest.exports)
-              return miscUtils.mapAndFilter.skip;
+            if (!manifest.exports) return miscUtils.mapAndFilter.skip;
             resolveEntries(manifest.exports);
 
-            return {path: workspacePath, category, entry: Object.fromEntries(entries)};
+            return { path: workspacePath, category, entry: Object.fromEntries(entries) };
           },
         ),
-        packageCategories: [
-          `Generic Packages`,
-          `Yarn Packages`,
-          `Default Plugins`,
-        ],
+        packageCategories: [`Generic Packages`, `Yarn Packages`, `Default Plugins`],
         readmes: true,
         gitRefName: process.env.COMMIT_REF ?? `master`,
         typedocOptions: {
@@ -120,7 +118,7 @@ const config = {
   ],
 
   webpack: {
-    jsLoader: isServer => ({
+    jsLoader: (isServer) => ({
       loader: require.resolve(`esbuild-loader`),
       options: {
         loader: `tsx`,
@@ -157,9 +155,7 @@ const config = {
     ],
   ],
 
-  scripts: [
-    `/js/custom.js`,
-  ],
+  scripts: [`/js/custom.js`],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */

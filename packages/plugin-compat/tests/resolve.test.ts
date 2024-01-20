@@ -1,16 +1,14 @@
-import path    from 'path';
-import resolve from 'resolve';
+import path from "path";
+import resolve from "resolve";
 
 const FILENAME = path.basename(__filename);
 
 describe(`ResolvePatch`, () => {
   it(`should not match a local file that matches the specifier`, () => {
-    expect(() =>
-      resolve.sync(FILENAME, {extensions: [`.ts`]}),
-    ).toThrow(`Cannot find module '${FILENAME}'`);
+    expect(() => resolve.sync(FILENAME, { extensions: [`.ts`] })).toThrow(`Cannot find module '${FILENAME}'`);
 
-    expect(
-      () => resolve.sync(FILENAME, {
+    expect(() =>
+      resolve.sync(FILENAME, {
         extensions: [`.ts`],
         __skipPackageIterator: true,
       } as any),
@@ -39,14 +37,14 @@ describe(`ResolvePatch`, () => {
       resolve.sync(`got`, {
         paths: [require.resolve(`@yarnpkg/core`)],
       }),
-    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+    ).toEqual(require.resolve(`got`, { paths: [require.resolve(`@yarnpkg/core`)] }));
 
     expect(
       resolve.sync(`got`, {
         paths: [require.resolve(`@yarnpkg/core`)],
         __skipPackageIterator: true,
       } as any),
-    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+    ).toEqual(require.resolve(`got`, { paths: [require.resolve(`@yarnpkg/core`)] }));
   });
 
   it(`can require a dependency from basedir`, () => {
@@ -54,14 +52,14 @@ describe(`ResolvePatch`, () => {
       resolve.sync(`got`, {
         basedir: require.resolve(`@yarnpkg/core`),
       }),
-    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+    ).toEqual(require.resolve(`got`, { paths: [require.resolve(`@yarnpkg/core`)] }));
 
     expect(
       resolve.sync(`got`, {
         basedir: require.resolve(`@yarnpkg/core`),
         __skipPackageIterator: true,
       } as any),
-    ).toEqual(require.resolve(`got`, {paths: [require.resolve(`@yarnpkg/core`)]}));
+    ).toEqual(require.resolve(`got`, { paths: [require.resolve(`@yarnpkg/core`)] }));
   });
 
   it(`non-absolute paths should return non-absolute result if it can be found from the cwd`, () => {

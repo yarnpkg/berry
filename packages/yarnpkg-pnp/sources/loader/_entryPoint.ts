@@ -1,22 +1,22 @@
-import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ProxiedFS, ppath} from '@yarnpkg/fslib';
-import {ZipOpenFS}                                                             from '@yarnpkg/libzip';
-import fs                                                                      from 'fs';
-import Module                                                                  from 'module';
-import StringDecoder                                                           from 'string_decoder';
+import { FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ProxiedFS, ppath } from "@yarnpkg/fslib";
+import { ZipOpenFS } from "@yarnpkg/libzip";
+import fs from "fs";
+import Module from "module";
+import StringDecoder from "string_decoder";
 
-import {RuntimeState, PnpApi}                                                  from '../types';
+import { RuntimeState, PnpApi } from "../types";
 
-import {applyPatch}                                                            from './applyPatch';
-import {hydrateRuntimeState}                                                   from './hydrateRuntimeState';
-import {MakeApiOptions, makeApi}                                               from './makeApi';
-import {Manager, makeManager}                                                  from './makeManager';
+import { applyPatch } from "./applyPatch";
+import { hydrateRuntimeState } from "./hydrateRuntimeState";
+import { MakeApiOptions, makeApi } from "./makeApi";
+import { Manager, makeManager } from "./makeManager";
 
 declare var $$SETUP_STATE: (hrs: typeof hydrateRuntimeState, basePath?: NativePath) => RuntimeState;
 
 // We must copy the fs into a local, because otherwise
 // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
 // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
-const localFs: typeof fs = {...fs};
+const localFs: typeof fs = { ...fs };
 const nodeFs = new NodeFS(localFs);
 
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
@@ -54,48 +54,50 @@ const dynamicFsLayer = new DynamicFS();
 
 let manager: Manager;
 
-const defaultApi = Object.assign(makeApi(defaultRuntimeState, {
-  fakeFs: dynamicFsLayer,
-  pnpapiResolution: defaultPnpapiResolution,
-}), {
-  /**
-   * Can be used to generate a different API than the default one (for example
-   * to map it on `/` rather than the local directory path, or to use a
-   * different FS layer than the default one).
-   */
-  makeApi: ({
-    basePath = undefined,
-    fakeFs = dynamicFsLayer,
-    pnpapiResolution = defaultPnpapiResolution,
-    ...rest
-  }: Partial<MakeApiOptions> & {basePath?: NativePath}) => {
-    const apiRuntimeState = typeof basePath !== `undefined`
-      ? $$SETUP_STATE(hydrateRuntimeState, basePath)
-      : defaultRuntimeState;
+const defaultApi = Object.assign(
+  makeApi(defaultRuntimeState, {
+    fakeFs: dynamicFsLayer,
+    pnpapiResolution: defaultPnpapiResolution,
+  }),
+  {
+    /**
+     * Can be used to generate a different API than the default one (for example
+     * to map it on `/` rather than the local directory path, or to use a
+     * different FS layer than the default one).
+     */
+    makeApi: ({
+      basePath = undefined,
+      fakeFs = dynamicFsLayer,
+      pnpapiResolution = defaultPnpapiResolution,
+      ...rest
+    }: Partial<MakeApiOptions> & { basePath?: NativePath }) => {
+      const apiRuntimeState =
+        typeof basePath !== `undefined` ? $$SETUP_STATE(hydrateRuntimeState, basePath) : defaultRuntimeState;
 
-    return makeApi(apiRuntimeState, {
-      fakeFs,
-      pnpapiResolution,
-      ...rest,
-    });
+      return makeApi(apiRuntimeState, {
+        fakeFs,
+        pnpapiResolution,
+        ...rest,
+      });
+    },
+
+    /**
+     * Will inject the specified API into the environment, monkey-patching FS. Is
+     * automatically called when the hook is loaded through `--require`.
+     */
+    setup: (api?: PnpApi) => {
+      applyPatch(api || defaultApi, {
+        fakeFs: defaultFsLayer,
+        manager,
+      });
+
+      // Now that the `fs` module is patched we can swap the `baseFs` to
+      // a NodeFS with a live `fs` binding to pick up changes to the `fs`
+      // module allowing users to patch it
+      dynamicFsLayer.baseFs = new NodeFS(fs);
+    },
   },
-
-  /**
-   * Will inject the specified API into the environment, monkey-patching FS. Is
-   * automatically called when the hook is loaded through `--require`.
-   */
-  setup: (api?: PnpApi) => {
-    applyPatch(api || defaultApi, {
-      fakeFs: defaultFsLayer,
-      manager,
-    });
-
-    // Now that the `fs` module is patched we can swap the `baseFs` to
-    // a NodeFS with a live `fs` binding to pick up changes to the `fs`
-    // module allowing users to patch it
-    dynamicFsLayer.baseFs = new NodeFS(fs);
-  },
-});
+);
 
 manager = makeManager(defaultApi, {
   fakeFs: dynamicFsLayer,
@@ -117,7 +119,7 @@ if (module.parent && module.parent.id === `internal/preload`) {
 
 if (process.mainModule === module) {
   const reportError = (code: string, message: string, data: Object) => {
-    process.stdout.write(`${JSON.stringify([{code, message, data}, null])}\n`);
+    process.stdout.write(`${JSON.stringify([{ code, message, data }, null])}\n`);
   };
 
   const reportSuccess = (resolution: string | null) => {
@@ -152,13 +154,12 @@ if (process.mainModule === module) {
     let buffer = ``;
     const decoder = new StringDecoder.StringDecoder();
 
-    process.stdin.on(`data`, chunk => {
+    process.stdin.on(`data`, (chunk) => {
       buffer += decoder.write(chunk);
 
       do {
         const index = buffer.indexOf(`\n`);
-        if (index === -1)
-          break;
+        if (index === -1) break;
 
         const line = buffer.slice(0, index);
         buffer = buffer.slice(index + 1);

@@ -1,12 +1,12 @@
-import {Configuration, nodeUtils}                                              from '@yarnpkg/core';
-import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils} from '@yarnpkg/fslib';
-import {ZipCompression, ZipFS}                                                 from '@yarnpkg/libzip';
-import {PassThrough, Readable}                                                 from 'stream';
-import tar                                                                     from 'tar';
+import { Configuration, nodeUtils } from "@yarnpkg/core";
+import { FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils } from "@yarnpkg/fslib";
+import { ZipCompression, ZipFS } from "@yarnpkg/libzip";
+import { PassThrough, Readable } from "stream";
+import tar from "tar";
 
-import {AsyncPool, TaskPool, WorkerPool}                                       from './TaskPool';
-import * as miscUtils                                                          from './miscUtils';
-import {getContent as getZipWorkerSource}                                      from './worker-zip';
+import { AsyncPool, TaskPool, WorkerPool } from "./TaskPool";
+import * as miscUtils from "./miscUtils";
+import { getContent as getZipWorkerSource } from "./worker-zip";
 
 export type ConvertToZipPayload = {
   tmpFile: PortablePath;
@@ -20,10 +20,10 @@ export type ZipWorkerPool = TaskPool<ConvertToZipPayload, PortablePath>;
 function createTaskPool(poolMode: string, poolSize: number): ZipWorkerPool {
   switch (poolMode) {
     case `async`:
-      return new AsyncPool(convertToZipWorker, {poolSize});
+      return new AsyncPool(convertToZipWorker, { poolSize });
 
     case `workers`:
-      return new WorkerPool(getZipWorkerSource(), {poolSize});
+      return new WorkerPool(getZipWorkerSource(), { poolSize });
 
     default: {
       throw new Error(`Assertion failed: Unknown value ${poolMode} for taskPoolMode`);
@@ -43,8 +43,7 @@ export function getDefaultTaskPool() {
 const workerPools = new WeakMap<Configuration, ZipWorkerPool>();
 
 export function getTaskPoolForConfiguration(configuration: Configuration | void): ZipWorkerPool {
-  if (typeof configuration === `undefined`)
-    return getDefaultTaskPool();
+  if (typeof configuration === `undefined`) return getDefaultTaskPool();
 
   return miscUtils.getFactoryWithDefault(workerPools, configuration, () => {
     const poolMode = configuration.get(`taskPoolMode`);
@@ -52,10 +51,10 @@ export function getTaskPoolForConfiguration(configuration: Configuration | void)
 
     switch (poolMode) {
       case `async`:
-        return new AsyncPool(convertToZipWorker, {poolSize});
+        return new AsyncPool(convertToZipWorker, { poolSize });
 
       case `workers`:
-        return new WorkerPool(getZipWorkerSource(), {poolSize});
+        return new WorkerPool(getZipWorkerSource(), { poolSize });
 
       default: {
         throw new Error(`Assertion failed: Unknown value ${poolMode} for taskPoolMode`);
@@ -65,9 +64,9 @@ export function getTaskPoolForConfiguration(configuration: Configuration | void)
 }
 
 export async function convertToZipWorker(data: ConvertToZipPayload) {
-  const {tmpFile, tgz, compressionLevel, extractBufferOpts} = data;
+  const { tmpFile, tgz, compressionLevel, extractBufferOpts } = data;
 
-  const zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel, stats: statUtils.makeDefaultStats()});
+  const zipFs = new ZipFS(tmpFile, { create: true, level: compressionLevel, stats: statUtils.makeDefaultStats() });
 
   // Buffers sent through Node are turned into regular Uint8Arrays
   const tgzBuffer = Buffer.from(tgz.buffer, tgz.byteOffset, tgz.byteLength);
@@ -85,19 +84,27 @@ export interface MakeArchiveFromDirectoryOptions {
   inMemory?: boolean;
 }
 
-export async function makeArchiveFromDirectory(source: PortablePath, {baseFs = new NodeFS(), prefixPath = PortablePath.root, compressionLevel, inMemory = false}: MakeArchiveFromDirectoryOptions = {}): Promise<ZipFS> {
+export async function makeArchiveFromDirectory(
+  source: PortablePath,
+  {
+    baseFs = new NodeFS(),
+    prefixPath = PortablePath.root,
+    compressionLevel,
+    inMemory = false,
+  }: MakeArchiveFromDirectoryOptions = {},
+): Promise<ZipFS> {
   let zipFs;
   if (inMemory) {
-    zipFs = new ZipFS(null, {level: compressionLevel});
+    zipFs = new ZipFS(null, { level: compressionLevel });
   } else {
     const tmpFolder = await xfs.mktempPromise();
     const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
-    zipFs = new ZipFS(tmpFile, {create: true, level: compressionLevel});
+    zipFs = new ZipFS(tmpFile, { create: true, level: compressionLevel });
   }
 
   const target = ppath.resolve(PortablePath.root, prefixPath!);
-  await zipFs.copyPromise(target, source, {baseFs, stableTime: true, stableSort: true});
+  await zipFs.copyPromise(target, source, { baseFs, stableTime: true, stableSort: true });
 
   return zipFs;
 }
@@ -117,9 +124,7 @@ export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions = {}) 
   const tmpFolder = await xfs.mktempPromise();
   const tmpFile = ppath.join(tmpFolder, `archive.zip`);
 
-  const compressionLevel = opts.compressionLevel
-    ?? opts.configuration?.get(`compressionLevel`)
-    ?? `mixed`;
+  const compressionLevel = opts.compressionLevel ?? opts.configuration?.get(`compressionLevel`) ?? `mixed`;
 
   const extractBufferOpts: ExtractBufferOptions = {
     prefixPath: opts.prefixPath,
@@ -127,22 +132,22 @@ export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions = {}) 
   };
 
   const taskPool = opts.taskPool ?? getTaskPoolForConfiguration(opts.configuration);
-  await taskPool.run({tmpFile, tgz, compressionLevel, extractBufferOpts});
+  await taskPool.run({ tmpFile, tgz, compressionLevel, extractBufferOpts });
 
-  return new ZipFS(tmpFile, {level: opts.compressionLevel});
+  return new ZipFS(tmpFile, { level: opts.compressionLevel });
 }
 
-async function * parseTar(tgz: Buffer) {
+async function* parseTar(tgz: Buffer) {
   // @ts-expect-error - Types are wrong about what this function returns
   const parser: tar.ParseStream = new tar.Parse();
 
-  const passthrough = new PassThrough({objectMode: true, autoDestroy: true, emitClose: true});
+  const passthrough = new PassThrough({ objectMode: true, autoDestroy: true, emitClose: true });
 
   parser.on(`entry`, (entry: tar.ReadEntry) => {
     passthrough.write(entry);
   });
 
-  parser.on(`error`, error => {
+  parser.on(`error`, (error) => {
     passthrough.destroy(error);
   });
 
@@ -161,31 +166,30 @@ async function * parseTar(tgz: Buffer) {
   }
 }
 
-export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
+export async function extractArchiveTo<T extends FakeFS<PortablePath>>(
+  tgz: Buffer,
+  targetFs: T,
+  { stripComponents = 0, prefixPath = PortablePath.dot }: ExtractBufferOptions = {},
+): Promise<T> {
   function ignore(entry: tar.ReadEntry) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
-    if (entry.path[0] === `/`)
-      return true;
+    if (entry.path[0] === `/`) return true;
 
     const parts = entry.path.split(/\//g);
 
     // We also ignore paths that could lead to escaping outside the archive
-    if (parts.some((part: string) => part === `..`))
-      return true;
+    if (parts.some((part: string) => part === `..`)) return true;
 
-    if (parts.length <= stripComponents)
-      return true;
+    if (parts.length <= stripComponents) return true;
 
     return false;
   }
 
   for await (const entry of parseTar(tgz)) {
-    if (ignore(entry))
-      continue;
+    if (ignore(entry)) continue;
 
     const parts = ppath.normalize(npath.toPortablePath(entry.path)).replace(/\/$/, ``).split(/\//g);
-    if (parts.length <= stripComponents)
-      continue;
+    if (parts.length <= stripComponents) continue;
 
     const slicePath = parts.slice(stripComponents).join(`/`) as PortablePath;
     const mappedPath = ppath.join(prefixPath, slicePath);
@@ -193,31 +197,45 @@ export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buff
     let mode = 0o644;
 
     // If a single executable bit is set, normalize so that all are
-    if (entry.type === `Directory` || ((entry.mode ?? 0) & 0o111) !== 0)
-      mode |= 0o111;
+    if (entry.type === `Directory` || ((entry.mode ?? 0) & 0o111) !== 0) mode |= 0o111;
 
     switch (entry.type) {
-      case `Directory`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
+      case `Directory`:
+        {
+          targetFs.mkdirpSync(ppath.dirname(mappedPath), {
+            chmod: 0o755,
+            utimes: [constants.SAFE_TIME, constants.SAFE_TIME],
+          });
 
-        targetFs.mkdirSync(mappedPath, {mode});
-        targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
-      } break;
+          targetFs.mkdirSync(mappedPath, { mode });
+          targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
+        }
+        break;
 
       case `OldFile`:
-      case `File`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
+      case `File`:
+        {
+          targetFs.mkdirpSync(ppath.dirname(mappedPath), {
+            chmod: 0o755,
+            utimes: [constants.SAFE_TIME, constants.SAFE_TIME],
+          });
 
-        targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable), {mode});
-        targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
-      } break;
+          targetFs.writeFileSync(mappedPath, await miscUtils.bufferStream(entry as unknown as Readable), { mode });
+          targetFs.utimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
+        }
+        break;
 
-      case `SymbolicLink`: {
-        targetFs.mkdirpSync(ppath.dirname(mappedPath), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
+      case `SymbolicLink`:
+        {
+          targetFs.mkdirpSync(ppath.dirname(mappedPath), {
+            chmod: 0o755,
+            utimes: [constants.SAFE_TIME, constants.SAFE_TIME],
+          });
 
-        targetFs.symlinkSync((entry as any).linkpath, mappedPath);
-        targetFs.lutimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
-      } break;
+          targetFs.symlinkSync((entry as any).linkpath, mappedPath);
+          targetFs.lutimesSync(mappedPath, constants.SAFE_TIME, constants.SAFE_TIME);
+        }
+        break;
     }
   }
 

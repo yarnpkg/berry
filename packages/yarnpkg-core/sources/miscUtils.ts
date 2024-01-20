@@ -1,11 +1,11 @@
-import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
-import {UsageError}               from 'clipanion';
-import isEqual                    from 'lodash/isEqual';
-import mergeWith                  from 'lodash/mergeWith';
-import micromatch                 from 'micromatch';
-import pLimit, {Limit}            from 'p-limit';
-import semver                     from 'semver';
-import {Readable, Transform}      from 'stream';
+import { PortablePath, npath, xfs } from "@yarnpkg/fslib";
+import { UsageError } from "clipanion";
+import isEqual from "lodash/isEqual";
+import mergeWith from "lodash/mergeWith";
+import micromatch from "micromatch";
+import pLimit, { Limit } from "p-limit";
+import semver from "semver";
+import { Readable, Transform } from "stream";
 
 /**
  * @internal
@@ -14,7 +14,7 @@ export function isTaggedYarnVersion(version: string | null) {
   return !!(semver.valid(version) && version!.match(/^[^-]+(-rc\.[0-9]+)?$/));
 }
 
-export function plural(n: number, {one, more, zero = more}: {zero?: string, one: string, more: string}) {
+export function plural(n: number, { one, more, zero = more }: { zero?: string; one: string; more: string }) {
   return n === 0 ? zero : n === 1 ? one : more;
 }
 
@@ -22,23 +22,27 @@ export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
 }
 
-export function overrideType<T>(val: unknown): asserts val is T {
-}
+export function overrideType<T>(val: unknown): asserts val is T {}
 
 export function assertNever(arg: never): never {
   throw new Error(`Assertion failed: Unexpected object '${arg}'`);
 }
 
-export function validateEnum<T>(def: {[key: string]: T}, value: string): T {
+export function validateEnum<T>(def: { [key: string]: T }, value: string): T {
   const values = Object.values(def);
 
   if (!values.includes(value as any))
-    throw new UsageError(`Invalid value for enumeration: ${JSON.stringify(value)} (expected one of ${values.map(value => JSON.stringify(value)).join(`, `)})`);
+    throw new UsageError(
+      `Invalid value for enumeration: ${JSON.stringify(value)} (expected one of ${values.map((value) => JSON.stringify(value)).join(`, `)})`,
+    );
 
   return value as any as T;
 }
 
-export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFilterSkip): Array<Out> {
+export function mapAndFilter<In, Out>(
+  iterable: Iterable<In>,
+  cb: (value: In) => Out | typeof mapAndFilterSkip,
+): Array<Out> {
   const output: Array<Out> = [];
 
   for (const value of iterable) {
@@ -54,7 +58,10 @@ export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) =>
 const mapAndFilterSkip = Symbol();
 mapAndFilter.skip = mapAndFilterSkip;
 
-export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
+export function mapAndFind<In, Out>(
+  iterable: Iterable<In>,
+  cb: (value: In) => Out | typeof mapAndFindSkip,
+): Out | undefined {
   for (const value of iterable) {
     const out = cb(value);
     if (out !== mapAndFindSkip) {
@@ -68,7 +75,7 @@ export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => O
 const mapAndFindSkip = Symbol();
 mapAndFind.skip = mapAndFindSkip;
 
-export function isIndexableObject(value: unknown): value is {[key: string]: unknown} {
+export function isIndexableObject(value: unknown): value is { [key: string]: unknown } {
   return typeof value === `object` && value !== null;
 }
 
@@ -79,10 +86,16 @@ export interface ToMapValue<T extends object> {
 }
 
 export type MapValueToObjectValue<T> =
-  T extends Map<infer K, infer V> ? (K extends string | number | symbol ? MapValueToObjectValue<Record<K, V>> : never)
-    : T extends ToMapValue<infer V> ? MapValueToObjectValue<V>
-      : T extends PortablePath ? PortablePath
-        : T extends object ? {[K in keyof T]: MapValueToObjectValue<T[K]>}
+  T extends Map<infer K, infer V>
+    ? K extends string | number | symbol
+      ? MapValueToObjectValue<Record<K, V>>
+      : never
+    : T extends ToMapValue<infer V>
+      ? MapValueToObjectValue<V>
+      : T extends PortablePath
+        ? PortablePath
+        : T extends object
+          ? { [K in keyof T]: MapValueToObjectValue<T[K]> }
           : T;
 
 export async function allSettledSafe<T>(promises: Array<Promise<T>>) {
@@ -104,8 +117,7 @@ export async function allSettledSafe<T>(promises: Array<Promise<T>>) {
  * Converts Maps to indexable objects recursively.
  */
 export function convertMapsToIndexableObjects<T>(arg: T): MapValueToObjectValue<T> {
-  if (arg instanceof Map)
-    arg = Object.fromEntries(arg);
+  if (arg instanceof Map) arg = Object.fromEntries(arg);
 
   if (isIndexableObject(arg)) {
     for (const key of Object.keys(arg)) {
@@ -128,8 +140,7 @@ export interface GetSetMap<K, V> {
 export function getFactoryWithDefault<K, T>(map: GetSetMap<K, T>, key: K, factory: () => T) {
   let value = map.get(key);
 
-  if (typeof value === `undefined`)
-    map.set(key, value = factory());
+  if (typeof value === `undefined`) map.set(key, (value = factory()));
 
   return value;
 }
@@ -137,8 +148,7 @@ export function getFactoryWithDefault<K, T>(map: GetSetMap<K, T>, key: K, factor
 export function getArrayWithDefault<K, T>(map: GetSetMap<K, Array<T>>, key: K) {
   let value = map.get(key);
 
-  if (typeof value === `undefined`)
-    map.set(key, value = []);
+  if (typeof value === `undefined`) map.set(key, (value = []));
 
   return value;
 }
@@ -146,8 +156,7 @@ export function getArrayWithDefault<K, T>(map: GetSetMap<K, Array<T>>, key: K) {
 export function getSetWithDefault<K, T>(map: GetSetMap<K, Set<T>>, key: K) {
   let value = map.get(key);
 
-  if (typeof value === `undefined`)
-    map.set(key, value = new Set<T>());
+  if (typeof value === `undefined`) map.set(key, (value = new Set<T>()));
 
   return value;
 }
@@ -155,8 +164,7 @@ export function getSetWithDefault<K, T>(map: GetSetMap<K, Set<T>>, key: K) {
 export function getMapWithDefault<K, MK, MV>(map: GetSetMap<K, Map<MK, MV>>, key: K) {
   let value = map.get(key);
 
-  if (typeof value === `undefined`)
-    map.set(key, value = new Map<MK, MV>());
+  if (typeof value === `undefined`) map.set(key, (value = new Map<MK, MV>()));
 
   return value;
 }
@@ -165,8 +173,7 @@ export function getMapWithDefault<K, MK, MV>(map: GetSetMap<K, Map<MK, MV>>, key
 // if it throws an exception)
 
 export async function releaseAfterUseAsync<T>(fn: () => Promise<T>, cleanup?: (() => any) | null) {
-  if (cleanup == null)
-    return await fn();
+  if (cleanup == null) return await fn();
 
   try {
     return await fn();
@@ -204,11 +211,11 @@ export async function bufferStream(stream: Readable) {
   return await new Promise<Buffer>((resolve, reject) => {
     const chunks: Array<Buffer> = [];
 
-    stream.on(`error`, error => {
+    stream.on(`error`, (error) => {
       reject(error);
     });
 
-    stream.on(`data`, chunk => {
+    stream.on(`data`, (chunk) => {
       chunks.push(chunk);
     });
 
@@ -252,7 +259,7 @@ export function makeDeferred<T = void>(): Deferred<T> {
     reject = rejectFn;
   });
 
-  return {promise, resolve: resolve!, reject: reject!};
+  return { promise, resolve: resolve!, reject: reject! };
 }
 
 export class AsyncActions {
@@ -267,21 +274,23 @@ export class AsyncActions {
 
   set(key: string, factory: () => Promise<void>) {
     let deferred = this.deferred.get(key);
-    if (typeof deferred === `undefined`)
-      this.deferred.set(key, deferred = makeDeferred());
+    if (typeof deferred === `undefined`) this.deferred.set(key, (deferred = makeDeferred()));
 
     const promise = this.limit(() => factory());
     this.promises.set(key, promise);
 
-    promise.then(() => {
-      if (this.promises.get(key) === promise) {
-        deferred!.resolve();
-      }
-    }, err => {
-      if (this.promises.get(key) === promise) {
-        deferred!.reject(err);
-      }
-    });
+    promise.then(
+      () => {
+        if (this.promises.get(key) === promise) {
+          deferred!.resolve();
+        }
+      },
+      (err) => {
+        if (this.promises.get(key) === promise) {
+          deferred!.reject(err);
+        }
+      },
+    );
 
     return deferred.promise;
   }
@@ -364,10 +373,13 @@ function dynamicRequireNoCache(path: string) {
   return result;
 }
 
-const dynamicRequireFsTimeCache = new Map<PortablePath, {
-  mtime: number;
-  instance: any;
-}>();
+const dynamicRequireFsTimeCache = new Map<
+  PortablePath,
+  {
+    mtime: number;
+    instance: any;
+  }
+>();
 
 /**
  * Requires a module without using the cache if it has changed since the last time it was loaded
@@ -376,11 +388,10 @@ function dynamicRequireFsTime(path: PortablePath) {
   const cachedInstance = dynamicRequireFsTimeCache.get(path);
   const stat = xfs.statSync(path);
 
-  if (cachedInstance?.mtime === stat.mtimeMs)
-    return cachedInstance.instance;
+  if (cachedInstance?.mtime === stat.mtimeMs) return cachedInstance.instance;
 
   const instance = dynamicRequireNoCache(path);
-  dynamicRequireFsTimeCache.set(path, {mtime: stat.mtimeMs, instance});
+  dynamicRequireFsTimeCache.set(path, { mtime: stat.mtimeMs, instance });
   return instance;
 }
 
@@ -390,9 +401,12 @@ export enum CachingStrategy {
   Node,
 }
 
-export function dynamicRequire(path: string, opts?: {cachingStrategy?: CachingStrategy}): any;
-export function dynamicRequire(path: PortablePath, opts: {cachingStrategy: CachingStrategy.FsTime}): any;
-export function dynamicRequire(path: string | PortablePath, {cachingStrategy = CachingStrategy.Node}: {cachingStrategy?: CachingStrategy} = {}) {
+export function dynamicRequire(path: string, opts?: { cachingStrategy?: CachingStrategy }): any;
+export function dynamicRequire(path: PortablePath, opts: { cachingStrategy: CachingStrategy.FsTime }): any;
+export function dynamicRequire(
+  path: string | PortablePath,
+  { cachingStrategy = CachingStrategy.Node }: { cachingStrategy?: CachingStrategy } = {},
+) {
   switch (cachingStrategy) {
     case CachingStrategy.NoCache:
       return dynamicRequireNoCache(path);
@@ -421,13 +435,11 @@ export function dynamicRequire(path: string | PortablePath, {cachingStrategy = C
 export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) | Array<(value: T) => string>) {
   const asArray = Array.from(values);
 
-  if (!Array.isArray(mappers))
-    mappers = [mappers];
+  if (!Array.isArray(mappers)) mappers = [mappers];
 
   const stringified: Array<Array<string>> = [];
 
-  for (const mapper of mappers)
-    stringified.push(asArray.map(value => mapper(value)));
+  for (const mapper of mappers) stringified.push(asArray.map((value) => mapper(value)));
 
   const indices = asArray.map((_, index) => index);
 
@@ -443,7 +455,7 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
     return 0;
   });
 
-  return indices.map(index => {
+  return indices.map((index) => {
     return asArray[index];
   });
 }
@@ -456,32 +468,32 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
  * @returns A `string` representing a regular expression or `null` if no glob patterns are provided
  */
 export function buildIgnorePattern(ignorePatterns: Array<string>) {
-  if (ignorePatterns.length === 0)
-    return null;
+  if (ignorePatterns.length === 0) return null;
 
-  return ignorePatterns.map(pattern => {
-    return `(${micromatch.makeRe(pattern, {
-      windows: false,
-      dot: true,
-    }).source})`;
-  }).join(`|`);
+  return ignorePatterns
+    .map((pattern) => {
+      return `(${
+        micromatch.makeRe(pattern, {
+          windows: false,
+          dot: true,
+        }).source
+      })`;
+    })
+    .join(`|`);
 }
 
-export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
+export function replaceEnvVariables(value: string, { env }: { env: { [key: string]: string | undefined } }) {
   const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
 
   return value.replace(regex, (...args) => {
-    const {variableName, colon, fallback} = args[args.length - 1];
+    const { variableName, colon, fallback } = args[args.length - 1];
 
     const variableExist = Object.hasOwn(env, variableName);
     const variableValue = env[variableName];
 
-    if (variableValue)
-      return variableValue;
-    if (variableExist && !colon)
-      return variableValue;
-    if (fallback != null)
-      return fallback;
+    if (variableValue) return variableValue;
+    if (variableExist && !colon) return variableValue;
+    if (fallback != null) return fallback;
 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
@@ -510,8 +522,7 @@ export function parseBoolean(value: unknown): boolean {
 }
 
 export function parseOptionalBoolean(value: unknown): boolean | undefined {
-  if (typeof value === `undefined`)
-    return value;
+  if (typeof value === `undefined`) return value;
 
   return parseBoolean(value);
 }
@@ -529,8 +540,7 @@ export type FilterKeys<T extends {}, Filter> = {
 }[keyof T];
 
 export function isPathLike(value: string): boolean {
-  if (npath.isAbsolute(value) || value.match(/^(\.{1,2}|~)\//))
-    return true;
+  if (npath.isAbsolute(value) || value.match(/^(\.{1,2}|~)\//)) return true;
   return false;
 }
 
@@ -548,18 +558,21 @@ type MergeObjects<T extends Array<unknown>, Accumulator> = T extends [infer U, .
  * @see toMerged for a version that doesn't mutate the target argument
  *
  */
-export function mergeIntoTarget<T extends object, S extends Array<object>>(target: T, ...sources: S): MergeObjects<S, T> {
+export function mergeIntoTarget<T extends object, S extends Array<object>>(
+  target: T,
+  ...sources: S
+): MergeObjects<S, T> {
   // We need to wrap everything in an object because otherwise lodash fails to merge 2 top-level arrays
-  const wrap = <T>(value: T) => ({value});
+  const wrap = <T>(value: T) => ({ value });
 
   const wrappedTarget = wrap(target);
-  const wrappedSources = sources.map(source => wrap(source));
+  const wrappedSources = sources.map((source) => wrap(source));
 
-  const {value} = mergeWith(wrappedTarget, ...wrappedSources, (targetValue: unknown, sourceValue: unknown) => {
+  const { value } = mergeWith(wrappedTarget, ...wrappedSources, (targetValue: unknown, sourceValue: unknown) => {
     // We need to preserve comments in custom Array classes such as comment-json's `CommentArray`, so we can't use spread or `Set`s
     if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
       for (const sourceItem of sourceValue) {
-        if (!targetValue.find(targetItem => isEqual(targetItem, sourceItem))) {
+        if (!targetValue.find((targetItem) => isEqual(targetItem, sourceItem))) {
           targetValue.push(sourceItem);
         }
       }
@@ -582,7 +595,10 @@ export function toMerged<S extends Array<object>>(...sources: S): MergeObjects<S
   return mergeIntoTarget({}, ...sources);
 }
 
-export function groupBy<T extends Record<string, any>, K extends keyof T>(items: Iterable<T>, key: K): {[V in T[K]]?: Array<Extract<T, {[_ in K]: V}>>} {
+export function groupBy<T extends Record<string, any>, K extends keyof T>(
+  items: Iterable<T>,
+  key: K,
+): { [V in T[K]]?: Array<Extract<T, { [_ in K]: V }>> } {
   const groups: Record<string, any> = Object.create(null);
 
   for (const item of items) {

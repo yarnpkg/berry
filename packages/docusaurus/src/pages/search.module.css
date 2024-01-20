@@ -17,7 +17,7 @@
   margin-top: 0;
   margin-bottom: 0;
 
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
 
   border-radius: 10px;
 
@@ -136,7 +136,7 @@
 .resultBy {
   margin-left: 5px;
 
-  font-size: .8rem;
+  font-size: 0.8rem;
 
   white-space: nowrap;
 }
@@ -157,7 +157,7 @@
 
   padding: 0 5px;
 
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 
 .badge > * {

@@ -14,7 +14,7 @@ describe(`Features`, () => {
           pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('various-requires/invalid-require')`)).rejects.toMatchObject({
@@ -40,7 +40,7 @@ describe(`Features`, () => {
           pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('various-requires/invalid-require')`)).resolves.toMatchObject({
@@ -64,7 +64,7 @@ describe(`Features`, () => {
           pnpFallbackMode: `all`,
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('peer-deps')`)).resolves.toMatchObject({
@@ -88,7 +88,7 @@ describe(`Features`, () => {
           pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(source(`require('peer-deps-lvl1')`)).resolves.toMatchObject({
@@ -126,10 +126,10 @@ describe(`Features`, () => {
           pnpFallbackMode: `dependencies-only`,
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
-          const {stderr} = await run(`node`, `-e`, `require('various-requires/invalid-require')`);
+          const { stderr } = await run(`node`, `-e`, `require('various-requires/invalid-require')`);
           expect(stderr).toMatch(/various-requires tried to access no-deps, but it isn't declared in its dependencies/);
         },
       ),
@@ -142,7 +142,7 @@ describe(`Features`, () => {
         {
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await expect(run(`install`)).resolves.toBeTruthy();
         },
       ),
@@ -151,11 +151,11 @@ describe(`Features`, () => {
     test(
       `it should install a root workspace without any dependencies (named)`,
       makeTemporaryEnv(
-        {name: `workspace`},
+        { name: `workspace` },
         {
           pnpMode: `loose`,
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await expect(run(`install`)).resolves.toBeTruthy();
         },
       ),

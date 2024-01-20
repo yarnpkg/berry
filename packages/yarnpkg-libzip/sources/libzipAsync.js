@@ -1,18 +1,18 @@
 var frozenFs = Object.assign({}, require("fs"));
 
-var createModule = (function() {
+var createModule = (function () {
   var _scriptDir =
     typeof document !== "undefined" && document.currentScript
       ? document.currentScript.src
       : undefined;
   if (typeof __filename !== "undefined") _scriptDir = _scriptDir || __filename;
-  return function(createModule) {
+  return function (createModule) {
     createModule = createModule || {};
 
     null;
     var Module = typeof createModule !== "undefined" ? createModule : {};
     var readyPromiseResolve, readyPromiseReject;
-    Module["ready"] = new Promise(function(resolve, reject) {
+    Module["ready"] = new Promise(function (resolve, reject) {
       readyPromiseResolve = resolve;
       readyPromiseReject = reject;
     });
@@ -25,7 +25,7 @@ var createModule = (function() {
     }
     var arguments_ = [];
     var thisProgram = "./this.program";
-    var quit_ = function(status, toThrow) {
+    var quit_ = function (status, toThrow) {
       throw toThrow;
     };
     var ENVIRONMENT_IS_WEB = false;
@@ -69,10 +69,10 @@ var createModule = (function() {
         thisProgram = process["argv"][1].replace(/\\/g, "/");
       }
       arguments_ = process["argv"].slice(2);
-      quit_ = function(status) {
+      quit_ = function (status) {
         process["exit"](status);
       };
-      Module["inspect"] = function() {
+      Module["inspect"] = function () {
         return "[Emscripten Module object]";
       };
     } else {
@@ -89,7 +89,7 @@ var createModule = (function() {
     if (Module["thisProgram"]) thisProgram = Module["thisProgram"];
     if (Module["quit"]) quit_ = Module["quit"];
     var tempRet0 = 0;
-    var setTempRet0 = function(value) {
+    var setTempRet0 = function (value) {
       tempRet0 = value;
     };
     var wasmBinary;
@@ -133,13 +133,13 @@ var createModule = (function() {
       var func = Module["_" + ident];
       assert(
         func,
-        "Cannot call unknown function " + ident + ", make sure it is exported"
+        "Cannot call unknown function " + ident + ", make sure it is exported",
       );
       return func;
     }
     function ccall(ident, returnType, argTypes, args, opts) {
       var toC = {
-        string: function(str) {
+        string: function (str) {
           var ret = 0;
           if (str !== null && str !== undefined && str !== 0) {
             var len = (str.length << 2) + 1;
@@ -148,11 +148,11 @@ var createModule = (function() {
           }
           return ret;
         },
-        array: function(arr) {
+        array: function (arr) {
           var ret = stackAlloc(arr.length);
           writeArrayToMemory(arr, ret);
           return ret;
-        }
+        },
       };
       function convertReturnValue(ret) {
         if (returnType === "string") return UTF8ToString(ret);
@@ -180,14 +180,14 @@ var createModule = (function() {
     }
     function cwrap(ident, returnType, argTypes, opts) {
       argTypes = argTypes || [];
-      var numericArgs = argTypes.every(function(type) {
+      var numericArgs = argTypes.every(function (type) {
         return type === "number";
       });
       var numericRet = returnType !== "string";
       if (numericRet && numericArgs && !opts) {
         return getCFunc(ident);
       }
-      return function() {
+      return function () {
         return ccall(ident, returnType, argTypes, arguments, opts);
       };
     }
@@ -395,20 +395,20 @@ var createModule = (function() {
       if (!wasmBinary && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER)) {
         if (typeof fetch === "function") {
           return fetch(wasmBinaryFile, { credentials: "same-origin" })
-            .then(function(response) {
+            .then(function (response) {
               if (!response["ok"]) {
-                throw "failed to load wasm binary file at '" +
-                  wasmBinaryFile +
-                  "'";
+                throw (
+                  "failed to load wasm binary file at '" + wasmBinaryFile + "'"
+                );
               }
               return response["arrayBuffer"]();
             })
-            .catch(function() {
+            .catch(function () {
               return getBinary(wasmBinaryFile);
             });
         }
       }
-      return Promise.resolve().then(function() {
+      return Promise.resolve().then(function () {
         return getBinary(wasmBinaryFile);
       });
     }
@@ -429,11 +429,11 @@ var createModule = (function() {
       }
       function instantiateArrayBuffer(receiver) {
         return getBinaryPromise()
-          .then(function(binary) {
+          .then(function (binary) {
             var result = WebAssembly.instantiate(binary, info);
             return result;
           })
-          .then(receiver, function(reason) {
+          .then(receiver, function (reason) {
             err("failed to asynchronously prepare wasm: " + reason);
             abort(reason);
           });
@@ -446,14 +446,14 @@ var createModule = (function() {
           typeof fetch === "function"
         ) {
           return fetch(wasmBinaryFile, { credentials: "same-origin" }).then(
-            function(response) {
+            function (response) {
               var result = WebAssembly.instantiateStreaming(response, info);
-              return result.then(receiveInstantiationResult, function(reason) {
+              return result.then(receiveInstantiationResult, function (reason) {
                 err("wasm streaming compile failed: " + reason);
                 err("falling back to ArrayBuffer instantiation");
                 return instantiateArrayBuffer(receiveInstantiationResult);
               });
-            }
+            },
           );
         } else {
           return instantiateArrayBuffer(receiveInstantiationResult);
@@ -547,11 +547,11 @@ var createModule = (function() {
         var overGrownHeapSize = oldSize * (1 + 0.2 / cutDown);
         overGrownHeapSize = Math.min(
           overGrownHeapSize,
-          requestedSize + 100663296
+          requestedSize + 100663296,
         );
         var newSize = Math.min(
           maxHeapSize,
-          alignUp(Math.max(requestedSize, overGrownHeapSize), 65536)
+          alignUp(Math.max(requestedSize, overGrownHeapSize), 65536),
         );
         var replacement = emscripten_realloc_buffer(newSize);
         if (replacement) {
@@ -582,7 +582,7 @@ var createModule = (function() {
       LE_HEAP_STORE_I32((__get_timezone() >> 2) * 4, stdTimezoneOffset * 60);
       LE_HEAP_STORE_I32(
         (__get_daylight() >> 2) * 4,
-        Number(winterOffset != summerOffset)
+        Number(winterOffset != summerOffset),
       );
       function extractZone(date) {
         var match = date.toTimeString().match(/\(([A-Za-z ]+)\)$/);
@@ -609,7 +609,7 @@ var createModule = (function() {
         LE_HEAP_LOAD_I32(((tmPtr + 8) >> 2) * 4),
         LE_HEAP_LOAD_I32(((tmPtr + 4) >> 2) * 4),
         LE_HEAP_LOAD_I32((tmPtr >> 2) * 4),
-        0
+        0,
       );
       var date = new Date(time);
       LE_HEAP_STORE_I32(((tmPtr + 24) >> 2) * 4, date.getUTCDay());
@@ -621,7 +621,7 @@ var createModule = (function() {
     var decodeBase64 =
       typeof atob === "function"
         ? atob
-        : function(input) {
+        : function (input) {
             var keyStr =
               "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var output = "";
@@ -658,7 +658,7 @@ var createModule = (function() {
         return new Uint8Array(
           buf["buffer"],
           buf["byteOffset"],
-          buf["byteLength"]
+          buf["byteLength"],
         );
       }
       try {
@@ -684,246 +684,252 @@ var createModule = (function() {
       d: _emscripten_resize_heap,
       a: _setTempRet0,
       b: _time,
-      f: _timegm
+      f: _timegm,
     };
     var asm = createWasm();
-    var ___wasm_call_ctors = (Module["___wasm_call_ctors"] = function() {
+    var ___wasm_call_ctors = (Module["___wasm_call_ctors"] = function () {
       return (___wasm_call_ctors = Module["___wasm_call_ctors"] =
         Module["asm"]["h"]).apply(null, arguments);
     });
-    var _zip_ext_count_symlinks = (Module[
-      "_zip_ext_count_symlinks"
-    ] = function() {
-      return (_zip_ext_count_symlinks = Module["_zip_ext_count_symlinks"] =
-        Module["asm"]["i"]).apply(null, arguments);
-    });
+    var _zip_ext_count_symlinks = (Module["_zip_ext_count_symlinks"] =
+      function () {
+        return (_zip_ext_count_symlinks = Module["_zip_ext_count_symlinks"] =
+          Module["asm"]["i"]).apply(null, arguments);
+      });
     var _zip_file_get_external_attributes = (Module[
       "_zip_file_get_external_attributes"
-    ] = function() {
+    ] = function () {
       return (_zip_file_get_external_attributes = Module[
         "_zip_file_get_external_attributes"
-      ] = Module["asm"]["j"]).apply(null, arguments);
+      ] =
+        Module["asm"]["j"]).apply(null, arguments);
     });
-    var _zipstruct_statS = (Module["_zipstruct_statS"] = function() {
+    var _zipstruct_statS = (Module["_zipstruct_statS"] = function () {
       return (_zipstruct_statS = Module["_zipstruct_statS"] =
         Module["asm"]["k"]).apply(null, arguments);
     });
-    var _zipstruct_stat_size = (Module["_zipstruct_stat_size"] = function() {
+    var _zipstruct_stat_size = (Module["_zipstruct_stat_size"] = function () {
       return (_zipstruct_stat_size = Module["_zipstruct_stat_size"] =
         Module["asm"]["l"]).apply(null, arguments);
     });
-    var _zipstruct_stat_mtime = (Module["_zipstruct_stat_mtime"] = function() {
+    var _zipstruct_stat_mtime = (Module["_zipstruct_stat_mtime"] = function () {
       return (_zipstruct_stat_mtime = Module["_zipstruct_stat_mtime"] =
         Module["asm"]["m"]).apply(null, arguments);
     });
-    var _zipstruct_stat_crc = (Module["_zipstruct_stat_crc"] = function() {
+    var _zipstruct_stat_crc = (Module["_zipstruct_stat_crc"] = function () {
       return (_zipstruct_stat_crc = Module["_zipstruct_stat_crc"] =
         Module["asm"]["n"]).apply(null, arguments);
     });
-    var _zipstruct_errorS = (Module["_zipstruct_errorS"] = function() {
+    var _zipstruct_errorS = (Module["_zipstruct_errorS"] = function () {
       return (_zipstruct_errorS = Module["_zipstruct_errorS"] =
         Module["asm"]["o"]).apply(null, arguments);
     });
-    var _zipstruct_error_code_zip = (Module[
-      "_zipstruct_error_code_zip"
-    ] = function() {
-      return (_zipstruct_error_code_zip = Module["_zipstruct_error_code_zip"] =
-        Module["asm"]["p"]).apply(null, arguments);
-    });
-    var _zipstruct_stat_comp_size = (Module[
-      "_zipstruct_stat_comp_size"
-    ] = function() {
-      return (_zipstruct_stat_comp_size = Module["_zipstruct_stat_comp_size"] =
-        Module["asm"]["q"]).apply(null, arguments);
-    });
-    var _zipstruct_stat_comp_method = (Module[
-      "_zipstruct_stat_comp_method"
-    ] = function() {
-      return (_zipstruct_stat_comp_method = Module[
-        "_zipstruct_stat_comp_method"
-      ] = Module["asm"]["r"]).apply(null, arguments);
-    });
-    var _zip_close = (Module["_zip_close"] = function() {
+    var _zipstruct_error_code_zip = (Module["_zipstruct_error_code_zip"] =
+      function () {
+        return (_zipstruct_error_code_zip = Module[
+          "_zipstruct_error_code_zip"
+        ] =
+          Module["asm"]["p"]).apply(null, arguments);
+      });
+    var _zipstruct_stat_comp_size = (Module["_zipstruct_stat_comp_size"] =
+      function () {
+        return (_zipstruct_stat_comp_size = Module[
+          "_zipstruct_stat_comp_size"
+        ] =
+          Module["asm"]["q"]).apply(null, arguments);
+      });
+    var _zipstruct_stat_comp_method = (Module["_zipstruct_stat_comp_method"] =
+      function () {
+        return (_zipstruct_stat_comp_method = Module[
+          "_zipstruct_stat_comp_method"
+        ] =
+          Module["asm"]["r"]).apply(null, arguments);
+      });
+    var _zip_close = (Module["_zip_close"] = function () {
       return (_zip_close = Module["_zip_close"] = Module["asm"]["s"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_delete = (Module["_zip_delete"] = function() {
+    var _zip_delete = (Module["_zip_delete"] = function () {
       return (_zip_delete = Module["_zip_delete"] = Module["asm"]["t"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_dir_add = (Module["_zip_dir_add"] = function() {
+    var _zip_dir_add = (Module["_zip_dir_add"] = function () {
       return (_zip_dir_add = Module["_zip_dir_add"] = Module["asm"]["u"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_discard = (Module["_zip_discard"] = function() {
+    var _zip_discard = (Module["_zip_discard"] = function () {
       return (_zip_discard = Module["_zip_discard"] = Module["asm"]["v"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_error_init_with_code = (Module[
-      "_zip_error_init_with_code"
-    ] = function() {
-      return (_zip_error_init_with_code = Module["_zip_error_init_with_code"] =
-        Module["asm"]["w"]).apply(null, arguments);
-    });
-    var _zip_get_error = (Module["_zip_get_error"] = function() {
+    var _zip_error_init_with_code = (Module["_zip_error_init_with_code"] =
+      function () {
+        return (_zip_error_init_with_code = Module[
+          "_zip_error_init_with_code"
+        ] =
+          Module["asm"]["w"]).apply(null, arguments);
+      });
+    var _zip_get_error = (Module["_zip_get_error"] = function () {
       return (_zip_get_error = Module["_zip_get_error"] =
         Module["asm"]["x"]).apply(null, arguments);
     });
-    var _zip_file_get_error = (Module["_zip_file_get_error"] = function() {
+    var _zip_file_get_error = (Module["_zip_file_get_error"] = function () {
       return (_zip_file_get_error = Module["_zip_file_get_error"] =
         Module["asm"]["y"]).apply(null, arguments);
     });
-    var _zip_error_strerror = (Module["_zip_error_strerror"] = function() {
+    var _zip_error_strerror = (Module["_zip_error_strerror"] = function () {
       return (_zip_error_strerror = Module["_zip_error_strerror"] =
         Module["asm"]["z"]).apply(null, arguments);
     });
-    var _zip_fclose = (Module["_zip_fclose"] = function() {
+    var _zip_fclose = (Module["_zip_fclose"] = function () {
       return (_zip_fclose = Module["_zip_fclose"] = Module["asm"]["A"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_file_add = (Module["_zip_file_add"] = function() {
+    var _zip_file_add = (Module["_zip_file_add"] = function () {
       return (_zip_file_add = Module["_zip_file_add"] =
         Module["asm"]["B"]).apply(null, arguments);
     });
-    var _free = (Module["_free"] = function() {
+    var _free = (Module["_free"] = function () {
       return (_free = Module["_free"] = Module["asm"]["C"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _malloc = (Module["_malloc"] = function() {
+    var _malloc = (Module["_malloc"] = function () {
       return (_malloc = Module["_malloc"] = Module["asm"]["D"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_source_error = (Module["_zip_source_error"] = function() {
+    var _zip_source_error = (Module["_zip_source_error"] = function () {
       return (_zip_source_error = Module["_zip_source_error"] =
         Module["asm"]["E"]).apply(null, arguments);
     });
-    var _zip_source_seek = (Module["_zip_source_seek"] = function() {
+    var _zip_source_seek = (Module["_zip_source_seek"] = function () {
       return (_zip_source_seek = Module["_zip_source_seek"] =
         Module["asm"]["F"]).apply(null, arguments);
     });
     var _zip_file_set_external_attributes = (Module[
       "_zip_file_set_external_attributes"
-    ] = function() {
+    ] = function () {
       return (_zip_file_set_external_attributes = Module[
         "_zip_file_set_external_attributes"
-      ] = Module["asm"]["G"]).apply(null, arguments);
+      ] =
+        Module["asm"]["G"]).apply(null, arguments);
     });
-    var _zip_file_set_mtime = (Module["_zip_file_set_mtime"] = function() {
+    var _zip_file_set_mtime = (Module["_zip_file_set_mtime"] = function () {
       return (_zip_file_set_mtime = Module["_zip_file_set_mtime"] =
         Module["asm"]["H"]).apply(null, arguments);
     });
-    var _zip_fopen_index = (Module["_zip_fopen_index"] = function() {
+    var _zip_fopen_index = (Module["_zip_fopen_index"] = function () {
       return (_zip_fopen_index = Module["_zip_fopen_index"] =
         Module["asm"]["I"]).apply(null, arguments);
     });
-    var _zip_fread = (Module["_zip_fread"] = function() {
+    var _zip_fread = (Module["_zip_fread"] = function () {
       return (_zip_fread = Module["_zip_fread"] = Module["asm"]["J"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var _zip_get_name = (Module["_zip_get_name"] = function() {
+    var _zip_get_name = (Module["_zip_get_name"] = function () {
       return (_zip_get_name = Module["_zip_get_name"] =
         Module["asm"]["K"]).apply(null, arguments);
     });
-    var _zip_get_num_entries = (Module["_zip_get_num_entries"] = function() {
+    var _zip_get_num_entries = (Module["_zip_get_num_entries"] = function () {
       return (_zip_get_num_entries = Module["_zip_get_num_entries"] =
         Module["asm"]["L"]).apply(null, arguments);
     });
-    var _zip_source_read = (Module["_zip_source_read"] = function() {
+    var _zip_source_read = (Module["_zip_source_read"] = function () {
       return (_zip_source_read = Module["_zip_source_read"] =
         Module["asm"]["M"]).apply(null, arguments);
     });
-    var _zip_name_locate = (Module["_zip_name_locate"] = function() {
+    var _zip_name_locate = (Module["_zip_name_locate"] = function () {
       return (_zip_name_locate = Module["_zip_name_locate"] =
         Module["asm"]["N"]).apply(null, arguments);
     });
-    var _zip_open_from_source = (Module["_zip_open_from_source"] = function() {
+    var _zip_open_from_source = (Module["_zip_open_from_source"] = function () {
       return (_zip_open_from_source = Module["_zip_open_from_source"] =
         Module["asm"]["O"]).apply(null, arguments);
     });
-    var _zip_set_file_compression = (Module[
-      "_zip_set_file_compression"
-    ] = function() {
-      return (_zip_set_file_compression = Module["_zip_set_file_compression"] =
-        Module["asm"]["P"]).apply(null, arguments);
-    });
-    var _zip_source_buffer = (Module["_zip_source_buffer"] = function() {
+    var _zip_set_file_compression = (Module["_zip_set_file_compression"] =
+      function () {
+        return (_zip_set_file_compression = Module[
+          "_zip_set_file_compression"
+        ] =
+          Module["asm"]["P"]).apply(null, arguments);
+      });
+    var _zip_source_buffer = (Module["_zip_source_buffer"] = function () {
       return (_zip_source_buffer = Module["_zip_source_buffer"] =
         Module["asm"]["Q"]).apply(null, arguments);
     });
-    var _zip_source_buffer_create = (Module[
-      "_zip_source_buffer_create"
-    ] = function() {
-      return (_zip_source_buffer_create = Module["_zip_source_buffer_create"] =
-        Module["asm"]["R"]).apply(null, arguments);
-    });
-    var _zip_source_close = (Module["_zip_source_close"] = function() {
+    var _zip_source_buffer_create = (Module["_zip_source_buffer_create"] =
+      function () {
+        return (_zip_source_buffer_create = Module[
+          "_zip_source_buffer_create"
+        ] =
+          Module["asm"]["R"]).apply(null, arguments);
+      });
+    var _zip_source_close = (Module["_zip_source_close"] = function () {
       return (_zip_source_close = Module["_zip_source_close"] =
         Module["asm"]["S"]).apply(null, arguments);
     });
-    var _zip_source_free = (Module["_zip_source_free"] = function() {
+    var _zip_source_free = (Module["_zip_source_free"] = function () {
       return (_zip_source_free = Module["_zip_source_free"] =
         Module["asm"]["T"]).apply(null, arguments);
     });
-    var _zip_source_keep = (Module["_zip_source_keep"] = function() {
+    var _zip_source_keep = (Module["_zip_source_keep"] = function () {
       return (_zip_source_keep = Module["_zip_source_keep"] =
         Module["asm"]["U"]).apply(null, arguments);
     });
-    var _zip_source_open = (Module["_zip_source_open"] = function() {
+    var _zip_source_open = (Module["_zip_source_open"] = function () {
       return (_zip_source_open = Module["_zip_source_open"] =
         Module["asm"]["V"]).apply(null, arguments);
     });
-    var _zip_source_tell = (Module["_zip_source_tell"] = function() {
+    var _zip_source_tell = (Module["_zip_source_tell"] = function () {
       return (_zip_source_tell = Module["_zip_source_tell"] =
         Module["asm"]["X"]).apply(null, arguments);
     });
-    var _zip_stat_index = (Module["_zip_stat_index"] = function() {
+    var _zip_stat_index = (Module["_zip_stat_index"] = function () {
       return (_zip_stat_index = Module["_zip_stat_index"] =
         Module["asm"]["Y"]).apply(null, arguments);
     });
-    var __get_tzname = (Module["__get_tzname"] = function() {
+    var __get_tzname = (Module["__get_tzname"] = function () {
       return (__get_tzname = Module["__get_tzname"] = Module["asm"]["Z"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var __get_daylight = (Module["__get_daylight"] = function() {
+    var __get_daylight = (Module["__get_daylight"] = function () {
       return (__get_daylight = Module["__get_daylight"] =
         Module["asm"]["_"]).apply(null, arguments);
     });
-    var __get_timezone = (Module["__get_timezone"] = function() {
+    var __get_timezone = (Module["__get_timezone"] = function () {
       return (__get_timezone = Module["__get_timezone"] =
         Module["asm"]["$"]).apply(null, arguments);
     });
-    var stackSave = (Module["stackSave"] = function() {
+    var stackSave = (Module["stackSave"] = function () {
       return (stackSave = Module["stackSave"] = Module["asm"]["aa"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
-    var stackRestore = (Module["stackRestore"] = function() {
+    var stackRestore = (Module["stackRestore"] = function () {
       return (stackRestore = Module["stackRestore"] =
         Module["asm"]["ba"]).apply(null, arguments);
     });
-    var stackAlloc = (Module["stackAlloc"] = function() {
+    var stackAlloc = (Module["stackAlloc"] = function () {
       return (stackAlloc = Module["stackAlloc"] = Module["asm"]["ca"]).apply(
         null,
-        arguments
+        arguments,
       );
     });
     Module["cwrap"] = cwrap;
@@ -954,8 +960,8 @@ var createModule = (function() {
       }
       if (Module["setStatus"]) {
         Module["setStatus"]("Running...");
-        setTimeout(function() {
-          setTimeout(function() {
+        setTimeout(function () {
+          setTimeout(function () {
             Module["setStatus"]("");
           }, 1);
           doRun();
@@ -980,7 +986,7 @@ var createModule = (function() {
 if (typeof exports === "object" && typeof module === "object")
   module.exports = createModule;
 else if (typeof define === "function" && define["amd"])
-  define([], function() {
+  define([], function () {
     return createModule;
   });
 else if (typeof exports === "object") exports["createModule"] = createModule;

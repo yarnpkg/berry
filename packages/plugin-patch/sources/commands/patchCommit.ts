@@ -1,15 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                                  from '@yarnpkg/cli';
-import {Configuration, Descriptor, DescriptorHash, Manifest, Project, structUtils, Workspace} from '@yarnpkg/core';
-import {npath, xfs, ppath, Filename}                                                          from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Configuration, Descriptor, DescriptorHash, Manifest, Project, structUtils, Workspace } from "@yarnpkg/core";
+import { npath, xfs, ppath, Filename } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
 
-import * as patchUtils                                                                        from '../patchUtils';
+import * as patchUtils from "../patchUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class PatchCommitCommand extends BaseCommand {
-  static paths = [
-    [`patch-commit`],
-  ];
+  static paths = [[`patch-commit`]];
 
   static usage: Usage = Command.Usage({
     description: `generate a patch out of a directory`,
@@ -30,10 +28,9 @@ export default class PatchCommitCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState();
 
@@ -41,8 +38,7 @@ export default class PatchCommitCommand extends BaseCommand {
     const sourcePath = ppath.join(folderPath, `../source`);
     const metaPath = ppath.join(folderPath, `../.yarn-patch.json`);
 
-    if (!xfs.existsSync(sourcePath))
-      throw new UsageError(`The argument folder didn't get created by 'yarn patch'`);
+    if (!xfs.existsSync(sourcePath)) throw new UsageError(`The argument folder didn't get created by 'yarn patch'`);
 
     const diff = await patchUtils.diffFolders(sourcePath, folderPath);
 
@@ -60,38 +56,33 @@ export default class PatchCommitCommand extends BaseCommand {
     const patchFolder = configuration.get(`patchFolder`);
     const patchPath = ppath.join(patchFolder, `${structUtils.slugifyLocator(locator)}.patch`);
 
-    await xfs.mkdirPromise(patchFolder, {recursive: true});
+    await xfs.mkdirPromise(patchFolder, { recursive: true });
     await xfs.writeFilePromise(patchPath, diff);
 
     const workspaceDependents: Array<Workspace> = [];
     const transitiveDependencies = new Map<DescriptorHash, Descriptor>();
 
     for (const pkg of project.storedPackages.values()) {
-      if (structUtils.isVirtualLocator(pkg))
-        continue;
+      if (structUtils.isVirtualLocator(pkg)) continue;
 
       const descriptor = pkg.dependencies.get(locator.identHash);
-      if (!descriptor)
-        continue;
+      if (!descriptor) continue;
 
       const devirtualizedDescriptor = structUtils.ensureDevirtualizedDescriptor(descriptor);
       const unpatchedDescriptor = patchUtils.ensureUnpatchedDescriptor(devirtualizedDescriptor);
 
       const resolution = project.storedResolutions.get(unpatchedDescriptor.descriptorHash);
-      if (!resolution)
-        throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+      if (!resolution) throw new Error(`Assertion failed: Expected the resolution to have been registered`);
 
       const dependency = project.storedPackages.get(resolution);
-      if (!dependency)
-        throw new Error(`Assertion failed: Expected the package to have been registered`);
+      if (!dependency) throw new Error(`Assertion failed: Expected the package to have been registered`);
 
       const workspace = project.tryWorkspaceByLocator(pkg);
       if (workspace) {
         workspaceDependents.push(workspace);
       } else {
         const originalPkg = project.originalPackages.get(pkg.locatorHash);
-        if (!originalPkg)
-          throw new Error(`Assertion failed: Expected the original package to have been registered`);
+        if (!originalPkg) throw new Error(`Assertion failed: Expected the original package to have been registered`);
 
         const originalDependency = originalPkg.dependencies.get(descriptor.identHash);
         if (!originalDependency)
@@ -104,8 +95,7 @@ export default class PatchCommitCommand extends BaseCommand {
     for (const workspace of workspaceDependents) {
       for (const dependencyType of Manifest.hardDependencies) {
         const originalDescriptor = workspace.manifest[dependencyType].get(locator.identHash);
-        if (!originalDescriptor)
-          continue;
+        if (!originalDescriptor) continue;
 
         const newDescriptor = patchUtils.makeDescriptor(originalDescriptor, {
           parentLocator: null,
@@ -125,7 +115,9 @@ export default class PatchCommitCommand extends BaseCommand {
       });
 
       project.topLevelWorkspace.manifest.resolutions.push({
-        pattern: {descriptor: {fullName: structUtils.stringifyIdent(newDescriptor), description: originalDescriptor.range}},
+        pattern: {
+          descriptor: { fullName: structUtils.stringifyIdent(newDescriptor), description: originalDescriptor.range },
+        },
         reference: newDescriptor.range,
       });
     }

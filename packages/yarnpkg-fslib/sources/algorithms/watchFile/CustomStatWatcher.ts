@@ -1,9 +1,9 @@
-import {EventEmitter}                                             from 'events';
-import {BigIntStats, Stats}                                       from 'fs';
+import { EventEmitter } from "events";
+import { BigIntStats, Stats } from "fs";
 
-import {StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS} from '../../FakeFS';
-import {Path}                                                     from '../../path';
-import * as statUtils                                             from '../../statUtils';
+import { StatWatcher, WatchFileCallback, WatchFileOptions, FakeFS } from "../../FakeFS";
+import { Path } from "../../path";
+import * as statUtils from "../../statUtils";
 
 export enum Event {
   Change = `change`,
@@ -23,7 +23,7 @@ export function assertStatus<T extends Status>(current: Status, expected: T): as
 }
 
 // `bigint` can only be set class-wide, because that's what Node does
-export type ListenerOptions = Omit<Required<WatchFileOptions>, 'bigint'>;
+export type ListenerOptions = Omit<Required<WatchFileOptions>, "bigint">;
 
 export type CustomStatWatcherOptions = {
   bigint?: boolean;
@@ -52,7 +52,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
     return statWatcher;
   }
 
-  private constructor(fakeFs: FakeFS<P>, path: P, {bigint = false}: CustomStatWatcherOptions = {}) {
+  private constructor(fakeFs: FakeFS<P>, path: P, { bigint = false }: CustomStatWatcherOptions = {}) {
     super();
 
     this.fakeFs = fakeFs;
@@ -95,13 +95,13 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
 
   stat() {
     try {
-      return this.fakeFs.statSync(this.path, {bigint: this.bigint});
+      return this.fakeFs.statSync(this.path, { bigint: this.bigint });
     } catch (error) {
       // From observation, all errors seem to be mostly ignored by Node.
       // Checked with ENOENT, ENOTDIR, EPERM
       const statInstance = this.bigint
-        ? ((new statUtils.BigIntStatsEntry() as unknown) as BigIntStats)
-        : ((new statUtils.StatEntry() as unknown) as Stats);
+        ? (new statUtils.BigIntStatsEntry() as unknown as BigIntStats)
+        : (new statUtils.StatEntry() as unknown as Stats);
 
       return statUtils.clearStats(statInstance);
     }
@@ -117,8 +117,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
       const currentStats = this.stat();
       const previousStats = this.lastStats;
 
-      if (statUtils.areStatsEqual(currentStats, previousStats))
-        return;
+      if (statUtils.areStatsEqual(currentStats, previousStats)) return;
 
       this.lastStats = currentStats;
 
@@ -144,8 +143,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
     this.removeListener(Event.Change, listener);
 
     const interval = this.changeListeners.get(listener);
-    if (typeof interval !== `undefined`)
-      clearInterval(interval);
+    if (typeof interval !== `undefined`) clearInterval(interval);
 
     this.changeListeners.delete(listener);
   }
@@ -167,8 +165,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
    * Refs all stored intervals.
    */
   ref() {
-    for (const interval of this.changeListeners.values())
-      interval.ref();
+    for (const interval of this.changeListeners.values()) interval.ref();
 
     return this;
   }
@@ -177,8 +174,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
    * Unrefs all stored intervals.
    */
   unref() {
-    for (const interval of this.changeListeners.values())
-      interval.unref();
+    for (const interval of this.changeListeners.values()) interval.unref();
 
     return this;
   }

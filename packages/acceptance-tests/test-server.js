@@ -1,8 +1,10 @@
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
-const {tests: {startPackageServer}} = require(`pkg-tests-core`);
+const {
+  tests: { startPackageServer },
+} = require(`pkg-tests-core`);
 
-startPackageServer().then(url => {
+startPackageServer().then((url) => {
   console.log(url);
 });
 

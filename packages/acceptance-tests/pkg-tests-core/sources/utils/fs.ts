@@ -1,16 +1,16 @@
-import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {parseSyml}                       from '@yarnpkg/parsers';
-import stream                            from 'stream';
-import tarFs                             from 'tar-fs';
-import zlib, {Gzip}                      from 'zlib';
+import { PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { parseSyml } from "@yarnpkg/parsers";
+import stream from "stream";
+import tarFs from "tar-fs";
+import zlib, { Gzip } from "zlib";
 
-import {execPromise}                     from './exec';
+import { execPromise } from "./exec";
 
 const IS_WIN32 = process.platform === `win32`;
 
 export const packToStream = (
   source: PortablePath,
-  {virtualPath = null}: {virtualPath?: PortablePath | null} = {},
+  { virtualPath = null }: { virtualPath?: PortablePath | null } = {},
 ): Gzip => {
   if (virtualPath) {
     if (!ppath.isAbsolute(virtualPath)) {
@@ -43,11 +43,12 @@ export const packToStream = (
   return stream.pipeline(packStream, zlib.createGzip(), () => {});
 };
 
-export const packToFile = async (target: PortablePath, source: PortablePath, options: {virtualPath?: PortablePath | null}): Promise<void> => {
-  await stream.promises.pipeline(
-    packToStream(source, options),
-    xfs.createWriteStream(target),
-  );
+export const packToFile = async (
+  target: PortablePath,
+  source: PortablePath,
+  options: { virtualPath?: PortablePath | null },
+): Promise<void> => {
+  await stream.promises.pipeline(packToStream(source, options), xfs.createWriteStream(target));
 };
 
 export const unpackToDirectory = async (target: PortablePath, source: PortablePath): Promise<void> => {
@@ -79,9 +80,9 @@ export const readSyml = async (source: PortablePath): Promise<any> => {
 
 export const makeFakeBinary = async (
   target: PortablePath,
-  {output = `Fake binary`, exitCode = 1}: {output?: string, exitCode?: number} = {},
+  { output = `Fake binary`, exitCode = 1 }: { output?: string; exitCode?: number } = {},
 ): Promise<void> => {
-  const realTarget = IS_WIN32 ? `${target}.cmd` as PortablePath : target;
+  const realTarget = IS_WIN32 ? (`${target}.cmd` as PortablePath) : target;
   const header = IS_WIN32 ? `@echo off\n` : `#!/bin/sh\n`;
 
   await writeFile(realTarget, `${header}printf "%s" "${output}"\nexit ${exitCode}\n`);
@@ -94,18 +95,20 @@ export enum FsLinkType {
   UNKNOWN,
 }
 
-export const determineLinkType = async function(path: PortablePath) {
+export const determineLinkType = async function (path: PortablePath) {
   const stats = await xfs.lstatPromise(path);
 
-  if (!stats.isSymbolicLink())
-    return FsLinkType.UNKNOWN;
-  if (!IS_WIN32)
-    return FsLinkType.SYMBOLIC;
+  if (!stats.isSymbolicLink()) return FsLinkType.UNKNOWN;
+  if (!IS_WIN32) return FsLinkType.SYMBOLIC;
 
   // Must spawn a process to determine link type on Windows (or include native code)
   // `dir` the directory, toss lines that start with whitespace (header/footer), check for type of path passed in
-  const {stdout: dirOutput} = (await execPromise(`dir /al /l`, {shell: `cmd.exe`, cwd: npath.fromPortablePath(ppath.dirname(path))}));
-  const linkType = new RegExp(`^\\S.*<(?<linkType>.+)>.*\\s${ppath.basename(path)}(?:\\s|$)`, `gm`).exec(dirOutput)?.groups?.linkType;
+  const { stdout: dirOutput } = await execPromise(`dir /al /l`, {
+    shell: `cmd.exe`,
+    cwd: npath.fromPortablePath(ppath.dirname(path)),
+  });
+  const linkType = new RegExp(`^\\S.*<(?<linkType>.+)>.*\\s${ppath.basename(path)}(?:\\s|$)`, `gm`).exec(dirOutput)
+    ?.groups?.linkType;
 
   switch (linkType) {
     case `SYMLINK`:

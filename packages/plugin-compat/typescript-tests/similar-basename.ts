@@ -12,7 +12,7 @@
 // 1: https://github.com/microsoft/TypeScript/blob/98866a5a740b487c20046d4ffaa36aa1f202dde9/src/compiler/moduleNameResolver.ts#L20
 // 2: https://github.com/arcanis/TypeScript/blob/36225c32609137d29008e9d3ecf48c6f51456eb5/src/compiler/program.ts#L2625
 
-import {find} from 'lodash-es';
+import { find } from "lodash-es";
 
 find([``], () => true);
 

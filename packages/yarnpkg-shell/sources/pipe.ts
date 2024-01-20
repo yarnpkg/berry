@@ -1,9 +1,9 @@
-import {ChildProcess}                               from 'child_process';
-import crossSpawn                                   from 'cross-spawn';
-import {PassThrough, Readable, Transform, Writable} from 'stream';
-import {StringDecoder}                              from 'string_decoder';
+import { ChildProcess } from "child_process";
+import crossSpawn from "cross-spawn";
+import { PassThrough, Readable, Transform, Writable } from "stream";
+import { StringDecoder } from "string_decoder";
 
-import {ShellOptions, ShellState}                   from './index';
+import { ShellOptions, ShellState } from "./index";
 
 export enum Pipe {
   STDIN = 0b00,
@@ -12,15 +12,9 @@ export enum Pipe {
 }
 
 // This is hell to type
-export type Stdio = [
-  any,
-  any,
-  any,
-];
+export type Stdio = [any, any, any];
 
-export type ProcessImplementation = (
-  stdio: Stdio,
-) => {
+export type ProcessImplementation = (stdio: Stdio) => {
   stdin: Writable;
   promise: Promise<number>;
 };
@@ -38,25 +32,20 @@ function sigtermHandler() {
   }
 }
 
-export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
+export function makeProcess(
+  name: string,
+  args: Array<string>,
+  opts: ShellOptions,
+  spawnOpts: any,
+): ProcessImplementation {
   return (stdio: Stdio) => {
-    const stdin = stdio[0] instanceof Transform
-      ? `pipe`
-      : stdio[0];
+    const stdin = stdio[0] instanceof Transform ? `pipe` : stdio[0];
 
-    const stdout = stdio[1] instanceof Transform
-      ? `pipe`
-      : stdio[1];
+    const stdout = stdio[1] instanceof Transform ? `pipe` : stdio[1];
 
-    const stderr = stdio[2] instanceof Transform
-      ? `pipe`
-      : stdio[2];
+    const stderr = stdio[2] instanceof Transform ? `pipe` : stdio[2];
 
-    const child = crossSpawn(name, args, {...spawnOpts, stdio: [
-      stdin,
-      stdout,
-      stderr,
-    ]});
+    const child = crossSpawn(name, args, { ...spawnOpts, stdio: [stdin, stdout, stderr] });
 
     activeChildren.add(child);
 
@@ -65,17 +54,14 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
       process.on(`SIGTERM`, sigtermHandler);
     }
 
-    if (stdio[0] instanceof Transform)
-      stdio[0].pipe(child.stdin!);
-    if (stdio[1] instanceof Transform)
-      child.stdout!.pipe(stdio[1], {end: false});
-    if (stdio[2] instanceof Transform)
-      child.stderr!.pipe(stdio[2], {end: false});
+    if (stdio[0] instanceof Transform) stdio[0].pipe(child.stdin!);
+    if (stdio[1] instanceof Transform) child.stdout!.pipe(stdio[1], { end: false });
+    if (stdio[2] instanceof Transform) child.stderr!.pipe(stdio[2], { end: false });
 
     return {
       stdin: child.stdin!,
-      promise: new Promise(resolve => {
-        child.on(`error`, error => {
+      promise: new Promise((resolve) => {
+        child.on(`error`, (error) => {
           activeChildren.delete(child);
 
           if (activeChildren.size === 0) {
@@ -85,22 +71,28 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
 
           // @ts-expect-error
           switch (error.code) {
-            case `ENOENT`: {
-              stdio[2].write(`command not found: ${name}\n`);
-              resolve(127);
-            } break;
-            case `EACCES`: {
-              stdio[2].write(`permission denied: ${name}\n`);
-              resolve(128);
-            } break;
-            default: {
-              stdio[2].write(`uncaught error: ${error.message}\n`);
-              resolve(1);
-            } break;
+            case `ENOENT`:
+              {
+                stdio[2].write(`command not found: ${name}\n`);
+                resolve(127);
+              }
+              break;
+            case `EACCES`:
+              {
+                stdio[2].write(`permission denied: ${name}\n`);
+                resolve(128);
+              }
+              break;
+            default:
+              {
+                stdio[2].write(`uncaught error: ${error.message}\n`);
+                resolve(1);
+              }
+              break;
           }
         });
 
-        child.on(`close`, code => {
+        child.on(`close`, (code) => {
           activeChildren.delete(child);
 
           if (activeChildren.size === 0) {
@@ -121,17 +113,17 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
 
 export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImplementation {
   return (stdio: Stdio) => {
-    const stdin = stdio[0] === `pipe`
-      ? new PassThrough()
-      : stdio[0];
+    const stdin = stdio[0] === `pipe` ? new PassThrough() : stdio[0];
 
     return {
       stdin,
-      promise: Promise.resolve().then(() => builtin({
-        stdin,
-        stdout: stdio[1],
-        stderr: stdio[2],
-      })),
+      promise: Promise.resolve().then(() =>
+        builtin({
+          stdin,
+          stdout: stdio[1],
+          stderr: stdio[2],
+        }),
+      ),
     };
   };
 }
@@ -197,7 +189,7 @@ export class Handle {
 
   private pipe: PipeStream | null = null;
 
-  static start(implementation: ProcessImplementation, {stdin, stdout, stderr}: StartOptions) {
+  static start(implementation: ProcessImplementation, { stdin, stdout, stderr }: StartOptions) {
     const chain = new Handle(null, implementation);
 
     chain.stdin = stdin;
@@ -221,25 +213,17 @@ export class Handle {
     next.stdout = this.stdout;
     next.stderr = this.stderr;
 
-    if ((source & Pipe.STDOUT) === Pipe.STDOUT)
-      this.stdout = pipe;
-    else if (this.ancestor !== null)
-      this.stderr = this.ancestor.stdout;
+    if ((source & Pipe.STDOUT) === Pipe.STDOUT) this.stdout = pipe;
+    else if (this.ancestor !== null) this.stderr = this.ancestor.stdout;
 
-    if ((source & Pipe.STDERR) === Pipe.STDERR)
-      this.stderr = pipe;
-    else if (this.ancestor !== null)
-      this.stderr = this.ancestor.stderr;
+    if ((source & Pipe.STDERR) === Pipe.STDERR) this.stderr = pipe;
+    else if (this.ancestor !== null) this.stderr = this.ancestor.stderr;
 
     return next;
   }
 
   async exec() {
-    const stdio: Stdio = [
-      `ignore`,
-      `ignore`,
-      `ignore`,
-    ];
+    const stdio: Stdio = [`ignore`, `ignore`, `ignore`];
 
     if (this.pipe) {
       stdio[0] = `pipe`;
@@ -269,10 +253,9 @@ export class Handle {
 
     const child = this.implementation(stdio);
 
-    if (this.pipe)
-      this.pipe.attach(child.stdin);
+    if (this.pipe) this.pipe.attach(child.stdin);
 
-    return await child.promise.then(code => {
+    return await child.promise.then((code) => {
       stdoutLock.close();
       stderrLock.close();
 
@@ -282,8 +265,7 @@ export class Handle {
 
   async run() {
     const promises = [];
-    for (let handle: Handle | null = this; handle; handle = handle.ancestor)
-      promises.push(handle.exec());
+    for (let handle: Handle | null = this; handle; handle = handle.ancestor) promises.push(handle.exec());
 
     const exitCodes = await Promise.all(promises);
     return exitCodes[0];
@@ -300,7 +282,7 @@ function createStreamReporter(reportFn: (text: string) => void, prefix: string |
 
   let buffer = ``;
 
-  stream.on(`data`, chunk => {
+  stream.on(`data`, (chunk) => {
     let chunkStr = decoder.write(chunk);
     let lineIndex;
 
@@ -339,9 +321,15 @@ function createStreamReporter(reportFn: (text: string) => void, prefix: string |
   return stream;
 }
 
-export function createOutputStreamsWithPrefix(state: ShellState, {prefix}: {prefix: string | null}) {
+export function createOutputStreamsWithPrefix(state: ShellState, { prefix }: { prefix: string | null }) {
   return {
-    stdout: createStreamReporter(text => state.stdout.write(`${text}\n`), (state.stdout as any).isTTY ? prefix : null),
-    stderr: createStreamReporter(text => state.stderr.write(`${text}\n`), (state.stderr as any).isTTY ? prefix : null),
+    stdout: createStreamReporter(
+      (text) => state.stdout.write(`${text}\n`),
+      (state.stdout as any).isTTY ? prefix : null,
+    ),
+    stderr: createStreamReporter(
+      (text) => state.stderr.write(`${text}\n`),
+      (state.stderr as any).isTTY ? prefix : null,
+    ),
   };
 }

@@ -1,7 +1,7 @@
-import {FakeFS}              from './FakeFS';
-import {PortablePath, ppath} from './path';
+import { FakeFS } from "./FakeFS";
+import { PortablePath, ppath } from "./path";
 
-const makeError = () => Object.assign(new Error(`ENOSYS: unsupported filesystem access`), {code: `ENOSYS`});
+const makeError = () => Object.assign(new Error(`ENOSYS: unsupported filesystem access`), { code: `ENOSYS` });
 
 export class NoFS extends FakeFS<PortablePath> {
   static readonly instance = new NoFS();

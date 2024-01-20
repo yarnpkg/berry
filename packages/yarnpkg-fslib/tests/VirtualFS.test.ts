@@ -1,6 +1,6 @@
-import {VirtualFS}                            from '../sources/VirtualFS';
-import {Filename, npath, ppath, PortablePath} from '../sources/path';
-import {CwdFS, xfs}                           from '../sources';
+import { VirtualFS } from "../sources/VirtualFS";
+import { Filename, npath, ppath, PortablePath } from "../sources/path";
+import { CwdFS, xfs } from "../sources";
 
 describe(`VirtualFS`, () => {
   it(`should ignore non-hash virtual components`, () => {
@@ -134,7 +134,9 @@ describe(`VirtualFS`, () => {
 
     const virtualFs = new VirtualFS();
 
-    const virtualContent = virtualFs.readFileSync(ppath.relative(ppath.cwd(), ppath.join(virtualEntry, `package.json`)));
+    const virtualContent = virtualFs.readFileSync(
+      ppath.relative(ppath.cwd(), ppath.join(virtualEntry, `package.json`)),
+    );
     const physicalContent = xfs.readFileSync(ppath.join(ppath.dirname(ppath.dirname(virtualPath)), `package.json`));
 
     expect(virtualContent).toEqual(physicalContent);
@@ -172,7 +174,7 @@ describe(`VirtualFS`, () => {
   });
 
   it(`should work when the path is a dot`, () => {
-    const virtualFs = new VirtualFS({baseFs: new CwdFS(npath.toPortablePath(__dirname))});
+    const virtualFs = new VirtualFS({ baseFs: new CwdFS(npath.toPortablePath(__dirname)) });
 
     expect(virtualFs.readdirSync(PortablePath.dot)).toContain(`VirtualFS.test.ts`);
   });

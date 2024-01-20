@@ -1,20 +1,20 @@
-import {structUtils, Report, Manifest, miscUtils, formatUtils}              from '@yarnpkg/core';
-import {Locator, Package, FinalizeInstallStatus, hashUtils}                 from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, LinkType, WindowsLinkType} from '@yarnpkg/core';
-import {LocatorHash, Descriptor, DependencyMeta, Configuration}             from '@yarnpkg/core';
-import {MessageName, Project, FetchResult, Installer}                       from '@yarnpkg/core';
-import {PortablePath, npath, ppath, Filename}                               from '@yarnpkg/fslib';
-import {VirtualFS, xfs, FakeFS, NativePath}                                 from '@yarnpkg/fslib';
-import {ZipOpenFS}                                                          from '@yarnpkg/libzip';
-import {buildNodeModulesTree}                                               from '@yarnpkg/nm';
-import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from '@yarnpkg/nm';
-import {parseSyml}                                                          from '@yarnpkg/parsers';
-import {jsInstallUtils}                                                     from '@yarnpkg/plugin-pnp';
-import {PnpApi, PackageInformation}                                         from '@yarnpkg/pnp';
-import cmdShim                                                              from '@zkochan/cmd-shim';
-import {UsageError}                                                         from 'clipanion';
-import crypto                                                               from 'crypto';
-import fs                                                                   from 'fs';
+import { structUtils, Report, Manifest, miscUtils, formatUtils } from "@yarnpkg/core";
+import { Locator, Package, FinalizeInstallStatus, hashUtils } from "@yarnpkg/core";
+import { Linker, LinkOptions, MinimalLinkOptions, LinkType, WindowsLinkType } from "@yarnpkg/core";
+import { LocatorHash, Descriptor, DependencyMeta, Configuration } from "@yarnpkg/core";
+import { MessageName, Project, FetchResult, Installer } from "@yarnpkg/core";
+import { PortablePath, npath, ppath, Filename } from "@yarnpkg/fslib";
+import { VirtualFS, xfs, FakeFS, NativePath } from "@yarnpkg/fslib";
+import { ZipOpenFS } from "@yarnpkg/libzip";
+import { buildNodeModulesTree } from "@yarnpkg/nm";
+import { NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits } from "@yarnpkg/nm";
+import { parseSyml } from "@yarnpkg/parsers";
+import { jsInstallUtils } from "@yarnpkg/plugin-pnp";
+import { PnpApi, PackageInformation } from "@yarnpkg/pnp";
+import cmdShim from "@zkochan/cmd-shim";
+import { UsageError } from "clipanion";
+import crypto from "crypto";
+import fs from "fs";
 
 const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
@@ -22,9 +22,15 @@ const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 const MTIME_ACCURANCY = 1000;
 
-type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
+type InstallState = {
+  locatorMap: NodeModulesLocatorMap;
+  locationTree: LocationTree;
+  binSymlinks: BinSymlinkMap;
+  nmMode: NodeModulesMode;
+  mtimeMs: number;
+};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
-type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, 'bin'>>;
+type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, "bin">>;
 
 export enum NodeModulesMode {
   CLASSIC = `classic`,
@@ -47,56 +53,56 @@ export class NodeModulesLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    if (!this.isEnabled(opts))
-      throw new Error(`Assertion failed: Expected the node-modules linker to be enabled`);
+    if (!this.isEnabled(opts)) throw new Error(`Assertion failed: Expected the node-modules linker to be enabled`);
 
     const workspace = opts.project.tryWorkspaceByLocator(locator);
-    if (workspace)
-      return workspace.cwd;
+    if (workspace) return workspace.cwd;
 
     const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
-      return await findInstallState(opts.project, {unrollAliases: true});
+      return await findInstallState(opts.project, { unrollAliases: true });
     });
 
     if (installState === null)
-      throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
+      throw new UsageError(
+        `Couldn't find the node_modules state file - running an install might help (findPackageLocation)`,
+      );
 
     const locatorInfo = installState.locatorMap.get(structUtils.stringifyLocator(locator));
     if (!locatorInfo) {
-      const err = new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`);
+      const err = new UsageError(
+        `Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed node_modules map - running an install might help`,
+      );
       (err as any).code = `LOCATOR_NOT_INSTALLED`;
       throw err;
     }
 
     // Sort locations from shallowest to deepest in terms of directory nesting
-    const sortedLocations = locatorInfo.locations.sort((loc1, loc2) => loc1.split(ppath.sep).length - loc2.split(ppath.sep).length);
+    const sortedLocations = locatorInfo.locations.sort(
+      (loc1, loc2) => loc1.split(ppath.sep).length - loc2.split(ppath.sep).length,
+    );
     // Find the location with shallowest directory nesting that starts inside node_modules of cwd
     const startingCwdModules = ppath.join(opts.project.configuration.startingCwd, NODE_MODULES);
-    return sortedLocations.find(location => ppath.contains(startingCwdModules, location)) || locatorInfo.locations[0];
+    return sortedLocations.find((location) => ppath.contains(startingCwdModules, location)) || locatorInfo.locations[0];
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    if (!this.isEnabled(opts))
-      return null;
+    if (!this.isEnabled(opts)) return null;
 
     const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
-      return await findInstallState(opts.project, {unrollAliases: true});
+      return await findInstallState(opts.project, { unrollAliases: true });
     });
 
-    if (installState === null)
-      return null;
+    if (installState === null) return null;
 
-    const {locationRoot, segments} = parseLocation(ppath.resolve(location), {skipPrefix: opts.project.cwd});
+    const { locationRoot, segments } = parseLocation(ppath.resolve(location), { skipPrefix: opts.project.cwd });
 
     let locationNode = installState.locationTree.get(locationRoot);
-    if (!locationNode)
-      return null;
+    if (!locationNode) return null;
 
     let locator = locationNode.locator!;
     for (const segment of segments) {
       locationNode = locationNode.children.get(segment);
-      if (!locationNode)
-        break;
+      if (!locationNode) break;
       locator = locationNode.locator || locator;
     }
 
@@ -117,12 +123,15 @@ class NodeModulesInstaller implements Installer {
   // in the `finalizeInstall` step. Contrary to custom data this isn't persisted
   // anywhere - we literally just use it for the lifetime of the installer then
   // discard it.
-  private localStore: Map<LocatorHash, {
-    pkg: Package;
-    customPackageData: CustomPackageData;
-    dependencyMeta: DependencyMeta;
-    pnpNode: PackageInformation<NativePath>;
-  }> = new Map();
+  private localStore: Map<
+    LocatorHash,
+    {
+      pkg: Package;
+      customPackageData: CustomPackageData;
+      dependencyMeta: DependencyMeta;
+      pnpNode: PackageInformation<NativePath>;
+    }
+  > = new Map();
 
   private realLocatorChecksums: Map<LocatorHash, string | null> = new Map();
 
@@ -133,8 +142,8 @@ class NodeModulesInstaller implements Installer {
   private customData: {
     store: Map<LocatorHash, CustomPackageData>;
   } = {
-      store: new Map(),
-    };
+    store: new Map(),
+  };
 
   attachCustomData(customData: any) {
     this.customData = customData;
@@ -153,7 +162,7 @@ class NodeModulesInstaller implements Installer {
 
     // We don't link the package at all if it's for an unsupported platform
     if (!structUtils.isPackageCompatible(pkg, this.opts.project.configuration.getSupportedArchitectures()))
-      return {packageLocation: null, buildRequest: null};
+      return { packageLocation: null, buildRequest: null };
 
     const packageDependencies = new Map<string, string | [string, string] | null>();
     const packagePeers = new Set<string>();
@@ -190,7 +199,9 @@ class NodeModulesInstaller implements Installer {
     });
 
     // We need ZIP contents checksum for CAS addressing purposes, so we need to strip cache key from checksum here
-    const checksum = fetchResult.checksum ? fetchResult.checksum.substring(fetchResult.checksum.indexOf(`/`) + 1) : null;
+    const checksum = fetchResult.checksum
+      ? fetchResult.checksum.substring(fetchResult.checksum.indexOf(`/`) + 1)
+      : null;
     this.realLocatorChecksums.set(realLocator.locatorHash, checksum);
 
     return {
@@ -206,7 +217,7 @@ class NodeModulesInstaller implements Installer {
 
     for (const [descriptor, locator] of dependencies) {
       const target = !structUtils.areIdentsEqual(descriptor, locator)
-        ? [structUtils.stringifyIdent(locator), locator.reference] as [string, string]
+        ? ([structUtils.stringifyIdent(locator), locator.reference] as [string, string])
         : locator.reference;
 
       slot.pnpNode.packageDependencies.set(structUtils.stringifyIdent(descriptor), target);
@@ -218,8 +229,7 @@ class NodeModulesInstaller implements Installer {
   }
 
   async finalizeInstall() {
-    if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`)
-      return undefined;
+    if (this.opts.project.configuration.get(`nodeLinker`) !== `node-modules`) return undefined;
 
     const defaultFsLayer = new VirtualFS({
       baseFs: new ZipOpenFS({
@@ -235,25 +245,41 @@ class NodeModulesInstaller implements Installer {
     if (preinstallState === null || nmModeSetting !== preinstallState.nmMode) {
       this.opts.project.storedBuildState.clear();
 
-      preinstallState = {locatorMap: new Map(), binSymlinks: new Map(), locationTree: new Map(), nmMode: nmModeSetting, mtimeMs: 0};
+      preinstallState = {
+        locatorMap: new Map(),
+        binSymlinks: new Map(),
+        locationTree: new Map(),
+        nmMode: nmModeSetting,
+        mtimeMs: 0,
+      };
     }
 
-    const hoistingLimitsByCwd = new Map(this.opts.project.workspaces.map(workspace => {
-      let hoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`);
-      try {
-        hoistingLimits = miscUtils.validateEnum(NodeModulesHoistingLimits, workspace.manifest.installConfig?.hoistingLimits ?? hoistingLimits);
-      } catch (e) {
-        const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
-        this.opts.report.reportWarning(MessageName.INVALID_MANIFEST, `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`);
-      }
-      return [workspace.relativeCwd, hoistingLimits];
-    }));
+    const hoistingLimitsByCwd = new Map(
+      this.opts.project.workspaces.map((workspace) => {
+        let hoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`);
+        try {
+          hoistingLimits = miscUtils.validateEnum(
+            NodeModulesHoistingLimits,
+            workspace.manifest.installConfig?.hoistingLimits ?? hoistingLimits,
+          );
+        } catch (e) {
+          const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
+          this.opts.report.reportWarning(
+            MessageName.INVALID_MANIFEST,
+            `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`,
+          );
+        }
+        return [workspace.relativeCwd, hoistingLimits];
+      }),
+    );
 
-    const selfReferencesByCwd = new Map(this.opts.project.workspaces.map(workspace => {
-      let selfReferences = this.opts.project.configuration.get(`nmSelfReferences`);
-      selfReferences = workspace.manifest.installConfig?.selfReferences ?? selfReferences;
-      return [workspace.relativeCwd, selfReferences];
-    }));
+    const selfReferencesByCwd = new Map(
+      this.opts.project.workspaces.map((workspace) => {
+        let selfReferences = this.opts.project.configuration.get(`nmSelfReferences`);
+        selfReferences = workspace.manifest.installConfig?.selfReferences ?? selfReferences;
+        return [workspace.relativeCwd, selfReferences];
+      }),
+    );
 
     const pnpApi: PnpApi = {
       VERSIONS: {
@@ -265,21 +291,22 @@ class NodeModulesInstaller implements Installer {
       },
       getLocator: (name, referencish) => {
         if (Array.isArray(referencish)) {
-          return {name: referencish[0], reference: referencish[1]};
+          return { name: referencish[0], reference: referencish[1] };
         } else {
-          return {name, reference: referencish};
+          return { name, reference: referencish };
         }
       },
       getDependencyTreeRoots: () => {
-        return this.opts.project.workspaces.map(workspace => {
+        return this.opts.project.workspaces.map((workspace) => {
           const anchoredLocator = workspace.anchoredLocator;
-          return {name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference};
+          return { name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference };
         });
       },
-      getPackageInformation: pnpLocator => {
-        const locator = pnpLocator.reference === null
-          ? this.opts.project.topLevelWorkspace.anchoredLocator
-          : structUtils.makeLocator(structUtils.parseIdent(pnpLocator.name), pnpLocator.reference);
+      getPackageInformation: (pnpLocator) => {
+        const locator =
+          pnpLocator.reference === null
+            ? this.opts.project.topLevelWorkspace.anchoredLocator
+            : structUtils.makeLocator(structUtils.parseIdent(pnpLocator.name), pnpLocator.reference);
 
         const slot = this.localStore.get(locator.locatorHash);
         if (typeof slot === `undefined`)
@@ -287,11 +314,11 @@ class NodeModulesInstaller implements Installer {
 
         return slot.pnpNode;
       },
-      findPackageLocator: location => {
+      findPackageLocator: (location) => {
         const workspace = this.opts.project.tryWorkspaceByCwd(npath.toPortablePath(location));
         if (workspace !== null) {
           const anchoredLocator = workspace.anchoredLocator;
-          return {name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference};
+          return { name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference };
         }
 
         throw new Error(`Assertion failed: Unimplemented`);
@@ -305,15 +332,20 @@ class NodeModulesInstaller implements Installer {
       resolveRequest: () => {
         throw new Error(`Assertion failed: Unimplemented`);
       },
-      resolveVirtual: path => {
+      resolveVirtual: (path) => {
         return npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(path)));
       },
     };
 
-    const {tree, errors, preserveSymlinksRequired} = buildNodeModulesTree(pnpApi, {pnpifyFs: false, validateExternalSoftLinks: true, hoistingLimitsByCwd, project: this.opts.project, selfReferencesByCwd});
+    const { tree, errors, preserveSymlinksRequired } = buildNodeModulesTree(pnpApi, {
+      pnpifyFs: false,
+      validateExternalSoftLinks: true,
+      hoistingLimitsByCwd,
+      project: this.opts.project,
+      selfReferencesByCwd,
+    });
     if (!tree) {
-      for (const {messageName, text} of errors)
-        this.opts.report.reportError(messageName, text);
+      for (const { messageName, text } of errors) this.opts.report.reportError(messageName, text);
 
       return undefined;
     }
@@ -324,12 +356,11 @@ class NodeModulesInstaller implements Installer {
       project: this.opts.project,
       report: this.opts.report,
       realLocatorChecksums: this.realLocatorChecksums,
-      loadManifest: async locatorKey => {
+      loadManifest: async (locatorKey) => {
         const locator = structUtils.parseLocator(locatorKey);
 
         const slot = this.localStore.get(locator.locatorHash);
-        if (typeof slot === `undefined`)
-          throw new Error(`Assertion failed: Expected the slot to exist`);
+        if (typeof slot === `undefined`) throw new Error(`Assertion failed: Expected the slot to exist`);
 
         return slot.customPackageData.manifest;
       },
@@ -338,21 +369,19 @@ class NodeModulesInstaller implements Installer {
     const installStatuses: Array<FinalizeInstallStatus> = [];
 
     for (const [locatorKey, installRecord] of locatorMap.entries()) {
-      if (isLinkLocator(locatorKey))
-        continue;
+      if (isLinkLocator(locatorKey)) continue;
 
       const locator = structUtils.parseLocator(locatorKey);
       const slot = this.localStore.get(locator.locatorHash);
-      if (typeof slot === `undefined`)
-        throw new Error(`Assertion failed: Expected the slot to exist`);
+      if (typeof slot === `undefined`) throw new Error(`Assertion failed: Expected the slot to exist`);
 
       // Workspaces are built by the core
-      if (this.opts.project.tryWorkspaceByLocator(slot.pkg))
-        continue;
+      if (this.opts.project.tryWorkspaceByLocator(slot.pkg)) continue;
 
-      const buildRequest = jsInstallUtils.extractBuildRequest(slot.pkg, slot.customPackageData, slot.dependencyMeta, {configuration: this.opts.project.configuration});
-      if (!buildRequest)
-        continue;
+      const buildRequest = jsInstallUtils.extractBuildRequest(slot.pkg, slot.customPackageData, slot.dependencyMeta, {
+        configuration: this.opts.project.configuration,
+      });
+      if (!buildRequest) continue;
 
       installStatuses.push({
         buildLocations: installRecord.locations,
@@ -362,7 +391,10 @@ class NodeModulesInstaller implements Installer {
     }
 
     if (preserveSymlinksRequired)
-      this.opts.report.reportWarning(MessageName.NM_PRESERVE_SYMLINKS_REQUIRED, `The application uses portals and that's why ${formatUtils.pretty(this.opts.project.configuration, `--preserve-symlinks`, formatUtils.Type.CODE)} Node option is required for launching it`);
+      this.opts.report.reportWarning(
+        MessageName.NM_PRESERVE_SYMLINKS_REQUIRED,
+        `The application uses portals and that's why ${formatUtils.pretty(this.opts.project.configuration, `--preserve-symlinks`, formatUtils.Type.CODE)} Node option is required for launching it`,
+      );
 
     return {
       customData: this.customData,
@@ -371,17 +403,16 @@ class NodeModulesInstaller implements Installer {
   }
 }
 
-
 type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U : never;
 type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData>>;
 
 async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) {
-  const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest();
+  const manifest =
+    (await Manifest.tryFind(fetchResult.prefixPath, { baseFs: fetchResult.packageFs })) ?? new Manifest();
 
   const preservedScripts = new Set([`preinstall`, `install`, `postinstall`]);
   for (const scriptName of manifest.scripts.keys())
-    if (!preservedScripts.has(scriptName))
-      manifest.scripts.delete(scriptName);
+    if (!preservedScripts.has(scriptName)) manifest.scripts.delete(scriptName);
 
   return {
     manifest: {
@@ -394,7 +425,13 @@ async function extractCustomPackageData(pkg: Package, fetchResult: FetchResult) 
   };
 }
 
-async function writeInstallState(project: Project, locatorMap: NodeModulesLocatorMap, binSymlinks: BinSymlinkMap, nmMode: {value: NodeModulesMode}, {installChangedByUser}: {installChangedByUser: boolean}) {
+async function writeInstallState(
+  project: Project,
+  locatorMap: NodeModulesLocatorMap,
+  binSymlinks: BinSymlinkMap,
+  nmMode: { value: NodeModulesMode },
+  { installChangedByUser }: { installChangedByUser: boolean },
+) {
   let locatorState = ``;
 
   locatorState += `# Warning: This file is automatically generated. Removing it is fine, but will\n`;
@@ -448,32 +485,31 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   const installStatePath = ppath.join(rootPath, NODE_MODULES, INSTALL_STATE_FILE);
 
   // Force install state file rewrite, so that it has mtime bigger than all node_modules subfolders
-  if (installChangedByUser)
-    await xfs.removePromise(installStatePath);
+  if (installChangedByUser) await xfs.removePromise(installStatePath);
 
   await xfs.changeFilePromise(installStatePath, locatorState, {
     automaticNewlines: true,
   });
 }
 
-async function findInstallState(project: Project, {unrollAliases = false}: {unrollAliases?: boolean} = {}): Promise<InstallState | null> {
+async function findInstallState(
+  project: Project,
+  { unrollAliases = false }: { unrollAliases?: boolean } = {},
+): Promise<InstallState | null> {
   const rootPath = project.cwd;
   const installStatePath = ppath.join(rootPath, NODE_MODULES, INSTALL_STATE_FILE);
 
   let stats;
   try {
     stats = await xfs.statPromise(installStatePath);
-  } catch (e) {
-  }
+  } catch (e) {}
 
-  if (!stats)
-    return null;
+  if (!stats) return null;
 
   const locatorState = parseSyml(await xfs.readFilePromise(installStatePath, `utf8`));
 
   // If we have a higher serialized version than we can handle, ignore the state alltogether
-  if (locatorState.__metadata.version > STATE_FILE_VERSION)
-    return null;
+  if (locatorState.__metadata.version > STATE_FILE_VERSION) return null;
 
   const nmMode = locatorState.__metadata.nmMode || NodeModulesMode.CLASSIC;
 
@@ -507,7 +543,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
 
     if (unrollAliases && installRecord.aliases) {
       for (const reference of installRecord.aliases) {
-        const {scope, name} = structUtils.parseLocator(locatorStr);
+        const { scope, name } = structUtils.parseLocator(locatorStr);
 
         const alias = structUtils.makeLocator(structUtils.makeIdent(scope, name), reference);
         const aliasStr = structUtils.stringifyLocator(alias);
@@ -522,28 +558,36 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
     }
   }
 
-  return {locatorMap, binSymlinks, locationTree: buildLocationTree(locatorMap, {skipPrefix: project.cwd}), nmMode, mtimeMs: stats.mtimeMs};
+  return {
+    locatorMap,
+    binSymlinks,
+    locationTree: buildLocationTree(locatorMap, { skipPrefix: project.cwd }),
+    nmMode,
+    mtimeMs: stats.mtimeMs,
+  };
 }
 
-const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, innerLoop?: boolean, allowSymlink?: boolean}): Promise<any> => {
+const removeDir = async (
+  dir: PortablePath,
+  options: { contentsOnly: boolean; innerLoop?: boolean; allowSymlink?: boolean },
+): Promise<any> => {
   if (dir.split(ppath.sep).indexOf(NODE_MODULES) < 0)
     throw new Error(`Assertion failed: trying to remove dir that doesn't contain node_modules: ${dir}`);
 
   try {
     if (!options.innerLoop) {
       const stats = options.allowSymlink ? await xfs.statPromise(dir) : await xfs.lstatPromise(dir);
-      if (options.allowSymlink && !stats.isDirectory() ||
-        (!options.allowSymlink && stats.isSymbolicLink())) {
+      if ((options.allowSymlink && !stats.isDirectory()) || (!options.allowSymlink && stats.isSymbolicLink())) {
         await xfs.unlinkPromise(dir);
         return;
       }
     }
-    const entries = await xfs.readdirPromise(dir, {withFileTypes: true});
+    const entries = await xfs.readdirPromise(dir, { withFileTypes: true });
     for (const entry of entries) {
       const targetPath = ppath.join(dir, entry.name);
       if (entry.isDirectory()) {
         if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
-          await removeDir(targetPath, {innerLoop: true, contentsOnly: false});
+          await removeDir(targetPath, { innerLoop: true, contentsOnly: false });
         }
       } else {
         await xfs.unlinkPromise(targetPath);
@@ -562,7 +606,7 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
 const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
-type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, linkType: LinkType };
+type LocationNode = { children: Map<Filename, LocationNode>; locator?: LocatorKey; linkType: LinkType };
 type LocationRoot = PortablePath;
 
 /**
@@ -600,15 +644,20 @@ type LocationRoot = PortablePath;
  */
 type LocationTree = Map<LocationRoot, LocationNode>;
 
-const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: PortablePath}): {locationRoot: PortablePath, segments: Array<Filename>} => {
+const parseLocation = (
+  location: PortablePath,
+  { skipPrefix }: { skipPrefix: PortablePath },
+): { locationRoot: PortablePath; segments: Array<Filename> } => {
   const projectRelativePath = ppath.contains(skipPrefix, location);
   if (projectRelativePath === null)
-    throw new Error(`Assertion failed: Writing attempt prevented to ${location} which is outside project root: ${skipPrefix}`);
+    throw new Error(
+      `Assertion failed: Writing attempt prevented to ${location} which is outside project root: ${skipPrefix}`,
+    );
 
   const allSegments = projectRelativePath
     .split(ppath.sep)
     // Ignore empty segments (after trailing slashes)
-    .filter(segment => segment !== ``);
+    .filter((segment) => segment !== ``);
   const nmIndex = allSegments.indexOf(NODE_MODULES);
 
   // Project path, up until the first node_modules segment
@@ -618,13 +667,15 @@ const parseLocation = (location: PortablePath, {skipPrefix}: {skipPrefix: Portab
   // All segments that follow
   const segments = allSegments.slice(nmIndex) as Array<Filename>;
 
-  return {locationRoot, segments};
+  return { locationRoot, segments };
 };
 
-const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix}: {skipPrefix: PortablePath}): LocationTree => {
+const buildLocationTree = (
+  locatorMap: NodeModulesLocatorMap | null,
+  { skipPrefix }: { skipPrefix: PortablePath },
+): LocationTree => {
   const locationTree: LocationTree = new Map();
-  if (locatorMap === null)
-    return locationTree;
+  if (locatorMap === null) return locationTree;
 
   const makeNode: () => LocationNode = () => ({
     children: new Map(),
@@ -642,7 +693,7 @@ const buildLocationTree = (locatorMap: NodeModulesLocatorMap | null, {skipPrefix
     }
 
     for (const location of info.locations) {
-      const {locationRoot, segments} = parseLocation(location, {skipPrefix});
+      const { locationRoot, segments } = parseLocation(location, { skipPrefix });
 
       let node = miscUtils.getFactoryWithDefault(locationTree, locationRoot, makeNode);
 
@@ -673,8 +724,7 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath, wind
     let stats;
     try {
       stats = await xfs.lstatPromise(srcPath);
-    } catch (e) {
-    }
+    } catch (e) {}
 
     if (!stats || stats.isDirectory()) {
       await xfs.symlinkPromise(srcPath, dstPath, `junction`);
@@ -693,24 +743,44 @@ async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, cont
     await xfs.writeFilePromise(tmpPath, content);
     try {
       await xfs.linkPromise(tmpPath, dstPath);
-    } catch (e) {
-    }
+    } catch (e) {}
   } finally {
     await xfs.unlinkPromise(tmpPath);
   }
 }
 
-async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, baseFs, nmMode}: {srcPath: PortablePath, dstPath: PortablePath, entry: DirEntry, globalHardlinksStore: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: {value: NodeModulesMode}}) {
+async function copyFilePromise({
+  srcPath,
+  dstPath,
+  entry,
+  globalHardlinksStore,
+  baseFs,
+  nmMode,
+}: {
+  srcPath: PortablePath;
+  dstPath: PortablePath;
+  entry: DirEntry;
+  globalHardlinksStore: PortablePath | null;
+  baseFs: FakeFS<PortablePath>;
+  nmMode: { value: NodeModulesMode };
+}) {
   if (entry.kind === DirEntryKind.FILE) {
     if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && entry.digest) {
-      const contentFilePath = ppath.join(globalHardlinksStore, entry.digest.substring(0, 2) as Filename, `${entry.digest.substring(2)}.dat` as Filename);
+      const contentFilePath = ppath.join(
+        globalHardlinksStore,
+        entry.digest.substring(0, 2) as Filename,
+        `${entry.digest.substring(2)}.dat` as Filename,
+      );
 
       let doesContentFileExist;
       try {
         const stats = await xfs.statPromise(contentFilePath);
 
-        if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
-          const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
+        if (
+          stats &&
+          (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)
+        ) {
+          const contentDigest = await hashUtils.checksumFile(contentFilePath, { baseFs: xfs, algorithm: `sha1` });
           if (contentDigest !== entry.digest) {
             // If file content was modified by the user, or corrupted, we first move it out of the way
             const tmpPath = ppath.join(globalHardlinksStore, `${crypto.randomBytes(16).toString(`hex`)}.tmp`);
@@ -721,14 +791,13 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
             await xfs.writeFilePromise(tmpPath, content);
 
             try {
-            // Then we try to move content file back on its place, if its still free
-            // If we fail here, it means that some other process or thread has created content file
-            // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
+              // Then we try to move content file back on its place, if its still free
+              // If we fail here, it means that some other process or thread has created content file
+              // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
               await xfs.linkPromise(tmpPath, contentFilePath);
               entry.mtimeMs = new Date().getTime();
               await xfs.unlinkPromise(tmpPath);
-            } catch (e) {
-            }
+            } catch (e) {}
           } else if (!entry.mtimeMs) {
             entry.mtimeMs = Math.ceil(stats.mtimeMs);
           }
@@ -765,27 +834,50 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
 }
 
 enum DirEntryKind {
-  FILE = `file`, DIRECTORY = `directory`, SYMLINK = `symlink`,
+  FILE = `file`,
+  DIRECTORY = `directory`,
+  SYMLINK = `symlink`,
 }
 
-type DirEntry = {
-  kind: DirEntryKind.FILE;
-  mode: number;
-  digest?: string;
-  mtimeMs?: number;
-} | {
-  kind: DirEntryKind. DIRECTORY;
-} | {
-  kind: DirEntryKind.SYMLINK;
-  symlinkTo: PortablePath;
-};
+type DirEntry =
+  | {
+      kind: DirEntryKind.FILE;
+      mode: number;
+      digest?: string;
+      mtimeMs?: number;
+    }
+  | {
+      kind: DirEntryKind.DIRECTORY;
+    }
+  | {
+      kind: DirEntryKind.SYMLINK;
+      symlinkTo: PortablePath;
+    };
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, windowsLinkType: windowsLinkType, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, windowsLinkType: WindowsLinkType, packageChecksum: string | null}) => {
-  await xfs.mkdirPromise(dstDir, {recursive: true});
+const copyPromise = async (
+  dstDir: PortablePath,
+  srcDir: PortablePath,
+  {
+    baseFs,
+    globalHardlinksStore,
+    nmMode,
+    windowsLinkType: windowsLinkType,
+    packageChecksum,
+  }: {
+    baseFs: FakeFS<PortablePath>;
+    globalHardlinksStore: PortablePath | null;
+    nmMode: { value: NodeModulesMode };
+    windowsLinkType: WindowsLinkType;
+    packageChecksum: string | null;
+  },
+) => {
+  await xfs.mkdirPromise(dstDir, { recursive: true });
 
-  const getEntriesRecursive = async (relativePath: PortablePath = PortablePath.dot): Promise<Map<PortablePath, DirEntry>> => {
+  const getEntriesRecursive = async (
+    relativePath: PortablePath = PortablePath.dot,
+  ): Promise<Map<PortablePath, DirEntry>> => {
     const srcPath = ppath.join(srcDir, relativePath);
-    const entries = await baseFs.readdirPromise(srcPath, {withFileTypes: true});
+    const entries = await baseFs.readdirPromise(srcPath, { withFileTypes: true });
     const entryMap = new Map();
 
     for (const entry of entries) {
@@ -793,17 +885,19 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       let entryValue: DirEntry;
       const srcEntryPath = ppath.join(srcPath, entry.name);
       if (entry.isFile()) {
-        entryValue = {kind: DirEntryKind.FILE, mode: (await baseFs.lstatPromise(srcEntryPath)).mode};
+        entryValue = { kind: DirEntryKind.FILE, mode: (await baseFs.lstatPromise(srcEntryPath)).mode };
         if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL) {
-          const digest = await hashUtils.checksumFile(srcEntryPath, {baseFs, algorithm: `sha1`});
+          const digest = await hashUtils.checksumFile(srcEntryPath, { baseFs, algorithm: `sha1` });
           entryValue.digest = digest;
         }
       } else if (entry.isDirectory()) {
-        entryValue = {kind: DirEntryKind.DIRECTORY};
-      } else  if (entry.isSymbolicLink()) {
-        entryValue = {kind: DirEntryKind.SYMLINK, symlinkTo: await baseFs.readlinkPromise(srcEntryPath)};
+        entryValue = { kind: DirEntryKind.DIRECTORY };
+      } else if (entry.isSymbolicLink()) {
+        entryValue = { kind: DirEntryKind.SYMLINK, symlinkTo: await baseFs.readlinkPromise(srcEntryPath) };
       } else {
-        throw new Error(`Unsupported file type (file: ${srcEntryPath}, mode: 0o${await baseFs.statSync(srcEntryPath).mode.toString(8).padStart(6, `0`)})`);
+        throw new Error(
+          `Unsupported file type (file: ${srcEntryPath}, mode: 0o${await baseFs.statSync(srcEntryPath).mode.toString(8).padStart(6, `0`)})`,
+        );
       }
 
       entryMap.set(relativeEntryPath, entryValue);
@@ -820,9 +914,16 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
 
   let allEntries: Map<PortablePath, DirEntry>;
   if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && packageChecksum) {
-    const entriesJsonPath = ppath.join(globalHardlinksStore, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
+    const entriesJsonPath = ppath.join(
+      globalHardlinksStore,
+      packageChecksum.substring(0, 2) as Filename,
+      `${packageChecksum.substring(2)}.json` as Filename,
+    );
     try {
-      allEntries = new Map(Object.entries(JSON.parse(await xfs.readFilePromise(entriesJsonPath, `utf8`)))) as Map<PortablePath, DirEntry>;
+      allEntries = new Map(Object.entries(JSON.parse(await xfs.readFilePromise(entriesJsonPath, `utf8`)))) as Map<
+        PortablePath,
+        DirEntry
+      >;
     } catch (e) {
       allEntries = await getEntriesRecursive();
     }
@@ -835,10 +936,10 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
     const srcPath = ppath.join(srcDir, relativePath);
     const dstPath = ppath.join(dstDir, relativePath);
     if (entry.kind === DirEntryKind.DIRECTORY) {
-      await xfs.mkdirPromise(dstPath, {recursive: true});
+      await xfs.mkdirPromise(dstPath, { recursive: true });
     } else if (entry.kind === DirEntryKind.FILE) {
       const originalMtime = entry.mtimeMs;
-      await copyFilePromise({srcPath, dstPath, entry, nmMode, baseFs, globalHardlinksStore});
+      await copyFilePromise({ srcPath, dstPath, entry, nmMode, baseFs, globalHardlinksStore });
       if (entry.mtimeMs !== originalMtime) {
         mtimesChanged = true;
       }
@@ -848,9 +949,17 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
   }
 
   if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && mtimesChanged && packageChecksum) {
-    const entriesJsonPath = ppath.join(globalHardlinksStore, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
+    const entriesJsonPath = ppath.join(
+      globalHardlinksStore,
+      packageChecksum.substring(0, 2) as Filename,
+      `${packageChecksum.substring(2)}.json` as Filename,
+    );
     await xfs.removePromise(entriesJsonPath);
-    await atomicFileWrite(globalHardlinksStore, entriesJsonPath, Buffer.from(JSON.stringify(Object.fromEntries(allEntries))));
+    await atomicFileWrite(
+      globalHardlinksStore,
+      entriesJsonPath,
+      Buffer.from(JSON.stringify(Object.fromEntries(allEntries))),
+    );
   }
 };
 
@@ -863,13 +972,29 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
  *
  * @returns location tree and bin symlinks with modules, unavailable on disk, removed
  */
-function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: BinSymlinkMap, stateMtimeMs: number, project: Project): {locationTree: LocationTree, binSymlinks: BinSymlinkMap, locatorLocations: Map<LocatorKey, Set<PortablePath>>, installChangedByUser: boolean} {
+function syncPreinstallStateWithDisk(
+  locationTree: LocationTree,
+  binSymlinks: BinSymlinkMap,
+  stateMtimeMs: number,
+  project: Project,
+): {
+  locationTree: LocationTree;
+  binSymlinks: BinSymlinkMap;
+  locatorLocations: Map<LocatorKey, Set<PortablePath>>;
+  installChangedByUser: boolean;
+} {
   const refinedLocationTree: LocationTree = new Map();
   const refinedBinSymlinks = new Map();
   const locatorLocations = new Map();
   let installChangedByUser = false;
 
-  const syncNodeWithDisk = (parentPath: PortablePath, entry: Filename, parentNode: LocationNode, refinedNode: LocationNode, parentDiskEntries: Set<Filename>) => {
+  const syncNodeWithDisk = (
+    parentPath: PortablePath,
+    entry: Filename,
+    parentNode: LocationNode,
+    refinedNode: LocationNode,
+    parentDiskEntries: Set<Filename>,
+  ) => {
     let doesExistOnDisk = true;
     const entryPath = ppath.join(parentPath, entry);
     let childDiskEntries = new Set<Filename>();
@@ -878,8 +1003,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
       let stats;
       try {
         stats = xfs.statSync(entryPath);
-      } catch (e) {
-      }
+      } catch (e) {}
 
       doesExistOnDisk = !!stats;
 
@@ -898,8 +1022,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
         let binStats;
         try {
           binStats = xfs.statSync(binPath);
-        } catch (e) {
-        }
+        } catch (e) {}
 
         if (!binStats) {
           installChangedByUser = true;
@@ -925,8 +1048,8 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
 
     const node = parentNode.children.get(entry)!;
     if (doesExistOnDisk) {
-      const {linkType, locator} = node;
-      const childRefinedNode = {children: new Map(), linkType, locator};
+      const { linkType, locator } = node;
+      const childRefinedNode = { children: new Map(), linkType, locator };
       refinedNode.children.set(entry, childRefinedNode);
       if (locator) {
         const locations = miscUtils.getSetWithDefault(locatorLocations, locator);
@@ -943,8 +1066,8 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
   };
 
   for (const [workspaceRoot, node] of locationTree) {
-    const {linkType, locator} = node;
-    const refinedNode = {children: new Map(), linkType, locator};
+    const { linkType, locator } = node;
+    const refinedNode = { children: new Map(), linkType, locator };
     refinedLocationTree.set(workspaceRoot, refinedNode);
     if (locator) {
       const locations = miscUtils.getSetWithDefault(locatorLocations, node.locator);
@@ -957,23 +1080,25 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
     }
   }
 
-  return {locationTree: refinedLocationTree, binSymlinks: refinedBinSymlinks, locatorLocations, installChangedByUser};
+  return { locationTree: refinedLocationTree, binSymlinks: refinedBinSymlinks, locatorLocations, installChangedByUser };
 }
 
 function isLinkLocator(locatorKey: LocatorKey): boolean {
   let descriptor = structUtils.parseDescriptor(locatorKey);
-  if (structUtils.isVirtualDescriptor(descriptor))
-    descriptor = structUtils.devirtualizeDescriptor(descriptor);
+  if (structUtils.isVirtualDescriptor(descriptor)) descriptor = structUtils.devirtualizeDescriptor(descriptor);
 
   return descriptor.range.startsWith(`link:`);
 }
 
-async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: LoadManifest}) {
+async function createBinSymlinkMap(
+  installState: NodeModulesLocatorMap,
+  locationTree: LocationTree,
+  projectRoot: PortablePath,
+  { loadManifest }: { loadManifest: LoadManifest },
+) {
   const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
-  for (const [locatorKey, {locations}] of installState) {
-    const manifest = !isLinkLocator(locatorKey)
-      ? await loadManifest(locatorKey, locations[0])
-      : null;
+  for (const [locatorKey, { locations }] of installState) {
+    const manifest = !isLinkLocator(locatorKey) ? await loadManifest(locatorKey, locations[0]) : null;
 
     const bin = new Map();
     if (manifest) {
@@ -990,7 +1115,11 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 
   const binSymlinks: BinSymlinkMap = new Map();
 
-  const getBinSymlinks = (location: PortablePath, parentLocatorLocation: PortablePath, node: LocationNode): Map<Filename, PortablePath> => {
+  const getBinSymlinks = (
+    location: PortablePath,
+    parentLocatorLocation: PortablePath,
+    node: LocationNode,
+  ): Map<Filename, PortablePath> => {
     const symlinks = new Map();
     const internalPath = ppath.contains(projectRoot, location);
     if (node.locator && internalPath !== null) {
@@ -1028,15 +1157,12 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 }
 
 const areRealLocatorsEqual = (locatorKey1?: LocatorKey, locatorKey2?: LocatorKey) => {
-  if (!locatorKey1 || !locatorKey2)
-    return locatorKey1 === locatorKey2;
+  if (!locatorKey1 || !locatorKey2) return locatorKey1 === locatorKey2;
 
   let locator1 = structUtils.parseLocator(locatorKey1);
-  if (structUtils.isVirtualLocator(locator1))
-    locator1 = structUtils.devirtualizeLocator(locator1);
+  if (structUtils.isVirtualLocator(locator1)) locator1 = structUtils.devirtualizeLocator(locator1);
   let locator2 = structUtils.parseLocator(locatorKey2);
-  if (structUtils.isVirtualLocator(locator2))
-    locator2 = structUtils.devirtualizeLocator(locator2);
+  if (structUtils.isVirtualLocator(locator2)) locator2 = structUtils.devirtualizeLocator(locator2);
 
   return structUtils.areLocatorsEqual(locator1, locator2);
 };
@@ -1045,7 +1171,23 @@ export function getGlobalHardlinksStore(configuration: Configuration): PortableP
   return ppath.join(configuration.get(`globalFolder`), `store` as Filename);
 }
 
-async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
+async function persistNodeModules(
+  preinstallState: InstallState,
+  installState: NodeModulesLocatorMap,
+  {
+    baseFs,
+    project,
+    report,
+    loadManifest,
+    realLocatorChecksums,
+  }: {
+    project: Project;
+    baseFs: FakeFS<PortablePath>;
+    report: Report;
+    loadManifest: LoadManifest;
+    realLocatorChecksums: Map<LocatorHash, string | null>;
+  },
+) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
   const {
@@ -1053,19 +1195,40 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     binSymlinks: prevBinSymlinks,
     locatorLocations: prevLocatorLocations,
     installChangedByUser,
-  } = syncPreinstallStateWithDisk(preinstallState.locationTree, preinstallState.binSymlinks, preinstallState.mtimeMs, project);
+  } = syncPreinstallStateWithDisk(
+    preinstallState.locationTree,
+    preinstallState.binSymlinks,
+    preinstallState.mtimeMs,
+    project,
+  );
 
-  const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
+  const locationTree = buildLocationTree(installState, { skipPrefix: project.cwd });
 
   const addQueue: Array<Promise<void>> = [];
-  const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode},  windowsLinkType: WindowsLinkType, packageChecksum: string | null}) => {
+  const addModule = async ({
+    srcDir,
+    dstDir,
+    linkType,
+    globalHardlinksStore,
+    nmMode,
+    windowsLinkType,
+    packageChecksum,
+  }: {
+    srcDir: PortablePath;
+    dstDir: PortablePath;
+    linkType: LinkType;
+    globalHardlinksStore: PortablePath | null;
+    nmMode: { value: NodeModulesMode };
+    windowsLinkType: WindowsLinkType;
+    packageChecksum: string | null;
+  }) => {
     const promise: Promise<any> = (async () => {
       try {
         if (linkType === LinkType.SOFT) {
-          await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
+          await xfs.mkdirPromise(ppath.dirname(dstDir), { recursive: true });
           await symlinkPromise(ppath.resolve(srcDir), dstDir, windowsLinkType);
         } else {
-          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum});
+          await copyPromise(dstDir, srcDir, { baseFs, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum });
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
@@ -1080,28 +1243,37 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   };
 
-  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options: { nmMode: {value: NodeModulesMode}, innerLoop?: boolean }) => {
+  const cloneModule = async (
+    srcDir: PortablePath,
+    dstDir: PortablePath,
+    options: { nmMode: { value: NodeModulesMode }; innerLoop?: boolean },
+  ) => {
     const promise: Promise<any> = (async () => {
-      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options: { nmMode: {value: NodeModulesMode}, innerLoop?: boolean }) => {
+      const cloneDir = async (
+        srcDir: PortablePath,
+        dstDir: PortablePath,
+        options: { nmMode: { value: NodeModulesMode }; innerLoop?: boolean },
+      ) => {
         try {
-          if (!options.innerLoop)
-            await xfs.mkdirPromise(dstDir, {recursive: true});
+          if (!options.innerLoop) await xfs.mkdirPromise(dstDir, { recursive: true });
 
-          const entries = await xfs.readdirPromise(srcDir, {withFileTypes: true});
+          const entries = await xfs.readdirPromise(srcDir, { withFileTypes: true });
           for (const entry of entries) {
-            if ((!options.innerLoop) && entry.name === DOT_BIN)
-              continue;
+            if (!options.innerLoop && entry.name === DOT_BIN) continue;
 
             const src = ppath.join(srcDir, entry.name);
             const dst = ppath.join(dstDir, entry.name);
 
             if (entry.isDirectory()) {
               if (entry.name !== NODE_MODULES || (options && options.innerLoop)) {
-                await xfs.mkdirPromise(dst, {recursive: true});
-                await cloneDir(src, dst, {...options, innerLoop: true});
+                await xfs.mkdirPromise(dst, { recursive: true });
+                await cloneDir(src, dst, { ...options, innerLoop: true });
               }
             } else {
-              if (nmMode.value === NodeModulesMode.HARDLINKS_LOCAL || nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL) {
+              if (
+                nmMode.value === NodeModulesMode.HARDLINKS_LOCAL ||
+                nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL
+              ) {
                 await xfs.linkPromise(src, dst);
               } else {
                 await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
@@ -1109,8 +1281,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
             }
           }
         } catch (e) {
-          if (!options.innerLoop)
-            e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
+          if (!options.innerLoop) e.message = `While cloning ${srcDir} -> ${dstDir} ${e.message}`;
 
           throw e;
         } finally {
@@ -1131,10 +1302,11 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const removeOutdatedDirs = async (location: PortablePath, prevNode: LocationNode, node?: LocationNode) => {
     if (!node) {
       if (prevNode.children.has(NODE_MODULES))
-        await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: false});
+        await removeDir(ppath.join(location, NODE_MODULES), { contentsOnly: false });
 
-      const isRootNmLocation = ppath.basename(location) === NODE_MODULES && locationTree.has(ppath.join(ppath.dirname(location), ppath.sep));
-      await removeDir(location, {contentsOnly: location === rootNmDirPath, allowSymlink: isRootNmLocation});
+      const isRootNmLocation =
+        ppath.basename(location) === NODE_MODULES && locationTree.has(ppath.join(ppath.dirname(location), ppath.sep));
+      await removeDir(location, { contentsOnly: location === rootNmDirPath, allowSymlink: isRootNmLocation });
     } else {
       for (const [segment, prevChildNode] of prevNode.children) {
         const childNode = node.children.get(segment);
@@ -1148,8 +1320,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     const node = locationTree.get(location);
     for (const [segment, prevChildNode] of prevNode.children) {
       // '.' segment exists only for top-level locator, skip it
-      if (segment === `.`)
-        continue;
+      if (segment === `.`) continue;
       const childNode = node ? node.children.get(segment) : node;
       const dirPath = ppath.join(location, segment);
       await removeOutdatedDirs(dirPath, prevChildNode, childNode);
@@ -1159,16 +1330,16 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const cleanNewDirs = async (location: PortablePath, node: LocationNode, prevNode?: LocationNode) => {
     if (!prevNode) {
       // We want to clean only contents of top-level node_modules dir, since we need these dirs to be present
-      if (node.children.has(NODE_MODULES))
-        await removeDir(ppath.join(location, NODE_MODULES), {contentsOnly: true});
+      if (node.children.has(NODE_MODULES)) await removeDir(ppath.join(location, NODE_MODULES), { contentsOnly: true });
 
       // 1. If new directory is a symlink, we need to remove it fully
       // 2. If new directory is a hardlink - we just need to clean it up
-      const isRootNmLocation = ppath.basename(location) === NODE_MODULES && locationTree.has(ppath.join(ppath.dirname(location), ppath.sep));
-      await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD, allowSymlink: isRootNmLocation});
+      const isRootNmLocation =
+        ppath.basename(location) === NODE_MODULES && locationTree.has(ppath.join(ppath.dirname(location), ppath.sep));
+      await removeDir(location, { contentsOnly: node.linkType === LinkType.HARD, allowSymlink: isRootNmLocation });
     } else {
       if (!areRealLocatorsEqual(node.locator, prevNode.locator))
-        await removeDir(location, {contentsOnly: node.linkType === LinkType.HARD});
+        await removeDir(location, { contentsOnly: node.linkType === LinkType.HARD });
 
       for (const [segment, childNode] of node.children) {
         const prevChildNode = prevNode.children.get(segment);
@@ -1182,8 +1353,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     const prevNode = prevLocationTree.get(location);
     for (const [segment, childNode] of node.children) {
       // '.' segment exists only for top-level locator, skip it
-      if (segment === `.`)
-        continue;
+      if (segment === `.`) continue;
       const prevChildNode = prevNode ? prevNode.children.get(segment) : prevNode;
       await cleanNewDirs(ppath.join(location, segment), childNode, prevChildNode);
     }
@@ -1192,10 +1362,15 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const persistedLocations = new Map<PortablePath, PortablePath>();
 
   // Update changed locations
-  const addList: Array<{srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, realLocatorHash: LocatorHash}> = [];
+  const addList: Array<{
+    srcDir: PortablePath;
+    dstDir: PortablePath;
+    linkType: LinkType;
+    realLocatorHash: LocatorHash;
+  }> = [];
   for (const [prevLocator, locations] of prevLocatorLocations) {
     for (const location of locations) {
-      const {locationRoot, segments} = parseLocation(location, {
+      const { locationRoot, segments } = parseLocation(location, {
         skipPrefix: project.cwd,
       });
 
@@ -1222,9 +1397,8 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
             }
           } else if (srcDir !== dstDir) {
             let realLocator = structUtils.parseLocator(node.locator!);
-            if (structUtils.isVirtualLocator(realLocator))
-              realLocator = structUtils.devirtualizeLocator(realLocator);
-            addList.push({srcDir, dstDir, linkType, realLocatorHash: realLocator.locatorHash});
+            if (structUtils.isVirtualLocator(realLocator)) realLocator = structUtils.devirtualizeLocator(realLocator);
+            addList.push({ srcDir, dstDir, linkType, realLocatorHash: realLocator.locatorHash });
           }
         }
       }
@@ -1232,9 +1406,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   }
 
   // Add new locations
-  for (const [locator, {locations}] of installState.entries()) {
+  for (const [locator, { locations }] of installState.entries()) {
     for (const location of locations) {
-      const {locationRoot, segments} = parseLocation(location, {
+      const { locationRoot, segments } = parseLocation(location, {
         skipPrefix: project.cwd,
       });
 
@@ -1244,27 +1418,24 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
       const info = installState.get(locator)!;
       let realLocator = structUtils.parseLocator(locator);
-      if (structUtils.isVirtualLocator(realLocator))
-        realLocator = structUtils.devirtualizeLocator(realLocator);
+      if (structUtils.isVirtualLocator(realLocator)) realLocator = structUtils.devirtualizeLocator(realLocator);
       const realLocatorHash = realLocator.locatorHash;
       const srcDir = info.target;
       const dstDir = location;
-      if (srcDir === dstDir)
-        continue;
+      if (srcDir === dstDir) continue;
 
       const linkType = info.linkType;
 
-      for (const segment of segments)
-        node = node!.children.get(segment);
+      for (const segment of segments) node = node!.children.get(segment);
 
       if (!prevTreeNode) {
-        addList.push({srcDir, dstDir, linkType, realLocatorHash});
+        addList.push({ srcDir, dstDir, linkType, realLocatorHash });
       } else {
         for (const segment of segments) {
           curLocation = ppath.join(curLocation, segment);
           prevTreeNode = prevTreeNode.children.get(segment);
           if (!prevTreeNode) {
-            addList.push({srcDir, dstDir, linkType, realLocatorHash});
+            addList.push({ srcDir, dstDir, linkType, realLocatorHash });
             break;
           }
         }
@@ -1275,7 +1446,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const progress = Report.progressViaCounter(addList.length);
   const reportedProgress = report.reportProgress(progress);
   const nmModeSetting = project.configuration.get(`nmMode`);
-  const nmMode = {value: nmModeSetting};
+  const nmMode = { value: nmModeSetting };
   const windowsLinkType = project.configuration.get(`winLinkType`) as WindowsLinkType;
 
   try {
@@ -1283,9 +1454,12 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // source directory. We'll later use the resulting install directories for
     // the other instances of the same package (this will avoid us having to
     // crawl the zip archives for each package).
-    const globalHardlinksStore = nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL ? `${getGlobalHardlinksStore(project.configuration)}/v1` as PortablePath : null;
+    const globalHardlinksStore =
+      nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL
+        ? (`${getGlobalHardlinksStore(project.configuration)}/v1` as PortablePath)
+        : null;
     if (globalHardlinksStore) {
-      if (!await xfs.existsPromise(globalHardlinksStore)) {
+      if (!(await xfs.existsPromise(globalHardlinksStore))) {
         await xfs.mkdirpPromise(globalHardlinksStore);
         for (let idx = 0; idx < 256; idx++) {
           await xfs.mkdirPromise(ppath.join(globalHardlinksStore, idx.toString(16).padStart(2, `0`) as Filename));
@@ -1295,7 +1469,13 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     for (const entry of addList) {
       if (entry.linkType === LinkType.SOFT || !persistedLocations.has(entry.srcDir)) {
         persistedLocations.set(entry.srcDir, entry.dstDir);
-        await addModule({...entry, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum: realLocatorChecksums.get(entry.realLocatorHash) || null});
+        await addModule({
+          ...entry,
+          globalHardlinksStore,
+          nmMode,
+          windowsLinkType,
+          packageChecksum: realLocatorChecksums.get(entry.realLocatorHash) || null,
+        });
       }
     }
 
@@ -1306,32 +1486,42 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     for (const entry of addList) {
       const persistedDir = persistedLocations.get(entry.srcDir)!;
       if (entry.linkType !== LinkType.SOFT && entry.dstDir !== persistedDir) {
-        await cloneModule(persistedDir, entry.dstDir, {nmMode});
+        await cloneModule(persistedDir, entry.dstDir, { nmMode });
       }
     }
 
     await Promise.all(addQueue);
 
-    await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
+    await xfs.mkdirPromise(rootNmDirPath, { recursive: true });
 
-    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
+    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, { loadManifest });
     await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, windowsLinkType);
 
-    await writeInstallState(project, installState, binSymlinks, nmMode, {installChangedByUser});
+    await writeInstallState(project, installState, binSymlinks, nmMode, { installChangedByUser });
 
     if (nmModeSetting == NodeModulesMode.HARDLINKS_GLOBAL && nmMode.value == NodeModulesMode.HARDLINKS_LOCAL) {
-      report.reportWarningOnce(MessageName.NM_HARDLINKS_MODE_DOWNGRADED, `'nmMode' has been downgraded to 'hardlinks-local' due to global cache and install folder being on different devices`);
+      report.reportWarningOnce(
+        MessageName.NM_HARDLINKS_MODE_DOWNGRADED,
+        `'nmMode' has been downgraded to 'hardlinks-local' due to global cache and install folder being on different devices`,
+      );
     }
   } finally {
     reportedProgress.stop();
   }
 }
 
-async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlinks: BinSymlinkMap, projectCwd: PortablePath, windowsLinkType: WindowsLinkType) {
+async function persistBinSymlinks(
+  previousBinSymlinks: BinSymlinkMap,
+  binSymlinks: BinSymlinkMap,
+  projectCwd: PortablePath,
+  windowsLinkType: WindowsLinkType,
+) {
   // Delete outdated .bin folders
   for (const location of previousBinSymlinks.keys()) {
     if (ppath.contains(projectCwd, location) === null)
-      throw new Error(`Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`);
+      throw new Error(
+        `Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`,
+      );
     if (!binSymlinks.has(location)) {
       const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
       await xfs.removePromise(binDir);
@@ -1340,10 +1530,12 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
 
   for (const [location, symlinks] of binSymlinks) {
     if (ppath.contains(projectCwd, location) === null)
-      throw new Error(`Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`);
+      throw new Error(
+        `Assertion failed. Excepted bin symlink location to be inside project dir, instead it was at ${location}`,
+      );
     const binDir = ppath.join(location, NODE_MODULES, DOT_BIN);
     const prevSymlinks = previousBinSymlinks.get(location) || new Map();
-    await xfs.mkdirPromise(binDir, {recursive: true});
+    await xfs.mkdirPromise(binDir, { recursive: true });
     for (const name of prevSymlinks.keys()) {
       if (!symlinks.has(name)) {
         // Remove outdated symlinks
@@ -1358,11 +1550,10 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
       const prevTarget = prevSymlinks.get(name);
       const symlinkPath = ppath.join(binDir, name);
       // Skip unchanged .bin symlinks
-      if (prevTarget === target)
-        continue;
+      if (prevTarget === target) continue;
 
       if (process.platform === `win32`) {
-        await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
+        await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), { createPwshFile: false });
       } else {
         await xfs.removePromise(symlinkPath);
         await symlinkPromise(target, symlinkPath, windowsLinkType);

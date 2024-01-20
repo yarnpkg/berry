@@ -1,8 +1,8 @@
-import {NoParamCallback}           from 'fs';
+import { NoParamCallback } from "fs";
 
-import {Dir, DirentNoPath, FakeFS} from '../FakeFS';
-import * as errors                 from '../errors';
-import {Filename, Path}            from '../path';
+import { Dir, DirentNoPath, FakeFS } from "../FakeFS";
+import * as errors from "../errors";
+import { Filename, Path } from "../path";
 
 export type CustomDirOptions = {
   onClose?: () => void;
@@ -23,7 +23,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
     }
   }
 
-  async * [Symbol.asyncIterator]() {
+  async *[Symbol.asyncIterator]() {
     try {
       let dirent: DirentNoPath | null;
       // eslint-disable-next-line no-cond-assign
@@ -40,8 +40,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
   read(cb?: (err: NodeJS.ErrnoException | null, dirent: DirentNoPath | null) => void) {
     const dirent = this.readSync();
 
-    if (typeof cb !== `undefined`)
-      return cb(null, dirent);
+    if (typeof cb !== `undefined`) return cb(null, dirent);
 
     return Promise.resolve(dirent);
   }
@@ -57,8 +56,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
   close(cb?: NoParamCallback) {
     this.closeSync();
 
-    if (typeof cb !== `undefined`)
-      return cb(null);
+    if (typeof cb !== `undefined`) return cb(null);
 
     return Promise.resolve();
   }
@@ -74,8 +72,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
 export function opendir<P extends Path>(fakeFs: FakeFS<P>, path: P, entries: Array<Filename>, opts?: CustomDirOptions) {
   const nextDirent = () => {
     const filename = entries.shift();
-    if (typeof filename === `undefined`)
-      return null;
+    if (typeof filename === `undefined`) return null;
 
     const entryPath = fakeFs.pathUtils.join(path, filename);
 

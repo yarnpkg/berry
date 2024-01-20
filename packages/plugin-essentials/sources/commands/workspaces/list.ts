@@ -1,13 +1,11 @@
-import {BaseCommand}                                                                        from '@yarnpkg/cli';
-import {Configuration, Manifest, Project, StreamReport, structUtils, Descriptor, Workspace} from '@yarnpkg/core';
-import {gitUtils}                                                                           from '@yarnpkg/plugin-git';
-import {Command, Option, Usage}                                                             from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration, Manifest, Project, StreamReport, structUtils, Descriptor, Workspace } from "@yarnpkg/core";
+import { gitUtils } from "@yarnpkg/plugin-git";
+import { Command, Option, Usage } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesListCommand extends BaseCommand {
-  static paths = [
-    [`workspaces`, `list`],
-  ];
+  static paths = [[`workspaces`, `list`]];
 
   static usage: Usage = Command.Usage({
     category: `Workspace-related commands`,
@@ -48,71 +46,70 @@ export default class WorkspacesListCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project} = await Project.find(configuration, this.context.cwd);
+    const { project } = await Project.find(configuration, this.context.cwd);
 
-    const report = await StreamReport.start({
-      configuration,
-      json: this.json,
-      stdout: this.context.stdout,
-    }, async report => {
-      const candidates = this.since
-        ? await gitUtils.fetchChangedWorkspaces({ref: this.since, project})
-        : project.workspaces;
+    const report = await StreamReport.start(
+      {
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+      },
+      async (report) => {
+        const candidates = this.since
+          ? await gitUtils.fetchChangedWorkspaces({ ref: this.since, project })
+          : project.workspaces;
 
-      const workspaces = new Set(candidates);
-      if (this.recursive)
-        for (const dependents of [...candidates].map(candidate => candidate.getRecursiveWorkspaceDependents()))
-          for (const dependent of dependents)
-            workspaces.add(dependent);
+        const workspaces = new Set(candidates);
+        if (this.recursive)
+          for (const dependents of [...candidates].map((candidate) => candidate.getRecursiveWorkspaceDependents()))
+            for (const dependent of dependents) workspaces.add(dependent);
 
-      for (const workspace of workspaces) {
-        const {manifest} = workspace;
+        for (const workspace of workspaces) {
+          const { manifest } = workspace;
 
-        if (manifest.private && this.noPrivate)
-          continue;
+          if (manifest.private && this.noPrivate) continue;
 
-        let extra;
-        if (this.verbose) {
-          const workspaceDependencies = new Set<Workspace>();
-          const mismatchedWorkspaceDependencies = new Set<Descriptor>();
+          let extra;
+          if (this.verbose) {
+            const workspaceDependencies = new Set<Workspace>();
+            const mismatchedWorkspaceDependencies = new Set<Descriptor>();
 
-          for (const dependencyType of Manifest.hardDependencies) {
-            for (const [identHash, descriptor]  of manifest.getForScope(dependencyType)) {
-              const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
+            for (const dependencyType of Manifest.hardDependencies) {
+              for (const [identHash, descriptor] of manifest.getForScope(dependencyType)) {
+                const matchingWorkspace = project.tryWorkspaceByDescriptor(descriptor);
 
-              if (matchingWorkspace === null) {
-                if (project.workspacesByIdent.has(identHash)) {
-                  mismatchedWorkspaceDependencies.add(descriptor);
+                if (matchingWorkspace === null) {
+                  if (project.workspacesByIdent.has(identHash)) {
+                    mismatchedWorkspaceDependencies.add(descriptor);
+                  }
+                } else {
+                  workspaceDependencies.add(matchingWorkspace);
                 }
-              } else {
-                workspaceDependencies.add(matchingWorkspace);
               }
             }
+
+            extra = {
+              workspaceDependencies: Array.from(workspaceDependencies).map((workspace) => {
+                return workspace.relativeCwd;
+              }),
+
+              mismatchedWorkspaceDependencies: Array.from(mismatchedWorkspaceDependencies).map((descriptor) => {
+                return structUtils.stringifyDescriptor(descriptor);
+              }),
+            };
           }
 
-          extra = {
-            workspaceDependencies: Array.from(workspaceDependencies).map(workspace => {
-              return workspace.relativeCwd;
-            }),
+          report.reportInfo(null, `${workspace.relativeCwd}`);
+          report.reportJson({
+            location: workspace.relativeCwd,
 
-            mismatchedWorkspaceDependencies: Array.from(mismatchedWorkspaceDependencies).map(descriptor => {
-              return structUtils.stringifyDescriptor(descriptor);
-            }),
-          };
+            name: manifest.name ? structUtils.stringifyIdent(manifest.name) : null,
+
+            ...extra,
+          });
         }
-
-        report.reportInfo(null, `${workspace.relativeCwd}`);
-        report.reportJson({
-          location: workspace.relativeCwd,
-
-          name: manifest.name
-            ? structUtils.stringifyIdent(manifest.name)
-            : null,
-
-          ...extra,
-        });
-      }
-    });
+      },
+    );
 
     return report.exitCode();
   }

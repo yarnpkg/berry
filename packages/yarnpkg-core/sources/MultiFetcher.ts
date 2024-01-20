@@ -1,8 +1,8 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions} from './Fetcher';
-import {MessageName}                                from './MessageName';
-import {ReportError}                                from './Report';
-import * as structUtils                             from './structUtils';
-import {Locator}                                    from './types';
+import { Fetcher, FetchOptions, MinimalFetchOptions } from "./Fetcher";
+import { MessageName } from "./MessageName";
+import { ReportError } from "./Report";
+import * as structUtils from "./structUtils";
+import { Locator } from "./types";
 
 export class MultiFetcher implements Fetcher {
   private readonly fetchers: Array<Fetcher>;
@@ -12,8 +12,7 @@ export class MultiFetcher implements Fetcher {
   }
 
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!this.tryFetcher(locator, opts))
-      return false;
+    if (!this.tryFetcher(locator, opts)) return false;
 
     return true;
   }
@@ -31,19 +30,21 @@ export class MultiFetcher implements Fetcher {
   }
 
   private tryFetcher(locator: Locator, opts: MinimalFetchOptions) {
-    const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator, opts));
+    const fetcher = this.fetchers.find((fetcher) => fetcher.supports(locator, opts));
 
-    if (!fetcher)
-      return null;
+    if (!fetcher) return null;
 
     return fetcher;
   }
 
   private getFetcher(locator: Locator, opts: MinimalFetchOptions) {
-    const fetcher = this.fetchers.find(fetcher => fetcher.supports(locator, opts));
+    const fetcher = this.fetchers.find((fetcher) => fetcher.supports(locator, opts));
 
     if (!fetcher)
-      throw new ReportError(MessageName.FETCHER_NOT_FOUND, `${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available fetcher`);
+      throw new ReportError(
+        MessageName.FETCHER_NOT_FOUND,
+        `${structUtils.prettyLocator(opts.project.configuration, locator)} isn't supported by any available fetcher`,
+      );
 
     return fetcher;
   }

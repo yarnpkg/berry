@@ -41,13 +41,13 @@ If Babel had instead defined Lodash 1 as its own dependency, the package manager
 
 - If your package is a plugin (for example `babel-plugin-transform-commonjs`) and the missing dependency is the core (for example `babel-core`), you would need to instead register the dependency inside the [`peerDependencies` field](/configuration/manifest#peerDependencies).
 
-- If your package is something that automatically loads plugins (for example `eslint`), peer dependencies obviously aren't an option as you can't reasonably list all plugins. Instead, you should use the [`createRequire` function](https://nodejs.org/api/module.html#module_module_createrequire_filename) (or its [polyfill](https://github.com/nuxt-contrib/create-require)) to load plugins *on behalf of* the configuration file that lists the plugins to load - be it the package.json or a custom one like the `.eslintrc.js` file.
+- If your package is something that automatically loads plugins (for example `eslint`), peer dependencies obviously aren't an option as you can't reasonably list all plugins. Instead, you should use the [`createRequire` function](https://nodejs.org/api/module.html#module_module_createrequire_filename) (or its [polyfill](https://github.com/nuxt-contrib/create-require)) to load plugins _on behalf of_ the configuration file that lists the plugins to load - be it the package.json or a custom one like the `.eslintrc.js` file.
 
 - If your package only requires the dependency in specific cases that the user control (for example `mikro-orm` which only depends on `sqlite3` if the consumer actually uses a SQLite3 database), use the [`peerDependenciesMeta` field](/configuration/manifest#peerDependenciesMeta.optional) to declare the peer dependency as optional and silence any warning when unmet.
 
 - If your package is a meta-package of utilities (for example Next.js, which itself depends on Webpack so that its consumers don't have to do it), the situation is a bit complicated and you have two different options:
 
-  - The preferred one is to list the dependency (in Next.js's case, `webpack`) as *both a regular dependency and a peer dependency*. Yarn will interpret this pattern as "peer dependency with a default", meaning that your users will be able to take ownership of the Webpack package if they need to, while still giving the package manager the ability to emit a warning if the provided version is incompatible with the one your package expects.
+  - The preferred one is to list the dependency (in Next.js's case, `webpack`) as _both a regular dependency and a peer dependency_. Yarn will interpret this pattern as "peer dependency with a default", meaning that your users will be able to take ownership of the Webpack package if they need to, while still giving the package manager the ability to emit a warning if the provided version is incompatible with the one your package expects.
 
   - An alternative is to instead re-export the dependency as part of your public API. For example, Next could expose a `next/webpack` file that would only contain `module.exports = require('webpack')`, and consumers would require that instead of the typical `webpack` module. This isn't the recommended approach, however, because it wouldn't play well with plugins that expect Webpack to be a peer dependency (they wouldn't know that they need to use this `next/webpack` module instead).
 
@@ -65,7 +65,7 @@ const data = fs.readFileSync(require.resolve(`my-dep/package.json`));
 If you need to access one of your dependencies' dependency (we really don't recommend that, but in some fringe cases it may happen), instead of hardcoding the `node_modules` path, use the [`createRequire`](https://nodejs.org/api/module.html#module_module_createrequire_filename) function:
 
 ```ts
-const {createRequire} = require(`module`);
+const { createRequire } = require(`module`);
 const firstDepReq = createRequire(require.resolve(`my-dep/package.json`));
 const secondDep = firstDepReq(`transitive-dep`);
 ```

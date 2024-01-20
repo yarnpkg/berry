@@ -1,6 +1,6 @@
-import {PortablePath, Filename} from '@yarnpkg/fslib';
-import {npath, ppath}           from '@yarnpkg/fslib';
-import {NodeModulesTree}        from '@yarnpkg/nm';
+import { PortablePath, Filename } from "@yarnpkg/fslib";
+import { npath, ppath } from "@yarnpkg/fslib";
+import { NodeModulesTree } from "@yarnpkg/nm";
 
 const NODE_MODULES = `node_modules`;
 
@@ -48,7 +48,6 @@ export interface ResolvedPath {
   isSymlink?: boolean;
 }
 
-
 /**
  * Resolves paths containing `/node_modules` inside PnP projects. If path is outside PnP
  * project it is not changed.
@@ -58,12 +57,11 @@ export interface ResolvedPath {
  * @returns resolved path
  */
 export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree: NodeModulesTree): ResolvedPath => {
-  const result: ResolvedPath = {resolvedPath: inputPath};
+  const result: ResolvedPath = { resolvedPath: inputPath };
   const segments = inputPath.split(ppath.sep);
 
   const firstIdx = segments.indexOf(NODE_MODULES);
-  if (firstIdx < 0)
-    return result;
+  if (firstIdx < 0) return result;
   let lastIdx = segments.lastIndexOf(NODE_MODULES);
   if (typeof segments[lastIdx + 1] !== `undefined`)
     // We have the situation .../node_modules/{something or @something}
@@ -84,8 +82,7 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
     locationCandidate = ppath.join(locationCandidate, curSegment);
     node = nodeModulesTree.get(locationCandidate);
     if (node) {
-      if ((node as any).linkType === LinkType.SOFT)
-        locationCandidate = (node as any).target;
+      if ((node as any).linkType === LinkType.SOFT) locationCandidate = (node as any).target;
       lastNode = node;
       request = PortablePath.dot;
       lastNodeLocation = node.dirList ? locationCandidate : (node as any).target;
@@ -96,7 +93,7 @@ export const resolveNodeModulesPath = (inputPath: PortablePath, nodeModulesTree:
     curIdx++;
   }
 
-  request = ppath.join(request, ...segments.slice(lastIdx + 1).map(x => x as Filename));
+  request = ppath.join(request, ...segments.slice(lastIdx + 1).map((x) => x as Filename));
 
   if (lastNode) {
     if (!lastNode.dirList || request !== PortablePath.dot) {

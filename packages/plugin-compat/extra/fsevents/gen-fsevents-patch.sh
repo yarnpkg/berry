@@ -52,3 +52,6 @@ cat "$THIS_DIR"/fsevents-1.2.11.patch \
   > "$TEMP_DIR"/fsevents.patch
 
 node "$THIS_DIR/../createPatch.js" "$TEMP_DIR"/fsevents.patch "$THIS_DIR"/../../sources/patches/fsevents.patch.ts
+
+cd "$THIS_DIR"
+yarn run -T prettier --write "$THIS_DIR"/../../sources/patches/fsevents.patch.ts

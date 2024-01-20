@@ -1,13 +1,13 @@
-import {FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath, VirtualFS} from '@yarnpkg/fslib';
-import fs                                                                     from 'fs';
-import {Module, isBuiltin}                                                    from 'module';
-import {fileURLToPath}                                                        from 'url';
+import { FakeFS, PosixFS, npath, patchFs, PortablePath, NativePath, VirtualFS } from "@yarnpkg/fslib";
+import fs from "fs";
+import { Module, isBuiltin } from "module";
+import { fileURLToPath } from "url";
 
-import {PnpApi}                                                               from '../types';
+import { PnpApi } from "../types";
 
-import {ErrorCode, makeError, getIssuerModule}                                from './internalTools';
-import {Manager}                                                              from './makeManager';
-import * as nodeUtils                                                         from './nodeUtils';
+import { ErrorCode, makeError, getIssuerModule } from "./internalTools";
+import { Manager } from "./makeManager";
+import * as nodeUtils from "./nodeUtils";
 
 export type ApplyPatchOptions = {
   fakeFs: FakeFS<PortablePath>;
@@ -35,13 +35,10 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   const moduleExports = require(`module`);
 
   moduleExports.findPnpApi = (lookupSource: URL | NativePath) => {
-    const lookupPath = lookupSource instanceof URL
-      ? fileURLToPath(lookupSource)
-      : lookupSource;
+    const lookupPath = lookupSource instanceof URL ? fileURLToPath(lookupSource) : lookupSource;
 
     const apiPath = opts.manager.findApiPathFor(lookupPath);
-    if (apiPath === null)
-      return null;
+    if (apiPath === null) return null;
 
     const apiEntry = opts.manager.getApiEntry(apiPath, true);
     // Check if the path is ignored
@@ -51,14 +48,13 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   function getRequireStack(parent: NodeModule | null | undefined) {
     const requireStack = [];
 
-    for (let cursor = parent; cursor; cursor = cursor.parent)
-      requireStack.push(cursor.filename || cursor.id);
+    for (let cursor = parent; cursor; cursor = cursor.parent) requireStack.push(cursor.filename || cursor.id);
 
     return requireStack;
   }
 
   const originalModuleLoad = Module._load;
-  Module._load = function(request: string, parent: NodeModule | null | undefined, isMain: boolean) {
+  Module._load = function (request: string, parent: NodeModule | null | undefined, isMain: boolean) {
     // The 'pnpapi' name is reserved to return the PnP api currently in use by the program
     if (request === `pnpapi`) {
       const parentApiPath = opts.manager.getApiPathFromParent(parent);
@@ -78,7 +74,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   };
 
   function getIssuerSpecsFromPaths(paths: Array<NativePath>): Array<IssuerSpec> {
-    return paths.map(path => ({
+    return paths.map((path) => ({
       apiPath: opts.manager.findApiPathFor(path),
       path,
       module: null,
@@ -86,12 +82,21 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   }
 
   function getIssuerSpecsFromModule(module: NodeModule | null | undefined): Array<IssuerSpec> {
-    if (module && module.id !== `<repl>` && module.id !== `internal/preload` && !module.parent && !module.filename && module.paths.length > 0) {
-      return [{
-        apiPath: opts.manager.findApiPathFor(module.paths[0]),
-        path: module.paths[0],
-        module,
-      }];
+    if (
+      module &&
+      module.id !== `<repl>` &&
+      module.id !== `internal/preload` &&
+      !module.parent &&
+      !module.filename &&
+      module.paths.length > 0
+    ) {
+      return [
+        {
+          apiPath: opts.manager.findApiPathFor(module.paths[0]),
+          path: module.paths[0],
+          module,
+        },
+      ];
     }
 
     const issuer = getIssuerModule(module);
@@ -100,15 +105,14 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       const path = npath.dirname(issuer.filename);
       const apiPath = opts.manager.getApiPathFromParent(issuer);
 
-      return [{apiPath, path, module}];
+      return [{ apiPath, path, module }];
     } else {
       const path = process.cwd();
 
       const apiPath =
-        opts.manager.findApiPathFor(npath.join(path, `[file]`)) ??
-        opts.manager.getApiPathFromParent(null);
+        opts.manager.findApiPathFor(npath.join(path, `[file]`)) ?? opts.manager.getApiPathFromParent(null);
 
-      return [{apiPath, path, module}];
+      return [{ apiPath, path, module }];
     }
   }
 
@@ -126,15 +130,18 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
   const originalModuleResolveFilename = Module._resolveFilename;
 
-  Module._resolveFilename = function(request: string, parent: (NodeModule & {pnpApiPath?: PortablePath}) | null | undefined, isMain: boolean, options?: {[key: string]: any}) {
-    if (isBuiltin(request))
-      return request;
+  Module._resolveFilename = function (
+    request: string,
+    parent: (NodeModule & { pnpApiPath?: PortablePath }) | null | undefined,
+    isMain: boolean,
+    options?: { [key: string]: any },
+  ) {
+    if (isBuiltin(request)) return request;
 
-    if (!enableNativeHooks)
-      return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
+    if (!enableNativeHooks) return originalModuleResolveFilename.call(Module, request, parent, isMain, options);
 
     if (options && options.plugnplay === false) {
-      const {plugnplay, ...forwardedOptions} = options;
+      const { plugnplay, ...forwardedOptions } = options;
 
       try {
         enableNativeHooks = false;
@@ -160,14 +167,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       }
     }
 
-    const issuerSpecs = options && options.paths
-      ? getIssuerSpecsFromPaths(options.paths)
-      : getIssuerSpecsFromModule(parent);
+    const issuerSpecs =
+      options && options.paths ? getIssuerSpecsFromPaths(options.paths) : getIssuerSpecsFromModule(parent);
 
     if (request.match(pathRegExp) === null) {
-      const parentDirectory = parent?.filename != null
-        ? npath.dirname(parent.filename)
-        : null;
+      const parentDirectory = parent?.filename != null ? npath.dirname(parent.filename) : null;
 
       const absoluteRequest = npath.isAbsolute(request)
         ? request
@@ -176,9 +180,10 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
           : null;
 
       if (absoluteRequest !== null) {
-        const apiPath = parent && parentDirectory === npath.dirname(absoluteRequest)
-          ? opts.manager.getApiPathFromParent(parent)
-          : opts.manager.findApiPathFor(absoluteRequest);
+        const apiPath =
+          parent && parentDirectory === npath.dirname(absoluteRequest)
+            ? opts.manager.getApiPathFromParent(parent)
+            : opts.manager.findApiPathFor(absoluteRequest);
 
         if (apiPath !== null) {
           issuerSpecs.unshift({
@@ -192,19 +197,16 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
     let firstError;
 
-    for (const {apiPath, path, module} of issuerSpecs) {
+    for (const { apiPath, path, module } of issuerSpecs) {
       let resolution;
 
-      const issuerApi = apiPath !== null
-        ? opts.manager.getApiEntry(apiPath, true).instance
-        : null;
+      const issuerApi = apiPath !== null ? opts.manager.getApiEntry(apiPath, true).instance : null;
 
       try {
         if (issuerApi !== null) {
           resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
         } else {
-          if (path === null)
-            throw new Error(`Assertion failed: Expected the path to be set`);
+          if (path === null) throw new Error(`Assertion failed: Expected the path to be set`);
 
           resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain);
         }
@@ -227,30 +229,24 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       value: requireStack,
     });
 
-    if (requireStack.length > 0)
-      firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
+    if (requireStack.length > 0) firstError.message += `\nRequire stack:\n- ${requireStack.join(`\n- `)}`;
 
-    if (typeof firstError.pnpCode === `string`)
-      Error.captureStackTrace(firstError);
+    if (typeof firstError.pnpCode === `string`) Error.captureStackTrace(firstError);
 
     throw firstError;
   };
 
   const originalFindPath = Module._findPath;
 
-  Module._findPath = function(request: string, paths: Array<string> | null | undefined, isMain: boolean) {
-    if (request === `pnpapi`)
-      return false;
+  Module._findPath = function (request: string, paths: Array<string> | null | undefined, isMain: boolean) {
+    if (request === `pnpapi`) return false;
 
-    if (!enableNativeHooks)
-      return originalFindPath.call(Module, request, paths, isMain);
+    if (!enableNativeHooks) return originalFindPath.call(Module, request, paths, isMain);
 
     // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L490-L494
     const isAbsolute = npath.isAbsolute(request);
-    if (isAbsolute)
-      paths = [``];
-    else if (!paths || paths.length === 0)
-      return false;
+    if (isAbsolute) paths = [``];
+    else if (!paths || paths.length === 0) return false;
 
     for (const path of paths) {
       let resolution: string | false;

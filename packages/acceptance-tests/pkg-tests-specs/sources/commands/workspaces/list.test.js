@@ -1,7 +1,7 @@
 const {
-  exec: {execFile},
-  fs: {writeJson},
-  misc: {parseJsonStream},
+  exec: { execFile },
+  fs: { writeJson },
+  misc: { parseJsonStream },
 } = require(`pkg-tests-core`);
 
 describe(`Commands`, () => {
@@ -13,7 +13,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await writeJson(`${path}/packages/workspace-a/package.json`, {
             name: `workspace-a`,
             version: `1.0.0`,
@@ -24,10 +24,7 @@ describe(`Commands`, () => {
             version: `1.0.0`,
           });
 
-          await expect(parseJsonStream(
-            (await run(`workspaces`, `list`, `-v`, `--json`)).stdout,
-            `location`,
-          )).toEqual({
+          await expect(parseJsonStream((await run(`workspaces`, `list`, `-v`, `--json`)).stdout, `location`)).toEqual({
             [`.`]: {
               location: `.`,
               name: null,
@@ -58,7 +55,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await writeJson(`${path}/packages/workspace-a/package.json`, {
             name: `workspace-a`,
             version: `1.0.0`,
@@ -75,10 +72,7 @@ describe(`Commands`, () => {
             },
           });
 
-          await expect(parseJsonStream(
-            (await run(`workspaces`, `list`, `-v`, `--json`)).stdout,
-            `location`,
-          )).toEqual({
+          await expect(parseJsonStream((await run(`workspaces`, `list`, `-v`, `--json`)).stdout, `location`)).toEqual({
             [`.`]: {
               location: `.`,
               name: null,
@@ -109,7 +103,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await writeJson(`${path}/packages/workspace-a/package.json`, {
             name: `workspace-a`,
             version: `1.0.0`,
@@ -123,10 +117,7 @@ describe(`Commands`, () => {
             version: `1.0.0`,
           });
 
-          await expect(parseJsonStream(
-            (await run(`workspaces`, `list`, `-v`, `--json`)).stdout,
-            `location`,
-          )).toEqual({
+          await expect(parseJsonStream((await run(`workspaces`, `list`, `-v`, `--json`)).stdout, `location`)).toEqual({
             [`.`]: {
               location: `.`,
               name: null,
@@ -152,55 +143,52 @@ describe(`Commands`, () => {
 
     test(
       `--since returns no workspaces if there have been no changes`,
-      makeWorkspacesListSinceEnv(async ({run}) => {
-        await expect(
-          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout.trim(),
-        ).toEqual(``);
+      makeWorkspacesListSinceEnv(async ({ run }) => {
+        await expect((await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout.trim()).toEqual(``);
       }),
     );
 
     test(
       `--no-private excludes private workspaces`,
-      makeTemporaryEnv({
-        private: true,
-        workspaces: [`packages/*`],
-      }, async ({run, path}) => {
-        await writeJson(`${path}/packages/workspace-a/package.json`, {
-          name: `workspace-a`,
+      makeTemporaryEnv(
+        {
           private: true,
-          version: `1.0.0`,
-        });
+          workspaces: [`packages/*`],
+        },
+        async ({ run, path }) => {
+          await writeJson(`${path}/packages/workspace-a/package.json`, {
+            name: `workspace-a`,
+            private: true,
+            version: `1.0.0`,
+          });
 
-        await writeJson(`${path}/packages/workspace-b/package.json`, {
-          name: `workspace-b`,
-          version: `1.0.0`,
-        });
-
-        await expect(
-          parseJsonStream(
-            (await run(`workspaces`, `list`, `-v`, `--no-private`, `--json`)).stdout,
-            `location`,
-          ),
-        ).toEqual({
-          [`packages/workspace-b`]: {
-            location: `packages/workspace-b`,
+          await writeJson(`${path}/packages/workspace-b/package.json`, {
             name: `workspace-b`,
-            workspaceDependencies: [],
-            mismatchedWorkspaceDependencies: [],
-          },
-        });
-      }),
+            version: `1.0.0`,
+          });
+
+          await expect(
+            parseJsonStream((await run(`workspaces`, `list`, `-v`, `--no-private`, `--json`)).stdout, `location`),
+          ).toEqual({
+            [`packages/workspace-b`]: {
+              location: `packages/workspace-b`,
+              name: `workspace-b`,
+              workspaceDependencies: [],
+              mismatchedWorkspaceDependencies: [],
+            },
+          });
+        },
+      ),
     );
 
     test(
       `--since returns only changed workspaces`,
-      makeWorkspacesListSinceEnv(async ({path, run}) => {
+      makeWorkspacesListSinceEnv(async ({ path, run }) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
-        await expect(parseJsonStream(
-          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout,
-          `location`,
-        )).toEqual({
+        await expect(
+          parseJsonStream((await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout, `location`),
+        ).toEqual({
           [`packages/workspace-a`]: {
             location: `packages/workspace-a`,
             name: `workspace-a`,
@@ -213,21 +201,19 @@ describe(`Commands`, () => {
 
     test(
       `--since returns no workspaces if there are no staged or unstaged changes on the default branch`,
-      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+      makeWorkspacesListSinceEnv(async ({ git, path, run }) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
         await git(`add`, `.`);
         await git(`commit`, `-m`, `wip`);
 
-        await expect(
-          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout.trim(),
-        ).toEqual(``);
+        await expect((await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout.trim()).toEqual(``);
       }),
     );
 
     test(
       `--since returns workspaces changed since commit`,
-      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+      makeWorkspacesListSinceEnv(async ({ git, path, run }) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
         await git(`add`, `.`);
@@ -244,10 +230,9 @@ describe(`Commands`, () => {
           version: `1.0.0`,
         });
 
-        await expect(parseJsonStream(
-          (await run(`workspaces`, `list`, `--since=${ref}`, `-v`, `--json`)).stdout,
-          `location`,
-        )).toEqual({
+        await expect(
+          parseJsonStream((await run(`workspaces`, `list`, `--since=${ref}`, `-v`, `--json`)).stdout, `location`),
+        ).toEqual({
           [`packages/workspace-b`]: {
             location: `packages/workspace-b`,
             name: `workspace-b`,
@@ -266,7 +251,7 @@ describe(`Commands`, () => {
 
     test(
       `--since returns workspaces changed since branching from the default branch`,
-      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+      makeWorkspacesListSinceEnv(async ({ git, path, run }) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
         await git(`add`, `.`);
@@ -276,25 +261,19 @@ describe(`Commands`, () => {
         await writeJson(`${path}/packages/workspace-b/delta.json`, {});
         await writeJson(`${path}/packages/workspace-c/delta.json`, {});
 
-        await expect(parseJsonStream(
-          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout,
-          `location`,
-        )).toEqual({
+        await expect(
+          parseJsonStream((await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout, `location`),
+        ).toEqual({
           [`packages/workspace-b`]: {
             location: `packages/workspace-b`,
             name: `workspace-b`,
-            workspaceDependencies: [
-              `packages/workspace-a`,
-              `packages/workspace-c`,
-            ],
+            workspaceDependencies: [`packages/workspace-a`, `packages/workspace-c`],
             mismatchedWorkspaceDependencies: [],
           },
           [`packages/workspace-c`]: {
             location: `packages/workspace-c`,
             name: `workspace-c`,
-            workspaceDependencies: [
-              `packages/workspace-a`,
-            ],
+            workspaceDependencies: [`packages/workspace-a`],
             mismatchedWorkspaceDependencies: [],
           },
         });
@@ -303,13 +282,15 @@ describe(`Commands`, () => {
 
     test(
       `--since --recursive returns workspaces changed and their dependents`,
-      makeWorkspacesListSinceEnv(async ({git, path, run}) => {
+      makeWorkspacesListSinceEnv(async ({ git, path, run }) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
-        await expect(parseJsonStream(
-          (await run(`workspaces`, `list`, `--since`, `--recursive`, `-v`, `--json`)).stdout,
-          `location`,
-        )).toEqual({
+        await expect(
+          parseJsonStream(
+            (await run(`workspaces`, `list`, `--since`, `--recursive`, `-v`, `--json`)).stdout,
+            `location`,
+          ),
+        ).toEqual({
           [`packages/workspace-a`]: {
             location: `packages/workspace-a`,
             name: `workspace-a`,
@@ -319,42 +300,31 @@ describe(`Commands`, () => {
           [`packages/workspace-b`]: {
             location: `packages/workspace-b`,
             name: `workspace-b`,
-            workspaceDependencies: [
-              `packages/workspace-a`,
-              `packages/workspace-c`,
-            ],
+            workspaceDependencies: [`packages/workspace-a`, `packages/workspace-c`],
             mismatchedWorkspaceDependencies: [],
           },
           [`packages/workspace-c/packages/workspace-d`]: {
             location: `packages/workspace-c/packages/workspace-d`,
             name: `workspace-d`,
-            workspaceDependencies: [
-              `packages/workspace-b`,
-            ],
+            workspaceDependencies: [`packages/workspace-b`],
             mismatchedWorkspaceDependencies: [],
           },
           [`packages/workspace-c/packages/workspace-d/packages/workspace-e`]: {
             location: `packages/workspace-c/packages/workspace-d/packages/workspace-e`,
             name: `workspace-e`,
-            workspaceDependencies: [
-              `packages/workspace-c/packages/workspace-d`,
-            ],
+            workspaceDependencies: [`packages/workspace-c/packages/workspace-d`],
             mismatchedWorkspaceDependencies: [],
           },
           [`packages/workspace-c/packages/workspace-f`]: {
             location: `packages/workspace-c/packages/workspace-f`,
             name: `workspace-f`,
-            workspaceDependencies: [
-              `packages/workspace-c/packages/workspace-d/packages/workspace-e`,
-            ],
+            workspaceDependencies: [`packages/workspace-c/packages/workspace-d/packages/workspace-e`],
             mismatchedWorkspaceDependencies: [],
           },
           [`packages/workspace-c`]: {
             location: `packages/workspace-c`,
             name: `workspace-c`,
-            workspaceDependencies: [
-              `packages/workspace-a`,
-            ],
+            workspaceDependencies: [`packages/workspace-a`],
             mismatchedWorkspaceDependencies: [],
           },
         });
@@ -419,26 +389,30 @@ async function setupWorkspaces(path) {
 }
 
 function makeWorkspacesListSinceEnv(cb) {
-  return makeTemporaryEnv({
-    private: true,
-    workspaces: [`packages/*`],
-  }, {}, async ({path, run, ...rest}) => {
-    await setupWorkspaces(path);
+  return makeTemporaryEnv(
+    {
+      private: true,
+      workspaces: [`packages/*`],
+    },
+    {},
+    async ({ path, run, ...rest }) => {
+      await setupWorkspaces(path);
 
-    const git = (...args) => execFile(`git`, args, {cwd: path});
+      const git = (...args) => execFile(`git`, args, { cwd: path });
 
-    await run(`install`);
+      await run(`install`);
 
-    await git(`init`, `.`);
+      await git(`init`, `.`);
 
-    // Otherwise we can't always commit
-    await git(`config`, `user.name`, `John Doe`);
-    await git(`config`, `user.email`, `john.doe@example.org`);
-    await git(`config`, `commit.gpgSign`, `false`);
+      // Otherwise we can't always commit
+      await git(`config`, `user.name`, `John Doe`);
+      await git(`config`, `user.email`, `john.doe@example.org`);
+      await git(`config`, `commit.gpgSign`, `false`);
 
-    await git(`add`, `.`);
-    await git(`commit`, `-m`, `First commit`);
+      await git(`add`, `.`);
+      await git(`commit`, `-m`, `First commit`);
 
-    await cb({path, run, ...rest, git});
-  });
+      await cb({ path, run, ...rest, git });
+    },
+  );
 }

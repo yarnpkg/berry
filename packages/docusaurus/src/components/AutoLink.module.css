@@ -12,9 +12,9 @@
 }
 
 .assign {
-  color: var(--autolink-color-assign)
+  color: var(--autolink-color-assign);
 }
 
 .value {
-  color: var(--autolink-color-value)
+  color: var(--autolink-color-value);
 }

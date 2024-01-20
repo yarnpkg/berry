@@ -1,10 +1,13 @@
-import {PortablePath}                           from '@yarnpkg/fslib';
-import {PnpApi}                                 from '@yarnpkg/pnp';
+import { PortablePath } from "@yarnpkg/fslib";
+import { PnpApi } from "@yarnpkg/pnp";
 
-import {Wrapper, GenerateBaseWrapper, BaseSdks} from '../generateSdk';
+import { Wrapper, GenerateBaseWrapper, BaseSdks } from "../generateSdk";
 
-export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`@astrojs/language-server` as PortablePath, {pnpApi, target});
+export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async (
+  pnpApi: PnpApi,
+  target: PortablePath,
+) => {
+  const wrapper = new Wrapper(`@astrojs/language-server` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 
@@ -12,7 +15,7 @@ export const generateAstroLanguageServerBaseWrapper: GenerateBaseWrapper = async
 };
 
 export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`eslint` as PortablePath, {pnpApi, target});
+  const wrapper = new Wrapper(`eslint` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 
@@ -20,7 +23,11 @@ export const generateEslintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
 };
 
 export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`prettier` as PortablePath, {pnpApi, target, manifestOverrides: {exports: undefined}});
+  const wrapper = new Wrapper(`prettier` as PortablePath, {
+    pnpApi,
+    target,
+    manifestOverrides: { exports: undefined },
+  });
 
   await wrapper.writeDefaults();
 
@@ -28,15 +35,18 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
 };
 
 export const generateRelayCompilerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`relay-compiler` as PortablePath, {pnpApi, target});
+  const wrapper = new Wrapper(`relay-compiler` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 
   return wrapper;
 };
 
-export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`typescript-language-server` as PortablePath, {pnpApi, target});
+export const generateTypescriptLanguageServerBaseWrapper: GenerateBaseWrapper = async (
+  pnpApi: PnpApi,
+  target: PortablePath,
+) => {
+  const wrapper = new Wrapper(`typescript-language-server` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 
@@ -251,19 +261,22 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
     };
   `;
 
-  const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});
+  const wrapper = new Wrapper(`typescript` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 
   await wrapper.writeFile(`lib/tsc.js` as PortablePath);
-  await wrapper.writeFile(`lib/tsserver.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
-  await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, {wrapModule: tsServerMonkeyPatch});
+  await wrapper.writeFile(`lib/tsserver.js` as PortablePath, { wrapModule: tsServerMonkeyPatch });
+  await wrapper.writeFile(`lib/tsserverlibrary.js` as PortablePath, { wrapModule: tsServerMonkeyPatch });
 
   return wrapper;
 };
 
-export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`svelte-language-server` as PortablePath, {pnpApi, target});
+export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = async (
+  pnpApi: PnpApi,
+  target: PortablePath,
+) => {
+  const wrapper = new Wrapper(`svelte-language-server` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 
@@ -271,7 +284,7 @@ export const generateSvelteLanguageServerBaseWrapper: GenerateBaseWrapper = asyn
 };
 
 export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
-  const wrapper = new Wrapper(`flow-bin` as PortablePath, {pnpApi, target});
+  const wrapper = new Wrapper(`flow-bin` as PortablePath, { pnpApi, target });
 
   await wrapper.writeDefaults();
 

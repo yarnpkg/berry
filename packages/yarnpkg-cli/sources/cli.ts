@@ -1,8 +1,8 @@
-import '@yarnpkg/cli/polyfills';
-import {npath, ppath}           from '@yarnpkg/fslib';
+import "@yarnpkg/cli/polyfills";
+import { npath, ppath } from "@yarnpkg/fslib";
 
-import {runExit}                from './lib';
-import {getPluginConfiguration} from './tools/getPluginConfiguration';
+import { runExit } from "./lib";
+import { getPluginConfiguration } from "./tools/getPluginConfiguration";
 
 runExit(process.argv.slice(2), {
   cwd: ppath.cwd(),

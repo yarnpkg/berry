@@ -1,4 +1,4 @@
-import {xfs} from '../sources';
+import { xfs } from "../sources";
 
 describe(`xfs`, () => {
   describe(`detachTemp`, () => {
@@ -6,7 +6,7 @@ describe(`xfs`, () => {
       const temp = xfs.mktempSync();
       xfs.detachTemp(temp);
 
-      const otherTemp = xfs.mktempSync(t => {
+      const otherTemp = xfs.mktempSync((t) => {
         xfs.detachTemp(t);
         return t;
       });
@@ -21,7 +21,7 @@ describe(`xfs`, () => {
       const temp = await xfs.mktempPromise();
       xfs.detachTemp(temp);
 
-      const otherTemp = await xfs.mktempPromise(async t => {
+      const otherTemp = await xfs.mktempPromise(async (t) => {
         xfs.detachTemp(t);
         return t;
       });

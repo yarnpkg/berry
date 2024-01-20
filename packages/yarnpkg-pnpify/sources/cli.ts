@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import {Cli, Builtins} from 'clipanion';
+import { Cli, Builtins } from "clipanion";
 
-import RunCommand      from './commands/RunCommand';
-import SdkCommand      from './commands/SdkCommand';
+import RunCommand from "./commands/RunCommand";
+import SdkCommand from "./commands/SdkCommand";
 
 const cli = new Cli({
   binaryLabel: `Yarn PnPify`,

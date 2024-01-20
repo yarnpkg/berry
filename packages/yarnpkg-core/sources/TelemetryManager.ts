@@ -1,11 +1,11 @@
-import {xfs, PortablePath, ppath} from '@yarnpkg/fslib';
+import { xfs, PortablePath, ppath } from "@yarnpkg/fslib";
 
-import {Configuration}            from './Configuration';
-import {YarnVersion}              from './YarnVersion';
-import * as hashUtils             from './hashUtils';
-import * as httpUtils             from './httpUtils';
-import * as miscUtils             from './miscUtils';
-import * as semverUtils           from './semverUtils';
+import { Configuration } from "./Configuration";
+import { YarnVersion } from "./YarnVersion";
+import * as hashUtils from "./hashUtils";
+import * as httpUtils from "./httpUtils";
+import * as miscUtils from "./miscUtils";
+import * as semverUtils from "./semverUtils";
 
 export enum MetricName {
   VERSION = `version`,
@@ -19,9 +19,9 @@ export enum MetricName {
 }
 
 export type RegistryBlock = {
-  values?: {[key in MetricName]?: Array<string>};
-  hits?: {[key in MetricName]?: {[extra: string]: number}};
-  enumerators?: {[key in MetricName]?: Array<string>};
+  values?: { [key in MetricName]?: Array<string> };
+  hits?: { [key in MetricName]?: { [extra: string]: number } };
+  enumerators?: { [key in MetricName]?: Array<string> };
 };
 
 export type RegistryFile = {
@@ -54,7 +54,9 @@ export function derive(params: DeriveParameters) {
   const nowDay = Math.floor(params.timeNow / day);
   const updateIntervalMs = params.updateInterval * day;
 
-  const lastUpdate = params.state.lastUpdate ?? params.timeNow + updateIntervalMs + Math.floor(updateIntervalMs * params.randomInitialInterval);
+  const lastUpdate =
+    params.state.lastUpdate ??
+    params.timeNow + updateIntervalMs + Math.floor(updateIntervalMs * params.randomInitialInterval);
   const nextUpdate = lastUpdate + updateIntervalMs;
 
   // We reset the tips each day at 8am
@@ -76,7 +78,7 @@ export function derive(params: DeriveParameters) {
     nextState.displayedTips = params.state.displayedTips;
   }
 
-  return {nextState, triggerUpdate, triggerTips, nextTips: triggerTips ? nowDay * day : lastTips};
+  return { nextState, triggerUpdate, triggerTips, nextTips: triggerTips ? nowDay * day : lastTips };
 }
 
 export class TelemetryManager {
@@ -128,27 +130,22 @@ export class TelemetryManager {
     // Get all possible non-null messages
     const activeTips = allTips
       .map((_, index) => index)
-      .filter(index => allTips[index] && checkVersion(allTips[index]?.selector));
+      .filter((index) => allTips[index] && checkVersion(allTips[index]?.selector));
 
-    if (activeTips.length === 0)
-      return null;
+    if (activeTips.length === 0) return null;
 
     // Filter out the ones that have already been displayed
-    let availableTips = activeTips
-      .filter(index => !displayedTips.has(index));
+    let availableTips = activeTips.filter((index) => !displayedTips.has(index));
 
     // If we've seen all tips, we can reset the list. We still
     // keep the last few items there, just to make sure we don't
     // immediately re-display the same tip as the last past days.
     if (availableTips.length === 0) {
-      const sliceLength = Math.floor(activeTips.length * .2);
+      const sliceLength = Math.floor(activeTips.length * 0.2);
 
-      this.displayedTips = sliceLength > 0
-        ? this.displayedTips.slice(-sliceLength)
-        : [];
+      this.displayedTips = sliceLength > 0 ? this.displayedTips.slice(-sliceLength) : [];
 
-      availableTips = activeTips
-        .filter(index => !displayedTips.has(index));
+      availableTips = activeTips.filter((index) => !displayedTips.has(index));
     }
 
     const selectedTip = availableTips[Math.floor(Math.random() * availableTips.length)];
@@ -243,7 +240,7 @@ export class TelemetryManager {
 
     if (nextState !== null) {
       try {
-        xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
+        xfs.mkdirSync(ppath.dirname(registryFile), { recursive: true });
         xfs.writeJsonSync(registryFile, nextState);
       } catch {
         // In some cases this location is read-only. Too bad 🤷‍♀️
@@ -251,23 +248,24 @@ export class TelemetryManager {
       }
     }
 
-    if (triggerTips && this.configuration.get(`enableTips`))
-      this.shouldShowTips = true;
+    if (triggerTips && this.configuration.get(`enableTips`)) this.shouldShowTips = true;
 
     if (triggerUpdate) {
       const blocks = state.blocks ?? {};
 
       if (Object.keys(blocks).length === 0) {
         const rawUrl = `https://browser-http-intake.logs.datadoghq.eu/v1/input/${accountId}?ddsource=yarn`;
-        const sendPayload = (payload: any) => httpUtils.post(rawUrl, payload, {
-          configuration: this.configuration,
-        }).catch(() => {
-          // Nothing we can do
-        });
+        const sendPayload = (payload: any) =>
+          httpUtils
+            .post(rawUrl, payload, {
+              configuration: this.configuration,
+            })
+            .catch(() => {
+              // Nothing we can do
+            });
 
         for (const [userId, block] of Object.entries(state.blocks ?? {})) {
-          if (Object.keys(block).length === 0)
-            continue;
+          if (Object.keys(block).length === 0) continue;
 
           const upload: any = block;
           upload.userId = userId;
@@ -287,8 +285,7 @@ export class TelemetryManager {
           const maxValues = 20;
 
           for (const [metricName, values] of Object.entries<any>(upload.values))
-            if (values.length > 0)
-              toSend.set(metricName, values.slice(0, maxValues));
+            if (values.length > 0) toSend.set(metricName, values.slice(0, maxValues));
 
           while (toSend.size > 0) {
             const upload: any = {};
@@ -324,12 +321,12 @@ export class TelemetryManager {
 
     const userId = this.configuration.get(`telemetryUserId`) ?? `*`;
 
-    const blocks = state.blocks = state.blocks ?? {};
-    const block = blocks[userId] = blocks[userId] ?? {};
+    const blocks = (state.blocks = state.blocks ?? {});
+    const block = (blocks[userId] = blocks[userId] ?? {});
 
     for (const key of this.hits.keys()) {
-      const store = block.hits = block.hits ?? {};
-      const ns = store[key] = store[key] ?? {};
+      const store = (block.hits = block.hits ?? {});
+      const ns = (store[key] = store[key] ?? {});
 
       for (const [extra, value] of this.hits.get(key)!) {
         ns[extra] = (ns[extra] ?? 0) + value;
@@ -338,12 +335,9 @@ export class TelemetryManager {
 
     for (const field of [`values`, `enumerators`] as const) {
       for (const key of this[field].keys()) {
-        const store = block[field] = block[field] ?? {};
+        const store = (block[field] = block[field] ?? {});
 
-        store[key] = [...new Set([
-          ...store[key] ?? [],
-          ...this[field].get(key) ?? [],
-        ])];
+        store[key] = [...new Set([...(store[key] ?? []), ...(this[field].get(key) ?? [])])];
       }
     }
 
@@ -352,7 +346,7 @@ export class TelemetryManager {
       state.displayedTips = this.displayedTips;
     }
 
-    xfs.mkdirSync(ppath.dirname(registryFile), {recursive: true});
+    xfs.mkdirSync(ppath.dirname(registryFile), { recursive: true });
     xfs.writeJsonSync(registryFile, state);
   }
 

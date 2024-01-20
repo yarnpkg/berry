@@ -1,15 +1,26 @@
-import {ppath, Filename}                                                                                                                                                                   from '@yarnpkg/fslib';
-import {FakeFS, NativePath, PortablePath, VirtualFS, npath}                                                                                                                                from '@yarnpkg/fslib';
-import {Module, isBuiltin}                                                                                                                                                                 from 'module';
-import {fileURLToPath, pathToFileURL}                                                                                                                                                      from 'url';
-import {inspect}                                                                                                                                                                           from 'util';
+import { ppath, Filename } from "@yarnpkg/fslib";
+import { FakeFS, NativePath, PortablePath, VirtualFS, npath } from "@yarnpkg/fslib";
+import { Module, isBuiltin } from "module";
+import { fileURLToPath, pathToFileURL } from "url";
+import { inspect } from "util";
 
-import {packageExportsResolve, packageImportsResolve}                                                                                                                                      from '../node/resolve.js';
-import {PackageInformation, PackageLocator, PnpApi, RuntimeState, PhysicalPackageLocator, DependencyTarget, ResolveToUnqualifiedOptions, ResolveUnqualifiedOptions, ResolveRequestOptions} from '../types';
+import { packageExportsResolve, packageImportsResolve } from "../node/resolve.js";
 
-import {ErrorCode, makeError, getPathForDisplay}                                                                                                                                           from './internalTools';
-import {getOptionValue}                                                                                                                                                                    from './node-options.js';
-import * as nodeUtils                                                                                                                                                                      from './nodeUtils';
+import { ErrorCode, makeError, getPathForDisplay } from "./internalTools";
+import { getOptionValue } from "./node-options.js";
+import * as nodeUtils from "./nodeUtils";
+
+import {
+  PackageInformation,
+  PackageLocator,
+  PnpApi,
+  RuntimeState,
+  PhysicalPackageLocator,
+  DependencyTarget,
+  ResolveToUnqualifiedOptions,
+  ResolveUnqualifiedOptions,
+  ResolveRequestOptions,
+} from "../types";
 
 export type MakeApiOptions = {
   allowDebug?: boolean;
@@ -36,7 +47,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   const isRelativeRegexp = /^\.{0,2}\//;
 
   // We only instantiate one of those so that we can use strict-equal comparisons
-  const topLevelLocator = {name: null, reference: null};
+  const topLevelLocator = { name: null, reference: null };
 
   // Used for compatibility purposes - cf setupCompatibilityLayer
   const fallbackLocators: Array<PackageLocator> = [];
@@ -44,8 +55,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   // To avoid emitting the same warning multiple times
   const emittedWarnings = new Set<string>();
 
-  if (runtimeState.enableTopLevelFallback === true)
-    fallbackLocators.push(topLevelLocator);
+  if (runtimeState.enableTopLevelFallback === true) fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
@@ -67,7 +77,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           if (reference === null) {
             throw new Error(`Assertion failed: This reference shouldn't be null`);
           } else {
-            fallbackLocators.push({name, reference});
+            fallbackLocators.push({ name, reference });
           }
         }
       }
@@ -79,11 +89,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * the $$DYNAMICALLY_GENERATED_CODE function.
    */
 
-  const {
-    ignorePattern,
-    packageRegistry,
-    packageLocatorsByLocations,
-  } = runtimeState as RuntimeState;
+  const { ignorePattern, packageRegistry, packageLocatorsByLocations } = runtimeState as RuntimeState;
 
   /**
    * Allows to print useful logs just be setting a value in the environment
@@ -103,19 +109,15 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const c = (n: number | string, str: string) => `\u001b[${n}m${str}\u001b[0m`;
 
     const error = entry.error;
-    if (error)
-      console.error(c(`31;1`, `✖ ${entry.error?.message.replace(/\n.*/s, ``)}`));
-    else
-      console.error(c(`33;1`, `‼ Resolution`));
+    if (error) console.error(c(`31;1`, `✖ ${entry.error?.message.replace(/\n.*/s, ``)}`));
+    else console.error(c(`33;1`, `‼ Resolution`));
 
-    if (entry.args.length > 0)
-      console.error();
-    for (const arg of entry.args)
-      console.error(`  ${c(`37;1`, `In ←`)} ${inspect(arg, {colors, compact: true})}`);
+    if (entry.args.length > 0) console.error();
+    for (const arg of entry.args) console.error(`  ${c(`37;1`, `In ←`)} ${inspect(arg, { colors, compact: true })}`);
 
     if (entry.result) {
       console.error();
-      console.error(`  ${c(`37;1`, `Out →`)} ${inspect(entry.result, {colors, compact: true})}`);
+      console.error(`  ${c(`37;1`, `Out →`)} ${inspect(entry.result, { colors, compact: true })}`);
     }
 
     const stack = new Error().stack!.match(/(?<=^ +)at.*/gm)?.slice(2) ?? [];
@@ -130,17 +132,16 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   }
 
   function maybeLog(name: string, fn: any): any {
-    if (opts.allowDebug === false)
-      return fn;
+    if (opts.allowDebug === false) return fn;
 
     if (Number.isFinite(debugLevel)) {
       if (debugLevel >= 2) {
         return (...args: Array<any>) => {
           const logEntry = makeLogEntry(name, args);
           try {
-            return logEntry.result = fn(...args);
+            return (logEntry.result = fn(...args));
           } catch (error) {
-            throw logEntry.error = error;
+            throw (logEntry.error = error);
           } finally {
             trace(logEntry);
           }
@@ -183,8 +184,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Returns whether the specified locator is a dependency tree root (in which case it's part of the project) or not
    */
   function isDependencyTreeRoot(packageLocator: PackageLocator) {
-    if (packageLocator.name === null)
-      return true;
+    if (packageLocator.name === null) return true;
 
     for (const dependencyTreeRoot of runtimeState.dependencyTreeRoots)
       if (dependencyTreeRoot.name === packageLocator.name && dependencyTreeRoot.reference === packageLocator.reference)
@@ -193,18 +193,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return false;
   }
 
-  const defaultExportsConditions = new Set([
-    `node`,
-    `require`,
-    ...getOptionValue(`--conditions`),
-  ]);
+  const defaultExportsConditions = new Set([`node`, `require`, ...getOptionValue(`--conditions`)]);
 
   /**
    * Implements the node resolution for the "exports" field
    *
    * @returns The remapped path or `null` if the package doesn't have a package.json or an "exports" field
    */
-  function applyNodeExportsResolution(unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions, issuer: PortablePath | null) {
+  function applyNodeExportsResolution(
+    unqualifiedPath: PortablePath,
+    conditions: Set<string> = defaultExportsConditions,
+    issuer: PortablePath | null,
+  ) {
     const locator = findPackageLocator(ppath.join(unqualifiedPath, `internal.js`), {
       resolveIgnored: true,
       includeDiscardFromLookup: true,
@@ -216,16 +216,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       );
     }
 
-    const {packageLocation} = getPackageInformationSafe(locator);
+    const { packageLocation } = getPackageInformationSafe(locator);
 
     const manifestPath = ppath.join(packageLocation, Filename.manifest);
-    if (!opts.fakeFs.existsSync(manifestPath))
-      return null;
+    if (!opts.fakeFs.existsSync(manifestPath)) return null;
 
     const pkgJson = JSON.parse(opts.fakeFs.readFileSync(manifestPath, `utf8`));
 
-    if (pkgJson.exports == null)
-      return null;
+    if (pkgJson.exports == null) return null;
 
     let subpath = ppath.contains(packageLocation, unqualifiedPath);
     if (subpath === null) {
@@ -235,8 +233,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       );
     }
 
-    if (subpath !== `.` && !isRelativeRegexp.test(subpath))
-      subpath = `./${subpath}` as PortablePath;
+    if (subpath !== `.` && !isRelativeRegexp.test(subpath)) subpath = `./${subpath}` as PortablePath;
 
     try {
       const resolvedExport = packageExportsResolve({
@@ -252,7 +249,13 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       throw makeError(
         ErrorCode.EXPORTS_RESOLUTION_FAILED,
         error.message,
-        {unqualifiedPath: getPathForDisplay(unqualifiedPath), locator, pkgJson, subpath: getPathForDisplay(subpath), conditions},
+        {
+          unqualifiedPath: getPathForDisplay(unqualifiedPath),
+          locator,
+          pkgJson,
+          subpath: getPathForDisplay(subpath),
+          conditions,
+        },
         error.code,
       );
     }
@@ -261,7 +264,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   /**
    * Implements the node resolution for folder access and extension selection
    */
-  function applyNodeExtensionResolution(unqualifiedPath: PortablePath, candidates: Array<PortablePath>, {extensions}: {extensions: Array<string>}): PortablePath | null {
+  function applyNodeExtensionResolution(
+    unqualifiedPath: PortablePath,
+    candidates: Array<PortablePath>,
+    { extensions }: { extensions: Array<string> },
+  ): PortablePath | null {
     let stat;
 
     try {
@@ -271,8 +278,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     // If the file exists and is a file, we can stop right there
 
-    if (stat && !stat.isDirectory())
-      return opts.fakeFs.realpathSync(unqualifiedPath);
+    if (stat && !stat.isDirectory()) return opts.fakeFs.realpathSync(unqualifiedPath);
 
     // If the file is a directory, we must check if it contains a package.json with a "main" entry
 
@@ -285,13 +291,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       let nextUnqualifiedPath;
 
-      if (pkgJson && pkgJson.main)
-        nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
+      if (pkgJson && pkgJson.main) nextUnqualifiedPath = ppath.resolve(unqualifiedPath, pkgJson.main);
 
       // If the "main" field changed the path, we start again from this new location
 
       if (nextUnqualifiedPath && nextUnqualifiedPath !== unqualifiedPath) {
-        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, {extensions});
+        const resolution = applyNodeExtensionResolution(nextUnqualifiedPath, candidates, { extensions });
 
         if (resolution !== null) {
           return resolution;
@@ -313,7 +318,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     if (stat && stat.isDirectory()) {
       for (let i = 0, length = extensions.length; i < length; i++) {
-        const candidateFile = ppath.format({dir: unqualifiedPath, name: `index` as Filename, ext: extensions[i]});
+        const candidateFile = ppath.format({ dir: unqualifiedPath, name: `index` as Filename, ext: extensions[i] });
         candidates.push(candidateFile);
         if (opts.fakeFs.existsSync(candidateFile)) {
           return candidateFile;
@@ -348,14 +353,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function callNativeResolution(request: PortablePath, issuer: PortablePath): NativePath | false {
-    if (issuer.endsWith(`/`))
-      issuer = ppath.join(issuer, `internal.js`);
+    if (issuer.endsWith(`/`)) issuer = ppath.join(issuer, `internal.js`);
 
     // Since we would need to create a fake module anyway (to call _resolveLookupPath that
     // would give us the paths to give to _resolveFilename), we can as well not use
     // the {paths} option at all, since it internally makes _resolveFilename create another
     // fake module anyway.
-    return Module._resolveFilename(npath.fromPortablePath(request), makeFakeModule(npath.fromPortablePath(issuer)), false, {plugnplay: false});
+    return Module._resolveFilename(
+      npath.fromPortablePath(request),
+      makeFakeModule(npath.fromPortablePath(issuer)),
+      false,
+      { plugnplay: false },
+    );
   }
 
   /**
@@ -363,12 +372,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function isPathIgnored(path: PortablePath) {
-    if (ignorePattern === null)
-      return false;
+    if (ignorePattern === null) return false;
 
     const subPath = ppath.contains(runtimeState.basePath, path);
-    if (subPath === null)
-      return false;
+    if (subPath === null) return false;
 
     if (ignorePattern.test(subPath.replace(/\/$/, ``))) {
       return true;
@@ -386,7 +393,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * functions, they'll just have to fix the conflicts and bump their own version number.
    */
 
-  const VERSIONS = {std: 3, resolveVirtual: 1, getAllLocators: 1};
+  const VERSIONS = { std: 3, resolveVirtual: 1, getAllLocators: 1 };
 
   /**
    * We export a special symbol for easy access to the top level locator.
@@ -398,14 +405,12 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Gets the package information for a given locator. Returns null if they cannot be retrieved.
    */
 
-  function getPackageInformation({name, reference}: PackageLocator): PackageInformation<PortablePath> | null {
+  function getPackageInformation({ name, reference }: PackageLocator): PackageInformation<PortablePath> | null {
     const packageInformationStore = packageRegistry.get(name);
-    if (!packageInformationStore)
-      return null;
+    if (!packageInformationStore) return null;
 
     const packageInformation = packageInformationStore.get(reference);
-    if (!packageInformation)
-      return null;
+    if (!packageInformation) return null;
 
     return packageInformation;
   }
@@ -418,24 +423,20 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * optimized at all, since we only need it when printing errors.
    */
 
-  function findPackageDependents({name, reference}: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
+  function findPackageDependents({ name, reference }: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
     const dependents: Array<PhysicalPackageLocator> = [];
 
     for (const [dependentName, packageInformationStore] of packageRegistry) {
-      if (dependentName === null)
-        continue;
+      if (dependentName === null) continue;
 
       for (const [dependentReference, packageInformation] of packageInformationStore) {
-        if (dependentReference === null)
-          continue;
+        if (dependentReference === null) continue;
 
         const dependencyReference = packageInformation.packageDependencies.get(name);
-        if (dependencyReference !== reference)
-          continue;
+        if (dependencyReference !== reference) continue;
 
         // Don't forget that all packages depend on themselves
-        if (dependentName === name && dependentReference === reference)
-          continue;
+        if (dependentName === name && dependentReference === reference) continue;
 
         dependents.push({
           name: dependentName,
@@ -455,15 +456,17 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * optimized at all, since we only need it when printing errors.
    */
 
-  function findBrokenPeerDependencies(dependency: string, initialPackage: PhysicalPackageLocator): Array<PhysicalPackageLocator> {
+  function findBrokenPeerDependencies(
+    dependency: string,
+    initialPackage: PhysicalPackageLocator,
+  ): Array<PhysicalPackageLocator> {
     const brokenPackages = new Map<string, Set<string>>();
 
     const alreadyVisited = new Set<string>();
 
     const traversal = (currentPackage: PhysicalPackageLocator) => {
       const identifier = JSON.stringify(currentPackage.name);
-      if (alreadyVisited.has(identifier))
-        return;
+      if (alreadyVisited.has(identifier)) return;
 
       alreadyVisited.add(identifier);
 
@@ -476,8 +479,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           traversal(dependent);
         } else {
           let brokenSet = brokenPackages.get(dependent.name);
-          if (typeof brokenSet === `undefined`)
-            brokenPackages.set(dependent.name, brokenSet = new Set());
+          if (typeof brokenSet === `undefined`) brokenPackages.set(dependent.name, (brokenSet = new Set()));
 
           brokenSet.add(dependent.reference);
         }
@@ -489,8 +491,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const brokenList: Array<PhysicalPackageLocator> = [];
 
     for (const name of [...brokenPackages.keys()].sort())
-      for (const reference of [...brokenPackages.get(name)!].sort())
-        brokenList.push({name, reference});
+      for (const reference of [...brokenPackages.get(name)!].sort()) brokenList.push({ name, reference });
 
     return brokenList;
   }
@@ -499,23 +500,29 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * Finds the package locator that owns the specified path. If none is found, returns null instead.
    */
 
-  function findPackageLocator(location: PortablePath, {resolveIgnored = false, includeDiscardFromLookup = false}: {resolveIgnored?: boolean, includeDiscardFromLookup?: boolean} = {}): PhysicalPackageLocator | null {
-    if (isPathIgnored(location) && !resolveIgnored)
-      return null;
+  function findPackageLocator(
+    location: PortablePath,
+    {
+      resolveIgnored = false,
+      includeDiscardFromLookup = false,
+    }: { resolveIgnored?: boolean; includeDiscardFromLookup?: boolean } = {},
+  ): PhysicalPackageLocator | null {
+    if (isPathIgnored(location) && !resolveIgnored) return null;
 
     let relativeLocation = ppath.relative(runtimeState.basePath, location);
 
-    if (!relativeLocation.match(isStrictRegExp))
-      relativeLocation = `./${relativeLocation}` as PortablePath;
+    if (!relativeLocation.match(isStrictRegExp)) relativeLocation = `./${relativeLocation}` as PortablePath;
 
-    if (!relativeLocation.endsWith(`/`))
-      relativeLocation = `${relativeLocation}/` as PortablePath;
+    if (!relativeLocation.endsWith(`/`)) relativeLocation = `${relativeLocation}/` as PortablePath;
 
     do {
       const entry = packageLocatorsByLocations.get(relativeLocation);
 
       if (typeof entry === `undefined` || (entry.discardFromLookup && !includeDiscardFromLookup)) {
-        relativeLocation = relativeLocation.substring(0, relativeLocation.lastIndexOf(`/`, relativeLocation.length - 2) + 1) as PortablePath;
+        relativeLocation = relativeLocation.substring(
+          0,
+          relativeLocation.lastIndexOf(`/`, relativeLocation.length - 2) + 1,
+        ) as PortablePath;
         continue;
       }
 
@@ -529,8 +536,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     try {
       return opts.fakeFs.readFileSync(npath.toPortablePath(filePath), `utf8`);
     } catch (err) {
-      if (err.code === `ENOENT`)
-        return undefined;
+      if (err.code === `ENOENT`) return undefined;
 
       throw err;
     }
@@ -548,17 +554,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveToUnqualified(request: PortablePath, issuer: PortablePath | null, {considerBuiltins = true}: ResolveToUnqualifiedOptions = {}): PortablePath | null {
-    if (request.startsWith(`#`))
-      throw new Error(`resolveToUnqualified can not handle private import mappings`);
+  function resolveToUnqualified(
+    request: PortablePath,
+    issuer: PortablePath | null,
+    { considerBuiltins = true }: ResolveToUnqualifiedOptions = {},
+  ): PortablePath | null {
+    if (request.startsWith(`#`)) throw new Error(`resolveToUnqualified can not handle private import mappings`);
 
     // The 'pnpapi' request is reserved and will always return the path to the PnP file, from everywhere
-    if (request === `pnpapi`)
-      return npath.toPortablePath(opts.pnpapiResolution);
+    if (request === `pnpapi`) return npath.toPortablePath(opts.pnpapiResolution);
 
     // Bailout if the request is a native module
-    if (considerBuiltins && isBuiltin(request))
-      return null;
+    if (considerBuiltins && isBuiltin(request)) return null;
 
     const requestForDisplay = getPathForDisplay(request);
     const issuerForDisplay = issuer && getPathForDisplay(issuer);
@@ -583,7 +590,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           throw makeError(
             ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
             `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer was explicitely ignored by the regexp)\n\nRequire request: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`,
-            {request: requestForDisplay, issuer: issuerForDisplay},
+            { request: requestForDisplay, issuer: issuerForDisplay },
           );
         }
 
@@ -604,7 +611,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           throw makeError(
             ErrorCode.API_ERROR,
             `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`,
-            {request: requestForDisplay, issuer: issuerForDisplay},
+            { request: requestForDisplay, issuer: issuerForDisplay },
           );
         }
 
@@ -627,7 +634,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         throw makeError(
           ErrorCode.API_ERROR,
           `The resolveToUnqualified function must be called with a valid issuer when the path isn't a builtin nor absolute`,
-          {request: requestForDisplay, issuer: issuerForDisplay},
+          { request: requestForDisplay, issuer: issuerForDisplay },
         );
       }
 
@@ -645,7 +652,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           throw makeError(
             ErrorCode.BUILTIN_NODE_RESOLUTION_FAILED,
             `The builtin node resolution algorithm was unable to resolve the requested module (it didn't go through the pnp resolver because the issuer doesn't seem to be part of the Yarn-managed dependency tree).\n\nRequire path: "${requestForDisplay}"\nRequired by: ${issuerForDisplay}\n`,
-            {request: requestForDisplay, issuer: issuerForDisplay},
+            { request: requestForDisplay, issuer: issuerForDisplay },
           );
         }
 
@@ -675,13 +682,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
               const fallbackInformation = getPackageInformationSafe(fallbackLocators[t]);
               const reference = fallbackInformation.packageDependencies.get(dependencyName);
 
-              if (reference == null)
-                continue;
+              if (reference == null) continue;
 
-              if (alwaysWarnOnFallback)
-                fallbackReference = reference;
-              else
-                dependencyReference = reference;
+              if (alwaysWarnOnFallback) fallbackReference = reference;
+              else dependencyReference = reference;
 
               break;
             }
@@ -707,21 +711,33 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           error = makeError(
             ErrorCode.MISSING_PEER_DEPENDENCY,
             `Your application tried to access ${dependencyName} (a peer dependency); this isn't allowed as there is no ancestor to satisfy the requirement. Use a devDependency if needed.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`,
-            {request: requestForDisplay, issuer: issuerForDisplay, dependencyName},
+            { request: requestForDisplay, issuer: issuerForDisplay, dependencyName },
           );
         } else {
           const brokenAncestors = findBrokenPeerDependencies(dependencyName, issuerLocator);
-          if (brokenAncestors.every(ancestor => isDependencyTreeRoot(ancestor))) {
+          if (brokenAncestors.every((ancestor) => isDependencyTreeRoot(ancestor))) {
             error = makeError(
               ErrorCode.MISSING_PEER_DEPENDENCY,
-              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
-              {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName, brokenAncestors},
+              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n${brokenAncestors.map((ancestorLocator) => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
+              {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName,
+                brokenAncestors,
+              },
             );
           } else {
             error = makeError(
               ErrorCode.MISSING_PEER_DEPENDENCY,
-              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n\n${brokenAncestors.map(ancestorLocator => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
-              {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName, brokenAncestors},
+              `${issuerLocator.name} tried to access ${dependencyName} (a peer dependency) but it isn't provided by its ancestors; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n\n${brokenAncestors.map((ancestorLocator) => `Ancestor breaking the chain: ${ancestorLocator.name}@${ancestorLocator.reference}\n`).join(``)}\n`,
+              {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName,
+                brokenAncestors,
+              },
             );
           }
         }
@@ -731,13 +747,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
               `Your application tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in your dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`,
-              {request: requestForDisplay, issuer: issuerForDisplay, dependencyName},
+              { request: requestForDisplay, issuer: issuerForDisplay, dependencyName },
             );
           } else {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
               `${issuerLocator.name} tried to access ${dependencyName}. While this module is usually interpreted as a Node builtin, your resolver is running inside a non-Node resolution context where such builtins are ignored. Since ${dependencyName} isn't otherwise declared in ${issuerLocator.name}'s dependencies, this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`,
-              {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
+              {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName,
+              },
             );
           }
         } else {
@@ -745,13 +766,18 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
               `Your application tried to access ${dependencyName}, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerForDisplay}\n`,
-              {request: requestForDisplay, issuer: issuerForDisplay, dependencyName},
+              { request: requestForDisplay, issuer: issuerForDisplay, dependencyName },
             );
           } else {
             error = makeError(
               ErrorCode.UNDECLARED_DEPENDENCY,
               `${issuerLocator.name} tried to access ${dependencyName}, but it isn't declared in its dependencies; this makes the require call ambiguous and unsound.\n\nRequired package: ${dependencyName}${dependencyName !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`,
-              {request: requestForDisplay, issuer: issuerForDisplay, issuerLocator: Object.assign({}, issuerLocator), dependencyName},
+              {
+                request: requestForDisplay,
+                issuer: issuerForDisplay,
+                issuerLocator: Object.assign({}, issuerLocator),
+                dependencyName,
+              },
             );
           }
         }
@@ -775,8 +801,8 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       // We need to check that the package exists on the filesystem, because it might not have been installed
 
       const dependencyLocator = Array.isArray(dependencyReference)
-        ? {name: dependencyReference[0], reference: dependencyReference[1]}
-        : {name: dependencyName, reference: dependencyReference};
+        ? { name: dependencyReference[0], reference: dependencyReference[1] }
+        : { name: dependencyName, reference: dependencyReference };
 
       const dependencyInformation = getPackageInformationSafe(dependencyLocator);
 
@@ -784,7 +810,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
         throw makeError(
           ErrorCode.MISSING_DEPENDENCY,
           `A dependency seems valid but didn't get installed for some reason. This might be caused by a partial install, such as dev vs prod.\n\nRequired package: ${dependencyLocator.name}@${dependencyLocator.reference}${dependencyLocator.name !== requestForDisplay ? ` (via "${requestForDisplay}")` : ``}\nRequired by: ${issuerLocator.name}@${issuerLocator.reference} (via ${issuerForDisplay})\n`,
-          {request: requestForDisplay, issuer: issuerForDisplay, dependencyLocator: Object.assign({}, dependencyLocator)},
+          {
+            request: requestForDisplay,
+            issuer: issuerForDisplay,
+            dependencyLocator: Object.assign({}, dependencyLocator),
+          },
         );
       }
 
@@ -806,10 +836,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     return ppath.normalize(unqualifiedPath);
   }
 
-  function resolveUnqualifiedExport(request: PortablePath, unqualifiedPath: PortablePath, conditions: Set<string> = defaultExportsConditions, issuer: PortablePath | null) {
+  function resolveUnqualifiedExport(
+    request: PortablePath,
+    unqualifiedPath: PortablePath,
+    conditions: Set<string> = defaultExportsConditions,
+    issuer: PortablePath | null,
+  ) {
     // "exports" only apply when requiring a package, not when requiring via an absolute / relative path
-    if (isStrictRegExp.test(request))
-      return unqualifiedPath;
+    if (isStrictRegExp.test(request)) return unqualifiedPath;
 
     const unqualifiedExportPath = applyNodeExportsResolution(unqualifiedPath, conditions, issuer);
     if (unqualifiedExportPath) {
@@ -824,20 +858,23 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * appends ".js" / ".json", and transforms directory accesses into "index.js").
    */
 
-  function resolveUnqualified(unqualifiedPath: PortablePath, {extensions = Object.keys(Module._extensions)}: ResolveUnqualifiedOptions = {}): PortablePath {
+  function resolveUnqualified(
+    unqualifiedPath: PortablePath,
+    { extensions = Object.keys(Module._extensions) }: ResolveUnqualifiedOptions = {},
+  ): PortablePath {
     const candidates: Array<PortablePath> = [];
-    const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
+    const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, { extensions });
 
     if (qualifiedPath) {
       return ppath.normalize(qualifiedPath);
     } else {
-      nodeUtils.reportRequiredFilesToWatchMode(candidates.map(candidate => npath.fromPortablePath(candidate)));
+      nodeUtils.reportRequiredFilesToWatchMode(candidates.map((candidate) => npath.fromPortablePath(candidate)));
 
       const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
 
       const containingPackage = findPackageLocator(unqualifiedPath);
       if (containingPackage) {
-        const {packageLocation} = getPackageInformationSafe(containingPackage);
+        const { packageLocation } = getPackageInformationSafe(containingPackage);
 
         let exists = true;
         try {
@@ -846,8 +883,15 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           if (err?.code === `ENOENT`) {
             exists = false;
           } else {
-            const readableError: string = (err?.message ?? err ?? `empty exception thrown`).replace(/^[A-Z]/, ($0: string) => $0.toLowerCase());
-            throw makeError(ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED, `Required package exists but could not be accessed (${readableError}).\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`, {unqualifiedPath: unqualifiedPathForDisplay, extensions});
+            const readableError: string = (err?.message ?? err ?? `empty exception thrown`).replace(
+              /^[A-Z]/,
+              ($0: string) => $0.toLowerCase(),
+            );
+            throw makeError(
+              ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
+              `Required package exists but could not be accessed (${readableError}).\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`,
+              { unqualifiedPath: unqualifiedPathForDisplay, extensions },
+            );
           }
         }
 
@@ -859,22 +903,21 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
           throw makeError(
             ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
             `${errorMessage}\n\nMissing package: ${containingPackage.name}@${containingPackage.reference}\nExpected package location: ${getPathForDisplay(packageLocation)}\n`,
-            {unqualifiedPath: unqualifiedPathForDisplay, extensions},
+            { unqualifiedPath: unqualifiedPathForDisplay, extensions },
           );
         }
       }
 
       throw makeError(
         ErrorCode.QUALIFIED_PATH_RESOLUTION_FAILED,
-        `Qualified path resolution failed: we looked for the following paths, but none could be accessed.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map(candidate => `Not found: ${getPathForDisplay(candidate)}\n`).join(``)}`,
-        {unqualifiedPath: unqualifiedPathForDisplay, extensions},
+        `Qualified path resolution failed: we looked for the following paths, but none could be accessed.\n\nSource path: ${unqualifiedPathForDisplay}\n${candidates.map((candidate) => `Not found: ${getPathForDisplay(candidate)}\n`).join(``)}`,
+        { unqualifiedPath: unqualifiedPathForDisplay, extensions },
       );
     }
   }
 
   function resolvePrivateRequest(request: PortablePath, issuer: PortablePath | null, opts: ResolveRequestOptions) {
-    if (!issuer)
-      throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
+    if (!issuer) throw new Error(`Assertion failed: An issuer is required to resolve private import mappings`);
 
     const resolved = packageImportsResolve({
       name: request,
@@ -884,7 +927,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     });
 
     if (resolved instanceof URL) {
-      return resolveUnqualified(npath.toPortablePath(fileURLToPath(resolved)), {extensions: opts.extensions});
+      return resolveUnqualified(npath.toPortablePath(fileURLToPath(resolved)), { extensions: opts.extensions });
     } else {
       if (resolved.startsWith(`#`))
         // Node behaves interestingly by default so just block the request for now.
@@ -903,37 +946,36 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * imports won't be computed correctly (they'll get resolved relative to "/tmp/" instead of "/tmp/foo/").
    */
 
-  function resolveRequest(request: PortablePath, issuer: PortablePath | null, opts: ResolveRequestOptions = {}): PortablePath | null {
+  function resolveRequest(
+    request: PortablePath,
+    issuer: PortablePath | null,
+    opts: ResolveRequestOptions = {},
+  ): PortablePath | null {
     try {
-      if (request.startsWith(`#`))
-        return resolvePrivateRequest(request, issuer, opts);
+      if (request.startsWith(`#`)) return resolvePrivateRequest(request, issuer, opts);
 
-      const {considerBuiltins, extensions, conditions} = opts;
+      const { considerBuiltins, extensions, conditions } = opts;
 
-      const unqualifiedPath = resolveToUnqualified(request, issuer, {considerBuiltins});
+      const unqualifiedPath = resolveToUnqualified(request, issuer, { considerBuiltins });
 
       // If the request is the pnpapi, we can just return the unqualifiedPath
       // without having to apply the exports resolution or the extension resolution
       // (opts.pnpapiResolution is always a full path - makeManager enforces this by stat-ing it)
-      if (request === `pnpapi`)
-        return unqualifiedPath;
+      if (request === `pnpapi`) return unqualifiedPath;
 
-      if (unqualifiedPath === null)
-        return null;
+      if (unqualifiedPath === null) return null;
 
-      const isIssuerIgnored = () =>
-        issuer !== null
-          ? isPathIgnored(issuer)
-          : false;
+      const isIssuerIgnored = () => (issuer !== null ? isPathIgnored(issuer) : false);
 
-      const remappedPath = (!considerBuiltins || !isBuiltin(request)) && !isIssuerIgnored()
-        ? resolveUnqualifiedExport(request, unqualifiedPath, conditions, issuer)
-        : unqualifiedPath;
+      const remappedPath =
+        (!considerBuiltins || !isBuiltin(request)) && !isIssuerIgnored()
+          ? resolveUnqualifiedExport(request, unqualifiedPath, conditions, issuer)
+          : unqualifiedPath;
 
-      return resolveUnqualified(remappedPath, {extensions});
+      return resolveUnqualified(remappedPath, { extensions });
     } catch (error) {
       if (Object.hasOwn(error, `pnpCode`))
-        Object.assign(error.data, {request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer)});
+        Object.assign(error.data, { request: getPathForDisplay(request), issuer: issuer && getPathForDisplay(issuer) });
 
       throw error;
     }
@@ -952,9 +994,9 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
     getLocator: (name: string, referencish: [string, string] | string): PhysicalPackageLocator => {
       if (Array.isArray(referencish)) {
-        return {name: referencish[0], reference: referencish[1]};
+        return { name: referencish[0], reference: referencish[1] };
       } else {
-        return {name, reference: referencish};
+        return { name, reference: referencish };
       }
     },
 
@@ -967,8 +1009,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
 
       for (const [name, entry] of packageRegistry)
         for (const reference of entry.keys())
-          if (name !== null && reference !== null)
-            locators.push({name, reference});
+          if (name !== null && reference !== null) locators.push({ name, reference });
 
       return locators;
     },
@@ -976,11 +1017,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     getPackageInformation: (locator: PackageLocator) => {
       const info = getPackageInformation(locator);
 
-      if (info === null)
-        return null;
+      if (info === null) return null;
 
       const packageLocation = npath.fromPortablePath(info.packageLocation);
-      const nativeInfo = {...info, packageLocation};
+      const nativeInfo = { ...info, packageLocation };
 
       return nativeInfo;
     },
@@ -989,29 +1029,36 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
       return findPackageLocator(npath.toPortablePath(path));
     },
 
-    resolveToUnqualified: maybeLog(`resolveToUnqualified`, (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
-      const portableIssuer = issuer !== null ?  npath.toPortablePath(issuer) : null;
+    resolveToUnqualified: maybeLog(
+      `resolveToUnqualified`,
+      (request: NativePath, issuer: NativePath | null, opts?: ResolveToUnqualifiedOptions) => {
+        const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
-      if (resolution === null)
-        return null;
+        const resolution = resolveToUnqualified(npath.toPortablePath(request), portableIssuer, opts);
+        if (resolution === null) return null;
 
-      return npath.fromPortablePath(resolution);
-    }),
+        return npath.fromPortablePath(resolution);
+      },
+    ),
 
-    resolveUnqualified: maybeLog(`resolveUnqualified`, (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
-      return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
-    }),
+    resolveUnqualified: maybeLog(
+      `resolveUnqualified`,
+      (unqualifiedPath: NativePath, opts?: ResolveUnqualifiedOptions) => {
+        return npath.fromPortablePath(resolveUnqualified(npath.toPortablePath(unqualifiedPath), opts));
+      },
+    ),
 
-    resolveRequest: maybeLog(`resolveRequest`, (request: NativePath, issuer: NativePath | null, opts?: ResolveRequestOptions) => {
-      const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
+    resolveRequest: maybeLog(
+      `resolveRequest`,
+      (request: NativePath, issuer: NativePath | null, opts?: ResolveRequestOptions) => {
+        const portableIssuer = issuer !== null ? npath.toPortablePath(issuer) : null;
 
-      const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
-      if (resolution === null)
-        return null;
+        const resolution = resolveRequest(npath.toPortablePath(request), portableIssuer, opts);
+        if (resolution === null) return null;
 
-      return npath.fromPortablePath(resolution);
-    }),
+        return npath.fromPortablePath(resolution);
+      },
+    ),
 
     resolveVirtual: maybeLog(`resolveVirtual`, (path: NativePath) => {
       const result = resolveVirtual(npath.toPortablePath(path));

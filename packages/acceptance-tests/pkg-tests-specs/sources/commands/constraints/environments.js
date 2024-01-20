@@ -1,20 +1,20 @@
-const {xfs} = require(`@yarnpkg/fslib`);
+const { xfs } = require(`@yarnpkg/fslib`);
 const {
-  fs: {writeJson},
+  fs: { writeJson },
 } = require(`pkg-tests-core`);
 
 exports.environments = {
-  [`empty project`]: async path => {
+  [`empty project`]: async (path) => {
     await writeJson(`${path}/package.json`, {});
   },
-  [`one regular dependency`]: async path => {
+  [`one regular dependency`]: async (path) => {
     await writeJson(`${path}/package.json`, {
       dependencies: {
         [`no-deps`]: `1.0.0`,
       },
     });
   },
-  [`two regular dependencies`]: async path => {
+  [`two regular dependencies`]: async (path) => {
     await writeJson(`${path}/package.json`, {
       dependencies: {
         [`no-deps`]: `1.0.0`,
@@ -22,7 +22,7 @@ exports.environments = {
       },
     });
   },
-  [`two development dependencies`]: async path => {
+  [`two development dependencies`]: async (path) => {
     await writeJson(`${path}/package.json`, {
       devDependencies: {
         [`no-deps`]: `1.0.0`,
@@ -30,7 +30,7 @@ exports.environments = {
       },
     });
   },
-  [`two regular dependencies, two development dependencies`]: async path => {
+  [`two regular dependencies, two development dependencies`]: async (path) => {
     await writeJson(`${path}/package.json`, {
       dependencies: {
         [`no-deps`]: `1.0.0`,
@@ -42,7 +42,7 @@ exports.environments = {
       },
     });
   },
-  [`multiple workspaces`]: async path => {
+  [`multiple workspaces`]: async (path) => {
     await writeJson(`${path}/package.json`, {
       private: true,
       workspaces: [`packages/**`],
@@ -82,7 +82,7 @@ exports.environments = {
       },
     });
   },
-  [`various field types`]: async path => {
+  [`various field types`]: async (path) => {
     await writeJson(`${path}/package.json`, {
       name: `foo`,
       repository: {
@@ -90,11 +90,7 @@ exports.environments = {
         url: `ssh://git@github.com/yarnpkg/berry.git`,
         directory: `.`,
       },
-      files: [
-        `/a`,
-        `/b`,
-        `/c`,
-      ],
+      files: [`/a`, `/b`, `/c`],
     });
   },
 };

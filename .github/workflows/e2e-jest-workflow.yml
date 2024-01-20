@@ -1,40 +1,40 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-jest-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-jest-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E Jest'
+name: "E2E Jest"
 jobs:
   chore:
-    name: 'Validating Jest'
+    name: "Validating Jest"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
 
-        yarn init -p
-        yarn add jest
+          yarn init -p
+          yarn add jest
 
-        echo "it('should pass', () => { expect(true).toBeTruthy(); });" | tee pass.test.js
-        yarn jest pass.test.js
+          echo "it('should pass', () => { expect(true).toBeTruthy(); });" | tee pass.test.js
+          yarn jest pass.test.js
 
-        echo "it('should fail', () => { expect(false).toBeTruthy(); });" | tee fail.test.js
-        ! yarn jest fail.test.js
+          echo "it('should fail', () => { expect(false).toBeTruthy(); });" | tee fail.test.js
+          ! yarn jest fail.test.js
 
-        yarn add left-pad
+          yarn add left-pad
 
-        echo "const leftPad = require('left-pad'); it('should resolve a module', () => { expect(typeof leftPad).toBe('function');});" | tee module.test.js
-        yarn jest module.test.js
+          echo "const leftPad = require('left-pad'); it('should resolve a module', () => { expect(typeof leftPad).toBe('function');});" | tee module.test.js
+          yarn jest module.test.js

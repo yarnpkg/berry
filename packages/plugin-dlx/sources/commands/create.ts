@@ -1,12 +1,10 @@
-import {BaseCommand} from '@yarnpkg/cli';
-import {structUtils} from '@yarnpkg/core';
-import {Option}      from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { structUtils } from "@yarnpkg/core";
+import { Option } from "clipanion";
 
 // eslint-disable-next-line arca/no-default-export
 export default class CreateCommand extends BaseCommand {
-  static paths = [
-    [`create`],
-  ];
+  static paths = [[`create`]];
 
   pkg = Option.String(`-p,--package`, {
     description: `The package to run the provided command from`,
@@ -21,10 +19,8 @@ export default class CreateCommand extends BaseCommand {
 
   async execute() {
     const flags = [];
-    if (this.pkg)
-      flags.push(`--package`, this.pkg);
-    if (this.quiet)
-      flags.push(`--quiet`);
+    if (this.pkg) flags.push(`--package`, this.pkg);
+    if (this.quiet) flags.push(`--quiet`);
 
     // @foo -> @foo/create
     const command = this.command.replace(/^(@[^@/]+)(@|$)/, `$1/create$2`);
@@ -39,8 +35,7 @@ export default class CreateCommand extends BaseCommand {
       : descriptor;
 
     let finalDescriptorString = structUtils.stringifyIdent(modifiedIdent);
-    if (descriptor.range !== `unknown`)
-      finalDescriptorString += `@${descriptor.range}`;
+    if (descriptor.range !== `unknown`) finalDescriptorString += `@${descriptor.range}`;
 
     return this.cli.run([`dlx`, ...flags, finalDescriptorString, ...this.args]);
   }

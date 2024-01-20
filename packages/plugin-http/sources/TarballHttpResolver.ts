@@ -1,9 +1,9 @@
-import {Resolver, ResolveOptions, MinimalResolveOptions, Package} from '@yarnpkg/core';
-import {Descriptor, Locator, Manifest}                            from '@yarnpkg/core';
-import {LinkType}                                                 from '@yarnpkg/core';
-import {miscUtils, structUtils}                                   from '@yarnpkg/core';
+import { Resolver, ResolveOptions, MinimalResolveOptions, Package } from "@yarnpkg/core";
+import { Descriptor, Locator, Manifest } from "@yarnpkg/core";
+import { LinkType } from "@yarnpkg/core";
+import { miscUtils, structUtils } from "@yarnpkg/core";
 
-import * as urlUtils                                              from './urlUtils';
+import * as urlUtils from "./urlUtils";
 
 export class TarballHttpResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -30,11 +30,16 @@ export class TarballHttpResolver implements Resolver {
     return [structUtils.convertDescriptorToLocator(descriptor)];
   }
 
-  async getSatisfying(descriptor: Descriptor, dependencies: Record<string, Package>, locators: Array<Locator>, opts: ResolveOptions) {
+  async getSatisfying(
+    descriptor: Descriptor,
+    dependencies: Record<string, Package>,
+    locators: Array<Locator>,
+    opts: ResolveOptions,
+  ) {
     const [locator] = await this.getCandidates(descriptor, dependencies, opts);
 
     return {
-      locators: locators.filter(candidate => candidate.locatorHash === locator.locatorHash),
+      locators: locators.filter((candidate) => candidate.locatorHash === locator.locatorHash),
       sorted: false,
     };
   }
@@ -46,7 +51,7 @@ export class TarballHttpResolver implements Resolver {
     const packageFetch = await opts.fetchOptions.fetcher.fetch(locator, opts.fetchOptions);
 
     const manifest = await miscUtils.releaseAfterUseAsync(async () => {
-      return await Manifest.find(packageFetch.prefixPath, {baseFs: packageFetch.packageFs});
+      return await Manifest.find(packageFetch.prefixPath, { baseFs: packageFetch.packageFs });
     }, packageFetch.releaseFs);
 
     return {

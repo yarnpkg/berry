@@ -1,5 +1,5 @@
-import {NodeFS}                   from '../sources/NodeFS';
-import {xfs, PortablePath, ppath} from '../sources';
+import { NodeFS } from "../sources/NodeFS";
+import { xfs, PortablePath, ppath } from "../sources";
 
 const nodeFs = new NodeFS();
 
@@ -39,8 +39,12 @@ describe(`NodeFS`, () => {
       await xfs.writeFilePromise(ppath.join(tmpdir, `foo/hello`), ``);
       await xfs.writeFilePromise(ppath.join(tmpdir, `foo/world`), ``);
 
-      expect((await nodeFs.readdirPromise(tmpdir, {recursive: true})).sort()).toEqual([`foo`, `foo/hello`, `foo/world`]);
-      expect((nodeFs.readdirSync(tmpdir, {recursive: true})).sort()).toEqual([`foo`, `foo/hello`, `foo/world`]);
+      expect((await nodeFs.readdirPromise(tmpdir, { recursive: true })).sort()).toEqual([
+        `foo`,
+        `foo/hello`,
+        `foo/world`,
+      ]);
+      expect(nodeFs.readdirSync(tmpdir, { recursive: true }).sort()).toEqual([`foo`, `foo/hello`, `foo/world`]);
     });
   });
 
@@ -80,7 +84,7 @@ describe(`NodeFS`, () => {
     });
 
     it(`should support ftruncatePromise`, async () => {
-      await xfs.mktempPromise(async dir => {
+      await xfs.mktempPromise(async (dir) => {
         const p = `${dir}/foo.txt` as PortablePath;
         await nodeFs.writeFilePromise(p, `foo`);
 
@@ -93,11 +97,11 @@ describe(`NodeFS`, () => {
     });
 
     it(`should support ftruncateSync`, () => {
-      xfs.mktempSync(dir => {
+      xfs.mktempSync((dir) => {
         const p = `${dir}/foo.txt` as PortablePath;
         nodeFs.writeFileSync(p, `foo`);
 
-        const fd =  nodeFs.openSync(p, `r+`);
+        const fd = nodeFs.openSync(p, `r+`);
         nodeFs.ftruncateSync(fd, 2);
         nodeFs.closeSync(fd);
 
@@ -107,7 +111,7 @@ describe(`NodeFS`, () => {
   });
 
   ifNotWin32It(`should support fchmodPromise`, async () => {
-    await xfs.mktempPromise(async dir => {
+    await xfs.mktempPromise(async (dir) => {
       const p = ppath.join(dir, `foo.txt`);
       await nodeFs.writeFilePromise(p, ``);
 
@@ -120,7 +124,7 @@ describe(`NodeFS`, () => {
   });
 
   ifNotWin32It(`should support fchmodSync`, () => {
-    xfs.mktempSync(dir => {
+    xfs.mktempSync((dir) => {
       const p = ppath.join(dir, `bar.txt`);
       nodeFs.writeFileSync(p, ``);
 
@@ -128,7 +132,7 @@ describe(`NodeFS`, () => {
       nodeFs.fchmodSync(fd, 0o744);
       nodeFs.closeSync(fd);
 
-      expect((nodeFs.statSync(p)).mode & 0o777).toBe(0o744);
+      expect(nodeFs.statSync(p).mode & 0o777).toBe(0o744);
     });
   });
 });

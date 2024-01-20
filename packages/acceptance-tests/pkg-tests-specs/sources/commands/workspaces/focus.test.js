@@ -1,4 +1,4 @@
-import {ppath, xfs} from '@yarnpkg/fslib';
+import { ppath, xfs } from "@yarnpkg/fslib";
 
 describe(`Commands`, () => {
   describe(`workspaces focus`, () => {
@@ -9,7 +9,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`install`);
@@ -36,7 +36,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`install`);
@@ -64,7 +64,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`install`);
@@ -91,7 +91,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`workspaces`, `focus`, {
@@ -115,7 +115,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`workspaces`, `focus`, `quux`, `--production`, {
@@ -138,7 +138,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`install`);
@@ -166,7 +166,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`install`);
@@ -193,7 +193,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({ path, run }) => {
           await setupProject(path);
 
           await run(`workspaces`, `focus`, `foo`, `bar`, {
@@ -211,12 +211,22 @@ describe(`Commands`, () => {
 async function setupProject(path) {
   const pkg = async (name, dependencies, devDependencies, scripts) => {
     await xfs.mkdirpPromise(ppath.join(path, `packages/${name}`));
-    await xfs.writeJsonPromise(ppath.join(path, `packages/${name}/package.json`), {name, dependencies, devDependencies, scripts});
+    await xfs.writeJsonPromise(ppath.join(path, `packages/${name}/package.json`), {
+      name,
+      dependencies,
+      devDependencies,
+      scripts,
+    });
   };
 
-  await pkg(`foo`, {[`no-deps`]: `1.0.0`}, {}, {postinstall: `echo 'postinstall' > postinstall.log`});
-  await pkg(`bar`, {[`no-deps`]: `2.0.0`});
-  await pkg(`baz`, {[`bar`]: `workspace:*`});
-  await pkg(`qux`, {[`no-deps`]: `1.0.0`}, {[`no-deps-bins`]: `1.0.0`}, {postinstall: `echo 'postinstall' > postinstall.log`});
-  await pkg(`quux`, {[`no-deps`]: `1.0.0`}, {[`bar`]: `workspace:*`});
+  await pkg(`foo`, { [`no-deps`]: `1.0.0` }, {}, { postinstall: `echo 'postinstall' > postinstall.log` });
+  await pkg(`bar`, { [`no-deps`]: `2.0.0` });
+  await pkg(`baz`, { [`bar`]: `workspace:*` });
+  await pkg(
+    `qux`,
+    { [`no-deps`]: `1.0.0` },
+    { [`no-deps-bins`]: `1.0.0` },
+    { postinstall: `echo 'postinstall' > postinstall.log` },
+  );
+  await pkg(`quux`, { [`no-deps`]: `1.0.0` }, { [`bar`]: `workspace:*` });
 }

@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
-import semver           from 'semver';
+import semver from "semver";
 
-import * as semverUtils from '../sources/semverUtils';
+import * as semverUtils from "../sources/semverUtils";
 
 type Specs = Array<[string, string, boolean]>;
 
@@ -12,7 +12,7 @@ const SPECS: Specs = [
   [`2.x`, `3.0.0-pre.0`, false],
 
   // From the semver test-suite
-  ...[
+  ...([
     [`2.x`, `2.0.0-pre.0`, true],
     [`2.x`, `2.1.0-pre.0`, true],
     [`1.1.x`, `1.1.0-a`, true],
@@ -34,7 +34,7 @@ const SPECS: Specs = [
     [`<=0.7.x`, `0.7.0-asdf`, true],
 
     [`>=1.0.0 <=1.1.0`, `1.1.0-pre`, true],
-  ] as Specs,
+  ] as Specs),
 
   [`^1.0.0`, `2.0.0-rc1`, false],
   [`^1.2.3-rc2`, `2.0.0`, false],
@@ -57,7 +57,7 @@ describe(`semverUtils`, () => {
       for (const [range, version, satisfied] of SPECS) {
         it(`${satisfied ? `should` : `shouldn't`} satisfy ${range} with ${version}`, () => {
           const semverUtilsResult = semverUtils.satisfiesWithPrereleases(version, range);
-          const semverResult = semver.satisfies(version, range, {includePrerelease: true});
+          const semverResult = semver.satisfies(version, range, { includePrerelease: true });
 
           expect(semverUtilsResult).toEqual(satisfied);
 

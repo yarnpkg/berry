@@ -1,39 +1,47 @@
-import {WebhookEvent}                                                                                            from '@octokit/webhooks-types';
-import {Filename, PortablePath, npath, ppath, xfs}                                                               from '@yarnpkg/fslib';
-import {parseSyml, stringifySyml}                                                                                from '@yarnpkg/parsers';
-import camelcase                                                                                                 from 'camelcase';
-import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
-import {UsageError}                                                                                              from 'clipanion';
-import {parse as parseDotEnv}                                                                                    from 'dotenv';
-import {builtinModules}                                                                                          from 'module';
-import pLimit, {Limit}                                                                                           from 'p-limit';
-import {PassThrough, Writable}                                                                                   from 'stream';
+import { WebhookEvent } from "@octokit/webhooks-types";
+import { Filename, PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { parseSyml, stringifySyml } from "@yarnpkg/parsers";
+import camelcase from "camelcase";
+import { isCI, isPR, GITHUB_ACTIONS } from "ci-info";
+import { UsageError } from "clipanion";
+import { parse as parseDotEnv } from "dotenv";
+import { builtinModules } from "module";
+import pLimit, { Limit } from "p-limit";
+import { PassThrough, Writable } from "stream";
 
-import {CorePlugin}                                                                                              from './CorePlugin';
-import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
-import {MultiFetcher}                                                                                            from './MultiFetcher';
-import {MultiResolver}                                                                                           from './MultiResolver';
-import {Plugin, Hooks, PluginMeta}                                                                               from './Plugin';
-import {Report}                                                                                                  from './Report';
-import {TelemetryManager}                                                                                        from './TelemetryManager';
-import {VirtualFetcher}                                                                                          from './VirtualFetcher';
-import {VirtualResolver}                                                                                         from './VirtualResolver';
-import {WorkspaceFetcher}                                                                                        from './WorkspaceFetcher';
-import {WorkspaceResolver}                                                                                       from './WorkspaceResolver';
-import * as configUtils                                                                                          from './configUtils';
-import * as folderUtils                                                                                          from './folderUtils';
-import * as formatUtils                                                                                          from './formatUtils';
-import * as hashUtils                                                                                            from './hashUtils';
-import * as httpUtils                                                                                            from './httpUtils';
-import * as miscUtils                                                                                            from './miscUtils';
-import * as nodeUtils                                                                                            from './nodeUtils';
-import * as semverUtils                                                                                          from './semverUtils';
-import * as structUtils                                                                                          from './structUtils';
-import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
+import { CorePlugin } from "./CorePlugin";
+import { Manifest, PeerDependencyMeta } from "./Manifest";
+import { MultiFetcher } from "./MultiFetcher";
+import { MultiResolver } from "./MultiResolver";
+import { Plugin, Hooks, PluginMeta } from "./Plugin";
+import { Report } from "./Report";
+import { TelemetryManager } from "./TelemetryManager";
+import { VirtualFetcher } from "./VirtualFetcher";
+import { VirtualResolver } from "./VirtualResolver";
+import { WorkspaceFetcher } from "./WorkspaceFetcher";
+import { WorkspaceResolver } from "./WorkspaceResolver";
+import * as configUtils from "./configUtils";
+import * as folderUtils from "./folderUtils";
+import * as formatUtils from "./formatUtils";
+import * as hashUtils from "./hashUtils";
+import * as httpUtils from "./httpUtils";
+import * as miscUtils from "./miscUtils";
+import * as nodeUtils from "./nodeUtils";
+import * as semverUtils from "./semverUtils";
+import * as structUtils from "./structUtils";
+
+import {
+  IdentHash,
+  Package,
+  Descriptor,
+  PackageExtension,
+  PackageExtensionType,
+  PackageExtensionStatus,
+  Locator,
+} from "./types";
 
 const isPublicRepository = (function () {
-  if (!GITHUB_ACTIONS || !process.env.GITHUB_EVENT_PATH)
-    return false;
+  if (!GITHUB_ACTIONS || !process.env.GITHUB_EVENT_PATH) return false;
 
   const githubEventPath = npath.toPortablePath(process.env.GITHUB_EVENT_PATH);
 
@@ -44,11 +52,9 @@ const isPublicRepository = (function () {
     return false;
   }
 
-  if (!(`repository` in data) || !data.repository)
-    return false;
+  if (!(`repository` in data) || !data.repository) return false;
 
-  if (data.repository.private ?? true)
-    return false;
+  if (data.repository.private ?? true) return false;
 
   return true;
 })();
@@ -148,10 +154,10 @@ export const FormatType = formatUtils.Type;
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string;
   type: T;
-} & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
+} & ({ isArray?: false } | { isArray: true; concatenateValues?: boolean });
 
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
-  properties: {[propertyName: string]: SettingsDefinition};
+  properties: { [propertyName: string]: SettingsDefinition };
 };
 
 export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
@@ -159,7 +165,9 @@ export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
   normalizeKeys?: (key: string) => string;
 };
 
-export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
+export type SimpleSettingsDefinition = BaseSettingsDefinition<
+  Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>
+> & {
   default: any;
   defaultText?: any;
   isNullable?: boolean;
@@ -169,12 +177,9 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
 export type SettingsDefinitionNoDefault =
   | MapSettingsDefinition
   | ShapeSettingsDefinition
-  | Omit<SimpleSettingsDefinition, 'default'>;
+  | Omit<SimpleSettingsDefinition, "default">;
 
-export type SettingsDefinition =
-  | MapSettingsDefinition
-  | ShapeSettingsDefinition
-  | SimpleSettingsDefinition;
+export type SettingsDefinition = MapSettingsDefinition | ShapeSettingsDefinition | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
   modules: Map<string, any>;
@@ -202,7 +207,7 @@ export enum WindowsLinkType {
 //
 // - options that enable a feature must begin with the "enable" prefix
 //   ex: enableEmojis, enableColors
-export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = {
+export const coreDefinitions: { [coreSettingName: string]: SettingsDefinition } = {
   // Not implemented for now, but since it's part of all Yarn installs we want to declare it in order to improve drop-in compatibility
   lastUpdateCheck: {
     description: `Last timestamp we checked whether new Yarn versions were available`,
@@ -662,14 +667,17 @@ export interface ConfigurationValueMap {
   httpTimeout: number;
   httpRetry: number;
   networkConcurrency: number;
-  networkSettings: Map<string, miscUtils.ToMapValue<{
-    httpsCaFilePath: PortablePath | null;
-    enableNetwork: boolean | null;
-    httpProxy: string | null;
-    httpsProxy: string | null;
-    httpsKeyFilePath: PortablePath | null;
-    httpsCertFilePath: PortablePath | null;
-  }>>;
+  networkSettings: Map<
+    string,
+    miscUtils.ToMapValue<{
+      httpsCaFilePath: PortablePath | null;
+      enableNetwork: boolean | null;
+      httpProxy: string | null;
+      httpsProxy: string | null;
+      httpsKeyFilePath: PortablePath | null;
+      httpsCertFilePath: PortablePath | null;
+    }>
+  >;
   httpsCaFilePath: PortablePath | null;
   httpsKeyFilePath: PortablePath | null;
   httpsCertFilePath: PortablePath | null;
@@ -677,7 +685,9 @@ export interface ConfigurationValueMap {
   taskPoolConcurrency: number;
   taskPoolMode: string;
 
-  logFilters: Array<miscUtils.ToMapValue<{code?: string, text?: string, pattern?: string, level?: formatUtils.LogLevel | null}>>;
+  logFilters: Array<
+    miscUtils.ToMapValue<{ code?: string; text?: string; pattern?: string; level?: formatUtils.LogLevel | null }>
+  >;
 
   // Settings related to telemetry
   enableTelemetry: boolean;
@@ -695,36 +705,44 @@ export interface ConfigurationValueMap {
   injectEnvironmentFiles: Array<PortablePath>;
 
   // Package patching - to fix incorrect definitions
-  packageExtensions: Map<string, miscUtils.ToMapValue<{
-    dependencies?: Map<string, string>;
-    peerDependencies?: Map<string, string>;
-    peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{optional?: boolean}>>;
-  }>>;
+  packageExtensions: Map<
+    string,
+    miscUtils.ToMapValue<{
+      dependencies?: Map<string, string>;
+      peerDependencies?: Map<string, string>;
+      peerDependenciesMeta?: Map<string, miscUtils.ToMapValue<{ optional?: boolean }>>;
+    }>
+  >;
 }
 
-export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
+export type PackageExtensionData = miscUtils.MapValueToObjectValue<
+  miscUtils.MapValue<ConfigurationValueMap["packageExtensions"]>
+>;
 
 export type PackageExtensions = Map<IdentHash, Array<[string, Array<PackageExtension>]>>;
 
 type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
   type:
-  | (T extends boolean ? SettingsType.BOOLEAN : never)
-  | (T extends number ? SettingsType.NUMBER : never)
-  | (T extends PortablePath ? SettingsType.ABSOLUTE_PATH : never)
-  | (T extends string ? SettingsType.LOCATOR | SettingsType.LOCATOR_LOOSE | SettingsType.SECRET | SettingsType.STRING : never)
-  | SettingsType.ANY
-  ;
+    | (T extends boolean ? SettingsType.BOOLEAN : never)
+    | (T extends number ? SettingsType.NUMBER : never)
+    | (T extends PortablePath ? SettingsType.ABSOLUTE_PATH : never)
+    | (T extends string
+        ? SettingsType.LOCATOR | SettingsType.LOCATOR_LOOSE | SettingsType.SECRET | SettingsType.STRING
+        : never)
+    | SettingsType.ANY;
 };
 
-type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
-  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
-  : T extends miscUtils.ToMapValue<infer U>
-    ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
-    : SimpleDefinitionForType<T>;
+type DefinitionForTypeHelper<T> =
+  T extends Map<string, infer U>
+    ? MapSettingsDefinition & { valueDefinition: Omit<DefinitionForType<U>, "default"> }
+    : T extends miscUtils.ToMapValue<infer U>
+      ? ShapeSettingsDefinition & { properties: ConfigurationDefinitionMap<U> }
+      : SimpleDefinitionForType<T>;
 
-type DefinitionForType<T> = T extends Array<infer U>
-  ? (DefinitionForTypeHelper<U> & {isArray: true})
-  : (DefinitionForTypeHelper<T> & {isArray?: false});
+type DefinitionForType<T> =
+  T extends Array<infer U>
+    ? DefinitionForTypeHelper<U> & { isArray: true }
+    : DefinitionForTypeHelper<T> & { isArray?: false };
 
 // We use this type to enforce that the types defined in the
 // `ConfigurationValueMap` interface match what's listed in
@@ -739,14 +757,22 @@ export type ConfigurationDefinitionMap<V = ConfigurationValueMap> = {
 // There are two types of values
 // 1. ResolvedRcFile from `configUtils.resolveRcFiles`
 // 2. objects passed directly via `configuration.useWithSource` or `configuration.use`
-function parseValue(configuration: Configuration, path: string, valueBase: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseValue(
+  configuration: Configuration,
+  path: string,
+  valueBase: unknown,
+  definition: SettingsDefinition,
+  folder: PortablePath,
+) {
   const value = configUtils.getValue(valueBase);
 
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
     if (!Array.isArray(value)) {
-      return String(value).split(/,/).map(segment => {
-        return parseSingleValue(configuration, path, segment, definition, folder);
-      });
+      return String(value)
+        .split(/,/)
+        .map((segment) => {
+          return parseSingleValue(configuration, path, segment, definition, folder);
+        });
     } else {
       return value.map((sub, i) => parseSingleValue(configuration, `${path}[${i}]`, sub, definition, folder));
     }
@@ -759,7 +785,13 @@ function parseValue(configuration: Configuration, path: string, valueBase: unkno
   }
 }
 
-function parseSingleValue(configuration: Configuration, path: string, valueBase: unknown, definition: SettingsDefinition, folder: PortablePath) {
+function parseSingleValue(
+  configuration: Configuration,
+  path: string,
+  valueBase: unknown,
+  definition: SettingsDefinition,
+  folder: PortablePath,
+) {
   const value = configUtils.getValue(valueBase);
 
   switch (definition.type) {
@@ -774,12 +806,10 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
   if (value === null && !definition.isNullable && definition.default !== null)
     throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
 
-  if (definition.values?.includes(value))
-    return value;
+  if (definition.values?.includes(value)) return value;
 
   const interpretValue = () => {
-    if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`)
-      return miscUtils.parseBoolean(value);
+    if (definition.type === SettingsType.BOOLEAN && typeof value !== `string`) return miscUtils.parseBoolean(value);
 
     if (typeof value !== `string`)
       throw new Error(`Expected configuration setting "${path}" to be a string, got ${typeof value}`);
@@ -789,13 +819,12 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
     });
 
     switch (definition.type) {
-      case SettingsType.ABSOLUTE_PATH:{
+      case SettingsType.ABSOLUTE_PATH: {
         let cwd = folder;
 
         // singleValue's source should be a single file path, if it exists
         const source = configUtils.getSource(valueBase);
-        if (source && source[0] !== `<`)
-          cwd = ppath.dirname(source as PortablePath);
+        if (source && source[0] !== `<`) cwd = ppath.dirname(source as PortablePath);
 
         return ppath.resolve(cwd, npath.toPortablePath(valueWithReplacedVariables));
       }
@@ -820,7 +849,13 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
   return interpreted;
 }
 
-function parseShape(configuration: Configuration, path: string, valueBase: unknown, definition: ShapeSettingsDefinition, folder: PortablePath) {
+function parseShape(
+  configuration: Configuration,
+  path: string,
+  valueBase: unknown,
+  definition: ShapeSettingsDefinition,
+  folder: PortablePath,
+) {
   const value = configUtils.getValue(valueBase);
 
   if (typeof value !== `object` || Array.isArray(value))
@@ -830,15 +865,16 @@ function parseShape(configuration: Configuration, path: string, valueBase: unkno
     ignoreArrays: true,
   });
 
-  if (value === null)
-    return result;
+  if (value === null) return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
     const subPath = `${path}.${propKey}`;
     const subDefinition = definition.properties[propKey];
 
     if (!subDefinition)
-      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
+      throw new UsageError(
+        `Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`,
+      );
 
     result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
   }
@@ -846,7 +882,13 @@ function parseShape(configuration: Configuration, path: string, valueBase: unkno
   return result;
 }
 
-function parseMap(configuration: Configuration, path: string, valueBase: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
+function parseMap(
+  configuration: Configuration,
+  path: string,
+  valueBase: unknown,
+  definition: MapSettingsDefinition,
+  folder: PortablePath,
+) {
   const value = configUtils.getValue(valueBase);
 
   const result = new Map<string, any>();
@@ -854,8 +896,7 @@ function parseMap(configuration: Configuration, path: string, valueBase: unknown
   if (typeof value !== `object` || Array.isArray(value))
     throw new UsageError(`Map configuration settings "${path}" must be an object`);
 
-  if (value === null)
-    return result;
+  if (value === null) return result;
 
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
@@ -871,11 +912,14 @@ function parseMap(configuration: Configuration, path: string, valueBase: unknown
   return result;
 }
 
-function getDefaultValue(configuration: Configuration, definition: SettingsDefinition, {ignoreArrays = false}: {ignoreArrays?: boolean} = {}) {
+function getDefaultValue(
+  configuration: Configuration,
+  definition: SettingsDefinition,
+  { ignoreArrays = false }: { ignoreArrays?: boolean } = {},
+) {
   switch (definition.type) {
     case SettingsType.SHAPE: {
-      if (definition.isArray && !ignoreArrays)
-        return [];
+      if (definition.isArray && !ignoreArrays) return [];
 
       const result = new Map<string, any>();
 
@@ -885,14 +929,12 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       return result;
     }
     case SettingsType.MAP: {
-      if (definition.isArray && !ignoreArrays)
-        return [];
+      if (definition.isArray && !ignoreArrays) return [];
 
       return new Map<string, any>();
     }
     case SettingsType.ABSOLUTE_PATH: {
-      if (definition.default === null)
-        return null;
+      if (definition.default === null) return null;
 
       if (configuration.projectCwd === null) {
         if (Array.isArray(definition.default)) {
@@ -908,7 +950,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
         }
       } else {
         if (Array.isArray(definition.default)) {
-          return definition.default.map((entry: string) => ppath.resolve(configuration.projectCwd!, entry as PortablePath));
+          return definition.default.map((entry: string) =>
+            ppath.resolve(configuration.projectCwd!, entry as PortablePath),
+          );
         } else {
           return ppath.resolve(configuration.projectCwd, definition.default);
         }
@@ -925,24 +969,25 @@ type SettingTransforms = {
   getNativePaths: boolean;
 };
 
-function transformConfiguration(rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
-  if (definition.type === SettingsType.SECRET && typeof rawValue === `string` && transforms.hideSecrets)
-    return SECRET;
+function transformConfiguration(
+  rawValue: unknown,
+  definition: SettingsDefinitionNoDefault,
+  transforms: SettingTransforms,
+) {
+  if (definition.type === SettingsType.SECRET && typeof rawValue === `string` && transforms.hideSecrets) return SECRET;
   if (definition.type === SettingsType.ABSOLUTE_PATH && typeof rawValue === `string` && transforms.getNativePaths)
     return npath.fromPortablePath(rawValue);
 
   if (definition.isArray && Array.isArray(rawValue)) {
     const newValue: Array<unknown> = [];
 
-    for (const value of rawValue)
-      newValue.push(transformConfiguration(value, definition, transforms));
+    for (const value of rawValue) newValue.push(transformConfiguration(value, definition, transforms));
 
     return newValue;
   }
 
   if (definition.type === SettingsType.MAP && rawValue instanceof Map) {
-    if (rawValue.size === 0)
-      return undefined;
+    if (rawValue.size === 0) return undefined;
 
     const newValue: Map<string, unknown> = new Map();
 
@@ -957,8 +1002,7 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
   }
 
   if (definition.type === SettingsType.SHAPE && rawValue instanceof Map) {
-    if (rawValue.size === 0)
-      return undefined;
+    if (rawValue.size === 0) return undefined;
 
     const newValue: Map<string, unknown> = new Map();
 
@@ -978,13 +1022,12 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
 }
 
 function getEnvironmentSettings() {
-  const environmentSettings: {[key: string]: any} = {};
+  const environmentSettings: { [key: string]: any } = {};
 
   for (let [key, value] of Object.entries(process.env)) {
     key = key.toLowerCase();
 
-    if (!key.startsWith(ENVIRONMENT_PREFIX))
-      continue;
+    if (!key.startsWith(ENVIRONMENT_PREFIX)) continue;
 
     key = camelcase(key.slice(ENVIRONMENT_PREFIX.length));
 
@@ -998,8 +1041,7 @@ function getRcFilename() {
   const rcKey = `${ENVIRONMENT_PREFIX}rc_filename`;
 
   for (const [key, value] of Object.entries(process.env))
-    if (key.toLowerCase() === rcKey && typeof value === `string`)
-      return value as Filename;
+    if (key.toLowerCase() === rcKey && typeof value === `string`) return value as Filename;
 
   return DEFAULT_RC_FILENAME as Filename;
 }
@@ -1013,34 +1055,30 @@ async function tryRead(p: PortablePath) {
 }
 
 async function isSameBinaryContent(a: PortablePath, b: PortablePath) {
-  return Buffer.compare(...await Promise.all([
-    tryRead(a),
-    tryRead(b),
-  ])) === 0;
+  return Buffer.compare(...(await Promise.all([tryRead(a), tryRead(b)]))) === 0;
 }
 
 async function isSameBinaryInode(a: PortablePath, b: PortablePath) {
-  const [aStat, bStat] = await Promise.all([
-    xfs.statPromise(a),
-    xfs.statPromise(b),
-  ]);
+  const [aStat, bStat] = await Promise.all([xfs.statPromise(a), xfs.statPromise(b)]);
 
   return aStat.dev === bStat.dev && aStat.ino === bStat.ino;
 }
 
-const isSameBinary = process.platform === `win32`
-  ? isSameBinaryContent
-  : isSameBinaryInode;
+const isSameBinary = process.platform === `win32` ? isSameBinaryContent : isSameBinaryInode;
 
-async function checkYarnPath({configuration, selfPath}: {configuration: Configuration, selfPath: PortablePath}): Promise<PortablePath | null> {
+async function checkYarnPath({
+  configuration,
+  selfPath,
+}: {
+  configuration: Configuration;
+  selfPath: PortablePath;
+}): Promise<PortablePath | null> {
   const yarnPath = configuration.get(`yarnPath`);
   const ignorePath = configuration.get(`ignorePath`);
 
-  if (ignorePath || yarnPath === null || yarnPath === selfPath)
-    return null;
+  if (ignorePath || yarnPath === null || yarnPath === selfPath) return null;
 
-  if (await isSameBinary(yarnPath, selfPath))
-    return null;
+  if (await isSameBinary(yarnPath, selfPath)) return null;
 
   return yarnPath;
 }
@@ -1086,8 +1124,16 @@ export class Configuration {
    */
 
   static create(startingCwd: PortablePath, plugins?: Map<string, Plugin>): Configuration;
-  static create(startingCwd: PortablePath, projectCwd: PortablePath | null, plugins?: Map<string, Plugin>): Configuration;
-  static create(startingCwd: PortablePath, projectCwdOrPlugins?: Map<string, Plugin> | PortablePath | null, maybePlugins?: Map<string, Plugin>) {
+  static create(
+    startingCwd: PortablePath,
+    projectCwd: PortablePath | null,
+    plugins?: Map<string, Plugin>,
+  ): Configuration;
+  static create(
+    startingCwd: PortablePath,
+    projectCwdOrPlugins?: Map<string, Plugin> | PortablePath | null,
+    maybePlugins?: Map<string, Plugin>,
+  ) {
     const configuration = new Configuration(startingCwd);
 
     if (typeof projectCwdOrPlugins !== `undefined` && !(projectCwdOrPlugins instanceof Map))
@@ -1095,14 +1141,14 @@ export class Configuration {
 
     configuration.importSettings(coreDefinitions);
 
-    const plugins = typeof maybePlugins !== `undefined`
-      ? maybePlugins
-      : projectCwdOrPlugins instanceof Map
-        ? projectCwdOrPlugins
-        : new Map();
+    const plugins =
+      typeof maybePlugins !== `undefined`
+        ? maybePlugins
+        : projectCwdOrPlugins instanceof Map
+          ? projectCwdOrPlugins
+          : new Map();
 
-    for (const [name, plugin] of plugins)
-      configuration.activatePlugin(name, plugin);
+    for (const [name, plugin] of plugins) configuration.activatePlugin(name, plugin);
 
     return configuration;
   }
@@ -1134,7 +1180,11 @@ export class Configuration {
    * way around).
    */
 
-  static async find(startingCwd: PortablePath, pluginConfiguration: PluginConfiguration | null, {strict = true, usePathCheck = null, useRc = true}: FindProjectOptions = {}) {
+  static async find(
+    startingCwd: PortablePath,
+    pluginConfiguration: PluginConfiguration | null,
+    { strict = true, usePathCheck = null, useRc = true }: FindProjectOptions = {},
+  ) {
     const environmentSettings = getEnvironmentSettings();
     delete environmentSettings.rcFilename;
 
@@ -1143,13 +1193,13 @@ export class Configuration {
 
     const homeRcFile = await Configuration.findFolderRcFile(folderUtils.getHomeFolder());
     if (homeRcFile) {
-      const rcFile = rcFiles.find(rcFile => rcFile.path === homeRcFile.path);
+      const rcFile = rcFiles.find((rcFile) => rcFile.path === homeRcFile.path);
       if (!rcFile) {
         rcFiles.unshift(homeRcFile);
       }
     }
 
-    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map(rcFile => [rcFile.path, rcFile.data]));
+    const resolvedRcFile = configUtils.resolveRcFiles(rcFiles.map((rcFile) => [rcFile.path, rcFile.data]));
 
     // XXX: in fact, it is not useful, but in order not to change the parameters of useWithSource, temporarily put a thing to prevent errors.
     const resolvedRcFileCwd = PortablePath.dot;
@@ -1158,35 +1208,37 @@ export class Configuration {
     // to not have to load the plugins if there's a `yarn-path` configured.
 
     type CoreKeys = keyof typeof coreDefinitions;
-    type CoreFields = {[key in CoreKeys]: any};
+    type CoreFields = { [key in CoreKeys]: any };
 
     const allCoreFieldKeys = new Set(Object.keys(coreDefinitions));
 
-    const pickPrimaryCoreFields = ({yarnPath, ignorePath, injectEnvironmentFiles}: CoreFields) => ({yarnPath, ignorePath, injectEnvironmentFiles});
-    const pickSecondaryCoreFields = ({yarnPath, ignorePath, injectEnvironmentFiles, ...rest}: CoreFields) => {
+    const pickPrimaryCoreFields = ({ yarnPath, ignorePath, injectEnvironmentFiles }: CoreFields) => ({
+      yarnPath,
+      ignorePath,
+      injectEnvironmentFiles,
+    });
+    const pickSecondaryCoreFields = ({ yarnPath, ignorePath, injectEnvironmentFiles, ...rest }: CoreFields) => {
       const secondaryCoreFields: CoreFields = {};
-      for (const [key, value] of Object.entries(rest))
-        if (allCoreFieldKeys.has(key))
-          secondaryCoreFields[key] = value;
+      for (const [key, value] of Object.entries(rest)) if (allCoreFieldKeys.has(key)) secondaryCoreFields[key] = value;
 
       return secondaryCoreFields;
     };
 
-    const pickPluginFields = ({yarnPath, ignorePath, ...rest}: CoreFields) => {
+    const pickPluginFields = ({ yarnPath, ignorePath, ...rest }: CoreFields) => {
       const pluginFields: any = {};
-      for (const [key, value] of Object.entries(rest))
-        if (!allCoreFieldKeys.has(key))
-          pluginFields[key] = value;
+      for (const [key, value] of Object.entries(rest)) if (!allCoreFieldKeys.has(key)) pluginFields[key] = value;
 
       return pluginFields;
     };
 
     configuration.importSettings(pickPrimaryCoreFields(coreDefinitions));
-    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {strict: false});
+    configuration.useWithSource(`<environment>`, pickPrimaryCoreFields(environmentSettings), startingCwd, {
+      strict: false,
+    });
 
     if (resolvedRcFile) {
       const [source, data] = resolvedRcFile;
-      configuration.useWithSource(source, pickPrimaryCoreFields(data), resolvedRcFileCwd, {strict: false});
+      configuration.useWithSource(source, pickPrimaryCoreFields(data), resolvedRcFileCwd, { strict: false });
     }
 
     if (usePathCheck) {
@@ -1198,7 +1250,10 @@ export class Configuration {
       if (yarnPath !== null) {
         return configuration;
       } else {
-        configuration.useWithSource(`<override>`, {ignorePath: true}, startingCwd, {strict: false, overwrite: true});
+        configuration.useWithSource(`<override>`, { ignorePath: true }, startingCwd, {
+          strict: false,
+          overwrite: true,
+        });
       }
     }
 
@@ -1217,25 +1272,27 @@ export class Configuration {
     configuration.env = env;
 
     // load the environment files
-    const environmentFiles = await Promise.all(configuration.get(`injectEnvironmentFiles`).map(async p => {
-      const content = p.endsWith(`?`)
-        ? await xfs.readFilePromise(p.slice(0, -1) as PortablePath, `utf8`).catch(() => ``)
-        : await xfs.readFilePromise(p as PortablePath, `utf8`);
+    const environmentFiles = await Promise.all(
+      configuration.get(`injectEnvironmentFiles`).map(async (p) => {
+        const content = p.endsWith(`?`)
+          ? await xfs.readFilePromise(p.slice(0, -1) as PortablePath, `utf8`).catch(() => ``)
+          : await xfs.readFilePromise(p as PortablePath, `utf8`);
 
-      return parseDotEnv(content);
-    }));
+        return parseDotEnv(content);
+      }),
+    );
 
     for (const environmentEntries of environmentFiles)
       for (const [key, value] of Object.entries(environmentEntries))
-        configuration.env[key] = miscUtils.replaceEnvVariables(value, {env});
+        configuration.env[key] = miscUtils.replaceEnvVariables(value, { env });
 
     // load all fields of the core definitions
     configuration.importSettings(pickSecondaryCoreFields(coreDefinitions));
-    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, {strict});
+    configuration.useWithSource(`<environment>`, pickSecondaryCoreFields(environmentSettings), startingCwd, { strict });
 
     if (resolvedRcFile) {
       const [source, data] = resolvedRcFile;
-      configuration.useWithSource(source, pickSecondaryCoreFields(data), resolvedRcFileCwd, {strict});
+      configuration.useWithSource(source, pickSecondaryCoreFields(data), resolvedRcFileCwd, { strict });
     }
 
     // Now that the configuration object is almost ready, we need to load all
@@ -1246,52 +1303,50 @@ export class Configuration {
     };
 
     // load the core plugins
-    const corePlugins = new Map<string, Plugin>([
-      [`@@core`, CorePlugin],
-    ]);
+    const corePlugins = new Map<string, Plugin>([[`@@core`, CorePlugin]]);
 
     if (pluginConfiguration !== null)
       for (const request of pluginConfiguration.plugins.keys())
         corePlugins.set(request, getDefault(pluginConfiguration.modules.get(request)));
 
-    for (const [name, corePlugin] of corePlugins)
-      configuration.activatePlugin(name, corePlugin);
+    for (const [name, corePlugin] of corePlugins) configuration.activatePlugin(name, corePlugin);
 
     // load third-party plugins
     const thirdPartyPlugins = new Map<string, Plugin>([]);
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
-      for (const request of builtinModules)
-        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
-      for (const [request, embedModule] of pluginConfiguration.modules)
-        requireEntries.set(request, () => embedModule);
+      for (const request of builtinModules) requireEntries.set(request, () => miscUtils.dynamicRequire(request));
+      for (const [request, embedModule] of pluginConfiguration.modules) requireEntries.set(request, () => embedModule);
 
       const dynamicPlugins = new Set();
 
       const importPlugin = async (pluginPath: PortablePath, source: string) => {
-        const {factory, name} = miscUtils.dynamicRequire(pluginPath);
-        if (!factory)
-          return;
+        const { factory, name } = miscUtils.dynamicRequire(pluginPath);
+        if (!factory) return;
 
         // Prevent plugin redefinition so that the ones declared deeper in the
         // filesystem always have precedence over the ones below.
-        if (dynamicPlugins.has(name))
-          return;
+        if (dynamicPlugins.has(name)) return;
 
         const pluginRequireEntries = new Map(requireEntries);
         const pluginRequire = (request: string) => {
           if (pluginRequireEntries.has(request)) {
             return pluginRequireEntries.get(request)();
           } else {
-            throw new UsageError(`This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`);
+            throw new UsageError(
+              `This plugin cannot access the package referenced via ${request} which is neither a builtin, nor an exposed entry`,
+            );
           }
         };
 
-        const plugin = await miscUtils.prettifyAsyncErrors(async () => {
-          return getDefault(await factory(pluginRequire));
-        }, message => {
-          return `${message} (when initializing ${name}, defined in ${source})`;
-        });
+        const plugin = await miscUtils.prettifyAsyncErrors(
+          async () => {
+            return getDefault(await factory(pluginRequire));
+          },
+          (message) => {
+            return `${message} (when initializing ${name}, defined in ${source})`;
+          },
+        );
 
         requireEntries.set(name, () => plugin);
 
@@ -1306,51 +1361,84 @@ export class Configuration {
         }
       }
 
-      for (const {path, cwd, data} of rcFiles) {
-        if (!useRc)
-          continue;
-        if (!Array.isArray(data.plugins))
-          continue;
+      for (const { path, cwd, data } of rcFiles) {
+        if (!useRc) continue;
+        if (!Array.isArray(data.plugins)) continue;
 
         for (const userPluginEntry of data.plugins) {
-          const userProvidedPath = typeof userPluginEntry !== `string`
-            ? userPluginEntry.path
-            : userPluginEntry;
+          const userProvidedPath = typeof userPluginEntry !== `string` ? userPluginEntry.path : userPluginEntry;
 
           const userProvidedSpec = userPluginEntry?.spec ?? ``;
           const userProvidedChecksum = userPluginEntry?.checksum ?? ``;
 
-          if (LEGACY_PLUGINS.has(userProvidedSpec))
-            continue;
+          if (LEGACY_PLUGINS.has(userProvidedSpec)) continue;
 
           const pluginPath = ppath.resolve(cwd, npath.toPortablePath(userProvidedPath));
-          if (!await xfs.existsPromise(pluginPath)) {
+          if (!(await xfs.existsPromise(pluginPath))) {
             if (!userProvidedSpec) {
-              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
-              const prettyGitIgnore = formatUtils.pretty(configuration, `.gitignore`, formatUtils.Type.NAME) ;
-              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
-              const prettyUrl = formatUtils.pretty(configuration, `https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored`, formatUtils.Type.URL) ;
-              throw new UsageError(`Missing source for the ${prettyPluginName} plugin - please try to remove the plugin from ${prettyYarnrc} then reinstall it manually. This error usually occurs because ${prettyGitIgnore} is incorrect, check ${prettyUrl} to make sure your plugin folder isn't gitignored.`);
+              const prettyPluginName = formatUtils.pretty(
+                configuration,
+                ppath.basename(pluginPath, `.cjs`),
+                formatUtils.Type.NAME,
+              );
+              const prettyGitIgnore = formatUtils.pretty(configuration, `.gitignore`, formatUtils.Type.NAME);
+              const prettyYarnrc = formatUtils.pretty(
+                configuration,
+                configuration.values.get(`rcFilename`),
+                formatUtils.Type.NAME,
+              );
+              const prettyUrl = formatUtils.pretty(
+                configuration,
+                `https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored`,
+                formatUtils.Type.URL,
+              );
+              throw new UsageError(
+                `Missing source for the ${prettyPluginName} plugin - please try to remove the plugin from ${prettyYarnrc} then reinstall it manually. This error usually occurs because ${prettyGitIgnore} is incorrect, check ${prettyUrl} to make sure your plugin folder isn't gitignored.`,
+              );
             }
 
             if (!userProvidedSpec.match(/^https?:/)) {
-              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
-              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
-              throw new UsageError(`Failed to recognize the source for the ${prettyPluginName} plugin - please try to delete the plugin from ${prettyYarnrc} then reinstall it manually.`);
+              const prettyPluginName = formatUtils.pretty(
+                configuration,
+                ppath.basename(pluginPath, `.cjs`),
+                formatUtils.Type.NAME,
+              );
+              const prettyYarnrc = formatUtils.pretty(
+                configuration,
+                configuration.values.get(`rcFilename`),
+                formatUtils.Type.NAME,
+              );
+              throw new UsageError(
+                `Failed to recognize the source for the ${prettyPluginName} plugin - please try to delete the plugin from ${prettyYarnrc} then reinstall it manually.`,
+              );
             }
 
-            const pluginBuffer = await httpUtils.get(userProvidedSpec, {configuration});
+            const pluginBuffer = await httpUtils.get(userProvidedSpec, { configuration });
             const pluginChecksum = hashUtils.makeHash(pluginBuffer);
 
             // if there is no checksum, this means that the user used --no-checksum and does not need to check this plugin
             if (userProvidedChecksum && userProvidedChecksum !== pluginChecksum) {
-              const prettyPluginName = formatUtils.pretty(configuration, ppath.basename(pluginPath, `.cjs`), formatUtils.Type.NAME);
-              const prettyYarnrc = formatUtils.pretty(configuration, configuration.values.get(`rcFilename`), formatUtils.Type.NAME) ;
-              const prettyPluginImportCommand = formatUtils.pretty(configuration, `yarn plugin import ${userProvidedSpec}`, formatUtils.Type.CODE) ;
-              throw new UsageError(`Failed to fetch the ${prettyPluginName} plugin from its remote location: its checksum seems to have changed. If this is expected, please remove the plugin from ${prettyYarnrc} then run ${prettyPluginImportCommand} to reimport it.`);
+              const prettyPluginName = formatUtils.pretty(
+                configuration,
+                ppath.basename(pluginPath, `.cjs`),
+                formatUtils.Type.NAME,
+              );
+              const prettyYarnrc = formatUtils.pretty(
+                configuration,
+                configuration.values.get(`rcFilename`),
+                formatUtils.Type.NAME,
+              );
+              const prettyPluginImportCommand = formatUtils.pretty(
+                configuration,
+                `yarn plugin import ${userProvidedSpec}`,
+                formatUtils.Type.CODE,
+              );
+              throw new UsageError(
+                `Failed to fetch the ${prettyPluginName} plugin from its remote location: its checksum seems to have changed. If this is expected, please remove the plugin from ${prettyYarnrc} then run ${prettyPluginImportCommand} to reimport it.`,
+              );
             }
 
-            await xfs.mkdirPromise(ppath.dirname(pluginPath), {recursive: true});
+            await xfs.mkdirPromise(ppath.dirname(pluginPath), { recursive: true });
             await xfs.writeFilePromise(pluginPath, pluginBuffer);
           }
 
@@ -1359,15 +1447,14 @@ export class Configuration {
       }
     }
 
-    for (const [name, thirdPartyPlugin] of thirdPartyPlugins)
-      configuration.activatePlugin(name, thirdPartyPlugin);
+    for (const [name, thirdPartyPlugin] of thirdPartyPlugins) configuration.activatePlugin(name, thirdPartyPlugin);
 
     // load values of all plugin definitions
-    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, {strict});
+    configuration.useWithSource(`<environment>`, pickPluginFields(environmentSettings), startingCwd, { strict });
 
     if (resolvedRcFile) {
       const [source, data] = resolvedRcFile;
-      configuration.useWithSource(source, pickPluginFields(data), resolvedRcFileCwd, {strict});
+      configuration.useWithSource(source, pickPluginFields(data), resolvedRcFileCwd, { strict });
     }
 
     if (configuration.get(`enableGlobalCache`)) {
@@ -1409,7 +1496,7 @@ export class Configuration {
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
         }
 
-        rcFiles.unshift({path: rcPath, cwd: currentCwd, data});
+        rcFiles.unshift({ path: rcPath, cwd: currentCwd, data });
       }
 
       nextCwd = ppath.dirname(currentCwd);
@@ -1425,14 +1512,13 @@ export class Configuration {
     try {
       content = await xfs.readFilePromise(path, `utf8`);
     } catch (err) {
-      if (err.code === `ENOENT`)
-        return null;
+      if (err.code === `ENOENT`) return null;
 
       throw err;
     }
 
     const data = parseSyml(content) as any;
-    return {path, cwd, data};
+    return { path, cwd, data };
   }
 
   static async findProjectCwd(startingCwd: PortablePath) {
@@ -1444,11 +1530,9 @@ export class Configuration {
     while (nextCwd !== currentCwd) {
       currentCwd = nextCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, Filename.lockfile)))
-        return currentCwd;
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.lockfile))) return currentCwd;
 
-      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest)))
-        projectCwd = currentCwd;
+      if (xfs.existsSync(ppath.join(currentCwd, Filename.manifest))) projectCwd = currentCwd;
 
       nextCwd = ppath.dirname(currentCwd);
     }
@@ -1456,16 +1540,22 @@ export class Configuration {
     return projectCwd;
   }
 
-  static async updateConfiguration(cwd: PortablePath, patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown}), opts: {immutable?: boolean} = {}) {
+  static async updateConfiguration(
+    cwd: PortablePath,
+    patch:
+      | { [key: string]: ((current: unknown) => unknown) | {} | undefined }
+      | ((current: { [key: string]: unknown }) => { [key: string]: unknown }),
+    opts: { immutable?: boolean } = {},
+  ) {
     const rcFilename = getRcFilename();
-    const configurationPath =  ppath.join(cwd, rcFilename as PortablePath);
+    const configurationPath = ppath.join(cwd, rcFilename as PortablePath);
 
     const current = xfs.existsSync(configurationPath)
-      ? parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any
+      ? (parseSyml(await xfs.readFilePromise(configurationPath, `utf8`)) as any)
       : {};
 
     let patched = false;
-    let replacement: {[key: string]: unknown};
+    let replacement: { [key: string]: unknown };
 
     if (typeof patch === `function`) {
       try {
@@ -1495,13 +1585,10 @@ export class Configuration {
           nextValue = patchField;
         }
 
-        if (currentValue === nextValue)
-          continue;
+        if (currentValue === nextValue) continue;
 
-        if (nextValue === Configuration.deleteProperty)
-          delete replacement[key];
-        else
-          replacement[key] = nextValue;
+        if (nextValue === Configuration.deleteProperty) delete replacement[key];
+        else replacement[key] = nextValue;
 
         patched = true;
       }
@@ -1519,29 +1606,25 @@ export class Configuration {
   }
 
   static async addPlugin(cwd: PortablePath, pluginMetaList: Array<PluginMeta>) {
-    if (pluginMetaList.length === 0)
-      return;
+    if (pluginMetaList.length === 0) return;
 
     await Configuration.updateConfiguration(cwd, (current: any) => {
       const currentPluginMetaList = current.plugins ?? [];
-      if (currentPluginMetaList.length === 0)
-        return {...current, plugins: pluginMetaList};
+      if (currentPluginMetaList.length === 0) return { ...current, plugins: pluginMetaList };
 
       const newPluginMetaList = [];
       let notYetProcessedList = [...pluginMetaList];
 
       for (const currentPluginMeta of currentPluginMetaList) {
-        const currentPluginPath = typeof currentPluginMeta !== `string`
-          ? currentPluginMeta.path
-          : currentPluginMeta;
+        const currentPluginPath = typeof currentPluginMeta !== `string` ? currentPluginMeta.path : currentPluginMeta;
 
-        const updatingPlugin = notYetProcessedList.find(pluginMeta => {
+        const updatingPlugin = notYetProcessedList.find((pluginMeta) => {
           return pluginMeta.path === currentPluginPath;
         });
 
         if (updatingPlugin) {
           newPluginMetaList.push(updatingPlugin);
-          notYetProcessedList = notYetProcessedList.filter(p => p !== updatingPlugin);
+          notYetProcessedList = notYetProcessedList.filter((p) => p !== updatingPlugin);
         } else {
           newPluginMetaList.push(currentPluginMeta);
         }
@@ -1549,11 +1632,15 @@ export class Configuration {
 
       newPluginMetaList.push(...notYetProcessedList);
 
-      return {...current, plugins: newPluginMetaList};
+      return { ...current, plugins: newPluginMetaList };
     });
   }
 
-  static async updateHomeConfiguration(patch: {[key: string]: ((current: unknown) => unknown) | {} | undefined} | ((current: {[key: string]: unknown}) => {[key: string]: unknown})) {
+  static async updateHomeConfiguration(
+    patch:
+      | { [key: string]: ((current: unknown) => unknown) | {} | undefined }
+      | ((current: { [key: string]: unknown }) => { [key: string]: unknown }),
+  ) {
     const homeFolder = folderUtils.getHomeFolder();
 
     return await Configuration.updateConfiguration(homeFolder, patch);
@@ -1571,19 +1658,22 @@ export class Configuration {
     }
   }
 
-  private importSettings(definitions: {[name: string]: SettingsDefinition | undefined}) {
+  private importSettings(definitions: { [name: string]: SettingsDefinition | undefined }) {
     for (const [name, definition] of Object.entries(definitions)) {
-      if (definition == null)
-        continue;
-      if (this.settings.has(name))
-        throw new Error(`Cannot redefine settings "${name}"`);
+      if (definition == null) continue;
+      if (this.settings.has(name)) throw new Error(`Cannot redefine settings "${name}"`);
 
       this.settings.set(name, definition);
       this.values.set(name, getDefaultValue(this, definition));
     }
   }
 
-  useWithSource(source: string, data: {[key: string]: unknown}, folder: PortablePath, opts?: {strict?: boolean, overwrite?: boolean}) {
+  useWithSource(
+    source: string,
+    data: { [key: string]: unknown },
+    folder: PortablePath,
+    opts?: { strict?: boolean; overwrite?: boolean },
+  ) {
     try {
       this.use(source, data, folder, opts);
     } catch (error) {
@@ -1592,52 +1682,56 @@ export class Configuration {
     }
   }
 
-  use(source: string, data: {[key: string]: unknown}, folder: PortablePath, {strict = true, overwrite = false}: {strict?: boolean, overwrite?: boolean} = {}) {
+  use(
+    source: string,
+    data: { [key: string]: unknown },
+    folder: PortablePath,
+    { strict = true, overwrite = false }: { strict?: boolean; overwrite?: boolean } = {},
+  ) {
     strict = strict && this.get(`enableStrictSettings`);
 
     for (const key of [`enableStrictSettings`, ...Object.keys(data)]) {
       const value = data[key];
 
       const fieldSource = configUtils.getSource(value);
-      if (fieldSource)
-        source = fieldSource;
+      if (fieldSource) source = fieldSource;
 
-      if (typeof value === `undefined`)
-        continue;
+      if (typeof value === `undefined`) continue;
 
       // The plugins have already been loaded at this point
-      if (key === `plugins`)
-        continue;
+      if (key === `plugins`) continue;
 
       // Some environment variables should be ignored when applying the configuration
-      if (source === `<environment>` && IGNORED_ENV_VARIABLES.has(key))
-        continue;
+      if (source === `<environment>` && IGNORED_ENV_VARIABLES.has(key)) continue;
 
       // It wouldn't make much sense, would it?
       if (key === `rcFilename`)
-        throw new UsageError(`The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`);
+        throw new UsageError(
+          `The rcFilename settings can only be set via ${`${ENVIRONMENT_PREFIX}RC_FILENAME`.toUpperCase()}, not via a rc file`,
+        );
 
       const definition = this.settings.get(key);
       if (!definition) {
         const homeFolder = folderUtils.getHomeFolder();
 
-        const rcFileFolder = source[0] !== `<`
-          ? ppath.dirname(source as PortablePath)
-          : null;
+        const rcFileFolder = source[0] !== `<` ? ppath.dirname(source as PortablePath) : null;
 
-        const isHomeRcFile = rcFileFolder !== null
-          ? homeFolder === rcFileFolder
-          : false;
+        const isHomeRcFile = rcFileFolder !== null ? homeFolder === rcFileFolder : false;
 
         if (strict && !isHomeRcFile) {
-          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+          throw new UsageError(
+            `Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`,
+          );
         } else {
           this.invalid.set(key, source);
           continue;
         }
       }
 
-      if (this.sources.has(key) && !(overwrite || definition.type === SettingsType.MAP || definition.isArray && definition.concatenateValues))
+      if (
+        this.sources.has(key) &&
+        !(overwrite || definition.type === SettingsType.MAP || (definition.isArray && definition.concatenateValues))
+      )
         continue;
 
       let parsed;
@@ -1655,16 +1749,22 @@ export class Configuration {
 
       if (definition.type === SettingsType.MAP) {
         const previousValue = this.values.get(key) as Map<string, any>;
-        this.values.set(key, new Map(overwrite
-          ? [...previousValue, ...parsed as Map<string, any>]
-          : [...parsed as Map<string, any>, ...previousValue],
-        ));
+        this.values.set(
+          key,
+          new Map(
+            overwrite
+              ? [...previousValue, ...(parsed as Map<string, any>)]
+              : [...(parsed as Map<string, any>), ...previousValue],
+          ),
+        );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else if (definition.isArray && definition.concatenateValues) {
         const previousValue = this.values.get(key) as Array<unknown>;
-        this.values.set(key, overwrite
-          ? [...previousValue, ...parsed as Array<unknown>]
-          : [...parsed as Array<unknown>, ...previousValue],
+        this.values.set(
+          key,
+          overwrite
+            ? [...previousValue, ...(parsed as Array<unknown>)]
+            : [...(parsed as Array<unknown>), ...previousValue],
         );
         this.sources.set(key, `${this.sources.get(key)}, ${source}`);
       } else {
@@ -1677,13 +1777,12 @@ export class Configuration {
   get<K extends keyof ConfigurationValueMap>(key: K): ConfigurationValueMap[K];
   get(key: string): unknown;
   get(key: string) {
-    if (!this.values.has(key))
-      throw new Error(`Invalid configuration key "${key}"`);
+    if (!this.values.has(key)) throw new Error(`Invalid configuration key "${key}"`);
 
     return this.values.get(key);
   }
 
-  getSpecial<T = any>(key: string, {hideSecrets = false, getNativePaths = false}: Partial<SettingTransforms>) {
+  getSpecial<T = any>(key: string, { hideSecrets = false, getNativePaths = false }: Partial<SettingTransforms>) {
     const rawValue = this.get(key);
     const definition = this.settings.get(key);
 
@@ -1696,14 +1795,19 @@ export class Configuration {
     }) as T;
   }
 
-  getSubprocessStreams(logFile: PortablePath, {header, prefix, report}: {header?: string, prefix: string, report: Report}) {
+  getSubprocessStreams(
+    logFile: PortablePath,
+    { header, prefix, report }: { header?: string; prefix: string; report: Report },
+  ) {
     let stdout: Writable;
     let stderr: Writable;
 
     const logStream = xfs.createWriteStream(logFile);
 
     if (this.get(`enableInlineBuilds`)) {
-      const stdoutLineReporter = report.createStreamReporter(`${prefix} ${formatUtils.pretty(this, `STDOUT`, `green`)}`);
+      const stdoutLineReporter = report.createStreamReporter(
+        `${prefix} ${formatUtils.pretty(this, `STDOUT`, `green`)}`,
+      );
       const stderrLineReporter = report.createStreamReporter(`${prefix} ${formatUtils.pretty(this, `STDERR`, `red`)}`);
 
       stdout = new PassThrough();
@@ -1722,47 +1826,31 @@ export class Configuration {
       }
     }
 
-    return {stdout, stderr};
+    return { stdout, stderr };
   }
 
   makeResolver() {
     const pluginResolvers = [];
 
     for (const plugin of this.plugins.values())
-      for (const resolver of plugin.resolvers || [])
-        pluginResolvers.push(new resolver());
+      for (const resolver of plugin.resolvers || []) pluginResolvers.push(new resolver());
 
-    return (
-      new MultiResolver([
-        new VirtualResolver(),
-        new WorkspaceResolver(),
-
-        ...pluginResolvers,
-      ])
-    );
+    return new MultiResolver([new VirtualResolver(), new WorkspaceResolver(), ...pluginResolvers]);
   }
 
   makeFetcher() {
     const pluginFetchers = [];
 
     for (const plugin of this.plugins.values())
-      for (const fetcher of plugin.fetchers || [])
-        pluginFetchers.push(new fetcher());
+      for (const fetcher of plugin.fetchers || []) pluginFetchers.push(new fetcher());
 
-    return new MultiFetcher([
-      new VirtualFetcher(),
-      new WorkspaceFetcher(),
-
-      ...pluginFetchers,
-    ]);
+    return new MultiFetcher([new VirtualFetcher(), new WorkspaceFetcher(), ...pluginFetchers]);
   }
 
   getLinkers() {
     const linkers = [];
 
-    for (const plugin of this.plugins.values())
-      for (const linker of plugin.linkers || [])
-        linkers.push(new linker());
+    for (const plugin of this.plugins.values()) for (const linker of plugin.linkers || []) linkers.push(new linker());
 
     return linkers;
   }
@@ -1772,18 +1860,18 @@ export class Configuration {
     const supportedArchitectures = this.get(`supportedArchitectures`);
 
     let os = supportedArchitectures.get(`os`);
-    if (os !== null)
-      os = os.map(value => value === `current` ? architecture.os : value);
+    if (os !== null) os = os.map((value) => (value === `current` ? architecture.os : value));
 
     let cpu = supportedArchitectures.get(`cpu`);
-    if (cpu !== null)
-      cpu = cpu.map(value => value === `current` ? architecture.cpu : value);
+    if (cpu !== null) cpu = cpu.map((value) => (value === `current` ? architecture.cpu : value));
 
     let libc = supportedArchitectures.get(`libc`);
     if (libc !== null)
-      libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
+      libc = miscUtils.mapAndFilter(libc, (value) =>
+        value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value,
+      );
 
-    return {os, cpu, libc};
+    return { os, cpu, libc };
   }
 
   private packageExtensions: PackageExtensions | null = null;
@@ -1792,18 +1880,21 @@ export class Configuration {
    * Computes and caches the package extensions.
    */
   async getPackageExtensions(): Promise<PackageExtensions> {
-    if (this.packageExtensions !== null)
-      return this.packageExtensions;
+    if (this.packageExtensions !== null) return this.packageExtensions;
 
     this.packageExtensions = new Map();
     const packageExtensions = this.packageExtensions;
 
-    const registerPackageExtension = (descriptor: Descriptor, extensionData: PackageExtensionData, {userProvided = false}: {userProvided?: boolean} = {}) => {
+    const registerPackageExtension = (
+      descriptor: Descriptor,
+      extensionData: PackageExtensionData,
+      { userProvided = false }: { userProvided?: boolean } = {},
+    ) => {
       if (!semverUtils.validRange(descriptor.range))
         throw new Error(`Only semver ranges are allowed as keys for the packageExtensions setting`);
 
       const extension = new Manifest();
-      extension.load(extensionData, {yamlCompatibilityMode: true});
+      extension.load(extensionData, { yamlCompatibilityMode: true });
 
       const extensionsPerIdent = miscUtils.getArrayWithDefault(packageExtensions, descriptor.identHash);
 
@@ -1817,23 +1908,41 @@ export class Configuration {
       } as const;
 
       for (const dependency of extension.dependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency});
+        extensionsPerRange.push({ ...baseExtension, type: PackageExtensionType.Dependency, descriptor: dependency });
       for (const peerDependency of extension.peerDependencies.values())
-        extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependency, descriptor: peerDependency});
+        extensionsPerRange.push({
+          ...baseExtension,
+          type: PackageExtensionType.PeerDependency,
+          descriptor: peerDependency,
+        });
 
       for (const [selector, meta] of extension.peerDependenciesMeta) {
         for (const [key, value] of Object.entries(meta)) {
-          extensionsPerRange.push({...baseExtension, type: PackageExtensionType.PeerDependencyMeta, selector, key: key as keyof typeof meta, value});
+          extensionsPerRange.push({
+            ...baseExtension,
+            type: PackageExtensionType.PeerDependencyMeta,
+            selector,
+            key: key as keyof typeof meta,
+            value,
+          });
         }
       }
     };
 
-    await this.triggerHook(hooks => {
-      return hooks.registerPackageExtensions;
-    }, this, registerPackageExtension);
+    await this.triggerHook(
+      (hooks) => {
+        return hooks.registerPackageExtensions;
+      },
+      this,
+      registerPackageExtension,
+    );
 
     for (const [descriptorString, extensionData] of this.get(`packageExtensions`))
-      registerPackageExtension(structUtils.parseDescriptor(descriptorString, true), miscUtils.convertMapsToIndexableObjects(extensionData), {userProvided: true});
+      registerPackageExtension(
+        structUtils.parseDescriptor(descriptorString, true),
+        miscUtils.convertMapsToIndexableObjects(extensionData),
+        { userProvided: true },
+      );
 
     return packageExtensions;
   }
@@ -1861,12 +1970,14 @@ export class Configuration {
   }
 
   normalizeDependencyMap<TKey>(dependencyMap: Map<TKey, Descriptor>) {
-    return new Map([...dependencyMap].map(([key, dependency]) => {
-      return [key, this.normalizeDependency(dependency)];
-    }));
+    return new Map(
+      [...dependencyMap].map(([key, dependency]) => {
+        return [key, this.normalizeDependency(dependency)];
+      }),
+    );
   }
 
-  normalizePackage(original: Package, {packageExtensions}: {packageExtensions: PackageExtensions}) {
+  normalizePackage(original: Package, { packageExtensions }: { packageExtensions: PackageExtensions }) {
     const pkg = structUtils.copyPackage(original);
 
     // We use the extensions to define additional dependencies that weren't
@@ -1878,8 +1989,7 @@ export class Configuration {
 
       if (version !== null) {
         for (const [range, extensionsPerRange] of extensionsPerIdent) {
-          if (!semverUtils.satisfiesWithPrereleases(version, range))
-            continue;
+          if (!semverUtils.satisfiesWithPrereleases(version, range)) continue;
 
           for (const extension of extensionsPerRange) {
             // If an extension is active for a package but redundant
@@ -1888,29 +1998,46 @@ export class Configuration {
               extension.status = PackageExtensionStatus.Redundant;
 
             switch (extension.type) {
-              case PackageExtensionType.Dependency: {
-                const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
-                if (typeof currentDependency === `undefined`) {
-                  extension.status = PackageExtensionStatus.Active;
-                  pkg.dependencies.set(extension.descriptor.identHash, this.normalizeDependency(extension.descriptor));
+              case PackageExtensionType.Dependency:
+                {
+                  const currentDependency = pkg.dependencies.get(extension.descriptor.identHash);
+                  if (typeof currentDependency === `undefined`) {
+                    extension.status = PackageExtensionStatus.Active;
+                    pkg.dependencies.set(
+                      extension.descriptor.identHash,
+                      this.normalizeDependency(extension.descriptor),
+                    );
+                  }
                 }
-              } break;
+                break;
 
-              case PackageExtensionType.PeerDependency: {
-                const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
-                if (typeof currentPeerDependency === `undefined`) {
-                  extension.status = PackageExtensionStatus.Active;
-                  pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
+              case PackageExtensionType.PeerDependency:
+                {
+                  const currentPeerDependency = pkg.peerDependencies.get(extension.descriptor.identHash);
+                  if (typeof currentPeerDependency === `undefined`) {
+                    extension.status = PackageExtensionStatus.Active;
+                    pkg.peerDependencies.set(extension.descriptor.identHash, extension.descriptor);
+                  }
                 }
-              } break;
+                break;
 
-              case PackageExtensionType.PeerDependencyMeta: {
-                const currentPeerDependencyMeta = pkg.peerDependenciesMeta.get(extension.selector);
-                if (typeof currentPeerDependencyMeta === `undefined` || !Object.hasOwn(currentPeerDependencyMeta, extension.key) || currentPeerDependencyMeta[extension.key] !== extension.value) {
-                  extension.status = PackageExtensionStatus.Active;
-                  miscUtils.getFactoryWithDefault(pkg.peerDependenciesMeta, extension.selector, () => ({} as PeerDependencyMeta))[extension.key] = extension.value;
+              case PackageExtensionType.PeerDependencyMeta:
+                {
+                  const currentPeerDependencyMeta = pkg.peerDependenciesMeta.get(extension.selector);
+                  if (
+                    typeof currentPeerDependencyMeta === `undefined` ||
+                    !Object.hasOwn(currentPeerDependencyMeta, extension.key) ||
+                    currentPeerDependencyMeta[extension.key] !== extension.value
+                  ) {
+                    extension.status = PackageExtensionStatus.Active;
+                    miscUtils.getFactoryWithDefault(
+                      pkg.peerDependenciesMeta,
+                      extension.selector,
+                      () => ({}) as PeerDependencyMeta,
+                    )[extension.key] = extension.value;
+                  }
                 }
-              } break;
+                break;
 
               default: {
                 miscUtils.assertNever(extension);
@@ -1927,9 +2054,7 @@ export class Configuration {
     // peer-depend on react.
 
     const getTypesName = (descriptor: Descriptor) => {
-      return descriptor.scope
-        ? `${descriptor.scope}__${descriptor.name}`
-        : `${descriptor.name}`;
+      return descriptor.scope ? `${descriptor.scope}__${descriptor.name}` : `${descriptor.name}`;
     };
 
     // I don't like implicit dependencies, but package authors are reluctant to
@@ -1946,8 +2071,7 @@ export class Configuration {
 
     // Automatically add corresponding `@types` optional peer dependencies
     for (const descriptor of pkg.peerDependencies.values()) {
-      if (descriptor.scope === `types`)
-        continue;
+      if (descriptor.scope === `types`) continue;
 
       const typesName = getTypesName(descriptor);
       const typesIdent = structUtils.makeIdent(`types`, typesName);
@@ -1965,8 +2089,12 @@ export class Configuration {
     // We sort the dependencies so that further iterations always occur in the
     // same order, regardless how the various registries formatted their output
 
-    pkg.dependencies = new Map(miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
-    pkg.peerDependencies = new Map(miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)));
+    pkg.dependencies = new Map(
+      miscUtils.sortMap(pkg.dependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)),
+    );
+    pkg.peerDependencies = new Map(
+      miscUtils.sortMap(pkg.peerDependencies, ([, descriptor]) => structUtils.stringifyDescriptor(descriptor)),
+    );
 
     return pkg;
   }
@@ -1977,37 +2105,43 @@ export class Configuration {
     });
   }
 
-  async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, ...args: U): Promise<void> {
+  async triggerHook<U extends Array<any>, V, HooksDefinition = Hooks>(
+    get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined,
+    ...args: U
+  ): Promise<void> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
-      if (!hooks)
-        continue;
+      if (!hooks) continue;
 
       const hook = get(hooks);
-      if (!hook)
-        continue;
+      if (!hook) continue;
 
       await hook(...args);
     }
   }
 
-  async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined, argsList: Array<U>): Promise<void> {
+  async triggerMultipleHooks<U extends Array<any>, V, HooksDefinition = Hooks>(
+    get: (hooks: HooksDefinition) => ((...args: U) => V) | undefined,
+    argsList: Array<U>,
+  ): Promise<void> {
     for (const args of argsList) {
       await this.triggerHook(get, ...args);
     }
   }
 
-  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
+  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(
+    get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined,
+    initialValue: V,
+    ...args: U
+  ): Promise<V> {
     let value = initialValue;
 
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
-      if (!hooks)
-        continue;
+      if (!hooks) continue;
 
       const hook = get(hooks);
-      if (!hook)
-        continue;
+      if (!hook) continue;
 
       value = await hook(value, ...args);
     }
@@ -2015,15 +2149,16 @@ export class Configuration {
     return value;
   }
 
-  async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined, ...args: U): Promise<Exclude<V, void> | null> {
+  async firstHook<U extends Array<any>, V, HooksDefinition = Hooks>(
+    get: (hooks: HooksDefinition) => ((...args: U) => Promise<V>) | undefined,
+    ...args: U
+  ): Promise<Exclude<V, void> | null> {
     for (const plugin of this.plugins.values()) {
       const hooks = plugin.hooks as HooksDefinition;
-      if (!hooks)
-        continue;
+      if (!hooks) continue;
 
       const hook = get(hooks);
-      if (!hook)
-        continue;
+      if (!hook) continue;
 
       const ret = await hook(...args);
       if (typeof ret !== `undefined`) {

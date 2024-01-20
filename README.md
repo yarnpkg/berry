@@ -146,6 +146,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-next-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-next-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-svelte-kit-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-vite-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vite-workflow.yml)<br/>
+
 </td><td valign="top">
 
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-esbuild-workflow.yml)<br/>
@@ -163,6 +164,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-typescript-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-vitest-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-vitest-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-webpack-workflow.yml)<br/>
+
 </td></tr>
 
 </table>

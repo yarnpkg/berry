@@ -45,14 +45,14 @@ Postinstall scripts should be avoided at all cost, as they make installs slower 
 
 When running scripts and binaries, some environment variables are usually made available:
 
-| Variable | Description |
-| --- | --- |
-| `$INIT_CWD` | Directory from which the script has been invoked. This isn't the same as the cwd, which for scripts is always equal to the closest package root. |
-| `$PROJECT_CWD` | Root of the project on the filesystem. |
-| `$npm_package_name` | Name of the running package. |
-| `$npm_package_version` | Version of the running package. |
-| `$npm_package_json` | Absolute path to the `package.json` of the running package. |
-| `$npm_execpath` | Absolute path to the Yarn binary. |
-| `$npm_node_execpath` | Absolute path to the Node binary. |
-| `$npm_config_user_agent` | String defining the Yarn version currently in use. |
-| `$npm_lifecycle_event` | Name of the script or lifecycle event, if relevant. |
+| Variable                 | Description                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `$INIT_CWD`              | Directory from which the script has been invoked. This isn't the same as the cwd, which for scripts is always equal to the closest package root. |
+| `$PROJECT_CWD`           | Root of the project on the filesystem.                                                                                                           |
+| `$npm_package_name`      | Name of the running package.                                                                                                                     |
+| `$npm_package_version`   | Version of the running package.                                                                                                                  |
+| `$npm_package_json`      | Absolute path to the `package.json` of the running package.                                                                                      |
+| `$npm_execpath`          | Absolute path to the Yarn binary.                                                                                                                |
+| `$npm_node_execpath`     | Absolute path to the Node binary.                                                                                                                |
+| `$npm_config_user_agent` | String defining the Yarn version currently in use.                                                                                               |
+| `$npm_lifecycle_event`   | Name of the script or lifecycle event, if relevant.                                                                                              |

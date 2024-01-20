@@ -5,7 +5,6 @@ title: "Release Workflow"
 description: An in-depth guide to Yarn's release workflow which helps with managing versions across a monorepo.
 ---
 
-
 :::info Experimental
 This feature is still incubating, and we'll likely be improving it based on your feedback.
 :::

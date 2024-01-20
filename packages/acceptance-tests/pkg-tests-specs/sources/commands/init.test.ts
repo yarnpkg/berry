@@ -1,11 +1,11 @@
-import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import { Filename, ppath, xfs } from "@yarnpkg/fslib";
 
 describe(`Commands`, () => {
   describe(`init`, () => {
     test(
       `it should create a new package.json in the local directory if it doesn't exist`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mktempPromise(async tmpDir => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (tmpDir) => {
           const pkgDir = ppath.join(tmpDir, `my-package`);
           await xfs.mkdirpPromise(pkgDir);
 
@@ -22,8 +22,8 @@ describe(`Commands`, () => {
 
     test(
       `it should create a new package.json in the specified directory if it doesn't exist`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mktempPromise(async tmpDir => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (tmpDir) => {
           const pkgDir = ppath.join(tmpDir, `my-package`);
           await xfs.mkdirpPromise(pkgDir);
 
@@ -40,8 +40,8 @@ describe(`Commands`, () => {
 
     test(
       `it should create a new package.json in the specified directory even if said directory doesn't exist`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mktempPromise(async tmpDir => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (tmpDir) => {
           const pkgDir = ppath.join(tmpDir, `my-package`);
 
           await run(`./my-package`, `init`, {
@@ -57,8 +57,8 @@ describe(`Commands`, () => {
 
     test(
       `it should copy the currently running bundle when using --install`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        await xfs.mktempPromise(async tmpDir => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await xfs.mktempPromise(async (tmpDir) => {
           const pkgDir = ppath.join(tmpDir, `my-package`);
           await xfs.mkdirpPromise(pkgDir);
 

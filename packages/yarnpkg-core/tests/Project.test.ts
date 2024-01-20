@@ -1,22 +1,26 @@
-import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Package} from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                                            from '@yarnpkg/fslib';
-import LinkPlugin                                                                      from '@yarnpkg/plugin-link';
-import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
-import v8                                                                              from 'v8';
+import { Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Package } from "@yarnpkg/core";
+import { Filename, PortablePath, ppath, xfs } from "@yarnpkg/fslib";
+import LinkPlugin from "@yarnpkg/plugin-link";
+import PnpPlugin from "@yarnpkg/plugin-pnp";
+import v8 from "v8";
 
-import {TestPlugin}                                                                    from './TestPlugin';
+import { TestPlugin } from "./TestPlugin";
 
 const getConfiguration = (p: PortablePath) => {
-  return Configuration.create(p, p, new Map([
-    [`@yarnpkg/plugin-link`, LinkPlugin],
-    [`@yarnpkg/plugin-pnp`, PnpPlugin],
-    [`plugin-test`, TestPlugin],
-  ]));
+  return Configuration.create(
+    p,
+    p,
+    new Map([
+      [`@yarnpkg/plugin-link`, LinkPlugin],
+      [`@yarnpkg/plugin-pnp`, PnpPlugin],
+      [`plugin-test`, TestPlugin],
+    ]),
+  );
 };
 
 describe(`Project`, () => {
   it(`should resolve virtual links during 'resolveEverything'`, async () => {
-    await xfs.mktempPromise(async dir => {
+    await xfs.mktempPromise(async (dir) => {
       await xfs.mkdirpPromise(ppath.join(dir, `foo`));
       await xfs.writeJsonPromise(ppath.join(dir, `foo`, Filename.manifest), {
         name: `foo`,
@@ -40,16 +44,16 @@ describe(`Project`, () => {
       // First we install the project; this will generate the lockfile yada yada
       {
         const configuration = await getConfiguration(dir);
-        const {project} = await Project.find(configuration, dir);
+        const { project } = await Project.find(configuration, dir);
         const cache = await Cache.find(configuration);
 
-        await project.install({cache, report: new ThrowReport()});
+        await project.install({ cache, report: new ThrowReport() });
       }
 
       // Then we do it again; if the virtual resolution succeeded, then the `foo` package should have a dependency on `bar`
       {
         const configuration = await getConfiguration(dir);
-        const {project} = await Project.find(configuration, dir);
+        const { project } = await Project.find(configuration, dir);
 
         await project.resolveEverything({
           lockfileOnly: true,
@@ -76,7 +80,7 @@ describe(`Project`, () => {
     // in https://github.com/yarnpkg/berry/pull/3565, we need the traversal to be in a
     // specific order for the test to have the correct result.
 
-    await xfs.mktempPromise(async dir => {
+    await xfs.mktempPromise(async (dir) => {
       await xfs.mkdirpPromise(ppath.join(dir, `xxx`));
       await xfs.writeJsonPromise(ppath.join(dir, `xxx`, Filename.manifest), {
         name: `xxx`,
@@ -108,10 +112,10 @@ describe(`Project`, () => {
       });
 
       const configuration = await getConfiguration(dir);
-      const {project} = await Project.find(configuration, dir);
+      const { project } = await Project.find(configuration, dir);
       const cache = await Cache.find(configuration);
 
-      await project.install({cache, report: new ThrowReport()});
+      await project.install({ cache, report: new ThrowReport() });
 
       const xxx = project.getWorkspaceByIdent(structUtils.makeIdent(null, `xxx`));
 
@@ -135,7 +139,7 @@ describe(`Project`, () => {
   });
 
   it(`should generate the exact same structure with a full resolveEverything as hydrateVirtualPackages`, async () => {
-    await xfs.mktempPromise(async dir => {
+    await xfs.mktempPromise(async (dir) => {
       await xfs.mkdirpPromise(ppath.join(dir, `foo`));
       await xfs.writeJsonPromise(ppath.join(dir, `foo`, Filename.manifest), {
         name: `foo`,
@@ -162,10 +166,10 @@ describe(`Project`, () => {
       // First we install the project; this will generate the lockfile yada yada
       {
         const configuration = await getConfiguration(dir);
-        const {project} = await Project.find(configuration, dir);
+        const { project } = await Project.find(configuration, dir);
         const cache = await Cache.find(configuration);
 
-        await project.install({cache, report: new ThrowReport()});
+        await project.install({ cache, report: new ThrowReport() });
 
         project1 = project;
       }
@@ -173,7 +177,7 @@ describe(`Project`, () => {
       // Then we setup the project except that this time we only call `hydrateVirtualPackages`
       {
         const configuration = await getConfiguration(dir);
-        const {project} = await Project.find(configuration, dir);
+        const { project } = await Project.find(configuration, dir);
 
         await project.restoreInstallState();
 
@@ -189,9 +193,11 @@ describe(`Project`, () => {
       // (otherwise our users would need to run `yarn install` again each time
       // they change the version from one of their workspaces / portals).
       const clean = (registry: Map<LocatorHash, Package>) => {
-        return new Map([...registry.values()].map(pkg => {
-          return [pkg.locatorHash, {...pkg, version: null}];
-        }));
+        return new Map(
+          [...registry.values()].map((pkg) => {
+            return [pkg.locatorHash, { ...pkg, version: null }];
+          }),
+        );
       };
 
       // Jest does a lot of magic with global values and comparisons. One of
@@ -204,27 +210,31 @@ describe(`Project`, () => {
       // output go through the same constructors (ie the v8 ones).
       const fixPrototypes = (data: unknown) => v8.deserialize(v8.serialize(data));
 
-      expect(fixPrototypes({
-        lockfileChecksum: project1.lockFileChecksum,
-        packages: clean(project1.storedPackages),
-        descriptors: project1.storedDescriptors,
-        resolutions: project1.storedResolutions,
-      })).toEqual(fixPrototypes({
-        lockfileChecksum: project2.lockFileChecksum,
-        packages: clean(project2.storedPackages),
-        descriptors: project2.storedDescriptors,
-        resolutions: project2.storedResolutions,
-      }));
+      expect(
+        fixPrototypes({
+          lockfileChecksum: project1.lockFileChecksum,
+          packages: clean(project1.storedPackages),
+          descriptors: project1.storedDescriptors,
+          resolutions: project1.storedResolutions,
+        }),
+      ).toEqual(
+        fixPrototypes({
+          lockfileChecksum: project2.lockFileChecksum,
+          packages: clean(project2.storedPackages),
+          descriptors: project2.storedDescriptors,
+          resolutions: project2.storedResolutions,
+        }),
+      );
     });
   });
 
   it(`should update Manifest.raw when persisting a workspace`, async () => {
-    await xfs.mktempPromise(async path => {
-      await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {name: `foo`});
+    await xfs.mktempPromise(async (path) => {
+      await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), { name: `foo` });
       await xfs.writeFilePromise(ppath.join(path, Filename.lockfile), ``);
 
       const configuration = getConfiguration(path);
-      const {project} = await Project.find(configuration, path);
+      const { project } = await Project.find(configuration, path);
 
       expect(project.topLevelWorkspace.manifest.raw.main).toBeUndefined();
 
@@ -237,20 +247,24 @@ describe(`Project`, () => {
   // https://github.com/yarnpkg/berry/issues/3559
   it(`should preserve resolution dependencies when installing in lockfileOnly mode`, async () => {
     const checkProject = (project: Project) => {
-      expect([...project.storedDescriptors.values()]).toStrictEqual(expect.arrayContaining([
-        expect.objectContaining({name: `foo`, range: `unbound:bar`}),
-        expect.objectContaining({name: `foo`, range: `resdep:foo@unbound:bar`}),
-      ]));
+      expect([...project.storedDescriptors.values()]).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: `foo`, range: `unbound:bar` }),
+          expect.objectContaining({ name: `foo`, range: `resdep:foo@unbound:bar` }),
+        ]),
+      );
 
       for (const packages of [project.originalPackages, project.storedPackages]) {
-        expect([...packages.values()]).toStrictEqual(expect.arrayContaining([
-          expect.objectContaining({name: `foo`, reference: `unbound:bar`}),
-          expect.objectContaining({name: `foo`, reference: `resdep:foo@unbound:bar`}),
-        ]));
+        expect([...packages.values()]).toStrictEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ name: `foo`, reference: `unbound:bar` }),
+            expect.objectContaining({ name: `foo`, reference: `resdep:foo@unbound:bar` }),
+          ]),
+        );
       }
     };
 
-    await xfs.mktempPromise(async dir => {
+    await xfs.mktempPromise(async (dir) => {
       await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {
         dependencies: {
           [`foo`]: `resdep:foo@unbound:bar`,
@@ -260,10 +274,10 @@ describe(`Project`, () => {
       // First we install the project; this will generate the lockfile yada yada
       {
         const configuration = await getConfiguration(dir);
-        const {project} = await Project.find(configuration, dir);
+        const { project } = await Project.find(configuration, dir);
         const cache = await Cache.find(configuration);
 
-        await project.install({cache, report: new ThrowReport()});
+        await project.install({ cache, report: new ThrowReport() });
 
         // Sanity check
         checkProject(project);
@@ -272,7 +286,7 @@ describe(`Project`, () => {
       // Then we do it again, with a lockfileOnly install
       {
         const configuration = await getConfiguration(dir);
-        const {project} = await Project.find(configuration, dir);
+        const { project } = await Project.find(configuration, dir);
 
         await project.resolveEverything({
           lockfileOnly: true,
@@ -284,16 +298,16 @@ describe(`Project`, () => {
     });
   });
 
-  it(`should recover from a corrupted install state`, async() => {
-    await xfs.mktempPromise(async dir => {
-      await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {name: `foo`});
+  it(`should recover from a corrupted install state`, async () => {
+    await xfs.mktempPromise(async (dir) => {
+      await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), { name: `foo` });
       await xfs.writeFilePromise(ppath.join(dir, Filename.lockfile), ``);
 
       const configuration = getConfiguration(dir);
-      const {project} = await Project.find(configuration, dir);
+      const { project } = await Project.find(configuration, dir);
       const cache = await Cache.find(configuration);
 
-      await project.install({cache, report: new ThrowReport()});
+      await project.install({ cache, report: new ThrowReport() });
 
       const statePath = configuration.get(`installStatePath`);
       await xfs.writeFilePromise(statePath, `invalid state`);

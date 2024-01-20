@@ -1,15 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Cache, Configuration, MessageName}   from '@yarnpkg/core';
-import {Project, StreamReport}               from '@yarnpkg/core';
-import {Command, Option, Usage}              from 'clipanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { Cache, Configuration, MessageName } from "@yarnpkg/core";
+import { Project, StreamReport } from "@yarnpkg/core";
+import { Command, Option, Usage } from "clipanion";
 
-import * as versionUtils                     from '../../versionUtils';
+import * as versionUtils from "../../versionUtils";
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends BaseCommand {
-  static paths = [
-    [`version`, `apply`],
-  ];
+  static paths = [[`version`, `apply`]];
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
@@ -26,13 +24,10 @@ export default class VersionApplyCommand extends BaseCommand {
 
       Note that this command will also update the \`workspace:\` references across all your local workspaces, thus ensuring that they keep referring to the same workspaces even after the version bump.
     `,
-    examples: [[
-      `Apply the version change to the local workspace`,
-      `yarn version apply`,
-    ], [
-      `Apply the version change to all the workspaces in the local workspace`,
-      `yarn version apply --all`,
-    ]],
+    examples: [
+      [`Apply the version change to the local workspace`, `yarn version apply`],
+      [`Apply the version change to all the workspaces in the local workspace`, `yarn version apply --all`],
+    ],
   });
 
   all = Option.Boolean(`--all`, false, {
@@ -58,75 +53,76 @@ export default class VersionApplyCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState({
       restoreResolutions: false,
     });
 
-    const applyReport = await StreamReport.start({
-      configuration,
-      json: this.json,
-      stdout: this.context.stdout,
-    }, async report => {
-      const prerelease = this.prerelease
-        ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`
-        : null;
+    const applyReport = await StreamReport.start(
+      {
+        configuration,
+        json: this.json,
+        stdout: this.context.stdout,
+      },
+      async (report) => {
+        const prerelease = this.prerelease ? (typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`) : null;
 
-      const allReleases = await versionUtils.resolveVersionFiles(project, {prerelease});
-      let filteredReleases: typeof allReleases = new Map();
+        const allReleases = await versionUtils.resolveVersionFiles(project, { prerelease });
+        let filteredReleases: typeof allReleases = new Map();
 
-      if (this.all) {
-        filteredReleases = allReleases;
-      } else {
-        const relevantWorkspaces = this.recursive
-          ? workspace.getRecursiveWorkspaceDependencies()
-          : [workspace];
+        if (this.all) {
+          filteredReleases = allReleases;
+        } else {
+          const relevantWorkspaces = this.recursive ? workspace.getRecursiveWorkspaceDependencies() : [workspace];
 
-        for (const child of relevantWorkspaces) {
-          const release = allReleases.get(child);
-          if (typeof release !== `undefined`) {
-            filteredReleases.set(child, release);
-          }
-        }
-      }
-
-      if (filteredReleases.size === 0) {
-        const protip = allReleases.size > 0
-          ? ` Did you want to add --all?`
-          : ``;
-
-        report.reportWarning(MessageName.UNNAMED, `The current workspace doesn't seem to require a version bump.${protip}`);
-        return;
-      }
-
-      versionUtils.applyReleases(project, filteredReleases, {report});
-
-      if (!this.dryRun) {
-        if (!prerelease) {
-          if (this.all) {
-            await versionUtils.clearVersionFiles(project);
-          } else {
-            await versionUtils.updateVersionFiles(project, [...filteredReleases.keys()]);
+          for (const child of relevantWorkspaces) {
+            const release = allReleases.get(child);
+            if (typeof release !== `undefined`) {
+              filteredReleases.set(child, release);
+            }
           }
         }
 
-        report.reportSeparator();
-      }
-    });
+        if (filteredReleases.size === 0) {
+          const protip = allReleases.size > 0 ? ` Did you want to add --all?` : ``;
 
-    if (this.dryRun || applyReport.hasErrors())
-      return applyReport.exitCode();
+          report.reportWarning(
+            MessageName.UNNAMED,
+            `The current workspace doesn't seem to require a version bump.${protip}`,
+          );
+          return;
+        }
 
-    return await project.installWithNewReport({
-      json: this.json,
-      stdout: this.context.stdout,
-    }, {
-      cache,
-    });
+        versionUtils.applyReleases(project, filteredReleases, { report });
+
+        if (!this.dryRun) {
+          if (!prerelease) {
+            if (this.all) {
+              await versionUtils.clearVersionFiles(project);
+            } else {
+              await versionUtils.updateVersionFiles(project, [...filteredReleases.keys()]);
+            }
+          }
+
+          report.reportSeparator();
+        }
+      },
+    );
+
+    if (this.dryRun || applyReport.hasErrors()) return applyReport.exitCode();
+
+    return await project.installWithNewReport(
+      {
+        json: this.json,
+        stdout: this.context.stdout,
+      },
+      {
+        cache,
+      },
+    );
   }
 }

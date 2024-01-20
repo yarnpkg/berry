@@ -1,4 +1,4 @@
-import {derive} from '../sources/TelemetryManager';
+import { derive } from "../sources/TelemetryManager";
 
 const hour = 60 * 60 * 1000;
 const day = 24 * hour;
@@ -8,16 +8,18 @@ const TEST_TIME = 946684800000;
 
 describe(`TelemetryManager`, () => {
   it(`should properly initialize the telemetry state`, () => {
-    expect(derive({
-      state: {},
+    expect(
+      derive({
+        state: {},
 
-      timeNow: TEST_TIME + 12 * hour,
-      timeZone: 0,
+        timeNow: TEST_TIME + 12 * hour,
+        timeZone: 0,
 
-      randomInitialInterval: 0,
-      updateInterval: 7,
-    })).toEqual({
-      nextState: {lastUpdate: TEST_TIME + 12 * hour + 7 * day, lastTips: TEST_TIME},
+        randomInitialInterval: 0,
+        updateInterval: 7,
+      }),
+    ).toEqual({
+      nextState: { lastUpdate: TEST_TIME + 12 * hour + 7 * day, lastTips: TEST_TIME },
 
       triggerUpdate: false,
       triggerTips: false,
@@ -27,17 +29,19 @@ describe(`TelemetryManager`, () => {
   });
 
   it(`shouldn't detect a tips display until 8am`, () => {
-    expect(derive({
-      state: {
-        lastTips: TEST_TIME,
-      },
+    expect(
+      derive({
+        state: {
+          lastTips: TEST_TIME,
+        },
 
-      timeNow: TEST_TIME + (24 + 7) * hour,
-      timeZone: 0,
+        timeNow: TEST_TIME + (24 + 7) * hour,
+        timeZone: 0,
 
-      randomInitialInterval: 0,
-      updateInterval: 7,
-    })).toEqual({
+        randomInitialInterval: 0,
+        updateInterval: 7,
+      }),
+    ).toEqual({
       nextState: expect.objectContaining({
         lastTips: TEST_TIME,
       }),
@@ -50,17 +54,19 @@ describe(`TelemetryManager`, () => {
   });
 
   it(`should detect a tips display after 8am`, () => {
-    expect(derive({
-      state: {
-        lastTips: TEST_TIME,
-      },
+    expect(
+      derive({
+        state: {
+          lastTips: TEST_TIME,
+        },
 
-      timeNow: TEST_TIME + (24 + 9) * hour,
-      timeZone: 0,
+        timeNow: TEST_TIME + (24 + 9) * hour,
+        timeZone: 0,
 
-      randomInitialInterval: 0,
-      updateInterval: 7,
-    })).toEqual({
+        randomInitialInterval: 0,
+        updateInterval: 7,
+      }),
+    ).toEqual({
       nextState: expect.objectContaining({
         lastTips: TEST_TIME,
       }),
@@ -73,17 +79,19 @@ describe(`TelemetryManager`, () => {
   });
 
   it(`should use the local timezone when checking the tips display`, () => {
-    expect(derive({
-      state: {
-        lastTips: TEST_TIME,
-      },
+    expect(
+      derive({
+        state: {
+          lastTips: TEST_TIME,
+        },
 
-      timeNow: TEST_TIME + (24 + 7) * hour,
-      timeZone: 2 * hour,
+        timeNow: TEST_TIME + (24 + 7) * hour,
+        timeZone: 2 * hour,
 
-      randomInitialInterval: 0,
-      updateInterval: 7,
-    })).toEqual({
+        randomInitialInterval: 0,
+        updateInterval: 7,
+      }),
+    ).toEqual({
       nextState: expect.objectContaining({
         lastTips: TEST_TIME,
       }),

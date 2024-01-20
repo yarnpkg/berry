@@ -1,26 +1,26 @@
-name: 'Close stale issues'
+name: "Close stale issues"
 on:
   schedule:
-  - cron: '0 * * * *'
+    - cron: "0 * * * *"
 
 jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stale@v6
-      with:
-        repo-token: ${{secrets.YARNBOT_TOKEN}}
+      - uses: actions/stale@v6
+        with:
+          repo-token: ${{secrets.YARNBOT_TOKEN}}
 
-        stale-issue-message: |
-          Hi! 👋
+          stale-issue-message: |
+            Hi! 👋
 
-          It seems like this issue as been marked as probably resolved, or missing important information blocking its progression. As a result, it'll be closed in a few days unless a maintainer explicitly vouches for it.
+            It seems like this issue as been marked as probably resolved, or missing important information blocking its progression. As a result, it'll be closed in a few days unless a maintainer explicitly vouches for it.
 
-        remove-stale-when-updated: true
+          remove-stale-when-updated: true
 
-        days-before-stale: 30
-        days-before-close: 5
+          days-before-stale: 30
+          days-before-close: 5
 
-        only-labels: 'waiting for feedback'
+          only-labels: "waiting for feedback"
 
-        stale-issue-label: 'stale'
+          stale-issue-label: "stale"

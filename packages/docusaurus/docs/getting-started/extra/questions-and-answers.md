@@ -126,7 +126,7 @@ Although tempting, this reasoning has a fatal flaw: removing the lockfile from t
 
 - Even assuming you run fresh installs every week, your upgrades won't be easily reversible - once you test the most recent packages, you won't test against the less recent ones. The compatibility issues will still exist, they just will be against packages that used to work but that you don't test anymore. in other words, by always testing the most recent semver release, you won't see if you accidentally start relying on a feature that wasn't available before.
 
-Of course these points are only part of the problem - the lack of lockfile also means that key state information are missing from the repository. When months later you or your contributors want to make a fix on one of your old projects you might not even be able to *build* it anymore, let alone improve it.
+Of course these points are only part of the problem - the lack of lockfile also means that key state information are missing from the repository. When months later you or your contributors want to make a fix on one of your old projects you might not even be able to _build_ it anymore, let alone improve it.
 
 Lockfiles should **always** be kept within the repository. Continuous integration testing **is a good idea**, but should be left to continuous integration systems. For example, Yarn itself runs [daily tests](https://github.com/yarnpkg/berry#current-status) against the latest versions of major open-source frameworks and tools, which allows us to quickly spot any compatibility issue with the newest release, while still being guarateed that every contributor will have a consistent experience working with the project. [Dependabot](https://dependabot.com/#how-it-works) and [Renovate](https://www.whitesourcesoftware.com/free-developer-tools/renovate) are also good tools that track your dependencies updates for you.
 
@@ -215,7 +215,7 @@ Given that PnP is a resolver standard different from Node, tools that reimplemen
 
 Which now begs the question: why do we still apply this patch even when Plug'n'Play is disabled? The main reason is that Yarn intends to provide consistent behaviour. Some setups involve using the `node_modules` linker during development (to avoid having to setup editor [SDKS](/getting-started/editor-sdks)) and PnP in production (for install speed). If we were to only apply the patches when PnP is enabled, then the package cache would turn different, which would for example break immutable installs.
 
-We *could* potentially make it configurable through a switch, but in the end we decided it wasn't worth the extra configuration:
+We _could_ potentially make it configurable through a switch, but in the end we decided it wasn't worth the extra configuration:
 
 - The TypeScript patch is a noop if PnP isn't enabled, so this shouldn't affect your work (if it does, please open an issue)
 - We hope to eventually land this PR in TypeScript one day, so the more eyes we can get on it the higher our confidence will be

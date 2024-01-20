@@ -1,16 +1,24 @@
-import {safeLoad, FAILSAFE_SCHEMA} from 'js-yaml';
+import { safeLoad, FAILSAFE_SCHEMA } from "js-yaml";
 
-import {parse}                     from './grammars/syml';
+import { parse } from "./grammars/syml";
 
 const simpleStringPattern = /^(?![-?:,\][{}#&*!|>'"%@` \t\r\n]).([ \t]*(?![,\][{}:# \t\r\n]).)*$/;
 
 // The following keys will always be stored at the top of the object, in the
 // specified order. It's not fair but life isn't fair either.
-const specialObjectKeys = [`__metadata`, `version`, `resolution`, `dependencies`, `peerDependencies`, `dependenciesMeta`, `peerDependenciesMeta`, `binaries`];
+const specialObjectKeys = [
+  `__metadata`,
+  `version`,
+  `resolution`,
+  `dependencies`,
+  `peerDependencies`,
+  `dependenciesMeta`,
+  `peerDependenciesMeta`,
+  `binaries`,
+];
 
 export class PreserveOrdering {
-  constructor(public readonly data: any) {
-  }
+  constructor(public readonly data: any) {}
 }
 
 function stringifyString(value: string): string {
@@ -22,42 +30,37 @@ function stringifyString(value: string): string {
 }
 
 function isRemovableField(value: any): boolean {
-  if (typeof value === `undefined`)
-    return true;
+  if (typeof value === `undefined`) return true;
 
   if (typeof value === `object` && value !== null && !Array.isArray(value))
-    return Object.keys(value).every(key => isRemovableField(value[key]));
+    return Object.keys(value).every((key) => isRemovableField(value[key]));
 
   return false;
 }
 
 function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolean): string {
-  if (value === null)
-    return `null\n`;
+  if (value === null) return `null\n`;
 
-  if (typeof value === `number` || typeof value === `boolean`)
-    return `${value.toString()}\n`;
+  if (typeof value === `number` || typeof value === `boolean`) return `${value.toString()}\n`;
 
-  if (typeof value === `string`)
-    return `${stringifyString(value)}\n`;
+  if (typeof value === `string`) return `${stringifyString(value)}\n`;
 
   if (Array.isArray(value)) {
-    if (value.length === 0)
-      return `[]\n`;
+    if (value.length === 0) return `[]\n`;
 
     const indent = `  `.repeat(indentLevel);
 
-    const serialized = value.map(sub => {
-      return `${indent}- ${stringifyValue(sub, indentLevel + 1, false)}`;
-    }).join(``);
+    const serialized = value
+      .map((sub) => {
+        return `${indent}- ${stringifyValue(sub, indentLevel + 1, false)}`;
+      })
+      .join(``);
 
     return `\n${serialized}`;
   }
 
   if (typeof value === `object` && value) {
-    const [data, sort] = value instanceof PreserveOrdering
-      ? [value.data, false]
-      : [value, true];
+    const [data, sort] = value instanceof PreserveOrdering ? [value.data, false] : [value, true];
 
     const indent = `  `.repeat(indentLevel);
 
@@ -68,40 +71,36 @@ function stringifyValue(value: any, indentLevel: number, newLineIfObject: boolea
         const aIndex = specialObjectKeys.indexOf(a);
         const bIndex = specialObjectKeys.indexOf(b);
 
-        if (aIndex === -1 && bIndex === -1)
-          return a < b ? -1 : a > b ? +1 : 0;
-        if (aIndex !== -1 && bIndex === -1)
-          return -1;
-        if (aIndex === -1 && bIndex !== -1)
-          return +1;
+        if (aIndex === -1 && bIndex === -1) return a < b ? -1 : a > b ? +1 : 0;
+        if (aIndex !== -1 && bIndex === -1) return -1;
+        if (aIndex === -1 && bIndex !== -1) return +1;
 
         return aIndex - bIndex;
       });
     }
 
-    const fields = keys.filter(key => {
-      return !isRemovableField(data[key]);
-    }).map((key, index) => {
-      const value = data[key];
+    const fields =
+      keys
+        .filter((key) => {
+          return !isRemovableField(data[key]);
+        })
+        .map((key, index) => {
+          const value = data[key];
 
-      const stringifiedKey = stringifyString(key);
-      const stringifiedValue = stringifyValue(value, indentLevel + 1, true);
+          const stringifiedKey = stringifyString(key);
+          const stringifiedValue = stringifyValue(value, indentLevel + 1, true);
 
-      const recordIndentation = index > 0 || newLineIfObject
-        ? indent
-        : ``;
+          const recordIndentation = index > 0 || newLineIfObject ? indent : ``;
 
-      // Yaml 1.2 spec says that keys over 1024 characters need to be prefixed with ? and the : goes in a new line
-      const keyPart = stringifiedKey.length > 1024
-        ? `? ${stringifiedKey}\n${recordIndentation}:`
-        : `${stringifiedKey}:`;
+          // Yaml 1.2 spec says that keys over 1024 characters need to be prefixed with ? and the : goes in a new line
+          const keyPart =
+            stringifiedKey.length > 1024 ? `? ${stringifiedKey}\n${recordIndentation}:` : `${stringifiedKey}:`;
 
-      const valuePart = stringifiedValue.startsWith(`\n`)
-        ? stringifiedValue
-        : ` ${stringifiedValue}`;
+          const valuePart = stringifiedValue.startsWith(`\n`) ? stringifiedValue : ` ${stringifiedValue}`;
 
-      return `${recordIndentation}${keyPart}${valuePart}`;
-    }).join(indentLevel === 0 ? `\n` : ``) || `\n`;
+          return `${recordIndentation}${keyPart}${valuePart}`;
+        })
+        .join(indentLevel === 0 ? `\n` : ``) || `\n`;
 
     if (!newLineIfObject) {
       return `${fields}`;
@@ -119,7 +118,10 @@ export function stringifySyml(value: any) {
     return stringified !== `\n` ? stringified : ``;
   } catch (error) {
     if (error.location)
-      error.message = error.message.replace(/(\.)?$/, ` (line ${error.location.start.line}, column ${error.location.start.column})$1`);
+      error.message = error.message.replace(
+        /(\.)?$/,
+        ` (line ${error.location.start.line}, column ${error.location.start.column})$1`,
+      );
     throw error;
   }
 }
@@ -127,8 +129,7 @@ export function stringifySyml(value: any) {
 stringifySyml.PreserveOrdering = PreserveOrdering;
 
 function parseViaPeg(source: string) {
-  if (!source.endsWith(`\n`))
-    source += `\n`;
+  if (!source.endsWith(`\n`)) source += `\n`;
 
   return parse(source);
 }
@@ -136,8 +137,7 @@ function parseViaPeg(source: string) {
 const LEGACY_REGEXP = /^(#.*(\r?\n))*?#\s+yarn\s+lockfile\s+v1\r?\n/i;
 
 function parseViaJsYaml(source: string) {
-  if (LEGACY_REGEXP.test(source))
-    return parseViaPeg(source);
+  if (LEGACY_REGEXP.test(source)) return parseViaPeg(source);
 
   const value = safeLoad(source, {
     schema: FAILSAFE_SCHEMA,
@@ -146,8 +146,7 @@ function parseViaJsYaml(source: string) {
 
   // Empty files are parsed as `undefined` instead of an empty object
   // Empty files with 2 newlines or more are `null` instead
-  if (value === undefined || value === null)
-    return {} as {[key: string]: string};
+  if (value === undefined || value === null) return {} as { [key: string]: string };
 
   if (typeof value !== `object`)
     throw new Error(`Expected an indexed object, got a ${typeof value} instead. Does your file follow Yaml's rules?`);
@@ -155,7 +154,7 @@ function parseViaJsYaml(source: string) {
   if (Array.isArray(value))
     throw new Error(`Expected an indexed object, got an array instead. Does your file follow Yaml's rules?`);
 
-  return value as {[key: string]: string};
+  return value as { [key: string]: string };
 }
 
 export function parseSyml(source: string) {

@@ -1,185 +1,185 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
-    - mael/fsevents-fix
+      - master
+      - mael/fsevents-fix
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-fsevents-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-fsevents-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E FSEvents'
+name: "E2E FSEvents"
 jobs:
   chore:
-    name: 'Validating FSEvents'
+    name: "Validating FSEvents"
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running the integration test (FSEvents ^1)'
-      run: |
-        source scripts/e2e-setup-ci.sh
-        yarn init -w
+      - name: "Running the integration test (FSEvents ^1)"
+        run: |
+          source scripts/e2e-setup-ci.sh
+          yarn init -w
 
-        mkdir packages/foo
-        yarn packages/foo init
-        yarn packages/foo add -P lodash
+          mkdir packages/foo
+          yarn packages/foo init
+          yarn packages/foo add -P lodash
 
-        yarn add fsevents@^1 node-gyp foo@workspace:0.0.0
+          yarn add fsevents@^1 node-gyp foo@workspace:0.0.0
 
-        cat > test.js <<EOT
-          const assert = require('assert');
-          const fsevents = require('fsevents');
-          const fs = require('fs');
-          const path = require('path');
+          cat > test.js <<EOT
+            const assert = require('assert');
+            const fsevents = require('fsevents');
+            const fs = require('fs');
+            const path = require('path');
 
-          async function sleep(n) {
-            return new Promise(resolve => {
-              setTimeout(resolve, n);
-            });
-          }
+            async function sleep(n) {
+              return new Promise(resolve => {
+                setTimeout(resolve, n);
+              });
+            }
 
-          async function runTestOn(dir, fileName, expectation) {
-            expectation.sort();
+            async function runTestOn(dir, fileName, expectation) {
+              expectation.sort();
 
-            const file = path.join(dir, fileName);
+              const file = path.join(dir, fileName);
 
-            const events = [];
-            const watcher = fsevents(dir);
-            watcher.on('change', (...args) => events.push(args));
-            watcher.start();
+              const events = [];
+              const watcher = fsevents(dir);
+              watcher.on('change', (...args) => events.push(args));
+              watcher.start();
 
-            async function main() {
-              await sleep(1000);
-              fs.writeFileSync(file, '');
-              await sleep(1000);
+              async function main() {
+                await sleep(1000);
+                fs.writeFileSync(file, '');
+                await sleep(1000);
 
-              if (events.length === 0)
-                throw new Error('No events recorded');
+                if (events.length === 0)
+                  throw new Error('No events recorded');
 
-              const pList = events.map(pEntry => pEntry[0]);
-              pList.sort();
+                const pList = events.map(pEntry => pEntry[0]);
+                pList.sort();
 
-              const currentJson = JSON.stringify(pList);
-              const expectedJson = JSON.stringify(expectation);
+                const currentJson = JSON.stringify(pList);
+                const expectedJson = JSON.stringify(expectation);
 
-              if (currentJson !== expectedJson) {
-                throw new Error('Expectation mismatch:\n  - ' + currentJson + '\n  - ' + expectedJson);
+                if (currentJson !== expectedJson) {
+                  throw new Error('Expectation mismatch:\n  - ' + currentJson + '\n  - ' + expectedJson);
+                }
+              }
+
+              try {
+                return await main();
+              } finally {
+                watcher.stop();
               }
             }
 
-            try {
-              return await main();
-            } finally {
-              watcher.stop();
-            }
-          }
-
-          async function registerTest(dir, fileName, expectation) {
-            try {
-              await runTestOn(dir, fileName, expectation);
-              console.log('Succeeded test for ' + dir);
-            } catch (error) {
-              console.log('Failed test for ' + dir + ': ' + error.message);
-              process.exitCode = 1;
-            }
-          }
-
-          const rootDir = __dirname;
-          const virtualFooDir = path.dirname(require.resolve('foo/package.json'));
-
-          Promise.resolve().then(async () => {
-            await registerTest(rootDir, 'hello', [rootDir + '/hello']);
-            await registerTest(rootDir + '/__virtual__/1234/0', 'world', [rootDir + '/__virtual__/1234/0/world']);
-            await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
-          });
-        EOT
-
-        yarn node ./test.js
-
-    - name: 'Running the integration test (FSEvents latest)'
-      run: |
-        source scripts/e2e-setup-ci.sh
-        yarn init -w
-
-        mkdir packages/foo
-        yarn packages/foo init
-        yarn packages/foo add -P lodash
-
-        yarn add fsevents@latest foo@workspace:0.0.0
-
-        cat > test.js <<EOT
-          const assert = require('assert');
-          const fsevents = require('fsevents');
-          const fs = require('fs');
-          const path = require('path');
-
-          async function sleep(n) {
-            return new Promise(resolve => {
-              setTimeout(resolve, n);
-            });
-          }
-
-          async function runTestOn(dir, fileName, expectation) {
-            expectation.sort();
-
-            const file = path.join(dir, fileName);
-
-            const events = [];
-            const stop = fsevents.watch(dir, (...args) => events.push(args));
-
-            async function main() {
-              await sleep(1000);
-              fs.writeFileSync(file, '');
-              await sleep(1000);
-
-              if (events.length === 0)
-                throw new Error('No events recorded');
-
-              const pList = events.map(pEntry => pEntry[0]);
-              pList.sort();
-
-              const currentJson = JSON.stringify(pList);
-              const expectedJson = JSON.stringify(expectation);
-
-              if (currentJson !== expectedJson) {
-                throw new Error('Expectation mismatch:\n  - ' + currentJson + '\n  - ' + expectedJson);
+            async function registerTest(dir, fileName, expectation) {
+              try {
+                await runTestOn(dir, fileName, expectation);
+                console.log('Succeeded test for ' + dir);
+              } catch (error) {
+                console.log('Failed test for ' + dir + ': ' + error.message);
+                process.exitCode = 1;
               }
             }
 
-            try {
-              return await main();
-            } finally {
-              await stop();
+            const rootDir = __dirname;
+            const virtualFooDir = path.dirname(require.resolve('foo/package.json'));
+
+            Promise.resolve().then(async () => {
+              await registerTest(rootDir, 'hello', [rootDir + '/hello']);
+              await registerTest(rootDir + '/__virtual__/1234/0', 'world', [rootDir + '/__virtual__/1234/0/world']);
+              await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
+            });
+          EOT
+
+          yarn node ./test.js
+
+      - name: "Running the integration test (FSEvents latest)"
+        run: |
+          source scripts/e2e-setup-ci.sh
+          yarn init -w
+
+          mkdir packages/foo
+          yarn packages/foo init
+          yarn packages/foo add -P lodash
+
+          yarn add fsevents@latest foo@workspace:0.0.0
+
+          cat > test.js <<EOT
+            const assert = require('assert');
+            const fsevents = require('fsevents');
+            const fs = require('fs');
+            const path = require('path');
+
+            async function sleep(n) {
+              return new Promise(resolve => {
+                setTimeout(resolve, n);
+              });
             }
-          }
 
-          async function registerTest(dir, fileName, expectation) {
-            try {
-              await runTestOn(dir, fileName, expectation);
-              console.log('Succeeded test for ' + dir);
-            } catch (error) {
-              console.log('Failed test for ' + dir + ': ' + error.message);
-              process.exitCode = 1;
+            async function runTestOn(dir, fileName, expectation) {
+              expectation.sort();
+
+              const file = path.join(dir, fileName);
+
+              const events = [];
+              const stop = fsevents.watch(dir, (...args) => events.push(args));
+
+              async function main() {
+                await sleep(1000);
+                fs.writeFileSync(file, '');
+                await sleep(1000);
+
+                if (events.length === 0)
+                  throw new Error('No events recorded');
+
+                const pList = events.map(pEntry => pEntry[0]);
+                pList.sort();
+
+                const currentJson = JSON.stringify(pList);
+                const expectedJson = JSON.stringify(expectation);
+
+                if (currentJson !== expectedJson) {
+                  throw new Error('Expectation mismatch:\n  - ' + currentJson + '\n  - ' + expectedJson);
+                }
+              }
+
+              try {
+                return await main();
+              } finally {
+                await stop();
+              }
             }
-          }
 
-          const rootDir = __dirname;
-          const virtualFooDir = path.dirname(require.resolve('foo/package.json'));
+            async function registerTest(dir, fileName, expectation) {
+              try {
+                await runTestOn(dir, fileName, expectation);
+                console.log('Succeeded test for ' + dir);
+              } catch (error) {
+                console.log('Failed test for ' + dir + ': ' + error.message);
+                process.exitCode = 1;
+              }
+            }
 
-          Promise.resolve().then(async () => {
-            await registerTest(rootDir, 'hello', [rootDir + '/hello']);
-            await registerTest(rootDir + '/__virtual__/1234/0', 'world', [rootDir + '/__virtual__/1234/0/world']);
-            await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
-          });
-        EOT
+            const rootDir = __dirname;
+            const virtualFooDir = path.dirname(require.resolve('foo/package.json'));
 
-        yarn node ./test.js
-      if: |
-        success() || failure()
+            Promise.resolve().then(async () => {
+              await registerTest(rootDir, 'hello', [rootDir + '/hello']);
+              await registerTest(rootDir + '/__virtual__/1234/0', 'world', [rootDir + '/__virtual__/1234/0/world']);
+              await registerTest(rootDir, 'packages/foo/hello', [rootDir + '/packages/foo/hello', virtualFooDir + '/hello']);
+            });
+          EOT
+
+          yarn node ./test.js
+        if: |
+          success() || failure()

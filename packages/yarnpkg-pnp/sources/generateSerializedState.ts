@@ -1,18 +1,16 @@
-import {PackageRegistryData}                            from './types';
-import {PackageStoreData, PnpSettings, SerializedState} from './types';
+import { PackageRegistryData } from "./types";
+import { PackageStoreData, PnpSettings, SerializedState } from "./types";
 
 // Keep this function is sync with its implementation in:
 // @yarnpkg/core/sources/miscUtils.ts
 export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) | Array<(value: T) => string>) {
   const asArray = Array.from(values);
 
-  if (!Array.isArray(mappers))
-    mappers = [mappers];
+  if (!Array.isArray(mappers)) mappers = [mappers];
 
   const stringified: Array<Array<string>> = [];
 
-  for (const mapper of mappers)
-    stringified.push(asArray.map(value => mapper(value)));
+  for (const mapper of mappers) stringified.push(asArray.map((value) => mapper(value)));
 
   const indices = asArray.map((_, index) => index);
 
@@ -28,7 +26,7 @@ export function sortMap<T>(values: Iterable<T>, mappers: ((value: T) => string) 
     return 0;
   });
 
-  return indices.map(index => {
+  return indices.map((index) => {
     return asArray[index];
   });
 }
@@ -37,15 +35,14 @@ function generateFallbackExclusionList(settings: PnpSettings): Array<[string, Ar
   const fallbackExclusionList = new Map();
 
   const sortedData = sortMap(settings.fallbackExclusionList || [], [
-    ({name, reference}) => name,
-    ({name, reference}) => reference,
+    ({ name, reference }) => name,
+    ({ name, reference }) => reference,
   ]);
 
-  for (const {name, reference} of sortedData) {
+  for (const { name, reference } of sortedData) {
     let references = fallbackExclusionList.get(name);
 
-    if (typeof references === `undefined`)
-      fallbackExclusionList.set(name, references = new Set());
+    if (typeof references === `undefined`) fallbackExclusionList.set(name, (references = new Set()));
 
     references.add(reference);
   }
@@ -62,34 +59,41 @@ function generateFallbackPoolData(settings: PnpSettings): Array<[string, string 
 function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
   const packageRegistryData: PackageRegistryData = [];
 
-  for (const [packageName, packageStore] of sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
+  for (const [packageName, packageStore] of sortMap(settings.packageRegistry, ([packageName]) =>
+    packageName === null ? `0` : `1${packageName}`,
+  )) {
     const packageStoreData: PackageStoreData = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
-    for (const [packageReference, {packageLocation, packageDependencies, packagePeers, linkType, discardFromLookup}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+    for (const [
+      packageReference,
+      { packageLocation, packageDependencies, packagePeers, linkType, discardFromLookup },
+    ] of sortMap(packageStore, ([packageReference]) => (packageReference === null ? `0` : `1${packageReference}`))) {
       const normalizedDependencies: Array<[string, string | [string, string] | null]> = [];
 
       if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
         normalizedDependencies.push([packageName, packageReference]);
 
-      for (const [dependencyName, dependencyReference] of sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
+      for (const [dependencyName, dependencyReference] of sortMap(
+        packageDependencies.entries(),
+        ([dependencyName]) => dependencyName,
+      ))
         normalizedDependencies.push([dependencyName, dependencyReference]);
 
-      const normalizedPeers = packagePeers && packagePeers.size > 0
-        ? Array.from(packagePeers)
-        : undefined;
+      const normalizedPeers = packagePeers && packagePeers.size > 0 ? Array.from(packagePeers) : undefined;
 
-      const normalizedDiscardFromLookup = discardFromLookup
-        ? discardFromLookup
-        : undefined;
+      const normalizedDiscardFromLookup = discardFromLookup ? discardFromLookup : undefined;
 
-      packageStoreData.push([packageReference, {
-        packageLocation,
-        packageDependencies: normalizedDependencies,
-        packagePeers: normalizedPeers,
-        linkType,
-        discardFromLookup: normalizedDiscardFromLookup,
-      }]);
+      packageStoreData.push([
+        packageReference,
+        {
+          packageLocation,
+          packageDependencies: normalizedDependencies,
+          packagePeers: normalizedPeers,
+          linkType,
+          discardFromLookup: normalizedDiscardFromLookup,
+        },
+      ]);
     }
   }
 
@@ -99,10 +103,7 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
 export function generateSerializedState(settings: PnpSettings): SerializedState {
   return {
     // @eslint-ignore-next-line @typescript-eslint/naming-convention
-    __info: [
-      `This file is automatically generated. Do not touch it, or risk`,
-      `your modifications being lost.`,
-    ],
+    __info: [`This file is automatically generated. Do not touch it, or risk`, `your modifications being lost.`],
 
     dependencyTreeRoots: settings.dependencyTreeRoots,
     enableTopLevelFallback: settings.enableTopLevelFallback || false,

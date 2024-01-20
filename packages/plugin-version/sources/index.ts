@@ -1,17 +1,17 @@
-import {Plugin, SettingsType} from '@yarnpkg/core';
-import {PortablePath}         from '@yarnpkg/fslib';
+import { Plugin, SettingsType } from "@yarnpkg/core";
+import { PortablePath } from "@yarnpkg/fslib";
 
-import VersionApplyCommand    from './commands/version/apply';
-import VersionCheckCommand    from './commands/version/check';
-import VersionCommand         from './commands/version';
-import * as versionUtils      from './versionUtils';
+import VersionApplyCommand from "./commands/version/apply";
+import VersionCheckCommand from "./commands/version/check";
+import VersionCommand from "./commands/version";
+import * as versionUtils from "./versionUtils";
 
-export {VersionApplyCommand};
-export {VersionCheckCommand};
-export {VersionCommand};
-export {versionUtils};
+export { VersionApplyCommand };
+export { VersionCheckCommand };
+export { VersionCommand };
+export { versionUtils };
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     deferredVersionFolder: PortablePath;
     preferDeferredVersions: boolean;
@@ -31,11 +31,7 @@ const plugin: Plugin = {
       default: false,
     },
   },
-  commands: [
-    VersionApplyCommand,
-    VersionCheckCommand,
-    VersionCommand,
-  ],
+  commands: [VersionApplyCommand, VersionCheckCommand, VersionCommand],
 };
 
 // eslint-disable-next-line arca/no-default-export

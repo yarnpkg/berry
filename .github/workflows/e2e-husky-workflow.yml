@@ -1,40 +1,40 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-husky-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-husky-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E Husky'
+name: "E2E Husky"
 jobs:
   chore:
-    name: 'Validating Husky'
+    name: "Validating Husky"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
 
-        git init
-        echo '/.yarn' > .gitignore
+          git init
+          echo '/.yarn' > .gitignore
 
-        echo '{"skipCI": false, "hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
-        echo 'module.exports = {extends: ["@commitlint/config-conventional"]};' > commitlint.config.js
+          echo '{"skipCI": false, "hooks": {"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"}}' > .huskyrc
+          echo 'module.exports = {extends: ["@commitlint/config-conventional"]};' > commitlint.config.js
 
-        yarn init -p
-        yarn add -D husky@^4.0.0-beta.1 @commitlint/{cli,config-conventional}
+          yarn init -p
+          yarn add -D husky@^4.0.0-beta.1 @commitlint/{cli,config-conventional}
 
-        git add .
-        ! git commit -m "Invalid commit message should fail pre-commit check"
+          git add .
+          ! git commit -m "Invalid commit message should fail pre-commit check"
 
-        git commit -m "test: lint on commitmsg should pass pre-commit check"
+          git commit -m "test: lint on commitmsg should pass pre-commit check"

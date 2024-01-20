@@ -1,4 +1,4 @@
-import {Path, npath} from '@yarnpkg/fslib';
+import { Path, npath } from "@yarnpkg/fslib";
 
 export enum ErrorCode {
   API_ERROR = `API_ERROR`,
@@ -27,10 +27,13 @@ const MODULE_NOT_FOUND_ERRORS = new Set([
  * by third-parties.
  */
 
-export function makeError(pnpCode: ErrorCode, message: string, data: Record<string, any> = {}, code?: string): Error & {code: string, pnpCode: ErrorCode, data: Record<string, any>} {
-  code ??= MODULE_NOT_FOUND_ERRORS.has(pnpCode)
-    ? `MODULE_NOT_FOUND`
-    : pnpCode;
+export function makeError(
+  pnpCode: ErrorCode,
+  message: string,
+  data: Record<string, any> = {},
+  code?: string,
+): Error & { code: string; pnpCode: ErrorCode; data: Record<string, any> } {
+  code ??= MODULE_NOT_FOUND_ERRORS.has(pnpCode) ? `MODULE_NOT_FOUND` : pnpCode;
 
   const propertySpec = {
     configurable: true,
@@ -62,8 +65,7 @@ export function makeError(pnpCode: ErrorCode, message: string, data: Record<stri
 export function getIssuerModule(parent: NodeModule | null | undefined): NodeModule | null {
   let issuer = parent;
 
-  while (issuer && (issuer.id === `[eval]` || issuer.id === `<repl>` || !issuer.filename))
-    issuer = issuer.parent;
+  while (issuer && (issuer.id === `[eval]` || issuer.id === `<repl>` || !issuer.filename)) issuer = issuer.parent;
 
   return issuer || null;
 }

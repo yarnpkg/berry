@@ -4,9 +4,9 @@ title: CLI Reference
 description: List of commands distributed with Yarn.
 ---
 
-import Link          from '@docusaurus/Link';
+import Link from '@docusaurus/Link';
 import {commandList} from '@yarnpkg/docusaurus/docs/generated/commandList';
-import groupBy       from 'lodash/groupBy';
+import groupBy from 'lodash/groupBy';
 
 <div>
   {Object.entries(groupBy(commandList, command => command.category ?? `General commands`)).map(([category, commands]) => <>

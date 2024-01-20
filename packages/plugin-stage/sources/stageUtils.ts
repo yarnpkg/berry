@@ -1,4 +1,4 @@
-import {xfs, Filename, PortablePath, ppath} from '@yarnpkg/fslib';
+import { xfs, Filename, PortablePath, ppath } from "@yarnpkg/fslib";
 
 export enum ActionType {
   CREATE,
@@ -20,7 +20,7 @@ export type Consensus = {
   useComponent: boolean;
 };
 
-export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: Filename}) {
+export async function findVcsRoot(cwd: PortablePath, { marker }: { marker: Filename }) {
   do {
     if (!xfs.existsSync(ppath.join(cwd, marker))) {
       cwd = ppath.dirname(cwd);
@@ -32,9 +32,8 @@ export async function findVcsRoot(cwd: PortablePath, {marker}: {marker: Filename
   return null;
 }
 
-export function isYarnFile(path: PortablePath, {roots, names}: {roots: Set<string>, names: Set<string>}) {
-  if (names.has(ppath.basename(path)))
-    return true;
+export function isYarnFile(path: PortablePath, { roots, names }: { roots: Set<string>; names: Set<string> }) {
+  if (names.has(ppath.basename(path))) return true;
 
   do {
     if (!roots.has(path)) {
@@ -71,11 +70,11 @@ export function expandDirectory(initialCwd: PortablePath) {
 }
 
 export function checkConsensus(lines: Array<string>, regex: RegExp) {
-  let yes = 0, no = 0;
+  let yes = 0,
+    no = 0;
 
   for (const line of lines) {
-    if (line === `wip`)
-      continue;
+    if (line === `wip`) continue;
 
     if (regex.test(line)) {
       yes += 1;
@@ -131,10 +130,8 @@ export function genCommitMessage(consensus: Consensus, actions: Array<[ActionTyp
 
     let verb = VERBS.get(type)!;
 
-    if (consensus.useUpperCase && all.length === 0)
-      verb = `${verb[0].toUpperCase()}${verb.slice(1)}`;
-    if (consensus.useThirdPerson)
-      verb += `s`;
+    if (consensus.useUpperCase && all.length === 0) verb = `${verb[0].toUpperCase()}${verb.slice(1)}`;
+    if (consensus.useThirdPerson) verb += `s`;
 
     const subjects = [what];
 
@@ -147,10 +144,8 @@ export function genCommitMessage(consensus: Consensus, actions: Array<[ActionTyp
 
     let description = subjects.shift()!;
 
-    if (subjects.length === 1)
-      description += ` (and one other)`;
-    else if (subjects.length > 1)
-      description += ` (and ${subjects.length} others)`;
+    if (subjects.length === 1) description += ` (and one other)`;
+    else if (subjects.length > 1) description += ` (and ${subjects.length} others)`;
 
     all.push(`${verb} ${description}`);
   }

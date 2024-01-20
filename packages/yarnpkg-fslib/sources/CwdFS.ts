@@ -1,7 +1,7 @@
-import {FakeFS}              from './FakeFS';
-import {NodeFS}              from './NodeFS';
-import {ProxiedFS}           from './ProxiedFS';
-import {PortablePath, ppath} from './path';
+import { FakeFS } from "./FakeFS";
+import { NodeFS } from "./NodeFS";
+import { ProxiedFS } from "./ProxiedFS";
+import { PortablePath, ppath } from "./path";
 
 export type CwdFSOptions = {
   baseFs?: FakeFS<PortablePath>;
@@ -12,7 +12,7 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
 
   protected readonly baseFs: FakeFS<PortablePath>;
 
-  constructor(target: PortablePath, {baseFs = new NodeFS()}: CwdFSOptions = {}) {
+  constructor(target: PortablePath, { baseFs = new NodeFS() }: CwdFSOptions = {}) {
     super(ppath);
 
     this.target = this.pathUtils.normalize(target);

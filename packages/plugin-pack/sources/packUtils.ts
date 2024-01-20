@@ -1,11 +1,11 @@
-import {Manifest, Report, Workspace, scriptUtils}                             from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath, constants} from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                                  from '@yarnpkg/plugin-stage';
-import mm                                                                     from 'micromatch';
-import tar                                                                    from 'tar-stream';
-import {createGzip}                                                           from 'zlib';
+import { Manifest, Report, Workspace, scriptUtils } from "@yarnpkg/core";
+import { FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath, constants } from "@yarnpkg/fslib";
+import { Hooks as StageHooks } from "@yarnpkg/plugin-stage";
+import mm from "micromatch";
+import tar from "tar-stream";
+import { createGzip } from "zlib";
 
-import {Hooks}                                                                from './';
+import { Hooks } from "./";
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -44,38 +44,33 @@ type IgnoreList = {
 };
 
 export async function hasPackScripts(workspace: Workspace) {
-  if (scriptUtils.hasWorkspaceScript(workspace, `prepack`))
-    return true;
+  if (scriptUtils.hasWorkspaceScript(workspace, `prepack`)) return true;
 
-  if (scriptUtils.hasWorkspaceScript(workspace, `postpack`))
-    return true;
+  if (scriptUtils.hasWorkspaceScript(workspace, `postpack`)) return true;
 
   return false;
 }
 
-export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
-  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
+export async function prepareForPack(workspace: Workspace, { report }: { report: Report }, cb: () => Promise<void>) {
+  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, { report });
 
   try {
     const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
-    if (await xfs.existsPromise(manifestPath))
-      await workspace.manifest.loadFile(manifestPath, {baseFs: xfs});
+    if (await xfs.existsPromise(manifestPath)) await workspace.manifest.loadFile(manifestPath, { baseFs: xfs });
 
     await cb();
   } finally {
-    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
+    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, { report });
   }
 }
 
 export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>) {
-  if (typeof files === `undefined`)
-    files = await genPackList(workspace);
+  if (typeof files === `undefined`) files = await genPackList(workspace);
 
   const executableFiles = new Set<PortablePath>();
   for (const value of workspace.manifest.publishConfig?.executableFiles ?? new Set())
     executableFiles.add(ppath.normalize(value));
-  for (const value of workspace.manifest.bin.values())
-    executableFiles.add(ppath.normalize(value));
+  for (const value of workspace.manifest.bin.values()) executableFiles.add(ppath.normalize(value));
 
   const pack = tar.pack();
 
@@ -93,9 +88,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         mtime: new Date(constants.SAFE_TIME * 1000),
       };
 
-      const mode = executableFiles.has(file)
-        ? 0o755
-        : 0o644;
+      const mode = executableFiles.has(file) ? 0o755 : 0o644;
 
       let resolveFn: Function;
       let rejectFn: Function;
@@ -119,12 +112,11 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         // The root package.json supports replacement fields in publishConfig
         if (file === `package.json`)
           content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
-        else
-          content = await xfs.readFilePromise(source);
+        else content = await xfs.readFilePromise(source);
 
-        pack.entry({...opts, mode, type: `file`}, content, cb);
+        pack.entry({ ...opts, mode, type: `file` }, content, cb);
       } else if (stat.isSymbolicLink()) {
-        pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+        pack.entry({ ...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source) }, cb);
       } else {
         cb(new Error(`Unsupported file type ${stat.mode} for ${npath.fromPortablePath(file)}`));
       }
@@ -144,11 +136,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 export async function genPackageManifest(workspace: Workspace): Promise<object> {
   const data = JSON.parse(JSON.stringify(workspace.manifest.raw));
 
-  await workspace.project.configuration.triggerHook(
-    (hooks: Hooks) => hooks.beforeWorkspacePacking,
-    workspace,
-    data,
-  );
+  await workspace.project.configuration.triggerHook((hooks: Hooks) => hooks.beforeWorkspacePacking, workspace, data);
 
   return data;
 }
@@ -162,17 +150,14 @@ export async function genPackList(workspace: Workspace) {
     reject: [],
   };
 
-  for (const pattern of ALWAYS_IGNORE)
-    globalList.reject.push(pattern);
+  for (const pattern of ALWAYS_IGNORE) globalList.reject.push(pattern);
 
-  for (const pattern of NEVER_IGNORE)
-    globalList.accept.push(pattern);
+  for (const pattern of NEVER_IGNORE) globalList.accept.push(pattern);
 
   globalList.reject.push(configuration.get(`rcFilename`));
 
   const maybeRejectPath = (path: PortablePath | null) => {
-    if (path === null || !path.startsWith(`${workspace.cwd}/`))
-      return;
+    if (path === null || !path.startsWith(`${workspace.cwd}/`)) return;
 
     const workspaceRelativePath = ppath.relative(workspace.cwd, path);
     const workspaceAbsolutePath = ppath.resolve(PortablePath.root, workspaceRelativePath);
@@ -188,11 +173,15 @@ export async function genPackList(workspace: Workspace) {
   maybeRejectPath(configuration.get(`virtualFolder`));
   maybeRejectPath(configuration.get(`yarnPath`));
 
-  await configuration.triggerHook((hooks: StageHooks) => {
-    return hooks.populateYarnPaths;
-  }, project, (path: PortablePath | null) => {
-    maybeRejectPath(path);
-  });
+  await configuration.triggerHook(
+    (hooks: StageHooks) => {
+      return hooks.populateYarnPaths;
+    },
+    project,
+    (path: PortablePath | null) => {
+      maybeRejectPath(path);
+    },
+  );
 
   // All child workspaces are ignored
   for (const otherWorkspace of project.workspaces) {
@@ -212,14 +201,10 @@ export async function genPackList(workspace: Workspace) {
   const browser = workspace.manifest.publishConfig?.browser ?? workspace.manifest.browser;
   const bins = workspace.manifest.publishConfig?.bin ?? workspace.manifest.bin;
 
-  if (main != null)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
-  if (module != null)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
-  if (typeof browser === `string`)
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, browser));
-  for (const path of bins.values())
-    ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
+  if (main != null) ignoreList.accept.push(ppath.resolve(PortablePath.root, main));
+  if (module != null) ignoreList.accept.push(ppath.resolve(PortablePath.root, module));
+  if (typeof browser === `string`) ignoreList.accept.push(ppath.resolve(PortablePath.root, browser));
+  for (const path of bins.values()) ignoreList.accept.push(ppath.resolve(PortablePath.root, path));
 
   if (browser instanceof Map) {
     for (const [original, replacement] of browser.entries()) {
@@ -235,7 +220,7 @@ export async function genPackList(workspace: Workspace) {
     ignoreList.reject.push(`/*`);
 
     for (const pattern of workspace.manifest.files!) {
-      addIgnorePattern(ignoreList.accept, pattern, {cwd: PortablePath.root});
+      addIgnorePattern(ignoreList.accept, pattern, { cwd: PortablePath.root });
     }
   }
 
@@ -246,7 +231,14 @@ export async function genPackList(workspace: Workspace) {
   });
 }
 
-async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
+async function walk(
+  initialCwd: PortablePath,
+  {
+    hasExplicitFileList,
+    globalList,
+    ignoreList,
+  }: { hasExplicitFileList: boolean; globalList: IgnoreList; ignoreList: IgnoreList },
+) {
   const list: Array<PortablePath> = [];
 
   const cwdFs = new JailFS(initialCwd);
@@ -256,8 +248,7 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
     const [cwd, ignoreLists] = cwdList.pop()!;
     const stat = await cwdFs.lstatPromise(cwd);
 
-    if (isIgnored(cwd, {globalList, ignoreLists: stat.isDirectory() ? null : ignoreLists}))
-      continue;
+    if (isIgnored(cwd, { globalList, ignoreLists: stat.isDirectory() ? null : ignoreLists })) continue;
 
     if (stat.isDirectory()) {
       const entries = await cwdFs.readdirPromise(cwd);
@@ -278,12 +269,10 @@ async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, 
           ? await loadIgnoreList(cwdFs, cwd, `.gitignore` as Filename)
           : null;
 
-      let nextIgnoreLists = localIgnoreList !== null
-        ? [localIgnoreList].concat(ignoreLists)
-        : ignoreLists;
+      let nextIgnoreLists = localIgnoreList !== null ? [localIgnoreList].concat(ignoreLists) : ignoreLists;
 
-      if (isIgnored(cwd, {globalList, ignoreLists}))
-        nextIgnoreLists = [...ignoreLists, {accept: [], reject: [`**/*`]}];
+      if (isIgnored(cwd, { globalList, ignoreLists }))
+        nextIgnoreLists = [...ignoreLists, { accept: [], reject: [`**/*`] }];
 
       for (const entry of entries) {
         cwdList.push([ppath.resolve(cwd, entry), nextIgnoreLists]);
@@ -304,34 +293,29 @@ async function loadIgnoreList(fs: FakeFS<PortablePath>, cwd: PortablePath, filen
 
   const data = await fs.readFilePromise(ppath.join(cwd, filename), `utf8`);
 
-  for (const pattern of data.split(/\n/g))
-    addIgnorePattern(ignoreList.reject, pattern, {cwd});
+  for (const pattern of data.split(/\n/g)) addIgnorePattern(ignoreList.reject, pattern, { cwd });
 
   return ignoreList;
 }
 
-function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
+function normalizePattern(pattern: string, { cwd }: { cwd: PortablePath }) {
   const negated = pattern[0] === `!`;
 
-  if (negated)
-    pattern = pattern.slice(1);
+  if (negated) pattern = pattern.slice(1);
 
-  if (pattern.match(/\.{0,1}\//))
-    pattern = ppath.resolve(cwd, pattern as PortablePath);
+  if (pattern.match(/\.{0,1}\//)) pattern = ppath.resolve(cwd, pattern as PortablePath);
 
-  if (negated)
-    pattern = `!${pattern}`;
+  if (negated) pattern = `!${pattern}`;
 
   return pattern;
 }
 
-function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
+function addIgnorePattern(target: Array<string>, pattern: string, { cwd }: { cwd: PortablePath }) {
   const trimed = pattern.trim();
 
-  if (trimed === `` || trimed[0] === `#`)
-    return;
+  if (trimed === `` || trimed[0] === `#`) return;
 
-  target.push(normalizePattern(trimed, {cwd}));
+  target.push(normalizePattern(trimed, { cwd }));
 }
 
 enum MatchType {
@@ -340,20 +324,20 @@ enum MatchType {
   NegatedMatch,
 }
 
-function isIgnored(cwd: string, {globalList, ignoreLists}: {globalList: IgnoreList, ignoreLists: Array<IgnoreList> | null}) {
+function isIgnored(
+  cwd: string,
+  { globalList, ignoreLists }: { globalList: IgnoreList; ignoreLists: Array<IgnoreList> | null },
+) {
   const globalAcceptMatchType = matchPatternType(cwd, globalList.accept);
-  if (globalAcceptMatchType !== MatchType.None)
-    return globalAcceptMatchType === MatchType.NegatedMatch;
+  if (globalAcceptMatchType !== MatchType.None) return globalAcceptMatchType === MatchType.NegatedMatch;
 
   const globalRejectMatchType = matchPatternType(cwd, globalList.reject);
-  if (globalRejectMatchType !== MatchType.None)
-    return globalRejectMatchType === MatchType.Match;
+  if (globalRejectMatchType !== MatchType.None) return globalRejectMatchType === MatchType.Match;
 
   if (ignoreLists !== null) {
     for (const ignoreList of ignoreLists) {
       const acceptMatchType = matchPatternType(cwd, ignoreList.accept);
-      if (acceptMatchType !== MatchType.None)
-        return acceptMatchType === MatchType.NegatedMatch;
+      if (acceptMatchType !== MatchType.None) return acceptMatchType === MatchType.NegatedMatch;
 
       const rejectMatchType = matchPatternType(cwd, ignoreList.reject);
       if (rejectMatchType !== MatchType.None) {
@@ -375,17 +359,14 @@ function matchPatternType(path: string, patterns: Array<string>) {
         inclusives.push(patterns[t]);
       }
     } else {
-      if (inclusives === patterns)
-        inclusives = patterns.slice(0, t);
+      if (inclusives === patterns) inclusives = patterns.slice(0, t);
 
       exclusives.push(patterns[t].slice(1));
     }
   }
 
-  if (isMatchBasename(path, exclusives))
-    return MatchType.NegatedMatch;
-  if (isMatchBasename(path, inclusives))
-    return MatchType.Match;
+  if (isMatchBasename(path, exclusives)) return MatchType.NegatedMatch;
+  if (isMatchBasename(path, inclusives)) return MatchType.Match;
 
   return MatchType.None;
 }
@@ -400,17 +381,14 @@ function isMatchBasename(path: string, patterns: Array<string>) {
         paths.push(patterns[t]);
       }
     } else {
-      if (paths === patterns)
-        paths = patterns.slice(0, t);
+      if (paths === patterns) paths = patterns.slice(0, t);
 
       basenames.push(patterns[t]);
     }
   }
 
-  if (mm.isMatch(path, paths as any, {dot: true, nocase: true}))
-    return true;
-  if (mm.isMatch(path, basenames as any, {dot: true, basename: true, nocase: true}))
-    return true;
+  if (mm.isMatch(path, paths as any, { dot: true, nocase: true })) return true;
+  if (mm.isMatch(path, basenames as any, { dot: true, basename: true, nocase: true })) return true;
 
   return false;
 }

@@ -1,7 +1,7 @@
-import clsx   from 'clsx';
-import React  from 'react';
+import clsx from "clsx";
+import React from "react";
 
-import styles from './styles.module.css';
+import styles from "./styles.module.css";
 
 type FeatureItem = {
   title: string;
@@ -15,39 +15,26 @@ const FeatureList: Array<FeatureItem> = [
     icon: `icon-workspaces`,
     description: (
       <>
-        First package manager built specifically around workspaces, Yarn lets
-        you split your project into sub-components.
+        First package manager built specifically around workspaces, Yarn lets you split your project into
+        sub-components.
       </>
     ),
   },
   {
     title: `Stability`,
     icon: `icon-stability`,
-    description: (
-      <>
-        Yarn guarantees that installs that work today will keep working the
-        same way in the future.
-      </>
-    ),
+    description: <>Yarn guarantees that installs that work today will keep working the same way in the future.</>,
   },
   {
     title: `Documentation`,
     icon: `icon-documentation`,
-    description: (
-      <>
-        Special care is put into our documentation, which we keep improving at
-        every new version.
-      </>
-    ),
+    description: <>Special care is put into our documentation, which we keep improving at every new version.</>,
   },
   {
     title: `Plugins`,
     icon: `icon-plugins`,
     description: (
-      <>
-        Yarn may not solve all your problems - but it'll give you the tools to
-        solve the ones you find on your way.
-      </>
+      <>Yarn may not solve all your problems - but it'll give you the tools to solve the ones you find on your way.</>
     ),
   },
   {
@@ -55,8 +42,8 @@ const FeatureList: Array<FeatureItem> = [
     icon: `icon-innovation`,
     description: (
       <>
-        We believe in challenging the status quo. Yarn will always be at the
-        frontline, brewing new workflows and improving old ones.
+        We believe in challenging the status quo. Yarn will always be at the frontline, brewing new workflows and
+        improving old ones.
       </>
     ),
   },
@@ -65,14 +52,14 @@ const FeatureList: Array<FeatureItem> = [
     icon: `icon-openness`,
     description: (
       <>
-        Yarn is a fully independent open-source project tied to no company. Our
-        contributor community defines the roadmap.
+        Yarn is a fully independent open-source project tied to no company. Our contributor community defines the
+        roadmap.
       </>
     ),
   },
 ];
 
-function Feature({icon, title, description}: FeatureItem) {
+function Feature({ icon, title, description }: FeatureItem) {
   return (
     <div className={clsx(`col col--4`, styles.feature)}>
       <div className={`text--center`}>

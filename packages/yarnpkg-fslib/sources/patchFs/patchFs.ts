@@ -1,11 +1,11 @@
-import fs           from 'fs';
-import {promisify}  from 'util';
+import fs from "fs";
+import { promisify } from "util";
 
-import {FakeFS}     from '../FakeFS';
-import {NodePathFS} from '../NodePathFS';
-import {NativePath} from '../path';
+import { FakeFS } from "../FakeFS";
+import { NodePathFS } from "../NodePathFS";
+import { NativePath } from "../path";
 
-import {FileHandle} from './FileHandle';
+import { FileHandle } from "./FileHandle";
 
 const SYNC_IMPLEMENTATIONS = new Set([
   `accessSync`,
@@ -94,29 +94,15 @@ interface ReadSyncOptions {
   position?: number | null | undefined;
 }
 
-type ReadSyncArguments = [
-  fd: number,
-  buffer: Buffer,
-  offset: number,
-  length: number,
-  position?: number | null,
-];
+type ReadSyncArguments = [fd: number, buffer: Buffer, offset: number, length: number, position?: number | null];
 
-type ReadSyncArgumentsOptions = [
-  fd: number,
-  buffer: Buffer,
-  opts?: ReadSyncOptions,
-];
+type ReadSyncArgumentsOptions = [fd: number, buffer: Buffer, opts?: ReadSyncOptions];
 //#endregion
 
 //#region read types
 type ReadOptions = ReadSyncOptions & { buffer?: Buffer };
 
-type ReadCallback = (
-  err: NodeJS.ErrnoException | null,
-  bytesRead: number,
-  buffer: Buffer
-) => void;
+type ReadCallback = (err: NodeJS.ErrnoException | null, bytesRead: number, buffer: Buffer) => void;
 
 type ReadArguments = [
   fd: number,
@@ -127,11 +113,7 @@ type ReadArguments = [
   callback: ReadCallback,
 ];
 
-type ReadArgumentsOptions = [
-  fd: number,
-  opts: ReadOptions,
-  callback: ReadCallback,
-];
+type ReadArgumentsOptions = [fd: number, opts: ReadOptions, callback: ReadCallback];
 
 type ReadArgumentsCallback = [fd: number, callback: ReadCallback];
 //#endregion
@@ -157,11 +139,14 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
       const callback = hasCallback ? args.pop() : () => {};
 
       process.nextTick(() => {
-        fakeFs.existsPromise(p).then(exists => {
-          callback(exists);
-        }, () => {
-          callback(false);
-        });
+        fakeFs.existsPromise(p).then(
+          (exists) => {
+            callback(exists);
+          },
+          () => {
+            callback(false);
+          },
+        );
       });
     });
 
@@ -181,16 +166,10 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
           callback = (args as ReadArgumentsOptions)[2];
         }
 
-        ({
-          buffer = Buffer.alloc(16384),
-          offset = 0,
-          length = buffer.byteLength,
-          position,
-        } = options);
+        ({ buffer = Buffer.alloc(16384), offset = 0, length = buffer.byteLength, position } = options);
       }
 
-      if (offset == null)
-        offset = 0;
+      if (offset == null) offset = 0;
 
       length |= 0;
 
@@ -201,39 +180,42 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         return;
       }
 
-      if (position == null)
-        position = -1;
+      if (position == null) position = -1;
 
       process.nextTick(() => {
-        fakeFs.readPromise(fd, buffer, offset, length, position).then(bytesRead => {
-          callback(null, bytesRead, buffer);
-        }, error => {
-          // https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/fs.js#L655-L658
-          // Known issue: bytesRead could theoretically be > than 0, but we currently always return 0
-          callback(error, 0, buffer);
-        });
+        fakeFs.readPromise(fd, buffer, offset, length, position).then(
+          (bytesRead) => {
+            callback(null, bytesRead, buffer);
+          },
+          (error) => {
+            // https://github.com/nodejs/node/blob/1317252dfe8824fd9cfee125d2aaa94004db2f3b/lib/fs.js#L655-L658
+            // Known issue: bytesRead could theoretically be > than 0, but we currently always return 0
+            callback(error, 0, buffer);
+          },
+        );
       });
     });
 
     for (const fnName of ASYNC_IMPLEMENTATIONS) {
       const origName = fnName.replace(/Promise$/, ``);
-      if (typeof (patchedFs as any)[origName] === `undefined`)
-        continue;
+      if (typeof (patchedFs as any)[origName] === `undefined`) continue;
 
       const fakeImpl: Function = (fakeFs as any)[fnName];
-      if (typeof fakeImpl === `undefined`)
-        continue;
+      if (typeof fakeImpl === `undefined`) continue;
 
       const wrapper = (...args: Array<any>) => {
         const hasCallback = typeof args[args.length - 1] === `function`;
         const callback = hasCallback ? args.pop() : () => {};
 
         process.nextTick(() => {
-          fakeImpl.apply(fakeFs, args).then((result: any) => {
-            callback(null, result);
-          }, (error: Error) => {
-            callback(error);
-          });
+          fakeImpl.apply(fakeFs, args).then(
+            (result: any) => {
+              callback(null, result);
+            },
+            (error: Error) => {
+              callback(error);
+            },
+          );
         });
       };
 
@@ -261,31 +243,26 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         // Assume fs.read(fd, buffer, options)
         const options = (args as ReadSyncArgumentsOptions)[2] || {};
 
-        ({offset = 0, length = buffer.byteLength, position} = options);
+        ({ offset = 0, length = buffer.byteLength, position } = options);
       }
 
-      if (offset == null)
-        offset = 0;
+      if (offset == null) offset = 0;
 
       length |= 0;
 
-      if (length === 0)
-        return 0;
+      if (length === 0) return 0;
 
-      if (position == null)
-        position = -1;
+      if (position == null) position = -1;
 
       return fakeFs.readSync(fd, buffer, offset, length, position);
     });
 
     for (const fnName of SYNC_IMPLEMENTATIONS) {
       const origName = fnName;
-      if (typeof (patchedFs as any)[origName] === `undefined`)
-        continue;
+      if (typeof (patchedFs as any)[origName] === `undefined`) continue;
 
       const fakeImpl: Function = (fakeFs as any)[fnName];
-      if (typeof fakeImpl === `undefined`)
-        continue;
+      if (typeof fakeImpl === `undefined`) continue;
 
       setupFn(patchedFs, origName, fakeImpl.bind(fakeFs));
     }
@@ -303,17 +280,14 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
     for (const fnName of ASYNC_IMPLEMENTATIONS) {
       const origName = fnName.replace(/Promise$/, ``);
-      if (typeof (patchedFsPromises as any)[origName] === `undefined`)
-        continue;
+      if (typeof (patchedFsPromises as any)[origName] === `undefined`) continue;
 
       const fakeImpl: Function = (fakeFs as any)[fnName];
-      if (typeof fakeImpl === `undefined`)
-        continue;
+      if (typeof fakeImpl === `undefined`) continue;
 
       // Open is a bit particular with fs.promises: it returns a file handle
       // instance instead of the traditional file descriptor number
-      if (fnName === `open`)
-        continue;
+      if (fnName === `open`) continue;
 
       setupFn(patchedFsPromises, origName, (pathLike: string | FileHandle<any>, ...args: Array<any>) => {
         if (pathLike instanceof FileHandle) {
@@ -345,12 +319,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     // @ts-expect-error
     patchedFs.read[promisify.custom] = async (fd: number, buffer: Buffer, ...args: Array<any>) => {
       const res = fakeFs.readPromise(fd, buffer, ...args);
-      return {bytesRead: await res, buffer};
+      return { bytesRead: await res, buffer };
     };
     // @ts-expect-error
     patchedFs.write[promisify.custom] = async (fd: number, buffer: Buffer, ...args: Array<any>) => {
       const res = fakeFs.writePromise(fd, buffer, ...args);
-      return {bytesWritten: await res, buffer};
+      return { bytesWritten: await res, buffer };
     };
   }
 }

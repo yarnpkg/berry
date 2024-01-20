@@ -1,6 +1,6 @@
-import {PortablePath, ppath, Filename, xfs} from '@yarnpkg/fslib';
+import { PortablePath, ppath, Filename, xfs } from "@yarnpkg/fslib";
 
-import {RunFunction}                        from './tests';
+import { RunFunction } from "./tests";
 
 const deepResolve = require(`super-resolve`);
 
@@ -13,7 +13,7 @@ export const mtme = (
   const createWorkspaces = async (path: PortablePath) => {
     for (const [workspace, manifest] of Object.entries(workspaces)) {
       const workspacePath = ppath.join(path, workspace as PortablePath);
-      await xfs.mkdirPromise(workspacePath, {recursive: true});
+      await xfs.mkdirPromise(workspacePath, { recursive: true });
 
       await xfs.writeJsonPromise(ppath.join(workspacePath, Filename.manifest), await deepResolve(manifest));
     }
@@ -31,7 +31,7 @@ export const mtme = (
     );
   }
 
-  return makeTemporaryEnv(packageJson, subDefinition, async args => {
+  return makeTemporaryEnv(packageJson, subDefinition, async (args) => {
     await createWorkspaces(args.path);
 
     return fn!(args);

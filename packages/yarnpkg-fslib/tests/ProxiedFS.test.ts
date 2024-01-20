@@ -1,6 +1,6 @@
-import {NoFS}                from '../sources/NoFS';
-import {ProxiedFS}           from '../sources/ProxiedFS';
-import {PortablePath, ppath} from '../sources/path';
+import { NoFS } from "../sources/NoFS";
+import { ProxiedFS } from "../sources/ProxiedFS";
+import { PortablePath, ppath } from "../sources/path";
 
 describe(`ProxiedFS`, () => {
   it(`should resolve relative symlinks after remapping`, async () => {
@@ -17,8 +17,8 @@ describe(`ProxiedFS`, () => {
         super(ppath);
       }
 
-      mapToBase = jest.fn(p => p);
-      mapFromBase = jest.fn(p => p);
+      mapToBase = jest.fn((p) => p);
+      mapFromBase = jest.fn((p) => p);
     }
 
     {
@@ -26,7 +26,11 @@ describe(`ProxiedFS`, () => {
       const testFs = new TestFS(spyFs);
 
       const basePath = `/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z` as PortablePath;
-      const linkPath = basePath.split(`/`).slice(2, -1).map(() => `..`).join(`/`) as PortablePath;
+      const linkPath = basePath
+        .split(`/`)
+        .slice(2, -1)
+        .map(() => `..`)
+        .join(`/`) as PortablePath;
 
       testFs.symlinkSync(linkPath, basePath);
 
@@ -41,7 +45,11 @@ describe(`ProxiedFS`, () => {
       const testFs = new TestFS(spyFs);
 
       const basePath = `/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z` as PortablePath;
-      const linkPath = basePath.split(`/`).slice(2, -1).map(() => `..`).join(`/`) as PortablePath;
+      const linkPath = basePath
+        .split(`/`)
+        .slice(2, -1)
+        .map(() => `..`)
+        .join(`/`) as PortablePath;
 
       await testFs.symlinkPromise(linkPath, basePath);
 

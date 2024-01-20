@@ -1,10 +1,9 @@
-import {npath, ppath} from '@yarnpkg/fslib';
+import { npath, ppath } from "@yarnpkg/fslib";
 
-import {environments} from './constraints/environments';
-
+import { environments } from "./constraints/environments";
 
 const {
-  fs: {writeFile},
+  fs: { writeFile },
 } = require(`pkg-tests-core`);
 
 const scriptNames = {
@@ -95,73 +94,109 @@ const constraints = {
 
 describe(`Commands`, () => {
   describe(`constraints`, () => {
-    it(`should report custom errors`, makeTemporaryEnv({}, async ({path, run, source}) => {
-      await run(`install`);
+    it(
+      `should report custom errors`,
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
+        await run(`install`);
 
-      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+        await writeFile(
+          ppath.join(path, `yarn.config.cjs`),
+          `
         exports.constraints = ({Yarn}) => {
           Yarn.workspace().error('This should fail');
         };
-      `);
+      `,
+        );
 
-      await expect(run(`constraints`)).rejects.toThrow(/This should fail/);
-    }));
+        await expect(run(`constraints`)).rejects.toThrow(/This should fail/);
+      }),
+    );
 
-    it(`should allow requiring dependencies from the yarn.config.cjs file`, makeTemporaryEnv({
-      dependencies: {
-        [`no-deps`]: `1.0.0`,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
+    it(
+      `should allow requiring dependencies from the yarn.config.cjs file`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        },
+        async ({ path, run, source }) => {
+          await run(`install`);
 
-      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+          await writeFile(
+            ppath.join(path, `yarn.config.cjs`),
+            `
         require('no-deps');
 
         exports.constraints = ({Yarn}) => {
         };
-      `);
+      `,
+          );
 
-      await run(`constraints`);
-    }));
+          await run(`constraints`);
+        },
+      ),
+    );
 
-    it(`shouldn't report errors when comparing identical objects`, makeTemporaryEnv({
-      foo: {
-        ok: true,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
+    it(
+      `shouldn't report errors when comparing identical objects`,
+      makeTemporaryEnv(
+        {
+          foo: {
+            ok: true,
+          },
+        },
+        async ({ path, run, source }) => {
+          await run(`install`);
 
-      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+          await writeFile(
+            ppath.join(path, `yarn.config.cjs`),
+            `
         exports.constraints = ({Yarn}) => {
           Yarn.workspace().set('foo', {ok: true});
         };
-      `);
+      `,
+          );
 
-      await run(`constraints`);
-    }));
+          await run(`constraints`);
+        },
+      ),
+    );
 
-    it(`should report an error when comparing objects with different key ordering`, makeTemporaryEnv({
-      foo: {
-        b: true,
-        a: true,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
+    it(
+      `should report an error when comparing objects with different key ordering`,
+      makeTemporaryEnv(
+        {
+          foo: {
+            b: true,
+            a: true,
+          },
+        },
+        async ({ path, run, source }) => {
+          await run(`install`);
 
-      await writeFile(ppath.join(path, `yarn.config.cjs`), `
+          await writeFile(
+            ppath.join(path, `yarn.config.cjs`),
+            `
         exports.constraints = ({Yarn}) => {
           Yarn.workspace().set('foo', {a: true, b: true});
         };
-      `);
+      `,
+          );
 
-      await expect(run(`constraints`)).rejects.toThrow(`Invalid field foo; expected { a: true, b: true }, found { b: true, a: true }`);
-    }));
+          await expect(run(`constraints`)).rejects.toThrow(
+            `Invalid field foo; expected { a: true, b: true }, found { b: true, a: true }`,
+          );
+        },
+      ),
+    );
 
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, scripts] of Object.entries(constraints)) {
         for (const [scriptType, script] of Object.entries(scripts)) {
-          test(`test (${environmentDescription} / ${scriptDescription} / ${scriptType})`,
-            makeTemporaryEnv({}, async ({path, run, source}) => {
+          test(
+            `test (${environmentDescription} / ${scriptDescription} / ${scriptType})`,
+            makeTemporaryEnv({}, async ({ path, run, source }) => {
               await environment(path);
               await run(`install`);
 
@@ -172,16 +207,18 @@ describe(`Commands`, () => {
               let stderr;
 
               try {
-                ({code, stdout, stderr} = await run(`constraints`));
+                ({ code, stdout, stderr } = await run(`constraints`));
               } catch (error) {
-                ({code, stdout, stderr} = error);
+                ({ code, stdout, stderr } = error);
               }
 
               // TODO: Use .replaceAll when we drop support for Node.js v14
-              stdout = stdout.split(npath.join(npath.fromPortablePath(path), `yarn.config.cjs`)).join(`/path/to/yarn.config.cjs`);
+              stdout = stdout
+                .split(npath.join(npath.fromPortablePath(path), `yarn.config.cjs`))
+                .join(`/path/to/yarn.config.cjs`);
               stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
 
-              expect({code, stdout, stderr}).toMatchSnapshot();
+              expect({ code, stdout, stderr }).toMatchSnapshot();
             }),
           );
         }

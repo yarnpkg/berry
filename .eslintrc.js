@@ -1,20 +1,20 @@
 module.exports = {
-  extends: [
-    require.resolve(`@yarnpkg/eslint-config`),
-    require.resolve(`@yarnpkg/eslint-config/react`),
-  ],
+  extends: [require.resolve(`@yarnpkg/eslint-config`), require.resolve(`@yarnpkg/eslint-config/react`)],
   overrides: [
     {
       files: [`!packages/*/sources/{index,Plugin}.ts`],
       rules: {
-        '@typescript-eslint/naming-convention': [`error`, {
-          selector: `typeLike`,
-          format: [`PascalCase`],
-          custom: {
-            regex: `^Hooks$`,
-            match: false,
+        "@typescript-eslint/naming-convention": [
+          `error`,
+          {
+            selector: `typeLike`,
+            format: [`PascalCase`],
+            custom: {
+              regex: `^Hooks$`,
+              match: false,
+            },
           },
-        }],
+        ],
       },
     },
     {
@@ -26,7 +26,8 @@ module.exports = {
     },
   ],
   rules: {
-    'no-restricted-properties': [2,
+    "no-restricted-properties": [
+      2,
       {
         object: `semver`,
         property: `validRange`,
@@ -38,13 +39,14 @@ module.exports = {
         message: `Use 'semverUtils.validRange' instead`,
       },
     ],
-    'no-restricted-globals': [2,
+    "no-restricted-globals": [
+      2,
       {
         name: `fetch`,
         message: `Use 'httpUtils' instead`,
       },
     ],
-    'no-restricted-imports': [
+    "no-restricted-imports": [
       `error`,
       {
         patterns: [

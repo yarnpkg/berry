@@ -4,10 +4,10 @@ describe(`Features`, () => {
       `it should report a warning when omitting a peer dependencies`,
       makeTemporaryEnv(
         {
-          dependencies: {[`peer-deps`]: `1.0.0`},
+          dependencies: { [`peer-deps`]: `1.0.0` },
         },
-        async ({path, run, source}) => {
-          const {stdout} = await run(`install`);
+        async ({ path, run, source }) => {
+          const { stdout } = await run(`install`);
 
           expect(stdout).toContain(`YN0002`);
         },
@@ -18,10 +18,10 @@ describe(`Features`, () => {
       `it should not report a warning when omitting an optional peer dependency`,
       makeTemporaryEnv(
         {
-          dependencies: {[`optional-peer-deps`]: `1.0.0`},
+          dependencies: { [`optional-peer-deps`]: `1.0.0` },
         },
-        async ({path, run, source}) => {
-          const {stdout} = await run(`install`);
+        async ({ path, run, source }) => {
+          const { stdout } = await run(`install`);
 
           expect(stdout).not.toContain(`YN0002`);
         },
@@ -37,10 +37,12 @@ describe(`Features`, () => {
             [`no-deps`]: `1.1.0`,
           },
         },
-        async ({path, run, source}) => {
-          const {stdout} = await run(`install`);
+        async ({ path, run, source }) => {
+          const { stdout } = await run(`install`);
 
-          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0, which doesn't satisfy what mismatched-peer-deps-lvl0 \(p[a-f0-9]{5}\) and other dependencies request \(1\.0\.0\)/);
+          expect(stdout).toMatch(
+            /no-deps is listed by your project with version 1\.1\.0, which doesn't satisfy what mismatched-peer-deps-lvl0 \(p[a-f0-9]{5}\) and other dependencies request \(1\.0\.0\)/,
+          );
         },
       ),
     );
@@ -50,11 +52,11 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            'optional-peer-deps-implicit': `1.0.0`,
-            'no-deps': `1.0.0`,
+            "optional-peer-deps-implicit": `1.0.0`,
+            "no-deps": `1.0.0`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(
@@ -70,15 +72,17 @@ describe(`Features`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            'optional-peer-deps-implicit': `1.0.0`,
-            '@types/no-deps': `1.0.0`,
+            "optional-peer-deps-implicit": `1.0.0`,
+            "@types/no-deps": `1.0.0`,
           },
         },
-        async ({path, run, source}) => {
+        async ({ path, run, source }) => {
           await run(`install`);
 
           await expect(
-            source(`require(require.resolve('@types/no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })) === require('@types/no-deps')`),
+            source(
+              `require(require.resolve('@types/no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })) === require('@types/no-deps')`,
+            ),
           ).resolves.toEqual(true);
         },
       ),

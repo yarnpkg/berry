@@ -1,17 +1,15 @@
-import {Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, SettingsType} from '@yarnpkg/core';
-import {structUtils, ThrowReport, miscUtils, semverUtils}                                       from '@yarnpkg/core';
-import {ppath, xfs}                                                                             from '@yarnpkg/fslib';
-import {Hooks as EssentialsHooks}                                                               from '@yarnpkg/plugin-essentials';
-import {suggestUtils}                                                                           from '@yarnpkg/plugin-essentials';
-import {Hooks as PackHooks}                                                                     from '@yarnpkg/plugin-pack';
-import semver                                                                                   from 'semver';
+import { Descriptor, Plugin, Workspace, ResolveOptions, Manifest, AllDependencies, SettingsType } from "@yarnpkg/core";
+import { structUtils, ThrowReport, miscUtils, semverUtils } from "@yarnpkg/core";
+import { ppath, xfs } from "@yarnpkg/fslib";
+import { Hooks as EssentialsHooks } from "@yarnpkg/plugin-essentials";
+import { suggestUtils } from "@yarnpkg/plugin-essentials";
+import { Hooks as PackHooks } from "@yarnpkg/plugin-pack";
+import semver from "semver";
 
-import {hasDefinitelyTyped}                                                                     from './typescriptUtils';
+import { hasDefinitelyTyped } from "./typescriptUtils";
 
 const getTypesName = (descriptor: Descriptor) => {
-  return descriptor.scope
-    ? `${descriptor.scope}__${descriptor.name}`
-    : `${descriptor.name}`;
+  return descriptor.scope ? `${descriptor.scope}__${descriptor.name}` : `${descriptor.name}`;
 };
 
 const afterWorkspaceDependencyAddition = async (
@@ -20,17 +18,15 @@ const afterWorkspaceDependencyAddition = async (
   descriptor: Descriptor,
   strategies: Array<suggestUtils.Strategy>,
 ) => {
-  if (descriptor.scope === `types`)
-    return;
+  if (descriptor.scope === `types`) return;
 
-  const {project} = workspace;
-  const {configuration} = project;
+  const { project } = workspace;
+  const { configuration } = project;
 
-  const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
-    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
+  const tsEnableAutoTypes =
+    configuration.get(`tsEnableAutoTypes`) ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
-  if (!tsEnableAutoTypes)
-    return;
+  if (!tsEnableAutoTypes) return;
 
   const resolver = configuration.makeResolver();
   const resolveOptions: ResolveOptions = {
@@ -40,8 +36,7 @@ const afterWorkspaceDependencyAddition = async (
   };
 
   const requiresInstallTypes = await hasDefinitelyTyped(descriptor, configuration);
-  if (!requiresInstallTypes)
-    return;
+  if (!requiresInstallTypes) return;
 
   const typesName = getTypesName(descriptor);
 
@@ -56,13 +51,12 @@ const afterWorkspaceDependencyAddition = async (
   }
 
   const semverRange = semver.coerce(range);
-  if (semverRange === null)
-    return;
+  if (semverRange === null) return;
 
   const coercedRange = `${suggestUtils.Modifier.CARET}${semverRange!.major}`;
   const atTypesDescriptor = structUtils.makeDescriptor(structUtils.makeIdent(`types`, typesName), coercedRange);
 
-  const projectSuggestions = miscUtils.mapAndFind(project.workspaces, workspace => {
+  const projectSuggestions = miscUtils.mapAndFind(project.workspaces, (workspace) => {
     const regularDependencyHash = workspace.manifest.dependencies.get(descriptor.identHash)?.descriptorHash;
     const devDependencyHash = workspace.manifest.devDependencies.get(descriptor.identHash)?.descriptorHash;
 
@@ -74,15 +68,13 @@ const afterWorkspaceDependencyAddition = async (
 
     for (const type of Manifest.allDependencies) {
       const atTypesDependency = workspace.manifest[type].get(atTypesDescriptor.identHash);
-      if (typeof atTypesDependency === `undefined`)
-        continue;
+      if (typeof atTypesDependency === `undefined`) continue;
 
       atTypesDependencies.push([type, atTypesDependency]);
     }
 
     // We only want workspaces that also depend on the appropriate @types package
-    if (atTypesDependencies.length === 0)
-      return miscUtils.mapAndFind.skip;
+    if (atTypesDependencies.length === 0) return miscUtils.mapAndFind.skip;
 
     return atTypesDependencies;
   });
@@ -112,17 +104,15 @@ const afterWorkspaceDependencyRemoval = async (
   dependencyTarget: suggestUtils.Target,
   descriptor: Descriptor,
 ) => {
-  if (descriptor.scope === `types`)
-    return;
+  if (descriptor.scope === `types`) return;
 
-  const {project} = workspace;
-  const {configuration} = project;
+  const { project } = workspace;
+  const { configuration } = project;
 
-  const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
-    ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
+  const tsEnableAutoTypes =
+    configuration.get(`tsEnableAutoTypes`) ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
-  if (!tsEnableAutoTypes)
-    return;
+  if (!tsEnableAutoTypes) return;
 
   const typesName = getTypesName(descriptor);
 
@@ -131,8 +121,7 @@ const afterWorkspaceDependencyRemoval = async (
   for (const type of Manifest.allDependencies) {
     const current = workspace.manifest[type].get(ident.identHash);
 
-    if (typeof current === `undefined`)
-      continue;
+    if (typeof current === `undefined`) continue;
 
     workspace.manifest[type].delete(ident.identHash);
   }
@@ -147,7 +136,7 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 };
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     tsEnableAutoTypes: boolean | null;
   }

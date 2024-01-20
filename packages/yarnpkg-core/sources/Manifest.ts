@@ -1,16 +1,16 @@
-import {FakeFS, Filename, NodeFS, PortablePath, ppath}    from '@yarnpkg/fslib';
-import {Resolution, parseResolution, stringifyResolution} from '@yarnpkg/parsers';
-import semver                                             from 'semver';
+import { FakeFS, Filename, NodeFS, PortablePath, ppath } from "@yarnpkg/fslib";
+import { Resolution, parseResolution, stringifyResolution } from "@yarnpkg/parsers";
+import semver from "semver";
 
-import {WorkspaceResolver}                                from './WorkspaceResolver';
-import * as miscUtils                                     from './miscUtils';
-import * as semverUtils                                   from './semverUtils';
-import * as structUtils                                   from './structUtils';
-import {Ident, Descriptor}                                from './types';
-import {IdentHash}                                        from './types';
+import { WorkspaceResolver } from "./WorkspaceResolver";
+import * as miscUtils from "./miscUtils";
+import * as semverUtils from "./semverUtils";
+import * as structUtils from "./structUtils";
+import { Ident, Descriptor } from "./types";
+import { IdentHash } from "./types";
 
-export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
-export type HardDependencies = 'dependencies' | 'devDependencies';
+export type AllDependencies = "dependencies" | "devDependencies" | "peerDependencies";
+export type HardDependencies = "dependencies" | "devDependencies";
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -75,7 +75,7 @@ export class Manifest {
   public dependenciesMeta: Map<string, Map<string | null, DependencyMeta>> = new Map();
   public peerDependenciesMeta: Map<string, PeerDependencyMeta> = new Map();
 
-  public resolutions: Array<{pattern: Resolution, reference: string}> = [];
+  public resolutions: Array<{ pattern: Resolution; reference: string }> = [];
 
   public files: Set<PortablePath> | null = null;
   public publishConfig: PublishConfig | null = null;
@@ -83,7 +83,7 @@ export class Manifest {
 
   public preferUnplugged: boolean | null = null;
 
-  public raw: {[key: string]: any} = {};
+  public raw: { [key: string]: any } = {};
 
   /**
    * errors found in the raw manifest while loading
@@ -95,31 +95,29 @@ export class Manifest {
   static readonly allDependencies: Array<AllDependencies> = [`dependencies`, `devDependencies`, `peerDependencies`];
   static readonly hardDependencies: Array<HardDependencies> = [`dependencies`, `devDependencies`];
 
-  static async tryFind(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
+  static async tryFind(path: PortablePath, { baseFs = new NodeFS() }: { baseFs?: FakeFS<PortablePath> } = {}) {
     const manifestPath = ppath.join(path, `package.json`);
 
     try {
-      return await Manifest.fromFile(manifestPath, {baseFs});
+      return await Manifest.fromFile(manifestPath, { baseFs });
     } catch (err) {
-      if (err.code === `ENOENT`)
-        return null;
+      if (err.code === `ENOENT`) return null;
 
       throw err;
     }
   }
 
-  static async find(path: PortablePath, {baseFs}: {baseFs?: FakeFS<PortablePath>} = {}) {
-    const manifest = await Manifest.tryFind(path, {baseFs});
+  static async find(path: PortablePath, { baseFs }: { baseFs?: FakeFS<PortablePath> } = {}) {
+    const manifest = await Manifest.tryFind(path, { baseFs });
 
-    if (manifest === null)
-      throw new Error(`Manifest not found`);
+    if (manifest === null) throw new Error(`Manifest not found`);
 
     return manifest;
   }
 
-  static async fromFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>} = {}) {
+  static async fromFile(path: PortablePath, { baseFs = new NodeFS() }: { baseFs?: FakeFS<PortablePath> } = {}) {
     const manifest = new Manifest();
-    await manifest.loadFile(path, {baseFs});
+    await manifest.loadFile(path, { baseFs });
 
     return manifest;
   }
@@ -144,7 +142,7 @@ export class Manifest {
     this.indent = getIndent(text);
   }
 
-  async loadFile(path: PortablePath, {baseFs = new NodeFS()}: {baseFs?: FakeFS<PortablePath>}) {
+  async loadFile(path: PortablePath, { baseFs = new NodeFS() }: { baseFs?: FakeFS<PortablePath> }) {
     const content = await baseFs.readFilePromise(path, `utf8`);
 
     let data;
@@ -159,9 +157,8 @@ export class Manifest {
     this.indent = getIndent(content);
   }
 
-  load(data: any, {yamlCompatibilityMode = false}: {yamlCompatibilityMode?: boolean} = {}) {
-    if (typeof data !== `object` || data === null)
-      throw new Error(`Utterly invalid manifest data (${data})`);
+  load(data: any, { yamlCompatibilityMode = false }: { yamlCompatibilityMode?: boolean } = {}) {
+    if (typeof data !== `object` || data === null) throw new Error(`Utterly invalid manifest data (${data})`);
 
     this.raw = data;
     const errors: Array<Error> = [];
@@ -175,10 +172,8 @@ export class Manifest {
       }
     }
 
-    if (typeof data.version === `string`)
-      this.version = data.version;
-    else
-      this.version = null;
+    if (typeof data.version === `string`) this.version = data.version;
+    else this.version = null;
 
     if (Array.isArray(data.os)) {
       const os: Array<string> = [];
@@ -225,40 +220,26 @@ export class Manifest {
       this.libc = null;
     }
 
-    if (typeof data.type === `string`)
-      this.type = data.type;
-    else
-      this.type = null;
+    if (typeof data.type === `string`) this.type = data.type;
+    else this.type = null;
 
-    if (typeof data.packageManager === `string`)
-      this.packageManager = data.packageManager;
-    else
-      this.packageManager = null;
+    if (typeof data.packageManager === `string`) this.packageManager = data.packageManager;
+    else this.packageManager = null;
 
-    if (typeof data.private === `boolean`)
-      this.private = data.private;
-    else
-      this.private = false;
+    if (typeof data.private === `boolean`) this.private = data.private;
+    else this.private = false;
 
-    if (typeof data.license === `string`)
-      this.license = data.license;
-    else
-      this.license = null;
+    if (typeof data.license === `string`) this.license = data.license;
+    else this.license = null;
 
-    if (typeof data.languageName === `string`)
-      this.languageName = data.languageName;
-    else
-      this.languageName = null;
+    if (typeof data.languageName === `string`) this.languageName = data.languageName;
+    else this.languageName = null;
 
-    if (typeof data.main === `string`)
-      this.main = normalizeSlashes(data.main);
-    else
-      this.main = null;
+    if (typeof data.main === `string`) this.main = normalizeSlashes(data.main);
+    else this.main = null;
 
-    if (typeof data.module === `string`)
-      this.module = normalizeSlashes(data.module);
-    else
-      this.module = null;
+    if (typeof data.module === `string`) this.module = normalizeSlashes(data.module);
+    else this.module = null;
 
     if (data.browser != null) {
       if (typeof data.browser === `string`) {
@@ -376,7 +357,10 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== `string` || (!range.startsWith(WorkspaceResolver.protocol) && !semverUtils.validRange(range))) {
+        if (
+          typeof range !== `string` ||
+          (!range.startsWith(WorkspaceResolver.protocol) && !semverUtils.validRange(range))
+        ) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }
@@ -418,25 +402,25 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const dependencyMeta = this.ensureDependencyMeta(descriptor);
 
-        const built = tryParseOptionalBoolean(meta.built, {yamlCompatibilityMode});
+        const built = tryParseOptionalBoolean(meta.built, { yamlCompatibilityMode });
         if (built === null) {
           errors.push(new Error(`Invalid built meta field for '${pattern}'`));
           continue;
         }
 
-        const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
+        const optional = tryParseOptionalBoolean(meta.optional, { yamlCompatibilityMode });
         if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
         }
 
-        const unplugged = tryParseOptionalBoolean(meta.unplugged, {yamlCompatibilityMode});
+        const unplugged = tryParseOptionalBoolean(meta.unplugged, { yamlCompatibilityMode });
         if (unplugged === null) {
           errors.push(new Error(`Invalid unplugged meta field for '${pattern}'`));
           continue;
         }
 
-        Object.assign(dependencyMeta, {built, optional, unplugged});
+        Object.assign(dependencyMeta, { built, optional, unplugged });
       }
     }
 
@@ -451,13 +435,13 @@ export class Manifest {
         const descriptor = structUtils.parseDescriptor(pattern);
         const peerDependencyMeta = this.ensurePeerDependencyMeta(descriptor);
 
-        const optional = tryParseOptionalBoolean(meta.optional, {yamlCompatibilityMode});
+        const optional = tryParseOptionalBoolean(meta.optional, { yamlCompatibilityMode });
         if (optional === null) {
           errors.push(new Error(`Invalid optional meta field for '${pattern}'`));
           continue;
         }
 
-        Object.assign(peerDependencyMeta, {optional});
+        Object.assign(peerDependencyMeta, { optional });
       }
     }
 
@@ -470,7 +454,7 @@ export class Manifest {
         }
 
         try {
-          this.resolutions.push({pattern: parseResolution(pattern), reference});
+          this.resolutions.push({ pattern: parseResolution(pattern), reference });
         } catch (error) {
           errors.push(error);
           continue;
@@ -496,8 +480,7 @@ export class Manifest {
     if (typeof data.publishConfig === `object` && data.publishConfig !== null) {
       this.publishConfig = {};
 
-      if (typeof data.publishConfig.access === `string`)
-        this.publishConfig.access = data.publishConfig.access;
+      if (typeof data.publishConfig.access === `string`) this.publishConfig.access = data.publishConfig.access;
 
       if (typeof data.publishConfig.main === `string`)
         this.publishConfig.main = normalizeSlashes(data.publishConfig.main);
@@ -519,8 +502,7 @@ export class Manifest {
         }
       }
 
-      if (typeof data.publishConfig.registry === `string`)
-        this.publishConfig.registry = data.publishConfig.registry;
+      if (typeof data.publishConfig.registry === `string`) this.publishConfig.registry = data.publishConfig.registry;
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
@@ -610,14 +592,12 @@ export class Manifest {
 
         const identDescriptor = structUtils.makeDescriptor(ident, `unknown`);
         const dependencyMeta = this.ensureDependencyMeta(identDescriptor);
-        Object.assign(dependencyMeta, {optional: true});
+        Object.assign(dependencyMeta, { optional: true });
       }
     }
 
-    if (typeof data.preferUnplugged === `boolean`)
-      this.preferUnplugged = data.preferUnplugged;
-    else
-      this.preferUnplugged = null;
+    if (typeof data.preferUnplugged === `boolean`) this.preferUnplugged = data.preferUnplugged;
+    else this.preferUnplugged = null;
 
     this.errors = errors;
   }
@@ -640,38 +620,31 @@ export class Manifest {
   }
 
   hasConsumerDependency(ident: Ident) {
-    if (this.dependencies.has(ident.identHash))
-      return true;
+    if (this.dependencies.has(ident.identHash)) return true;
 
-    if (this.peerDependencies.has(ident.identHash))
-      return true;
+    if (this.peerDependencies.has(ident.identHash)) return true;
 
     return false;
   }
 
   hasHardDependency(ident: Ident) {
-    if (this.dependencies.has(ident.identHash))
-      return true;
+    if (this.dependencies.has(ident.identHash)) return true;
 
-    if (this.devDependencies.has(ident.identHash))
-      return true;
+    if (this.devDependencies.has(ident.identHash)) return true;
 
     return false;
   }
 
   hasSoftDependency(ident: Ident) {
-    if (this.peerDependencies.has(ident.identHash))
-      return true;
+    if (this.peerDependencies.has(ident.identHash)) return true;
 
     return false;
   }
 
   hasDependency(ident: Ident) {
-    if (this.hasHardDependency(ident))
-      return true;
+    if (this.hasHardDependency(ident)) return true;
 
-    if (this.hasSoftDependency(ident))
-      return true;
+    if (this.hasSoftDependency(ident)) return true;
 
     return false;
   }
@@ -679,12 +652,9 @@ export class Manifest {
   getConditions() {
     const fields: Array<string> = [];
 
-    if (this.os && this.os.length > 0)
-      fields.push(toConditionLine(`os`, this.os));
-    if (this.cpu && this.cpu.length > 0)
-      fields.push(toConditionLine(`cpu`, this.cpu));
-    if (this.libc && this.libc.length > 0)
-      fields.push(toConditionLine(`libc`, this.libc));
+    if (this.os && this.os.length > 0) fields.push(toConditionLine(`os`, this.os));
+    if (this.cpu && this.cpu.length > 0) fields.push(toConditionLine(`cpu`, this.cpu));
+    if (this.libc && this.libc.length > 0) fields.push(toConditionLine(`libc`, this.libc));
 
     return fields.length > 0 ? fields.join(` & `) : null;
   }
@@ -697,12 +667,10 @@ export class Manifest {
     const range = descriptor.range !== `unknown` ? descriptor.range : null;
 
     let dependencyMetaSet = this.dependenciesMeta.get(identString);
-    if (!dependencyMetaSet)
-      this.dependenciesMeta.set(identString, dependencyMetaSet = new Map());
+    if (!dependencyMetaSet) this.dependenciesMeta.set(identString, (dependencyMetaSet = new Map()));
 
     let dependencyMeta = dependencyMetaSet.get(range);
-    if (!dependencyMeta)
-      dependencyMetaSet.set(range, dependencyMeta = {});
+    if (!dependencyMeta) dependencyMetaSet.set(range, (dependencyMeta = {}));
 
     return dependencyMeta;
   }
@@ -714,22 +682,23 @@ export class Manifest {
     const identString = structUtils.stringifyIdent(descriptor);
 
     let peerDependencyMeta = this.peerDependenciesMeta.get(identString);
-    if (!peerDependencyMeta)
-      this.peerDependenciesMeta.set(identString, peerDependencyMeta = {});
+    if (!peerDependencyMeta) this.peerDependenciesMeta.set(identString, (peerDependencyMeta = {}));
 
     return peerDependencyMeta;
   }
 
-  setRawField(name: string, value: any, {after = []}: {after?: Array<string>} = {}) {
-    const afterSet = new Set(after.filter(key => {
-      return Object.hasOwn(this.raw, key);
-    }));
+  setRawField(name: string, value: any, { after = [] }: { after?: Array<string> } = {}) {
+    const afterSet = new Set(
+      after.filter((key) => {
+        return Object.hasOwn(this.raw, key);
+      }),
+    );
 
     if (afterSet.size === 0 || Object.hasOwn(this.raw, name)) {
       this.raw[name] = value;
     } else {
       const oldRaw = this.raw;
-      const newRaw = this.raw = {} as {[key: string]: any};
+      const newRaw = (this.raw = {} as { [key: string]: any });
 
       let inserted = false;
 
@@ -748,65 +717,43 @@ export class Manifest {
     }
   }
 
-  exportTo(data: {[key: string]: any}, {compatibilityMode = true}: {compatibilityMode?: boolean} = {}) {
+  exportTo(data: { [key: string]: any }, { compatibilityMode = true }: { compatibilityMode?: boolean } = {}) {
     // Note that we even set the fields that we re-set later; it
     // allows us to preserve the key ordering
     Object.assign(data, this.raw);
 
-    if (this.name !== null)
-      data.name = structUtils.stringifyIdent(this.name);
-    else
-      delete data.name;
+    if (this.name !== null) data.name = structUtils.stringifyIdent(this.name);
+    else delete data.name;
 
-    if (this.version !== null)
-      data.version = this.version;
-    else
-      delete data.version;
+    if (this.version !== null) data.version = this.version;
+    else delete data.version;
 
-    if (this.os !== null)
-      data.os = this.os;
-    else
-      delete data.os;
+    if (this.os !== null) data.os = this.os;
+    else delete data.os;
 
-    if (this.cpu !== null)
-      data.cpu = this.cpu;
-    else
-      delete data.cpu;
+    if (this.cpu !== null) data.cpu = this.cpu;
+    else delete data.cpu;
 
-    if (this.type !== null)
-      data.type = this.type;
-    else
-      delete data.type;
+    if (this.type !== null) data.type = this.type;
+    else delete data.type;
 
-    if (this.packageManager !== null)
-      data.packageManager = this.packageManager;
-    else
-      delete data.packageManager;
+    if (this.packageManager !== null) data.packageManager = this.packageManager;
+    else delete data.packageManager;
 
-    if (this.private)
-      data.private = true;
-    else
-      delete data.private;
+    if (this.private) data.private = true;
+    else delete data.private;
 
-    if (this.license !== null)
-      data.license = this.license;
-    else
-      delete data.license;
+    if (this.license !== null) data.license = this.license;
+    else delete data.license;
 
-    if (this.languageName !== null)
-      data.languageName = this.languageName;
-    else
-      delete data.languageName;
+    if (this.languageName !== null) data.languageName = this.languageName;
+    else delete data.languageName;
 
-    if (this.main !== null)
-      data.main = this.main;
-    else
-      delete data.main;
+    if (this.main !== null) data.main = this.main;
+    else delete data.main;
 
-    if (this.module !== null)
-      data.module = this.module;
-    else
-      delete data.module;
+    if (this.module !== null) data.module = this.module;
+    else delete data.module;
 
     if (this.browser !== null) {
       const browser = this.browser;
@@ -814,9 +761,14 @@ export class Manifest {
       if (typeof browser === `string`) {
         data.browser = browser;
       } else if (browser instanceof Map) {
-        data.browser = Object.assign({}, ...Array.from(browser.keys()).sort().map(name => {
-          return {[name]: browser.get(name)};
-        }));
+        data.browser = Object.assign(
+          {},
+          ...Array.from(browser.keys())
+            .sort()
+            .map((name) => {
+              return { [name]: browser.get(name) };
+            }),
+        );
       }
     } else {
       delete data.browser;
@@ -825,20 +777,29 @@ export class Manifest {
     if (this.bin.size === 1 && this.name !== null && this.bin.has(this.name.name)) {
       data.bin = this.bin.get(this.name.name)!;
     } else if (this.bin.size > 0) {
-      data.bin = Object.assign({}, ...Array.from(this.bin.keys()).sort().map(name => {
-        return {[name]: this.bin.get(name)};
-      }));
+      data.bin = Object.assign(
+        {},
+        ...Array.from(this.bin.keys())
+          .sort()
+          .map((name) => {
+            return { [name]: this.bin.get(name) };
+          }),
+      );
     } else {
       delete data.bin;
     }
 
     if (this.workspaceDefinitions.length > 0) {
       if (this.raw.workspaces && !Array.isArray(this.raw.workspaces)) {
-        data.workspaces = {...this.raw.workspaces, packages: this.workspaceDefinitions.map(({pattern}) => pattern)};
+        data.workspaces = { ...this.raw.workspaces, packages: this.workspaceDefinitions.map(({ pattern }) => pattern) };
       } else {
-        data.workspaces = this.workspaceDefinitions.map(({pattern}) => pattern);
+        data.workspaces = this.workspaceDefinitions.map(({ pattern }) => pattern);
       }
-    } else if (this.raw.workspaces && !Array.isArray(this.raw.workspaces) && Object.keys(this.raw.workspaces).length > 0) {
+    } else if (
+      this.raw.workspaces &&
+      !Array.isArray(this.raw.workspaces) &&
+      Object.keys(this.raw.workspaces).length > 0
+    ) {
       data.workspaces = this.raw.workspaces;
     } else {
       delete data.workspaces;
@@ -868,92 +829,110 @@ export class Manifest {
     }
 
     if (regularDependencies.length > 0) {
-      data.dependencies = Object.assign({}, ...structUtils.sortDescriptors(regularDependencies).map(dependency => {
-        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-      }));
+      data.dependencies = Object.assign(
+        {},
+        ...structUtils.sortDescriptors(regularDependencies).map((dependency) => {
+          return { [structUtils.stringifyIdent(dependency)]: dependency.range };
+        }),
+      );
     } else {
       delete data.dependencies;
     }
 
     if (optionalDependencies.length > 0) {
-      data.optionalDependencies = Object.assign({}, ...structUtils.sortDescriptors(optionalDependencies).map(dependency => {
-        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-      }));
+      data.optionalDependencies = Object.assign(
+        {},
+        ...structUtils.sortDescriptors(optionalDependencies).map((dependency) => {
+          return { [structUtils.stringifyIdent(dependency)]: dependency.range };
+        }),
+      );
     } else {
       delete data.optionalDependencies;
     }
 
     if (this.devDependencies.size > 0) {
-      data.devDependencies = Object.assign({}, ...structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
-        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-      }));
+      data.devDependencies = Object.assign(
+        {},
+        ...structUtils.sortDescriptors(this.devDependencies.values()).map((dependency) => {
+          return { [structUtils.stringifyIdent(dependency)]: dependency.range };
+        }),
+      );
     } else {
       delete data.devDependencies;
     }
 
     if (this.peerDependencies.size > 0) {
-      data.peerDependencies = Object.assign({}, ...structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
-        return {[structUtils.stringifyIdent(dependency)]: dependency.range};
-      }));
+      data.peerDependencies = Object.assign(
+        {},
+        ...structUtils.sortDescriptors(this.peerDependencies.values()).map((dependency) => {
+          return { [structUtils.stringifyIdent(dependency)]: dependency.range };
+        }),
+      );
     } else {
       delete data.peerDependencies;
     }
 
     data.dependenciesMeta = {};
 
-    for (const [identString, dependencyMetaSet] of miscUtils.sortMap(this.dependenciesMeta.entries(), ([identString, dependencyMetaSet]) => identString)) {
-      for (const [range, meta] of miscUtils.sortMap(dependencyMetaSet.entries(), ([range, meta]) => range !== null ? `0${range}` : `1`)) {
-        const key = range !== null
-          ? structUtils.stringifyDescriptor(structUtils.makeDescriptor(structUtils.parseIdent(identString), range))
-          : identString;
+    for (const [identString, dependencyMetaSet] of miscUtils.sortMap(
+      this.dependenciesMeta.entries(),
+      ([identString, dependencyMetaSet]) => identString,
+    )) {
+      for (const [range, meta] of miscUtils.sortMap(dependencyMetaSet.entries(), ([range, meta]) =>
+        range !== null ? `0${range}` : `1`,
+      )) {
+        const key =
+          range !== null
+            ? structUtils.stringifyDescriptor(structUtils.makeDescriptor(structUtils.parseIdent(identString), range))
+            : identString;
 
-        const metaCopy = {...meta};
+        const metaCopy = { ...meta };
 
-        if (compatibilityMode && range === null)
-          delete metaCopy.optional;
+        if (compatibilityMode && range === null) delete metaCopy.optional;
 
-        if (Object.keys(metaCopy).length === 0)
-          continue;
+        if (Object.keys(metaCopy).length === 0) continue;
 
         data.dependenciesMeta[key] = metaCopy;
       }
     }
 
-    if (Object.keys(data.dependenciesMeta).length === 0)
-      delete data.dependenciesMeta;
+    if (Object.keys(data.dependenciesMeta).length === 0) delete data.dependenciesMeta;
 
     if (this.peerDependenciesMeta.size > 0) {
-      data.peerDependenciesMeta = Object.assign({}, ...miscUtils.sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString).map(([identString, meta]) => {
-        return {[identString]: meta};
-      }));
+      data.peerDependenciesMeta = Object.assign(
+        {},
+        ...miscUtils
+          .sortMap(this.peerDependenciesMeta.entries(), ([identString, meta]) => identString)
+          .map(([identString, meta]) => {
+            return { [identString]: meta };
+          }),
+      );
     } else {
       delete data.peerDependenciesMeta;
     }
 
     if (this.resolutions.length > 0) {
-      data.resolutions = Object.assign({}, ...this.resolutions.map(({pattern, reference}) => {
-        return {[stringifyResolution(pattern)]: reference};
-      }));
+      data.resolutions = Object.assign(
+        {},
+        ...this.resolutions.map(({ pattern, reference }) => {
+          return { [stringifyResolution(pattern)]: reference };
+        }),
+      );
     } else {
       delete data.resolutions;
     }
 
-    if (this.files !== null)
-      data.files = Array.from(this.files);
-    else
-      delete data.files;
+    if (this.files !== null) data.files = Array.from(this.files);
+    else delete data.files;
 
-    if (this.preferUnplugged !== null)
-      data.preferUnplugged = this.preferUnplugged;
-    else
-      delete data.preferUnplugged;
+    if (this.preferUnplugged !== null) data.preferUnplugged = this.preferUnplugged;
+    else delete data.preferUnplugged;
 
     if (this.scripts !== null && this.scripts.size > 0) {
       data.scripts ??= {};
 
       for (const existingScriptName of Object.keys(data.scripts))
-        if (!this.scripts.has(existingScriptName))
-          delete data.scripts[existingScriptName];
+        if (!this.scripts.has(existingScriptName)) delete data.scripts[existingScriptName];
 
       for (const [name, content] of this.scripts.entries()) {
         // Set one at a time in order to preserve implicitly-preserved ordering of existing scripts.
@@ -978,7 +957,7 @@ function getIndent(content: string) {
 }
 
 function stripBOM(content: string) {
-  if (content.charCodeAt(0) === 0xFEFF) {
+  if (content.charCodeAt(0) === 0xfeff) {
     return content.slice(1);
   } else {
     return content;
@@ -989,20 +968,17 @@ function normalizeSlashes(str: string) {
   return str.replace(/\\/g, `/`) as PortablePath;
 }
 
-function tryParseOptionalBoolean(value: unknown, {yamlCompatibilityMode}: {yamlCompatibilityMode: boolean}) {
-  if (yamlCompatibilityMode)
-    return miscUtils.tryParseOptionalBoolean(value);
+function tryParseOptionalBoolean(value: unknown, { yamlCompatibilityMode }: { yamlCompatibilityMode: boolean }) {
+  if (yamlCompatibilityMode) return miscUtils.tryParseOptionalBoolean(value);
 
-  if (typeof value === `undefined` || typeof value === `boolean`)
-    return value;
+  if (typeof value === `undefined` || typeof value === `boolean`) return value;
 
   return null;
 }
 
 function toConditionToken(name: string, raw: string) {
   const index = raw.search(/[^!]/);
-  if (index === -1)
-    return `invalid`;
+  if (index === -1) return `invalid`;
 
   const prefix = index % 2 === 0 ? `` : `!`;
   const value = raw.slice(index);
@@ -1014,6 +990,6 @@ function toConditionLine(name: string, rawTokens: Array<string>) {
   if (rawTokens.length === 1) {
     return toConditionToken(name, rawTokens[0]);
   } else {
-    return `(${rawTokens.map(raw => toConditionToken(name, raw)).join(` | `)})`;
+    return `(${rawTokens.map((raw) => toConditionToken(name, raw)).join(` | `)})`;
   }
 }

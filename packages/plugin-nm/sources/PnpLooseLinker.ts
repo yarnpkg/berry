@@ -1,9 +1,9 @@
-import {LinkOptions, structUtils}                      from '@yarnpkg/core';
-import {VirtualFS, ppath, Filename}                    from '@yarnpkg/fslib';
-import {ZipOpenFS}                                     from '@yarnpkg/libzip';
-import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/nm';
-import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
-import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
+import { LinkOptions, structUtils } from "@yarnpkg/core";
+import { VirtualFS, ppath, Filename } from "@yarnpkg/fslib";
+import { ZipOpenFS } from "@yarnpkg/libzip";
+import { NodeModulesPackageNode, buildNodeModulesTree } from "@yarnpkg/nm";
+import { PnpInstaller, PnpLinker } from "@yarnpkg/plugin-pnp";
+import { PnpSettings, makeRuntimeApi, DependencyTarget } from "@yarnpkg/pnp";
 
 export class PnpLooseLinker extends PnpLinker {
   protected mode = `loose`;
@@ -25,10 +25,9 @@ class PnpLooseInstaller extends PnpInstaller {
     });
 
     const pnp = makeRuntimeApi(pnpSettings, this.opts.project.cwd, defaultFsLayer);
-    const {tree, errors} = buildNodeModulesTree(pnp, {pnpifyFs: false, project: this.opts.project});
+    const { tree, errors } = buildNodeModulesTree(pnp, { pnpifyFs: false, project: this.opts.project });
     if (!tree) {
-      for (const {messageName, text} of errors)
-        this.opts.report.reportError(messageName, text);
+      for (const { messageName, text } of errors) this.opts.report.reportError(messageName, text);
 
       return;
     }
@@ -51,18 +50,15 @@ class PnpLooseInstaller extends PnpInstaller {
 
     const entry = tree.get(root);
     // If there's no root junction point, it means that there are no dependencies to add to the fallback pool
-    if (typeof entry === `undefined`)
-      return;
+    if (typeof entry === `undefined`) return;
 
-    if (`target` in entry)
-      throw new Error(`Assertion failed: Expected the root junction point to be a directory`);
+    if (`target` in entry) throw new Error(`Assertion failed: Expected the root junction point to be a directory`);
 
     for (const childName of entry.dirList) {
       const childP = ppath.join(root, childName);
 
       const child = tree.get(childP);
-      if (typeof child === `undefined`)
-        throw new Error(`Assertion failed: Expected the child to have been registered`);
+      if (typeof child === `undefined`) throw new Error(`Assertion failed: Expected the child to have been registered`);
 
       if (`target` in child) {
         registerFallback(childName, child);

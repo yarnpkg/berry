@@ -1,37 +1,37 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-pnp-angular-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-pnp-angular-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E PnP Angular'
+name: "E2E PnP Angular"
 jobs:
   chore:
-    name: 'Validating Angular'
+    name: "Validating Angular"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
-      with:
-        # TODO: Remove when the issue causing timeouts / crashes in Node.js >= 21 is fixed.
-        node-version: 20
+      - uses: ./.github/actions/prepare
+        with:
+          # TODO: Remove when the issue causing timeouts / crashes in Node.js >= 21 is fixed.
+          node-version: 20
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
 
-        # TODO: Angular should be fixed to detect the correct package manager to install with
-        # but for now we need to specify it
-        yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
+          # TODO: Angular should be fixed to detect the correct package manager to install with
+          # but for now we need to specify it
+          yarn dlx -p @angular/cli@next ng new berry-angular --interactive=false --package-manager yarn
 
-        cd berry-angular
+          cd berry-angular
 
-        yarn ng build --aot
+          yarn ng build --aot

@@ -1,13 +1,30 @@
-import {miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi}                   from '@yarnpkg/core';
-import {FetchResult, Locator, Package}                                                                          from '@yarnpkg/core';
-import {Linker, LinkOptions, MinimalLinkOptions, Manifest, MessageName, DependencyMeta, LinkType, Installer}    from '@yarnpkg/core';
-import {AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs}                                             from '@yarnpkg/fslib';
-import {generateInlinedScript, generateSplitScript, PackageRegistry, PnpApi, PnpSettings, getESMLoaderTemplate} from '@yarnpkg/pnp';
-import {UsageError}                                                                                             from 'clipanion';
+import { miscUtils, structUtils, formatUtils, Descriptor, LocatorHash, InstallPackageExtraApi } from "@yarnpkg/core";
+import { FetchResult, Locator, Package } from "@yarnpkg/core";
+import { AliasFS, CwdFS, PortablePath, VirtualFS, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { UsageError } from "clipanion";
 
-import {getPnpPath}                                                                                             from './index';
-import * as jsInstallUtils                                                                                      from './jsInstallUtils';
-import * as pnpUtils                                                                                            from './pnpUtils';
+import { getPnpPath } from "./index";
+import * as jsInstallUtils from "./jsInstallUtils";
+import * as pnpUtils from "./pnpUtils";
+
+import {
+  Linker,
+  LinkOptions,
+  MinimalLinkOptions,
+  Manifest,
+  MessageName,
+  DependencyMeta,
+  LinkType,
+  Installer,
+} from "@yarnpkg/core";
+import {
+  generateInlinedScript,
+  generateSplitScript,
+  PackageRegistry,
+  PnpApi,
+  PnpSettings,
+  getESMLoaderTemplate,
+} from "@yarnpkg/pnp";
 
 const FORCED_UNPLUG_PACKAGES = new Set([
   // Contains native binaries
@@ -32,41 +49,41 @@ export class PnpLinker implements Linker {
   }
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
-    if (!this.isEnabled(opts))
-      throw new Error(`Assertion failed: Expected the PnP linker to be enabled`);
+    if (!this.isEnabled(opts)) throw new Error(`Assertion failed: Expected the PnP linker to be enabled`);
 
     const pnpPath = getPnpPath(opts.project).cjs;
     if (!xfs.existsSync(pnpPath))
-      throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+      throw new UsageError(
+        `The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`,
+      );
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
+      return miscUtils.dynamicRequire(pnpPath, { cachingStrategy: miscUtils.CachingStrategy.FsTime });
     });
 
-    const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
+    const packageLocator = { name: structUtils.stringifyIdent(locator), reference: locator.reference };
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
 
     if (!packageInformation)
-      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
+      throw new UsageError(
+        `Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`,
+      );
 
     return npath.toPortablePath(packageInformation.packageLocation);
   }
 
   async findPackageLocator(location: PortablePath, opts: LinkOptions) {
-    if (!this.isEnabled(opts))
-      return null;
+    if (!this.isEnabled(opts)) return null;
 
     const pnpPath = getPnpPath(opts.project).cjs;
-    if (!xfs.existsSync(pnpPath))
-      return null;
+    if (!xfs.existsSync(pnpPath)) return null;
 
     const pnpFile = miscUtils.getFactoryWithDefault(this.pnpCache, pnpPath, () => {
-      return miscUtils.dynamicRequire(pnpPath, {cachingStrategy: miscUtils.CachingStrategy.FsTime});
+      return miscUtils.dynamicRequire(pnpPath, { cachingStrategy: miscUtils.CachingStrategy.FsTime });
     });
 
     const locator = pnpFile.findPackageLocator(npath.fromPortablePath(location));
-    if (!locator)
-      return null;
+    if (!locator) return null;
 
     return structUtils.makeLocator(structUtils.parseIdent(locator.name), locator.reference);
   }
@@ -76,11 +93,9 @@ export class PnpLinker implements Linker {
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
-    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`)
-      return false;
+    if (opts.project.configuration.get(`nodeLinker`) !== `pnp`) return false;
 
-    if (opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return false;
+    if (opts.project.configuration.get(`pnpMode`) !== this.mode) return false;
 
     return true;
   }
@@ -93,10 +108,13 @@ export class PnpInstaller implements Installer {
 
   private readonly packageRegistry: PackageRegistry = new Map();
 
-  private readonly virtualTemplates: Map<LocatorHash, {
-    locator: Locator;
-    location: PortablePath;
-  }> = new Map();
+  private readonly virtualTemplates: Map<
+    LocatorHash,
+    {
+      locator: Locator;
+      location: PortablePath;
+    }
+  > = new Map();
 
   private isESMLoaderRequired: boolean = false;
 
@@ -107,8 +125,8 @@ export class PnpInstaller implements Installer {
   private customData: {
     store: Map<LocatorHash, CustomPackageData>;
   } = {
-      store: new Map(),
-    };
+    store: new Map(),
+  };
 
   attachCustomData(customData: any) {
     this.customData = customData;
@@ -153,14 +171,15 @@ export class PnpInstaller implements Installer {
         }
       }
 
-      if (customPackageData.manifest.type === `module`)
-        this.isESMLoaderRequired = true;
+      if (customPackageData.manifest.type === `module`) this.isESMLoaderRequired = true;
 
       dependencyMeta = this.opts.project.getDependencyMeta(devirtualizedLocator, pkg.version);
     }
 
     const buildRequest = mayNeedToBeBuilt
-      ? jsInstallUtils.extractBuildRequest(pkg, customPackageData!, dependencyMeta!, {configuration: this.opts.project.configuration})
+      ? jsInstallUtils.extractBuildRequest(pkg, customPackageData!, dependencyMeta!, {
+          configuration: this.opts.project.configuration,
+        })
       : null;
 
     const packageFs = mayNeedToBeUnplugged
@@ -168,7 +187,9 @@ export class PnpInstaller implements Installer {
       : fetchResult.packageFs;
 
     if (ppath.isAbsolute(fetchResult.prefixPath))
-      throw new Error(`Assertion failed: Expected the prefix path (${fetchResult.prefixPath}) to be relative to the parent`);
+      throw new Error(
+        `Assertion failed: Expected the prefix path (${fetchResult.prefixPath}) to be relative to the parent`,
+      );
 
     const packageRawLocation = ppath.resolve(packageFs.getRealPath(), fetchResult.prefixPath);
 
@@ -214,7 +235,7 @@ export class PnpInstaller implements Installer {
 
     for (const [descriptor, locator] of dependencies) {
       const target = !structUtils.areIdentsEqual(descriptor, locator)
-        ? [structUtils.stringifyIdent(locator), locator.reference] as [string, string]
+        ? ([structUtils.stringifyIdent(locator), locator.reference] as [string, string])
         : locator.reference;
 
       packageInformation.packageDependencies.set(structUtils.stringifyIdent(descriptor), target);
@@ -229,15 +250,12 @@ export class PnpInstaller implements Installer {
     }
   }
 
-
   async finalizeInstall() {
-    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode)
-      return undefined;
+    if (this.opts.project.configuration.get(`pnpMode`) !== this.mode) return undefined;
 
     const pnpPath = getPnpPath(this.opts.project);
 
-    if (!this.isEsmEnabled())
-      await xfs.removePromise(pnpPath.esmLoader);
+    if (!this.isEsmEnabled()) await xfs.removePromise(pnpPath.esmLoader);
 
     if (this.opts.project.configuration.get(`nodeLinker`) !== `pnp`) {
       await xfs.removePromise(pnpPath.cjs);
@@ -248,7 +266,7 @@ export class PnpInstaller implements Installer {
       return undefined;
     }
 
-    for (const {locator, location} of this.virtualTemplates.values()) {
+    for (const { locator, location } of this.virtualTemplates.values()) {
       miscUtils.getMapWithDefault(this.packageRegistry, structUtils.stringifyIdent(locator)).set(locator.reference, {
         packageLocation: location,
         packageDependencies: new Map(),
@@ -258,24 +276,31 @@ export class PnpInstaller implements Installer {
       });
     }
 
-    this.packageRegistry.set(null, new Map([
-      [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
-    ]));
+    this.packageRegistry.set(
+      null,
+      new Map([[null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)]]),
+    );
 
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
-    const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference}));
+    const dependencyTreeRoots = this.opts.project.workspaces.map(({ anchoredLocator }) => ({
+      name: structUtils.stringifyIdent(anchoredLocator),
+      reference: anchoredLocator.reference,
+    }));
     const enableTopLevelFallback = pnpFallbackMode !== `none`;
     const fallbackExclusionList = [];
     const fallbackPool = new Map();
-    const ignorePattern = miscUtils.buildIgnorePattern([`.yarn/sdks/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
+    const ignorePattern = miscUtils.buildIgnorePattern([
+      `.yarn/sdks/**`,
+      ...this.opts.project.configuration.get(`pnpIgnorePatterns`),
+    ]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
 
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
         if (this.opts.project.tryWorkspaceByLocator(pkg))
-          fallbackExclusionList.push({name: structUtils.stringifyIdent(pkg), reference: pkg.reference});
+          fallbackExclusionList.push({ name: structUtils.stringifyIdent(pkg), reference: pkg.reference });
 
     await this.asyncActions.wait();
 
@@ -302,8 +327,7 @@ export class PnpInstaller implements Installer {
     if (this.opts.project.configuration.sources.has(`pnpEnableEsmLoader`))
       return this.opts.project.configuration.get(`pnpEnableEsmLoader`);
 
-    if (this.isESMLoaderRequired)
-      return true;
+    if (this.isESMLoaderRequired) return true;
 
     for (const workspace of this.opts.project.workspaces) {
       if (workspace.manifest.type === `module`) {
@@ -319,7 +343,10 @@ export class PnpInstaller implements Installer {
 
     const nodeModules = await this.locateNodeModules(pnpSettings.ignorePattern);
     if (nodeModules.length > 0) {
-      this.opts.report.reportWarning(MessageName.DANGEROUS_NODE_MODULES, `One or more node_modules have been detected and will be removed. This operation may take some time.`);
+      this.opts.report.reportWarning(
+        MessageName.DANGEROUS_NODE_MODULES,
+        `One or more node_modules have been detected and will be removed. This operation may take some time.`,
+      );
       for (const nodeModulesPath of nodeModules) {
         await xfs.removePromise(nodeModulesPath);
       }
@@ -337,7 +364,7 @@ export class PnpInstaller implements Installer {
 
       await xfs.removePromise(pnpPath.data);
     } else {
-      const {dataFile, loaderFile} = generateSplitScript(pnpSettings);
+      const { dataFile, loaderFile } = generateSplitScript(pnpSettings);
 
       await xfs.changeFilePromise(pnpPath.cjs, loaderFile, {
         automaticNewlines: true,
@@ -351,7 +378,10 @@ export class PnpInstaller implements Installer {
     }
 
     if (this.isEsmEnabled()) {
-      this.opts.report.reportWarning(MessageName.UNNAMED, `ESM support for PnP uses the experimental loader API and is therefore experimental`);
+      this.opts.report.reportWarning(
+        MessageName.UNNAMED,
+        `ESM support for PnP uses the experimental loader API and is therefore experimental`,
+      );
       await xfs.changeFilePromise(pnpPath.esmLoader, getESMLoaderTemplate(), {
         automaticNewlines: true,
         mode: 0o644,
@@ -377,14 +407,17 @@ export class PnpInstaller implements Installer {
 
     for (const workspace of this.opts.project.workspaces) {
       const nodeModulesPath = ppath.join(workspace.cwd, `node_modules`);
-      if (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd)) || !xfs.existsSync(nodeModulesPath))
+      if (
+        (ignoreRegExp && ignoreRegExp.test(ppath.relative(this.opts.project.cwd, workspace.cwd))) ||
+        !xfs.existsSync(nodeModulesPath)
+      )
         continue;
 
       const directoryListing = await xfs.readdirPromise(nodeModulesPath, {
         withFileTypes: true,
       });
 
-      const nonCacheEntries = directoryListing.filter(entry => {
+      const nonCacheEntries = directoryListing.filter((entry) => {
         return !entry.isDirectory() || entry.name === `.bin` || !entry.name.startsWith(`.`);
       });
 
@@ -402,7 +435,13 @@ export class PnpInstaller implements Installer {
 
   private readonly unpluggedPaths: Set<string> = new Set();
 
-  private async unplugPackageIfNeeded(pkg: Package, customPackageData: CustomPackageData, fetchResult: FetchResult, dependencyMeta: DependencyMeta, api: InstallPackageExtraApi) {
+  private async unplugPackageIfNeeded(
+    pkg: Package,
+    customPackageData: CustomPackageData,
+    fetchResult: FetchResult,
+    dependencyMeta: DependencyMeta,
+    api: InstallPackageExtraApi,
+  ) {
     if (this.shouldBeUnplugged(pkg, customPackageData, dependencyMeta)) {
       return this.unplugPackage(pkg, fetchResult, api);
     } else {
@@ -411,46 +450,44 @@ export class PnpInstaller implements Installer {
   }
 
   private shouldBeUnplugged(pkg: Package, customPackageData: CustomPackageData, dependencyMeta: DependencyMeta) {
-    if (typeof dependencyMeta.unplugged !== `undefined`)
-      return dependencyMeta.unplugged;
+    if (typeof dependencyMeta.unplugged !== `undefined`) return dependencyMeta.unplugged;
 
-    if (FORCED_UNPLUG_PACKAGES.has(pkg.identHash))
-      return true;
+    if (FORCED_UNPLUG_PACKAGES.has(pkg.identHash)) return true;
 
-    if (pkg.conditions != null)
-      return true;
+    if (pkg.conditions != null) return true;
 
-    if (customPackageData.manifest.preferUnplugged !== null)
-      return customPackageData.manifest.preferUnplugged;
+    if (customPackageData.manifest.preferUnplugged !== null) return customPackageData.manifest.preferUnplugged;
 
-    const buildRequest = jsInstallUtils.extractBuildRequest(pkg, customPackageData, dependencyMeta, {configuration: this.opts.project.configuration});
-    if (buildRequest?.skipped === false || customPackageData.misc.extractHint)
-      return true;
+    const buildRequest = jsInstallUtils.extractBuildRequest(pkg, customPackageData, dependencyMeta, {
+      configuration: this.opts.project.configuration,
+    });
+    if (buildRequest?.skipped === false || customPackageData.misc.extractHint) return true;
 
     return false;
   }
 
   private async unplugPackage(locator: Locator, fetchResult: FetchResult, api: InstallPackageExtraApi) {
-    const unplugPath = pnpUtils.getUnpluggedPath(locator, {configuration: this.opts.project.configuration});
+    const unplugPath = pnpUtils.getUnpluggedPath(locator, { configuration: this.opts.project.configuration });
     if (this.opts.project.disabledLocators.has(locator.locatorHash))
-      return new AliasFS(unplugPath, {baseFs: fetchResult.packageFs, pathUtils: ppath});
+      return new AliasFS(unplugPath, { baseFs: fetchResult.packageFs, pathUtils: ppath });
 
     this.unpluggedPaths.add(unplugPath);
 
-    api.holdFetchResult(this.asyncActions.set(locator.locatorHash, async () => {
-      const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready`);
-      if (await xfs.existsPromise(readyFile))
-        return;
+    api.holdFetchResult(
+      this.asyncActions.set(locator.locatorHash, async () => {
+        const readyFile = ppath.join(unplugPath, fetchResult.prefixPath, `.ready`);
+        if (await xfs.existsPromise(readyFile)) return;
 
-      // Delete any build state for the locator so it can run anew, this allows users
-      // to remove `.yarn/unplugged` and have the builds run again
-      this.opts.project.storedBuildState.delete(locator.locatorHash);
+        // Delete any build state for the locator so it can run anew, this allows users
+        // to remove `.yarn/unplugged` and have the builds run again
+        this.opts.project.storedBuildState.delete(locator.locatorHash);
 
-      await xfs.mkdirPromise(unplugPath, {recursive: true});
-      await xfs.copyPromise(unplugPath, PortablePath.dot, {baseFs: fetchResult.packageFs, overwrite: false});
+        await xfs.mkdirPromise(unplugPath, { recursive: true });
+        await xfs.copyPromise(unplugPath, PortablePath.dot, { baseFs: fetchResult.packageFs, overwrite: false });
 
-      await xfs.writeFilePromise(readyFile, ``);
-    }));
+        await xfs.writeFilePromise(readyFile, ``);
+      }),
+    );
 
     return new CwdFS(unplugPath);
   }
@@ -461,11 +498,15 @@ export class PnpInstaller implements Installer {
 
     const packageInformationStore = this.packageRegistry.get(key1);
     if (!packageInformationStore)
-      throw new Error(`Assertion failed: The package information store should have been available (for ${structUtils.prettyIdent(this.opts.project.configuration, locator)})`);
+      throw new Error(
+        `Assertion failed: The package information store should have been available (for ${structUtils.prettyIdent(this.opts.project.configuration, locator)})`,
+      );
 
     const packageInformation = packageInformationStore.get(key2);
     if (!packageInformation)
-      throw new Error(`Assertion failed: The package information should have been available (for ${structUtils.prettyLocator(this.opts.project.configuration, locator)})`);
+      throw new Error(
+        `Assertion failed: The package information should have been available (for ${structUtils.prettyLocator(this.opts.project.configuration, locator)})`,
+      );
 
     return packageInformation;
   }
@@ -491,19 +532,19 @@ function normalizeDirectoryPath(root: PortablePath, folder: PortablePath) {
     // Don't use ppath.join here, it ignores the `.`
     relativeFolder = `./${relativeFolder}` as PortablePath;
 
-  return relativeFolder.replace(/\/?$/, `/`)  as PortablePath;
+  return relativeFolder.replace(/\/?$/, `/`) as PortablePath;
 }
 
 type UnboxPromise<T extends Promise<any>> = T extends Promise<infer U> ? U : never;
 type CustomPackageData = UnboxPromise<ReturnType<typeof extractCustomPackageData>>;
 
 async function extractCustomPackageData(fetchResult: FetchResult) {
-  const manifest = await Manifest.tryFind(fetchResult.prefixPath, {baseFs: fetchResult.packageFs}) ?? new Manifest();
+  const manifest =
+    (await Manifest.tryFind(fetchResult.prefixPath, { baseFs: fetchResult.packageFs })) ?? new Manifest();
 
   const preservedScripts = new Set([`preinstall`, `install`, `postinstall`]);
   for (const scriptName of manifest.scripts.keys())
-    if (!preservedScripts.has(scriptName))
-      manifest.scripts.delete(scriptName);
+    if (!preservedScripts.has(scriptName)) manifest.scripts.delete(scriptName);
 
   return {
     manifest: {

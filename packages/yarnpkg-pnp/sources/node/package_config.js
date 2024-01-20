@@ -1,14 +1,9 @@
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
-import { ERR_INVALID_PACKAGE_CONFIG } from './errors.js';
-import { filterOwnProperties } from './util.js';
+import { ERR_INVALID_PACKAGE_CONFIG } from "./errors.js";
+import { filterOwnProperties } from "./util.js";
 
-import {
-  SafeMap,
-  JSONParse,
-  ObjectPrototypeHasOwnProperty,
-  StringPrototypeEndsWith,
-} from './primordials.js';
+import { SafeMap, JSONParse, ObjectPrototypeHasOwnProperty, StringPrototypeEndsWith } from "./primordials.js";
 
 const packageJSONCache = new SafeMap();
 
@@ -24,7 +19,7 @@ function getPackageConfig(path, specifier, base, readFileSyncFn) {
       exists: false,
       main: undefined,
       name: undefined,
-      type: 'none',
+      type: "none",
       exports: undefined,
       imports: undefined,
     };
@@ -38,32 +33,25 @@ function getPackageConfig(path, specifier, base, readFileSyncFn) {
   } catch (error) {
     throw new ERR_INVALID_PACKAGE_CONFIG(
       path,
-      (base ? `"${specifier}" from ` : '') + fileURLToPath(base || specifier),
-      error.message
+      (base ? `"${specifier}" from ` : "") + fileURLToPath(base || specifier),
+      error.message,
     );
   }
 
-  let { imports, main, name, type } = filterOwnProperties(packageJSON, [
-    'imports',
-    'main',
-    'name',
-    'type',
-  ]);
-  const exports = ObjectPrototypeHasOwnProperty(packageJSON, 'exports')
-    ? packageJSON.exports
-    : undefined;
-  if (typeof imports !== 'object' || imports === null) {
+  let { imports, main, name, type } = filterOwnProperties(packageJSON, ["imports", "main", "name", "type"]);
+  const exports = ObjectPrototypeHasOwnProperty(packageJSON, "exports") ? packageJSON.exports : undefined;
+  if (typeof imports !== "object" || imports === null) {
     imports = undefined;
   }
-  if (typeof main !== 'string') {
+  if (typeof main !== "string") {
     main = undefined;
   }
-  if (typeof name !== 'string') {
+  if (typeof name !== "string") {
     name = undefined;
   }
   // Ignore unknown types for forwards compatibility
-  if (type !== 'module' && type !== 'commonjs') {
-    type = 'none';
+  if (type !== "module" && type !== "commonjs") {
+    type = "none";
   }
 
   const packageConfig = {
@@ -80,24 +68,19 @@ function getPackageConfig(path, specifier, base, readFileSyncFn) {
 }
 
 export function getPackageScopeConfig(resolved, readFileSyncFn) {
-  let packageJSONUrl = new URL('./package.json', resolved);
+  let packageJSONUrl = new URL("./package.json", resolved);
   while (true) {
     const packageJSONPath = packageJSONUrl.pathname;
-    if (StringPrototypeEndsWith(packageJSONPath, 'node_modules/package.json')) {
+    if (StringPrototypeEndsWith(packageJSONPath, "node_modules/package.json")) {
       break;
     }
-    const packageConfig = getPackageConfig(
-      fileURLToPath(packageJSONUrl),
-      resolved,
-      undefined,
-      readFileSyncFn
-    );
+    const packageConfig = getPackageConfig(fileURLToPath(packageJSONUrl), resolved, undefined, readFileSyncFn);
     if (packageConfig.exists) {
       return packageConfig;
     }
 
     const lastPackageJSONUrl = packageJSONUrl;
-    packageJSONUrl = new URL('../package.json', packageJSONUrl);
+    packageJSONUrl = new URL("../package.json", packageJSONUrl);
 
     // Terminates at root where ../package.json equals ../../package.json
     // (can't just check "/package.json" for Windows support).
@@ -111,7 +94,7 @@ export function getPackageScopeConfig(resolved, readFileSyncFn) {
     exists: false,
     main: undefined,
     name: undefined,
-    type: 'none',
+    type: "none",
     exports: undefined,
     imports: undefined,
   };

@@ -1,15 +1,14 @@
-import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
-import {Locator}                                       from '@yarnpkg/core';
-import {httpUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
-import {CwdFS, ppath, xfs}                             from '@yarnpkg/fslib';
-import {gitUtils}                                      from '@yarnpkg/plugin-git';
+import { Fetcher, FetchOptions, MinimalFetchOptions } from "@yarnpkg/core";
+import { Locator } from "@yarnpkg/core";
+import { httpUtils, scriptUtils, structUtils, tgzUtils } from "@yarnpkg/core";
+import { CwdFS, ppath, xfs } from "@yarnpkg/fslib";
+import { gitUtils } from "@yarnpkg/plugin-git";
 
-import * as githubUtils                                from './githubUtils';
+import * as githubUtils from "./githubUtils";
 
 export class GithubFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
-    if (!githubUtils.isGithubUrl(locator.reference))
-      return false;
+    if (!githubUtils.isGithubUrl(locator.reference)) return false;
 
     return true;
   }
@@ -23,7 +22,11 @@ export class GithubFetcher implements Fetcher {
 
     const [packageFs, releaseFs, checksum] = await opts.cache.fetchPackageFromCache(locator, expectedChecksum, {
       onHit: () => opts.report.reportCacheHit(locator),
-      onMiss: () => opts.report.reportCacheMiss(locator, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from GitHub`),
+      onMiss: () =>
+        opts.report.reportCacheMiss(
+          locator,
+          `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be found in the cache and will be fetched from GitHub`,
+        ),
       loader: () => this.fetchFromNetwork(locator, opts),
       ...opts.cacheOptions,
     });
@@ -41,7 +44,7 @@ export class GithubFetcher implements Fetcher {
       configuration: opts.project.configuration,
     });
 
-    return await xfs.mktempPromise(async extractPath => {
+    return await xfs.mktempPromise(async (extractPath) => {
       const extractTarget = new CwdFS(extractPath);
 
       await tgzUtils.extractArchiveTo(sourceBuffer, extractTarget, {
@@ -69,7 +72,7 @@ export class GithubFetcher implements Fetcher {
   }
 
   private getLocatorUrl(locator: Locator, opts: MinimalFetchOptions) {
-    const {auth, username, reponame, treeish} = githubUtils.parseGithubUrl(locator.reference);
+    const { auth, username, reponame, treeish } = githubUtils.parseGithubUrl(locator.reference);
 
     return `https://${auth ? `${auth}@` : ``}github.com/${username}/${reponame}/archive/${treeish}.tar.gz`;
   }

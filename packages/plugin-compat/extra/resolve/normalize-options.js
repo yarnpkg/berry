@@ -7,8 +7,7 @@ const path = require(`path`);
 module.exports = function (_, opts) {
   opts = opts || {};
 
-  if (opts.forceNodeResolution || !process.versions.pnp)
-    return opts;
+  if (opts.forceNodeResolution || !process.versions.pnp) return opts;
 
   // It would be nice if we could throw, but that would break the transparent
   // compatibility with packages that use `resolve` today (such as Gulp). Since
@@ -17,26 +16,26 @@ module.exports = function (_, opts) {
   // if (opts.packageIterator || opts.paths)
   //   throw new Error(`The "packageIterator" and "paths" options cannot be used in PnP environments. Set "forceNodeResolution: true" if absolutely needed, or branch on process.versions.pnp otherwise.`);
 
-  const {findPnpApi} = require(`module`);
+  const { findPnpApi } = require(`module`);
 
   const runPnpResolution = (request, basedir) => {
     // Extract the name of the package being requested (1=package name, 2=internal path)
     const parts = request.match(/^((?:@[^/]+\/)?[^/]+)(\/.*)?/);
     if (!parts)
-      throw new Error(`Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`);
+      throw new Error(
+        `Assertion failed: Expected the "resolve" package to call the "paths" callback with package names only (got "${request}")`,
+      );
 
     // Make sure that basedir ends with a slash
-    if (basedir.charAt(basedir.length - 1) !== `/`)
-      basedir = path.join(basedir, `/`);
+    if (basedir.charAt(basedir.length - 1) !== `/`) basedir = path.join(basedir, `/`);
 
     const api = findPnpApi(basedir);
-    if (api === null)
-      return undefined;
+    if (api === null) return undefined;
 
     // This is guaranteed to return the path to the "package.json" file from the given package
     let manifestPath;
     try {
-      manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {considerBuiltins: false});
+      manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, { considerBuiltins: false });
     } catch (err) {
       return null;
     }
@@ -48,11 +47,9 @@ module.exports = function (_, opts) {
     const packagePath = path.dirname(manifestPath);
 
     // Attach the internal path to the resolved package directory
-    const unqualifiedPath = typeof parts[2] !== `undefined`
-      ? path.join(packagePath, parts[2])
-      : packagePath;
+    const unqualifiedPath = typeof parts[2] !== `undefined` ? path.join(packagePath, parts[2]) : packagePath;
 
-    return {packagePath, unqualifiedPath};
+    return { packagePath, unqualifiedPath };
   };
 
   const runPnpResolutionOnArray = (request, paths) => {
@@ -71,8 +68,7 @@ module.exports = function (_, opts) {
   const packageIterator = (request, basedir, getCandidates, opts) => {
     const pathsToTest = [basedir].concat(originalPaths);
     const resolution = runPnpResolutionOnArray(request, pathsToTest);
-    if (resolution == null)
-      return getCandidates();
+    if (resolution == null) return getCandidates();
 
     return [resolution.unqualifiedPath];
   };
@@ -80,15 +76,13 @@ module.exports = function (_, opts) {
   const paths = (request, basedir, getNodeModulePaths, opts) => {
     const pathsToTest = [basedir].concat(originalPaths);
     const resolution = runPnpResolutionOnArray(request, pathsToTest);
-    if (resolution == null)
-      return getNodeModulePaths().concat(originalPaths);
+    if (resolution == null) return getNodeModulePaths().concat(originalPaths);
 
     // Stip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
 
     // Strip the scope named folder if needed
-    if (request.match(/^@[^/]+\//))
-      nodeModules = path.dirname(nodeModules);
+    if (request.match(/^@[^/]+\//)) nodeModules = path.dirname(nodeModules);
 
     return [nodeModules];
   };
@@ -109,8 +103,7 @@ module.exports = function (_, opts) {
   }
 
   opts.paths = function (request, basedir, getNodeModulePaths, opts) {
-    if (isInsideIterator)
-      return getNodeModulePaths().concat(originalPaths);
+    if (isInsideIterator) return getNodeModulePaths().concat(originalPaths);
 
     return paths(request, basedir, getNodeModulePaths, opts);
   };

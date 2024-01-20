@@ -1,20 +1,16 @@
-import {BaseCommand}                               from '@yarnpkg/cli';
-import {Configuration, Project}                    from '@yarnpkg/core';
-import {Filename, PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}        from 'clipanion';
+import { BaseCommand } from "@yarnpkg/cli";
+import { Configuration, Project } from "@yarnpkg/core";
+import { Filename, PortablePath, npath, ppath, xfs } from "@yarnpkg/fslib";
+import { Command, Option, Usage, UsageError } from "clipanion";
 
-import {Driver as GitDriver}                       from '../drivers/GitDriver';
-import {Hooks}                                     from '..';
+import { Driver as GitDriver } from "../drivers/GitDriver";
+import { Hooks } from "..";
 
-const ALL_DRIVERS = [
-  GitDriver,
-];
+const ALL_DRIVERS = [GitDriver];
 
 // eslint-disable-next-line arca/no-default-export
 export default class StageCommand extends BaseCommand {
-  static paths = [
-    [`stage`],
-  ];
+  static paths = [[`stage`]];
 
   static usage: Usage = Command.Usage({
     description: `add all yarn files to your vcs`,
@@ -25,13 +21,10 @@ export default class StageCommand extends BaseCommand {
 
       Since the staging area is a non-existent concept in Mercurial, Yarn will always create a new commit when running this command on Mercurial repositories. You can get this behavior when using Git by using the \`--commit\` flag which will directly create a commit.
     `,
-    examples: [[
-      `Adds all modified project files to the staging area`,
-      `yarn stage`,
-    ], [
-      `Creates a new commit containing all modified project files`,
-      `yarn stage --commit`,
-    ]],
+    examples: [
+      [`Adds all modified project files to the staging area`, `yarn stage`],
+      [`Creates a new commit containing all modified project files`, `yarn stage --commit`],
+    ],
   });
 
   commit = Option.Boolean(`-c,--commit`, false, {
@@ -50,13 +43,13 @@ export default class StageCommand extends BaseCommand {
   // "iirc I intended it to update (amend) the current
   // commit if it exists, or to create a new one otherwise"
   // TODO: unhide it and add a description once implemented
-  update = Option.Boolean(`-u,--update`, false, {hidden: true});
+  update = Option.Boolean(`-u,--update`, false, { hidden: true });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project} = await Project.find(configuration, this.context.cwd);
+    const { project } = await Project.find(configuration, this.context.cwd);
 
-    const {driver, root} = await findDriver(project.cwd);
+    const { driver, root } = await findDriver(project.cwd);
 
     const basePaths: Array<PortablePath | null> = [
       configuration.get(`cacheFolder`),
@@ -65,19 +58,21 @@ export default class StageCommand extends BaseCommand {
       configuration.get(`yarnPath`),
     ];
 
-    await configuration.triggerHook((hooks: Hooks) => {
-      return hooks.populateYarnPaths;
-    }, project, (path: PortablePath | null) => {
-      basePaths.push(path);
-    });
+    await configuration.triggerHook(
+      (hooks: Hooks) => {
+        return hooks.populateYarnPaths;
+      },
+      project,
+      (path: PortablePath | null) => {
+        basePaths.push(path);
+      },
+    );
 
     const yarnPaths = new Set<PortablePath>();
 
     // We try to follow symlinks to properly add their targets (for example
     // the cache folder could be a symlink to another folder from the repo)
-    for (const basePath of basePaths)
-      for (const path of resolveToVcs(root, basePath))
-        yarnPaths.add(path);
+    for (const basePath of basePaths) for (const path of resolveToVcs(root, basePath)) yarnPaths.add(path);
 
     const yarnNames: Set<string> = new Set([
       configuration.get(`rcFilename`) as string,
@@ -98,7 +93,7 @@ export default class StageCommand extends BaseCommand {
       }
     } else {
       if (this.reset) {
-        const stagedChangeList = await driver.filterChanges(root, yarnPaths, yarnNames, {staged: true});
+        const stagedChangeList = await driver.filterChanges(root, yarnPaths, yarnNames, { staged: true });
         if (stagedChangeList.length === 0) {
           this.context.stdout.write(`No staged changes found!`);
         } else {
@@ -127,10 +122,9 @@ async function findDriver(cwd: PortablePath) {
     }
   }
 
-  if (driver === null || root === null)
-    throw new UsageError(`No stage driver has been found for your current project`);
+  if (driver === null || root === null) throw new UsageError(`No stage driver has been found for your current project`);
 
-  return {driver, root};
+  return { driver, root };
 }
 
 /**
@@ -145,14 +139,12 @@ async function findDriver(cwd: PortablePath) {
 function resolveToVcs(cwd: PortablePath, path: PortablePath | null) {
   const resolved: Array<PortablePath> = [];
 
-  if (path === null)
-    return resolved;
+  if (path === null) return resolved;
 
   while (true) {
     // If the current element is within the repository, we flag it as something
     // that's part of the Yarn installation
-    if (path === cwd || path.startsWith(`${cwd}/`))
-      resolved.push(path);
+    if (path === cwd || path.startsWith(`${cwd}/`)) resolved.push(path);
 
     let stat;
     try {

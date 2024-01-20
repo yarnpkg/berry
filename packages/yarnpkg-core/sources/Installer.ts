@@ -1,8 +1,8 @@
-import {PortablePath}                 from '@yarnpkg/fslib';
+import { PortablePath } from "@yarnpkg/fslib";
 
-import {FetchResult}                  from './Fetcher';
-import {Report}                       from './Report';
-import {Descriptor, Locator, Package} from './types';
+import { FetchResult } from "./Fetcher";
+import { Report } from "./Report";
+import { Descriptor, Locator, Package } from "./types";
 
 export enum BuildDirectiveType {
   SCRIPT = 0,
@@ -14,13 +14,15 @@ export type BuildDirective = {
   script: string;
 };
 
-export type BuildRequest = {
-  skipped: false;
-  directives: Array<BuildDirective>;
-} | {
-  skipped: true;
-  explain: (report: Report) => void;
-};
+export type BuildRequest =
+  | {
+      skipped: false;
+      directives: Array<BuildDirective>;
+    }
+  | {
+      skipped: true;
+      explain: (report: Report) => void;
+    };
 
 export type InstallStatus = {
   packageLocation: PortablePath | null;

@@ -379,13 +379,17 @@
             "type": "string",
             "title": "Match messages whose content is strictly equal to the given text.",
             "description": "In case a message matches both `code`-based and `text`-based filters, the `text`-based ones will take precedence over the `code`-based ones.",
-            "examples": ["lorem-ipsum@npm:1.2.3 lists build scripts, but its build has been explicitly disabled through configuration"]
+            "examples": [
+              "lorem-ipsum@npm:1.2.3 lists build scripts, but its build has been explicitly disabled through configuration"
+            ]
           },
           "pattern": {
             "type": "string",
             "title": "Match messages whose content match the given glob pattern.",
             "description": "In case a message matches both `pattern`-based and `code`-based filters, the `pattern`-based ones will take precedence over the other ones. Patterns can be overridden on a case-by-case basis by using the `text` filter, which has precedence over `pattern`.",
-            "examples": ["lorem-ipsum@* lists build scripts, but its build has been explicitly disabled through configuration"]
+            "examples": [
+              "lorem-ipsum@* lists build scripts, but its build has been explicitly disabled through configuration"
+            ]
           },
           "level": {
             "type": "string",
@@ -474,10 +478,7 @@
       "_package": "@yarnpkg/plugin-pnp",
       "title": "Define how Node packages should be installed.",
       "description": "Yarn supports three ways to install your project's dependencies, based on the `nodeLinker` setting. Possible values are:\n\n- If `pnp`, a single Node.js loader file will be generated.\n- If `pnpm`, a `node-modules` will be created using symlinks and hardlinks to a global content-addressable store.\n- If `node-modules`, a regular `node_modules` folder just like in Yarn Classic or npm will be created.",
-      "anyOf": [
-        { "type": "string" },
-        { "enum": ["pnp", "pnpm", "node-modules"] }
-      ],
+      "anyOf": [{ "type": "string" }, { "enum": ["pnp", "pnpm", "node-modules"] }],
       "type": "string",
       "default": "pnp"
     },

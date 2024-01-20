@@ -1,14 +1,13 @@
-import CJSON          from 'comment-json';
+import CJSON from "comment-json";
 
-import * as miscUtils from '../sources/miscUtils';
+import * as miscUtils from "../sources/miscUtils";
 
 describe(`miscUtils`, () => {
   describe(`mapAndFind`, () => {
     it(`should work with a simple example`, () => {
       expect(
-        miscUtils.mapAndFind([1, 2, 3], n => {
-          if (n !== 2)
-            return miscUtils.mapAndFind.skip;
+        miscUtils.mapAndFind([1, 2, 3], (n) => {
+          if (n !== 2) return miscUtils.mapAndFind.skip;
 
           return n;
         }),
@@ -17,9 +16,8 @@ describe(`miscUtils`, () => {
 
     it(`should only return the first element that matches the predicate`, () => {
       expect(
-        miscUtils.mapAndFind([`a`, 1, `b`, 2], n => {
-          if (typeof n !== `number`)
-            return miscUtils.mapAndFind.skip;
+        miscUtils.mapAndFind([`a`, 1, `b`, 2], (n) => {
+          if (typeof n !== `number`) return miscUtils.mapAndFind.skip;
 
           return n;
         }),
@@ -28,9 +26,8 @@ describe(`miscUtils`, () => {
 
     it(`should return undefined if no element matching the predicate is found`, () => {
       expect(
-        miscUtils.mapAndFind([`a`, 1, `b`, 2], n => {
-          if (typeof n !== `boolean`)
-            return miscUtils.mapAndFind.skip;
+        miscUtils.mapAndFind([`a`, 1, `b`, 2], (n) => {
+          if (typeof n !== `boolean`) return miscUtils.mapAndFind.skip;
 
           return n;
         }),
@@ -39,45 +36,37 @@ describe(`miscUtils`, () => {
   });
 
   describe(`isPathLike`, () => {
-    it.each([
-      `/some/abs/path`,
-      `~/home/directory`,
-      `../parent/directory`,
-      `./current/directory`,
-    ])(`should return true for %s`, pathLike => {
-      expect(miscUtils.isPathLike(pathLike)).toBe(true);
-    });
+    it.each([`/some/abs/path`, `~/home/directory`, `../parent/directory`, `./current/directory`])(
+      `should return true for %s`,
+      (pathLike) => {
+        expect(miscUtils.isPathLike(pathLike)).toBe(true);
+      },
+    );
 
-    it.each([
-      `{some-glob,}`,
-      `pkg-a`,
-      `@scope/ident`,
-      `scope/ident`,
-      `~`,
-    ])(`should return false for %s`, pathLike => {
+    it.each([`{some-glob,}`, `pkg-a`, `@scope/ident`, `scope/ident`, `~`])(`should return false for %s`, (pathLike) => {
       expect(miscUtils.isPathLike(pathLike)).toBe(false);
     });
   });
 
   describe(`toMerged`, () => {
     it(`should merge 2 shallow objects without mutating any arguments`, () => {
-      const a = {a: 1};
-      const b = {b: 2};
+      const a = { a: 1 };
+      const b = { b: 2 };
       const c = miscUtils.toMerged(a, b);
 
-      expect(a).toStrictEqual({a: 1});
-      expect(b).toStrictEqual({b: 2});
-      expect(c).toStrictEqual({a: 1, b: 2});
+      expect(a).toStrictEqual({ a: 1 });
+      expect(b).toStrictEqual({ b: 2 });
+      expect(c).toStrictEqual({ a: 1, b: 2 });
     });
 
     it(`should merge 2 deep objects without mutating any arguments`, () => {
-      const a = {n: {a: 1}};
-      const b = {n: {b: 2}};
+      const a = { n: { a: 1 } };
+      const b = { n: { b: 2 } };
       const c = miscUtils.toMerged(a, b);
 
-      expect(a).toStrictEqual({n: {a: 1}});
-      expect(b).toStrictEqual({n: {b: 2}});
-      expect(c).toStrictEqual({n: {a: 1, b: 2}});
+      expect(a).toStrictEqual({ n: { a: 1 } });
+      expect(b).toStrictEqual({ n: { b: 2 } });
+      expect(c).toStrictEqual({ n: { a: 1, b: 2 } });
     });
 
     it(`should merge 2 arrays by concatenating their contents without mutating any arguments`, () => {
@@ -91,29 +80,29 @@ describe(`miscUtils`, () => {
     });
 
     it(`should merge 2 objects of arrays by concatenating their contents without mutating any arguments`, () => {
-      const a = {n: [1, 2, 3]};
-      const b = {n: [4, 5, 6]};
+      const a = { n: [1, 2, 3] };
+      const b = { n: [4, 5, 6] };
       const c = miscUtils.toMerged(a, b);
 
-      expect(a).toStrictEqual({n: [1, 2, 3]});
-      expect(b).toStrictEqual({n: [4, 5, 6]});
-      expect(c).toStrictEqual({n: [1, 2, 3, 4, 5, 6]});
+      expect(a).toStrictEqual({ n: [1, 2, 3] });
+      expect(b).toStrictEqual({ n: [4, 5, 6] });
+      expect(c).toStrictEqual({ n: [1, 2, 3, 4, 5, 6] });
     });
 
     it(`should merge identical elements in arrays (primitives)`, () => {
-      const a = {n: [1, 2, 3, 4]};
-      const b = {n: [4, 5, 6]};
+      const a = { n: [1, 2, 3, 4] };
+      const b = { n: [4, 5, 6] };
       const c = miscUtils.toMerged(a, b);
 
-      expect(c).toStrictEqual({n: [1, 2, 3, 4, 5, 6]});
+      expect(c).toStrictEqual({ n: [1, 2, 3, 4, 5, 6] });
     });
 
     it(`should merge identical elements in arrays (objects)`, () => {
-      const a = {n: [{a: 1}, {b: 2}]};
-      const b = {n: [{b: 2}, {c: 3}]};
+      const a = { n: [{ a: 1 }, { b: 2 }] };
+      const b = { n: [{ b: 2 }, { c: 3 }] };
       const c = miscUtils.toMerged(a, b);
 
-      expect(c).toStrictEqual({n: [{a: 1}, {b: 2}, {c: 3}]});
+      expect(c).toStrictEqual({ n: [{ a: 1 }, { b: 2 }, { c: 3 }] });
     });
   });
 
@@ -132,10 +121,12 @@ describe(`miscUtils`, () => {
           3
         ]
       }`);
-      const b = {n: [4, 5, 6]};
+      const b = { n: [4, 5, 6] };
       const c = miscUtils.mergeIntoTarget(a, b);
 
-      expect(CJSON.stringify(c, null, 2)).toStrictEqual(CJSON.stringify(CJSON.parse(`{
+      expect(CJSON.stringify(c, null, 2)).toStrictEqual(
+        CJSON.stringify(
+          CJSON.parse(`{
         // n
         "n":
         // array
@@ -150,7 +141,11 @@ describe(`miscUtils`, () => {
           5,
           6
         ]
-      }`), null, 2));
+      }`),
+          null,
+          2,
+        ),
+      );
     });
   });
 });

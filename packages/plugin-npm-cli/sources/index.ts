@@ -1,30 +1,30 @@
-import {Plugin, SettingsType} from '@yarnpkg/core';
+import { Plugin, SettingsType } from "@yarnpkg/core";
 
-import NpmAuditCommand        from './commands/npm/audit';
-import NpmInfoCommand         from './commands/npm/info';
-import NpmLoginCommand        from './commands/npm/login';
-import NpmLogoutCommand       from './commands/npm/logout';
-import NpmPublishCommand      from './commands/npm/publish';
-import NpmTagAddCommand       from './commands/npm/tag/add';
-import NpmTagListCommand      from './commands/npm/tag/list';
-import NpmTagRemoveCommand    from './commands/npm/tag/remove';
-import NpmWhoamiCommand       from './commands/npm/whoami';
-import * as npmAuditTypes     from './npmAuditTypes';
-import * as npmAuditUtils     from './npmAuditUtils';
+import NpmAuditCommand from "./commands/npm/audit";
+import NpmInfoCommand from "./commands/npm/info";
+import NpmLoginCommand from "./commands/npm/login";
+import NpmLogoutCommand from "./commands/npm/logout";
+import NpmPublishCommand from "./commands/npm/publish";
+import NpmTagAddCommand from "./commands/npm/tag/add";
+import NpmTagListCommand from "./commands/npm/tag/list";
+import NpmTagRemoveCommand from "./commands/npm/tag/remove";
+import NpmWhoamiCommand from "./commands/npm/whoami";
+import * as npmAuditTypes from "./npmAuditTypes";
+import * as npmAuditUtils from "./npmAuditUtils";
 
-export {npmAuditTypes};
-export {npmAuditUtils};
-export {NpmAuditCommand};
-export {NpmInfoCommand};
-export {NpmLoginCommand};
-export {NpmLogoutCommand};
-export {NpmPublishCommand};
-export {NpmTagAddCommand};
-export {NpmTagListCommand};
-export {NpmTagRemoveCommand};
-export {NpmWhoamiCommand};
+export { npmAuditTypes };
+export { npmAuditUtils };
+export { NpmAuditCommand };
+export { NpmInfoCommand };
+export { NpmLoginCommand };
+export { NpmLogoutCommand };
+export { NpmPublishCommand };
+export { NpmTagAddCommand };
+export { NpmTagListCommand };
+export { NpmTagRemoveCommand };
+export { NpmWhoamiCommand };
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     npmPublishAccess: string | null;
     npmAuditExcludePackages: Array<string>;

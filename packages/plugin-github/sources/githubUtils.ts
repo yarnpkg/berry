@@ -1,4 +1,4 @@
-import querystring from 'querystring';
+import querystring from "querystring";
 
 type ParsedGithubUrl = {
   auth?: string;
@@ -16,7 +16,7 @@ const githubPatterns = [
  * Determines whether a given url is a valid github git url via regex
  */
 export function isGithubUrl(url: string): boolean {
-  return url ? githubPatterns.some(pattern => !!url.match(pattern)) : false;
+  return url ? githubPatterns.some((pattern) => !!url.match(pattern)) : false;
 }
 
 /**
@@ -32,24 +32,23 @@ export function parseGithubUrl(urlStr: string): ParsedGithubUrl {
     }
   }
 
-  if (!match)
-    throw new Error(invalidGithubUrlMessage(urlStr));
+  if (!match) throw new Error(invalidGithubUrlMessage(urlStr));
 
   let [, auth, username, reponame, treeish = `master`] = match;
 
-  const {commit} = querystring.parse(treeish) as {commit?: string};
+  const { commit } = querystring.parse(treeish) as { commit?: string };
 
   treeish =
     // New style:
     // The URLs have already been normalized by `gitUtils.resolveUrl`,
     // so it's certain in the context of the `GithubFetcher`
     // that the `commit` querystring parameter exists
-    commit
+    commit ||
     // Old style:
     // Shouldn't ever be needed by the GithubFetcher
-    || treeish.replace(/[^:]*:/, ``);
+    treeish.replace(/[^:]*:/, ``);
 
-  return {auth, username, reponame, treeish};
+  return { auth, username, reponame, treeish };
 }
 
 export function invalidGithubUrlMessage(url: string): string {

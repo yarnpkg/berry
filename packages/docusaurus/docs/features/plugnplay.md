@@ -49,7 +49,7 @@ You may never have noticed it, but when a Node.js import or require call is inva
 Uncaught Error: Cannot find module 'not-found'
 ```
 
-Yarn PnP not only tells you exactly *what* the problem is, but also which packages are involved. For example, the two following error messages may be emitted depending on the circumstances:
+Yarn PnP not only tells you exactly _what_ the problem is, but also which packages are involved. For example, the two following error messages may be emitted depending on the circumstances:
 
 ```
 Error: Your application tried to access not-found, but it isn't declared in your dependencies; this makes the require call ambiguous and unsound.

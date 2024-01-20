@@ -1,41 +1,36 @@
 /* eslint-disable no-undef */
-import {useLocation}                                 from '@docusaurus/router';
-import {useDocsSidebar}                              from '@docusaurus/theme-common/internal';
-import BackToTopButton                               from '@theme/BackToTopButton';
-import DocPageLayoutMain                             from '@theme/DocPage/Layout/Main';
-import DocPageLayoutSidebar                          from '@theme/DocPage/Layout/Sidebar';
-import Layout                                        from '@theme/Layout';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import { useLocation } from "@docusaurus/router";
+import { useDocsSidebar } from "@docusaurus/theme-common/internal";
+import BackToTopButton from "@theme/BackToTopButton";
+import DocPageLayoutMain from "@theme/DocPage/Layout/Main";
+import DocPageLayoutSidebar from "@theme/DocPage/Layout/Sidebar";
+import Layout from "@theme/Layout";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
-import styles                                        from './styles.module.css';
+import styles from "./styles.module.css";
 
 function getReactNodeFromDomNode(domNode) {
-  const fiberKey = Object.keys(domNode).find(key => key.startsWith(`__reactFiber$`));
-  if (!fiberKey)
-    throw new Error(`Assertion failed: Couldn't find the React node associated with the DOM node`);
+  const fiberKey = Object.keys(domNode).find((key) => key.startsWith(`__reactFiber$`));
+  if (!fiberKey) throw new Error(`Assertion failed: Couldn't find the React node associated with the DOM node`);
 
-  const {type: Type, memoizedProps} = domNode[fiberKey];
-  return <Type {...memoizedProps}/>;
+  const { type: Type, memoizedProps } = domNode[fiberKey];
+  return <Type {...memoizedProps} />;
 }
 
-function getSuggestedModal({onExit}) {
-  if (!location.hash)
-    return null;
+function getSuggestedModal({ onExit }) {
+  if (!location.hash) return null;
 
   const navigation = window.performance.getEntriesByType(`navigation`);
   if (navigation.length > 0 && navigation[0].type !== `navigate` && window.location.hostname !== `localhost`)
     return null;
 
   const target = document.getElementById(location.hash.slice(1));
-  if (!target)
-    return null;
+  if (!target) return null;
 
   let adjustedTarget = target;
-  while (adjustedTarget && adjustedTarget.tagName !== `H2`)
-    adjustedTarget = adjustedTarget.previousSibling;
+  while (adjustedTarget && adjustedTarget.tagName !== `H2`) adjustedTarget = adjustedTarget.previousSibling;
 
-  if (!adjustedTarget)
-    return null;
+  if (!adjustedTarget) return null;
 
   const reactNodes = [];
 
@@ -48,12 +43,12 @@ function getSuggestedModal({onExit}) {
     current = current.nextSibling;
   } while (current && current.tagName !== target.tagName);
 
-  return <FocusModal onExit={onExit} children={<>{reactNodes}</>}/>;
+  return <FocusModal onExit={onExit} children={<>{reactNodes}</>} />;
 }
 
-const FocusModal = ({onExit, children}) => {
+const FocusModal = ({ onExit, children }) => {
   useEffect(() => {
-    const keyDownHandler = event => {
+    const keyDownHandler = (event) => {
       if (event.key === `Escape`) {
         onExit();
       }
@@ -67,11 +62,9 @@ const FocusModal = ({onExit, children}) => {
 
   return (
     <div className={styles.modalParent}>
-      <div className={styles.modalOverlay} onClick={() => onExit()}/>
+      <div className={styles.modalOverlay} onClick={() => onExit()} />
       <div className={styles.modalContent}>
-        <div className={`markdown`}>
-          {children}
-        </div>
+        <div className={`markdown`}>{children}</div>
       </div>
     </div>
   );
@@ -82,14 +75,14 @@ const useFocusModal = () => {
   const [modal, setModal] = useState(null);
 
   useLayoutEffect(() => {
-    setModal(getSuggestedModal({onExit: () => setModal(null)}));
+    setModal(getSuggestedModal({ onExit: () => setModal(null) }));
   }, [location.pathname]);
 
   return modal;
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default function DocPageLayout({title, children}) {
+export default function DocPageLayout({ title, children }) {
   const sidebar = useDocsSidebar();
   const [hiddenSidebarContainer, setHiddenSidebarContainer] = useState(false);
 
@@ -107,9 +100,7 @@ export default function DocPageLayout({title, children}) {
             setHiddenSidebarContainer={setHiddenSidebarContainer}
           />
         )}
-        <DocPageLayoutMain hiddenSidebarContainer={hiddenSidebarContainer}>
-          {children}
-        </DocPageLayoutMain>
+        <DocPageLayoutMain hiddenSidebarContainer={hiddenSidebarContainer}>{children}</DocPageLayoutMain>
       </div>
     </Layout>
   );

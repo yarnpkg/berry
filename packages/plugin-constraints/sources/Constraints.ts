@@ -1,13 +1,13 @@
 /// <reference path="./tauProlog.d.ts"/>
-import {Ident, MessageName, nodeUtils, Project, ReportError, Workspace} from '@yarnpkg/core';
-import {miscUtils, structUtils}                                         from '@yarnpkg/core';
-import {xfs, ppath, PortablePath}                                       from '@yarnpkg/fslib';
+import { Ident, MessageName, nodeUtils, Project, ReportError, Workspace } from "@yarnpkg/core";
+import { miscUtils, structUtils } from "@yarnpkg/core";
+import { xfs, ppath, PortablePath } from "@yarnpkg/fslib";
 // @ts-expect-error
-import plLists                                                          from 'tau-prolog/modules/lists';
-import pl                                                               from 'tau-prolog';
+import plLists from "tau-prolog/modules/lists";
+import pl from "tau-prolog";
 
-import * as constraintUtils                                             from './constraintUtils';
-import {linkProjectToSession}                                           from './tauModule';
+import * as constraintUtils from "./constraintUtils";
+import { linkProjectToSession } from "./tauModule";
 
 plLists(pl);
 
@@ -30,15 +30,10 @@ export enum DependencyType {
   PeerDependencies = `peerDependencies`,
 }
 
-const DEPENDENCY_TYPES = [
-  DependencyType.Dependencies,
-  DependencyType.DevDependencies,
-  DependencyType.PeerDependencies,
-];
+const DEPENDENCY_TYPES = [DependencyType.Dependencies, DependencyType.DevDependencies, DependencyType.PeerDependencies];
 
 function extractErrorImpl(value: any): any {
-  if (value instanceof pl.type.Num)
-    return value.value;
+  if (value instanceof pl.type.Num) return value.value;
 
   if (value instanceof pl.type.Term) {
     switch (value.indicator) {
@@ -57,15 +52,21 @@ function extractErrorImpl(value: any): any {
       case `syntax_error/1`:
         return new ReportError(MessageName.PROLOG_SYNTAX_ERROR, `Syntax error: ${extractErrorImpl(value.args[0])}`);
       case `existence_error/2`:
-        return new ReportError(MessageName.PROLOG_EXISTENCE_ERROR, `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`);
+        return new ReportError(
+          MessageName.PROLOG_EXISTENCE_ERROR,
+          `Existence error: ${extractErrorImpl(value.args[0])} ${extractErrorImpl(value.args[1])} not found`,
+        );
       case `instantiation_error/0`:
-        return new ReportError(MessageName.PROLOG_INSTANTIATION_ERROR, `Instantiation error: an argument is variable when an instantiated argument was expected`);
+        return new ReportError(
+          MessageName.PROLOG_INSTANTIATION_ERROR,
+          `Instantiation error: an argument is variable when an instantiated argument was expected`,
+        );
       case `line/1`:
-        return {line: extractErrorImpl(value.args[0])};
+        return { line: extractErrorImpl(value.args[0]) };
       case `column/1`:
-        return {column: extractErrorImpl(value.args[0])};
+        return { column: extractErrorImpl(value.args[0]) };
       case `found/1`:
-        return {found: extractErrorImpl(value.args[0])};
+        return { found: extractErrorImpl(value.args[0]) };
       case `./2`:
         return [extractErrorImpl(value.args[0])].concat(extractErrorImpl(value.args[1]));
       case `//2`:
@@ -112,30 +113,26 @@ class Session {
   }
 
   private fetchNextAnswer() {
-    return new Promise<pl.Answer>(resolve => {
+    return new Promise<pl.Answer>((resolve) => {
       this.session.answer((result: any) => {
         resolve(result);
       });
     });
   }
 
-  public async * makeQuery(query: string) {
+  public async *makeQuery(query: string) {
     const parsed = this.session.query(query);
 
-    if (parsed !== true)
-      throw extractError(parsed);
+    if (parsed !== true) throw extractError(parsed);
 
     while (true) {
       const answer = await this.fetchNextAnswer();
 
-      if (answer === null)
-        throw new ReportError(MessageName.PROLOG_LIMIT_EXCEEDED, `Resolution limit exceeded`);
+      if (answer === null) throw new ReportError(MessageName.PROLOG_LIMIT_EXCEEDED, `Resolution limit exceeded`);
 
-      if (!answer)
-        break;
+      if (!answer) break;
 
-      if (answer.id === `throw`)
-        throw extractError(answer);
+      if (answer.id === `throw`) throw extractError(answer);
 
       yield answer;
     }
@@ -155,8 +152,7 @@ function parseLinkToJson(link: pl.Link): string | null {
     return null;
   } else {
     const val = link.toJavaScript();
-    if (typeof val !== `string`)
-      return JSON.stringify(val);
+    if (typeof val !== `string`) return JSON.stringify(val);
 
     try {
       return JSON.stringify(JSON.parse(val));
@@ -188,8 +184,7 @@ export class Constraints implements constraintUtils.Engine {
   getProjectDatabase() {
     let database = ``;
 
-    for (const dependencyType of DEPENDENCY_TYPES)
-      database += `dependency_type(${dependencyType}).\n`;
+    for (const dependencyType of DEPENDENCY_TYPES) database += `dependency_type(${dependencyType}).\n`;
 
     for (const workspace of this.project.workspacesByCwd.values()) {
       const relativeCwd = workspace.relativeCwd;
@@ -248,15 +243,15 @@ export class Constraints implements constraintUtils.Engine {
   }
 
   async process(): Promise<constraintUtils.ProcessResult> {
-    const {
-      enforcedDependencies,
-      enforcedFields,
-    } = await this.processClassic();
+    const { enforcedDependencies, enforcedFields } = await this.processClassic();
 
     const manifestUpdates = new Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>();
 
-    for (const {workspace, dependencyIdent, dependencyRange, dependencyType} of enforcedDependencies) {
-      const normalizedPath = constraintUtils.normalizePath([dependencyType, structUtils.stringifyIdent(dependencyIdent)]);
+    for (const { workspace, dependencyIdent, dependencyRange, dependencyType } of enforcedDependencies) {
+      const normalizedPath = constraintUtils.normalizePath([
+        dependencyType,
+        structUtils.stringifyIdent(dependencyIdent),
+      ]);
 
       const workspaceUpdates = miscUtils.getMapWithDefault(manifestUpdates, workspace.cwd);
       const pathUpdates = miscUtils.getMapWithDefault(workspaceUpdates, normalizedPath);
@@ -264,7 +259,7 @@ export class Constraints implements constraintUtils.Engine {
       pathUpdates.set(dependencyRange ?? undefined, new Set());
     }
 
-    for (const {workspace, fieldPath, fieldValue} of enforcedFields) {
+    for (const { workspace, fieldPath, fieldValue } of enforcedFields) {
       const normalizedPath = constraintUtils.normalizePath(fieldPath);
 
       const workspaceUpdates = miscUtils.getMapWithDefault(manifestUpdates, workspace.cwd);
@@ -282,51 +277,53 @@ export class Constraints implements constraintUtils.Engine {
   private async genEnforcedDependencies(session: Session) {
     const enforcedDependencies: Array<EnforcedDependency> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`)) {
+    for await (const answer of session.makeQuery(
+      `workspace(WorkspaceCwd), dependency_type(DependencyType), gen_enforced_dependency(WorkspaceCwd, DependencyIdent, DependencyRange, DependencyType).`,
+    )) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const dependencyRawIdent = parseLink(answer.links.DependencyIdent);
       const dependencyRange = parseLink(answer.links.DependencyRange);
       const dependencyType = parseLink(answer.links.DependencyType) as DependencyType;
 
-      if (workspaceCwd === null || dependencyRawIdent === null)
-        throw new Error(`Invalid rule`);
+      if (workspaceCwd === null || dependencyRawIdent === null) throw new Error(`Invalid rule`);
 
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
       const dependencyIdent = structUtils.parseIdent(dependencyRawIdent);
 
-      enforcedDependencies.push({workspace, dependencyIdent, dependencyRange, dependencyType});
+      enforcedDependencies.push({ workspace, dependencyIdent, dependencyRange, dependencyType });
     }
 
     return miscUtils.sortMap(enforcedDependencies, [
-      ({dependencyRange}) => dependencyRange !== null ? `0` : `1`,
-      ({workspace}) => structUtils.stringifyIdent(workspace.anchoredLocator),
-      ({dependencyIdent}) => structUtils.stringifyIdent(dependencyIdent),
+      ({ dependencyRange }) => (dependencyRange !== null ? `0` : `1`),
+      ({ workspace }) => structUtils.stringifyIdent(workspace.anchoredLocator),
+      ({ dependencyIdent }) => structUtils.stringifyIdent(dependencyIdent),
     ]);
   }
 
   private async genEnforcedFields(session: Session) {
     const enforcedFields: Array<EnforcedField> = [];
 
-    for await (const answer of session.makeQuery(`workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`)) {
+    for await (const answer of session.makeQuery(
+      `workspace(WorkspaceCwd), gen_enforced_field(WorkspaceCwd, FieldPath, FieldValue).`,
+    )) {
       const workspaceCwd = ppath.resolve(this.project.cwd, parseLink(answer.links.WorkspaceCwd) as PortablePath);
       const fieldPath = parseLink(answer.links.FieldPath);
       const fieldValue = parseLinkToJson(answer.links.FieldValue);
 
-      if (workspaceCwd === null || fieldPath === null)
-        throw new Error(`Invalid rule`);
+      if (workspaceCwd === null || fieldPath === null) throw new Error(`Invalid rule`);
 
       const workspace = this.project.getWorkspaceByCwd(workspaceCwd);
 
-      enforcedFields.push({workspace, fieldPath, fieldValue});
+      enforcedFields.push({ workspace, fieldPath, fieldValue });
     }
 
     return miscUtils.sortMap(enforcedFields, [
-      ({workspace}) => structUtils.stringifyIdent(workspace.anchoredLocator),
-      ({fieldPath}) => fieldPath,
+      ({ workspace }) => structUtils.stringifyIdent(workspace.anchoredLocator),
+      ({ fieldPath }) => fieldPath,
     ]);
   }
 
-  async * query(query: string) {
+  async *query(query: string) {
     const session = this.createSession();
 
     for await (const answer of session.makeQuery(query)) {

@@ -1,10 +1,10 @@
-import {Plugin, SettingsType} from '@yarnpkg/core';
+import { Plugin, SettingsType } from "@yarnpkg/core";
 
-import InitCommand            from './commands/init';
+import InitCommand from "./commands/init";
 
-export {InitCommand};
+export { InitCommand };
 
-declare module '@yarnpkg/core' {
+declare module "@yarnpkg/core" {
   interface ConfigurationValueMap {
     initScope: string | null;
     initFields: Map<string, any>;
@@ -36,9 +36,7 @@ const plugin: Plugin = {
       },
     },
   },
-  commands: [
-    InitCommand,
-  ],
+  commands: [InitCommand],
 };
 
 // eslint-disable-next-line arca/no-default-export

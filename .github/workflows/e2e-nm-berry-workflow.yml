@@ -1,38 +1,38 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-nm-berry-workflow.yml
-    - scripts/e2e-setup-ci.sh
-    - packages/yarnpkg-nm/sources/hoist.ts
-    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
-    - packages/plugin-nm/sources/NodeModulesLinker.ts
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-nm-berry-workflow.yml
+      - scripts/e2e-setup-ci.sh
+      - packages/yarnpkg-nm/sources/hoist.ts
+      - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
+      - packages/plugin-nm/sources/NodeModulesLinker.ts
 
-name: 'E2E NM Berry Install'
+name: "E2E NM Berry Install"
 jobs:
   chore:
     strategy:
       matrix:
         platform:
-        - ubuntu-latest
-        - windows-latest
+          - ubuntu-latest
+          - windows-latest
 
-    name: 'Validating berry install via node-modules linker on ${{matrix.platform}}'
+    name: "Validating berry install via node-modules linker on ${{matrix.platform}}"
     runs-on: ${{matrix.platform}}
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running node_modules install with self-validation'
-      run: |
-        source scripts/e2e-setup-ci.sh nm
-        cd -
-        NM_DEBUG_LEVEL=1 yarn
-      shell: bash
+      - name: "Running node_modules install with self-validation"
+        run: |
+          source scripts/e2e-setup-ci.sh nm
+          cd -
+          NM_DEBUG_LEVEL=1 yarn
+        shell: bash

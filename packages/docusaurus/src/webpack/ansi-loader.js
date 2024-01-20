@@ -1,5 +1,5 @@
-const {Terminal} = require(`xterm-headless`);
-const {SerializeAddon} = require(`xterm-addon-serialize`);
+const { Terminal } = require(`xterm-headless`);
+const { SerializeAddon } = require(`xterm-addon-serialize`);
 
 module.exports = function (content) {
   const callback = this.async();
@@ -14,7 +14,8 @@ module.exports = function (content) {
   terminal.loadAddon(serializeAddon);
 
   terminal.write(content, () => {
-    const serialized = serializeAddon.serializeAsHTML()
+    const serialized = serializeAddon
+      .serializeAsHTML()
       // We don't care about the HTML wrapper
       .replace(/.*<!--StartFragment--><pre>|<\/pre><!--EndFragment-->.*/g, ``)
       // https://github.com/xtermjs/xterm.js/pull/4833

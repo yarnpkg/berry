@@ -1,8 +1,8 @@
-import {NativePath, npath, VirtualFS}   from '@yarnpkg/fslib';
-import fs                               from 'fs';
-import path                             from 'path';
+import { NativePath, npath, VirtualFS } from "@yarnpkg/fslib";
+import fs from "fs";
+import path from "path";
 
-import {WATCH_MODE_MESSAGE_USES_ARRAYS} from '../esm-loader/loaderFlags';
+import { WATCH_MODE_MESSAGE_USES_ARRAYS } from "../esm-loader/loaderFlags";
 
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
 export function readPackageScope(checkPath: NativePath) {
@@ -11,8 +11,7 @@ export function readPackageScope(checkPath: NativePath) {
   do {
     separatorIndex = checkPath.lastIndexOf(npath.sep);
     checkPath = checkPath.slice(0, separatorIndex);
-    if (checkPath.endsWith(`${npath.sep}node_modules`))
-      return false;
+    if (checkPath.endsWith(`${npath.sep}node_modules`)) return false;
     const pjson = readPackage(checkPath + npath.sep);
     if (pjson) {
       return {
@@ -28,8 +27,7 @@ export function readPackageScope(checkPath: NativePath) {
 export function readPackage(requestPath: NativePath) {
   const jsonPath = npath.resolve(requestPath, `package.json`);
 
-  if (!fs.existsSync(jsonPath))
-    return null;
+  if (!fs.existsSync(jsonPath)) return null;
 
   return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
 }
@@ -39,12 +37,9 @@ export function readPackage(requestPath: NativePath) {
 // if the file contains ESM syntax
 export function ERR_REQUIRE_ESM(filename: string, parentPath: string | null = null) {
   const basename =
-    parentPath && path.basename(filename) === path.basename(parentPath)
-      ? filename
-      : path.basename(filename);
+    parentPath && path.basename(filename) === path.basename(parentPath) ? filename : path.basename(filename);
 
-  const msg =
-    `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
+  const msg = `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
 Instead change the require of ${basename} in ${parentPath} to a dynamic import() which is available in all CommonJS modules.`;
 
   const err = new Error(msg) as Error & { code: string };
@@ -56,12 +51,12 @@ Instead change the require of ${basename} in ${parentPath} to a dynamic import()
 // https://github.com/nodejs/node/pull/45348
 export function reportRequiredFilesToWatchMode(files: Array<NativePath>) {
   if (process.env.WATCH_REPORT_DEPENDENCIES && process.send) {
-    files = files.map(filename => npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename))));
+    files = files.map((filename) => npath.fromPortablePath(VirtualFS.resolveVirtual(npath.toPortablePath(filename))));
     if (WATCH_MODE_MESSAGE_USES_ARRAYS) {
-      process.send({'watch:require': files});
+      process.send({ "watch:require": files });
     } else {
       for (const filename of files) {
-        process.send({'watch:require': filename});
+        process.send({ "watch:require": filename });
       }
     }
   }

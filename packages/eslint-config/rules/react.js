@@ -1,10 +1,8 @@
 module.exports = {
-  plugins: [
-    `react`,
-  ],
+  plugins: [`react`],
   rules: {
-    'arca/jsx-longhand-props': 2,
-    'react/jsx-uses-react': 1,
-    'react/jsx-uses-vars': 1,
+    "arca/jsx-longhand-props": 2,
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 1,
   },
 };

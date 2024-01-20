@@ -1,94 +1,113 @@
-import {miscUtils, semverUtils}                              from '@yarnpkg/core';
-import {FakeFS, ppath, NodeFS, PortablePath, constants}      from '@yarnpkg/fslib';
+import { miscUtils, semverUtils } from "@yarnpkg/core";
+import { FakeFS, ppath, NodeFS, PortablePath, constants } from "@yarnpkg/fslib";
 
-import {UnmatchedHunkError}                                  from './UnmatchedHunkError';
-import {ParsedPatchFile, FilePatch, Hunk, PatchMutationType} from './parse';
+import { UnmatchedHunkError } from "./UnmatchedHunkError";
+import { ParsedPatchFile, FilePatch, Hunk, PatchMutationType } from "./parse";
 
 async function preserveTime(baseFs: FakeFS<PortablePath>, p: PortablePath, cb: () => Promise<PortablePath | void>) {
   const stat = await baseFs.lstatPromise(p);
 
   const result = await cb();
-  if (typeof result !== `undefined`)
-    p = result;
+  if (typeof result !== `undefined`) p = result;
 
   await baseFs.lutimesPromise(p, stat.atime, stat.mtime);
 }
 
-export async function applyPatchFile(effects: ParsedPatchFile, {baseFs = new NodeFS(), dryRun = false, version = null}: {baseFs?: FakeFS<PortablePath>, dryRun?: boolean, version?: string | null} = {}) {
+export async function applyPatchFile(
+  effects: ParsedPatchFile,
+  {
+    baseFs = new NodeFS(),
+    dryRun = false,
+    version = null,
+  }: { baseFs?: FakeFS<PortablePath>; dryRun?: boolean; version?: string | null } = {},
+) {
   for (const eff of effects) {
     if (eff.semverExclusivity !== null && version !== null)
-      if (!semverUtils.satisfiesWithPrereleases(version, eff.semverExclusivity))
-        continue;
+      if (!semverUtils.satisfiesWithPrereleases(version, eff.semverExclusivity)) continue;
 
     switch (eff.type) {
-      case `file deletion`: {
-        if (dryRun) {
-          if (!baseFs.existsSync(eff.path)) {
-            throw new Error(`Trying to delete a file that doesn't exist: ${eff.path}`);
+      case `file deletion`:
+        {
+          if (dryRun) {
+            if (!baseFs.existsSync(eff.path)) {
+              throw new Error(`Trying to delete a file that doesn't exist: ${eff.path}`);
+            }
+          } else {
+            await preserveTime(baseFs, ppath.dirname(eff.path), async () => {
+              await baseFs.unlinkPromise(eff.path);
+            });
           }
-        } else {
-          await preserveTime(baseFs, ppath.dirname(eff.path), async () => {
-            await baseFs.unlinkPromise(eff.path);
-          });
         }
-      } break;
+        break;
 
-      case `rename`: {
-        if (dryRun) {
-          if (!baseFs.existsSync(eff.fromPath)) {
-            throw new Error(`Trying to move a file that doesn't exist: ${eff.fromPath}`);
-          }
-        } else {
-          await preserveTime(baseFs, ppath.dirname(eff.fromPath), async () => {
-            await preserveTime(baseFs, ppath.dirname(eff.toPath), async () => {
-              await preserveTime(baseFs, eff.fromPath, async () => {
-                await baseFs.movePromise(eff.fromPath, eff.toPath);
-                return eff.toPath;
+      case `rename`:
+        {
+          if (dryRun) {
+            if (!baseFs.existsSync(eff.fromPath)) {
+              throw new Error(`Trying to move a file that doesn't exist: ${eff.fromPath}`);
+            }
+          } else {
+            await preserveTime(baseFs, ppath.dirname(eff.fromPath), async () => {
+              await preserveTime(baseFs, ppath.dirname(eff.toPath), async () => {
+                await preserveTime(baseFs, eff.fromPath, async () => {
+                  await baseFs.movePromise(eff.fromPath, eff.toPath);
+                  return eff.toPath;
+                });
               });
             });
+          }
+        }
+        break;
+
+      case `file creation`:
+        {
+          if (dryRun) {
+            if (baseFs.existsSync(eff.path)) {
+              throw new Error(`Trying to create a file that already exists: ${eff.path}`);
+            }
+          } else {
+            const fileContents = eff.hunk
+              ? eff.hunk.parts[0].lines.join(`\n`) + (eff.hunk.parts[0].noNewlineAtEndOfFile ? `` : `\n`)
+              : ``;
+
+            // Todo: the parent of the first directory thus created will still see its mtime changed
+            await baseFs.mkdirpPromise(ppath.dirname(eff.path), {
+              chmod: 0o755,
+              utimes: [constants.SAFE_TIME, constants.SAFE_TIME],
+            });
+
+            await baseFs.writeFilePromise(eff.path, fileContents, { mode: eff.mode });
+            await baseFs.utimesPromise(eff.path, constants.SAFE_TIME, constants.SAFE_TIME);
+          }
+        }
+        break;
+
+      case `patch`:
+        {
+          await preserveTime(baseFs, eff.path, async () => {
+            await applyPatch(eff, { baseFs, dryRun });
           });
         }
-      } break;
+        break;
 
-      case `file creation`: {
-        if (dryRun) {
-          if (baseFs.existsSync(eff.path)) {
-            throw new Error(`Trying to create a file that already exists: ${eff.path}`);
-          }
-        } else {
-          const fileContents = eff.hunk
-            ? eff.hunk.parts[0].lines.join(`\n`) + (eff.hunk.parts[0].noNewlineAtEndOfFile ? `` : `\n`)
-            : ``;
+      case `mode change`:
+        {
+          const currentStat = await baseFs.statPromise(eff.path);
+          const currentMode = currentStat.mode;
 
-          // Todo: the parent of the first directory thus created will still see its mtime changed
-          await baseFs.mkdirpPromise(ppath.dirname(eff.path), {chmod: 0o755, utimes: [constants.SAFE_TIME, constants.SAFE_TIME]});
+          if (isExecutable(eff.newMode) !== isExecutable(currentMode)) continue;
 
-          await baseFs.writeFilePromise(eff.path, fileContents, {mode: eff.mode});
-          await baseFs.utimesPromise(eff.path, constants.SAFE_TIME, constants.SAFE_TIME);
+          await preserveTime(baseFs, eff.path, async () => {
+            await baseFs.chmodPromise(eff.path, eff.newMode);
+          });
         }
-      } break;
+        break;
 
-      case `patch`: {
-        await preserveTime(baseFs, eff.path, async () => {
-          await applyPatch(eff, {baseFs, dryRun});
-        });
-      } break;
-
-      case `mode change`: {
-        const currentStat = await baseFs.statPromise(eff.path);
-        const currentMode = currentStat.mode;
-
-        if (isExecutable(eff.newMode) !== isExecutable(currentMode))
-          continue;
-
-        await preserveTime(baseFs, eff.path, async () => {
-          await baseFs.chmodPromise(eff.path, eff.newMode);
-        });
-      } break;
-
-      default: {
-        miscUtils.assertNever(eff);
-      } break;
+      default:
+        {
+          miscUtils.assertNever(eff);
+        }
+        break;
     }
   }
 }
@@ -127,7 +146,10 @@ function linesAreEqual(a: string, b: string) {
  *
  */
 
-export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = false}: {baseFs: FakeFS<PortablePath>, dryRun?: boolean}) {
+export async function applyPatch(
+  { hunks, path }: FilePatch,
+  { baseFs, dryRun = false }: { baseFs: FakeFS<PortablePath>; dryRun?: boolean },
+) {
   const mode = await baseFs.statSync(path).mode;
 
   const fileContents = await baseFs.readFileSync(path, `utf8`);
@@ -172,8 +194,7 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
       offset += 1;
     }
 
-    if (modifications === null)
-      throw new UnmatchedHunkError(hunks.indexOf(hunk), hunk);
+    if (modifications === null) throw new UnmatchedHunkError(hunks.indexOf(hunk), hunk);
 
     result.push(modifications);
 
@@ -181,36 +202,43 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
     maxFrozenLine = location + hunk.header.original.length;
   }
 
-  if (dryRun)
-    return;
+  if (dryRun) return;
 
   let diffOffset = 0;
 
   for (const modifications of result) {
     for (const modification of modifications) {
       switch (modification.type) {
-        case `splice`: {
-          const firstLine = modification.index + diffOffset;
-          fileLines.splice(firstLine, modification.numToDelete, ...modification.linesToInsert);
-          diffOffset += modification.linesToInsert.length - modification.numToDelete;
-        } break;
+        case `splice`:
+          {
+            const firstLine = modification.index + diffOffset;
+            fileLines.splice(firstLine, modification.numToDelete, ...modification.linesToInsert);
+            diffOffset += modification.linesToInsert.length - modification.numToDelete;
+          }
+          break;
 
-        case `pop`: {
-          fileLines.pop();
-        } break;
+        case `pop`:
+          {
+            fileLines.pop();
+          }
+          break;
 
-        case `push`: {
-          fileLines.push(modification.line);
-        } break;
+        case `push`:
+          {
+            fileLines.push(modification.line);
+          }
+          break;
 
-        default: {
-          miscUtils.assertNever(modification);
-        } break;
+        default:
+          {
+            miscUtils.assertNever(modification);
+          }
+          break;
       }
     }
   }
 
-  await baseFs.writeFilePromise(path, fileLines.join(`\n`), {mode});
+  await baseFs.writeFilePromise(path, fileLines.join(`\n`), { mode });
 }
 
 type Push = {
@@ -229,10 +257,7 @@ type Splice = {
   linesToInsert: Array<string>;
 };
 
-type Modification =
-  | Push
-  | Pop
-  | Splice;
+type Modification = Push | Pop | Splice;
 
 function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Array<Modification> | null {
   const result: Array<Modification> = [];
@@ -240,49 +265,54 @@ function evaluateHunk(hunk: Hunk, fileLines: Array<string>, offset: number): Arr
   for (const part of hunk.parts) {
     switch (part.type) {
       case PatchMutationType.Context:
-      case PatchMutationType.Deletion: {
-        for (const line of part.lines) {
-          const originalLine = fileLines[offset];
+      case PatchMutationType.Deletion:
+        {
+          for (const line of part.lines) {
+            const originalLine = fileLines[offset];
 
-          if (originalLine == null || !linesAreEqual(originalLine, line))
-            return null;
+            if (originalLine == null || !linesAreEqual(originalLine, line)) return null;
 
-          offset += 1;
+            offset += 1;
+          }
+
+          if (part.type === PatchMutationType.Deletion) {
+            result.push({
+              type: `splice`,
+              index: offset - part.lines.length,
+              numToDelete: part.lines.length,
+              linesToInsert: [],
+            });
+
+            if (part.noNewlineAtEndOfFile) {
+              result.push({
+                type: `push`,
+                line: ``,
+              });
+            }
+          }
         }
+        break;
 
-        if (part.type === PatchMutationType.Deletion) {
+      case PatchMutationType.Insertion:
+        {
           result.push({
             type: `splice`,
-            index: offset - part.lines.length,
-            numToDelete: part.lines.length,
-            linesToInsert: [],
+            index: offset,
+            numToDelete: 0,
+            linesToInsert: part.lines,
           });
 
           if (part.noNewlineAtEndOfFile) {
-            result.push({
-              type: `push`,
-              line: ``,
-            });
+            result.push({ type: `pop` });
           }
         }
-      } break;
+        break;
 
-      case PatchMutationType.Insertion: {
-        result.push({
-          type: `splice`,
-          index: offset,
-          numToDelete: 0,
-          linesToInsert: part.lines,
-        });
-
-        if (part.noNewlineAtEndOfFile) {
-          result.push({type: `pop`});
+      default:
+        {
+          miscUtils.assertNever(part.type);
         }
-      } break;
-
-      default: {
-        miscUtils.assertNever(part.type);
-      } break;
+        break;
     }
   }
 

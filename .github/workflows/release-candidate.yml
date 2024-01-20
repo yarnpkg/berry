@@ -2,59 +2,59 @@ on:
   workflow_dispatch:
     inputs:
       apply_versions:
-        description: 'Apply new versions?'
+        description: "Apply new versions?"
         required: false
-        default: '1'
+        default: "1"
 
 env:
-  node-version: '18.x'
+  node-version: "18.x"
 
-name: 'Release Candidate'
+name: "Release Candidate"
 jobs:
   release:
-    name: 'Releasing a RC'
+    name: "Releasing a RC"
     runs-on: ubuntu-latest
 
     env:
       NODE_OPTIONS: --max_old_space_size=8192
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: master
-        token: ${{secrets.YARNBOT_TOKEN}}
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+          token: ${{secrets.YARNBOT_TOKEN}}
 
-    - name: 'Retrieve all the relevant tags'
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: "Retrieve all the relevant tags"
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-    - name: 'Use Node.js ${{ env.node-version }}'
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.node-version }}
+      - name: "Use Node.js ${{ env.node-version }}"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.node-version }}
 
-    - name: 'Build a binary for convenience'
-      run: |
-        yarn build:cli
+      - name: "Build a binary for convenience"
+        run: |
+          yarn build:cli
 
-        TMPBIN=$(mktemp -d)
-        cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
+          TMPBIN=$(mktemp -d)
+          cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
 
-        grep -v "yarnPath:" .yarnrc.yml > $TMPBIN/.yarnrc.yml
-        cp $TMPBIN/.yarnrc.yml .yarnrc.yml
-        echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
-        git update-index --skip-worktree -- .yarnrc.yml
+          grep -v "yarnPath:" .yarnrc.yml > $TMPBIN/.yarnrc.yml
+          cp $TMPBIN/.yarnrc.yml .yarnrc.yml
+          echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
+          git update-index --skip-worktree -- .yarnrc.yml
 
-    - name: 'Generate the release commits'
-      if: ${{fromJSON(github.event.inputs.apply_versions)}}
-      run: |
-        git config user.name "Yarn Bot"
-        git config user.email nison.mael+yarnbot@gmail.com
-        ./scripts/release/01-release-tags.sh --prerelease
-        git push --follow-tags
+      - name: "Generate the release commits"
+        if: ${{fromJSON(github.event.inputs.apply_versions)}}
+        run: |
+          git config user.name "Yarn Bot"
+          git config user.email nison.mael+yarnbot@gmail.com
+          ./scripts/release/01-release-tags.sh --prerelease
+          git push --follow-tags
 
-    - name: 'Upload the releases'
-      run: |
-        yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
-        yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
-        ./scripts/release/02-release-builds.sh
-        ./scripts/release/03-release-npm.sh
+      - name: "Upload the releases"
+        run: |
+          yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
+          yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.YARNBOT_TOKEN}}"
+          ./scripts/release/02-release-builds.sh
+          ./scripts/release/03-release-npm.sh

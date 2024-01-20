@@ -1,6 +1,6 @@
-import {FakeFS}                          from './FakeFS';
-import {ProxiedFS}                       from './ProxiedFS';
-import {npath, NativePath, PortablePath} from './path';
+import { FakeFS } from "./FakeFS";
+import { ProxiedFS } from "./ProxiedFS";
+import { npath, NativePath, PortablePath } from "./path";
 
 export class PosixFS extends ProxiedFS<NativePath, PortablePath> {
   protected readonly baseFs: FakeFS<PortablePath>;

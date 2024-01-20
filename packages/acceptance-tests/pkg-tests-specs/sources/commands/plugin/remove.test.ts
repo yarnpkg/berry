@@ -1,12 +1,12 @@
-import {hashUtils}                   from '@yarnpkg/core';
-import {xfs, ppath, Filename, npath} from '@yarnpkg/fslib';
-import {fs, yarn}                    from 'pkg-tests-core';
+import { hashUtils } from "@yarnpkg/core";
+import { xfs, ppath, Filename, npath } from "@yarnpkg/fslib";
+import { fs, yarn } from "pkg-tests-core";
 
 describe(`Commands`, () => {
   describe(`plugin remove`, () => {
     test(
       `it should support removing a plugin via its name`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const helloWorldSource = require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-world.js`);
         const helloUniverseSource = require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-universe.js`);
 
@@ -19,33 +19,38 @@ describe(`Commands`, () => {
 
         await expect(xfs.existsPromise(helloWorldPlugin)).resolves.toEqual(true);
         await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
-          plugins: [{
-            path: ppath.relative(path, helloWorldPlugin),
-            spec: ppath.relative(path, npath.toPortablePath(helloWorldSource)),
-            checksum: await hashUtils.checksumFile(helloWorldPlugin),
-          }, {
-            path: ppath.relative(path, helloUniversePlugin),
-            spec: ppath.relative(path, npath.toPortablePath(helloUniverseSource)),
-            checksum: await hashUtils.checksumFile(helloUniversePlugin),
-          }],
+          plugins: [
+            {
+              path: ppath.relative(path, helloWorldPlugin),
+              spec: ppath.relative(path, npath.toPortablePath(helloWorldSource)),
+              checksum: await hashUtils.checksumFile(helloWorldPlugin),
+            },
+            {
+              path: ppath.relative(path, helloUniversePlugin),
+              spec: ppath.relative(path, npath.toPortablePath(helloUniverseSource)),
+              checksum: await hashUtils.checksumFile(helloUniversePlugin),
+            },
+          ],
         });
 
         await run(`plugin`, `remove`, `@yarnpkg/plugin-hello-world`);
 
         await expect(xfs.existsPromise(helloWorldPlugin)).resolves.toEqual(false);
         await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
-          plugins: [{
-            path: ppath.relative(path, helloUniversePlugin),
-            spec: ppath.relative(path, npath.toPortablePath(helloUniverseSource)),
-            checksum: await hashUtils.checksumFile(helloUniversePlugin),
-          }],
+          plugins: [
+            {
+              path: ppath.relative(path, helloUniversePlugin),
+              spec: ppath.relative(path, npath.toPortablePath(helloUniverseSource)),
+              checksum: await hashUtils.checksumFile(helloUniversePlugin),
+            },
+          ],
         });
       }),
     );
 
     test(
       `it should completely remove the key when removing the last plugin`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
+      makeTemporaryEnv({}, async ({ path, run, source }) => {
         const helloWorldSource = require.resolve(`@yarnpkg/monorepo/scripts/plugin-hello-world.js`);
 
         await run(`plugin`, `import`, helloWorldSource);

@@ -155,4 +155,4 @@ build libzipSync -s WASM_ASYNC_COMPILATION=0 &
 build libzipAsync -s WASM_ASYNC_COMPILATION=1 &
 wait
 
-yarn prettier --write ../sources/*.js
+yarn run -T prettier --no-config --write ../sources/*.js

@@ -1,4 +1,4 @@
-import {Libzip} from './makeInterface';
+import { Libzip } from "./makeInterface";
 
 export let cachedInstance: Libzip | undefined;
 
@@ -11,8 +11,7 @@ export function setFactory(factory: () => Libzip) {
 }
 
 export function getInstance() {
-  if (typeof cachedInstance === `undefined`)
-    cachedInstance = registeredFactory();
+  if (typeof cachedInstance === `undefined`) cachedInstance = registeredFactory();
 
   return cachedInstance;
 }

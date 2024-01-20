@@ -1,16 +1,13 @@
-import {Plugin}                  from '@yarnpkg/core';
+import { Plugin } from "@yarnpkg/core";
 
-import SearchCommand             from './commands/search';
-import UpgradeInteractiveCommand from './commands/upgrade-interactive';
+import SearchCommand from "./commands/search";
+import UpgradeInteractiveCommand from "./commands/upgrade-interactive";
 
-export {SearchCommand};
-export {UpgradeInteractiveCommand};
+export { SearchCommand };
+export { UpgradeInteractiveCommand };
 
 const plugin: Plugin = {
-  commands: [
-    SearchCommand,
-    UpgradeInteractiveCommand,
-  ],
+  commands: [SearchCommand, UpgradeInteractiveCommand],
 };
 
 // eslint-disable-next-line arca/no-default-export

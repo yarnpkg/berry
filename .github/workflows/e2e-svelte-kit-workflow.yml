@@ -1,29 +1,29 @@
 on:
   schedule:
-  - cron: '0 */4 * * *'
+    - cron: "0 */4 * * *"
   push:
     branches:
-    - master
+      - master
   pull_request:
     paths:
-    - .github/actions/prepare/action.yml
-    - .github/workflows/e2e-svelte-kit-workflow.yml
-    - scripts/e2e-setup-ci.sh
+      - .github/actions/prepare/action.yml
+      - .github/workflows/e2e-svelte-kit-workflow.yml
+      - scripts/e2e-setup-ci.sh
 
-name: 'E2E SvelteKit'
+name: "E2E SvelteKit"
 jobs:
   chore:
-    name: 'Validating SvelteKit'
+    name: "Validating SvelteKit"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: ./.github/actions/prepare
+      - uses: ./.github/actions/prepare
 
-    - name: 'Running the integration test'
-      run: |
-        source scripts/e2e-setup-ci.sh
-        yes | yarn create svelte@next my-app && cd my-app
-        yarn
-        yarn build
+      - name: "Running the integration test"
+        run: |
+          source scripts/e2e-setup-ci.sh
+          yes | yarn create svelte@next my-app && cd my-app
+          yarn
+          yarn build

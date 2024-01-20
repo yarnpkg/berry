@@ -1,20 +1,27 @@
-import {BaseCommand, WorkspaceRequiredError}                                                            from '@yarnpkg/cli';
-import {IdentHash, structUtils}                                                                         from '@yarnpkg/core';
-import {Project, Workspace, InstallMode}                                                                from '@yarnpkg/core';
-import {Cache, Configuration, Descriptor, LightReport, MessageName, MinimalResolveOptions, formatUtils} from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}                                                             from 'clipanion';
-import {prompt}                                                                                         from 'enquirer';
-import micromatch                                                                                       from 'micromatch';
-import * as t                                                                                           from 'typanion';
+import { BaseCommand, WorkspaceRequiredError } from "@yarnpkg/cli";
+import { IdentHash, structUtils } from "@yarnpkg/core";
+import { Project, Workspace, InstallMode } from "@yarnpkg/core";
+import { Command, Option, Usage, UsageError } from "clipanion";
+import { prompt } from "enquirer";
+import micromatch from "micromatch";
+import * as t from "typanion";
 
-import * as suggestUtils                                                                                from '../suggestUtils';
-import {Hooks}                                                                                          from '..';
+import * as suggestUtils from "../suggestUtils";
+import { Hooks } from "..";
+
+import {
+  Cache,
+  Configuration,
+  Descriptor,
+  LightReport,
+  MessageName,
+  MinimalResolveOptions,
+  formatUtils,
+} from "@yarnpkg/core";
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpCommand extends BaseCommand {
-  static paths = [
-    [`up`],
-  ];
+  static paths = [[`up`]];
 
   static usage: Usage = Command.Usage({
     description: `upgrade dependencies across the project`,
@@ -39,25 +46,14 @@ export default class UpCommand extends BaseCommand {
 
       **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
     `,
-    examples: [[
-      `Upgrade all instances of lodash to the latest release`,
-      `$0 up lodash`,
-    ], [
-      `Upgrade all instances of lodash to the latest release, but ask confirmation for each`,
-      `$0 up lodash -i`,
-    ], [
-      `Upgrade all instances of lodash to 1.2.3`,
-      `$0 up lodash@1.2.3`,
-    ], [
-      `Upgrade all instances of packages with the \`@babel\` scope to the latest release`,
-      `$0 up '@babel/*'`,
-    ], [
-      `Upgrade all instances of packages containing the word \`jest\` to the latest release`,
-      `$0 up '*jest*'`,
-    ], [
-      `Upgrade all instances of packages with the \`@babel\` scope to 7.0.0`,
-      `$0 up '@babel/*@7.0.0'`,
-    ]],
+    examples: [
+      [`Upgrade all instances of lodash to the latest release`, `$0 up lodash`],
+      [`Upgrade all instances of lodash to the latest release, but ask confirmation for each`, `$0 up lodash -i`],
+      [`Upgrade all instances of lodash to 1.2.3`, `$0 up lodash@1.2.3`],
+      [`Upgrade all instances of packages with the \`@babel\` scope to the latest release`, `$0 up '@babel/*'`],
+      [`Upgrade all instances of packages containing the word \`jest\` to the latest release`, `$0 up '*jest*'`],
+      [`Upgrade all instances of packages with the \`@babel\` scope to 7.0.0`, `$0 up '@babel/*@7.0.0'`],
+    ],
   });
 
   interactive = Option.Boolean(`-i,--interactive`, {
@@ -92,7 +88,9 @@ export default class UpCommand extends BaseCommand {
   patterns = Option.Rest();
 
   static schema = [
-    t.hasKeyRelationship(`recursive`, t.KeyRelationship.Forbids, [`interactive`, `exact`, `tilde`, `caret`], {ignore: [undefined, false]}),
+    t.hasKeyRelationship(`recursive`, t.KeyRelationship.Forbids, [`interactive`, `exact`, `tilde`, `caret`], {
+      ignore: [undefined, false],
+    }),
   ];
 
   async execute() {
@@ -105,11 +103,10 @@ export default class UpCommand extends BaseCommand {
 
   async executeUpRecursive() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState({
       restoreResolutions: false,
@@ -117,7 +114,7 @@ export default class UpCommand extends BaseCommand {
 
     const allDescriptors = [...project.storedDescriptors.values()];
 
-    const stringifiedIdents = allDescriptors.map(descriptor => {
+    const stringifiedIdents = allDescriptors.map((descriptor) => {
       return structUtils.stringifyIdent(descriptor);
     });
 
@@ -132,7 +129,7 @@ export default class UpCommand extends BaseCommand {
       }
     }
 
-    const relevantDescriptors = allDescriptors.filter(descriptor => {
+    const relevantDescriptors = allDescriptors.filter((descriptor) => {
       return relevantIdents.has(descriptor.identHash);
     });
 
@@ -141,21 +138,23 @@ export default class UpCommand extends BaseCommand {
       project.storedResolutions.delete(descriptor.descriptorHash);
     }
 
-    return await project.installWithNewReport({
-      stdout: this.context.stdout,
-    }, {
-      cache,
-      mode: this.mode,
-    });
+    return await project.installWithNewReport(
+      {
+        stdout: this.context.stdout,
+      },
+      {
+        cache,
+        mode: this.mode,
+      },
+    );
   }
 
   async executeUpClassic() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const { project, workspace } = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (!workspace) throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     await project.restoreInstallState({
       restoreResolutions: false,
@@ -166,15 +165,14 @@ export default class UpCommand extends BaseCommand {
 
     const modifier = suggestUtils.getModifier(this, project);
 
-    const strategies = interactive ? [
-      suggestUtils.Strategy.KEEP,
-      suggestUtils.Strategy.REUSE,
-      suggestUtils.Strategy.PROJECT,
-      suggestUtils.Strategy.LATEST,
-    ] : [
-      suggestUtils.Strategy.PROJECT,
-      suggestUtils.Strategy.LATEST,
-    ];
+    const strategies = interactive
+      ? [
+          suggestUtils.Strategy.KEEP,
+          suggestUtils.Strategy.REUSE,
+          suggestUtils.Strategy.PROJECT,
+          suggestUtils.Strategy.LATEST,
+        ]
+      : [suggestUtils.Strategy.PROJECT, suggestUtils.Strategy.LATEST];
 
     const allSuggestionsPromises = [];
     const unreferencedPatterns = [];
@@ -189,14 +187,15 @@ export default class UpCommand extends BaseCommand {
       for (const workspace of project.workspaces) {
         for (const target of [suggestUtils.Target.REGULAR, suggestUtils.Target.DEVELOPMENT]) {
           const descriptors = workspace.manifest.getForScope(target);
-          const stringifiedIdents = [...descriptors.values()].map(descriptor => {
+          const stringifiedIdents = [...descriptors.values()].map((descriptor) => {
             return structUtils.stringifyIdent(descriptor);
           });
 
           // As a special case, we support "*" as a pattern to upgrade all packages
-          const matches = stringifiedPseudoDescriptor === `*`
-            ? stringifiedIdents
-            : micromatch(stringifiedIdents, stringifiedPseudoDescriptor);
+          const matches =
+            stringifiedPseudoDescriptor === `*`
+              ? stringifiedIdents
+              : micromatch(stringifiedIdents, stringifiedPseudoDescriptor);
 
           for (const stringifiedIdent of matches) {
             const ident = structUtils.parseIdent(stringifiedIdent);
@@ -207,14 +206,24 @@ export default class UpCommand extends BaseCommand {
 
             const request = structUtils.makeDescriptor(ident, pseudoDescriptor.range);
 
-            allSuggestionsPromises.push(Promise.resolve().then(async () => {
-              return [
-                workspace,
-                target,
-                existingDescriptor,
-                await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, target, fixed, modifier, strategies}),
-              ] as const;
-            }));
+            allSuggestionsPromises.push(
+              Promise.resolve().then(async () => {
+                return [
+                  workspace,
+                  target,
+                  existingDescriptor,
+                  await suggestUtils.getSuggestedDescriptors(request, {
+                    project,
+                    workspace,
+                    cache,
+                    target,
+                    fixed,
+                    modifier,
+                    strategies,
+                  }),
+                ] as const;
+              }),
+            );
 
             isReferenced = true;
           }
@@ -227,79 +236,95 @@ export default class UpCommand extends BaseCommand {
     }
 
     if (unreferencedPatterns.length > 1)
-      throw new UsageError(`Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by any workspace`);
+      throw new UsageError(
+        `Patterns ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} don't match any packages referenced by any workspace`,
+      );
     if (unreferencedPatterns.length > 0)
-      throw new UsageError(`Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by any workspace`);
+      throw new UsageError(
+        `Pattern ${formatUtils.prettyList(configuration, unreferencedPatterns, formatUtils.Type.CODE)} doesn't match any packages referenced by any workspace`,
+      );
 
     const allSuggestions = await Promise.all(allSuggestionsPromises);
 
-    const checkReport = await LightReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      suggestInstall: false,
-    }, async report => {
-      for (const [/*workspace*/, /*target*/, existing, {suggestions, rejections}] of allSuggestions) {
-        const nonNullSuggestions = suggestions.filter(suggestion => {
-          return suggestion.descriptor !== null;
-        });
+    const checkReport = await LightReport.start(
+      {
+        configuration,
+        stdout: this.context.stdout,
+        suggestInstall: false,
+      },
+      async (report) => {
+        for (const [, , /*workspace*/ /*target*/ existing, { suggestions, rejections }] of allSuggestions) {
+          const nonNullSuggestions = suggestions.filter((suggestion) => {
+            return suggestion.descriptor !== null;
+          });
 
-        if (nonNullSuggestions.length === 0) {
-          const [firstError] = rejections;
-          if (typeof firstError === `undefined`)
-            throw new Error(`Assertion failed: Expected an error to have been set`);
+          if (nonNullSuggestions.length === 0) {
+            const [firstError] = rejections;
+            if (typeof firstError === `undefined`)
+              throw new Error(`Assertion failed: Expected an error to have been set`);
 
-          const prettyError = this.cli.error(firstError);
+            const prettyError = this.cli.error(firstError);
 
-          if (!project.configuration.get(`enableNetwork`)) {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)\n\n${prettyError}`);
-          } else {
-            report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range\n\n${prettyError}`);
+            if (!project.configuration.get(`enableNetwork`)) {
+              report.reportError(
+                MessageName.CANT_SUGGEST_RESOLUTIONS,
+                `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range (note: network resolution has been disabled)\n\n${prettyError}`,
+              );
+            } else {
+              report.reportError(
+                MessageName.CANT_SUGGEST_RESOLUTIONS,
+                `${structUtils.prettyDescriptor(configuration, existing)} can't be resolved to a satisfying range\n\n${prettyError}`,
+              );
+            }
+          } else if (nonNullSuggestions.length > 1 && !interactive) {
+            report.reportError(
+              MessageName.CANT_SUGGEST_RESOLUTIONS,
+              `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`,
+            );
           }
-        } else if (nonNullSuggestions.length > 1 && !interactive) {
-          report.reportError(MessageName.CANT_SUGGEST_RESOLUTIONS, `${structUtils.prettyDescriptor(configuration, existing)} has multiple possible upgrade strategies; use -i to disambiguate manually`);
         }
-      }
-    });
+      },
+    );
 
-    if (checkReport.hasErrors())
-      return checkReport.exitCode();
+    if (checkReport.hasErrors()) return checkReport.exitCode();
 
     let askedQuestions = false;
 
-    const afterWorkspaceDependencyReplacementList: Array<[
-      Workspace,
-      suggestUtils.Target,
-      Descriptor,
-      Descriptor,
-    ]> = [];
+    const afterWorkspaceDependencyReplacementList: Array<[Workspace, suggestUtils.Target, Descriptor, Descriptor]> = [];
 
-    for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {
+    for (const [workspace, target /*existing*/, , { suggestions }] of allSuggestions) {
       let selected: Descriptor;
 
-      const nonNullSuggestions = suggestions.filter(suggestion => {
+      const nonNullSuggestions = suggestions.filter((suggestion) => {
         return suggestion.descriptor !== null;
       }) as Array<suggestUtils.Suggestion>;
 
       const firstSuggestedDescriptor = nonNullSuggestions[0].descriptor;
-      const areAllTheSame = nonNullSuggestions.every(suggestion => structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor));
+      const areAllTheSame = nonNullSuggestions.every((suggestion) =>
+        structUtils.areDescriptorsEqual(suggestion.descriptor, firstSuggestedDescriptor),
+      );
 
       if (nonNullSuggestions.length === 1 || areAllTheSame) {
         selected = firstSuggestedDescriptor;
       } else {
         askedQuestions = true;
-        ({answer: selected} = await prompt<{answer: Descriptor}>({
+        ({ answer: selected } = await prompt<{ answer: Descriptor }>({
           type: `select`,
           name: `answer`,
           message: `Which range do you want to use in ${structUtils.prettyWorkspace(configuration, workspace)} ❯ ${target}?`,
-          choices: suggestions.map(({descriptor, name, reason}) => descriptor ? {
-            name,
-            hint: reason,
-            descriptor,
-          } : {
-            name,
-            hint: reason,
-            disabled: true,
-          }),
+          choices: suggestions.map(({ descriptor, name, reason }) =>
+            descriptor
+              ? {
+                  name,
+                  hint: reason,
+                  descriptor,
+                }
+              : {
+                  name,
+                  hint: reason,
+                  disabled: true,
+                },
+          ),
           onCancel: () => process.exit(130),
           result(name: string) {
             // @ts-expect-error: The enquirer types don't include find
@@ -316,20 +341,12 @@ export default class UpCommand extends BaseCommand {
         throw new Error(`Assertion failed: This descriptor should have a matching entry`);
 
       if (current.descriptorHash !== selected.descriptorHash) {
-        workspace.manifest[target].set(
-          selected.identHash,
-          selected,
-        );
+        workspace.manifest[target].set(selected.identHash, selected);
 
-        afterWorkspaceDependencyReplacementList.push([
-          workspace,
-          target,
-          current,
-          selected,
-        ]);
+        afterWorkspaceDependencyReplacementList.push([workspace, target, current, selected]);
       } else {
         const resolver = configuration.makeResolver();
-        const resolveOptions: MinimalResolveOptions = {project, resolver};
+        const resolveOptions: MinimalResolveOptions = { project, resolver };
 
         const normalizedDependency = configuration.normalizeDependency(current);
         const bound = resolver.bindDescriptor(normalizedDependency, workspace.anchoredLocator, resolveOptions);
@@ -343,14 +360,16 @@ export default class UpCommand extends BaseCommand {
       afterWorkspaceDependencyReplacementList,
     );
 
-    if (askedQuestions)
-      this.context.stdout.write(`\n`);
+    if (askedQuestions) this.context.stdout.write(`\n`);
 
-    return await project.installWithNewReport({
-      stdout: this.context.stdout,
-    }, {
-      cache,
-      mode: this.mode,
-    });
+    return await project.installWithNewReport(
+      {
+        stdout: this.context.stdout,
+      },
+      {
+        cache,
+        mode: this.mode,
+      },
+    );
   }
 }

@@ -1,14 +1,14 @@
-import {Configuration, Plugin, httpUtils} from '@yarnpkg/core';
-import {npath}                            from '@yarnpkg/fslib';
+import { Configuration, Plugin, httpUtils } from "@yarnpkg/core";
+import { npath } from "@yarnpkg/fslib";
 
 describe(`httpUtils`, () => {
   describe(`request`, () => {
     it(`executes a request to the given target using any registered wrapNetworkRequest plugins`, async () => {
       // Arrange
       const target = `https://my/fake/target`;
-      const body = {fake: `body`};
+      const body = { fake: `body` };
 
-      const {plugins, mockWrapNetworkRequest} = getPluginsWithMockWrapNetworkRequestPlugin();
+      const { plugins, mockWrapNetworkRequest } = getPluginsWithMockWrapNetworkRequestPlugin();
 
       const configuration = Configuration.create(npath.toPortablePath(`.`), plugins);
       mockWrapNetworkRequest.mockReturnValue(() => {});
@@ -19,7 +19,7 @@ describe(`httpUtils`, () => {
       const method = httpUtils.Method.PUT;
 
       // Act
-      await httpUtils.request(target, body, {configuration, headers, jsonRequest, jsonResponse, method});
+      await httpUtils.request(target, body, { configuration, headers, jsonRequest, jsonResponse, method });
 
       // Assert
       expect(mockWrapNetworkRequest.mock.calls.length).toBe(1);
@@ -44,6 +44,6 @@ describe(`httpUtils`, () => {
       },
     });
 
-    return {plugins, mockWrapNetworkRequest};
+    return { plugins, mockWrapNetworkRequest };
   }
 });
