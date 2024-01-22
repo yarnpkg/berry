@@ -2018,13 +2018,13 @@ function applyVirtualResolutionMutations({
   };
 
   const resolvePeerDependenciesImpl = (parentDescriptor: Descriptor, parentLocator: Locator, peerSlots: Map<IdentHash, LocatorHash>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
+    if (!optional)
+      optionalBuilds.delete(parentLocator.locatorHash);
+
     if (accessibleLocators.has(parentLocator.locatorHash))
       return;
 
     accessibleLocators.add(parentLocator.locatorHash);
-
-    if (!optional)
-      optionalBuilds.delete(parentLocator.locatorHash);
 
     const parentPackage = allPackages.get(parentLocator.locatorHash);
     if (!parentPackage)
