@@ -80,10 +80,11 @@ export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'>
 // - an in-memory cache, to avoid hitting the disk and the network more than once per process for each package
 // - an on-disk cache, for exact version matches and to avoid refetching the metadata if the resource hasn't changed on the server
 
-const PACKAGE_METADATA_CACHE = new Map<PortablePath, Promise<CachedMetadata | null>>();
+const PACKAGE_DISK_METADATA_CACHE = new Map<PortablePath, Promise<CachedMetadata | null>>();
+const PACKAGE_NETWORK_METADATA_CACHE = new Map<PortablePath, Promise<CachedMetadata | null>>();
 
 async function loadPackageMetadataInfoFromDisk(identPath: PortablePath) {
-  return await miscUtils.getFactoryWithDefault(PACKAGE_METADATA_CACHE, identPath, async () => {
+  return await miscUtils.getFactoryWithDefault(PACKAGE_DISK_METADATA_CACHE, identPath, async () => {
     let cached: CachedMetadata | null = null;
 
     try {
@@ -103,7 +104,7 @@ type LoadPackageMetadataInfoFromNetworkOptions = {
 };
 
 async function loadPackageMetadataInfoFromNetwork(identPath: PortablePath, ident: Ident, {configuration, cached, registry, headers, version, ...rest}: LoadPackageMetadataInfoFromNetworkOptions) {
-  return await miscUtils.getFactoryWithDefault(PACKAGE_METADATA_CACHE, identPath, async () => {
+  return await miscUtils.getFactoryWithDefault(PACKAGE_NETWORK_METADATA_CACHE, identPath, async () => {
     return await get(getIdentUrl(ident), {
       ...rest,
       customErrorMessage: customPackageError,
@@ -137,14 +138,22 @@ async function loadPackageMetadataInfoFromNetwork(identPath: PortablePath, ident
           lastModified: response.headers[`last-modified`],
         };
 
-        // We append the PID because it is guaranteed that this code is only run once per process for a given ident
-        const identPathTemp = `${identPath}-${process.pid}.tmp` as PortablePath;
+        PACKAGE_DISK_METADATA_CACHE.set(identPath, Promise.resolve(metadata));
 
-        await xfs.mkdirPromise(ppath.dirname(identPathTemp), {recursive: true});
-        await xfs.writeJsonPromise(identPathTemp, metadata, {compact: true});
+        // We don't need the cache in this process anymore (since we stored everything in both memory caches),
+        // so we can run the part that writes the cache to disk in the background.
+        Promise.resolve().then(async () => {
+          // We append the PID because it is guaranteed that this code is only run once per process for a given ident
+          const identPathTemp = `${identPath}-${process.pid}.tmp` as PortablePath;
 
-        // Doing a rename is important to ensure the cache is atomic
-        await xfs.renamePromise(identPathTemp, identPath);
+          await xfs.mkdirPromise(ppath.dirname(identPathTemp), {recursive: true});
+          await xfs.writeJsonPromise(identPathTemp, metadata, {compact: true});
+
+          // Doing a rename is important to ensure the cache is atomic
+          await xfs.renamePromise(identPathTemp, identPath);
+        }).catch(() => {
+          // It's not dramatic if the cache can't be written, so we just ignore the error
+        });
 
         return {
           ...response,
