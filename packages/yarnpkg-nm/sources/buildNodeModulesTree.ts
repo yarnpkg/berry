@@ -193,7 +193,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
     const pkg = pnp.getPackageInformation(locator);
     if (pkg) {
       const parentLocatorKey = parentLocator ? stringifyLocator(parentLocator) : ``;
-      if (stringifyLocator(locator) !== parentLocatorKey && pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation)) {
+      if (stringifyLocator(locator) !== parentLocatorKey && pkg.linkType === LinkType.SOFT && !locator.reference.startsWith(`link:`) && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation)) {
         const location = getRealPackageLocation(pkg, locator, pnp);
         const prevLocator = workspaceLikeLocators.get(location);
         // Give workspaces a priority over portals and other protocols pointing to the same location
