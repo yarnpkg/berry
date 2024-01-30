@@ -5023,7 +5023,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.15"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:5.4.0-beta"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5143,7 +5143,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:5.4.0-beta"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5229,7 +5229,7 @@ __metadata:
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
     typedoc: "npm:^0.25.3"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:5.4.0-beta"
     unist-util-visit: "npm:^2"
     unist-util-visit-parents: "npm:^2"
     usehooks-ts: "npm:^2.9.1"
@@ -5339,7 +5339,7 @@ __metadata:
     react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.3.3"
+    typescript: "npm:5.4.0-beta"
   dependenciesMeta:
     core-js:
       built: false
@@ -18202,23 +18202,23 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.3.3":
-  version: 5.3.3
-  resolution: "typescript@npm:5.3.3"
+"typescript@npm:5.4.0-beta":
+  version: 5.4.0-beta
+  resolution: "typescript@npm:5.4.0-beta"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/6e4e6a14a50c222b3d14d4ea2f729e79f972fa536ac1522b91202a9a65af3605c2928c4a790a4a50aa13694d461c479ba92cedaeb1e7b190aadaa4e4b96b8e18
+  checksum: 10/380556e1a843d1649ad1834eeacef491b28cf69951b6b7b41a413a49b15b88777961adff98140c900bef35c6bdcf6df1e09b6ebdff352ca8c3269deb971843b6
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
-  version: 5.3.3
-  resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
+"typescript@patch:typescript@npm%3A5.4.0-beta#optional!builtin<compat/typescript>":
+  version: 5.4.0-beta
+  resolution: "typescript@patch:typescript@npm%3A5.4.0-beta#optional!builtin<compat/typescript>::version=5.4.0-beta&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/c93786fcc9a70718ba1e3819bab56064ead5817004d1b8186f8ca66165f3a2d0100fee91fa64c840dcd45f994ca5d615d8e1f566d39a7470fc1e014dbb4cf15d
+  checksum: 10/7188bd33c638cb19595e122eab95eae608b465873e837ea49df9e46c7a8e9c62e68d67a49e262d628d8c9263959fe92127b5f8cab34509c31b7920b8fcbaad20
   languageName: node
   linkType: hard
 
