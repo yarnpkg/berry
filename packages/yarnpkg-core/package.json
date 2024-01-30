@@ -82,5 +82,6 @@
   },
   "engines": {
     "node": ">=18.12.0"
-  }
+  },
+  "stableVersion": "4.0.3"
 }
