@@ -35348,10 +35348,9 @@ async function copyImpl(prelayout, postlayout, destinationFs, destination, sourc
         updated = await copySymlink(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts);
       }
       break;
-    default:
-      {
-        throw new Error(`Unsupported file type (${sourceStat.mode})`);
-      }
+    default: {
+      throw new Error(`Unsupported file type (${sourceStat.mode})`);
+    }
   }
   if (opts.linkStrategy?.type !== `HardlinkFromIndex` || !sourceStat.isFile()) {
     if (updated || destinationStat?.mtime?.getTime() !== mtime.getTime() || destinationStat?.atime?.getTime() !== atime.getTime()) {
@@ -35414,7 +35413,10 @@ async function copyFolder(prelayout, postlayout, destinationFs, destination, des
 }
 async function copyFileViaIndex(prelayout, postlayout, destinationFs, destination, destinationStat, sourceFs, source, sourceStat, opts, linkStrategy) {
   const sourceHash = await sourceFs.checksumFilePromise(source, { algorithm: `sha1` });
-  const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2), `${sourceHash}.dat`);
+  const defaultMode = 420;
+  const sourceMode = sourceStat.mode & 511;
+  const indexFileName = `${sourceHash}${sourceMode !== defaultMode ? sourceMode.toString(8) : ``}`;
+  const indexPath = destinationFs.pathUtils.join(linkStrategy.indexPath, sourceHash.slice(0, 2), `${indexFileName}.dat`);
   let AtomicBehavior;
   ((AtomicBehavior2) => {
     AtomicBehavior2[AtomicBehavior2["Lock"] = 0] = "Lock";
@@ -35470,8 +35472,12 @@ async function copyFileViaIndex(prelayout, postlayout, destinationFs, destinatio
     }
   });
   postlayout.push(async () => {
-    if (!indexStat)
+    if (!indexStat) {
       await destinationFs.lutimesPromise(indexPath, defaultTime, defaultTime);
+      if (sourceMode !== defaultMode) {
+        await destinationFs.chmodPromise(indexPath, sourceMode);
+      }
+    }
     if (tempPath && !tempPathCleaned) {
       await destinationFs.unlinkPromise(tempPath);
     }
