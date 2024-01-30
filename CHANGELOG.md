@@ -8,7 +8,18 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+## 4.1.0
+
+- Tweaks `-,--verbose` in `yarn workspaces foreach`; `-v` will now only print the prefixes, `-vv` will be necessary to also print the timings.
+- Adds a new `--json` option to `yarn run` when called without script name
+
 - Fixes `node-modules` linker `link:` dependencies mistreatment as inner workspaces, when they point to a parent folder of a workspace
+- Fixes spurious "No candidates found" errors
+- Fixes missing executable permissions when using `nodeLinker: pnpm`
+- Fixes packages being incorrectly flagged as optional
+- Fixes cache key corruptions due to uncontrolled git merges
+- Fixes `yarn version apply --all --dry-run` making unexpected changes
+- Fixes `yarn npm login` when the remote registry is Verdaccio
 
 ## 4.0.1
 
