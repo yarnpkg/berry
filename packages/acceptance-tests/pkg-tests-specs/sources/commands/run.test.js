@@ -1,4 +1,5 @@
 import {ppath, xfs} from '@yarnpkg/fslib';
+import {misc}       from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   for (const [description, args] of [[`with prefix`, [`run`]], [`without prefix`, []]]) {
@@ -155,6 +156,27 @@ describe(`Commands`, () => {
         async ({path, run, source}) => {
           const {code, stdout, stderr} = await run(`run`);
           expect({code, stdout, stderr}).toMatchSnapshot();
+        },
+      ),
+    );
+    test(`it should print the list of available scripts as JSON if no parameters passed to command`,
+      makeTemporaryEnv(
+        {
+          scripts: {
+            foo: `echo hello`,
+            bar: `echo hi`,
+          },
+        },
+        async ({path, run, source}) => {
+          const {stdout} = await run(`run`, `--json`);
+
+          expect(misc.parseJsonStream(stdout)).toEqual([{
+            name: `foo`,
+            script: `echo hello`,
+          }, {
+            name: `bar`,
+            script: `echo hi`,
+          }]);
         },
       ),
     );

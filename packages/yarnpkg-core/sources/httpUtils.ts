@@ -4,7 +4,6 @@ import {Agent as HttpsAgent}                     from 'https';
 import {Agent as HttpAgent, IncomingHttpHeaders} from 'http';
 import micromatch                                from 'micromatch';
 import tunnel, {ProxyOptions}                    from 'tunnel';
-import {URL}                                     from 'url';
 
 import {ConfigurationValueMap, Configuration}    from './Configuration';
 import {MessageName}                             from './MessageName';

@@ -8,6 +8,19 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+## 4.1.0
+
+- Tweaks `-,--verbose` in `yarn workspaces foreach`; `-v` will now only print the prefixes, `-vv` will be necessary to also print the timings.
+- Adds a new `--json` option to `yarn run` when called without script name
+
+- Fixes `node-modules` linker `link:` dependencies mistreatment as inner workspaces, when they point to a parent folder of a workspace
+- Fixes spurious "No candidates found" errors
+- Fixes missing executable permissions when using `nodeLinker: pnpm`
+- Fixes packages being incorrectly flagged as optional
+- Fixes cache key corruptions due to uncontrolled git merges
+- Fixes `yarn version apply --all --dry-run` making unexpected changes
+- Fixes `yarn npm login` when the remote registry is Verdaccio
+
 ## 4.0.1
 
 - Fixes creation of symlinks for `node-modules` linker when inner workspace depends on outer workspace
@@ -719,7 +732,7 @@ yarn set version 2.1.0
 
 - Registry auth settings can now be declared per-scope (they previously had to be per-registry). This will be handy with the GitHub Package Registry model, where each scope may have different access tokens.
 - The configuration file now interpolates the values with the environment variables using the `${name}` syntax (strict by default; use `${name:-default}` to provide a default value).
-- The new `changesetIgnorePatterns` setting can be used to ignore some paths from the changeset detection from `yarn version check` (changes to those paths won't be taken into account when deciding which workspaces need to fresh releases).
+- The new `changesetIgnorePatterns` setting can be used to ignore some paths from the changeset detection from `yarn version check` (changes to those paths won't be taken into account when deciding which workspaces need to fresh releases).
 - The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
 - The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
 - The new `preferTruncatedLines` setting allow you to tell Yarn that it's ok if info and warning messages are truncated to fit in a single line (errors will always wrap as much as needed, and piping Yarn's output will toggle off this behaviour altogether).

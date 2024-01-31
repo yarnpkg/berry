@@ -29,7 +29,7 @@ Zero-installs are the combination of two Yarn features that allow you to skip ha
 
 As we saw, the offline mirror removes your project's dependency on the npm registry by keeping the Yarn cache within the repository. But can we go further, and directly make this cache the actual? The answer is yes!
 
-As long as your project uses [Yarn PnP](/) **and** the offline mirror, all you have to do is add the loader files to Git, and you can forget `yarn install` most of the time. Since the PnP loaders have exactly the same content regardless of the machine that generated them, and since the offline cache will contain all the files that the loaders reference, the `git checkout` calls effectively double as `yarn install` of sort.
+As long as your project uses [Yarn PnP](/features/pnp) **and** the [offline mirror](#offline-mirror), all you have to do is add the loader files to Git, and you can forget `yarn install` most of the time. Since the PnP loaders have exactly the same content regardless of the machine that generated them, and since the offline cache will contain all the files that the loaders reference, the `git checkout` calls effectively double as `yarn install` of sort.
 
 One caveat: adding or removing packages with native dependencies will still require `yarn install` to be run, as such packages depend on files that, unlike Node.js scripts, can't be evaluated directly from within their zip archives. Those packages are quite rare in practice, aren't frequently updated, and Yarn will display an helpful error message should you forget to do it, so this doesn't significantly impact the usefulness of the pattern.
 

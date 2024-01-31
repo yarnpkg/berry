@@ -1,14 +1,13 @@
-import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, IdentHash, hashUtils, Project, miscUtils, Cache} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                                                                            from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                                                                                                  from '@yarnpkg/fslib';
-import {prompt}                                                                                                                              from 'enquirer';
-import pick                                                                                                                                  from 'lodash/pick';
-import semver                                                                                                                                from 'semver';
-import {URL}                                                                                                                                 from 'url';
+import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, hashUtils, Project, miscUtils, Cache} from '@yarnpkg/core';
+import {MessageName, ReportError}                                                                                                 from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs}                                                                                       from '@yarnpkg/fslib';
+import {prompt}                                                                                                                   from 'enquirer';
+import pick                                                                                                                       from 'lodash/pick';
+import semver                                                                                                                     from 'semver';
 
-import {Hooks}                                                                                                                               from './index';
-import * as npmConfigUtils                                                                                                                   from './npmConfigUtils';
-import {MapLike}                                                                                                                             from './npmConfigUtils';
+import {Hooks}                                                                                                                    from './index';
+import * as npmConfigUtils                                                                                                        from './npmConfigUtils';
+import {MapLike}                                                                                                                  from './npmConfigUtils';
 
 export enum AuthType {
   NO_AUTH,
@@ -81,74 +80,31 @@ export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'>
 // - an in-memory cache, to avoid hitting the disk and the network more than once per process for each package
 // - an on-disk cache, for exact version matches and to avoid refetching the metadata if the resource hasn't changed on the server
 
-const PACKAGE_METADATA_CACHE = new Map<IdentHash, Promise<PackageMetadata> | PackageMetadata>();
+const PACKAGE_DISK_METADATA_CACHE = new Map<PortablePath, Promise<CachedMetadata | null>>();
+const PACKAGE_NETWORK_METADATA_CACHE = new Map<PortablePath, Promise<CachedMetadata | null>>();
 
-/**
- * Caches and returns the package metadata for the given ident.
- *
- * Note: This function only caches and returns specific fields from the metadata.
- * If you need other fields, use the uncached {@link get} or consider whether it would make more sense to extract
- * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
- */
-export async function getPackageMetadata(ident: Ident, {cache, project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
-  return await miscUtils.getFactoryWithDefault(PACKAGE_METADATA_CACHE, ident.identHash, async () => {
-    const {configuration} = project;
-
-    registry = normalizeRegistry(configuration, {ident, registry});
-
-    const registryFolder = getRegistryFolder(configuration, registry);
-    const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
-
+async function loadPackageMetadataInfoFromDisk(identPath: PortablePath) {
+  return await miscUtils.getFactoryWithDefault(PACKAGE_DISK_METADATA_CACHE, identPath, async () => {
     let cached: CachedMetadata | null = null;
 
-    // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
-    // since most likely the user is trying to validate the metadata using hardened mode.
-    if (!project.lockfileNeedsRefresh) {
-      try {
-        cached = await xfs.readJsonPromise(identPath) as CachedMetadata;
-      } catch {}
+    try {
+      cached = await xfs.readJsonPromise(identPath) as CachedMetadata;
+    } catch {}
 
-      if (cached) {
-        if (typeof version !== `undefined` && typeof cached.metadata.versions[version] !== `undefined`)
-          return cached.metadata;
+    return cached;
+  });
+}
 
-        if (configuration.get(`enableOfflineMode`)) {
-          const copy = structuredClone(cached.metadata);
-          const deleted = new Set();
+type LoadPackageMetadataInfoFromNetworkOptions = {
+  configuration: Configuration;
+  cached: CachedMetadata | null;
+  registry: string;
+  headers?: {[key: string]: string | undefined};
+  version?: string;
+};
 
-          if (cache) {
-            for (const version of Object.keys(copy.versions)) {
-              const locator = structUtils.makeLocator(ident, `npm:${version}`);
-              const mirrorPath = cache.getLocatorMirrorPath(locator);
-
-              if (!mirrorPath || !xfs.existsSync(mirrorPath)) {
-                delete copy.versions[version];
-                deleted.add(version);
-              }
-            }
-
-            const latest = copy[`dist-tags`].latest;
-            if (deleted.has(latest)) {
-              const allVersions = Object.keys(cached.metadata.versions)
-                .sort(semver.compare);
-
-              let latestIndex = allVersions.indexOf(latest);
-              while (deleted.has(allVersions[latestIndex]) && latestIndex >= 0)
-                latestIndex -= 1;
-
-              if (latestIndex >= 0) {
-                copy[`dist-tags`].latest = allVersions[latestIndex];
-              } else {
-                delete copy[`dist-tags`].latest;
-              }
-            }
-          }
-
-          return copy;
-        }
-      }
-    }
-
+async function loadPackageMetadataInfoFromNetwork(identPath: PortablePath, ident: Ident, {configuration, cached, registry, headers, version, ...rest}: LoadPackageMetadataInfoFromNetworkOptions) {
+  return await miscUtils.getFactoryWithDefault(PACKAGE_NETWORK_METADATA_CACHE, identPath, async () => {
     return await get(getIdentUrl(ident), {
       ...rest,
       customErrorMessage: customPackageError,
@@ -176,22 +132,28 @@ export async function getPackageMetadata(ident: Ident, {cache, project, registry
 
         const packageMetadata = pickPackageMetadata(JSON.parse(response.body.toString()));
 
-        PACKAGE_METADATA_CACHE.set(ident.identHash, packageMetadata);
-
         const metadata: CachedMetadata = {
           metadata: packageMetadata,
           etag: response.headers.etag,
           lastModified: response.headers[`last-modified`],
         };
 
-        // We append the PID because it is guaranteed that this code is only run once per process for a given ident
-        const identPathTemp = `${identPath}-${process.pid}.tmp` as PortablePath;
+        PACKAGE_DISK_METADATA_CACHE.set(identPath, Promise.resolve(metadata));
 
-        await xfs.mkdirPromise(registryFolder, {recursive: true});
-        await xfs.writeJsonPromise(identPathTemp, metadata, {compact: true});
+        // We don't need the cache in this process anymore (since we stored everything in both memory caches),
+        // so we can run the part that writes the cache to disk in the background.
+        Promise.resolve().then(async () => {
+          // We append the PID because it is guaranteed that this code is only run once per process for a given ident
+          const identPathTemp = `${identPath}-${process.pid}.tmp` as PortablePath;
 
-        // Doing a rename is important to ensure the cache is atomic
-        await xfs.renamePromise(identPathTemp, identPath);
+          await xfs.mkdirPromise(ppath.dirname(identPathTemp), {recursive: true});
+          await xfs.writeJsonPromise(identPathTemp, metadata, {compact: true});
+
+          // Doing a rename is important to ensure the cache is atomic
+          await xfs.renamePromise(identPathTemp, identPath);
+        }).catch(() => {
+          // It's not dramatic if the cache can't be written, so we just ignore the error
+        });
 
         return {
           ...response,
@@ -199,6 +161,83 @@ export async function getPackageMetadata(ident: Ident, {cache, project, registry
         };
       },
     });
+  });
+}
+
+/**
+ * Caches and returns the package metadata for the given ident.
+ *
+ * Note: This function only caches and returns specific fields from the metadata.
+ * If you need other fields, use the uncached {@link get} or consider whether it would make more sense to extract
+ * the fields from the on-disk packages using the linkers or from the fetch results using the fetchers.
+ */
+export async function getPackageMetadata(ident: Ident, {cache, project, registry, headers, version, ...rest}: GetPackageMetadataOptions): Promise<PackageMetadata> {
+  const {configuration} = project;
+
+  registry = normalizeRegistry(configuration, {ident, registry});
+
+  const registryFolder = getRegistryFolder(configuration, registry);
+  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
+
+  let cached: CachedMetadata | null = null;
+
+  // We bypass the on-disk cache for security reasons if the lockfile needs to be refreshed,
+  // since most likely the user is trying to validate the metadata using hardened mode.
+  if (!project.lockfileNeedsRefresh) {
+    cached = await loadPackageMetadataInfoFromDisk(identPath);
+
+    if (cached) {
+      if (typeof version !== `undefined` && typeof cached.metadata.versions[version] !== `undefined`)
+        return cached.metadata;
+
+
+      // If in offline mode, we change the metadata to pretend that the only versions available
+      // on the registry are the ones currently stored in our cache. This is to avoid the resolver
+      // to try to resolve to a version that we wouldn't be able to download.
+      if (configuration.get(`enableOfflineMode`)) {
+        const copy = structuredClone(cached.metadata);
+        const deleted = new Set();
+
+        if (cache) {
+          for (const version of Object.keys(copy.versions)) {
+            const locator = structUtils.makeLocator(ident, `npm:${version}`);
+            const mirrorPath = cache.getLocatorMirrorPath(locator);
+
+            if (!mirrorPath || !xfs.existsSync(mirrorPath)) {
+              delete copy.versions[version];
+              deleted.add(version);
+            }
+          }
+
+          const latest = copy[`dist-tags`].latest;
+          if (deleted.has(latest)) {
+            const allVersions = Object.keys(cached.metadata.versions)
+              .sort(semver.compare);
+
+            let latestIndex = allVersions.indexOf(latest);
+            while (deleted.has(allVersions[latestIndex]) && latestIndex >= 0)
+              latestIndex -= 1;
+
+            if (latestIndex >= 0) {
+              copy[`dist-tags`].latest = allVersions[latestIndex];
+            } else {
+              delete copy[`dist-tags`].latest;
+            }
+          }
+        }
+
+        return copy;
+      }
+    }
+  }
+
+  return await loadPackageMetadataInfoFromNetwork(identPath, ident, {
+    ...rest,
+    configuration,
+    cached,
+    registry,
+    headers,
+    version,
   });
 }
 
