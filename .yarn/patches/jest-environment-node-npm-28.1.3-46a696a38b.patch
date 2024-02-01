@@ -1,0 +1,13 @@
+diff --git a/build/index.js b/build/index.js
+index 3c0fb4aeec446cd49ae74262620c629dae962f0d..293191019f776a43fe8ce3613ad071ae5a47649a 100644
+--- a/build/index.js
++++ b/build/index.js
+@@ -111,7 +111,7 @@ class NodeEnvironment {
+               configurable: descriptor.configurable,
+               enumerable: descriptor.enumerable,
+               value: val,
+-              writable: descriptor.writable
++              writable: descriptor.writable === true || nodeGlobalsKey === 'performance'
+             });
+             return val;
+           },

@@ -27829,7 +27829,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["glob", "npm:7.1.7"],\
             ["graceful-fs", "npm:4.2.11"],\
             ["jest-circus", "npm:28.1.3"],\
-            ["jest-environment-node", "npm:28.1.3"],\
+            ["jest-environment-node", "patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::version=28.1.3&hash=ced26a&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["jest-get-type", "npm:28.0.2"],\
             ["jest-regex-util", "npm:28.0.2"],\
             ["jest-resolve", "npm:28.1.3"],\
@@ -27866,7 +27866,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["glob", "npm:7.1.7"],\
             ["graceful-fs", "npm:4.2.11"],\
             ["jest-circus", "npm:28.1.3"],\
-            ["jest-environment-node", "npm:28.1.3"],\
+            ["jest-environment-node", "patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::version=28.1.3&hash=ced26a&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["jest-get-type", "npm:28.0.2"],\
             ["jest-regex-util", "npm:28.0.2"],\
             ["jest-resolve", "npm:28.1.3"],\
@@ -27948,10 +27948,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["jest-environment-node", [\
-        ["npm:28.1.3", {\
-          "packageLocation": "./.yarn/cache/jest-environment-node-npm-28.1.3-46a696a38b-1048fe306a.zip/node_modules/jest-environment-node/",\
+        ["patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::version=28.1.3&hash=ced26a&locator=%40yarnpkg%2Fmonorepo%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/jest-environment-node-patch-3bebd090f1-8a482735a7.zip/node_modules/jest-environment-node/",\
           "packageDependencies": [\
-            ["jest-environment-node", "npm:28.1.3"],\
+            ["jest-environment-node", "patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::version=28.1.3&hash=ced26a&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["@jest/environment", "npm:28.1.3"],\
             ["@jest/fake-timers", "npm:28.1.3"],\
             ["@jest/types", "npm:28.1.3"],\
@@ -28189,7 +28189,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["emittery", "npm:0.10.2"],\
             ["graceful-fs", "npm:4.2.11"],\
             ["jest-docblock", "npm:28.1.1"],\
-            ["jest-environment-node", "npm:28.1.3"],\
+            ["jest-environment-node", "patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::version=28.1.3&hash=ced26a&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."],\
             ["jest-haste-map", "npm:28.1.3"],\
             ["jest-leak-detector", "npm:28.1.3"],\
             ["jest-message-util", "npm:28.1.3"],\

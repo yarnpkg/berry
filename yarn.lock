@@ -16381,7 +16381,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-node@npm:^28.1.3":
+"jest-environment-node@npm:28.1.3":
   version: 28.1.3
   resolution: "jest-environment-node@npm:28.1.3"
   dependencies:
@@ -16392,6 +16392,20 @@ __metadata:
     jest-mock: ^28.1.3
     jest-util: ^28.1.3
   checksum: 1048fe306a6a8b0880a4c66278ebb57479f29c12cff89aab3aa79ab77a8859cf17ab8aa9919fd21c329a7db90e35581b43664e694ad453d5b04e00f3c6420469
+  languageName: node
+  linkType: hard
+
+"jest-environment-node@patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::locator=%40yarnpkg%2Fmonorepo%40workspace%3A.":
+  version: 28.1.3
+  resolution: "jest-environment-node@patch:jest-environment-node@npm%3A28.1.3#./.yarn/patches/jest-environment-node-npm-28.1.3-46a696a38b.patch::version=28.1.3&hash=ced26a&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."
+  dependencies:
+    "@jest/environment": ^28.1.3
+    "@jest/fake-timers": ^28.1.3
+    "@jest/types": ^28.1.3
+    "@types/node": "*"
+    jest-mock: ^28.1.3
+    jest-util: ^28.1.3
+  checksum: 8a482735a77ff27355fe0bca5127502b15df9bb9cf7f2b36ae860347e8b8ff8357206f6993e3b0f6a25c2cb20a2df23359212247cf2930ee370a3f0dbb9075c2
   languageName: node
   linkType: hard
 
