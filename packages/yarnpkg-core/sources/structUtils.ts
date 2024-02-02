@@ -665,7 +665,7 @@ export function stringifyLocator(locator: Locator) {
  */
 export function slugifyIdent(ident: Ident) {
   if (ident.scope !== null) {
-    return `@${ident.scope}-${ident.name}`;
+    return `@${ident.scope}_${ident.name}`;
   } else {
     return ident.name;
   }
