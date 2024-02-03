@@ -5023,7 +5023,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.15.15"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.3.1-rc"
+    typescript: "npm:5.4.0-beta"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5143,7 +5143,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.3.1-rc"
+    typescript: "npm:5.4.0-beta"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5229,7 +5229,7 @@ __metadata:
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
     typedoc: "npm:^0.25.3"
-    typescript: "npm:5.3.0-beta"
+    typescript: "npm:5.4.0-beta"
     unist-util-visit: "npm:^2"
     unist-util-visit-parents: "npm:^2"
     usehooks-ts: "npm:^2.9.1"
@@ -5339,7 +5339,7 @@ __metadata:
     react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:5.3.1-rc"
+    typescript: "npm:5.4.0-beta"
   dependenciesMeta:
     core-js:
       built: false
@@ -18202,43 +18202,23 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.3.0-beta":
-  version: 5.3.0-beta
-  resolution: "typescript@npm:5.3.0-beta"
+"typescript@npm:5.4.0-beta":
+  version: 5.4.0-beta
+  resolution: "typescript@npm:5.4.0-beta"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/6de8258af991d3a8dff20f864bb87dcdd0f753a9b37239385754cee6c3cf6b70b20d109c970dadc87d4f49c53bbc2b77dabd29bb01c0076affb03724ed5f3c65
+  checksum: 10/380556e1a843d1649ad1834eeacef491b28cf69951b6b7b41a413a49b15b88777961adff98140c900bef35c6bdcf6df1e09b6ebdff352ca8c3269deb971843b6
   languageName: node
   linkType: hard
 
-"typescript@npm:5.3.1-rc":
-  version: 5.3.1-rc
-  resolution: "typescript@npm:5.3.1-rc"
+"typescript@patch:typescript@npm%3A5.4.0-beta#optional!builtin<compat/typescript>":
+  version: 5.4.0-beta
+  resolution: "typescript@patch:typescript@npm%3A5.4.0-beta#optional!builtin<compat/typescript>::version=5.4.0-beta&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/72d656ff516f9feceffcb62f84b9d401c90389ad18d7a7126d67020df2621b7b68d59aec07ad96327749a1b0190f1b18e4d7e5e1eaee09bffde183699f92a13a
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>":
-  version: 5.3.0-beta
-  resolution: "typescript@patch:typescript@npm%3A5.3.0-beta#optional!builtin<compat/typescript>::version=5.3.0-beta&hash=29ae49"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10/d0be2329d190d33592e53ddff064a17b4d0c2614e2749ec58eb629d575825c4f1427619a9c0d64dfb6b831e7fb8eb9f8084b5146ee8148efabd5e04382d201a3
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A5.3.1-rc#optional!builtin<compat/typescript>":
-  version: 5.3.1-rc
-  resolution: "typescript@patch:typescript@npm%3A5.3.1-rc#optional!builtin<compat/typescript>::version=5.3.1-rc&hash=e012d7"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10/7f15bd5095e38645991fc6ec6d34fa8c13c1ab245653e8cb0a9f8139a70d758c1a086d00538a2f4ec127834dd838428816e1ab954dccf6c62c884bd69a638e92
+  checksum: 10/7188bd33c638cb19595e122eab95eae608b465873e837ea49df9e46c7a8e9c62e68d67a49e262d628d8c9263959fe92127b5f8cab34509c31b7920b8fcbaad20
   languageName: node
   linkType: hard
 
