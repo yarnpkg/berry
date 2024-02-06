@@ -23,6 +23,6 @@ The hardened mode can be set (or disabled) using either the `enableHardenedMode`
 
 Under this mode, Yarn will automatically enable the `--check-resolutions` and `--refresh-lockfile` flags when running `yarn install`, which should protect you against most attacks caused by [lockfile poisoning](https://snyk.io/blog/why-npm-lockfiles-can-be-a-security-blindspot-for-injecting-malicious-modules/), at the cost of a little bit of install speed.
 
-:::warning
+:::danger
 The hardened mode makes installs significantly slower as Yarn has to query the registry to make sure the information contained in the lockfile are accurate. If your CI pipeline runs multiple jobs, we recommend disabling the hardened mode in all but one of them so as to limit the performance impact.
 :::

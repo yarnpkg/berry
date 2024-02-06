@@ -6,6 +6,8 @@ description: Yarn's in-depth installation guide.
 sidebar_position: 2
 ---
 
+import {CommandLineHighlight} from '@site/src/components/CommandLineHighlight.tsx';
+
 :::tip
 
 The preferred way to manage Yarn is by-project and through [Corepack](/corepack), a tool shipped by default with Node.js. Modern releases of Yarn aren't meant to be installed globally, or from npm.
@@ -51,6 +53,6 @@ It accepts a `--branch` flag which you can use to test specific PRs:
 yarn set version from sources --branch 1211
 ```
 
-:::caution
+:::warning
 Unlike the stable and canary channels, the `yarn set version from sources` command can't leverage Corepack and will need to store the Yarn binary inside the `.yarn/releases` folder and reference it from your project's `.yarnrc.yml` file.
 :::
