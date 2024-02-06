@@ -7617,15 +7617,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@vscode/codicons", [\
-      ["npm:0.0.33", {\
-        "packageLocation": "./.yarn/cache/@vscode-codicons-npm-0.0.33-7699cffa69-34b4ca3d79.zip/node_modules/@vscode/codicons/",\
-        "packageDependencies": [\
-          ["@vscode/codicons", "npm:0.0.33"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@webassemblyjs/ast", [\
       ["npm:1.11.6", {\
         "packageLocation": "./.yarn/cache/@webassemblyjs-ast-npm-1.11.6-d3fd2bb49a-4c1303971c.zip/node_modules/@webassemblyjs/ast/",\
@@ -8889,7 +8880,6 @@ const RAW_RUNTIME_STATE =
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
           ["cross-spawn", "npm:7.0.3"],\
-          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"],\
           ["dompurify", "npm:3.0.5"],\
           ["esbuild-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.20.0"],\
           ["fast-glob", "npm:3.2.12"],\
@@ -21691,54 +21681,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["doctrine", "npm:3.0.0"],\
           ["esutils", "npm:2.0.2"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["docusaurus-plugin-typedoc-api", [\
-      ["patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0", {\
-        "packageLocation": "./.yarn/cache/docusaurus-plugin-typedoc-api-patch-c12a7f739c-a52a91cefa.zip/node_modules/docusaurus-plugin-typedoc-api/",\
-        "packageDependencies": [\
-          ["docusaurus-plugin-typedoc-api", "patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
-      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0", {\
-        "packageLocation": "./.yarn/__virtual__/docusaurus-plugin-typedoc-api-virtual-37d4103367/0/cache/docusaurus-plugin-typedoc-api-patch-c12a7f739c-a52a91cefa.zip/node_modules/docusaurus-plugin-typedoc-api/",\
-        "packageDependencies": [\
-          ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A3.0.1#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-3.0.1-7dd061feb2.patch::version=3.0.1&hash=2fc7b0"],\
-          ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
-          ["@docusaurus/mdx-loader", "virtual:9826341132ae5dbb1ddb6e2e81962286d991c1953ff9179430466f50cb662ee23e73f6b1b88ed04176b42d83dfb45a44fc458d5948cffa817bac8653694aa6c2#patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/@docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch::version=2.4.3&hash=9c6d0d"],\
-          ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
-          ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.4.3"],\
-          ["@docusaurus/types", "virtual:1032d63fb281bf780ba23ab422caa9a96e3b896a94b98df8200cda4953b63bfb12abe076ff1da556075f136e9166f70e97a1a4deca2e015af037bb9a2851fe46#npm:2.4.3"],\
-          ["@docusaurus/utils", "virtual:60b74811600036d9bec15c3f0f4350f202474581c6a024054e3d88aefca416aea658fd75c1181b708a15bec695dec91bd00d5d2c7893d76f221cbc41f4bde91a#npm:2.4.3"],\
-          ["@types/docusaurus__core", null],\
-          ["@types/docusaurus__plugin-content-docs", null],\
-          ["@types/react", "npm:16.9.2"],\
-          ["@types/react-dom", null],\
-          ["@types/typedoc", null],\
-          ["@types/typescript", null],\
-          ["@vscode/codicons", "npm:0.0.33"],\
-          ["marked", "npm:4.3.0"],\
-          ["react", "npm:17.0.2"],\
-          ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.0.2"],\
-          ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.3"],\
-          ["typescript", "patch:typescript@npm%3A5.4.1-rc#optional!builtin<compat/typescript>::version=5.4.1-rc&hash=5adc0c"]\
-        ],\
-        "packagePeers": [\
-          "@docusaurus/core",\
-          "@docusaurus/plugin-content-docs",\
-          "@types/docusaurus__core",\
-          "@types/docusaurus__plugin-content-docs",\
-          "@types/react-dom",\
-          "@types/react",\
-          "@types/typedoc",\
-          "@types/typescript",\
-          "react-dom",\
-          "react",\
-          "typedoc",\
-          "typescript"\
         ],\
         "linkType": "HARD"\
       }]\
