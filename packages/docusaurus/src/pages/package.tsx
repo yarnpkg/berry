@@ -16,7 +16,7 @@ import {useLocalStorage}                                                        
 
 import {usePackageInfo, useReleaseFile, useReleaseInfo, useReleaseReadme, useResolvedVersion}                                                                                     from '../lib/npmTools';
 import {Check, checks}                                                                                                                                                            from '../lib/packageChecks';
-import Layout                                                                                                                                                                     from '../theme/DocPage/Layout/index';
+import Layout                                                                                                                                                                     from '../theme/DocRoot/Layout/index';
 
 import styles                                                                                                                                                                     from './package.module.css';
 

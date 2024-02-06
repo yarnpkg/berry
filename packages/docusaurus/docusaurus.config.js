@@ -10,8 +10,7 @@ const path = require(`path`);
 const {YarnVersion} = require(`@yarnpkg/core`);
 
 const fastGlob = require(`fast-glob`);
-const lightCodeTheme = require(`prism-react-renderer/themes/github`);
-const darkCodeTheme = require(`prism-react-renderer/themes/dracula`);
+const {themes} = require(`prism-react-renderer`);
 
 const {miscUtils} = require(`@yarnpkg/core`);
 
@@ -189,8 +188,9 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Yarn Contributors, Inc. Built with Docusaurus.`,
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        theme: themes.github,
+        darkTheme: themes.dracula,
+        additionalLanguages: [`bash`, `json`],
       },
     }),
 };

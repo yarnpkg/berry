@@ -38,7 +38,7 @@ For portability reasons, all paths inside of the manifests:
 - must use the unix path format (`/` as separators).
 - must be relative to the manifest folder (so they are the same regardless of the location of the project on disk).
 
-:::caution
+:::warning
 All algorithms in this specification assume that paths have been normalized according to these two rules.
 :::
 
@@ -101,10 +101,10 @@ You may notice that various places use arrays of tuples in place of maps. This i
 :::
 
 import pnpSchema from '@yarnpkg/docusaurus/static/configuration/pnp.json';
-import theme     from 'prism-react-renderer/themes/vsDark';
+import {themes}  from 'prism-react-renderer';
 import {JsonDoc} from 'react-json-doc';
 
-<JsonDoc theme={theme} extraTheme={{
+<JsonDoc theme={themes.vsDark} extraTheme={{
   container: {borderRadius: `var(--ifm-code-border-radius)`},
   inactiveHeader: {},
   activeHeader: {borderRadius: `var(--ifm-code-border-radius)`, background: `#3d437c`},

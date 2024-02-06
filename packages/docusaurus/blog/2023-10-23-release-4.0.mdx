@@ -43,7 +43,7 @@ Together, those checks will prevent any attacker from surreptitiously modifying 
 The Hardened Mode is enabled by toggling on `enableHardenedMode`, but it's also automatically enabled when Yarn detects that it runs within a GitHub pull request on a public repository. This can be disabled by explicitly toggling off `enableHardenedMode` in your yarnrc file.
 :::
 
-:::caution
+:::warning
 Installs operating under Hardened Mode constraints are significantly slower than usual as they need to perform many network requests that would be skipped otherwise. We don't recommend enabling it by default - if you need it in a specific CI job, toggle it on via an environment variable:
 
 ```bash
@@ -63,7 +63,7 @@ As a result, Prolog constraints are deprecated starting from Yarn 4, and **they 
 The new optional `enableConstraintsChecks` setting will make Yarn run your constraints as part of `yarn install`. It's a handy way to surface errors before having to wait for the remote CI to raise them, and since the new engine is so fast, it has almost no impact on your install time 🚀
 :::
 
-## TypeScript Integration, Interactive Tools, ... 
+## TypeScript Integration, Interactive Tools, ...
 
 Various features in Yarn used to be shipped as sideloaded plugins that needed to be managed separately from the main bundle. While this helped us build a plugin ecosystem, it also proved challenging to manage for our users. We implemented some features to make that easier (auto-upgrade plugins when you auto-update Yarn), but in the end the few KiBs we gained by not shipping all the features by default weren't worth the confusion and friction they caused.
 

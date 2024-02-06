@@ -14,7 +14,7 @@
     "@types/jest": "^28.1.6",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^18.17.15",
-    "@types/react": "^16.8.0",
+    "@types/react": "^18.2.54",
     "@types/semver": "^7.1.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
@@ -32,8 +32,7 @@
   },
   "resolutions": {
     "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
-    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
-    "@docusaurus/mdx-loader": "patch:@docusaurus/mdx-loader@npm%3A2.4.3#~/.yarn/patches/%40docusaurus-mdx-loader-npm-2.4.3-0d95b4751a.patch"
+    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -79,11 +78,11 @@
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@mdx-js/react": "^1.6.22",
+    "@mdx-js/react": "^3.0.0",
     "@yarnpkg/types": "workspace:^",
     "chalk": "^3.0.0",
     "micromatch": "^4.0.2",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "semver": "^7.1.2"
   }
 }
