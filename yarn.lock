@@ -6802,6 +6802,7 @@ __metadata:
     clsx: "npm:^1.2.1"
     cross-spawn: "npm:7.0.3"
     dompurify: "npm:^3.0.5"
+    esast-util-from-js: "npm:^2.0.1"
     esbuild-loader: "npm:^2.20.0"
     fast-glob: "npm:^3.2.2"
     git-url-parse: "npm:^13.1.0"
@@ -6812,6 +6813,7 @@ __metadata:
     markdown-it-br: "npm:^1.0.0"
     marked: "npm:^5.1.1"
     marked-base-url: "npm:^1.0.1"
+    mdast-util-mdx-jsx: "npm:^3.0.0"
     monaco-editor: "npm:^0.24.0"
     os-browserify: "npm:^0.3.0"
     pako: "npm:^2.0.4"
@@ -10760,6 +10762,30 @@ __metadata:
     d: "npm:^1.0.1"
     ext: "npm:^1.1.2"
   checksum: 10/b404e5ecae1a076058aa2ba2568d87e2cb4490cb1130784b84e7b4c09c570b487d4f58ed685a08db8d350bd4916500dd3d623b26e6b3520841d30d2ebb152f8d
+  languageName: node
+  linkType: hard
+
+"esast-util-from-estree@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "esast-util-from-estree@npm:2.0.0"
+  dependencies:
+    "@types/estree-jsx": "npm:^1.0.0"
+    devlop: "npm:^1.0.0"
+    estree-util-visit: "npm:^2.0.0"
+    unist-util-position-from-estree: "npm:^2.0.0"
+  checksum: 10/b11a13df70e51e0306a8097d691eb2dbde52388bb4d29f89c080fccd00c9fb22a624fad8683ca2ce01761cbf289d3fd480852aec8f5e5a3f0a2abd30aa8dfbe7
+  languageName: node
+  linkType: hard
+
+"esast-util-from-js@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "esast-util-from-js@npm:2.0.1"
+  dependencies:
+    "@types/estree-jsx": "npm:^1.0.0"
+    acorn: "npm:^8.0.0"
+    esast-util-from-estree: "npm:^2.0.0"
+    vfile-message: "npm:^4.0.0"
+  checksum: 10/ad3ff18de45d981a19ae35ecd7f47a2954399c2d901f3d9f22ab58309c327215b6e2e39f9c0a8ff58d3fd0435fe81a3ff4257754e1a12bdc590a0b68c9d6e085
   languageName: node
   linkType: hard
 
