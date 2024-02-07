@@ -84,6 +84,20 @@ yarn dlx @yarnpkg/sdks base
                 (setq lsp-clients-typescript-server-args `("--tsserver-path" ,(concat project-directory ".yarn/sdks/typescript/bin/tsserver") "--stdio")))))))
 ```
 
+If, rather than LSP, you are using `eglot` (either bundled with Emacs 29.1 and later versions, or installed separately), your `.dir-locals.el` should instead read
+
+```lisp
+((typescript-ts-mode
+  . ((eglot-server-programs
+      . (((tsx-ts-mode typescript-ts-mode typescript-mode)
+          . (lambda (&rest ignored)
+              (let* ((project-directory (car (dir-locals-find-file default-directory)))
+                     (tsserver-path (concat project-directory ".yarn/sdks/typescript/bin/tsserver")))
+                `("typescript-language-server" "--stdio"
+                  :initializationOptions
+                  (:tserver (:path ,tsserver-path)))))))))))
+```
+
 ### Neovim Native LSP
 
 1. Install [vim-rzip](https://github.com/lbrayner/vim-rzip)
