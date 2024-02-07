@@ -11730,6 +11730,7 @@ const RAW_RUNTIME_STATE =
           ["clsx", "npm:1.2.1"],\
           ["cross-spawn", "npm:7.0.3"],\
           ["dompurify", "npm:3.0.5"],\
+          ["esast-util-from-js", "npm:2.0.1"],\
           ["esbuild-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.20.0"],\
           ["fast-glob", "npm:3.2.12"],\
           ["git-url-parse", "npm:13.1.0"],\
@@ -11740,6 +11741,7 @@ const RAW_RUNTIME_STATE =
           ["markdown-it-br", "npm:1.0.0"],\
           ["marked", "npm:5.1.1"],\
           ["marked-base-url", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.0.1"],\
+          ["mdast-util-mdx-jsx", "npm:3.0.0"],\
           ["monaco-editor", "npm:0.24.0"],\
           ["os-browserify", "npm:0.3.0"],\
           ["pako", "npm:2.0.4"],\
@@ -25456,6 +25458,32 @@ const RAW_RUNTIME_STATE =
           ["es6-symbol", "npm:3.1.3"],\
           ["d", "npm:1.0.1"],\
           ["ext", "npm:1.4.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["esast-util-from-estree", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "./.yarn/cache/esast-util-from-estree-npm-2.0.0-8748618571-b11a13df70.zip/node_modules/esast-util-from-estree/",\
+        "packageDependencies": [\
+          ["esast-util-from-estree", "npm:2.0.0"],\
+          ["@types/estree-jsx", "npm:1.0.4"],\
+          ["devlop", "npm:1.1.0"],\
+          ["estree-util-visit", "npm:2.0.0"],\
+          ["unist-util-position-from-estree", "npm:2.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["esast-util-from-js", [\
+      ["npm:2.0.1", {\
+        "packageLocation": "./.yarn/cache/esast-util-from-js-npm-2.0.1-90f741062d-ad3ff18de4.zip/node_modules/esast-util-from-js/",\
+        "packageDependencies": [\
+          ["esast-util-from-js", "npm:2.0.1"],\
+          ["@types/estree-jsx", "npm:1.0.4"],\
+          ["acorn", "npm:8.11.3"],\
+          ["esast-util-from-estree", "npm:2.0.0"],\
+          ["vfile-message", "npm:4.0.2"]\
         ],\
         "linkType": "HARD"\
       }]\

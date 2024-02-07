@@ -92,8 +92,10 @@
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "ansi-to-html": "^0.7.2",
+    "esast-util-from-js": "^2.0.1",
     "esbuild-loader": "^2.20.0",
     "fast-glob": "^3.2.2",
+    "mdast-util-mdx-jsx": "^3.0.0",
     "typedoc": "^0.25.3",
     "typescript": "5.4.1-rc"
   },

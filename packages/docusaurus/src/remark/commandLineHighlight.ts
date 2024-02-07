@@ -1,9 +1,11 @@
-import {YarnCli, getCli}   from '@yarnpkg/cli';
-import {parseShell}        from '@yarnpkg/parsers';
-import {Definition, Token} from 'clipanion';
-import {capitalize}        from 'lodash';
-import visit               from 'unist-util-visit-parents';
-import {pathToFileURL}     from 'url';
+import {YarnCli, getCli}        from '@yarnpkg/cli';
+import {parseShell}             from '@yarnpkg/parsers';
+import {Definition, Token}      from 'clipanion';
+import {fromJs}                 from 'esast-util-from-js';
+import {capitalize}             from 'lodash';
+import type {MdxJsxFlowElement} from 'mdast-util-mdx-jsx';
+import visit                    from 'unist-util-visit-parents';
+import {pathToFileURL}          from 'url';
 
 export type ScriptLine =
   | RawLine
@@ -161,9 +163,11 @@ export const plugin = () => () => {
       if (lines.some(line => line === null))
         return;
 
-      const highlightNode = {
-        type: `jsx`,
-        value: ``,
+      const highlightNode: MdxJsxFlowElement = {
+        type: `mdxJsxFlowElement`,
+        name: `CommandLineHighlight`,
+        attributes: [],
+        children: [],
       };
 
       const parent = ancestors[ancestors.length - 1];
@@ -172,14 +176,32 @@ export const plugin = () => () => {
       parent.children[index] = highlightNode;
 
       highlightNodes.push(Promise.all(lines.map(line => line())).then(lines => {
-        highlightNode.value = `<CommandLineHighlight type={${JSON.stringify(node.type)}} lines={${JSON.stringify(lines)}}/>`;
+        highlightNode.attributes = [
+          {
+            type: `mdxJsxAttribute`,
+            name: `type`,
+            value: node.type,
+          },
+          {
+            type: `mdxJsxAttribute`,
+            name: `lines`,
+            value: {
+              type: `mdxJsxAttributeValueExpression`,
+              value: JSON.stringify(lines),
+              data: {estree: fromJs(JSON.stringify(lines), {module: true})},
+            },
+          },
+        ];
       }));
     });
 
     if (highlightNodes.length > 0) {
+      const url = pathToFileURL(require.resolve(`../components/CommandLineHighlight.tsx`));
+      const code = `import {CommandLineHighlight} from ${JSON.stringify(url)};\n`;
       ast.children.unshift({
-        type: `import`,
-        value: `import {CommandLineHighlight} from ${JSON.stringify(pathToFileURL(require.resolve(`../components/CommandLineHighlight.tsx`)))};\n`,
+        type: `mdxjsEsm`,
+        value: code,
+        data: {estree: fromJs(code, {module: true})},
       });
 
       await Promise.all(highlightNodes);
