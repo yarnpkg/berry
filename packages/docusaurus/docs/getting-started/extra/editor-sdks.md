@@ -76,7 +76,7 @@ The SDK comes with a typescript-language-server wrapper which enables you to use
 yarn dlx @yarnpkg/sdks base
 ```
 
-2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support, and make sure LSP is loaded after local variables are applied to trigger the `eval-after-load`:
+2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
 
 ```lisp
 ((typescript-mode
