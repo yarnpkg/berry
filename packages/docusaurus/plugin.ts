@@ -1,11 +1,12 @@
-const {createRequire} = require(`module`);
+import type {PluginModule} from '@docusaurus/types';
+import {createRequire}     from 'node:module';
+
 const webpack = createRequire(require.resolve(`@docusaurus/core/package.json`))(`webpack`);
 
-// docusaurus-plugin/src/index.js
-module.exports = function(context, options) {
+const plugin: PluginModule = async function() {
   return {
-    name: `docusaurus-plugin`,
-    configureWebpack(config, isServer, utils) {
+    name: `docusaurus-yarn-plugin`,
+    configureWebpack() {
       return {
         module: {
           rules: [{
@@ -37,3 +38,6 @@ module.exports = function(context, options) {
     },
   };
 };
+
+// eslint-disable-next-line arca/no-default-export
+export default plugin;

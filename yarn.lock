@@ -3880,7 +3880,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/types@npm:3.1.1":
+"@docusaurus/tsconfig@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@docusaurus/tsconfig@npm:3.1.1"
+  checksum: 10/042a03d5a282b314d3e923d3534b77dc5780e1fb3302a70a929e7e97677d2346e7e9f94452dd68f8d872eef1f02b640a686da43800e3cf0d66ee831acfad91ac
+  languageName: node
+  linkType: hard
+
+"@docusaurus/types@npm:3.1.1, @docusaurus/types@npm:^3.1.1":
   version: 3.1.1
   resolution: "@docusaurus/types@npm:3.1.1"
   dependencies:
@@ -5338,13 +5345,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/docusaurus@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@tsconfig/docusaurus@npm:2.0.0"
-  checksum: 10/39adca336d9d8d6838c982212e6661c3d211d02244be17861cae4e16b9b5ee9aa0f2d48099649417794b0c2b7661e53905615f94ffb4b5608a326f5b55194e2f
-  languageName: node
-  linkType: hard
-
 "@types/acorn@npm:^4.0.0":
   version: 4.0.6
   resolution: "@types/acorn@npm:4.0.6"
@@ -5862,6 +5862,15 @@ __metadata:
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
   checksum: 10/b45fff7270b5e81be19ef91a66b764a8b21473a97a8d211218a52e3426b79ad48f371819ab9153370756b33ba284e5c875463de4d2cf48a472e9098d7f09e8a2
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.19.15":
+  version: 18.19.17
+  resolution: "@types/node@npm:18.19.17"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10/7bef9d73227c6c47f0b616ff47df8390d03c6ea2ea4b60b272f336b58c928dbd02cc1f3e399e68660d37ee41836db91358b816575286a3b3114e4384bbd076e3
   languageName: node
   linkType: hard
 
@@ -6769,17 +6778,19 @@ __metadata:
     "@docusaurus/preset-classic": "npm:^3.1.1"
     "@docusaurus/theme-classic": "npm:^3.1.1"
     "@docusaurus/theme-common": "npm:^3.1.1"
+    "@docusaurus/tsconfig": "npm:^3.1.1"
+    "@docusaurus/types": "npm:^3.1.1"
     "@fontsource/pt-sans": "npm:^5.0.5"
     "@mdx-js/react": "npm:^3.0.0"
     "@monaco-editor/react": "npm:^4.4.6"
     "@primer/octicons-react": "npm:^17.7.0"
-    "@tsconfig/docusaurus": "npm:^2.0.0"
     "@types/cross-spawn": "npm:6.0.0"
     "@types/dompurify": "npm:^3"
     "@types/git-url-parse": "npm:^9.0.0"
     "@types/lodash": "npm:^4.14.136"
     "@types/markdown-it": "npm:^12.2.3"
     "@types/marked": "npm:^5.0.0"
+    "@types/node": "npm:^18.19.15"
     "@types/pako": "npm:^2"
     "@types/react": "npm:^18.2.54"
     "@types/react-instantsearch-dom": "npm:^6"
@@ -21405,6 +21416,13 @@ pem@dexus/pem:
   version: 1.13.4
   resolution: "underscore@npm:1.13.4"
   checksum: 10/c704bb64a970087c9fe687d3a38aae5c6fa1dad1431fa49c54b5905d657e58aad7e8919964b8d922360b8f39a232b15d2df9b8b61fa790ef168e86835acc07e5
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 10/0097779d94bc0fd26f0418b3a05472410408877279141ded2bd449167be1aed7ea5b76f756562cb3586a07f251b90799bab22d9019ceba49c037c76445f7cddd
   languageName: node
   linkType: hard
 
