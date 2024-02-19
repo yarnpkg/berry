@@ -4,6 +4,7 @@ import {useDocsSidebar}                              from '@docusaurus/theme-com
 import BackToTopButton                               from '@theme/BackToTopButton';
 import DocRootLayoutMain                             from '@theme/DocRoot/Layout/Main';
 import DocRootLayoutSidebar                          from '@theme/DocRoot/Layout/Sidebar';
+import type {Props}                                  from '@theme/DocRoot/Layout';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 
 import styles                                        from './styles.module.css';
@@ -21,17 +22,17 @@ function getSuggestedModal({onExit}) {
   if (!location.hash)
     return null;
 
-  const navigation = window.performance.getEntriesByType(`navigation`);
-  if (navigation.length > 0 && navigation[0].type !== `navigate` && window.location.hostname !== `localhost`)
+  const [navigation] = window.performance.getEntriesByType(`navigation`);
+  if (navigation instanceof PerformanceNavigationTiming && navigation.type !== `navigate` && window.location.hostname !== `localhost`)
     return null;
 
   const target = document.getElementById(location.hash.slice(1));
   if (!target)
     return null;
 
-  let adjustedTarget = target;
+  let adjustedTarget: Element | null = target;
   while (adjustedTarget && adjustedTarget.tagName !== `H2`)
-    adjustedTarget = adjustedTarget.previousSibling;
+    adjustedTarget = adjustedTarget.previousElementSibling;
 
   if (!adjustedTarget)
     return null;
@@ -41,10 +42,10 @@ function getSuggestedModal({onExit}) {
   const copy = document.createElement(`div`);
   copy.classList.add(`markdown`);
 
-  let current = target;
+  let current: Element = target;
   do {
     reactNodes.push(getReactNodeFromDomNode(current));
-    current = current.nextSibling;
+    current = current.nextElementSibling;
   } while (current && current.tagName !== target.tagName);
 
   return <FocusModal onExit={onExit} children={<>{reactNodes}</>}/>;
@@ -88,7 +89,7 @@ const useFocusModal = () => {
 };
 
 // eslint-disable-next-line arca/no-default-export
-export default function DocRootLayout({title, children}) {
+export default function DocRootLayout({children}: Props) {
   const sidebar = useDocsSidebar();
   const [hiddenSidebarContainer, setHiddenSidebarContainer] = useState(false);
 
