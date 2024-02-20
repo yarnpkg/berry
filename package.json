@@ -32,7 +32,8 @@
   },
   "resolutions": {
     "ink": "patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch",
-    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
+    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
+    "@docusaurus/mdx-loader": "patch:@docusaurus/mdx-loader@npm%3A3.1.1#~/.yarn/patches/%40docusaurus-mdx-loader-npm-3.1.1-f9575cfad3.patch"
   },
   "dependenciesMeta": {
     "core-js": {

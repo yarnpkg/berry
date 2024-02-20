@@ -26,6 +26,7 @@
     "clipanion": "^4.0.0-rc.2",
     "clsx": "^1.2.1",
     "cross-spawn": "7.0.3",
+    "docusaurus-plugin-typedoc-api": "patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch",
     "dompurify": "^3.0.5",
     "git-url-parse": "^13.1.0",
     "github-markdown-css": "^5.1.0",
@@ -98,7 +99,7 @@
     "esbuild-loader": "^2.20.0",
     "fast-glob": "^3.2.2",
     "mdast-util-mdx-jsx": "^3.0.0",
-    "typedoc": "^0.25.3",
+    "typedoc": "^0.25.7",
     "typescript": "5.4.1-rc"
   },
   "browserslist": {

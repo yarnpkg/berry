@@ -3570,6 +3570,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@docusaurus/mdx-loader@patch:@docusaurus/mdx-loader@npm%3A3.1.1#~/.yarn/patches/%40docusaurus-mdx-loader-npm-3.1.1-f9575cfad3.patch":
+  version: 3.1.1
+  resolution: "@docusaurus/mdx-loader@patch:@docusaurus/mdx-loader@npm%3A3.1.1#~/.yarn/patches/@docusaurus-mdx-loader-npm-3.1.1-f9575cfad3.patch::version=3.1.1&hash=1e716c"
+  dependencies:
+    "@babel/parser": "npm:^7.22.7"
+    "@babel/traverse": "npm:^7.22.8"
+    "@docusaurus/logger": "npm:3.1.1"
+    "@docusaurus/utils": "npm:3.1.1"
+    "@docusaurus/utils-validation": "npm:3.1.1"
+    "@mdx-js/mdx": "npm:^3.0.0"
+    "@slorber/remark-comment": "npm:^1.0.0"
+    escape-html: "npm:^1.0.3"
+    estree-util-value-to-estree: "npm:^3.0.1"
+    file-loader: "npm:^6.2.0"
+    fs-extra: "npm:^11.1.1"
+    image-size: "npm:^1.0.2"
+    mdast-util-mdx: "npm:^3.0.0"
+    mdast-util-to-string: "npm:^4.0.0"
+    rehype-raw: "npm:^7.0.0"
+    remark-directive: "npm:^3.0.0"
+    remark-emoji: "npm:^4.0.0"
+    remark-frontmatter: "npm:^5.0.0"
+    remark-gfm: "npm:^4.0.0"
+    stringify-object: "npm:^3.3.0"
+    tslib: "npm:^2.6.0"
+    unified: "npm:^11.0.3"
+    unist-util-visit: "npm:^5.0.0"
+    url-loader: "npm:^4.1.1"
+    vfile: "npm:^6.0.1"
+    webpack: "npm:^5.88.1"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 10/3afba7701b7e5af78ba8e1f3d90ba774c4b72241ebaac2f8530e81921e631b22d6009e66228320066716366e510bdf71b10f4a9c086acd39f373772fa759c73f
+  languageName: node
+  linkType: hard
+
 "@docusaurus/module-type-aliases@npm:3.1.1, @docusaurus/module-type-aliases@npm:^3.1.1":
   version: 3.1.1
   resolution: "@docusaurus/module-type-aliases@npm:3.1.1"
@@ -3617,7 +3654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/plugin-content-docs@npm:3.1.1, @docusaurus/plugin-content-docs@npm:^3.1.1":
+"@docusaurus/plugin-content-docs@npm:3.1.1, @docusaurus/plugin-content-docs@npm:^3.1.0, @docusaurus/plugin-content-docs@npm:^3.1.1":
   version: 3.1.1
   resolution: "@docusaurus/plugin-content-docs@npm:3.1.1"
   dependencies:
@@ -3817,7 +3854,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/theme-common@npm:3.1.1, @docusaurus/theme-common@npm:^3.1.1":
+"@docusaurus/theme-common@npm:3.1.1, @docusaurus/theme-common@npm:^3, @docusaurus/theme-common@npm:^3.1.1":
   version: 3.1.1
   resolution: "@docusaurus/theme-common@npm:3.1.1"
   dependencies:
@@ -3887,7 +3924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/types@npm:3.1.1, @docusaurus/types@npm:^3.1.1":
+"@docusaurus/types@npm:3.1.1, @docusaurus/types@npm:^3.1.0, @docusaurus/types@npm:^3.1.1":
   version: 3.1.1
   resolution: "@docusaurus/types@npm:3.1.1"
   dependencies:
@@ -3934,7 +3971,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/utils@npm:3.1.1":
+"@docusaurus/utils@npm:3.1.1, @docusaurus/utils@npm:^3.1.0":
   version: 3.1.1
   resolution: "@docusaurus/utils@npm:3.1.1"
   dependencies:
@@ -4734,6 +4771,18 @@ __metadata:
     unist-util-visit: "npm:^5.0.0"
     vfile: "npm:^6.0.0"
   checksum: 10/94f4881f3e3ff81f544a84d9ed8fa0ed9c55cad4cf325872e98a6c93ac142c672e535f849d1fdfaeb0769fa8c80c4e440613253869de2e836db5a565efacc3f4
+  languageName: node
+  linkType: hard
+
+"@mdx-js/react@npm:^3":
+  version: 3.0.1
+  resolution: "@mdx-js/react@npm:3.0.1"
+  dependencies:
+    "@types/mdx": "npm:^2.0.0"
+  peerDependencies:
+    "@types/react": ">=16"
+    react: ">=16"
+  checksum: 10/d566407af11e76f498f8133fbfa8a9d8a2ad80dc7a66ca109d29fcb92e953a2d2d7aaedc0c28571d126f1967faeb126dd2e4ab4ea474c994bf5c76fa204c5997
   languageName: node
   linkType: hard
 
@@ -6462,6 +6511,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vscode/codicons@npm:^0.0.35":
+  version: 0.0.35
+  resolution: "@vscode/codicons@npm:0.0.35"
+  checksum: 10/eed59049130e413467de7acac7b6627d07086978eab9480cce6ddb7d36eeeb2ace28176a855861c2e76b35739dc1540c49a5336194a15ea8c2cf765f6356a485
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.11.6, @webassemblyjs/ast@npm:^1.11.5":
   version: 1.11.6
   resolution: "@webassemblyjs/ast@npm:1.11.6"
@@ -6812,6 +6868,7 @@ __metadata:
     clipanion: "npm:^4.0.0-rc.2"
     clsx: "npm:^1.2.1"
     cross-spawn: "npm:7.0.3"
+    docusaurus-plugin-typedoc-api: "patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch"
     dompurify: "npm:^3.0.5"
     esast-util-from-js: "npm:^2.0.1"
     esbuild-loader: "npm:^2.20.0"
@@ -6849,7 +6906,7 @@ __metadata:
     semver: "npm:^7.1.2"
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
-    typedoc: "npm:^0.25.3"
+    typedoc: "npm:^0.25.7"
     typescript: "npm:5.4.1-rc"
     unist-util-visit: "npm:^2"
     unist-util-visit-parents: "npm:^2"
@@ -10349,6 +10406,46 @@ __metadata:
   dependencies:
     esutils: "npm:^2.0.2"
   checksum: 10/b4b28f1df5c563f7d876e7461254a4597b8cabe915abe94d7c5d1633fed263fcf9a85e8d3836591fc2d040108e822b0d32758e5ec1fe31c590dc7e08086e3e48
+  languageName: node
+  linkType: hard
+
+"docusaurus-plugin-typedoc-api@npm:4.2.0":
+  version: 4.2.0
+  resolution: "docusaurus-plugin-typedoc-api@npm:4.2.0"
+  dependencies:
+    "@docusaurus/plugin-content-docs": "npm:^3.1.0"
+    "@docusaurus/types": "npm:^3.1.0"
+    "@docusaurus/utils": "npm:^3.1.0"
+    "@vscode/codicons": "npm:^0.0.35"
+    marked: "npm:^9.1.6"
+    marked-smartypants: "npm:^1.1.5"
+    typedoc: "npm:^0.25.7"
+  peerDependencies:
+    "@docusaurus/core": ^3.0.0
+    "@docusaurus/mdx-loader": ^3.0.0
+    react: ">=18.0.0"
+    typescript: ^5.0.0
+  checksum: 10/e17f38a9a9fbd80f7ef39884c70592a02756f0176f8c1040b89283dc43d83f709d487e1cca9b728e60897a093e048b797f63575bf3f0f2c7d0f90e1edeea4470
+  languageName: node
+  linkType: hard
+
+"docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch":
+  version: 4.2.0
+  resolution: "docusaurus-plugin-typedoc-api@patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch::version=4.2.0&hash=b02f93"
+  dependencies:
+    "@docusaurus/plugin-content-docs": "npm:^3.1.0"
+    "@docusaurus/types": "npm:^3.1.0"
+    "@docusaurus/utils": "npm:^3.1.0"
+    "@vscode/codicons": "npm:^0.0.35"
+    marked: "npm:^9.1.6"
+    marked-smartypants: "npm:^1.1.5"
+    typedoc: "npm:^0.25.7"
+  peerDependencies:
+    "@docusaurus/core": ^3.0.0
+    "@docusaurus/mdx-loader": ^3.0.0
+    react: ">=18.0.0"
+    typescript: ^5.0.0
+  checksum: 10/59b65a3e86e94f912ccde0639033ba00efd6c589ee70efbdea03eb2d299d72ee6c47582dbb0e1dfed563812359d81e1d547e905737b5739058e3671518ea9c0b
   languageName: node
   linkType: hard
 
@@ -15273,6 +15370,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"marked-smartypants@npm:^1.1.5":
+  version: 1.1.6
+  resolution: "marked-smartypants@npm:1.1.6"
+  dependencies:
+    smartypants: "npm:^0.2.2"
+  peerDependencies:
+    marked: ">=4 <13"
+  checksum: 10/1783fff35e87eea7cf531405aaf8ef0f604bc2e0e98f70f8ea6e7efd3bb3e932a21c522ea625d1c71cc47e1b262051cb57e28f2e8e6b7c9c0296c5b8a1de1a10
+  languageName: node
+  linkType: hard
+
 "marked@npm:^4.3.0":
   version: 4.3.0
   resolution: "marked@npm:4.3.0"
@@ -15288,6 +15396,15 @@ __metadata:
   bin:
     marked: bin/marked.js
   checksum: 10/88bf0b1db52a84222956bc32e7e7cc7b3ecc6a978ec37acafd4e45aeb6c1c5a62640ab570fc1fccbaf385d39b4783a41a2e1d71f2766cf905e32164dc74eeec5
+  languageName: node
+  linkType: hard
+
+"marked@npm:^9.1.6":
+  version: 9.1.6
+  resolution: "marked@npm:9.1.6"
+  bin:
+    marked: bin/marked.js
+  checksum: 10/29d073500c70b6b53cd35a8d19f5e43df6e2819ddeca8848a31901b87b82ca0ea46a8a831920c656c69c33ad5dce4b75654c4c4ced34a67f4e4e4a31c7620cfe
   languageName: node
   linkType: hard
 
@@ -20010,15 +20127,15 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"shiki@npm:^0.14.1":
-  version: 0.14.5
-  resolution: "shiki@npm:0.14.5"
+"shiki@npm:^0.14.7":
+  version: 0.14.7
+  resolution: "shiki@npm:0.14.7"
   dependencies:
     ansi-sequence-parser: "npm:^1.1.0"
     jsonc-parser: "npm:^3.2.0"
     vscode-oniguruma: "npm:^1.7.0"
     vscode-textmate: "npm:^8.0.0"
-  checksum: 10/02c96cf7efcf71679e5c0d58eb91fea6a680251cadcbb15b7a3ccff38004382d3a6d0fdf4a336c2ecda6f6beb50eb9658d3ce91111196621df4fb18bbe4d334e
+  checksum: 10/be3f2444c65bd0c57802026f171cb42ad571d361ee885be0c292b60785f68c70f19b69310f5ffe7f7a93db4c5ef50211e0a0248794bc6bb48d242bc43fe72a62
   languageName: node
   linkType: hard
 
@@ -20135,6 +20252,16 @@ pem@dexus/pem:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: 10/927484aa0b1640fd9473cee3e0a0bcad6fce93fd7bbc18bac9ad0c33686f5d2e2c422fba24b5899c184524af01e11dd2bd051c2bf2b07e47aff8ca72cbfc60d2
+  languageName: node
+  linkType: hard
+
+"smartypants@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "smartypants@npm:0.2.2"
+  bin:
+    smartypants: bin/smartypants.js
+    smartypantsu: bin/smartypantsu.js
+  checksum: 10/e73ff0493fab65f8302d471cff01c1287d3d83ccbdd3d972c2bc383e2e65a51f6862429c0ce3efbafb6bad7cf4bb5648711567cb11465251aa273faee22626c0
   languageName: node
   linkType: hard
 
@@ -21357,19 +21484,19 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.25.3":
-  version: 0.25.3
-  resolution: "typedoc@npm:0.25.3"
+"typedoc@npm:^0.25.7":
+  version: 0.25.8
+  resolution: "typedoc@npm:0.25.8"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
     minimatch: "npm:^9.0.3"
-    shiki: "npm:^0.14.1"
+    shiki: "npm:^0.14.7"
   peerDependencies:
-    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x
+    typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: 10/1dd06155589731143e18555f51c0ad0543136040684aefadff3117b3c3c0ffb7ea41dec9de2cf2cf50afb51f0450f3b8e93a73a7a2928c80aa2516a2d247db4a
+  checksum: 10/68749aa3fc90843dbb68b9e486405056ddadb23682bb11000d8077f758101814fbb8aa27e1bca17c6a062fb54e6f4ee9474e9fe2fdb44bc7ed27f67afd9953b1
   languageName: node
   linkType: hard
 
