@@ -1,6 +1,6 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
 index 4a425cf3d..5bb8e25e1 100644
-semver exclusivity >=5.4.0-beta
+semver exclusivity >=5.4.0-beta <5.4.1-rc
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
 @@ -5063,6 +5063,9 @@ var sys = (() => {
@@ -345,7 +345,7 @@ semver exclusivity >=5.4.0-beta
    function reloadFileNamesFromConfigFile() {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
 index 7254b1aff..8a3ea0c8f 100644
-semver exclusivity >=5.4.0-beta
+semver exclusivity >=5.4.0-beta <5.4.1-rc
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -8611,6 +8611,9 @@ var sys = (() => {
@@ -998,7 +998,7 @@ semver exclusivity >=5.4.0-beta
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
 index 100081fb8..d63bc238e 100644
-semver exclusivity >=5.4.0-beta
+semver exclusivity >=5.4.0-beta <5.4.1-rc
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
 @@ -9914,6 +9914,8 @@ declare namespace ts {
@@ -1012,7 +1012,7 @@ semver exclusivity >=5.4.0-beta
      function resolveTripleslashReference(moduleName: string, containingFile: string): string;
 diff --git a/lib/typescript.js b/lib/typescript.js
 index 6cd6c983a..c20a7353f 100644
-semver exclusivity >=5.4.0-beta
+semver exclusivity >=5.4.0-beta <5.4.1-rc
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
 @@ -6370,6 +6370,9 @@ ${lanes.join("\n")}
@@ -1711,7 +1711,7 @@ semver exclusivity >=5.4.0-beta
            let result = (this.packageJsonFilesMap ?? (this.packageJsonFilesMap = /* @__PURE__ */ new Map())).get(path);
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
 index 691d2a967..395ce7e14 100644
-semver exclusivity >=5.4.0-beta
+semver exclusivity >=5.4.0-beta <5.4.1-rc
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
 @@ -4475,6 +4475,9 @@ var sys = (() => {
