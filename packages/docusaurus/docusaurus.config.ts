@@ -7,6 +7,7 @@ import glob                                                         from 'fast-g
 import * as fs                                                      from 'node:fs/promises';
 import * as path                                                    from 'node:path';
 import {themes}                                                     from 'prism-react-renderer';
+import {satisfies}                                                  from 'semver';
 
 import * as autoLink                                                from './src/remark/autoLink';
 import * as commandLineHighlight                                    from './src/remark/commandLineHighlight';
@@ -95,6 +96,28 @@ async function typedocPluginConfig(): Promise<Partial<DocusaurusPluginTypeDocApi
     },
     remarkPlugins,
   };
+}
+
+async function getPreviousVersions(): Promise<Array<{ label: string, href: string }>> {
+  const [npmResponse, repoResponse] = await Promise.all([
+    // eslint-disable-next-line no-restricted-globals
+    fetch(`https://registry.npmjs.org/yarn`, {headers: {accept: `application/vnd.npm.install-v1+json`}})
+      .then(response => response.json()),
+    // eslint-disable-next-line no-restricted-globals
+    fetch(`https://repo.yarnpkg.com/tags`)
+      .then(response => response.json()),
+  ]);
+
+  return [
+    {
+      label: repoResponse.tags.find(version => satisfies(version, `^3`)),
+      href: `https://v3.yarnpkg.com`,
+    },
+    {
+      label: npmResponse[`dist-tags`].latest,
+      href: `https://classic.yarnpkg.com/en/docs`,
+    },
+  ];
 }
 
 // eslint-disable-next-line arca/no-default-export
@@ -233,16 +256,7 @@ export default async function (): Promise<Config> {
             type: `docsVersionDropdown`,
             position: `right`,
             dropdownActiveClassDisabled: true,
-            dropdownItemsAfter: [
-              {
-                label: `3.6.4`,
-                href: `https://v3.yarnpkg.com`,
-              },
-              {
-                label: `1.22.19`,
-                href: `https://classic.yarnpkg.com/en/docs`,
-              },
-            ],
+            dropdownItemsAfter: await getPreviousVersions(),
           },
           {
             href: `https://discord.gg/yarnpkg`,
