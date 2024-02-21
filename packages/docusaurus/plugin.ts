@@ -1,5 +1,6 @@
 import type {PluginModule} from '@docusaurus/types';
 import {createRequire}     from 'node:module';
+import path                from 'node:path';
 
 const webpack = createRequire(require.resolve(`@docusaurus/core/package.json`))(`webpack`);
 
@@ -21,6 +22,10 @@ const plugin: PluginModule = async function() {
             buffer: false,
             os: require.resolve(`os-browserify`),
             path: require.resolve(`path-browserify`),
+          },
+          alias: {
+            '@mdx-js/react': require.resolve(`@mdx-js/react`),
+            react: path.resolve(require.resolve(`react/package.json`), `..`),
           },
         },
         plugins: [
