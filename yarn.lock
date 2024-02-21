@@ -3533,7 +3533,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/mdx-loader@npm:3.1.1":
+"@docusaurus/mdx-loader@npm:3.1.1, @docusaurus/mdx-loader@npm:^3":
   version: 3.1.1
   resolution: "@docusaurus/mdx-loader@npm:3.1.1"
   dependencies:
@@ -3567,43 +3567,6 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 10/78a4591a3851df4ae8606f9a923ff19f6162a391838b362cce217c7c0357fb5dafd274ec442ef4097e5ae06d1814319e575eca8e20b39d44196522edf057d5b5
-  languageName: node
-  linkType: hard
-
-"@docusaurus/mdx-loader@patch:@docusaurus/mdx-loader@npm%3A3.1.1#~/.yarn/patches/%40docusaurus-mdx-loader-npm-3.1.1-f9575cfad3.patch":
-  version: 3.1.1
-  resolution: "@docusaurus/mdx-loader@patch:@docusaurus/mdx-loader@npm%3A3.1.1#~/.yarn/patches/@docusaurus-mdx-loader-npm-3.1.1-f9575cfad3.patch::version=3.1.1&hash=1e716c"
-  dependencies:
-    "@babel/parser": "npm:^7.22.7"
-    "@babel/traverse": "npm:^7.22.8"
-    "@docusaurus/logger": "npm:3.1.1"
-    "@docusaurus/utils": "npm:3.1.1"
-    "@docusaurus/utils-validation": "npm:3.1.1"
-    "@mdx-js/mdx": "npm:^3.0.0"
-    "@slorber/remark-comment": "npm:^1.0.0"
-    escape-html: "npm:^1.0.3"
-    estree-util-value-to-estree: "npm:^3.0.1"
-    file-loader: "npm:^6.2.0"
-    fs-extra: "npm:^11.1.1"
-    image-size: "npm:^1.0.2"
-    mdast-util-mdx: "npm:^3.0.0"
-    mdast-util-to-string: "npm:^4.0.0"
-    rehype-raw: "npm:^7.0.0"
-    remark-directive: "npm:^3.0.0"
-    remark-emoji: "npm:^4.0.0"
-    remark-frontmatter: "npm:^5.0.0"
-    remark-gfm: "npm:^4.0.0"
-    stringify-object: "npm:^3.3.0"
-    tslib: "npm:^2.6.0"
-    unified: "npm:^11.0.3"
-    unist-util-visit: "npm:^5.0.0"
-    url-loader: "npm:^4.1.1"
-    vfile: "npm:^6.0.1"
-    webpack: "npm:^5.88.1"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 10/3afba7701b7e5af78ba8e1f3d90ba774c4b72241ebaac2f8530e81921e631b22d6009e66228320066716366e510bdf71b10f4a9c086acd39f373772fa759c73f
   languageName: node
   linkType: hard
 
@@ -4771,18 +4734,6 @@ __metadata:
     unist-util-visit: "npm:^5.0.0"
     vfile: "npm:^6.0.0"
   checksum: 10/94f4881f3e3ff81f544a84d9ed8fa0ed9c55cad4cf325872e98a6c93ac142c672e535f849d1fdfaeb0769fa8c80c4e440613253869de2e836db5a565efacc3f4
-  languageName: node
-  linkType: hard
-
-"@mdx-js/react@npm:^3":
-  version: 3.0.1
-  resolution: "@mdx-js/react@npm:3.0.1"
-  dependencies:
-    "@types/mdx": "npm:^2.0.0"
-  peerDependencies:
-    "@types/react": ">=16"
-    react: ">=16"
-  checksum: 10/d566407af11e76f498f8133fbfa8a9d8a2ad80dc7a66ca109d29fcb92e953a2d2d7aaedc0c28571d126f1967faeb126dd2e4ab4ea474c994bf5c76fa204c5997
   languageName: node
   linkType: hard
 
@@ -6994,11 +6945,9 @@ __metadata:
     "@babel/preset-react": "npm:^7.18.6"
     "@babel/preset-typescript": "npm:^7.18.6"
     "@iarna/toml": "npm:^2.2.5"
-    "@mdx-js/react": "npm:^3.0.0"
     "@types/jest": "npm:^28.1.6"
     "@types/micromatch": "npm:^4.0.1"
     "@types/node": "npm:^18.17.15"
-    "@types/react": "npm:^18.2.54"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -7014,7 +6963,6 @@ __metadata:
     jest: "npm:^29.2.1"
     micromatch: "npm:^4.0.2"
     pirates: "npm:^4.0.5"
-    react: "npm:^18.2.0"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
     typescript: "npm:5.4.1-rc"
