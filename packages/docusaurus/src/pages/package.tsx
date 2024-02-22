@@ -1,10 +1,11 @@
 import BrowserOnly                                                                                                                                                                from '@docusaurus/BrowserOnly';
 import {useLocation}                                                                                                                                                              from '@docusaurus/router';
-// @ts-expect-error
 import {DocsSidebarProvider}                                                                                                                                                      from '@docusaurus/theme-common/internal';
 import {HtmlClassNameProvider}                                                                                                                                                    from '@docusaurus/theme-common';
 import Editor                                                                                                                                                                     from '@monaco-editor/react';
 import {AlertIcon, ArrowLeftIcon, CheckIcon, FileDirectoryFillIcon, FileIcon, GearIcon, GlobeIcon, HomeIcon, HourglassIcon, ListUnorderedIcon, MarkGithubIcon, PlayIcon, TagIcon} from '@primer/octicons-react';
+import DocRootLayout                                                                                                                                                              from '@theme/DocRoot/Layout';
+import Layout                                                                                                                                                                     from '@theme/Layout';
 import {normalizeRepoUrl}                                                                                                                                                         from '@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl';
 import clsx                                                                                                                                                                       from 'clsx';
 import gitUrlParse                                                                                                                                                                from 'git-url-parse';
@@ -16,7 +17,6 @@ import {useLocalStorage}                                                        
 
 import {usePackageInfo, useReleaseFile, useReleaseInfo, useReleaseReadme, useResolvedVersion}                                                                                     from '../lib/npmTools';
 import {Check, checks}                                                                                                                                                            from '../lib/packageChecks';
-import Layout                                                                                                                                                                     from '../theme/DocRoot/Layout/index';
 
 import styles                                                                                                                                                                     from './package.module.css';
 
@@ -486,11 +486,13 @@ function SidebarProvider({name, version, children}: {name: string, version: stri
 function LoadingPage() {
   return (
     <HtmlClassNameProvider className={clsx(styles.html)}>
-      <DocsSidebarProvider name={`foo`} items={[]}>
-        <Layout title={`Package loading...`}>
-          Loading in progress
-        </Layout>
-      </DocsSidebarProvider>
+      <Layout title={`Package loading...`}>
+        <DocsSidebarProvider name={`foo`} items={[]}>
+          <DocRootLayout>
+            Loading in progress
+          </DocRootLayout>
+        </DocsSidebarProvider>
+      </Layout>
     </HtmlClassNameProvider>
   );
 }
@@ -513,11 +515,13 @@ function PackageInfoPage() {
 
   return (
     <HtmlClassNameProvider className={clsx(styles.html, !!path && styles.fileHtml)}>
-      <SidebarProvider name={name} version={version}>
-        <Layout title={`${name}`}>
-          {children}
-        </Layout>
-      </SidebarProvider>
+      <Layout title={name}>
+        <SidebarProvider name={name} version={version}>
+          <DocRootLayout>
+            {children}
+          </DocRootLayout>
+        </SidebarProvider>
+      </Layout>
     </HtmlClassNameProvider>
   );
 }
