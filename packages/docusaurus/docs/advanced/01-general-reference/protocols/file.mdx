@@ -1,0 +1,30 @@
+---
+category: protocols
+slug: /protocol/file
+title: "File Protocol"
+description: How file dependencies work in Yarn.
+---
+
+The `file:` protocol fetches a package from a local path. This can be useful for testing packages locally before publishing them to the npm registry, or distributing a particular dependency without relying on the version from the npm registry.
+
+```
+yarn add my-pkg@file:./relative/path/to/dependency/folder
+```
+
+## Packing
+
+:::warning
+Unlike [`git:` dependencies](/protocol/git), the folder pointed to by `file:` is not packed before being imported in the project. This is something we'll likely fix in a future major version.
+:::
+
+## Folder-based links
+
+When `file:` points to a folder, Yarn will copy it rather than directly reference its sources. For the `node_modules` linker, it means that the content of the generated `node_modules` will be unique files, and that changes performed there won't affect the original source folder.
+
+```
+file:./relative/path/to/package.tgz
+```
+
+## Tarball-based links
+
+When `file:` points to a `.tgz` file, Yarn will transparently let you require files from within the archive. For the `node_modules` linker, it means that the archive will be unpacked into the generated `node_modules` folder.

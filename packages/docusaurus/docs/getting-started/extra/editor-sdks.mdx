@@ -1,0 +1,115 @@
+---
+category: getting-started
+slug: /getting-started/editor-sdks
+title: "Editor SDKs"
+description: An overview of the editor SDKs used to bring PnP compatibility to editors.
+---
+
+Smart IDEs (such as VSCode or IntelliJ) require special configuration for TypeScript to work when using [Plug'n'Play installs](https://yarnpkg.com/features/pnp). This page is a collection of settings for each editor we've looked into.
+
+The editor SDKs and settings can be generated using `yarn dlx @yarnpkg/sdks`. Its detailed documentation can be found on the [dedicated page](/sdks/cli/default).
+
+:::info
+**Why are SDKs needed with Yarn PnP?**
+
+Yarn PnP works by generating a [Node.js loader](https://nodejs.org/api/esm.html#loaders), which has to be injected within the Node.js runtime. Many IDE extensions execute the packages they wrap (Prettier, TypeScript, ...) without consideration for loaders.
+
+The SDKs workaround that by generating indirection packages. When required, these indirection automatically setup the loader before forwarding the `require` calls to the real packages.
+:::
+
+## Usage
+
+Generate both the base SDK and the editor settings:
+
+```
+yarn dlx @yarnpkg/sdks vscode vim ...
+```
+
+Generate the base SDK, but no editor settings:
+
+```
+yarn dlx @yarnpkg/sdks base
+```
+
+Update all installed SDKs & editor settings:
+
+```
+yarn dlx @yarnpkg/sdks
+```
+
+## Tools currently supported
+
+:::warning
+The `yarn dlx @yarnpkg/sdks` command will look at the content of your *root* `package.json` to figure out the SDKs you need  - it won't look at the dependencies from any other workspaces.
+:::
+
+| Supported extension | Enabled if ... is found in your `package.json` dependencies |
+|---|---|
+| Builtin VSCode TypeScript Server | [typescript](https://yarnpkg.com/package/typescript) |
+| [astro-vscode](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode) | [astro](https://astro.build/) |
+| [vscode-eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) | [eslint](https://yarnpkg.com/package/eslint) |
+| [prettier-vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) | [prettier](https://yarnpkg.com/package/prettier) |
+| [relay](https://marketplace.visualstudio.com/items?itemName=meta.relay) | [relay](https://relay.dev/)
+
+If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg/berry/blob/master/packages/yarnpkg-sdks/sources/generateSdk.ts)
+
+
+## Editor setup
+
+### CoC nvim
+
+1. Install [vim-rzip](https://github.com/lbrayner/vim-rzip)
+
+2. Run the following command, which will generate a `.vim/coc-settings.json` file:
+
+```bash
+yarn dlx @yarnpkg/sdks vim
+```
+
+### Emacs
+
+The SDK comes with a typescript-language-server wrapper which enables you to use the ts-ls LSP client.
+
+1. Run the following command, which will generate a new directory called `.yarn/sdks`:
+
+```bash
+yarn dlx @yarnpkg/sdks base
+```
+
+2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support, and make sure LSP is loaded after local variables are applied to trigger the `eval-after-load`:
+
+```lisp
+((typescript-mode
+  . ((eval . (let ((project-directory (car (dir-locals-find-file default-directory))))
+                (setq lsp-clients-typescript-server-args `("--tsserver-path" ,(concat project-directory ".yarn/sdks/typescript/bin/tsserver") "--stdio")))))))
+```
+
+### Neovim Native LSP
+
+1. Install [vim-rzip](https://github.com/lbrayner/vim-rzip)
+
+2. Run the following command, which will generate a new directory called `.yarn/sdks`:
+
+```bash
+yarn dlx @yarnpkg/sdks base
+```
+
+TypeScript support should then work out of the box with [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) and [theia-ide/typescript-language-server](https://github.com/theia-ide/typescript-language-server).
+
+### VSCode
+
+1. Install the [ZipFS](https://marketplace.visualstudio.com/items?itemName=arcanis.vscode-zipfs) extension, which is maintained by the Yarn team.
+
+2. Run the following command, which will generate a `.vscode/settings.json` file:
+
+```bash
+yarn dlx @yarnpkg/sdks vscode
+```
+
+3. For safety reason VSCode requires you to explicitly activate the custom TS settings:
+
+    1. Press <kbd>ctrl+shift+p</kbd> in a TypeScript file
+    2. Choose "Select TypeScript Version"
+    3. Pick "Use Workspace Version"
+
+Your VSCode project is now configured to use the exact same version of TypeScript as the one you usually use, except that it will be able to properly resolve the type definitions.

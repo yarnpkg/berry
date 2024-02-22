@@ -1,0 +1,44 @@
+---
+category: getting-started
+slug: /corepack
+title: Corepack
+description: About Corepack, the Node.js package manager provider.
+sidebar_position: 2
+---
+
+You may notice by reading our [installation guide](/getting-started/install) that we don't tell you to run `npm install -g yarn` to install Yarn - we even recommend against it. The reason is simple: **just like your project dependencies must be locked, so should be the package manager itself.**
+
+Installing Yarn as a global binary meant you always used whatever was the latest version published. Most of the time it worked fine, but every once in a while something was shipped that could impact the way your project was installed - be it a bugfix, new bug, or breaking change.
+
+To counter that, Yarn joined forces with the Node.js project to start the development of [Corepack](https://nodejs.org/api/corepack.html), an official Node.js tool letting you define which package manager version you want to use on a per-project basis, just like your lockfile does for your project dependencies.
+
+:::info
+Corepack is marked experimental so we can iterate on its CLI faster, but it's already the preferred way to install package managers - both for Yarn and for pnpm.
+:::
+
+## Installation
+
+Corepack is included with all official Node.js releases starting from Node.js 14.19 / 16.9. It's however opt-in for the duration of the experimental stage, so you'll need to run `corepack enable` before it's active.
+
+You can quickly check whether Corepack is enabled by running `yarn exec env | grep COREPACK_ROOT`: if you get a path as output, Corepack is properly installed. If not, something may be messing with how the shims are installed. In that case check the [Troubleshooting](/corepack#troubleshooting) section for advices.
+
+:::danger
+Some third-party distributors may not include Corepack by default, in particular if you install Node.js from your system package manager. If that happens, running `npm install -g corepack` before `corepack enable` should do the trick.
+:::
+
+## Troubleshooting
+
+### Offline workflow
+
+If you use an airgapped network, as is often the case in company CIs, you may hit problems where Corepack isn't able to download the Yarn binary for the active project. The Corepack documentation includes a [dedicated section](https://github.com/nodejs/corepack?tab=readme-ov-file#offline-workflow) explaining how to avoid this problem.
+
+### Volta
+
+Volta doesn't currently integrate with Corepack, as it installs its own shims which prevent the Corepack ones from being applied. You will need to run the following two commands to force the integration:
+
+```bash
+npm install -g corepack
+
+# Specifying an explicit install-directory makes corepack overwrite volta's yarn shims, which is what we want
+corepack enable --install-directory ~/.volta/bin
+```

@@ -561,7 +561,7 @@ yarn set version 2.4.0
 
 ### Compatibility
 
-- Some patches went missing for TypeScript <4. This is now fixed.
+- Some patches went missing for TypeScript &lt;4. This is now fixed.
 
 - Calling `fs.exists(undefined)` won't crash anymore.
 
