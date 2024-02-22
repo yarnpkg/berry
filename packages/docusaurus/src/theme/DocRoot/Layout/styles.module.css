@@ -2,12 +2,12 @@
   display: flex;
   width: 100%;
 
-  margin: 40px 40px;
+  margin: 40px 40px 0;
   width: calc(100vw - 80px);
   min-height: calc(100vh - var(--ifm-navbar-height) - 40px);
 
   background: white;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
 }
 
 .docsWrapper {

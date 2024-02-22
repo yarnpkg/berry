@@ -87,13 +87,6 @@ html:not([x-doc-route="/"]) footer {
   display: none;
 }
 
-html:not([x-doc-route="/"]) .main-wrapper > :last-child {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-
-  margin-bottom: 0;
-}
-
 html.blog-wrapper .container {
   background: white;
   border-radius: 10px;
