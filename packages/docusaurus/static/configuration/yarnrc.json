@@ -845,7 +845,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
+        "pattern": "localhost|[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"
       },
       "default": [],
       "_exampleItems": ["*.example.org", "example.org"]
