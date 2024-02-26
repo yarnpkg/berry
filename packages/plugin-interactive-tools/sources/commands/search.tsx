@@ -224,7 +224,7 @@ export default class SearchCommand extends BaseCommand {
               <InkTextInput
                 value={query}
                 onChange={handleQueryOnChange}
-                placeholder={`e.g. babel, webpack, react...`}
+                placeholder={`i.e. babel, webpack, react...`}
                 showCursor={false}
               />
             </Box>
