@@ -209,7 +209,14 @@ const SLICES = [
     from: `9420c380b6f1f072ff66372cbf776fafd6eeed1c`,
     to: `9420c380b6f1f072ff66372cbf776fafd6eeed1c`,
     onto: `e80675868dff622d0870939e7c9930c68904e7e7`,
-    range: `>=5.4.0-beta`,
+    range: `>=5.4.0-beta <5.4.1-rc`,
+  },
+  // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-5.4-rc
+  {
+    from: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
+    to: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
+    onto: `db6b2a980280a9c87799b9c1edd6d71e92bb255b`,
+    range: `>=5.4.1-rc`,
   },
 ];
 
