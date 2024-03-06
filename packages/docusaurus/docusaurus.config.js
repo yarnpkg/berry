@@ -229,11 +229,15 @@ const config = {
             dropdownActiveClassDisabled: true,
             dropdownItemsAfter: [
               {
-                label: `3.6.4`,
+                label: `3.8.1`,
                 href: `https://v3.yarnpkg.com`,
               },
               {
-                label: `1.22.19`,
+                label: `2.4.3`,
+                href: `https://v2.yarnpkg.com`,
+              },
+              {
+                label: `1.22.21`,
                 href: `https://classic.yarnpkg.com/en/docs`,
               },
             ],
