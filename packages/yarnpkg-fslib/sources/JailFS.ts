@@ -18,12 +18,11 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
     super(ppath);
 
     this.target = this.pathUtils.resolve(PortablePath.root, target);
-
     this.baseFs = baseFs;
   }
 
   getRealPath() {
-    return this.pathUtils.resolve(this.baseFs.getRealPath(), this.pathUtils.relative(PortablePath.root, this.target));
+    return this.target;
   }
 
   getTarget() {
@@ -35,18 +34,15 @@ export class JailFS extends ProxiedFS<PortablePath, PortablePath> {
   }
 
   protected mapToBase(p: PortablePath): PortablePath {
-    const normalized = this.pathUtils.normalize(p);
+    const normalized = ppath.resolve(this.target, p);
 
-    if (this.pathUtils.isAbsolute(p))
-      return this.pathUtils.resolve(this.target, this.pathUtils.relative(JAIL_ROOT, p));
+    if (!ppath.contains(this.target, normalized))
+      throw new Error(`Resolving this path (${p}, resolved as ${normalized}) would escape the jail (${this.target})`);
 
-    if (normalized.match(/^\.\.\/?/))
-      throw new Error(`Resolving this path (${p}) would escape the jail`);
-
-    return this.pathUtils.resolve(this.target, p);
+    return normalized;
   }
 
   protected mapFromBase(p: PortablePath): PortablePath {
-    return this.pathUtils.resolve(JAIL_ROOT, this.pathUtils.relative(this.target, p));
+    return p;
   }
 }

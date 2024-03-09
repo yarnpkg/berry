@@ -37,10 +37,6 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
   }
 
   mapToBase(path: PortablePath) {
-    if (this.pathUtils.isAbsolute(path)) {
-      return path;
-    } else {
-      return this.pathUtils.join(this.target, path);
-    }
+    return ppath.resolve(this.target, path);
   }
 }
