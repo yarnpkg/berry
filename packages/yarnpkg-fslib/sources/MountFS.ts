@@ -5,9 +5,10 @@ import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}   
 import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
+import {SubFS}                                                                                                                                       from './SubFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
-import {Filename, FSPath, npath, PortablePath}                                                                                                       from './path';
+import {Filename, FSPath, npath, PortablePath, ppath}                                                                                                from './path';
 
 // Only file descriptors prefixed by those values will be forwarded to the MountFS
 // instances. Note that the highest MOUNT_MAGIC bit MUST NOT be set, otherwise the
@@ -79,6 +80,37 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   private isMount: Set<PortablePath> = new Set();
   private notMount: Set<PortablePath> = new Set();
   private realPaths: Map<PortablePath, PortablePath> = new Map();
+
+  static createFolderMount({baseFs, mountPoint, targetPath}: {baseFs: FakeFS<PortablePath>, mountPoint: PortablePath, targetPath: PortablePath}) {
+    const subFs = new SubFS(targetPath);
+
+    const getMountPoint = (p: PortablePath) => {
+      const detectedMountPoint = p === mountPoint || p.startsWith(`${mountPoint}/`) ? p.slice(0, mountPoint.length) : null;
+      return detectedMountPoint as PortablePath;
+    };
+
+    const factoryPromise = async (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
+      return () => subFs;
+    };
+
+    const factorySync = (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
+      return subFs;
+    };
+
+    return new MountFS({
+      baseFs,
+
+      getMountPoint,
+
+      factoryPromise,
+      factorySync,
+
+      magicByte: 21,
+      maxAge: Infinity,
+
+      typeCheck: null,
+    });
+  }
 
   constructor({baseFs = new NodeFS(), filter = null, magicByte = 0x2a, maxOpenFiles = Infinity, useCache = true, maxAge = 5000, typeCheck = constants.S_IFREG, getMountPoint, factoryPromise, factorySync}: MountFSOptions<MountedFS>) {
     if (Math.floor(magicByte) !== magicByte || !(magicByte > 1 && magicByte <= 127))
@@ -819,8 +851,8 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.readdirPromise(p, opts as any);
-    }, async (mountFs, {subPath}) => {
-      return await mountFs.readdirPromise(subPath, opts as any);
+    }, async (mountFs, {archivePath, subPath}) => {
+      return this.fixReaddirPaths(mountFs.resolve(subPath), p, await mountFs.readdirPromise(subPath, opts as any), opts as any);
     }, {
       requireSubpath: false,
     });
@@ -839,11 +871,23 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
     return this.makeCallSync(p, () => {
       return this.baseFs.readdirSync(p, opts as any);
-    }, (mountFs, {subPath}) => {
-      return mountFs.readdirSync(subPath, opts as any);
+    }, (mountFs, {archivePath, subPath}) => {
+      return this.fixReaddirPaths(mountFs.resolve(subPath), p, mountFs.readdirSync(subPath, opts as any), opts as any);
     }, {
       requireSubpath: false,
     });
+  }
+
+  private fixReaddirPaths(privatePath: PortablePath, publicPath: PortablePath, data: Array<Dirent<PortablePath> | DirentNoPath | PortablePath>, opts?: {recursive?: boolean, withFileTypes?: boolean} | null) {
+    if (!opts?.withFileTypes)
+      return data;
+
+    const entries = data as Array<Dirent<PortablePath>>;
+
+    for (const entry of entries)
+      entry.path = ppath.join(publicPath, ppath.relative(privatePath, entry.path));
+
+    return entries;
   }
 
   async readlinkPromise(p: PortablePath) {

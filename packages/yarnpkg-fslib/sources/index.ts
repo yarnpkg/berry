@@ -47,9 +47,11 @@ export {NoFS}                                              from './NoFS';
 export {NodeFS}                                            from './NodeFS';
 export {PosixFS}                                           from './PosixFS';
 export {ProxiedFS}                                         from './ProxiedFS';
+export {TraceFS}                                           from './TraceFS';
 export {VirtualFS}                                         from './VirtualFS';
 
-export {patchFs, extendFs} from './patchFs/patchFs';
+export {mountFolder}                     from './patchFs/mountFolder';
+export {applyFsLayer, patchFs, extendFs} from './patchFs/patchFs';
 
 export {xfs} from './xfs';
 export type {XFS} from './xfs';

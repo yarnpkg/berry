@@ -316,18 +316,20 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }
 
-  readdirPromise(p: P, opts?: null): Promise<Array<Filename>>;
-  readdirPromise(p: P, opts: {recursive?: false, withFileTypes: true}): Promise<Array<DirentNoPath>>;
-  readdirPromise(p: P, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
-  readdirPromise(p: P, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<DirentNoPath | Filename>>;
-  readdirPromise(p: P, opts: {recursive: true, withFileTypes: true}): Promise<Array<Dirent<P>>>;
-  readdirPromise(p: P, opts: {recursive: true, withFileTypes?: false}): Promise<Array<P>>;
-  readdirPromise(p: P, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent<P> | P>>;
-  readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<P> | DirentNoPath>>;
-  readdirPromise(p: P, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<P>>;
-  readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<P> | DirentNoPath | P>>;
-  readdirPromise(p: P, opts?: ReaddirOptions | null): Promise<Array<Dirent<P> | DirentNoPath | P | Filename>> {
-    return this.baseFs.readdirPromise(this.mapToBase(p), opts as any);
+  async readdirPromise(p: P, opts?: null): Promise<Array<Filename>>;
+  async readdirPromise(p: P, opts: {recursive?: false, withFileTypes: true}): Promise<Array<DirentNoPath>>;
+  async readdirPromise(p: P, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
+  async readdirPromise(p: P, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<DirentNoPath | Filename>>;
+  async readdirPromise(p: P, opts: {recursive: true, withFileTypes: true}): Promise<Array<Dirent<P>>>;
+  async readdirPromise(p: P, opts: {recursive: true, withFileTypes?: false}): Promise<Array<P>>;
+  async readdirPromise(p: P, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent<P> | P>>;
+  async readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<P> | DirentNoPath>>;
+  async readdirPromise(p: P, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<P>>;
+  async readdirPromise(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<P> | DirentNoPath | P>>;
+  async readdirPromise(p: P, opts?: ReaddirOptions | null): Promise<Array<Dirent<P> | DirentNoPath | P | Filename>> {
+    const mappedP = this.mapToBase(p);
+
+    return this.fixReaddir(p, mappedP, await this.baseFs.readdirPromise(mappedP, opts as any), opts);
   }
 
   readdirSync(p: P, opts?: null): Array<Filename>;
@@ -341,7 +343,20 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   readdirSync(p: P, opts: {recursive: boolean, withFileTypes?: false}): Array<P>;
   readdirSync(p: P, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<P> | DirentNoPath | P>;
   readdirSync(p: P, opts?: ReaddirOptions | null): Array<Dirent<P> | DirentNoPath | P | Filename> {
-    return this.baseFs.readdirSync(this.mapToBase(p), opts as any);
+    const mappedP = this.mapToBase(p);
+
+    return this.fixReaddir(p, mappedP, this.baseFs.readdirSync(mappedP, opts as any), opts);
+  }
+
+  private fixReaddir(p: P, mappedP: IP, result: Array<Filename | DirentNoPath>, opts?: ReaddirOptions | null): Array<Dirent<P> | DirentNoPath | P | Filename> {
+    if (!opts?.withFileTypes)
+      return result;
+
+    const items = result as Array<Dirent<P>>;
+    for (const item of items)
+      item.path = this.pathUtils.join(p, this.baseFs.pathUtils.relative(mappedP, item.path as any as IP) as any as P);
+
+    return items;
   }
 
   async readlinkPromise(p: P) {
