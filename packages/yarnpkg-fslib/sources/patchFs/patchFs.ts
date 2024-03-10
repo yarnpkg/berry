@@ -1,11 +1,13 @@
-import fs           from 'fs';
-import {promisify}  from 'util';
+import fs                         from 'fs';
+import {promisify}                from 'util';
 
-import {FakeFS}     from '../FakeFS';
-import {NodePathFS} from '../NodePathFS';
-import {NativePath} from '../path';
+import {FakeFS}                   from '../FakeFS';
+import {NodeFS}                   from '../NodeFS';
+import {NodePathFS}               from '../NodePathFS';
+import {PosixFS}                  from '../PosixFS';
+import {NativePath, PortablePath} from '../path';
 
-import {FileHandle} from './FileHandle';
+import {FileHandle}               from './FileHandle';
 
 const SYNC_IMPLEMENTATIONS = new Set([
   `accessSync`,
@@ -135,6 +137,16 @@ type ReadArgumentsOptions = [
 
 type ReadArgumentsCallback = [fd: number, callback: ReadCallback];
 //#endregion
+
+export function applyFsLayer(origFs: typeof fs, factory: (baseFs: FakeFS<PortablePath>) => FakeFS<PortablePath>) {
+  // We must copy the fs into a local, because otherwise
+  // 1. we would make the NodeFS instance use the function that we patched (infinite loop)
+  // 2. Object.create(fs) isn't enough, since it won't prevent the proto from being modified
+  const localFs = {...origFs};
+  const nodeFs = new NodeFS(localFs);
+
+  patchFs(fs, new PosixFS(factory(nodeFs)));
+}
 
 export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void {
   // We wrap the `fakeFs` with a `NodePathFS` to add support for all path types supported by Node

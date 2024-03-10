@@ -5,6 +5,7 @@ import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}   
 import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
 import {NodeFS}                                                                                                                                      from './NodeFS';
+import {SubFS}                                                                                                                                       from './SubFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
 import {Filename, FSPath, npath, PortablePath}                                                                                                       from './path';
@@ -79,6 +80,37 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   private isMount: Set<PortablePath> = new Set();
   private notMount: Set<PortablePath> = new Set();
   private realPaths: Map<PortablePath, PortablePath> = new Map();
+
+  static createFolderMount({baseFs, mountPoint, targetPath}: {baseFs: FakeFS<PortablePath>, mountPoint: PortablePath, targetPath: PortablePath}) {
+    const subFs = new SubFS(targetPath);
+
+    const getMountPoint = (p: PortablePath) => {
+      const detectedMountPoint = p === mountPoint || p.startsWith(`${mountPoint}/`) ? p.slice(0, mountPoint.length) : null;
+      return detectedMountPoint as PortablePath;
+    };
+
+    const factoryPromise = async (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
+      return () => subFs;
+    };
+
+    const factorySync = (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
+      return subFs;
+    };
+
+    return new MountFS({
+      baseFs,
+
+      getMountPoint,
+
+      factoryPromise,
+      factorySync,
+
+      magicByte: 21,
+      maxAge: Infinity,
+
+      typeCheck: null,
+    });
+  }
 
   constructor({baseFs = new NodeFS(), filter = null, magicByte = 0x2a, maxOpenFiles = Infinity, useCache = true, maxAge = 5000, typeCheck = constants.S_IFREG, getMountPoint, factoryPromise, factorySync}: MountFSOptions<MountedFS>) {
     if (Math.floor(magicByte) !== magicByte || !(magicByte > 1 && magicByte <= 127))
