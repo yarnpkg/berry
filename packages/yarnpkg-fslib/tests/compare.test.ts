@@ -1,4 +1,4 @@
-import {CwdFS, JailFS, NodeFS, npath, ppath} from '../sources';
+import {CwdFS, JailFS, NodeFS, SubFS, npath, ppath} from '../sources';
 
 const nodeFs = new NodeFS();
 const pkgDir = ppath.dirname(npath.toPortablePath(__dirname));
@@ -6,6 +6,7 @@ const pkgDir = ppath.dirname(npath.toPortablePath(__dirname));
 const drives = {
   CwdFS,
   JailFS,
+  SubFS,
 };
 
 const tests = {
@@ -50,6 +51,28 @@ const tests = {
     results: {
       CwdFS: `/`,
       JailFS: Error,
+    },
+  }],
+  readFileSync: [{
+    args: [`/package.json`, `utf8`],
+    results: {
+      CwdFS: Error,
+      JailFS: Error,
+      SubFS: expect.stringContaining(`"name": "@yarnpkg/fslib"`),
+    },
+  }, {
+    args: [`package.json`, `utf8`],
+    results: {
+      CwdFS: expect.stringContaining(`"name": "@yarnpkg/fslib"`),
+      JailFS: expect.stringContaining(`"name": "@yarnpkg/fslib"`),
+      SubFS: expect.stringContaining(`"name": "@yarnpkg/fslib"`),
+    },
+  }, {
+    args: [`../../package.json`, `utf8`],
+    results: {
+      CwdFS: expect.stringContaining(`"name": "@yarnpkg/monorepo"`),
+      JailFS: Error,
+      SubFS: expect.stringContaining(`"name": "@yarnpkg/fslib"`),
     },
   }],
 };
