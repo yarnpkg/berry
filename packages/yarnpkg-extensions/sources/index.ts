@@ -987,4 +987,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       vue: `^3.2.6`,
     },
   }],
+  // https://github.com/pzmosquito/eslint-import-resolver-vite/pull/22
+  // https://github.com/pzmosquito/eslint-import-resolver-vite/commit/97b8111b03d3f8c66506732ac965e906568e8dc1#diff-7ae45ad102eab3b6d7e7896acd08c427a9b25b346470d7bc6507b6481575d519
+  [`eslint-import-resolver-vite@<2.0.1`, {
+    dependencies: {
+      debug: `^4.3.4`,
+      resolve: `^1.22.8`,
+    },
+  }],
 ];
