@@ -76,12 +76,26 @@ The SDK comes with a typescript-language-server wrapper which enables you to use
 yarn dlx @yarnpkg/sdks base
 ```
 
-2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support, and make sure LSP is loaded after local variables are applied to trigger the `eval-after-load`:
+2. Create a `.dir-locals.el` with the following content to enable Flycheck and LSP support:
 
 ```lisp
 ((typescript-mode
   . ((eval . (let ((project-directory (car (dir-locals-find-file default-directory))))
                 (setq lsp-clients-typescript-server-args `("--tsserver-path" ,(concat project-directory ".yarn/sdks/typescript/bin/tsserver") "--stdio")))))))
+```
+
+If, rather than LSP, you are using `eglot` (either bundled with Emacs 29.1 and later versions, or installed separately), your `.dir-locals.el` should instead read
+
+```lisp
+((typescript-ts-mode
+  . ((eglot-server-programs
+      . (((tsx-ts-mode typescript-ts-mode typescript-mode)
+          . (lambda (&rest ignored)
+              (let* ((project-directory (car (dir-locals-find-file default-directory)))
+                     (tsserver-path (concat project-directory ".yarn/sdks/typescript/bin/tsserver")))
+                `("typescript-language-server" "--stdio"
+                  :initializationOptions
+                  (:tserver (:path ,tsserver-path)))))))))))
 ```
 
 ### Neovim Native LSP
