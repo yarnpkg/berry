@@ -186,6 +186,13 @@
       "type": "boolean",
       "examples": [false]
     },
+    "enableMergeConflictPrompt": {
+      "_package": "@yarnpkg/plugin-essentials",
+      "title": "Define whether to prompt the user about what to do when Yarn detects merge conflicts in the lockfile.",
+      "description": "If true, Yarn will prompt the user about what to do when it detects merge conflicts in the lockfile.",
+      "type": "boolean",
+      "examples": [false]
+    },
     "enableMessageNames": {
       "_package": "@yarnpkg/core",
       "title": "Define whether to prepend a message name before each printed line or not.",
