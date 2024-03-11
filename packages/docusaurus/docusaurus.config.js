@@ -233,10 +233,6 @@ const config = {
                 href: `https://v3.yarnpkg.com`,
               },
               {
-                label: `2.4.3`,
-                href: `https://v2.yarnpkg.com`,
-              },
-              {
                 label: `1.22.21`,
                 href: `https://classic.yarnpkg.com/en/docs`,
               },
