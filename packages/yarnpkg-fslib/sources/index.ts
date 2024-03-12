@@ -50,7 +50,7 @@ export {ProxiedFS}                                         from './ProxiedFS';
 export {SubFS}                                             from './SubFS';
 export {VirtualFS}                                         from './VirtualFS';
 
-export {patchFs, extendFs} from './patchFs/patchFs';
+export {applyFsLayer, extendFs, patchFs} from './patchFs/patchFs';
 
 export {xfs} from './xfs';
 export type {XFS} from './xfs';
