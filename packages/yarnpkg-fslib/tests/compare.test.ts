@@ -75,6 +75,12 @@ const tests = {
       SubFS: expect.stringContaining(`"name": "@yarnpkg/fslib"`),
     },
   }],
+  realpathSync: [{
+    args: [`package.json`],
+    results: {
+      SubFS: `/package.json`,
+    },
+  }],
 };
 
 describe(`FsLib comparison table`, () => {
