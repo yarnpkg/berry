@@ -33,6 +33,6 @@ export class SubFS extends ProxiedFS<PortablePath, PortablePath> {
     if (relPath.match(/^\.\.\/?/))
       throw new Error(`Path ${p} is outside of the jail`);
 
-    return ppath.normalize(p);
+    return ppath.join(PortablePath.root, relPath);
   }
 }
