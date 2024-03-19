@@ -66,7 +66,6 @@ describe(`Plugins`, () => {
         }),
       );
 
-
       test(
         `it should not automatically enable automatic @types insertion when a tsconfig is present in a sibling workspace`,
         makeTemporaryMonorepoEnv({
@@ -79,6 +78,25 @@ describe(`Plugins`, () => {
           });
 
           await expect(readManifest(`${path}/packages/bar` as PortablePath)).resolves.toMatchObject({
+            dependencies: {
+              [`is-number`]: `^2.0.0`,
+            },
+          });
+        }),
+      );
+
+      test(
+        `it should not automatically enable automatic @types insertion when a tsconfig is detected in the root project of the current workspace`,
+        makeTemporaryMonorepoEnv({
+          workspaces: [`packages/*`],
+        }, {[`packages/foo`]: {}}, async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `tsconfig.json`), ``);
+
+          await run(`add`, `is-number`, {
+            cwd: `${path}/packages/foo` as PortablePath,
+          });
+
+          await expect(readManifest(`${path}/packages/foo` as PortablePath)).resolves.toMatchObject({
             dependencies: {
               [`is-number`]: `^2.0.0`,
             },
