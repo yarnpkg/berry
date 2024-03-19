@@ -66,6 +66,26 @@ describe(`Plugins`, () => {
         }),
       );
 
+
+      test(
+        `it should not automatically enable automatic @types insertion when a tsconfig is present in a sibling workspace`,
+        makeTemporaryMonorepoEnv({
+          workspaces: [`packages/*`],
+        }, {[`packages/foo`]: {}, [`packages/bar`]: {}}, async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `packages/foo/tsconfig.json`), ``);
+
+          await run(`add`, `is-number`, {
+            cwd: `${path}/packages/bar` as PortablePath,
+          });
+
+          await expect(readManifest(`${path}/packages/bar` as PortablePath)).resolves.toMatchObject({
+            dependencies: {
+              [`is-number`]: `^2.0.0`,
+            },
+          });
+        }),
+      );
+
       test(
         `it should automatically add @types to devDependencies when package doesn't provide types`,
         makeTemporaryEnv({}, {
