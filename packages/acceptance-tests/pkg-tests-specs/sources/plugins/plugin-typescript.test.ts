@@ -27,13 +27,35 @@ describe(`Plugins`, () => {
       );
 
       test(
-        `it should automatically enable automatic @types insertion when a tsconfig is detected`,
+        `it should automatically enable automatic @types insertion when a tsconfig is detected at the root of the project`,
         makeTemporaryEnv({}, async ({path, run, source}) => {
           await xfs.writeFilePromise(ppath.join(path, `tsconfig.json`), ``);
 
           await run(`add`, `is-number`);
 
           await expect(readManifest(path)).resolves.toMatchObject({
+            dependencies: {
+              [`is-number`]: `^2.0.0`,
+            },
+            devDependencies: {
+              [`@types/is-number`]: `^2`,
+            },
+          });
+        }),
+      );
+
+      test(
+        `it should automatically enable automatic @types insertion when a tsconfig is detected in the current workspace`,
+        makeTemporaryMonorepoEnv({
+          workspaces: [`packages/*`],
+        }, {[`packages/foo`]: {}}, async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `packages/foo/tsconfig.json`), ``);
+
+          await run(`add`, `is-number`, {
+            cwd: `${path}/packages/foo` as PortablePath,
+          });
+
+          await expect(readManifest(`${path}/packages/foo` as PortablePath)).resolves.toMatchObject({
             dependencies: {
               [`is-number`]: `^2.0.0`,
             },
