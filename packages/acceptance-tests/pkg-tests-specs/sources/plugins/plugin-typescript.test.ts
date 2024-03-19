@@ -106,7 +106,7 @@ describe(`Plugins`, () => {
       );
 
       test(
-        `it should not automatically enable automatic @types insertion when a tsconfig is detected in the root project of the current workspace`,
+        `it should automatically enable automatic @types insertion when a tsconfig is detected in the root project of the current workspace`,
         makeTemporaryMonorepoEnv({
           workspaces: [`packages/*`],
         }, {[`packages/foo`]: {}}, async ({path, run, source}) => {
@@ -119,6 +119,9 @@ describe(`Plugins`, () => {
           await expect(readManifest(`${path}/packages/foo` as PortablePath)).resolves.toMatchObject({
             dependencies: {
               [`is-number`]: `^2.0.0`,
+            },
+            devDependencies: {
+              [`@types/is-number`]: `^2`,
             },
           });
         }),
@@ -450,7 +453,7 @@ describe(`Plugins`, () => {
         );
 
         test(
-          `it should not automatically remove @types ${type} from the current workspace when a tsconfig is detected in the root project of the current workspace`,
+          `it should automatically remove @types ${type} from the current workspace when a tsconfig is detected in the root project of the current workspace`,
           makeTemporaryMonorepoEnv({
             workspaces: [`packages/*`],
           },
@@ -465,7 +468,7 @@ describe(`Plugins`, () => {
               cwd: `${path}/packages/foo` as PortablePath,
             });
 
-            await expect(readManifest(`${path}/packages/foo` as PortablePath)).resolves.toHaveProperty(`${type}.@types/is-number`);
+            await expect(readManifest(`${path}/packages/foo` as PortablePath)).resolves.not.toHaveProperty(`${type}.@types/is-number`);
           }),
         );
 
