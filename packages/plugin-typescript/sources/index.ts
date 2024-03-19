@@ -27,6 +27,7 @@ const afterWorkspaceDependencyAddition = async (
   const {configuration} = project;
 
   const tsEnableAutoTypes = configuration.get(`tsEnableAutoTypes`)
+    ?? xfs.existsSync(ppath.join(workspace.cwd, `tsconfig.json`))
     ?? xfs.existsSync(ppath.join(project.cwd, `tsconfig.json`));
 
   if (!tsEnableAutoTypes)
