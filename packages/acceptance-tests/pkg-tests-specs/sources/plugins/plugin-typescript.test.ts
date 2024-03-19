@@ -51,7 +51,9 @@ describe(`Plugins`, () => {
         }, {[`packages/foo`]: {}}, async ({path, run, source}) => {
           await xfs.writeFilePromise(ppath.join(path, `packages/foo/tsconfig.json`), ``);
 
-          await run(`add`, `is-number`);
+          await run(`add`, `is-number`, {
+            cwd: `${path}/packages/foo` as PortablePath,
+          });
 
           await expect(readManifest(`${path}/packages/foo` as PortablePath)).resolves.toMatchObject({
             dependencies: {
