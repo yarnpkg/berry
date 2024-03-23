@@ -28525,10 +28525,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["pem", [\
-      ["https://github.com/dexus/pem.git#commit=71dae3346801dafb5a8bcebcd4c7267fd182666f", {\
-        "packageLocation": "./.yarn/cache/pem-https-dd6a983ad7-afd0967576.zip/node_modules/pem/",\
+      ["npm:1.14.8", {\
+        "packageLocation": "./.yarn/cache/pem-npm-1.14.8-93f058cb29-6e91c3c2dc.zip/node_modules/pem/",\
         "packageDependencies": [\
-          ["pem", "https://github.com/dexus/pem.git#commit=71dae3346801dafb5a8bcebcd4c7267fd182666f"],\
+          ["pem", "npm:1.14.8"],\
           ["es6-promisify", "npm:7.0.0"],\
           ["md5", "npm:2.3.0"],\
           ["os-tmpdir", "npm:1.0.2"],\
@@ -28601,7 +28601,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-npm-cli", "virtual:7bf4ad1016291a7e1c04756f55760890095421dd1b945930b62d8d0464c365d1cdce28ed812277b54dc54443922ac82afd5e98ed7f1d218ae7753d16e21541bb#workspace:packages/plugin-npm-cli"],\
           ["finalhandler", "npm:1.2.0"],\
           ["invariant", "npm:2.2.4"],\
-          ["pem", "https://github.com/dexus/pem.git#commit=71dae3346801dafb5a8bcebcd4c7267fd182666f"],\
+          ["pem", "npm:1.14.8"],\
           ["pkg-tests-fixtures", "workspace:packages/acceptance-tests/pkg-tests-fixtures"],\
           ["semver", "npm:7.5.4"],\
           ["serve-static", "npm:1.15.0"],\

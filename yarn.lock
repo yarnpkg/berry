@@ -14468,15 +14468,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-pem@dexus/pem:
-  version: 1.14.5
-  resolution: "pem@https://github.com/dexus/pem.git#commit=71dae3346801dafb5a8bcebcd4c7267fd182666f"
+"pem@npm:^1.14.8":
+  version: 1.14.8
+  resolution: "pem@npm:1.14.8"
   dependencies:
     es6-promisify: "npm:^7.0.0"
     md5: "npm:^2.3.0"
     os-tmpdir: "npm:^1.0.2"
     which: "npm:^2.0.2"
-  checksum: 10/afd09675767caf2fe95fa3efe2957558cde2a8118d7d2b835e981d402552a76a672fd7e327f72f821932aeac7dd0264193b695ce83e1dff9a5231cbe65e2cf8b
+  checksum: 10/6e91c3c2dc6c3cc3fe1c407e1eb5b6af024437bae9c82093f39b06175f18d005bcd0fcf4c3ccba7f9c14ddb457556f0606c9af05785314fb040abc39381dfcd3
   languageName: node
   linkType: hard
 
@@ -14534,7 +14534,7 @@ pem@dexus/pem:
     "@yarnpkg/plugin-npm-cli": "workspace:^"
     finalhandler: "npm:^1.1.2"
     invariant: "npm:^2.2.4"
-    pem: dexus/pem
+    pem: "npm:^1.14.8"
     pkg-tests-fixtures: "workspace:^"
     semver: "npm:^7.1.2"
     serve-static: "npm:^1.14.1"
