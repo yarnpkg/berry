@@ -23,7 +23,7 @@ export default class VersionCommand extends BaseCommand {
       - If prefixed by \`pre\` (\`premajor\`, ...), a \`-0\` suffix will be set (\`0.0.0-0\`).
       - If \`prerelease\`, the suffix will be increased (\`0.0.0-X\`); the third number from the semver range will also be increased if there was no suffix in the previous version.
       - If \`decline\`, the nonce will be increased for \`yarn version check\` to pass without version bump.
-      - If a valid semver range, it will be used as new version.
+      - If a valid semver range, it will be used as new version (not when using --deferred).
       - If unspecified, Yarn will ask you for guidance.
 
       For more information about the \`--deferred\` flag, consult our documentation (https://yarnpkg.com/features/release-workflow#deferred-versioning).
@@ -65,17 +65,10 @@ export default class VersionCommand extends BaseCommand {
 
     let releaseStrategy: string | null;
     if (isSemver) {
-      if (workspace.manifest.version !== null) {
-        const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
+      if (deferred)
+        throw new UsageError(`Can't bump to a specific version when using deferred`);
 
-        if (suggestedStrategy !== null) {
-          releaseStrategy = suggestedStrategy;
-        } else {
-          releaseStrategy = this.strategy;
-        }
-      } else {
-        releaseStrategy = this.strategy;
-      }
+      releaseStrategy = this.strategy;
     } else {
       const currentVersion = workspace.manifest.version;
 
