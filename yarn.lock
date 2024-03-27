@@ -2782,6 +2782,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/deepmerge@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@fastify/deepmerge@npm:1.3.0"
+  checksum: 10/6ddfc230ed46bfb158dbf83c2cc7f6119c9c1afb96d885cf5d95ac17b56126d04eef83ddb1ee7a1b044e65a128c76ebf8b391a26490b19f5812fa0d2d2a3a675
+  languageName: node
+  linkType: hard
+
 "@floating-ui/core@npm:^1.3.1":
   version: 1.3.1
   resolution: "@floating-ui/core@npm:1.3.1"
@@ -5080,6 +5087,7 @@ __metadata:
   resolution: "@yarnpkg/core@workspace:packages/yarnpkg-core"
   dependencies:
     "@arcanis/slice-ansi": "npm:^1.1.1"
+    "@fastify/deepmerge": "npm:^1.3.0"
     "@octokit/webhooks-types": "npm:^7.3.1"
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-json": "npm:^6.0.0"
@@ -5111,6 +5119,7 @@ __metadata:
     diff: "npm:^5.1.0"
     dotenv: "npm:^16.3.1"
     esbuild: "npm:esbuild-wasm@^0.15.15"
+    fast-deep-equal: "npm:^3.1.3"
     fast-glob: "npm:^3.2.2"
     got: "npm:^11.7.0"
     lodash: "npm:^4.17.15"

@@ -215,7 +215,7 @@ export default class InitCommand extends BaseCommand {
         changedPaths.push(gitattributesPath);
       }
 
-      const editorConfigProperties = {
+      const initialEditorConfigProperties = {
         [`*`]: {
           endOfLine: `lf`,
           insertFinalNewline: true,
@@ -227,7 +227,10 @@ export default class InitCommand extends BaseCommand {
         },
       };
 
-      miscUtils.mergeIntoTarget(editorConfigProperties, configuration.get(`initEditorConfig`));
+      const editorConfigProperties = miscUtils.toMerged(
+        initialEditorConfigProperties,
+        configuration.get(`initEditorConfig`),
+      );
 
       let editorConfigBody = `root = true\n`;
       for (const [selector, props] of Object.entries(editorConfigProperties)) {

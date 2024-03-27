@@ -4,7 +4,7 @@ import {npath, ppath, xfs}                                                  from
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
 import {Command, Option, Usage}                                             from 'clipanion';
-import {build, Plugin}                                                      from 'esbuild';
+import {build, Loader, Plugin}                                              from 'esbuild';
 import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
 import semver                                                               from 'semver';
@@ -137,10 +137,77 @@ export default class BuildBundleCommand extends Command {
           logLevel: `silent`,
           format: `iife`,
           platform: `node`,
-          plugins: [valLoader],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node${semver.minVersion(pkg.engines.node)!.version}`,
+          plugins: [valLoader, {
+            name: `foo`,
+            setup: build => {
+              build.onLoad({namespace: `lazy-command`, filter: /^/}, async args => {
+                const load = await xfs.readFilePromise(npath.toPortablePath(args.path), `utf8`);
+                const fixed = load.replace(/^ {2}async execute\(\) \{\n.*?^ {2}\}\n/ms, `
+                  async execute() {
+                    const mod = await import('${args.path}?real');
+                    return mod.default.prototype.execute.call(this);
+                  }
+                `);
+
+                return {
+                  contents: fixed,
+                  resolveDir: path.dirname(args.path),
+                  loader: path.extname(args.path).slice(1) as Loader,
+                };
+              });
+
+              build.onResolve({filter: /commands\/.*$/}, async args => {
+                if (!args.path.endsWith(`?real`))
+                  return undefined;
+
+                const resolution = await build.resolve(args.path.replace(/\?real$/, ``), {
+                  resolveDir: args.resolveDir,
+                  pluginData: {skipFoo: true},
+                });
+
+                return {
+                  path: resolution.path,
+                };
+              });
+
+              build.onResolve({filter: /commands\/.*$/}, async args => {
+                if (args.pluginData?.skipFoo)
+                  return undefined;
+
+                const resolution = await build.resolve(args.path, {
+                  resolveDir: args.resolveDir,
+                  pluginData: {skipFoo: true},
+                });
+
+                return {
+                  path: resolution.path,
+                  namespace: `lazy-command`,
+                };
+              });
+            },
+          }, {
+            name: `bar`,
+            setup: build => {
+              return;
+
+              build.onLoad({filter: /^/}, async args => {
+                let loader = path.extname(args.path).slice(1) as Loader;
+                if (loader === `mjs` as Loader)
+                  loader = `js`;
+
+                if (![`js`, `jsx`, `ts`, `tsx`].includes(loader))
+                  return undefined;
+
+                return {
+                  contents: `console.log(${JSON.stringify(args.path)});\n${await xfs.readFilePromise(npath.toPortablePath(args.path), `utf8`)}`,
+                  loader,
+                };
+              });
+            },
+          }],
         });
 
         for (const warning of res.warnings) {

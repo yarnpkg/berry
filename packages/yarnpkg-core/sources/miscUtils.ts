@@ -1,7 +1,7 @@
+import deepMerge                  from '@fastify/deepmerge';
 import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
 import {UsageError}               from 'clipanion';
-import isEqual                    from 'lodash/isEqual';
-import mergeWith                  from 'lodash/mergeWith';
+import deepEqual                  from 'fast-deep-equal';
 import micromatch                 from 'micromatch';
 import pLimit, {Limit}            from 'p-limit';
 import semver                     from 'semver';
@@ -538,6 +538,16 @@ type MergeObjects<T extends Array<unknown>, Accumulator> = T extends [infer U, .
   ? MergeObjects<Rest, Accumulator & U>
   : Accumulator;
 
+const deepMergeImpl = deepMerge({
+  mergeArray: () => (target, source) => {
+    for (const sourceItem of source)
+      if (!target.find(targetItem => deepEqual(targetItem, sourceItem)))
+        target.push(sourceItem);
+
+    return target;
+  },
+});
+
 /**
  * Merges multiple objects into the target argument.
  *
@@ -548,38 +558,13 @@ type MergeObjects<T extends Array<unknown>, Accumulator> = T extends [infer U, .
  * @see toMerged for a version that doesn't mutate the target argument
  *
  */
-export function mergeIntoTarget<T extends object, S extends Array<object>>(target: T, ...sources: S): MergeObjects<S, T> {
-  // We need to wrap everything in an object because otherwise lodash fails to merge 2 top-level arrays
-  const wrap = <T>(value: T) => ({value});
+export function toMerged<T extends object, S extends Array<object>>(target: T, ...sources: S): MergeObjects<S, {}> {
+  let current: any = cloneDeep(target);
 
-  const wrappedTarget = wrap(target);
-  const wrappedSources = sources.map(source => wrap(source));
+  for (const source of sources)
+    current = deepMergeImpl(current, source);
 
-  const {value} = mergeWith(wrappedTarget, ...wrappedSources, (targetValue: unknown, sourceValue: unknown) => {
-    // We need to preserve comments in custom Array classes such as comment-json's `CommentArray`, so we can't use spread or `Set`s
-    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
-      for (const sourceItem of sourceValue) {
-        if (!targetValue.find(targetItem => isEqual(targetItem, sourceItem))) {
-          targetValue.push(sourceItem);
-        }
-      }
-
-      return targetValue;
-    }
-
-    return undefined;
-  });
-
-  return value;
-}
-
-/**
- * Merges multiple objects into a single one, without mutating any arguments.
- *
- * Custom classes are not supported (i.e. comment-json's comments will be lost).
- */
-export function toMerged<S extends Array<object>>(...sources: S): MergeObjects<S, {}> {
-  return mergeIntoTarget({}, ...sources);
+  return current as MergeObjects<S, T>;
 }
 
 export function groupBy<T extends Record<string, any>, K extends keyof T>(items: Iterable<T>, key: K): {[V in T[K]]?: Array<Extract<T, {[_ in K]: V}>>} {
@@ -597,4 +582,89 @@ export function groupBy<T extends Record<string, any>, K extends keyof T>(items:
 
 export function parseInt(val: string | number) {
   return typeof val === `string` ? Number.parseInt(val, 10) : val;
+}
+
+export function pick(obj: Record<string, any>, keys: ReadonlyArray<string>) {
+  const result: Record<string, any> = {};
+
+  for (const key of keys)
+    if (Object.hasOwn(obj, key))
+      result[key] = obj[key];
+
+  return result;
+}
+
+export function omit(obj: Record<string, any>, keys: ReadonlyArray<string>) {
+  const result: Record<string, any> = {};
+  const keysSet = new Set(keys);
+
+  for (const key of Object.keys(obj))
+    if (!keysSet.has(key))
+      result[key] = obj[key];
+
+  return result;
+}
+
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function startCase(str: string) {
+  return str.split(/[-_]/g).map(capitalize).join(` `);
+}
+
+export function cloneDeep<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+export function toPath(p: string) {
+  return p.split(/[.[\]]/g);
+}
+
+export function get(obj: any, path: Array<string>) {
+  for (const segment of path) {
+    if (!Object.hasOwn(obj, segment))
+      return undefined;
+
+    obj = obj[segment];
+  }
+
+  return obj;
+}
+
+export function hasPath(obj: any, path: Array<string>) {
+  for (const segment of path) {
+    if (!Object.hasOwn(obj, segment))
+      return false;
+
+    obj = obj[segment];
+  }
+
+  return true;
+}
+
+export function set(obj: any, path: Array<string>, value: any) {
+  for (let i = 0; i < path.length - 1; ++i) {
+    const segment = path[i];
+
+    if (!Object.hasOwn(obj, segment))
+      obj[segment] = {};
+
+    obj = obj[segment];
+  }
+
+  obj[path[path.length - 1]] = value;
+}
+
+export function unset(obj: any, path: Array<string>) {
+  for (let i = 0; i < path.length - 1; ++i) {
+    const segment = path[i];
+
+    if (!Object.hasOwn(obj, segment))
+      return;
+
+    obj = obj[segment];
+  }
+
+  delete obj[path[path.length - 1]];
 }

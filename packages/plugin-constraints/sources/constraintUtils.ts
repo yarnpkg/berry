@@ -1,9 +1,5 @@
 import {Configuration, formatUtils, Manifest, miscUtils, nodeUtils, Project, treeUtils, Workspace} from '@yarnpkg/core';
 import {PortablePath}                                                                              from '@yarnpkg/fslib';
-import get                                                                                         from 'lodash/get';
-import set                                                                                         from 'lodash/set';
-import toPath                                                                                      from 'lodash/toPath';
-import unset                                                                                       from 'lodash/unset';
 
 export type ProcessResult = {
   manifestUpdates: Map<PortablePath, Map<string, Map<any, Set<nodeUtils.Caller>>>>;
@@ -125,7 +121,7 @@ function isKnownDict(parts: Array<string>, index: number) {
 export function normalizePath(p: Array<string> | string) {
   const parts = Array.isArray(p)
     ? p
-    : toPath(p);
+    : miscUtils.toPath(p);
 
   const normalizedParts = parts.map((part, t) => {
     if (numberRegExp.test(part))
@@ -202,7 +198,7 @@ export function applyEngineReport(project: Project, {manifestUpdates, reportedEr
       } else {
         const [[newValue]] = newValues;
 
-        const currentValue = get(manifest, fieldPath);
+        const currentValue = miscUtils.get(manifest, fieldPath);
         if (JSON.stringify(currentValue) === JSON.stringify(newValue))
           continue;
 
@@ -218,9 +214,9 @@ export function applyEngineReport(project: Project, {manifestUpdates, reportedEr
         }
 
         if (typeof newValue === `undefined`)
-          unset(manifest, fieldPath);
+          miscUtils.unset(manifest, fieldPath);
         else
-          set(manifest, fieldPath, newValue);
+          miscUtils.set(manifest, fieldPath, newValue);
 
         changedWorkspace = true;
       }

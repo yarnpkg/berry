@@ -14,7 +14,7 @@ export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeF
     : `{}`;
 
   const data = CJSON.parse(content);
-  const patched = `${CJSON.stringify(miscUtils.mergeIntoTarget(data, patch), null, 2)}\n`;
+  const patched = `${CJSON.stringify(miscUtils.toMerged(data, patch), null, 2)}\n`;
 
   await xfs.mkdirPromise(ppath.dirname(filePath), {recursive: true});
   await xfs.changeFilePromise(filePath, patched, {

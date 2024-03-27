@@ -1,4 +1,4 @@
-import algoliasearch from 'algoliasearch';
+import type {SearchIndex} from 'algoliasearch';
 
 const algolia = {
   appId: `OFCNCOG2CU`,
@@ -6,9 +6,17 @@ const algolia = {
   indexName: `npm-search`,
 };
 
-const client = algoliasearch(algolia.appId, algolia.apiKey).initIndex(
-  algolia.indexName,
-);
+let searchIndex: SearchIndex | undefined;
+
+export const getSearchIndex = async () => {
+  if (typeof searchIndex !== `undefined`)
+    return searchIndex;
+
+  const {default: algoliasearch} = await import(`algoliasearch`);
+  searchIndex = algoliasearch(algolia.appId, algolia.apiKey).initIndex(algolia.indexName);
+
+  return searchIndex;
+};
 
 export interface AlgoliaPackage {
   objectID: string;
@@ -34,6 +42,7 @@ export const search = async (
   query: string,
   page: number = 0,
 ) => {
+  const client = await getSearchIndex();
   const res = await client.search<AlgoliaPackage>(
     query,
     {

@@ -2,7 +2,6 @@ import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, s
 import {MessageName, ReportError}                                                                                                 from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                                                                                       from '@yarnpkg/fslib';
 import {prompt}                                                                                                                   from 'enquirer';
-import pick                                                                                                                       from 'lodash/pick';
 import semver                                                                                                                     from 'semver';
 
 import {Hooks}                                                                                                                    from './index';
@@ -285,7 +284,7 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
     'dist-tags': metadata[`dist-tags`],
     versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
       key,
-      pick(value, CACHED_FIELDS) as any,
+      miscUtils.pick(value, CACHED_FIELDS) as any,
     ])),
   };
 }

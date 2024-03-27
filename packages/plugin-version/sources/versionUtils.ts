@@ -3,7 +3,6 @@ import {PortablePath, npath, ppath, xfs}                                        
 import {parseSyml, stringifySyml}                                                                                                            from '@yarnpkg/parsers';
 import {gitUtils}                                                                                                                            from '@yarnpkg/plugin-git';
 import {UsageError}                                                                                                                          from 'clipanion';
-import omit                                                                                                                                  from 'lodash/omit';
 import semver                                                                                                                                from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
@@ -27,7 +26,7 @@ export function validateReleaseDecision(decision: unknown): string {
   if (semverDecision)
     return semverDecision;
 
-  return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
+  return miscUtils.validateEnum(miscUtils.omit(Decision, [`UNDECIDED`]), decision as string);
 }
 
 export type VersionFile = {

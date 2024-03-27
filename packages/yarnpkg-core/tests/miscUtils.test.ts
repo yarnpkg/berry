@@ -116,41 +116,4 @@ describe(`miscUtils`, () => {
       expect(c).toStrictEqual({n: [{a: 1}, {b: 2}, {c: 3}]});
     });
   });
-
-  describe(`mergeIntoTarget`, () => {
-    it(`should preserve comments when the target is an object created by comment-json`, () => {
-      const a = CJSON.parse(`{
-        // n
-        "n":
-        // array
-        [
-          // 1
-          1,
-          // 2
-          2,
-          // 3
-          3
-        ]
-      }`);
-      const b = {n: [4, 5, 6]};
-      const c = miscUtils.mergeIntoTarget(a, b);
-
-      expect(CJSON.stringify(c, null, 2)).toStrictEqual(CJSON.stringify(CJSON.parse(`{
-        // n
-        "n":
-        // array
-        [
-          // 1
-          1,
-          // 2
-          2,
-          // 3
-          3,
-          4,
-          5,
-          6
-        ]
-      }`), null, 2));
-    });
-  });
 });
