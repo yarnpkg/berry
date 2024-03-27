@@ -109,11 +109,11 @@ export default class WorkspacesForeachCommand extends BaseCommand {
   });
 
   include = Option.Array(`--include`, [], {
-    description: `An array of glob pattern idents or paths; only matching workspaces will be traversed`,
+    description: `An array of glob pattern idents; only matching workspaces will be traversed`,
   });
 
   exclude = Option.Array(`--exclude`, [], {
-    description: `An array of glob pattern idents or paths; matching workspaces won't be traversed`,
+    description: `An array of glob pattern idents; matching workspaces won't be traversed`,
   });
 
   publicOnly = Option.Boolean(`--no-private`, {
