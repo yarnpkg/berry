@@ -3,7 +3,6 @@ import {Workspace, structUtils}   from '@yarnpkg/core';
 import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
 import {packUtils}                from '@yarnpkg/plugin-pack';
 import {createHash}               from 'crypto';
-import ssri                       from 'ssri';
 
 import {normalizeRegistry}        from './npmConfigUtils';
 
@@ -21,6 +20,8 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   const name = structUtils.stringifyIdent(ident);
 
   const shasum = createHash(`sha1`).update(buffer).digest(`hex`);
+
+  const {default: ssri} = await import(`ssri`);
   const integrity = ssri.fromData(buffer).toString();
 
   const publishAccess = access ?? getPublishAccess(workspace, ident);

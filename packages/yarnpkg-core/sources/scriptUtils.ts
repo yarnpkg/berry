@@ -2,7 +2,6 @@ import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
 import {xfs, npath, ppath}                         from '@yarnpkg/fslib';
 import {ZipOpenFS}                                 from '@yarnpkg/libzip';
 import {execute}                                   from '@yarnpkg/shell';
-import capitalize                                  from 'lodash/capitalize';
 import pLimit                                      from 'p-limit';
 import {PassThrough, Readable, Writable}           from 'stream';
 
@@ -593,7 +592,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
     if (exitCode !== 0) {
       xfs.detachTemp(logDir);
 
-      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `${capitalize(lifecycleScriptName)} script failed (exit code ${formatUtils.pretty(configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)}); run ${formatUtils.pretty(configuration, `yarn ${lifecycleScriptName}`, formatUtils.Type.CODE)} to investigate`);
+      throw new ReportError(MessageName.LIFECYCLE_SCRIPT, `${miscUtils.capitalize(lifecycleScriptName)} script failed (exit code ${formatUtils.pretty(configuration, exitCode, formatUtils.Type.NUMBER)}, logs can be found here: ${formatUtils.pretty(configuration, logFile, formatUtils.Type.PATH)}); run ${formatUtils.pretty(configuration, `yarn ${lifecycleScriptName}`, formatUtils.Type.CODE)} to investigate`);
     }
   });
 }

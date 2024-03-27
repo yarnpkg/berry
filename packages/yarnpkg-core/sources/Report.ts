@@ -1,4 +1,3 @@
-import throttle               from 'lodash/throttle';
 import {PassThrough}          from 'stream';
 import {StringDecoder}        from 'string_decoder';
 
@@ -129,6 +128,20 @@ export abstract class Report {
     let lock = new Promise<void>(resolve => {
       unlock = resolve;
     });
+
+    function throttle<T extends Array<any>>(fn: (...args: T) => void, delay: number) {
+      let lastCall = 0;
+
+      return (...args: T) => {
+        const now = Date.now();
+
+        if (now - lastCall < delay)
+          return;
+
+        lastCall = now;
+        fn(...args);
+      };
+    }
 
     const setTitle: (title: string) => void = throttle((title: string) => {
       const thisUnlock = unlock;

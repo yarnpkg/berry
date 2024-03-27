@@ -1,9 +1,6 @@
 import {BaseCommand}                                         from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}                  from 'clipanion';
-import cloneDeep                                             from 'lodash/cloneDeep';
-import getPath                                               from 'lodash/get';
-import setPath                                               from 'lodash/set';
 import {inspect}                                             from 'util';
 
 // eslint-disable-next-line arca/no-default-export
@@ -84,8 +81,8 @@ export default class ConfigSetCommand extends BaseCommand {
 
     await updateConfiguration(current => {
       if (path) {
-        const clone = cloneDeep(current);
-        setPath(clone, this.name, value);
+        const clone = miscUtils.cloneDeep(current);
+        miscUtils.set(clone, miscUtils.toPath(this.name), value);
         return clone;
       } else {
         return {
@@ -103,7 +100,7 @@ export default class ConfigSetCommand extends BaseCommand {
 
     const asObject = miscUtils.convertMapsToIndexableObjects(displayedValue);
     const requestedObject = path
-      ? getPath(asObject, path)
+      ? miscUtils.get(asObject, miscUtils.toPath(path))
       : asObject;
 
     const report = await StreamReport.start({

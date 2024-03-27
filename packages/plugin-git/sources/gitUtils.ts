@@ -2,7 +2,6 @@ import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils,
 import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
-import capitalize                                                                                                                                 from 'lodash/capitalize';
 import querystring                                                                                                                                from 'querystring';
 import semver                                                                                                                                     from 'semver';
 
@@ -393,7 +392,7 @@ async function git(message: string, args: Array<string>, opts: Omit<execUtils.Ex
 
         const label = errorName === `error`
           ? `Error`
-          : `${capitalize(errorName)} Error`;
+          : `${miscUtils.capitalize(errorName)} Error`;
 
         report.reportError(MessageName.EXCEPTION, `  ${formatUtils.prettyField(configuration, {
           label,

@@ -1,8 +1,6 @@
 import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, hashUtils, Project, miscUtils, Cache} from '@yarnpkg/core';
 import {MessageName, ReportError}                                                                                                 from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                                                                                       from '@yarnpkg/fslib';
-import {prompt}                                                                                                                   from 'enquirer';
-import pick                                                                                                                       from 'lodash/pick';
 import semver                                                                                                                     from 'semver';
 
 import {Hooks}                                                                                                                    from './index';
@@ -285,7 +283,7 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
     'dist-tags': metadata[`dist-tags`],
     versions: Object.fromEntries(Object.entries(metadata.versions).map(([key, value]) => [
       key,
-      pick(value, CACHED_FIELDS) as any,
+      miscUtils.pick(value, CACHED_FIELDS) as any,
     ])),
   };
 }
@@ -510,6 +508,8 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
       if (!process.env.YARN_IS_TEST_ENV) {
         const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
         if (autoOpen && nodeUtils.openUrl) {
+          const {prompt} = await import(`enquirer`);
+
           const {openNow} = await prompt<{openNow: boolean}>({
             type: `confirm`,
             name: `openNow`,
@@ -534,6 +534,8 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
 
   if (process.env.YARN_IS_TEST_ENV)
     return process.env.YARN_INJECT_NPM_2FA_TOKEN || ``;
+
+  const {prompt} = await import(`enquirer`);
 
   const {otp} = await prompt<{otp: string}>({
     type: `password`,

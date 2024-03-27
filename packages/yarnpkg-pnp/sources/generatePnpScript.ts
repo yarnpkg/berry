@@ -2,11 +2,11 @@ import {Filename}                from '@yarnpkg/fslib';
 
 import {generatePrettyJson}      from './generatePrettyJson';
 import {generateSerializedState} from './generateSerializedState';
-import getTemplate               from './hook';
 import {SerializedState}         from './types';
 import {PnpSettings}             from './types';
 
 export function generateLoader(shebang: string | null | undefined, loader: string) {
+  const getTemplate = require(`./hook`);
   return [
     shebang ? `${shebang}\n` : ``,
     `/* eslint-disable */\n`,
