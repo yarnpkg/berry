@@ -13,10 +13,15 @@ export const ZIP_DIR3 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/foo.hiddenzip` as Filename,
 );
+export const ZIP_DIR4 = ppath.join(
+  npath.toPortablePath(__dirname),
+  `fixtures/symlink.zip` as Filename,
+);
 
 export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt`);
 export const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt`);
 export const ZIP_FILE3 = ppath.join(ZIP_DIR3, `foo.txt`);
+export const ZIP_FILE4 = ppath.join(ZIP_DIR4, `foo.txt`);
 
 afterEach(() => {
   jest.useRealTimers();
@@ -77,6 +82,14 @@ describe(`ZipOpenFS`, () => {
     expect(() => {
       fs.readFileSync(ZIP_FILE3, `utf8`);
     }).toThrowError();
+
+    fs.discardAndClose();
+  });
+
+  it(`can read from a zip file that's a symlink`, () => {
+    const fs = new ZipOpenFS();
+
+    expect(fs.readFileSync(ZIP_FILE4, `utf8`)).toEqual(`foo\n`);
 
     fs.discardAndClose();
   });
