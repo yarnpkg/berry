@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import fs from 'fs';
 import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
