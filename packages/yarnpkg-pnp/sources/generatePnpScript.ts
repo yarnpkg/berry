@@ -10,6 +10,7 @@ export function generateLoader(shebang: string | null | undefined, loader: strin
   return [
     shebang ? `${shebang}\n` : ``,
     `/* eslint-disable */\n`,
+    `// @ts-nocheck\n`,
     `"use strict";\n`,
     `\n`,
     loader,
