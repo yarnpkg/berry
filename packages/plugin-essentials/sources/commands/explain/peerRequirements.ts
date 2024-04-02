@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                                             from '@yarnpkg/cli';
-import type {PeerRequestNode}                                                                                    from '@yarnpkg/core/sources/Project';
-import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType} from '@yarnpkg/core';
-import {Command, Option}                                                                                         from 'clipanion';
-import {Writable}                                                                                                from 'stream';
-import * as t                                                                                                    from 'typanion';
+import {BaseCommand}                                                                                                        from '@yarnpkg/cli';
+import type {PeerRequestNode}                                                                                               from '@yarnpkg/core/sources/Project';
+import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType, miscUtils} from '@yarnpkg/core';
+import {Command, Option}                                                                                                    from 'clipanion';
+import {Writable}                                                                                                           from 'stream';
+import * as t                                                                                                               from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
@@ -32,6 +32,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   });
 
   hash = Option.String({
+    required: false,
     validator: t.cascade(t.isString(), [
       t.matchesRegExp(/^p[0-9a-f]{5}$/),
     ]),
@@ -47,9 +48,15 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
 
     await project.applyLightResolution();
 
-    return await explainPeerRequirement(this.hash, project, {
-      stdout: this.context.stdout,
-    });
+    if (typeof this.hash !== `undefined`) {
+      return await explainPeerRequirement(this.hash, project, {
+        stdout: this.context.stdout,
+      });
+    } else {
+      return await explainPeerRequirements(project, {
+        stdout: this.context.stdout,
+      });
+    }
   }
 }
 
@@ -141,6 +148,89 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
           report.reportInfo(MessageName.UNNAMED, `  The combined requested range is ${formatUtils.pretty(project.configuration, warning.range, formatUtils.Type.RANGE)}`);
         } else {
           report.reportInfo(MessageName.UNNAMED, `  Unfortunately, the requested ranges have no overlap`);
+        }
+      }
+    }
+  });
+
+
+  return report.exitCode();
+}
+
+export async function explainPeerRequirements(project: Project, opts: {stdout: Writable}) {
+  const report = await StreamReport.start({
+    configuration: project.configuration,
+    stdout: opts.stdout,
+    includeFooter: false,
+    includePrefix: false,
+  }, async report => {
+    const Marks = formatUtils.mark(project.configuration);
+
+    const sorted = miscUtils.sortMap(project.peerRequirementNodes, [
+      ([, requirement]) => structUtils.stringifyLocator(requirement.subject),
+      ([, requirement]) => structUtils.stringifyIdent(requirement.ident),
+    ]);
+
+    for (const [,peerRequirement] of sorted.values()) {
+      if (!peerRequirement.root)
+        continue;
+
+      const warning = project.peerWarnings.find(warning => {
+        return warning.hash === peerRequirement.hash;
+      });
+
+      const allRequests = [...structUtils.allPeerRequests(peerRequirement)];
+      let andOthers;
+      if (allRequests.length > 2)
+        andOthers = ` and ${allRequests.length - 1} other dependencies`;
+      else if (allRequests.length === 2)
+        andOthers = ` and 1 other dependency`;
+      else
+        andOthers = ``;
+
+      if (peerRequirement.provided.range !== `missing:`) {
+        const providedResolution = project.storedResolutions.get(peerRequirement.provided.descriptorHash);
+        if (!providedResolution)
+          throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+
+        const providedPkg = project.storedPackages.get(providedResolution);
+        if (!providedPkg)
+          throw new Error(`Assertion failed: Expected the provided package to have been registered`);
+
+        const message = `${
+          formatUtils.pretty(project.configuration, peerRequirement.hash, formatUtils.Type.CODE)
+        } → ${
+          warning ? Marks.Cross : Marks.Check
+        } ${
+          structUtils.prettyLocator(project.configuration, peerRequirement.subject)
+        } provides ${
+          structUtils.prettyLocator(project.configuration, providedPkg)
+        } to ${
+          structUtils.prettyLocator(project.configuration, allRequests[0]!.requester)
+        }${andOthers}`;
+
+        if (warning) {
+          report.reportWarning(MessageName.UNNAMED, message);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, message);
+        }
+      } else {
+        const message = `${
+          formatUtils.pretty(project.configuration, peerRequirement.hash, formatUtils.Type.CODE)
+        } → ${
+          warning ? Marks.Cross : Marks.Check
+        } ${
+          structUtils.prettyLocator(project.configuration, peerRequirement.subject)
+        } doesn't provide ${
+          structUtils.prettyIdent(project.configuration, peerRequirement.ident)
+        } to ${
+          structUtils.prettyLocator(project.configuration, allRequests[0]!.requester)
+        }${andOthers}`;
+
+        if (warning) {
+          report.reportWarning(MessageName.UNNAMED, message);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, message);
         }
       }
     }
