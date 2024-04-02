@@ -2196,7 +2196,7 @@ function applyVirtualResolutionMutations({
   const allIdents = new Map<IdentHash, Ident>();
 
   // We'll be keeping track of all virtual descriptors; once they have all
-  // been generated we'll check whether they can be consolidated into one.
+  // been generated we'll check whether they can be deduplicated into one.
   const allVirtualInstances = new Map<LocatorHash, Map<string, Descriptor>>();
   const allVirtualDependents = new Map<DescriptorHash, Set<LocatorHash>>();
 
@@ -2274,11 +2274,6 @@ function applyVirtualResolutionMutations({
     const thirdPass = [];
     const fourthPass = [];
 
-    // During this first pass we virtualize the descriptors. This allows us
-    // to reference them from their sibling without being order-dependent,
-    // which is required to solve cases where packages with peer dependencies
-    // have peer dependencies themselves.
-
     for (const descriptor of Array.from(parentPackage.dependencies.values())) {
       // We shouldn't virtualize the package if it was obtained through a peer
       // dependency (which can't be the case for workspaces when resolved
@@ -2308,11 +2303,6 @@ function applyVirtualResolutionMutations({
 
       const resolution = allResolutions.get(descriptor.descriptorHash);
       if (!resolution)
-        // Note that we can't use `getPackageFromDescriptor` (defined below,
-        // because when doing the initial tree building right after loading the
-        // project it's possible that we get some entries that haven't been
-        // registered into the lockfile yet - for example when the user has
-        // manually changed the package.json dependencies)
         throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
 
       const pkg = originalWorkspaceDefinitions.get(resolution) || allPackages.get(resolution);
@@ -2328,9 +2318,9 @@ function applyVirtualResolutionMutations({
       let virtualizedPackage: Package;
 
       const missingPeerDependencies = new Set<IdentHash>();
-
       const peerRequests = new Map<IdentHash, PeerRequestNode>();
 
+      // In the first pass we virtualize the requester's descriptor and package
       firstPass.push(() => {
         virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
         virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
@@ -2347,6 +2337,9 @@ function applyVirtualResolutionMutations({
         newVirtualInstances.push([pkg, virtualizedDescriptor, virtualizedPackage]);
       });
 
+      // In the second pass we resolve the peer requests to their provision.
+      // This must be done in a separate pass since the provided package may
+      // itself be a virtualized sibling package.
       secondPass.push(() => {
         allPeerRequests.set(virtualizedPackage.locatorHash, peerRequests);
 
@@ -2408,7 +2401,7 @@ function applyVirtualResolutionMutations({
           virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerProvision);
 
           // Need to track when a virtual descriptor is set as a dependency in case
-          // the descriptor will be consolidated.
+          // the descriptor will be deduplicated.
           if (structUtils.isVirtualDescriptor(peerProvision)) {
             const dependents = miscUtils.getSetWithDefault(allVirtualDependents, peerProvision.descriptorHash);
             dependents.add(virtualizedPackage.locatorHash);
@@ -2426,6 +2419,13 @@ function applyVirtualResolutionMutations({
         }));
       });
 
+      // Between the second and third passes, the deduplication passes happen.
+
+      // In the third pass, we recurse to resolve the peer request for the
+      // virtual package, but only if it is not deduplicated. If the virtual
+      // package is deduplicated, this would already have been done. This must
+      // be done after the deduplication passes as otherwise it could lead to
+      // infinite recursion when dealing with circular dependencies.
       thirdPass.push(() => {
         if (!allPackages.has(virtualizedPackage.locatorHash))
           return;
@@ -2447,11 +2447,9 @@ function applyVirtualResolutionMutations({
         virtualStack.set(pkg.locatorHash, next - 1);
       });
 
+      // In the fourth pass, we register information about the peer requirement
+      // and peer request trees, using the post-deduplication information.
       fourthPass.push(() => {
-        // Regardless of whether the initial virtualized package got deduped
-        // or not, we now register that *this* package is now a dependent on
-        // whatever its peer dependencies have been resolved to. We'll later
-        // use this information to generate warnings.
         const finalDescriptor = parentPackage.dependencies.get(descriptor.identHash);
         if (typeof finalDescriptor === `undefined`)
           throw new Error(`Assertion failed: Expected the peer dependency to have been turned into a dependency`);
@@ -2572,6 +2570,7 @@ function applyVirtualResolutionMutations({
   }
 
   for (const requirement of peerRequirementNodes.values()) {
+    // Only generate warnings on root requirements
     if (!requirement.root)
       continue;
 
