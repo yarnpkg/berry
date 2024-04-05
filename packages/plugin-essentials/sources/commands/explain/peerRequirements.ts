@@ -14,19 +14,19 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   static usage = Command.Usage({
     description: `explain a set of peer requirements`,
     details: `
-      A set of peer requirements represents all peer requirements that a dependent must satisfy when providing a given peer request to a requester and its descendants.
+      A peer requirement represents all peer requests that a subject must satisfy when providing a requested package to requesters.
 
-      When the hash argument is specified, this command prints a detailed explanation of all requirements of the set corresponding to the hash and whether they're satisfied or not.
+      When the hash argument is specified, this command prints a detailed explanation of the peer requirement corresponding to the hash and whether it is satisfied or not.
 
-      When used without arguments, this command lists all sets of peer requirements and the corresponding hash that can be used to get detailed information about a given set.
+      When used without arguments, this command lists all peer requirements and the corresponding hash that can be used to get detailed information about a given requirement.
 
       **Note:** A hash is a six-letter p-prefixed code that can be obtained from peer dependency warnings or from the list of all peer requirements (\`yarn explain peer-requirements\`).
     `,
     examples: [[
-      `Explain the corresponding set of peer requirements for a hash`,
+      `Explain the corresponding peer requirement for a hash`,
       `$0 explain peer-requirements p1a4ed`,
     ], [
-      `List all sets of peer requirements`,
+      `List all peer requirements`,
       `$0 explain peer-requirements`,
     ]],
   });
