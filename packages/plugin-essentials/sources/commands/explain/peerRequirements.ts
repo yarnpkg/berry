@@ -1,9 +1,9 @@
-import {BaseCommand}                                                                                                        from '@yarnpkg/cli';
-import type {PeerRequestNode}                                                                                               from '@yarnpkg/core/sources/Project';
-import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType, miscUtils} from '@yarnpkg/core';
-import {Command, Option}                                                                                                    from 'clipanion';
-import {Writable}                                                                                                           from 'stream';
-import * as t                                                                                                               from 'typanion';
+import {BaseCommand}                                                                                                                          from '@yarnpkg/cli';
+import type {PeerRequestNode}                                                                                                                 from '@yarnpkg/core/sources/Project';
+import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType, miscUtils, type LocatorHash} from '@yarnpkg/core';
+import {Command, Option}                                                                                                                      from 'clipanion';
+import {Writable}                                                                                                                             from 'stream';
+import * as t                                                                                                                                 from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
@@ -65,14 +65,25 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
   if (typeof root === `undefined`)
     throw new Error(`No peerDependency requirements found for hash: "${peerRequirementsHash}"`);
 
+  const seen = new Set<LocatorHash>();
   const makeTreeNode = (request: PeerRequestNode): treeUtils.TreeNode => {
+    if (seen.has(request.requester.locatorHash)) {
+      return {
+        value: formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: request.requester, descriptor: request.descriptor}),
+        children: [
+          {value: formatUtils.tuple(formatUtils.Type.NO_HINT, `...`)},
+        ],
+      };
+    }
+
+    seen.add(request.requester.locatorHash);
     return {
       value: formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: request.requester, descriptor: request.descriptor}),
       children: Object.fromEntries(
         Array.from(request.children.values(), child => {
           return [
             structUtils.stringifyLocator(child.requester),
-            child ? makeTreeNode(child) : false,
+            makeTreeNode(child),
           ];
         }),
       ),
