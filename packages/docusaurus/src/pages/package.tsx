@@ -380,7 +380,7 @@ function ReportView({name, version}: {name: string, version: string}) {
                 <tr>
                   <td></td>
                   <td></td>
-                  <td onClick={() => toggleEditMode(null)}>
+                  <td onClick={() => toggleEditMode()}>
                     <div className={styles.reportCheckContainer} data-tooltip-id={`tooltip`} data-tooltip-content={`Click here to pick the status checks you're interested in`}>
                       <GearIcon/>
                     </div>

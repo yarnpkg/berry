@@ -9042,6 +9042,7 @@ const RAW_RUNTIME_STATE =
           ["@types/lodash", "npm:4.14.172"],\
           ["@types/markdown-it", "npm:12.2.3"],\
           ["@types/marked", "npm:5.0.0"],\
+          ["@types/mdast", "npm:4.0.3"],\
           ["@types/node", "npm:18.19.17"],\
           ["@types/pako", "npm:2.0.0"],\
           ["@types/react", "npm:18.2.54"],\
@@ -9052,6 +9053,7 @@ const RAW_RUNTIME_STATE =
           ["@types/resolve", "npm:1.20.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/three", "npm:0.144.0"],\
+          ["@types/unist", "npm:3.0.2"],\
           ["@yarnpkg/cli", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -9104,8 +9106,8 @@ const RAW_RUNTIME_STATE =
           ["tslib", "npm:2.6.2"],\
           ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.8"],\
           ["typescript", "patch:typescript@npm%3A5.4.1-rc#optional!builtin<compat/typescript>::version=5.4.1-rc&hash=5adc0c"],\
-          ["unist-util-visit", "npm:2.0.3"],\
-          ["unist-util-visit-parents", "npm:2.1.2"],\
+          ["unified", "npm:11.0.4"],\
+          ["unist-util-visit-parents", "npm:6.0.1"],\
           ["usehooks-ts", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.9.1"],\
           ["webpack", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:5.90.1"],\
           ["xterm", "npm:5.3.0"],\

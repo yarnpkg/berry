@@ -35,13 +35,10 @@ function typedocPackageCategory(path: string) {
   }
 }
 async function typedocPluginConfig(): Promise<Partial<DocusaurusPluginTypeDocApiOptions>> {
-  type PackageExports =
-    | {[key: string]: PackageExports}
-    | Array<PackageExports>
-    | string
-    | null;
+  // Only handle export cases found in this monorepo
+  type PackageExports = {[key: string]: PackageExports} | string;
+
   function resolveEntries(exports: PackageExports): Array<[string, PackageEntryConfig]> {
-    // Only handle export cases found in this monorepo
     return Object.entries(exports).flatMap(([key, value]) => {
       if (typeof value === `object`) {
         // "exports": { ...: { ... } }
@@ -110,7 +107,7 @@ async function getPreviousVersions(): Promise<Array<{ label: string, href: strin
 
   return [
     {
-      label: repoResponse.tags.find(version => satisfies(version, `^3`)),
+      label: repoResponse.tags.find((version: string) => satisfies(version, `^3`)),
       href: `https://v3.yarnpkg.com`,
     },
     {

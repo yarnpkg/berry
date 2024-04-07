@@ -5,20 +5,22 @@ import BackToTopButton                               from '@theme/BackToTopButto
 import DocRootLayoutMain                             from '@theme/DocRoot/Layout/Main';
 import DocRootLayoutSidebar                          from '@theme/DocRoot/Layout/Sidebar';
 import type {Props}                                  from '@theme/DocRoot/Layout';
+import type {PropsWithChildren}                      from 'react';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 
 import styles                                        from './styles.module.css';
 
-function getReactNodeFromDomNode(domNode) {
+function getReactNodeFromDomNode(domNode: Element) {
   const fiberKey = Object.keys(domNode).find(key => key.startsWith(`__reactFiber$`));
   if (!fiberKey)
     throw new Error(`Assertion failed: Couldn't find the React node associated with the DOM node`);
 
+  // @ts-expect-error
   const {type: Type, memoizedProps} = domNode[fiberKey];
   return <Type {...memoizedProps}/>;
 }
 
-function getSuggestedModal({onExit}) {
+function getSuggestedModal({onExit}: {onExit: () => void}) {
   if (!location.hash)
     return null;
 
@@ -42,7 +44,7 @@ function getSuggestedModal({onExit}) {
   const copy = document.createElement(`div`);
   copy.classList.add(`markdown`);
 
-  let current: Element = target;
+  let current: Element | null = target;
   do {
     reactNodes.push(getReactNodeFromDomNode(current));
     current = current.nextElementSibling;
@@ -51,9 +53,9 @@ function getSuggestedModal({onExit}) {
   return <FocusModal onExit={onExit} children={<>{reactNodes}</>}/>;
 }
 
-const FocusModal = ({onExit, children}) => {
+const FocusModal = ({onExit, children}: PropsWithChildren<{onExit: () => void}>) => {
   useEffect(() => {
-    const keyDownHandler = event => {
+    const keyDownHandler = (event: KeyboardEvent) => {
       if (event.key === `Escape`) {
         onExit();
       }
@@ -79,7 +81,7 @@ const FocusModal = ({onExit, children}) => {
 
 const useFocusModal = () => {
   const location = useLocation();
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState<JSX.Element | null>(null);
 
   useLayoutEffect(() => {
     setModal(getSuggestedModal({onExit: () => setModal(null)}));
