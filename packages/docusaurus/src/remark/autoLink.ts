@@ -1,9 +1,9 @@
-import {fromJs}                              from 'esast-util-from-js';
-import type {MdxJsxFlowElement}              from 'mdast-util-mdx-jsx';
-import type {InlineCode, Node, Parent, Root} from 'mdast';
-import type {Transformer}                    from 'unified';
-import {visitParents as visit}               from 'unist-util-visit-parents';
-import {pathToFileURL}                       from 'url';
+import {fromJs}                 from 'esast-util-from-js';
+import type {MdxJsxFlowElement} from 'mdast-util-mdx-jsx';
+import type {Parent, Root}      from 'mdast';
+import type {Transformer}       from 'unified';
+import {visitParents as visit}  from 'unist-util-visit-parents';
+import {pathToFileURL}          from 'url';
 
 export type AutoLinkSpec = {
   sourceType: `json-schema`;
