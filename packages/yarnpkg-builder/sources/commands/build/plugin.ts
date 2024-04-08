@@ -55,7 +55,7 @@ export default class BuildPluginCommand extends Command {
   });
 
   metafile = Option.Boolean(`--metafile`, false, {
-    description: `Emit a metafile in the bundle`,
+    description: `Emit a metafile next to the bundle`,
   });
 
   async execute() {
