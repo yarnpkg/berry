@@ -1,4 +1,3 @@
-// @ts-expect-error
 import CodeBlock from '@theme/CodeBlock';
 import React     from 'react';
 
@@ -10,7 +9,7 @@ const $style = {
 export function TerminalCode({command}: {command: string}) {
   return (
     <div className={`terminal-code`}>
-      <CodeBlock style={{background: `red`}}>
+      <CodeBlock>
         <div>
           <span style={$style}>$ </span>{command}
         </div>
