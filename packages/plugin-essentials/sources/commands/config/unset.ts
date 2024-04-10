@@ -1,9 +1,6 @@
-import {BaseCommand}                              from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}       from 'clipanion';
-import cloneDeep                                  from 'lodash/cloneDeep';
-import hasPath                                    from 'lodash/has';
-import unsetPath                                  from 'lodash/unset';
+import {BaseCommand}                                         from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName, miscUtils} from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                  from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigUnsetCommand extends BaseCommand {
@@ -63,17 +60,17 @@ export default class ConfigUnsetCommand extends BaseCommand {
     }, async report => {
       let bailedOutEarly = false;
       await updateConfiguration(current => {
-        if (!hasPath(current, this.name)) {
+        if (!miscUtils.hasPath(current, miscUtils.toPath(this.name))) {
           report.reportWarning(MessageName.UNNAMED, `Configuration doesn't contain setting ${this.name}; there is nothing to unset`);
           bailedOutEarly = true;
           return current;
         }
 
         const clone = path
-          ? cloneDeep(current)
+          ? miscUtils.cloneDeep(current)
           : {...current};
 
-        unsetPath(clone, this.name);
+        miscUtils.unset(clone, miscUtils.toPath(this.name));
         return clone;
       });
 

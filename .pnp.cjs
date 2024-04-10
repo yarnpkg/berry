@@ -4874,6 +4874,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@fastify/deepmerge", [\
+      ["npm:1.3.0", {\
+        "packageLocation": "./.yarn/cache/@fastify-deepmerge-npm-1.3.0-72eb1f634c-6ddfc230ed.zip/node_modules/@fastify/deepmerge/",\
+        "packageDependencies": [\
+          ["@fastify/deepmerge", "npm:1.3.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@floating-ui/core", [\
       ["npm:1.3.1", {\
         "packageLocation": "./.yarn/cache/@floating-ui-core-npm-1.3.1-d31cabf485-b0aeb50831.zip/node_modules/@floating-ui/core/",\
@@ -8772,6 +8781,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@arcanis/slice-ansi", "npm:1.1.1"],\
+          ["@fastify/deepmerge", "npm:1.3.0"],\
           ["@octokit/webhooks-types", "npm:7.3.1"],\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-json", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:6.0.0"],\
@@ -8806,6 +8816,7 @@ const RAW_RUNTIME_STATE =
             "esbuild-wasm",\
             "npm:0.15.15"\
           ]],\
+          ["fast-deep-equal", "npm:3.1.3"],\
           ["fast-glob", "npm:3.2.12"],\
           ["got", "npm:11.8.2"],\
           ["lodash", "npm:4.17.21"],\

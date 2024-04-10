@@ -4,7 +4,6 @@ import {parseSyml, stringifySyml}                                       from '@y
 import {UsageError}                                                     from 'clipanion';
 import {createHash}                                                     from 'crypto';
 import {structuredPatch}                                                from 'diff';
-import pick                                                             from 'lodash/pick';
 import pLimit                                                           from 'p-limit';
 import semver                                                           from 'semver';
 import internal                                                         from 'stream';
@@ -2017,7 +2016,7 @@ export class Project {
     for (const category of Object.values(INSTALL_STATE_FIELDS))
       fields.push(...category);
 
-    const installState = pick(this, fields) as InstallState;
+    const installState = miscUtils.pick(this, fields) as InstallState;
     const serializedState = v8.serialize(installState);
     const newInstallStateChecksum = hashUtils.makeHash(serializedState);
     if (this.installStateChecksum === newInstallStateChecksum)
@@ -2052,13 +2051,13 @@ export class Project {
         this.linkersCustomData = installState.linkersCustomData;
 
     if (restoreBuildState)
-      Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
+      Object.assign(this, miscUtils.pick(installState, INSTALL_STATE_FIELDS.restoreBuildState));
 
     // Resolutions needs to be restored last otherwise applyLightResolution will persist a new state
     // before the rest is restored
     if (restoreResolutions) {
       if (installState.lockFileChecksum === this.lockFileChecksum) {
-        Object.assign(this, pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
+        Object.assign(this, miscUtils.pick(installState, INSTALL_STATE_FIELDS.restoreResolutions));
       } else {
         await this.applyLightResolution();
       }

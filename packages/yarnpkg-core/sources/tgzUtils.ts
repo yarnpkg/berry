@@ -2,7 +2,7 @@ import {Configuration, nodeUtils}                                              f
 import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils} from '@yarnpkg/fslib';
 import {ZipCompression, ZipFS}                                                 from '@yarnpkg/libzip';
 import {PassThrough, Readable}                                                 from 'stream';
-import tar                                                                     from 'tar';
+import {ParseStream, ReadEntry}                                                from 'tar';
 
 import {AsyncPool, TaskPool, WorkerPool}                                       from './TaskPool';
 import * as miscUtils                                                          from './miscUtils';
@@ -133,12 +133,14 @@ export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions = {}) 
 }
 
 async function * parseTar(tgz: Buffer) {
+  const tar = await import(`tar`);
+
   // @ts-expect-error - Types are wrong about what this function returns
-  const parser: tar.ParseStream = new tar.Parse();
+  const parser: ParseStream = new tar.Parse();
 
   const passthrough = new PassThrough({objectMode: true, autoDestroy: true, emitClose: true});
 
-  parser.on(`entry`, (entry: tar.ReadEntry) => {
+  parser.on(`entry`, (entry: ReadEntry) => {
     passthrough.write(entry);
   });
 
@@ -155,14 +157,14 @@ async function * parseTar(tgz: Buffer) {
   parser.end(tgz);
 
   for await (const entry of passthrough) {
-    const it = entry as tar.ReadEntry;
+    const it = entry as ReadEntry;
     yield it;
     it.resume();
   }
 }
 
 export async function extractArchiveTo<T extends FakeFS<PortablePath>>(tgz: Buffer, targetFs: T, {stripComponents = 0, prefixPath = PortablePath.dot}: ExtractBufferOptions = {}): Promise<T> {
-  function ignore(entry: tar.ReadEntry) {
+  function ignore(entry: ReadEntry) {
     // Disallow absolute paths; might be malicious (ex: /etc/passwd)
     if (entry.path[0] === `/`)
       return true;

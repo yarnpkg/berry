@@ -4,8 +4,6 @@ import {parseSyml, stringifySyml}                                   from '@yarnp
 import {PnpApi}                                                     from '@yarnpkg/pnp';
 import chalk                                                        from 'chalk';
 import {UsageError}                                                 from 'clipanion';
-import capitalize                                                   from 'lodash/capitalize';
-import startCase                                                    from 'lodash/startCase';
 
 import {dynamicRequire}                                             from './dynamicRequire';
 import {BASE_SDKS}                                                  from './sdks/base';
@@ -22,7 +20,7 @@ export const SUPPORTED_INTEGRATIONS = new Map([
 ] as const);
 
 export const getDisplayName = (name: string) =>
-  startCase(name).split(` `).map(word => capitalize(word)).join(` `);
+  miscUtils.startCase(name).split(` `).map(word => miscUtils.capitalize(word)).join(` `);
 
 export const validateIntegrations = (integrations: Set<string>) => {
   const unsupportedIntegrations: Array<string> = [];

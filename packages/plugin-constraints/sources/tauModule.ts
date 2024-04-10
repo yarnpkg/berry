@@ -1,10 +1,9 @@
 /// <reference path="./tauProlog.d.ts"/>
 
-import {Project, structUtils} from '@yarnpkg/core';
-import {PortablePath}         from '@yarnpkg/fslib';
-import getPath                from 'lodash/get';
-import pl                     from 'tau-prolog';
-import vm                     from 'vm';
+import {Project, miscUtils, structUtils} from '@yarnpkg/core';
+import {PortablePath}                    from '@yarnpkg/fslib';
+import pl                                from 'tau-prolog';
+import vm                                from 'vm';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const {is_atom: isAtom, is_variable: isVariable, is_instantiated_list: isInstantiatedList} = pl.type;
@@ -78,7 +77,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     if (workspace == null)
       return;
 
-    const value = getPath(workspace.manifest.raw!, fieldName.id);
+    const value = miscUtils.get(workspace.manifest.raw!, miscUtils.toPath(fieldName.id));
 
     // Field is not present => this predicate can never match
     if (typeof value === `undefined`)
@@ -125,7 +124,7 @@ const tauModule = new pl.type.Module(`constraints`, {
     if (workspace == null)
       return;
 
-    const value = getPath(workspace.manifest.raw!, fieldName.id);
+    const value = miscUtils.get(workspace.manifest.raw!, miscUtils.toPath(fieldName.id));
 
     // Field is not present => this predicate can never match
     if (typeof value === `undefined`)
