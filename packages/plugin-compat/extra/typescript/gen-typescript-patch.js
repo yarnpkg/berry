@@ -1,3 +1,4 @@
+const assert = require(`assert`);
 const cp = require(`child_process`);
 const crypto = require(`crypto`);
 const fs = require(`fs`);
@@ -27,42 +28,70 @@ const SLICES = [
     to: `426f5a7`,
     onto: `e39bdc3`,
     range: `>=3.2 <3.5`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   {
     from: `5d50de3`,
     to: `426f5a7`,
     onto: `cf7b2d4`,
     range: `>=3.5 <=3.6`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   {
     from: `5d50de3`,
     to: `426f5a7`,
     onto: `cda54b8`,
     range: `>3.6 <3.7`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   {
     from: `5d50de3`,
     to: `2f85932`,
     onto: `e39bdc3`,
     range: `>=3.7 <3.9`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   {
     from: `5d50de3`,
     to: `3af06df`,
     onto: `551f0dd`,
     range: `>=3.9 <4.0`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   {
     from: `6dbdd2f`,
     to: `6dbdd2f`,
     onto: `56865f7`,
     range: `>=4.0 <4.1`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   {
     from: `746d79b`,
     to: `746d79b`,
     onto: `69972a3`,
     range: `>=4.1 <4.2`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.2
   {
@@ -70,6 +99,10 @@ const SLICES = [
     to: `178a67b4663d80b0fcbea542e7255b4499b51708`,
     onto: `bfc55b5762443c37ecdef08a3b5a4e057b4d1e85`,
     range: `>=4.2 <4.3`,
+    volta: {
+      node: `14.15.5`,
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.3
   {
@@ -77,6 +110,9 @@ const SLICES = [
     to: `ffa54c5a104e7940b5c23666ddffbf44878f9d9f`,
     onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
     range: `>=4.3 <4.4`,
+    volta: {
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.4
   {
@@ -84,13 +120,19 @@ const SLICES = [
     to: `20ffca2f3c48591c971e6606a55b7b1820d8a64f`,
     onto: `a10409ccaa3604790dc45f52ef0402eb49015dcf`,
     range: `>=4.4 <4.5`,
+    volta: {
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.5
   {
-    from: `79fe5d206f89e5f1585807bdcd7feeb567a69646`,
-    to: `fff89a12766fa485e35b1c65d8631d109c4e2c0e`,
-    onto: `7893f689fedcfe28a499d119d34844840bce9160`,
+    from: `9232978f8e54f073b5451d0bf2737d42a0fd672f`,
+    to: `3a2388d39d41d000b5c5f9bcd48096b39fcedf8f`,
+    onto: `55e13e9115b3cc5458d76c39da1211dc28d7b51f`,
     range: `>=4.5.2 <4.6`,
+    volta: {
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.6
   {
@@ -98,6 +140,9 @@ const SLICES = [
     to: `fbec717ef33fc2db5791f2a1d5f9a315e293a50a`,
     onto: `83efc9f0d646bf86a3469e00c5ef5e4f7ab7cb95`,
     range: `>=4.6.1-rc <4.7`,
+    volta: {
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.7
   {
@@ -105,6 +150,9 @@ const SLICES = [
     to: `cd8d000510ed2d2910e0ebaa903a51adda546a0a`,
     onto: `6e62273fa1e7469b89b589667c2c233789c62176`,
     range: `>=4.7.0-beta <4.8`,
+    volta: {
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8.0-beta
   {
@@ -112,6 +160,9 @@ const SLICES = [
     to: `3287098f4785fd652112beadf3b33a960fcd19aa`,
     onto: `9a09c37878a45b06994485fdb510eb4d24587dcb`,
     range: `>=4.8.0-beta <4.8.1-rc`,
+    volta: {
+      npm: `6.14.11`,
+    },
   },
   // https://github.com/merceyz/TypeScript/tree/merceyz/pnp-4.8-stable
   {
@@ -344,20 +395,15 @@ async function cloneRepository() {
 async function resetGit(hash) {
   await execFile(`git`, [`reset`, `--hard`, hash], TS_REPO_SPAWN);
   await execFile(`git`, [`clean`, `-df`], TS_REPO_SPAWN);
-
-  if (fs.existsSync(path.join(TS_REPO, `package-lock.json`))) {
-    await execFile(`npm`, [`install`], TS_REPO_SPAWN);
-  } else {
-    const date = await execFile(`git`, [`show`, `-s`, `--format=%ci`], TS_REPO_SPAWN);
-    await execFile(`npm`, [`install`, `--before`, date.toString().trim()], TS_REPO_SPAWN);
-  }
 }
 
-async function buildRepository({from, to, onto}) {
+async function buildRepository({from, to, onto, volta}) {
   const code = Math.floor(Math.random() * 0x100000000).toString(16).padStart(8, `0`);
   const tmpDir = path.join(TMP_DIR, `${code}`);
 
   await resetGit(onto);
+
+  const date = await execFile(`git`, [`show`, `-s`, `--format=%ci`], TS_REPO_SPAWN);
 
   if (to) {
     let isAncestor;
@@ -375,7 +421,31 @@ async function buildRepository({from, to, onto}) {
     }
   }
 
-  await execFile(fs.existsSync(`${TS_REPO}/node_modules/.bin/hereby`) ? `./node_modules/.bin/hereby` : `./node_modules/.bin/gulp`, [`local`, `LKG`], TS_REPO_SPAWN);
+  {
+    const pkgPath = path.join(TS_REPO, `package.json`);
+    const pkg = JSON.parse(await fs.promises.readFile(pkgPath, `utf8`));
+
+    assert(!(pkg.volta?.node && volta?.node), `node version is already set for ${pkg.version}`);
+    assert(!(pkg.volta?.npm && volta?.npm), `npm version is already set for ${pkg.version}`);
+
+    const voltaConfig = {
+      ...volta,
+      ...pkg.volta,
+    };
+    assert(voltaConfig.node && voltaConfig.npm, `Missing complete volta configuration for ${pkg.version}, current config: ${JSON.stringify(voltaConfig)}`);
+
+    if (JSON.stringify(pkg.volta) !== JSON.stringify(voltaConfig)) {
+      pkg.volta = voltaConfig;
+      await fs.promises.writeFile(pkgPath, JSON.stringify(pkg, null, 4));
+    }
+  }
+
+  if (fs.existsSync(path.join(TS_REPO, `package-lock.json`)))
+    await execFile(`volta`, [`run`, `npm`, `ci`], TS_REPO_SPAWN);
+  else
+    await execFile(`volta`, [`run`, `npm`, `install`, `--before`, date.toString().trim()], TS_REPO_SPAWN);
+
+  await execFile(`volta`, [`run`, `node`, fs.existsSync(`${TS_REPO}/node_modules/.bin/hereby`) ? `./node_modules/.bin/hereby` : `./node_modules/.bin/gulp`, `local`, `LKG`], TS_REPO_SPAWN);
 
   // It seems that in some circumstances the build can produce incorrect artifacts. When
   // that happens, the final binary is very small. We try to detect that.
@@ -392,7 +462,7 @@ async function buildRepository({from, to, onto}) {
   return tmpDir;
 }
 
-async function run({from, to, onto, range}) {
+async function run({from, to, onto, range, volta}) {
   const hash = crypto
     .createHash(`md5`)
     .update(JSON.stringify({from, to, onto}))
@@ -414,8 +484,8 @@ async function run({from, to, onto, range}) {
 
   await cloneRepository();
 
-  const base = await buildRepository({onto});
-  const patched = await buildRepository({from, to, onto});
+  const base = await buildRepository({onto, volta});
+  const patched = await buildRepository({from, to, onto, volta});
 
   const buffer = await execFile(`git`, [`diff`, `--no-index`, base, patched], {checkExitCode: false});
 
