@@ -1,7 +1,7 @@
 import type {Options as MDXLoaderOptions, MDXPlugin}          from '@docusaurus/mdx-loader';
 import type {LoadContext, Plugin, PluginContentLoadedActions} from '@docusaurus/types';
 import {getCli}                                               from '@yarnpkg/cli';
-import {YarnVersion}                                          from '@yarnpkg/core';
+import {YarnVersion, miscUtils}                               from '@yarnpkg/core';
 import type {BaseContext, Definition}                         from 'clipanion';
 import {Cli}                                                  from 'clipanion';
 import glob                                                   from 'fast-glob';
@@ -58,22 +58,102 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
         .map(definition => createCommandPage(packageName, definition, actions)),
     );
 
+    const index = await createBinaryIndexPage(packageName, definitions, actions);
+
     return {
       sidebarItem: {
         type: `category`,
         label: packageName,
+        href: index.route.path,
         collapsible: false,
         collapsed: false,
         items: pages.map(page => page.sidebarItem),
       },
-      routes: pages.map(page => page.route),
+      routes: [
+        index.route,
+        ...pages.map(page => page.route),
+      ],
+    };
+  }
+
+  async function createBinaryIndexPage(packageName: string, definitions: Array<Definition>, actions: PluginContentLoadedActions) {
+    const shortName = packageName.split(`/`).pop();
+
+    const frontMatter = packageName === `@yarnpkg/cli`
+      ? {
+        slug: ROUTE_PREFIX,
+        title: `CLI Reference`,
+        description: `List of commands distributed with Yarn`,
+      }
+      : {
+        slug: `${ROUTE_PREFIX}/${shortName}`,
+        title: `${packageName} CLI Reference`,
+        description: `List of commands distributed with ${packageName}`,
+      };
+
+    const categories = new Map<string, Array<Definition>>();
+    for (const definition of definitions)
+      miscUtils.getArrayWithDefault(categories, definition.category ?? `General commands`).push(definition);
+
+    const sections = [
+      dedent(`
+        ---
+        ${Object.entries(frontMatter).map(([key, value]) => `${key}: "${value}"`).join(`\n`)}
+        ---
+
+        import Link from '@docusaurus/Link';
+      `),
+
+      ...Array.from(categories, ([category, definitions]) => dedent(`
+        ${categories.size > 1 ? `## ${category}` : ``}
+
+        <table>
+          <tbody>
+            ${definitions.map(definition => dedent(`
+              <tr>
+                <td><Link href="${commandSlug(packageName, definition)}">${definition.path}</Link></td>
+                <td>${definition.description ? `${definition.description[0].toUpperCase()}${definition.description.slice(1, -1)}.` : ``}</td>
+              </tr>
+            `)).join(`\n`)}
+          </tbody>
+        </table>
+      `)),
+    ];
+
+    const file = await actions.createData(`${frontMatter.slug.slice(1)}.mdx`, sections.filter(section => section !== null).join(`\n\n`));
+    await actions.createData(`${frontMatter.slug.slice(1)}.json`, JSON.stringify({
+      id: frontMatter.slug.slice(1),
+      title: frontMatter.title,
+      description: frontMatter.description,
+      slug: frontMatter.slug,
+      permalink: frontMatter.slug,
+      sidebar: `cli`,
+
+      source: file,
+      sourceDirName: path.dirname(file),
+
+      draft: false,
+      unlisted: false,
+      tags: [],
+      version: `current`,
+
+      frontMatter,
+    }));
+
+    return {
+      route: {
+        path: frontMatter.slug,
+        exact: true,
+        component: `@theme/DocItem`,
+        modules: {content: file},
+        sidebar: `cli`,
+      },
     };
   }
 
   async function createCommandPage(packageName: string, definition: Definition,  actions: PluginContentLoadedActions) {
     const shortName = packageName.split(`/`).pop();
-    const route = definition.path.split(` `).slice(1).join(`/`);
-    const slug = `${ROUTE_PREFIX}/${route}${route === shortName ? `/default` : ``}`;
+    const slug = commandSlug(packageName, definition);
 
     const frontMatter = {
       id: slug.slice(1),
@@ -196,6 +276,11 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
         sidebar: `cli`,
       },
     };
+  }
+
+  function commandSlug(packageName: string, definition: Definition) {
+    const route = definition.path.split(` `).slice(1).join(`/`);
+    return `${ROUTE_PREFIX}/${route}${packageName === `@yarnpkg/${route}` ? `/default` : ``}`;
   }
 
   return {
