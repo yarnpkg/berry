@@ -8,4 +8,4 @@ A CLI tool designed for generating and updating [Editor SDKs](https://yarnpkg.co
 
 ## Commands
 
-- [`sdks`](https://yarnpkg.com/sdks/cli/default) - Generate editor SDKs and settings.
+- [`sdks`](https://yarnpkg.com/cli/sdks/default) - Generate editor SDKs and settings.
