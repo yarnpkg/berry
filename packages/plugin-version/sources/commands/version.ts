@@ -34,6 +34,9 @@ export default class VersionCommand extends BaseCommand {
     ], [
       `Prepare the version to be bumped to the next major`,
       `yarn version major --deferred`,
+    ], [
+      `Immediately bump to the bumped the specified version`,
+      `yarn version 1.2.3-alpha.1`,
     ]],
   });
 
@@ -45,7 +48,8 @@ export default class VersionCommand extends BaseCommand {
     description: `Bump the version immediately`,
   });
 
-  strategy = Option.String();
+
+  strategy = Option.String({name: `strategy|semver`, required: false, description: `The strategy or semver range to use for bumping the version`});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
