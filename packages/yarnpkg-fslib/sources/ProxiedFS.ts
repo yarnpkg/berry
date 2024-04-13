@@ -2,7 +2,7 @@ import {Stats, BigIntStats}                                                     
 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions, ReaddirOptions, DirentNoPath} from './FakeFS';
 import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                                                  from './FakeFS';
-import {MkdirOptions, RmdirOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                                                 from './FakeFS';
+import {MkdirOptions, RmdirOptions, RmOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                                      from './FakeFS';
 import {FSPath, Filename, Path}                                                                                                                                                             from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
@@ -268,6 +268,14 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   rmdirSync(p: P, opts?: RmdirOptions) {
     return this.baseFs.rmdirSync(this.mapToBase(p), opts);
+  }
+
+  async rmPromise(p: P, opts?: RmOptions) {
+    return this.baseFs.rmPromise(this.mapToBase(p), opts);
+  }
+
+  rmSync(p: P, opts?: RmOptions) {
+    return this.baseFs.rmSync(this.mapToBase(p), opts);
   }
 
   async linkPromise(existingP: P, newP: P) {
