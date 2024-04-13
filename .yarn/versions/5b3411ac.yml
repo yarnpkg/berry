@@ -1,0 +1,4 @@
+releases:
+  "@yarnpkg/fslib": minor
+  "@yarnpkg/libzip": minor
+  "@yarnpkg/pnpify": minor
