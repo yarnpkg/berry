@@ -1,50 +1,63 @@
 import type {Options as MDXLoaderOptions, MDXPlugin}          from '@docusaurus/mdx-loader';
 import type {LoadContext, Plugin, PluginContentLoadedActions} from '@docusaurus/types';
-import {getCli}                                               from '@yarnpkg/cli';
 import {YarnVersion, miscUtils}                               from '@yarnpkg/core';
 import type {BaseContext, Definition}                         from 'clipanion';
 import {Cli}                                                  from 'clipanion';
 import glob                                                   from 'fast-glob';
-import {createRequire}                                        from 'node:module';
+import jiti                                                   from 'jiti';
 import path                                                   from 'path';
 
 const PLUGIN_NAME = `docusaurus-plugin-yarn-cli-docs`;
 const ROUTE_PREFIX = `/cli`;
-
 function dedent(value: string) {
   return value.trim().split(`\n`).map(line => line.trimStart()).join(`\n`);
 }
 
+const loader = jiti(__filename, {
+  cache: true,
+  requireCache: false,
+});
+
 const binaries = [
   {
     name: `@yarnpkg/cli`,
-    getCli,
+    getCli: async () => {
+      const {getCli} = loader(`@yarnpkg/cli`) as typeof import('@yarnpkg/cli');
+      return getCli();
+    },
+    watch: [`../plugin-*/sources/commands/**/*.{ts,tsx}`],
   },
   {
     name: `@yarnpkg/builder`,
     getCli: async () => {
-      const commands = Object.values(await import(`@yarnpkg/builder`));
+      const commands = Object.values(loader(`@yarnpkg/builder`) as typeof import('@yarnpkg/builder'));
       return Cli.from(commands, {binaryName: `yarn builder`});
     },
+    watch: [`../yarnpkg-builder/sources/commands/**/*.ts`],
   },
   {
     name: `@yarnpkg/pnpify`,
     getCli: async () => {
-      const proxyRequire = createRequire(require.resolve(`@yarnpkg/pnpify/package.json`));
-      const commandPaths = await glob([`./sources/commands/**/*.ts`], {cwd: path.dirname(proxyRequire.resolve(`./package.json`))});
+      const proxyLoader = jiti(require.resolve(`@yarnpkg/pnpify/package.json`), {
+        cache: true,
+        requireCache: false,
+      });
+      const commandPaths = await glob([`./sources/commands/**/*.ts`], {cwd: path.dirname(proxyLoader.resolve(`./package.json`))});
 
-      const commands = commandPaths.map(commandPath => proxyRequire(commandPath).default);
+      const commands = commandPaths.map(commandPath => proxyLoader(commandPath).default);
       return Cli.from(commands, {binaryName: `yarn pnpify`});
     },
+    watch: [`../yarnpkg-pnpify/sources/commands/**/*.ts`],
   },
   {
     name: `@yarnpkg/sdks`,
     getCli: async () => {
-      const {SdkCommand} = await import(`@yarnpkg/sdks`);
+      const {SdkCommand} = loader(`@yarnpkg/sdks`) as typeof import('@yarnpkg/sdks');
       return Cli.from(SdkCommand, {binaryName: `yarn sdks`});
     },
+    watch: [`../yarnpkg-sdks/sources/commands/**/*.ts`],
   },
-] satisfies Array<{ name: string, getCli: () => Promise<Cli<BaseContext>> }>;
+] satisfies Array<{ name: string, getCli: () => Promise<Cli<BaseContext>>, watch?: Array<string> }>;
 
 export type Options = {
   remarkPlugins: Array<MDXPlugin>;
@@ -362,6 +375,10 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
           ],
         },
       };
+    },
+
+    getPathsToWatch() {
+      return binaries.flatMap(({watch}) => watch ?? []);
     },
   };
 };

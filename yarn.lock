@@ -5339,6 +5339,7 @@ __metadata:
     fast-glob: "npm:^3.2.2"
     git-url-parse: "npm:^13.1.0"
     github-markdown-css: "npm:^5.1.0"
+    jiti: "npm:^1.21.0"
     lodash: "npm:^4.17.15"
     markdown-it: "npm:^13.0.1"
     markdown-it-br: "npm:^1.0.0"
@@ -13155,7 +13156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.20.0":
+"jiti@npm:^1.20.0, jiti@npm:^1.21.0":
   version: 1.21.0
   resolution: "jiti@npm:1.21.0"
   bin:

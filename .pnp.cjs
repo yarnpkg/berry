@@ -9044,6 +9044,7 @@ const RAW_RUNTIME_STATE =
           ["fast-glob", "npm:3.2.12"],\
           ["git-url-parse", "npm:13.1.0"],\
           ["github-markdown-css", "npm:5.1.0"],\
+          ["jiti", "npm:1.21.0"],\
           ["lodash", "npm:4.17.21"],\
           ["markdown-it", "npm:13.0.1"],\
           ["markdown-it-br", "npm:1.0.0"],\
