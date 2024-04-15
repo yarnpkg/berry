@@ -18,7 +18,7 @@ const loader = jiti(__filename, {
   requireCache: false,
 });
 
-const binaries = [
+const binaries: Array<{ name: string, getCli: () => Promise<Cli<BaseContext>>, watch: Array<string> }> = [
   {
     name: `@yarnpkg/cli`,
     getCli: async () => {
@@ -57,7 +57,7 @@ const binaries = [
     },
     watch: [`../yarnpkg-sdks/sources/commands/**/*.ts`],
   },
-] satisfies Array<{ name: string, getCli: () => Promise<Cli<BaseContext>>, watch?: Array<string> }>;
+];
 
 export type Options = {
   remarkPlugins: Array<MDXPlugin>;
@@ -306,9 +306,9 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
         })),
       );
     },
-    async contentLoaded({content: binaries, actions}) {
+    async contentLoaded({content, actions}) {
       const pages = await Promise.all(
-        Object.entries(binaries).map(([packageName, definitions]) => createBinaryPages(packageName, definitions, actions)),
+        Object.entries(content).map(([packageName, definitions]) => createBinaryPages(packageName, definitions, actions)),
       );
 
       const version = await actions.createData(`version-metadata.json`, JSON.stringify({
@@ -354,7 +354,7 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
           rules: [
             {
               test: /\.mdx$/,
-              include: path.join(context.generatedFilesDir, PLUGIN_NAME),
+              include: path.join(context.generatedFilesDir, PLUGIN_NAME, `default`),
               use: [
                 utils.getJSLoader({isServer}),
                 {
@@ -378,7 +378,7 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
     },
 
     getPathsToWatch() {
-      return binaries.flatMap(({watch}) => watch ?? []);
+      return binaries.flatMap(({watch}) => watch);
     },
   };
 };
