@@ -61,7 +61,7 @@ async function prettyNetworkError(response: Promise<Response>, {configuration, c
 
     if (message == null) {
       if (err.message.startsWith(`Response code`)) {
-        message = `The remote server failed to provide the requested resource`;
+        message = `The remote server failed to provide the requested resource (${err.response?.statusCode} ${err.request?.options?.method} ${err.request?.options?.url?.href})`;
       } else {
         message = err.message;
       }
