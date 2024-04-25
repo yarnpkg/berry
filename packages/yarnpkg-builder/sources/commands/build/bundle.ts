@@ -70,6 +70,10 @@ export default class BuildBundleCommand extends Command {
     description: `Includes a source map in the bundle`,
   });
 
+  metafile = Option.Boolean(`--metafile`, false, {
+    description: `Emit a metafile next to the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
@@ -79,6 +83,7 @@ export default class BuildBundleCommand extends Command {
     const plugins = findPlugins({basedir, profile: this.profile, plugins: this.plugins.map(plugin => path.resolve(plugin))});
     const modules = [...getDynamicLibs().keys()].concat(plugins);
     const output = ppath.join(portableBaseDir, `bundles/yarn.js`);
+    const metafile = this.metafile ? ppath.join(portableBaseDir, `bundles/yarn.meta.json`) : false;
 
     let version = pkgJsonVersion(basedir);
 
@@ -132,6 +137,7 @@ export default class BuildBundleCommand extends Command {
             }),
           },
           outfile: npath.fromPortablePath(output),
+          metafile: metafile !== false,
           // Default extensions + .mjs
           resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
@@ -160,6 +166,10 @@ export default class BuildBundleCommand extends Command {
         }
 
         await xfs.chmodPromise(output, 0o755);
+
+        if (metafile) {
+          await xfs.writeFilePromise(metafile, JSON.stringify(res.metafile));
+        }
       });
     });
 
@@ -174,6 +184,8 @@ export default class BuildBundleCommand extends Command {
       report.reportInfo(null, `${Mark.Question} Bundle path: ${formatUtils.pretty(configuration, output, formatUtils.Type.PATH)}`);
       report.reportInfo(null, `${Mark.Question} Bundle size: ${formatUtils.pretty(configuration, (await xfs.statPromise(output)).size, formatUtils.Type.SIZE)}`);
       report.reportInfo(null, `${Mark.Question} Bundle version: ${formatUtils.pretty(configuration, version, formatUtils.Type.REFERENCE)}`);
+      if (metafile)
+        report.reportInfo(null, `${Mark.Question} Bundle meta: ${formatUtils.pretty(configuration, metafile, formatUtils.Type.PATH)}`);
 
       report.reportSeparator();
 

@@ -23,6 +23,8 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "search.exclude": {
     "**/.pnp.*": true,
-    "**/.yarn": true
+    "**/.yarn": true,
+    "packages/*/bin/": true,
+    "packages/*/bundle/": true
   }
 }

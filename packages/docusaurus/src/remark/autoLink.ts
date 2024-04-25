@@ -1,5 +1,9 @@
-import visit           from 'unist-util-visit-parents';
-import {pathToFileURL} from 'url';
+import {fromJs}                 from 'esast-util-from-js';
+import type {MdxJsxFlowElement} from 'mdast-util-mdx-jsx';
+import type {Parent, Root}      from 'mdast';
+import type {Transformer}       from 'unified';
+import {visitParents as visit}  from 'unist-util-visit-parents';
+import {pathToFileURL}          from 'url';
 
 export type AutoLinkSpec = {
   sourceType: `json-schema`;
@@ -22,7 +26,7 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
 
   console.log(`Searching for autolinks`);
 
-  const transformer = async ast => {
+  const transformer: Transformer<Root> = async ast => {
     const specs = await specP;
     let hasAutoLinks = false;
 
@@ -30,7 +34,7 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
       if (node.type !== `inlineCode`)
         return;
 
-      const match = (node.value as string).match(/^(?<name>[^:]+)(?:: (?<value>.*))?$/);
+      const match = node.value.match(/^(?<name>[^:]+)(?:: (?<value>.*))?$/);
       if (!match)
         return;
 
@@ -71,15 +75,19 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
       if (typeof result === `undefined`)
         return;
 
-      const highlightNode = {
-        type: `jsx`,
-        value: `<AutoLink {...${JSON.stringify({
-          ...match.groups,
-          ...result,
-        })}}/>`,
+      const attributes = {...match.groups, ...result};
+      const highlightNode: MdxJsxFlowElement = {
+        type: `mdxJsxFlowElement`,
+        name: `AutoLink`,
+        attributes: [{
+          type: `mdxJsxExpressionAttribute`,
+          value: `...${JSON.stringify(attributes)}`,
+          data: {estree: fromJs(`({...${JSON.stringify(attributes)}})`, {module: true})},
+        }],
+        children: [],
       };
 
-      const parent = ancestors[ancestors.length - 1];
+      const parent: Parent = ancestors[ancestors.length - 1];
       const index = parent.children.indexOf(node);
 
       parent.children[index] = highlightNode;
@@ -87,9 +95,12 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
     });
 
     if (hasAutoLinks) {
+      const url = pathToFileURL(require.resolve(`../components/AutoLink.tsx`));
+      const code = `import {AutoLink} from ${JSON.stringify(url)};\n`;
       ast.children.unshift({
-        type: `import`,
-        value: `import {AutoLink} from ${JSON.stringify(pathToFileURL(require.resolve(`../components/AutoLink.tsx`)))};\n`,
+        type: `mdxjsEsm`,
+        value: code,
+        data: {estree: fromJs(code, {module: true})},
       });
     }
   };
