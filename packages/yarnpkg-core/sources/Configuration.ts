@@ -5,7 +5,7 @@ import camelcase                                                                
 import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
 import {UsageError}                                                                                              from 'clipanion';
 import {parse as parseDotEnv}                                                                                    from 'dotenv';
-import {builtinModules}                                                                                          from 'module';
+import {isBuiltin}                                                                                               from 'module';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
 
@@ -1262,11 +1262,6 @@ export class Configuration {
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
 
-      for (const request of builtinModules) {
-        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
-        requireEntries.set(`node:${request}`, () => miscUtils.dynamicRequire(`node:${request}`));
-      }
-
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
@@ -1284,6 +1279,9 @@ export class Configuration {
 
         const pluginRequireEntries = new Map(requireEntries);
         const pluginRequire = (request: string) => {
+          if (isBuiltin(request))
+            return miscUtils.dynamicRequire(request);
+
           if (pluginRequireEntries.has(request)) {
             return pluginRequireEntries.get(request)();
           } else {
