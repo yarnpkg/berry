@@ -36,7 +36,7 @@ If you use an airgapped network, as is often the case in company CIs, you may hi
 
 Volta doesn't currently integrate with Corepack, as it installs its own shims which prevent the Corepack ones from being applied. You will need to run the following two commands to force the integration:
 
-```bash
+```commandline
 npm install -g corepack
 
 # Specifying an explicit install-directory makes corepack overwrite volta's yarn shims, which is what we want

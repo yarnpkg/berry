@@ -35,21 +35,22 @@ Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite
 
 Our repository is set up in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `esbuild` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
 
-```bash
-yarn install # Will automatically pick up any changes you made to sources
+```commandline
+# Will automatically pick up any changes you made to sources
+yarn install
 ```
 
 ## Testing your code
 
 We currently have two testsuites, built for different purposes. The first one is unit tests and can be triggered by running the following command from anywhere within the repository:
 
-```bash
+```commandline
 yarn test:unit
 ```
 
 While various subcomponents that have a strict JS interface contract are tested via unit tests (for example the portable shell library, or the various util libraries we ship), Yarn as a whole relies on integration tests. Being much closer to what our users experience, they give us a higher confidence when refactoring the application that everything will work according to plan. Those tests can be triggered by running the following command (again, from anywhere within the repository):
 
-```bash
+```commandline
 yarn build:cli
 yarn test:integration
 ```
@@ -58,7 +59,7 @@ Note that because we want to avoid adding the `esbuild` overhead to each Yarn ca
 
 Both unit tests and integration tests use Jest, which means that you can filter the tests you want to run by using the `-t` flag (or simply the file path):
 
-```bash
+```commandline
 yarn test:unit yarnpkg-shell
 yarn test:integration -t 'it should correctly install a single dependency that contains no sub-dependencies'
 ```
@@ -74,13 +75,13 @@ The `makeTemporaryEnv` utility generates a very basic temporary environment just
 
 Before submitting your code for review, please make sure your code is properly formatted by using the following command from anywhere within the repository:
 
-```bash
+```commandline
 yarn test:lint
 ```
 
 We use ESLint to check this, so using the `--fix` flag will cause ESLint to attempt to automatically correct most errors that might be left in your code:
 
-```bash
+```commandline
 yarn test:lint --fix
 ```
 
@@ -106,7 +107,7 @@ You can check if you've set everything correctly with `yarn version check`.
 
 If you expect a package to have to be released again but Yarn doesn't offer you this choice, first check whether the name of your local branch is `master`. If that's the case, Yarn might not be able to detect your changes (since it will do it against `master`, which is yourself). Run the following commands:
 
-```bash
+```commandline
 git checkout -b my-feature
 git checkout -
 git reset --hard upstream/master
@@ -133,7 +134,7 @@ Our website is stored within the [`packages/docusaurus`](https://github.com/yarn
 
 Then run the following command to spawn a local server and see your changes:
 
-```bash
+```commandline
 yarn start
 ```
 
@@ -145,12 +146,12 @@ Once you're happy with what the documentation looks like, just commit your local
 
 Run the following command to generate an unminified bundle:
 
-```bash
+```commandline
 yarn build:cli --no-minify
 ```
 
 Use a profiler on the generated bundle at `packages/yarnpkg-cli/bundles/yarn.js`. Here is an example which uses the Node.js built-in profiler:
 
-```bash
+```commandline
 YARN_IGNORE_PATH=1 node --prof packages/yarnpkg-cli/bundles/yarn.js
 ```

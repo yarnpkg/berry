@@ -106,7 +106,7 @@ Should you use dependencies or peer dependencies? It depends on the context; as 
 
 The `node_modules/.bin` folder is an implementation detail, and the PnP installs don't generate it at all. Rather than relying on its existence, just use the `yarn run bin` command which can start both scripts and binaries:
 
-```bash
+```commandline
 yarn run jest
 # or, using the shortcut:
 yarn jest

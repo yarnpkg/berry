@@ -80,13 +80,13 @@ Note that while `createRequire` is Node 12+, a polyfill exists under the name [`
 
 Sometimes you may find yourself having slightly more complex needs, for example if you wish to spawn a script with specific Node flags. Depending on the context we recommend passing options via the [`NODE_OPTIONS` environment variable](https://nodejs.org/api/cli.html#cli_node_options_options) rather than the CLI, but if that's not an option you can use `yarn bin name` to get the specified binary path:
 
-```
+```commandline
 yarn node --inspect $(yarn bin jest)
 ```
 
 Note that, in this particular case, `yarn run` also supports the `--inspect` flag so you could just write:
 
-```
+```commandline
 yarn run --inspect jest
 ```
 

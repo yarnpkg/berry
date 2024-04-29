@@ -6,6 +6,8 @@ description: A step-by-step and in-depth migration guide from Yarn 1 (Classic) t
 sidebar_position: 2
 ---
 
+import {Inline as I, Command as C, Binary as B, Path as P, Unknown as U} from '@site/src/components/CommandLineHighlight2.tsx'
+
 :::tip
 You may have heard about [Yarn Plug'n'Play](/features/pnp) and be worried that your project isn't compatible yet. **Don't worry!**
 
@@ -19,7 +21,7 @@ Note that those commands only need to be run once for the whole project and will
 ## Migration steps
 
 1. Make sure you're using Node 18+
-2. Run <CommandLineHighlight type={`inlineCode`} lines={[{type: `command`, command: {name: `corepack`, path: [`enable`], argv: [`enable`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `enable`}]}]}/> to activate [Corepack](https://nodejs.org/api/corepack.html)
+2. Run `corepack enable` to activate [Corepack](https://nodejs.org/api/corepack.html)
 2. Go into your project directory
 3. Run `yarn set version berry`
 4. Convert your `.npmrc` and `.yarnrc` files into [`.yarnrc.yml`](/configuration/yarnrc) (details [here](/migration/guide#update-your-configuration-to-the-new-settings))
@@ -103,26 +105,26 @@ nmHoistingLimits: workspaces
 
 | Yarn Classic (1.x) | Yarn Modern |
 | --- | --- |
-| `yarn audit` | `yarn npm audit` |
-| `yarn create` | `yarn dlx create-NAME` |
-| `yarn global` | `yarn dlx` ([Read more](#use-yarn-dlx-instead-of-yarn-global)) |
-| `yarn info` | `yarn npm info` |
-| `yarn list` | `yarn info -AR` (`yarn info ! --json`?) |
-| `yarn login` | `yarn npm login` |
-| `yarn logout` | `yarn npm logout` |
-| `yarn outdated` | `yarn upgrade-interactive` ([Read more](https://github.com/yarnpkg/berry/issues/749)) |
-| `yarn publish` | `yarn npm publish` |
-| `yarn upgrade` | `yarn up` (note: updates all workspaces) |
-| `yarn install --production` | `yarn workspaces focus --all --production` |
+| <I><C><B>yarn</B><U>audit</U></C></I> | `yarn npm audit` |
+| <I><C><B>yarn</B><U>create</U></C></I> | `yarn dlx create-NAME` |
+| <I><C><B>yarn</B><U>global</U></C></I> | `yarn dlx` ([Read more](#use-yarn-dlx-instead-of-yarn-global)) |
+| <I><C><B>yarn</B><U>info</U></C></I> | `yarn npm info` |
+| <I><C><B>yarn</B><U>list</U></C></I> | `yarn info -AR` (`yarn info ! --json`?) |
+| <I><C><B>yarn</B><U>login</U></C></I> | `yarn npm login` |
+| <I><C><B>yarn</B><U>logout</U></C></I> | `yarn npm logout` |
+| <I><C><B>yarn</B><U>outdated</U></C></I> | `yarn upgrade-interactive` ([Read more](https://github.com/yarnpkg/berry/issues/749)) |
+| <I><C><B>yarn</B><U>publish</U></C></I> | `yarn npm publish` |
+| <I><C><B>yarn</B><U>upgrade</U></C></I> | `yarn up` (note: updates all workspaces) |
+| <I><C><B>yarn</B><P>install</P><U>--production</U></C></I> | `yarn workspaces focus --all --production` |
 
 ### Removed commands
 
 | <div style={{width: 150}}>Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn check`    | Cache integrity is now checked on regular installs - [Read more](https://github.com/yarnpkg/rfcs/pull/106) |
-| `yarn import`   | First import to Classic, then migrate to Yarn Modern |
-| `yarn licenses` | Perfect use case for plugins - [Read more](https://github.com/yarnpkg/berry/issues/1164) |
-| `yarn versions` | Use `yarn --version` and `node -p process.versions` |
+| <I><C><B>yarn</B><U>check</U></C></I>    | Cache integrity is now checked on regular installs - [Read more](https://github.com/yarnpkg/rfcs/pull/106) |
+| <I><C><B>yarn</B><U>import</U></C></I>   | First import to Classic, then migrate to Yarn Modern |
+| <I><C><B>yarn</B><U>licenses</U></C></I> | Perfect use case for plugins - [Read more](https://github.com/yarnpkg/berry/issues/1164) |
+| <I><C><B>yarn</B><U>versions</U></C></I> | Use `yarn --version` and `node -p process.versions` |
 
 ### Not implemented yet
 
@@ -130,5 +132,5 @@ Those features simply haven't been implemented yet. Help welcome!
 
 | <div style={{width: 150}}>Yarn Classic (1.x)</div> | Notes |
 | ------------------ | ----------------------------- |
-| `yarn owner`    | Will eventually be available as `yarn npm owner` |
-| `yarn team`     | Will eventually be available as `yarn npm team` |
+| <I><C><B>yarn</B><U>owner</U></C></I>    | Will eventually be available as `yarn npm owner` |
+| <I><C><B>yarn</B><U>team</U></C></I>     | Will eventually be available as `yarn npm team` |

@@ -9,13 +9,13 @@ description: Various cool things you can do with Yarn 2
 
 - Initialize the repo using Yarn 2:
 
-```
+```commandline
 yarn init -2
 ```
 
 - Add typescript and enable [VSCode integration](/getting-started/editor-sdks):
 
-```
+```commandline
 yarn add --dev typescript
 yarn dlx @yarnpkg/sdks vscode
 ```
@@ -23,11 +23,11 @@ yarn dlx @yarnpkg/sdks vscode
 ## Running a Yarn CLI command in the specified directory:
 
 - Starting a new library inside a monorepo directly, without manually creating directories for it.
-```
+```commandline
 yarn packages/my-new-lib init
 ```
 - Running an arbitrary command inside a specific workspace:
-```
+```commandline
 yarn packages/app tsc --noEmit
 ```
 
@@ -36,12 +36,12 @@ yarn packages/app tsc --noEmit
 You may sometimes need to use `node_modules` on just part of your workspace (for example, if you use React-Native).
 
 - Create a separate directory for the `node_modules` project.
-```
+```commandline
 mkdir nm-packages/myproj
 touch nm-packages/myproj/yarn.lock
 ```
 - Enable the `node-modules` linker :
-```
+```commandline
 yarn --cwd packages/myproj config set nodeLinker node-modules
 ```
 - Add a PnP ignore pattern for this path in your main `.yarnrc.yml` at the root of your monorepo:
