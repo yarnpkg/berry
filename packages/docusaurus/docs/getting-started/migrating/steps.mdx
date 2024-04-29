@@ -28,7 +28,7 @@ Note that those commands only need to be run once for the whole project and will
 5. Run `yarn install` to migrate the lockfile
 6. Commit all changes
 
-Good, you should now have a working Yarn install! Some things might still require some adjustments in your CI scripts (for example the deprecation of [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), or the renaming of `--frozen-lockfile` into `yarn install ! --immutable`), but at least we have a working project.
+Good, you should now have a working Yarn install! Some things might still require some adjustments in your CI scripts (for example the deprecation of [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), or the renaming of <I><C><U>--frozen-lockfile</U></C></I> into `--immutable`), but at least we have a working project.
 
 ## Breaking changes
 
@@ -109,7 +109,7 @@ nmHoistingLimits: workspaces
 | <I><C><B>yarn</B><U>create</U></C></I> | `yarn dlx create-NAME` |
 | <I><C><B>yarn</B><U>global</U></C></I> | `yarn dlx` ([Read more](#use-yarn-dlx-instead-of-yarn-global)) |
 | <I><C><B>yarn</B><U>info</U></C></I> | `yarn npm info` |
-| <I><C><B>yarn</B><U>list</U></C></I> | `yarn info -AR` (`yarn info ! --json`?) |
+| <I><C><B>yarn</B><U>list</U></C></I> | `yarn info -AR` (`--json`?) |
 | <I><C><B>yarn</B><U>login</U></C></I> | `yarn npm login` |
 | <I><C><B>yarn</B><U>logout</U></C></I> | `yarn npm logout` |
 | <I><C><B>yarn</B><U>outdated</U></C></I> | `yarn upgrade-interactive` ([Read more](https://github.com/yarnpkg/berry/issues/749)) |

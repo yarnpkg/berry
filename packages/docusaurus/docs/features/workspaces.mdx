@@ -82,7 +82,7 @@ This command takes a list of workspaces, extend the list to include transitive d
 yarn workspaces focus @my-org/app
 ```
 
-If you wish to also skip installing `devDependencies`, set the `yarn workspaces focus ! --production` flag. In the following example, Yarn will install the dependencies from all workspaces, but only the production ones:
+If you wish to also skip installing `devDependencies`, set the `--production` flag. In the following example, Yarn will install the dependencies from all workspaces, but only the production ones:
 
 ```commandline
 yarn workspaces focus -A --production
@@ -102,13 +102,13 @@ Scripts from multiple workspaces can be run in parallel if they share the same n
 yarn workspaces foreach --all -pt npm publish
 ```
 
-The `yarn workspaces foreach ! --all` flag will run the provided command on every workspace in the project, but it can be tweaked. In this example we use the `yarn workspaces foreach ! --since` flag to instead only select workspaces that were modified in the current branch compared to the [main branch](/):
+The `--all` flag will run the provided command on every workspace in the project, but it can be tweaked. In this example we use the `--since` flag to instead only select workspaces that were modified in the current branch compared to the [main branch](/):
 
 ```commandline
 yarn workspaces foreach --since run lint
 ```
 
-Similarly, the `yarn workspaces foreach ! --from pattern` flag will instead select all workspaces matching the provided glob pattern. As for all other Yarn commands, this flag will be applied to both workspace names and paths relative to the current working directory. For example, this command will run the `build` script on the current workspace and all other workspaces it depends on:
+Similarly, the `--from pattern` flag will instead select all workspaces matching the provided glob pattern. As for all other Yarn commands, this flag will be applied to both workspace names and paths relative to the current working directory. For example, this command will run the `build` script on the current workspace and all other workspaces it depends on:
 
 ```commandline
 yarn workspaces foreach --from . -R run build

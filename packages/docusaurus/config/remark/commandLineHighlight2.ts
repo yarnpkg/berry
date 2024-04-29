@@ -1,11 +1,11 @@
 import logger                                                                                                                              from '@docusaurus/logger';
 import {type YarnCli, getCli}                                                                                                              from '@yarnpkg/cli';
 import {parseShell, stringifyArgument, stringifyArgumentSegment, stringifyEnvSegment, type CommandChain, type CommandLine, type ShellLine} from '@yarnpkg/parsers';
-import type {Token}                                                                                                                        from 'clipanion';
+import type {Definition, Token}                                                                                                            from 'clipanion';
 import {fromJs}                                                                                                                            from 'esast-util-from-js';
 import {capitalize}                                                                                                                        from 'lodash';
 import type {MdxJsxTextElement}                                                                                                            from 'mdast-util-mdx-jsx';
-import type {Code, InlineCode, PhrasingContent, Root}                                                                                      from 'mdast';
+import type {Code, InlineCode, Parent, PhrasingContent, Root}                                                                              from 'mdast';
 import type {Transformer}                                                                                                                  from 'unified';
 import {CONTINUE, SKIP, visit}                                                                                                             from 'unist-util-visit';
 
@@ -137,6 +137,9 @@ const makeCommandLine = (line: CommandLine, cli: YarnCli): MdxJsxTextElement => 
   return mdx(null, {}, nodes);
 };
 
+let lastUsedDefinition: Definition | null = null;
+const pendingOptions: Array<{ parent: Parent, index: number, node: InlineCode }> = [];
+
 const makeYarnCommand = (args: Array<string>, cli: YarnCli): MdxJsxTextElement => {
   const [, ...argv] = args;
 
@@ -224,10 +227,47 @@ const makeYarnCommand = (args: Array<string>, cli: YarnCli): MdxJsxTextElement =
     }
   };
 
+  if (definition) {
+    lastUsedDefinition = definition;
+    for (const {parent, index, node} of pendingOptions) {
+      const replacement = makeBareOption(node, definition);
+      if (replacement) {
+        parent.children[index] = replacement;
+      } else {
+        logger.warn`[CLH] Unable to resolve option "${node.value}"`;
+      }
+    }
+    pendingOptions.length = 0;
+  }
+
   return mdx(`${NAMESPACE}.Command`, {}, [
     mdx(`${NAMESPACE}.Binary`, {}, cli.binaryName),
     ...nodes.map(makeMdastNode),
   ]);
+};
+
+const makeBareOption = (node: InlineCode, definition: Definition) => {
+  const [text, ...rest] = node.value.split(` `);
+
+  const option = definition.options.find(option => option.nameSet.includes(text));
+  if (option) {
+    return mdx(`${NAMESPACE}.Inline`, {}, [
+      mdx(`${NAMESPACE}.Command`, {}, [
+        mdx(
+          `${NAMESPACE}.Option`,
+          option?.description ? {tooltip: option.description} : {},
+          text,
+        ),
+        ...rest.map(arg => mdx(
+          `${NAMESPACE}.Value`,
+          {},
+          arg,
+        )),
+      ]),
+    ]);
+  } else {
+    return null;
+  }
 };
 
 const makeOtherCommand = (args: Array<string>): MdxJsxTextElement => {
@@ -288,12 +328,31 @@ export function plugin() {
 
           return SKIP;
         }
-      } else if (node.type === `inlineCode` && !node.value.includes(`!`)) {
+      } else if (node.type === `inlineCode`) {
+        if (node.value.includes(`!`)) {
+          logger.warn`[CLH] Split-based options are not supported: "${node.value}"`;
+          return SKIP;
+        }
+
         const prev = index !== undefined ? parent!.children[index - 1] : undefined;
         const comment = prev?.type === `mdxTextExpression`
           ? prev.data?.estree?.comments?.find(comment => /^\s*commandline(\s|$)/.test(comment.value))?.value
           : undefined;
-        const match = comment?.match(/^\s*commandline:(\{.+)/);
+
+        if (node.value.match(/^--?\w/)) {
+          if (lastUsedDefinition) {
+            const replacement = makeBareOption(node, lastUsedDefinition);
+            if (replacement) {
+              parent!.children[index!] = replacement;
+              ensureImport();
+
+              return SKIP;
+            }
+          }
+
+          pendingOptions.push({parent: parent!, index: index!, node});
+          return SKIP;
+        }
 
         if (comment || node.value.match(commandRegex)) {
           parent!.children[index!] = makeInline(node, cli);
@@ -305,6 +364,12 @@ export function plugin() {
 
       return CONTINUE;
     });
+
+    if (pendingOptions.length > 0) {
+      for (const {node} of pendingOptions) {
+        logger.warn`[CLH] Unable to resolve option "${node.value}"`;
+      }
+    }
   };
 
   return transformer;
