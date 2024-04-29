@@ -248,7 +248,7 @@ const plugin = async function(context: LoadContext, options: Options): Promise<P
             | ---------- | ----------- |
             ${definition.options.map(({definition, description}) => dedent(`
               | <h4 id="${encodeURIComponent((`options-${definition}`).replace(/-+/g, `-`))}" className="header-code"><code className="language-text">${definition}</code></h4> | ${description} |
-            `)).join(``)}
+            `)).join(`\n`)}
           `)
         : null,
     ];
