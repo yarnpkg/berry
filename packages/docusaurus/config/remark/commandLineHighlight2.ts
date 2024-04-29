@@ -16,7 +16,6 @@ const otherCli: Record<string, Array<string> | undefined> = {
   corepack: [`enable`],
   npm: [`install`, `run`],
   git: [`checkout`, `reset`, `rev-parse`],
-  cd: [],
 };
 
 const placeholders = new Map<string, string | MdxJsxTextElement>();
@@ -274,16 +273,34 @@ export function plugin() {
     }
 
     visit(ast, (node, index, parent) => {
-      if (node.type === `code` && (node.lang === `commandline` || node.meta?.split(` `).includes(`commandline`))) {
-        parent!.children[index!] = makeBlock(node, cli);
-        ensureImport();
+      if (node.type === `code`) {
+        if (node.lang === `commandline`) {
+          parent!.children[index!] = makeBlock(node, cli);
+          ensureImport();
 
-        return SKIP;
-      } else if (node.type === `inlineCode` && node.value.match(commandRegex) && node.value.includes(`!`)) {
-        parent!.children[index!] = makeInline(node, cli);
-        ensureImport();
+          return SKIP;
+        }
 
-        return SKIP;
+        const meta = node.meta?.split(` `).includes(`commandline`);
+        if (meta) {
+          parent!.children[index!] = makeBlock(node, cli);
+          ensureImport();
+
+          return SKIP;
+        }
+      } else if (node.type === `inlineCode` && !node.value.includes(`!`)) {
+        const prev = index !== undefined ? parent!.children[index - 1] : undefined;
+        const comment = prev?.type === `mdxTextExpression`
+          ? prev.data?.estree?.comments?.find(comment => /^\s*commandline(\s|$)/.test(comment.value))?.value
+          : undefined;
+        const match = comment?.match(/^\s*commandline:(\{.+)/);
+
+        if (comment || node.value.match(commandRegex)) {
+          parent!.children[index!] = makeInline(node, cli);
+          ensureImport();
+
+          return SKIP;
+        }
       }
 
       return CONTINUE;
