@@ -287,13 +287,16 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // Run an install; we can't avoid it unless we inspect the
             // package.json, which I don't want to do to keep the codebase
             // clean (even if it has a slight perf cost when cloning v1 repos)
-            const install = await execUtils.pipevp(`yarn`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const yarnV1Args = configuration.settings.get(`enableScripts`)
+              ? []
+              : [`--ignore-scripts`];
+            const install = await execUtils.pipevp(`yarn`, [...yarnV1Args, `install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (install.code !== 0)
               return install.code;
 
             stdout.write(`\n`);
 
-            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, ...yarnV1Args, `pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
             if (pack.code !== 0)
               return pack.code;
 
