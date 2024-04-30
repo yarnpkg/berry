@@ -290,13 +290,13 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             const yarnV1Args = configuration.settings.get(`enableScripts`)
               ? []
               : [`--ignore-scripts`];
-            const install = await execUtils.pipevp(`yarn`, [...yarnV1Args, `install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
+            const install = await execUtils.pipevp(`yarn`, [`install`, ...yarnV1Args], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (install.code !== 0)
               return install.code;
 
             stdout.write(`\n`);
 
-            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, ...yarnV1Args, `pack`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, ...yarnV1Args, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
             if (pack.code !== 0)
               return pack.code;
 
