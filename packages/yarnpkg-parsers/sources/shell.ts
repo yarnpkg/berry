@@ -138,7 +138,7 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
       return argumentSegment.pattern;
 
     case `shell`:
-      return doubleQuoteIfRequested(`\${${stringifyShellLine(argumentSegment.shell)}}`, argumentSegment.quoted);
+      return doubleQuoteIfRequested(`$(${stringifyShellLine(argumentSegment.shell)})`, argumentSegment.quoted);
 
     case `variable`:
       return doubleQuoteIfRequested(
