@@ -198,8 +198,7 @@ export const plugin = () => () => {
     });
 
     if (highlightNodes.length > 0) {
-      const url = pathToFileURL(require.resolve(`../components/CommandLineHighlight.tsx`));
-      const code = `import {CommandLineHighlight} from ${JSON.stringify(url)};\n`;
+      const code = `import {CommandLineHighlight} from "@site/src/components/CommandLineHighlight.tsx";\n`;
       ast.children.unshift({
         type: `mdxjsEsm`,
         value: code,

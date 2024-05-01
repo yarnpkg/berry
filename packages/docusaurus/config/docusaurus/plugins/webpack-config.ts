@@ -6,13 +6,13 @@ const webpack = createRequire(require.resolve(`@docusaurus/core/package.json`))(
 
 const plugin: PluginModule = async function() {
   return {
-    name: `docusaurus-yarn-plugin`,
+    name: `docusaurus-plugin-yarn-webpack-config`,
     configureWebpack() {
       return {
         module: {
           rules: [{
             test: /\.term\.dat$/,
-            use: [require.resolve(`./src/webpack/ansi-loader.js`)],
+            use: [require.resolve(`../../webpack/ansi-loader.js`)],
           }],
         },
         resolve: {

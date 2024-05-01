@@ -9,8 +9,8 @@ import * as path                                                    from 'node:p
 import {themes}                                                     from 'prism-react-renderer';
 import {satisfies}                                                  from 'semver';
 
-import * as autoLink                                                from './src/remark/autoLink';
-import * as commandLineHighlight                                    from './src/remark/commandLineHighlight';
+import * as autoLink                                                from './config/remark/autoLink';
+import * as commandLineHighlight                                    from './config/remark/commandLineHighlight';
 
 const remarkPlugins = [
   commandLineHighlight.plugin(),
@@ -89,7 +89,7 @@ async function typedocPluginConfig(): Promise<Partial<DocusaurusPluginTypeDocApi
     readmes: true,
     gitRefName: process.env.COMMIT_REF ?? `master`,
     typedocOptions: {
-      plugin: [`./src/typedoc/plugin.ts`],
+      plugin: [`./config/typedoc/plugin.ts`],
     },
     remarkPlugins,
   };
@@ -141,7 +141,7 @@ export default async function (): Promise<Config> {
     },
 
     plugins: [
-      require.resolve(`./plugin`),
+      `./config/docusaurus/plugins/webpack-config.ts`,
       [
         `docusaurus-plugin-typedoc-api`,
         await typedocPluginConfig(),
@@ -174,12 +174,12 @@ export default async function (): Promise<Config> {
                 label: `master (${YarnVersion})`,
               },
             },
-            sidebarPath: require.resolve(`./sidebars.ts`),
+            sidebarPath: `./config/docusaurus/sidebars.ts`,
             editUrl: `https://github.com/yarnpkg/berry/edit/master/packages/docusaurus/`,
             remarkPlugins,
           },
           theme: {
-            customCss: require.resolve(`./src/css/custom.css`),
+            customCss: `./src/css/custom.css`,
           },
         } satisfies Options,
       ],

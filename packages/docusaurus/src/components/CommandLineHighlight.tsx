@@ -2,7 +2,7 @@ import Link                                    from '@docusaurus/Link';
 import {stringifyArgument}                     from '@yarnpkg/parsers';
 import React                                   from 'react';
 
-import type {CommandLine, RawLine, ScriptLine} from '../remark/commandLineHighlight';
+import type {CommandLine, RawLine, ScriptLine} from '../../config/remark/commandLineHighlight';
 
 import styles                                  from './CommandLineHighlight.module.css';
 

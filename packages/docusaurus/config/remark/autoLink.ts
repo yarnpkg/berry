@@ -95,8 +95,7 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
     });
 
     if (hasAutoLinks) {
-      const url = pathToFileURL(require.resolve(`../components/AutoLink.tsx`));
-      const code = `import {AutoLink} from ${JSON.stringify(url)};\n`;
+      const code = `import {AutoLink} from "@site/src/components/AutoLink.tsx";\n`;
       ast.children.unshift({
         type: `mdxjsEsm`,
         value: code,
