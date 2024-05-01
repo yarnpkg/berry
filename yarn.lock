@@ -2195,7 +2195,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/mdx-loader@npm:3.2.1, @docusaurus/mdx-loader@npm:^3":
+"@docusaurus/mdx-loader@npm:3.2.1, @docusaurus/mdx-loader@npm:^3, @docusaurus/mdx-loader@npm:^3.2.1":
   version: 3.2.1
   resolution: "@docusaurus/mdx-loader@npm:3.2.1"
   dependencies:
@@ -5305,6 +5305,7 @@ __metadata:
   dependencies:
     "@codesandbox/sandpack-react": "npm:^1.15.0"
     "@docusaurus/core": "npm:^3.2.1"
+    "@docusaurus/mdx-loader": "npm:^3.2.1"
     "@docusaurus/module-type-aliases": "npm:^3.2.1"
     "@docusaurus/plugin-content-docs": "npm:^3.2.1"
     "@docusaurus/preset-classic": "npm:^3.2.1"

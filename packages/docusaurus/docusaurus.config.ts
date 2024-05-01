@@ -141,7 +141,14 @@ export default async function (): Promise<Config> {
     },
 
     plugins: [
-      `./config/docusaurus/plugins/webpack-config.ts`,
+      [
+        `./config/docusaurus/plugins/webpack-config.ts`,
+        {
+          changelog: {
+            remarkPlugins,
+          },
+        },
+      ],
       [
         `docusaurus-plugin-typedoc-api`,
         await typedocPluginConfig(),

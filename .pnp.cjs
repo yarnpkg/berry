@@ -3828,7 +3828,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/traverse", "npm:7.23.9"],\
           ["@docusaurus/cssnano-preset", "npm:3.2.1"],\
           ["@docusaurus/logger", "npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/react-loadable", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:5.5.2"],\
           ["@docusaurus/utils", "virtual:cc6c5450e647af501d04c552542964d76bd538642f619f86da4872f2b26b4c2304982ab4a573d4945672120af32b8976af37488c6ed18f423d2a0f6dab9bbbdb#npm:3.2.1"],\
           ["@docusaurus/utils-common", "virtual:cc6c5450e647af501d04c552542964d76bd538642f619f86da4872f2b26b4c2304982ab4a573d4945672120af32b8976af37488c6ed18f423d2a0f6dab9bbbdb#npm:3.2.1"],\
@@ -3935,10 +3935,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1", {\
-        "packageLocation": "./.yarn/__virtual__/@docusaurus-mdx-loader-virtual-dc4a6243b0/0/cache/@docusaurus-mdx-loader-npm-3.2.1-5fa9b010a8-53946a4c69.zip/node_modules/@docusaurus/mdx-loader/",\
+      ["virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1", {\
+        "packageLocation": "./.yarn/__virtual__/@docusaurus-mdx-loader-virtual-23dd958901/0/cache/@docusaurus-mdx-loader-npm-3.2.1-5fa9b010a8-53946a4c69.zip/node_modules/@docusaurus/mdx-loader/",\
         "packageDependencies": [\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/logger", "npm:3.2.1"],\
           ["@docusaurus/utils", "virtual:cc6c5450e647af501d04c552542964d76bd538642f619f86da4872f2b26b4c2304982ab4a573d4945672120af32b8976af37488c6ed18f423d2a0f6dab9bbbdb#npm:3.2.1"],\
           ["@docusaurus/utils-validation", "npm:3.2.1"],\
@@ -4027,7 +4027,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/plugin-content-blog", "virtual:ec84bded49e8305d7e51084e7ea8d56e63f77a0cb6f93d29cb2dc3e68abe6e528d8df6c7179b8c35a4489b8c18120c829c943c0d1a44ae70ca1e173b49fb079a#npm:3.2.1"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/logger", "npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/types", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/utils", "virtual:7de17b316d72d4ae3a40b8068e9e8a56294338a2de9b3c183782ea3707d1e9c33507ea4e772ff002293098568d2dcba861cf7c370c0c9d2659da5b6e33eab114#npm:3.2.1"],\
           ["@docusaurus/utils-common", "virtual:7de17b316d72d4ae3a40b8068e9e8a56294338a2de9b3c183782ea3707d1e9c33507ea4e772ff002293098568d2dcba861cf7c370c0c9d2659da5b6e33eab114#npm:3.2.1"],\
@@ -4070,7 +4070,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/logger", "npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/types", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/utils", "virtual:7de17b316d72d4ae3a40b8068e9e8a56294338a2de9b3c183782ea3707d1e9c33507ea4e772ff002293098568d2dcba861cf7c370c0c9d2659da5b6e33eab114#npm:3.2.1"],\
@@ -4111,7 +4111,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@docusaurus/plugin-content-pages", "virtual:ec84bded49e8305d7e51084e7ea8d56e63f77a0cb6f93d29cb2dc3e68abe6e528d8df6c7179b8c35a4489b8c18120c829c943c0d1a44ae70ca1e173b49fb079a#npm:3.2.1"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/types", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/utils", "virtual:7de17b316d72d4ae3a40b8068e9e8a56294338a2de9b3c183782ea3707d1e9c33507ea4e772ff002293098568d2dcba861cf7c370c0c9d2659da5b6e33eab114#npm:3.2.1"],\
           ["@docusaurus/utils-validation", "npm:3.2.1"],\
@@ -4368,7 +4368,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@docusaurus/theme-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/plugin-content-blog", "virtual:ec84bded49e8305d7e51084e7ea8d56e63f77a0cb6f93d29cb2dc3e68abe6e528d8df6c7179b8c35a4489b8c18120c829c943c0d1a44ae70ca1e173b49fb079a#npm:3.2.1"],\
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
@@ -4418,7 +4418,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@docusaurus-theme-common-virtual-2a73cd5cf5/0/cache/@docusaurus-theme-common-npm-3.2.1-2639b89f99-bedd469ddb.zip/node_modules/@docusaurus/theme-common/",\
         "packageDependencies": [\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/plugin-content-blog", "virtual:ec84bded49e8305d7e51084e7ea8d56e63f77a0cb6f93d29cb2dc3e68abe6e528d8df6c7179b8c35a4489b8c18120c829c943c0d1a44ae70ca1e173b49fb079a#npm:3.2.1"],\
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
@@ -9018,6 +9018,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/docusaurus", "workspace:packages/docusaurus"],\
           ["@codesandbox/sandpack-react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.15.0"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/preset-classic", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
@@ -21951,7 +21952,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch::version=4.2.0&hash=b02f93"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
-          ["@docusaurus/mdx-loader", "virtual:fd6141091aca99f3175443c8011d3237c7495f2eee578814d7b850c0f2fc7409275c5a8a743335964f258886aa962205ac0dd6c14723c6efb9075e068c1e20e0#npm:3.2.1"],\
+          ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/theme-common", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
           ["@docusaurus/types", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.2.1"],\
@@ -21973,6 +21974,7 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@docusaurus/core",\
+          "@docusaurus/mdx-loader",\
           "@docusaurus/plugin-content-docs",\
           "@types/docusaurus__core",\
           "@types/docusaurus__mdx-loader",\
