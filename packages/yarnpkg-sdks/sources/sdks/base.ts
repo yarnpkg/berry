@@ -249,6 +249,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
 
       return tsserver;
     };
+
+    moduleWrapper(absRequire(\`typescript\`));
   `;
 
   const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});

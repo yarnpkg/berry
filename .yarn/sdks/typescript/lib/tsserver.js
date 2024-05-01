@@ -9,6 +9,13 @@ const relPnpApiPath = "../../../../.pnp.cjs";
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = createRequire(absPnpApiPath);
 
+if (existsSync(absPnpApiPath)) {
+  if (!process.versions.pnp) {
+    // Setup the environment to be able to require typescript/lib/tsserver.js
+    require(absPnpApiPath).setup();
+  }
+}
+
 const moduleWrapper = tsserver => {
   if (!process.versions.pnp) {
     return tsserver;
@@ -214,12 +221,7 @@ const moduleWrapper = tsserver => {
   return tsserver;
 };
 
-if (existsSync(absPnpApiPath)) {
-  if (!process.versions.pnp) {
-    // Setup the environment to be able to require typescript/lib/tsserver.js
-    require(absPnpApiPath).setup();
-  }
-}
+moduleWrapper(absRequire(`typescript`));
 
 // Defer to the real typescript/lib/tsserver.js your application uses
 module.exports = moduleWrapper(absRequire(`typescript/lib/tsserver.js`));
