@@ -8,8 +8,7 @@
     "lib": ["ESNext", "DOM"],
 
     "baseUrl": ".",
-    "noEmit": true,
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": []
+  "exclude": [],
 }
