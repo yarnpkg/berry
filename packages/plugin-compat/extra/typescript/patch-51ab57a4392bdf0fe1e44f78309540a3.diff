@@ -1,0 +1,1053 @@
+diff --git a/lib/tsc.js b/lib/tsc.js
+index 06f7f5ec9..4a7e28076 100644
+semver exclusivity >=5.5.0-beta
+--- a/lib/tsc.js
++++ b/lib/tsc.js
+@@ -5120,6 +5120,9 @@ var sys = (() => {
+       }
+     }
+     function isFileSystemCaseSensitive() {
++      if (typeof process.versions.pnp !== `undefined`) {
++        return true;
++      }
+       if (platform === "win32" || platform === "win64") {
+         return false;
+       }
+@@ -38652,6 +38655,48 @@ function getDefaultValueForOption(option) {
+   }
+ }
+ 
++// src/compiler/pnpapi.ts
++function getPnpApi(path) {
++  if (typeof process.versions.pnp === "undefined") {
++    return;
++  }
++  const { findPnpApi } = require("module");
++  if (findPnpApi) {
++    return findPnpApi(`${path}/`);
++  }
++}
++function getPnpApiPath(path) {
++  var _a;
++  return (_a = getPnpApi(path)) == null ? void 0 : _a.resolveRequest(
++    "pnpapi",
++    /*issuer*/
++    null
++  );
++}
++
++// src/compiler/pnp.ts
++function getPnpTypeRoots(currentDirectory) {
++  const pnpApi = getPnpApi(currentDirectory);
++  if (!pnpApi) {
++    return [];
++  }
++  currentDirectory = resolvePath(currentDirectory);
++  const currentPackage = pnpApi.findPackageLocator(`${currentDirectory}/`);
++  if (!currentPackage) {
++    return [];
++  }
++  const { packageDependencies } = pnpApi.getPackageInformation(currentPackage);
++  const typeRoots = [];
++  for (const [name, referencish] of Array.from(packageDependencies.entries())) {
++    if (name.startsWith(`@types/`) && referencish !== null) {
++      const dependencyLocator = pnpApi.getLocator(name, referencish);
++      const { packageLocation } = pnpApi.getPackageInformation(dependencyLocator);
++      typeRoots.push(getDirectoryPath(packageLocation));
++    }
++  }
++  return typeRoots;
++}
++
+ // src/compiler/moduleNameResolver.ts
+ function trace(host, message, ...args) {
+   host.trace(formatMessage(message, ...args));
+@@ -38882,7 +38927,7 @@ function getEffectiveTypeRoots(options, host) {
+     return getDefaultTypeRoots(currentDirectory);
+   }
+ }
+-function getDefaultTypeRoots(currentDirectory) {
++function getNodeModulesTypeRoots(currentDirectory) {
+   let typeRoots;
+   forEachAncestorDirectory(normalizePath(currentDirectory), (directory) => {
+     const atTypes = combinePaths(directory, nodeModulesAtTypes);
+@@ -38895,6 +38940,15 @@ function arePathsEqual(path1, path2, host) {
+   const useCaseSensitiveFileNames2 = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+   return comparePaths(path1, path2, !useCaseSensitiveFileNames2) === 0 /* EqualTo */;
+ }
++function getDefaultTypeRoots(currentDirectory) {
++  const nmTypes = getNodeModulesTypeRoots(currentDirectory);
++  const pnpTypes = getPnpTypeRoots(currentDirectory);
++  if (nmTypes == null ? void 0 : nmTypes.length) {
++    return [...nmTypes, ...pnpTypes];
++  } else if (pnpTypes.length) {
++    return pnpTypes;
++  }
++}
+ function getOriginalAndResolvedFileName(fileName, host, traceEnabled) {
+   const resolvedFileName = realPath(fileName, host, traceEnabled);
+   const pathsAreEqual = arePathsEqual(fileName, resolvedFileName, host);
+@@ -40823,7 +40877,15 @@ function loadModuleFromNearestNodeModulesDirectoryWorker(extensions, moduleName,
+     return lookup(secondaryExtensions);
+   }
+   function lookup(extensions2) {
+-    return forEachAncestorDirectory(normalizeSlashes(directory), (ancestorDirectory) => {
++    const issuer = normalizeSlashes(directory);
++    if (getPnpApi(issuer)) {
++      const resolutionFromCache = tryFindNonRelativeModuleNameInCache(cache, moduleName, mode, issuer, redirectedReference, state);
++      if (resolutionFromCache) {
++        return resolutionFromCache;
++      }
++      return toSearchResult(loadModuleFromImmediateNodeModulesDirectoryPnP(extensions2, moduleName, issuer, state, typesScopeOnly, cache, redirectedReference));
++    }
++    return forEachAncestorDirectory(issuer, (ancestorDirectory) => {
+       if (getBaseFileName(ancestorDirectory) !== "node_modules") {
+         const resolutionFromCache = tryFindNonRelativeModuleNameInCache(cache, moduleName, mode, ancestorDirectory, redirectedReference, state);
+         if (resolutionFromCache) {
+@@ -40858,11 +40920,40 @@ function loadModuleFromImmediateNodeModulesDirectory(extensions, moduleName, dir
+     return loadModuleFromSpecificNodeModulesDirectory(4 /* Declaration */, mangleScopedPackageNameWithTrace(moduleName, state), nodeModulesAtTypes2, nodeModulesAtTypesExists, state, cache, redirectedReference);
+   }
+ }
++function loadModuleFromImmediateNodeModulesDirectoryPnP(extensions, moduleName, directory, state, typesScopeOnly, cache, redirectedReference) {
++  const issuer = normalizeSlashes(directory);
++  if (!typesScopeOnly) {
++    const packageResult = tryLoadModuleUsingPnpResolution(extensions, moduleName, issuer, state, cache, redirectedReference);
++    if (packageResult) {
++      return packageResult;
++    }
++  }
++  if (extensions & 4 /* Declaration */) {
++    return tryLoadModuleUsingPnpResolution(4 /* Declaration */, `@types/${mangleScopedPackageNameWithTrace(moduleName, state)}`, issuer, state, cache, redirectedReference);
++  }
++}
+ function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+-  var _a, _b;
+   const candidate = normalizePath(combinePaths(nodeModulesDirectory, moduleName));
+   const { packageName, rest } = parsePackageName(moduleName);
+   const packageDirectory = combinePaths(nodeModulesDirectory, packageName);
++  return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory);
++}
++function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++  const candidate = normalizePath(combinePaths(packageDirectory, rest));
++  return loadModuleFromSpecificNodeModulesDirectoryImpl(
++    extensions,
++    /*nodeModulesDirectoryExists*/
++    true,
++    state,
++    cache,
++    redirectedReference,
++    candidate,
++    rest,
++    packageDirectory
++  );
++}
++function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++  var _a, _b;
+   let rootPackageInfo;
+   let packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+   if (rest !== "" && packageInfo && (!(state.features & 8 /* Exports */) || !hasProperty(((_a = rootPackageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state)) == null ? void 0 : _a.contents.packageJsonContent) ?? emptyArray, "exports"))) {
+@@ -41167,6 +41258,18 @@ function traceIfEnabled(state, diagnostic, ...args) {
+ function useCaseSensitiveFileNames(state) {
+   return !state.host.useCaseSensitiveFileNames ? true : typeof state.host.useCaseSensitiveFileNames === "boolean" ? state.host.useCaseSensitiveFileNames : state.host.useCaseSensitiveFileNames();
+ }
++function loadPnpPackageResolution(packageName, containingDirectory) {
++  try {
++    const resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, `${containingDirectory}/`, { considerBuiltins: false });
++    return normalizeSlashes(resolution).replace(/\/$/, "");
++  } catch {
++  }
++}
++function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++  const { packageName, rest } = parsePackageName(moduleName);
++  const packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++  return packageResolution ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference) : void 0;
++}
+ 
+ // src/compiler/binder.ts
+ function getModuleInstanceState(node, visited) {
+@@ -44615,7 +44718,15 @@ function getAllModulePathsWorker(info, importedFileName, host, compilerOptions,
+     /*preferSymlinks*/
+     true,
+     (path, isRedirect) => {
+-      const isInNodeModules = pathContainsNodeModules(path);
++      let isInNodeModules = pathContainsNodeModules(path);
++      const pnpapi = getPnpApi(path);
++      if (!isInNodeModules && pnpapi) {
++        const fromLocator = pnpapi.findPackageLocator(info.importingSourceFileName);
++        const toLocator = pnpapi.findPackageLocator(path);
++        if (fromLocator && toLocator && fromLocator !== toLocator) {
++          isInNodeModules = true;
++        }
++      }
+       allFileNames.set(path, { path: info.getCanonicalFileName(path), isRedirect, isInNodeModules });
+       importedFileFromNodeModules = importedFileFromNodeModules || isInNodeModules;
+     }
+@@ -44914,7 +45025,41 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+   if (!host.fileExists || !host.readFile) {
+     return void 0;
+   }
+-  const parts = getNodeModulePathParts(path);
++  let parts = getNodeModulePathParts(path);
++  let pnpPackageName;
++  const pnpApi = getPnpApi(path);
++  if (pnpApi) {
++    const fromLocator = pnpApi.findPackageLocator(importingSourceFile.fileName);
++    const toLocator = pnpApi.findPackageLocator(path);
++    if (fromLocator === toLocator) {
++      return void 0;
++    }
++    if (fromLocator && toLocator) {
++      const fromInfo = pnpApi.getPackageInformation(fromLocator);
++      if (toLocator.reference === fromInfo.packageDependencies.get(toLocator.name)) {
++        pnpPackageName = toLocator.name;
++      } else {
++        for (const [name, reference] of fromInfo.packageDependencies) {
++          if (Array.isArray(reference)) {
++            if (reference[0] === toLocator.name && reference[1] === toLocator.reference) {
++              pnpPackageName = name;
++              break;
++            }
++          }
++        }
++      }
++      if (!parts) {
++        const toInfo = pnpApi.getPackageInformation(toLocator);
++        parts = {
++          topLevelNodeModulesIndex: void 0,
++          topLevelPackageNameIndex: void 0,
++          // The last character from packageLocation is the trailing "/", we want to point to it
++          packageRootIndex: toInfo.packageLocation.length - 1,
++          fileNameIndex: path.lastIndexOf(`/`)
++        };
++      }
++    }
++  }
+   if (!parts) {
+     return void 0;
+   }
+@@ -44952,14 +45097,16 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+   if (isRedirect && !isPackageRootPath) {
+     return void 0;
+   }
+-  const globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-  const pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-  if (!(startsWith(canonicalSourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-    return void 0;
++  if (typeof process.versions.pnp === "undefined") {
++    const globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++    const pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++    if (!(startsWith(canonicalSourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++      return void 0;
++    }
+   }
+-  const nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-  const packageName = getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+-  return getEmitModuleResolutionKind(options) === 1 /* Classic */ && packageName === nodeModulesDirectoryName ? void 0 : packageName;
++  const nodeModulesDirectoryName = typeof pnpPackageName !== "undefined" ? pnpPackageName + moduleSpecifier.substring(parts.packageRootIndex) : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++  const packageNameFromPath = getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++  return getEmitModuleResolutionKind(options) === 1 /* Classic */ && packageNameFromPath === nodeModulesDirectoryName ? void 0 : packageNameFromPath;
+   function tryDirectoryWithPackageJson(packageRootIndex) {
+     var _a, _b;
+     const packageRootPath = path.substring(0, packageRootIndex);
+@@ -44972,9 +45119,9 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+       const importMode = overrideMode || getDefaultResolutionModeForFile(importingSourceFile, host, options);
+       if (getResolvePackageJsonExports(options)) {
+         const nodeModulesDirectoryName2 = packageRootPath.substring(parts.topLevelPackageNameIndex + 1);
+-        const packageName2 = getPackageNameFromTypesPackageName(nodeModulesDirectoryName2);
++        const packageName = getPackageNameFromTypesPackageName(pnpPackageName ? pnpPackageName : nodeModulesDirectoryName2);
+         const conditions = getConditions(options, importMode);
+-        const fromExports = (packageJsonContent == null ? void 0 : packageJsonContent.exports) ? tryGetModuleNameFromExports(options, host, path, packageRootPath, packageName2, packageJsonContent.exports, conditions) : void 0;
++        const fromExports = (packageJsonContent == null ? void 0 : packageJsonContent.exports) ? tryGetModuleNameFromExports(options, host, path, packageRootPath, packageName, packageJsonContent.exports, conditions) : void 0;
+         if (fromExports) {
+           return { ...fromExports, verbatimFromExports: true };
+         }
+@@ -125700,6 +125847,11 @@ function createWatchProgram(host) {
+   if (configFileName) {
+     configFileWatcher = watchFile2(configFileName, scheduleProgramReload, 2e3 /* High */, watchOptions, WatchType.ConfigFile);
+   }
++  let pnpFileWatcher;
++  const pnpApiPath = getPnpApiPath(__filename);
++  if (pnpApiPath) {
++    pnpFileWatcher = watchFile2(pnpApiPath, scheduleResolutionReload, 2e3 /* High */, watchOptions, WatchType.ConfigFile);
++  }
+   const compilerHost = createCompilerHostFromProgramHost(host, () => compilerOptions, directoryStructureHost);
+   setGetSourceFileAsHashVersioned(compilerHost);
+   const getNewSourceFile = compilerHost.getSourceFile;
+@@ -125763,6 +125915,10 @@ function createWatchProgram(host) {
+       configFileWatcher.close();
+       configFileWatcher = void 0;
+     }
++    if (pnpFileWatcher) {
++      pnpFileWatcher.close();
++      pnpFileWatcher = void 0;
++    }
+     extendedConfigCache == null ? void 0 : extendedConfigCache.clear();
+     extendedConfigCache = void 0;
+     if (sharedExtendedConfigFileWatchers) {
+@@ -125798,7 +125954,7 @@ function createWatchProgram(host) {
+   function getCurrentProgram() {
+     return builderProgram && builderProgram.getProgramOrUndefined();
+   }
+-  function synchronizeProgram() {
++  function synchronizeProgram(forceAllFilesAsInvalidated = false) {
+     writeLog(`Synchronizing program`);
+     Debug.assert(compilerOptions);
+     Debug.assert(rootFileNames);
+@@ -125810,7 +125966,7 @@ function createWatchProgram(host) {
+         resolutionCache.onChangesAffectModuleResolution();
+       }
+     }
+-    const { hasInvalidatedResolutions, hasInvalidatedLibResolutions } = resolutionCache.createHasInvalidatedResolutions(customHasInvalidatedResolutions, customHasInvalidLibResolutions);
++    const { hasInvalidatedResolutions, hasInvalidatedLibResolutions } = resolutionCache.createHasInvalidatedResolutions(forceAllFilesAsInvalidated ? returnTrue : customHasInvalidatedResolutions, customHasInvalidLibResolutions);
+     const {
+       originalReadFile,
+       originalFileExists,
+@@ -126022,13 +126178,19 @@ function createWatchProgram(host) {
+     updateLevel = 2 /* Full */;
+     scheduleProgramUpdate();
+   }
++  function scheduleResolutionReload() {
++    writeLog("Clearing resolutions");
++    resolutionCache.clear();
++    updateLevel = 3 /* Resolutions */;
++    scheduleProgramUpdate();
++  }
+   function updateProgramWithWatchStatus() {
+     timerToUpdateProgram = void 0;
+     reportFileChangeDetectedOnCreateProgram = true;
+     updateProgram();
+   }
+   function updateProgram() {
+-    var _a, _b, _c, _d;
++    var _a, _b, _c, _d, _e;
+     switch (updateLevel) {
+       case 1 /* RootNamesAndUpdate */:
+         (_a = perfLogger) == null ? void 0 : _a.logStartUpdateProgram("PartialConfigReload");
+@@ -126038,12 +126200,19 @@ function createWatchProgram(host) {
+         (_b = perfLogger) == null ? void 0 : _b.logStartUpdateProgram("FullConfigReload");
+         reloadConfigFile();
+         break;
++      case 3 /* Resolutions */:
++        (_c = perfLogger) == null ? void 0 : _c.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++        synchronizeProgram(
++          /*forceAllFilesAsInvalidated*/
++          true
++        );
++        break;
+       default:
+-        (_c = perfLogger) == null ? void 0 : _c.logStartUpdateProgram("SynchronizeProgram");
++        (_d = perfLogger) == null ? void 0 : _d.logStartUpdateProgram("SynchronizeProgram");
+         synchronizeProgram();
+         break;
+     }
+-    (_d = perfLogger) == null ? void 0 : _d.logStopUpdateProgram("Done");
++    (_e = perfLogger) == null ? void 0 : _e.logStopUpdateProgram("Done");
+     return getCurrentBuilderProgram();
+   }
+   function reloadFileNamesFromConfigFile() {
+diff --git a/lib/tsserver.js b/lib/tsserver.js
+index 50cc6659c..9cefc330a 100644
+semver exclusivity >=5.5.0-beta
+--- a/lib/tsserver.js
++++ b/lib/tsserver.js
+@@ -33,6 +33,25 @@ var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "defau
+ var typescript_exports = {};
+ __reExport(typescript_exports, require("./typescript.js"));
+ 
++// src/compiler/pnpapi.ts
++function getPnpApi(path) {
++  if (typeof process.versions.pnp === "undefined") {
++    return;
++  }
++  const { findPnpApi } = require("module");
++  if (findPnpApi) {
++    return findPnpApi(`${path}/`);
++  }
++}
++function getPnpApiPath(path) {
++  var _a;
++  return (_a = getPnpApi(path)) == null ? void 0 : _a.resolveRequest(
++    "pnpapi",
++    /*issuer*/
++    null
++  );
++}
++
+ // src/tsserver/common.ts
+ function getLogLevel(level) {
+   if (level) {
+@@ -240,6 +259,10 @@ function initializeNodeSystem() {
+         }
+         try {
+           const args = [(0, typescript_exports.combinePaths)(libDirectory, "watchGuard.js"), path];
++          const pnpApiPath = getPnpApiPath(__filename);
++          if (pnpApiPath) {
++            args.unshift("-r", pnpApiPath);
++          }
+           if (logger.hasLevel(typescript_exports.server.LogLevel.verbose)) {
+             logger.info(`Starting ${process.execPath} with args:${typescript_exports.server.stringifyIndented(args)}`);
+           }
+@@ -422,6 +445,10 @@ function startNodeSession(options, logger, cancellationToken) {
+           break;
+         }
+       }
++      const pnpApiPath = getPnpApiPath(__filename);
++      if (pnpApiPath) {
++        execArgv.unshift("-r", pnpApiPath);
++      }
+       const typingsInstaller = (0, typescript_exports.combinePaths)((0, typescript_exports.getDirectoryPath)(typescript_exports.sys.getExecutingFilePath()), "typingsInstaller.js");
+       this.installer = childProcess.fork(typingsInstaller, args, { execArgv });
+       this.installer.on("message", (m) => this.handleMessage(m));
+diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
+index f4c59a844..631850d94 100644
+semver exclusivity >=5.5.0-beta
+--- a/lib/typescript.d.ts
++++ b/lib/typescript.d.ts
+@@ -9339,6 +9339,8 @@ declare namespace ts {
+          *  - Updating the program
+          */
+         Full = 2,
++        /** Reload the resolutions */
++        Resolutions = 3,
+     }
+     function findConfigFile(searchPath: string, fileExists: (fileName: string) => boolean, configName?: string): string | undefined;
+     function resolveTripleslashReference(moduleName: string, containingFile: string): string;
+diff --git a/lib/typescript.js b/lib/typescript.js
+index 6b52dd675..22cf43d26 100644
+semver exclusivity >=5.5.0-beta
+--- a/lib/typescript.js
++++ b/lib/typescript.js
+@@ -8708,6 +8708,9 @@ var sys = (() => {
+       }
+     }
+     function isFileSystemCaseSensitive() {
++      if (typeof process.versions.pnp !== `undefined`) {
++        return true;
++      }
+       if (platform === "win32" || platform === "win64") {
+         return false;
+       }
+@@ -43194,6 +43197,69 @@ function getDefaultValueForOption(option) {
+   }
+ }
+ 
++// src/compiler/pnpapi.ts
++function getPnpApi(path) {
++  if (typeof process.versions.pnp === "undefined") {
++    return;
++  }
++  const { findPnpApi } = require("module");
++  if (findPnpApi) {
++    return findPnpApi(`${path}/`);
++  }
++}
++function getPnpApiPath(path) {
++  var _a;
++  return (_a = getPnpApi(path)) == null ? void 0 : _a.resolveRequest(
++    "pnpapi",
++    /*issuer*/
++    null
++  );
++}
++
++// src/compiler/pnp.ts
++function getPnpTypeRoots(currentDirectory) {
++  const pnpApi = getPnpApi(currentDirectory);
++  if (!pnpApi) {
++    return [];
++  }
++  currentDirectory = resolvePath(currentDirectory);
++  const currentPackage = pnpApi.findPackageLocator(`${currentDirectory}/`);
++  if (!currentPackage) {
++    return [];
++  }
++  const { packageDependencies } = pnpApi.getPackageInformation(currentPackage);
++  const typeRoots = [];
++  for (const [name, referencish] of Array.from(packageDependencies.entries())) {
++    if (name.startsWith(`@types/`) && referencish !== null) {
++      const dependencyLocator = pnpApi.getLocator(name, referencish);
++      const { packageLocation } = pnpApi.getPackageInformation(dependencyLocator);
++      typeRoots.push(getDirectoryPath(packageLocation));
++    }
++  }
++  return typeRoots;
++}
++function isImportablePathPnp(fromPath, toPath3) {
++  const pnpApi = getPnpApi(fromPath);
++  const fromLocator = pnpApi.findPackageLocator(fromPath);
++  const toLocator = pnpApi.findPackageLocator(toPath3);
++  if (toLocator === null) {
++    return false;
++  }
++  const fromInfo = pnpApi.getPackageInformation(fromLocator);
++  const toReference = fromInfo.packageDependencies.get(toLocator.name);
++  if (toReference) {
++    return toReference === toLocator.reference;
++  }
++  for (const reference of fromInfo.packageDependencies.values()) {
++    if (Array.isArray(reference)) {
++      if (reference[0] === toLocator.name && reference[1] === toLocator.reference) {
++        return true;
++      }
++    }
++  }
++  return false;
++}
++
+ // src/compiler/moduleNameResolver.ts
+ function trace(host, message, ...args) {
+   host.trace(formatMessage(message, ...args));
+@@ -43436,7 +43502,7 @@ function getEffectiveTypeRoots(options, host) {
+     return getDefaultTypeRoots(currentDirectory);
+   }
+ }
+-function getDefaultTypeRoots(currentDirectory) {
++function getNodeModulesTypeRoots(currentDirectory) {
+   let typeRoots;
+   forEachAncestorDirectory(normalizePath(currentDirectory), (directory) => {
+     const atTypes = combinePaths(directory, nodeModulesAtTypes);
+@@ -43449,6 +43515,15 @@ function arePathsEqual(path1, path2, host) {
+   const useCaseSensitiveFileNames2 = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
+   return comparePaths(path1, path2, !useCaseSensitiveFileNames2) === 0 /* EqualTo */;
+ }
++function getDefaultTypeRoots(currentDirectory) {
++  const nmTypes = getNodeModulesTypeRoots(currentDirectory);
++  const pnpTypes = getPnpTypeRoots(currentDirectory);
++  if (nmTypes == null ? void 0 : nmTypes.length) {
++    return [...nmTypes, ...pnpTypes];
++  } else if (pnpTypes.length) {
++    return pnpTypes;
++  }
++}
+ function getOriginalAndResolvedFileName(fileName, host, traceEnabled) {
+   const resolvedFileName = realPath(fileName, host, traceEnabled);
+   const pathsAreEqual = arePathsEqual(fileName, resolvedFileName, host);
+@@ -43701,6 +43776,21 @@ function getConditions(options, resolutionMode) {
+ }
+ function resolvePackageNameToPackageJson(packageName, containingDirectory, options, host, cache) {
+   const moduleResolutionState = getTemporaryModuleResolutionState(cache == null ? void 0 : cache.getPackageJsonInfoCache(), host, options);
++  const pnpapi = getPnpApi(containingDirectory);
++  if (pnpapi) {
++    try {
++      const resolution = pnpapi.resolveToUnqualified(packageName, `${containingDirectory}/`, { considerBuiltins: false });
++      const candidate = normalizeSlashes(resolution).replace(/\/$/, "");
++      return getPackageJsonInfo(
++        candidate,
++        /*onlyRecordFailures*/
++        false,
++        moduleResolutionState
++      );
++    } catch {
++      return;
++    }
++  }
+   return forEachAncestorDirectory(containingDirectory, (ancestorDirectory) => {
+     if (getBaseFileName(ancestorDirectory) !== "node_modules") {
+       const nodeModulesFolder = combinePaths(ancestorDirectory, "node_modules");
+@@ -45529,7 +45619,15 @@ function loadModuleFromNearestNodeModulesDirectoryWorker(extensions, moduleName,
+     return lookup(secondaryExtensions);
+   }
+   function lookup(extensions2) {
+-    return forEachAncestorDirectory(normalizeSlashes(directory), (ancestorDirectory) => {
++    const issuer = normalizeSlashes(directory);
++    if (getPnpApi(issuer)) {
++      const resolutionFromCache = tryFindNonRelativeModuleNameInCache(cache, moduleName, mode, issuer, redirectedReference, state);
++      if (resolutionFromCache) {
++        return resolutionFromCache;
++      }
++      return toSearchResult(loadModuleFromImmediateNodeModulesDirectoryPnP(extensions2, moduleName, issuer, state, typesScopeOnly, cache, redirectedReference));
++    }
++    return forEachAncestorDirectory(issuer, (ancestorDirectory) => {
+       if (getBaseFileName(ancestorDirectory) !== "node_modules") {
+         const resolutionFromCache = tryFindNonRelativeModuleNameInCache(cache, moduleName, mode, ancestorDirectory, redirectedReference, state);
+         if (resolutionFromCache) {
+@@ -45564,11 +45662,40 @@ function loadModuleFromImmediateNodeModulesDirectory(extensions, moduleName, dir
+     return loadModuleFromSpecificNodeModulesDirectory(4 /* Declaration */, mangleScopedPackageNameWithTrace(moduleName, state), nodeModulesAtTypes2, nodeModulesAtTypesExists, state, cache, redirectedReference);
+   }
+ }
++function loadModuleFromImmediateNodeModulesDirectoryPnP(extensions, moduleName, directory, state, typesScopeOnly, cache, redirectedReference) {
++  const issuer = normalizeSlashes(directory);
++  if (!typesScopeOnly) {
++    const packageResult = tryLoadModuleUsingPnpResolution(extensions, moduleName, issuer, state, cache, redirectedReference);
++    if (packageResult) {
++      return packageResult;
++    }
++  }
++  if (extensions & 4 /* Declaration */) {
++    return tryLoadModuleUsingPnpResolution(4 /* Declaration */, `@types/${mangleScopedPackageNameWithTrace(moduleName, state)}`, issuer, state, cache, redirectedReference);
++  }
++}
+ function loadModuleFromSpecificNodeModulesDirectory(extensions, moduleName, nodeModulesDirectory, nodeModulesDirectoryExists, state, cache, redirectedReference) {
+-  var _a, _b;
+   const candidate = normalizePath(combinePaths(nodeModulesDirectory, moduleName));
+   const { packageName, rest } = parsePackageName(moduleName);
+   const packageDirectory = combinePaths(nodeModulesDirectory, packageName);
++  return loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory);
++}
++function loadModuleFromPnpResolution(extensions, packageDirectory, rest, state, cache, redirectedReference) {
++  const candidate = normalizePath(combinePaths(packageDirectory, rest));
++  return loadModuleFromSpecificNodeModulesDirectoryImpl(
++    extensions,
++    /*nodeModulesDirectoryExists*/
++    true,
++    state,
++    cache,
++    redirectedReference,
++    candidate,
++    rest,
++    packageDirectory
++  );
++}
++function loadModuleFromSpecificNodeModulesDirectoryImpl(extensions, nodeModulesDirectoryExists, state, cache, redirectedReference, candidate, rest, packageDirectory) {
++  var _a, _b;
+   let rootPackageInfo;
+   let packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
+   if (rest !== "" && packageInfo && (!(state.features & 8 /* Exports */) || !hasProperty(((_a = rootPackageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state)) == null ? void 0 : _a.contents.packageJsonContent) ?? emptyArray, "exports"))) {
+@@ -45873,6 +46000,18 @@ function traceIfEnabled(state, diagnostic, ...args) {
+ function useCaseSensitiveFileNames(state) {
+   return !state.host.useCaseSensitiveFileNames ? true : typeof state.host.useCaseSensitiveFileNames === "boolean" ? state.host.useCaseSensitiveFileNames : state.host.useCaseSensitiveFileNames();
+ }
++function loadPnpPackageResolution(packageName, containingDirectory) {
++  try {
++    const resolution = getPnpApi(containingDirectory).resolveToUnqualified(packageName, `${containingDirectory}/`, { considerBuiltins: false });
++    return normalizeSlashes(resolution).replace(/\/$/, "");
++  } catch {
++  }
++}
++function tryLoadModuleUsingPnpResolution(extensions, moduleName, containingDirectory, state, cache, redirectedReference) {
++  const { packageName, rest } = parsePackageName(moduleName);
++  const packageResolution = loadPnpPackageResolution(packageName, containingDirectory);
++  return packageResolution ? loadModuleFromPnpResolution(extensions, packageResolution, rest, state, cache, redirectedReference) : void 0;
++}
+ 
+ // src/compiler/binder.ts
+ var ModuleInstanceState = /* @__PURE__ */ ((ModuleInstanceState2) => {
+@@ -49440,7 +49579,15 @@ function getAllModulePathsWorker(info, importedFileName, host, compilerOptions,
+     /*preferSymlinks*/
+     true,
+     (path, isRedirect) => {
+-      const isInNodeModules = pathContainsNodeModules(path);
++      let isInNodeModules = pathContainsNodeModules(path);
++      const pnpapi = getPnpApi(path);
++      if (!isInNodeModules && pnpapi) {
++        const fromLocator = pnpapi.findPackageLocator(info.importingSourceFileName);
++        const toLocator = pnpapi.findPackageLocator(path);
++        if (fromLocator && toLocator && fromLocator !== toLocator) {
++          isInNodeModules = true;
++        }
++      }
+       allFileNames.set(path, { path: info.getCanonicalFileName(path), isRedirect, isInNodeModules });
+       importedFileFromNodeModules = importedFileFromNodeModules || isInNodeModules;
+     }
+@@ -49739,7 +49886,41 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+   if (!host.fileExists || !host.readFile) {
+     return void 0;
+   }
+-  const parts = getNodeModulePathParts(path);
++  let parts = getNodeModulePathParts(path);
++  let pnpPackageName;
++  const pnpApi = getPnpApi(path);
++  if (pnpApi) {
++    const fromLocator = pnpApi.findPackageLocator(importingSourceFile.fileName);
++    const toLocator = pnpApi.findPackageLocator(path);
++    if (fromLocator === toLocator) {
++      return void 0;
++    }
++    if (fromLocator && toLocator) {
++      const fromInfo = pnpApi.getPackageInformation(fromLocator);
++      if (toLocator.reference === fromInfo.packageDependencies.get(toLocator.name)) {
++        pnpPackageName = toLocator.name;
++      } else {
++        for (const [name, reference] of fromInfo.packageDependencies) {
++          if (Array.isArray(reference)) {
++            if (reference[0] === toLocator.name && reference[1] === toLocator.reference) {
++              pnpPackageName = name;
++              break;
++            }
++          }
++        }
++      }
++      if (!parts) {
++        const toInfo = pnpApi.getPackageInformation(toLocator);
++        parts = {
++          topLevelNodeModulesIndex: void 0,
++          topLevelPackageNameIndex: void 0,
++          // The last character from packageLocation is the trailing "/", we want to point to it
++          packageRootIndex: toInfo.packageLocation.length - 1,
++          fileNameIndex: path.lastIndexOf(`/`)
++        };
++      }
++    }
++  }
+   if (!parts) {
+     return void 0;
+   }
+@@ -49777,14 +49958,16 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+   if (isRedirect && !isPackageRootPath) {
+     return void 0;
+   }
+-  const globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
+-  const pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
+-  if (!(startsWith(canonicalSourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
+-    return void 0;
++  if (typeof process.versions.pnp === "undefined") {
++    const globalTypingsCacheLocation = host.getGlobalTypingsCacheLocation && host.getGlobalTypingsCacheLocation();
++    const pathToTopLevelNodeModules = getCanonicalFileName(moduleSpecifier.substring(0, parts.topLevelNodeModulesIndex));
++    if (!(startsWith(canonicalSourceDirectory, pathToTopLevelNodeModules) || globalTypingsCacheLocation && startsWith(getCanonicalFileName(globalTypingsCacheLocation), pathToTopLevelNodeModules))) {
++      return void 0;
++    }
+   }
+-  const nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
+-  const packageName = getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
+-  return getEmitModuleResolutionKind(options) === 1 /* Classic */ && packageName === nodeModulesDirectoryName ? void 0 : packageName;
++  const nodeModulesDirectoryName = typeof pnpPackageName !== "undefined" ? pnpPackageName + moduleSpecifier.substring(parts.packageRootIndex) : moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
++  const packageNameFromPath = getPackageNameFromTypesPackageName(nodeModulesDirectoryName);
++  return getEmitModuleResolutionKind(options) === 1 /* Classic */ && packageNameFromPath === nodeModulesDirectoryName ? void 0 : packageNameFromPath;
+   function tryDirectoryWithPackageJson(packageRootIndex) {
+     var _a, _b;
+     const packageRootPath = path.substring(0, packageRootIndex);
+@@ -49797,9 +49980,9 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+       const importMode = overrideMode || getDefaultResolutionModeForFile(importingSourceFile, host, options);
+       if (getResolvePackageJsonExports(options)) {
+         const nodeModulesDirectoryName2 = packageRootPath.substring(parts.topLevelPackageNameIndex + 1);
+-        const packageName2 = getPackageNameFromTypesPackageName(nodeModulesDirectoryName2);
++        const packageName = getPackageNameFromTypesPackageName(pnpPackageName ? pnpPackageName : nodeModulesDirectoryName2);
+         const conditions = getConditions(options, importMode);
+-        const fromExports = (packageJsonContent == null ? void 0 : packageJsonContent.exports) ? tryGetModuleNameFromExports(options, host, path, packageRootPath, packageName2, packageJsonContent.exports, conditions) : void 0;
++        const fromExports = (packageJsonContent == null ? void 0 : packageJsonContent.exports) ? tryGetModuleNameFromExports(options, host, path, packageRootPath, packageName, packageJsonContent.exports, conditions) : void 0;
+         if (fromExports) {
+           return { ...fromExports, verbatimFromExports: true };
+         }
+@@ -122821,6 +123004,7 @@ var ProgramUpdateLevel = /* @__PURE__ */ ((ProgramUpdateLevel2) => {
+   ProgramUpdateLevel2[ProgramUpdateLevel2["Update"] = 0] = "Update";
+   ProgramUpdateLevel2[ProgramUpdateLevel2["RootNamesAndUpdate"] = 1] = "RootNamesAndUpdate";
+   ProgramUpdateLevel2[ProgramUpdateLevel2["Full"] = 2] = "Full";
++  ProgramUpdateLevel2[ProgramUpdateLevel2["Resolutions"] = 3] = "Resolutions";
+   return ProgramUpdateLevel2;
+ })(ProgramUpdateLevel || {});
+ function updateSharedExtendedConfigFileWatcher(projectPath, options, extendedConfigFilesMap, createExtendedConfigFileWatch, toPath3) {
+@@ -130835,6 +131019,11 @@ function createWatchProgram(host) {
+   if (configFileName) {
+     configFileWatcher = watchFile2(configFileName, scheduleProgramReload, 2e3 /* High */, watchOptions, WatchType.ConfigFile);
+   }
++  let pnpFileWatcher;
++  const pnpApiPath = getPnpApiPath(__filename);
++  if (pnpApiPath) {
++    pnpFileWatcher = watchFile2(pnpApiPath, scheduleResolutionReload, 2e3 /* High */, watchOptions, WatchType.ConfigFile);
++  }
+   const compilerHost = createCompilerHostFromProgramHost(host, () => compilerOptions, directoryStructureHost);
+   setGetSourceFileAsHashVersioned(compilerHost);
+   const getNewSourceFile = compilerHost.getSourceFile;
+@@ -130898,6 +131087,10 @@ function createWatchProgram(host) {
+       configFileWatcher.close();
+       configFileWatcher = void 0;
+     }
++    if (pnpFileWatcher) {
++      pnpFileWatcher.close();
++      pnpFileWatcher = void 0;
++    }
+     extendedConfigCache == null ? void 0 : extendedConfigCache.clear();
+     extendedConfigCache = void 0;
+     if (sharedExtendedConfigFileWatchers) {
+@@ -130933,7 +131126,7 @@ function createWatchProgram(host) {
+   function getCurrentProgram() {
+     return builderProgram && builderProgram.getProgramOrUndefined();
+   }
+-  function synchronizeProgram() {
++  function synchronizeProgram(forceAllFilesAsInvalidated = false) {
+     writeLog(`Synchronizing program`);
+     Debug.assert(compilerOptions);
+     Debug.assert(rootFileNames);
+@@ -130945,7 +131138,7 @@ function createWatchProgram(host) {
+         resolutionCache.onChangesAffectModuleResolution();
+       }
+     }
+-    const { hasInvalidatedResolutions, hasInvalidatedLibResolutions } = resolutionCache.createHasInvalidatedResolutions(customHasInvalidatedResolutions, customHasInvalidLibResolutions);
++    const { hasInvalidatedResolutions, hasInvalidatedLibResolutions } = resolutionCache.createHasInvalidatedResolutions(forceAllFilesAsInvalidated ? returnTrue : customHasInvalidatedResolutions, customHasInvalidLibResolutions);
+     const {
+       originalReadFile,
+       originalFileExists,
+@@ -131157,13 +131350,19 @@ function createWatchProgram(host) {
+     updateLevel = 2 /* Full */;
+     scheduleProgramUpdate();
+   }
++  function scheduleResolutionReload() {
++    writeLog("Clearing resolutions");
++    resolutionCache.clear();
++    updateLevel = 3 /* Resolutions */;
++    scheduleProgramUpdate();
++  }
+   function updateProgramWithWatchStatus() {
+     timerToUpdateProgram = void 0;
+     reportFileChangeDetectedOnCreateProgram = true;
+     updateProgram();
+   }
+   function updateProgram() {
+-    var _a, _b, _c, _d;
++    var _a, _b, _c, _d, _e;
+     switch (updateLevel) {
+       case 1 /* RootNamesAndUpdate */:
+         (_a = perfLogger) == null ? void 0 : _a.logStartUpdateProgram("PartialConfigReload");
+@@ -131173,12 +131372,19 @@ function createWatchProgram(host) {
+         (_b = perfLogger) == null ? void 0 : _b.logStartUpdateProgram("FullConfigReload");
+         reloadConfigFile();
+         break;
++      case 3 /* Resolutions */:
++        (_c = perfLogger) == null ? void 0 : _c.logStartUpdateProgram("SynchronizeProgramWithResolutions");
++        synchronizeProgram(
++          /*forceAllFilesAsInvalidated*/
++          true
++        );
++        break;
+       default:
+-        (_c = perfLogger) == null ? void 0 : _c.logStartUpdateProgram("SynchronizeProgram");
++        (_d = perfLogger) == null ? void 0 : _d.logStartUpdateProgram("SynchronizeProgram");
+         synchronizeProgram();
+         break;
+     }
+-    (_d = perfLogger) == null ? void 0 : _d.logStopUpdateProgram("Done");
++    (_e = perfLogger) == null ? void 0 : _e.logStopUpdateProgram("Done");
+     return getCurrentBuilderProgram();
+   }
+   function reloadFileNamesFromConfigFile() {
+@@ -138135,7 +138341,14 @@ function createPackageJsonImportFilter(fromFile, preferences, host) {
+     return false;
+   }
+   function getNodeModulesPackageNameFromFileName(importedFileName, moduleSpecifierResolutionHost) {
+-    if (!importedFileName.includes("node_modules")) {
++    const pnpapi = getPnpApi(importedFileName);
++    if (pnpapi) {
++      const fromLocator = pnpapi.findPackageLocator(fromFile.fileName);
++      const toLocator = pnpapi.findPackageLocator(importedFileName);
++      if (!(fromLocator && toLocator)) {
++        return void 0;
++      }
++    } else if (!importedFileName.includes("node_modules")) {
+       return void 0;
+     }
+     const specifier = ts_moduleSpecifiers_exports.getNodeModulesPackageName(
+@@ -138693,6 +138906,9 @@ function isImportableFile(program, from, to, preferences, packageJsonFilter, mod
+   return hasImportablePath;
+ }
+ function isImportablePath(fromPath, toPath3, getCanonicalFileName, globalCachePath) {
++  if (getPnpApi(fromPath)) {
++    return isImportablePathPnp(fromPath, toPath3);
++  }
+   const toNodeModules = forEachAncestorDirectory(toPath3, (ancestor) => getBaseFileName(ancestor) === "node_modules" ? ancestor : void 0);
+   const toNodeModulesParent = toNodeModules && getDirectoryPath(getCanonicalFileName(toNodeModules));
+   return toNodeModulesParent === void 0 || startsWith(getCanonicalFileName(fromPath), toNodeModulesParent) || !!globalCachePath && startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent);
+@@ -166731,7 +166947,34 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, p
+           );
+         }
+       };
+-      if (fragmentDirectory && getResolvePackageJsonExports(compilerOptions)) {
++      const checkExports = (packageFile, packageDirectory, fragmentSubpath) => {
++        const packageJson = readJson(packageFile, host);
++        const exports2 = packageJson.exports;
++        if (exports2) {
++          if (typeof exports2 !== "object" || exports2 === null) {
++            return true;
++          }
++          const keys = getOwnKeys(exports2);
++          const conditions = getConditions(compilerOptions, mode);
++          addCompletionEntriesFromPathsOrExports(
++            result,
++            /*isExports*/
++            true,
++            fragmentSubpath,
++            packageDirectory,
++            extensionOptions,
++            program,
++            host,
++            keys,
++            (key) => singleElementArray(getPatternFromFirstMatchingCondition(exports2[key], conditions)),
++            comparePatternKeys
++          );
++          return true;
++        }
++        return false;
++      };
++      const shouldCheckExports = fragmentDirectory && getResolvePackageJsonExports(compilerOptions);
++      if (shouldCheckExports) {
+         const nodeModulesDirectoryLookup = ancestorLookup;
+         ancestorLookup = (ancestor) => {
+           const components = getPathComponents(fragment);
+@@ -166750,35 +166993,53 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, p
+           const packageDirectory = combinePaths(ancestor, "node_modules", packagePath);
+           const packageFile = combinePaths(packageDirectory, "package.json");
+           if (tryFileExists(host, packageFile)) {
+-            const packageJson = readJson(packageFile, host);
+-            const exports2 = packageJson.exports;
+-            if (exports2) {
+-              if (typeof exports2 !== "object" || exports2 === null) {
+-                return;
++            const fragmentSubpath = components.join("/") + (components.length && hasTrailingDirectorySeparator(fragment) ? "/" : "");
++            if (checkExports(packageFile, packageDirectory, fragmentSubpath)) {
++              return;
++            }
++          }
++          return nodeModulesDirectoryLookup(ancestor);
++        };
++      }
++      const pnpApi = getPnpApi(scriptPath);
++      if (pnpApi) {
++        const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
++        const dependencyNameMatch = fragment.match(pathRegExp);
++        if (dependencyNameMatch) {
++          const [, dependencyName, subPath] = dependencyNameMatch;
++          let unqualified;
++          try {
++            unqualified = pnpApi.resolveToUnqualified(dependencyName, scriptPath, { considerBuiltins: false });
++          } catch {
++          }
++          if (unqualified) {
++            const packageDirectory = normalizePath(unqualified);
++            let shouldGetCompletions = true;
++            if (shouldCheckExports) {
++              const packageFile = combinePaths(packageDirectory, "package.json");
++              if (tryFileExists(host, packageFile) && checkExports(packageFile, packageDirectory, subPath)) {
++                shouldGetCompletions = false;
+               }
+-              const keys = getOwnKeys(exports2);
+-              const fragmentSubpath = components.join("/") + (components.length && hasTrailingDirectorySeparator(fragment) ? "/" : "");
+-              const conditions = getConditions(compilerOptions, mode);
+-              addCompletionEntriesFromPathsOrExports(
+-                result,
+-                /*isExports*/
+-                true,
+-                fragmentSubpath,
++            }
++            if (shouldGetCompletions) {
++              getCompletionEntriesForDirectoryFragment(
++                subPath,
+                 packageDirectory,
+                 extensionOptions,
+                 program,
+                 host,
+-                keys,
+-                (key) => singleElementArray(getPatternFromFirstMatchingCondition(exports2[key], conditions)),
+-                comparePatternKeys
++                /*moduleSpecifierIsRelative*/
++                false,
++                /*exclude*/
++                void 0,
++                result
+               );
+-              return;
+             }
+           }
+-          return nodeModulesDirectoryLookup(ancestor);
+-        };
++        }
++      } else {
++        forEachAncestorDirectory(scriptPath, ancestorLookup);
+       }
+-      forEachAncestorDirectory(scriptPath, ancestorLookup);
+     }
+   }
+   return arrayFrom(result.values());
+@@ -166912,9 +167173,15 @@ function getCompletionEntriesFromTypings(host, program, scriptPath, fragmentDire
+   for (const root of typeRoots) {
+     getCompletionEntriesFromDirectories(root);
+   }
+-  for (const packageJson of findPackageJsons(scriptPath, host)) {
+-    const typesDir = combinePaths(getDirectoryPath(packageJson), "node_modules/@types");
+-    getCompletionEntriesFromDirectories(typesDir);
++  if (getPnpApi(scriptPath)) {
++    for (const root of getPnpTypeRoots(scriptPath)) {
++      getCompletionEntriesFromDirectories(root);
++    }
++  } else {
++    for (const packageJson of findPackageJsons(scriptPath, host)) {
++      const typesDir = combinePaths(getDirectoryPath(packageJson), "node_modules/@types");
++      getCompletionEntriesFromDirectories(typesDir);
++    }
+   }
+   return result;
+   function getCompletionEntriesFromDirectories(directory) {
+@@ -184102,6 +184369,29 @@ var ConfiguredProject2 = class extends Project3 {
+     return this.projectReferences;
+   }
+   updateReferences(refs) {
++    if (typeof process.versions.pnp !== `undefined`) {
++      const basePath = this.getCurrentDirectory();
++      const getPnpPath = (path) => {
++        try {
++          const pnpApi = getPnpApi(`${path}/`);
++          if (!pnpApi) {
++            return path;
++          }
++          const targetLocator = pnpApi.findPackageLocator(`${path}/`);
++          const { packageLocation } = pnpApi.getPackageInformation(targetLocator);
++          const request = combinePaths(targetLocator.name, getRelativePathFromDirectory(
++            packageLocation,
++            path,
++            /*ignoreCase*/
++            false
++          ));
++          return pnpApi.resolveToUnqualified(request, `${basePath}/`);
++        } catch {
++          return path;
++        }
++      };
++      refs = refs == null ? void 0 : refs.map((r) => ({ ...r, path: getPnpPath(r.path) }));
++    }
+     this.projectReferences = refs;
+     this.potentialProjectReferences = void 0;
+   }
+@@ -184807,6 +185097,7 @@ var _ProjectService = class _ProjectService {
+       log,
+       getDetailWatchInfo
+     );
++    this.pnpWatcher = this.watchPnpFile();
+     (_a = opts.incrementalVerifier) == null ? void 0 : _a.call(opts, this);
+   }
+   toPath(fileName) {
+@@ -186737,7 +187028,7 @@ Dynamic files must always be opened with service's current directory or service
+     this.performanceEventHandler = performanceEventHandler;
+   }
+   setHostConfiguration(args) {
+-    var _a;
++    var _a, _b;
+     if (args.file) {
+       const info = this.getScriptInfoForNormalizedPath(toNormalizedPath(args.file));
+       if (info) {
+@@ -186786,6 +187077,8 @@ Dynamic files must always be opened with service's current directory or service
+         this.hostConfiguration.watchOptions = substitution;
+         this.hostConfiguration.beforeSubstitution = substitution === watchOptions ? void 0 : watchOptions;
+         this.logger.info(`Host watch options changed to ${JSON.stringify(this.hostConfiguration.watchOptions)}, it will be take effect for next watches.`);
++        (_b = this.pnpWatcher) == null ? void 0 : _b.close();
++        this.watchPnpFile();
+       }
+     }
+   }
+@@ -187736,6 +188029,29 @@ Dynamic files must always be opened with service's current directory or service
+     });
+   }
+   /** @internal */
++  watchPnpFile() {
++    const pnpApiPath = getPnpApiPath(__filename);
++    if (!pnpApiPath) {
++      return;
++    }
++    return this.watchFactory.watchFile(
++      pnpApiPath,
++      () => {
++        this.forEachProject((project) => {
++          for (const info of project.getScriptInfos()) {
++            project.resolutionCache.invalidateResolutionOfFile(info.path);
++          }
++          project.markAsDirty();
++          updateProjectIfDirty(project);
++        });
++        this.delayEnsureProjectForOpenFiles();
++      },
++      250 /* Low */,
++      this.hostConfiguration.watchOptions,
++      WatchType.ConfigFile
++    );
++  }
++  /** @internal */
+   watchPackageJsonFile(file, path, project) {
+     Debug.assert(project !== void 0);
+     let result = (this.packageJsonFilesMap ?? (this.packageJsonFilesMap = /* @__PURE__ */ new Map())).get(path);
