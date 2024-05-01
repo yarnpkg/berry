@@ -250,7 +250,10 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
       return tsserver;
     };
 
-    moduleWrapper(absRequire(\`typescript\`));
+    const [major, minor] = absRequire(\`typescript/package.json\`).version.split(\`.\`, 2).map(value => parseInt(value, 10));
+    if (major >= 5 && minor >= 5) {
+      moduleWrapper(absRequire(\`typescript\`));
+    }
   `;
 
   const wrapper = new Wrapper(`typescript` as PortablePath, {pnpApi, target});

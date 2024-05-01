@@ -221,7 +221,10 @@ const moduleWrapper = tsserver => {
   return tsserver;
 };
 
-moduleWrapper(absRequire(`typescript`));
+const [major, minor] = absRequire(`typescript/package.json`).version.split(`.`, 2).map(value => parseInt(value, 10));
+if (major >= 5 && minor >= 5) {
+  moduleWrapper(absRequire(`typescript`));
+}
 
 // Defer to the real typescript/lib/tsserver.js your application uses
 module.exports = moduleWrapper(absRequire(`typescript/lib/tsserver.js`));
