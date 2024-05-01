@@ -251,6 +251,8 @@ export const generateTypescriptBaseWrapper: GenerateBaseWrapper = async (pnpApi:
     };
 
     const [major, minor] = absRequire(\`typescript/package.json\`).version.split(\`.\`, 2).map(value => parseInt(value, 10));
+    // In TypeScript@>=5.5 the tsserver uses the public TypeScript API so that needs to be patched as well.
+    // Ref https://github.com/microsoft/TypeScript/pull/55326
     if (major > 5 || (major === 5 && minor >= 5)) {
       moduleWrapper(absRequire(\`typescript\`));
     }
