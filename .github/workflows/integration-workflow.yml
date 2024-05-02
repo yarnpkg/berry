@@ -208,9 +208,9 @@ jobs:
           - {node: 12, platform: windows-latest, shard: 2/3}
           - {node: 12, platform: windows-latest, shard: 3/3}
           # macOS tests
-          - {node: 12, platform: macos-latest, shard: 1/3}
-          - {node: 12, platform: macos-latest, shard: 2/3}
-          - {node: 12, platform: macos-latest, shard: 3/3}
+          - {node: 12, platform: macos-13, shard: 1/3}
+          - {node: 12, platform: macos-13, shard: 2/3}
+          - {node: 12, platform: macos-13, shard: 3/3}
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
