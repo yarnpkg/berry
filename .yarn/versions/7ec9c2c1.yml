@@ -1,0 +1,14 @@
+releases:
+  "@yarnpkg/cli": patch
+  "@yarnpkg/extensions": patch
+  "@yarnpkg/plugin-compat": patch
+  "@yarnpkg/plugin-version": patch
+  "@yarnpkg/builder": patch
+  "@yarnpkg/sdks": patch
+  "@yarnpkg/core": patch
+  "@yarnpkg/plugin-npm-cli": patch
+  "@yarnpkg/parsers": patch
+  "@yarnpkg/shell": patch
+  "@yarnpkg/plugin-typescript": patch
+  "@yarnpkg/plugin-pnp": patch
+  "@yarnpkg/pnp": patch
