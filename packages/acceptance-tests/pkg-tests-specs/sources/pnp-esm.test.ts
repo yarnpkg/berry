@@ -1,6 +1,6 @@
-import {Filename, npath, ppath, xfs}                               from '@yarnpkg/fslib';
-import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                                             from 'url';
+import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                          from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -220,7 +220,7 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should not resolve JSON modules without an import assertion`,
+    `it should not resolve JSON modules without an import assertion/attribute`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -236,14 +236,14 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
-          stderr: expect.stringContaining(`ERR_IMPORT_ASSERTION_TYPE_MISSING`),
+          stderr: expect.stringContaining(SUPPORTS_IMPORT_ATTRIBUTES_ONLY ? `ERR_IMPORT_ATTRIBUTE_MISSING` : `ERR_IMPORT_ASSERTION_TYPE_MISSING`),
         });
       },
     ),
   );
 
   test(
-    `it should resolve JSON modules with an import assertion`,
+    `it should resolve JSON modules with an import assertion/attribute`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -254,7 +254,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
           `
-          import foo from './foo.json' assert { type: 'json' };
+          import foo from './foo.json' ${SUPPORTS_IMPORT_ATTRIBUTES ? `with` : `assert`} { type: 'json' };
           console.log(foo.name);
           `,
         );
