@@ -6998,15 +6998,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@types/pako", [\
-      ["npm:2.0.0", {\
-        "packageLocation": "./.yarn/cache/@types-pako-npm-2.0.0-cfc56150de-0352946565.zip/node_modules/@types/pako/",\
-        "packageDependencies": [\
-          ["@types/pako", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@types/parse-json", [\
       ["npm:4.0.0", {\
         "packageLocation": "./.yarn/cache/@types-parse-json-npm-4.0.0-298522afa6-4df9de9815.zip/node_modules/@types/parse-json/",\
@@ -9038,7 +9029,6 @@ const RAW_RUNTIME_STATE =
           ["@types/marked", "npm:5.0.0"],\
           ["@types/mdast", "npm:4.0.3"],\
           ["@types/node", "npm:18.19.17"],\
-          ["@types/pako", "npm:2.0.0"],\
           ["@types/react", "npm:18.2.54"],\
           ["@types/react-instantsearch-dom", "npm:6.12.3"],\
           ["@types/react-modal", "npm:3.16.0"],\
@@ -9047,7 +9037,6 @@ const RAW_RUNTIME_STATE =
           ["@types/resolve", "npm:1.20.2"],\
           ["@types/semver", "npm:7.5.0"],\
           ["@types/three", "npm:0.144.0"],\
-          ["@types/unist", "npm:3.0.2"],\
           ["@yarnpkg/cli", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -9067,7 +9056,6 @@ const RAW_RUNTIME_STATE =
           ["fast-glob", "npm:3.2.12"],\
           ["git-url-parse", "npm:13.1.0"],\
           ["github-markdown-css", "npm:5.1.0"],\
-          ["js-untar", "npm:2.0.0"],\
           ["lodash", "npm:4.17.21"],\
           ["markdown-it", "npm:13.0.1"],\
           ["markdown-it-br", "npm:1.0.0"],\
@@ -9076,10 +9064,8 @@ const RAW_RUNTIME_STATE =
           ["mdast-util-mdx-jsx", "npm:3.0.0"],\
           ["monaco-editor", "npm:0.24.0"],\
           ["os-browserify", "npm:0.3.0"],\
-          ["pako", "npm:2.0.4"],\
           ["path-browserify", "npm:1.0.1"],\
           ["prism-react-renderer", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.3.1"],\
-          ["process", "npm:0.11.10"],\
           ["react", "npm:18.2.0"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:18.2.0"],\
           ["react-instantsearch-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:6.36.0"],\
@@ -26786,15 +26772,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["js-untar", [\
-      ["npm:2.0.0", {\
-        "packageLocation": "./.yarn/cache/js-untar-npm-2.0.0-4833405b89-e91e77ee7e.zip/node_modules/js-untar/",\
-        "packageDependencies": [\
-          ["js-untar", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["js-yaml", [\
       ["npm:3.14.1", {\
         "packageLocation": "./.yarn/cache/js-yaml-npm-3.14.1-b968c6095e-9e22d80b4d.zip/node_modules/js-yaml/",\
@@ -29516,15 +29493,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["pako", [\
-      ["npm:2.0.4", {\
-        "packageLocation": "./.yarn/cache/pako-npm-2.0.4-1d4e28f3ac-b138374206.zip/node_modules/pako/",\
-        "packageDependencies": [\
-          ["pako", "npm:2.0.4"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["param-case", [\
       ["npm:3.0.4", {\
         "packageLocation": "./.yarn/cache/param-case-npm-3.0.4-cfb242ad97-b34227fd0f.zip/node_modules/param-case/",\
@@ -31027,15 +30995,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/prismjs-npm-1.29.0-6faa5b04b8-2080db382c.zip/node_modules/prismjs/",\
         "packageDependencies": [\
           ["prismjs", "npm:1.29.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["process", [\
-      ["npm:0.11.10", {\
-        "packageLocation": "./.yarn/cache/process-npm-0.11.10-aeb3b641ae-dbaa7e8d1d.zip/node_modules/process/",\
-        "packageDependencies": [\
-          ["process", "npm:0.11.10"]\
         ],\
         "linkType": "HARD"\
       }]\

@@ -1,6 +1,6 @@
 import {YarnCli, getCli}        from '@yarnpkg/cli';
 import {parseShell}             from '@yarnpkg/parsers';
-import {Definition, Token}      from 'clipanion';
+import type {Definition, Token} from 'clipanion';
 import {fromJs}                 from 'esast-util-from-js';
 import {capitalize}             from 'lodash';
 import type {MdxJsxFlowElement} from 'mdast-util-mdx-jsx';

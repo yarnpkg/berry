@@ -4430,13 +4430,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/pako@npm:^2":
-  version: 2.0.0
-  resolution: "@types/pako@npm:2.0.0"
-  checksum: 10/0352946565b65232d536483856e6353d4d4e9d2afc0566155f6c46f741663cc48f5e6e7d4e594d268d0e56f2252022944bbea98e6ca29e5c7c05229dcf3b68bf
-  languageName: node
-  linkType: hard
-
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -4781,7 +4774,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/unist@npm:*, @types/unist@npm:^3.0.0, @types/unist@npm:^3.0.2":
+"@types/unist@npm:*, @types/unist@npm:^3.0.0":
   version: 3.0.2
   resolution: "@types/unist@npm:3.0.2"
   checksum: 10/3d04d0be69316e5f14599a0d993a208606c12818cf631fd399243d1dc7a9bd8a3917d6066baa6abc290814afbd744621484756803c80cba892c39cd4b4a85616
@@ -5325,7 +5318,6 @@ __metadata:
     "@types/marked": "npm:^5.0.0"
     "@types/mdast": "npm:^4.0.3"
     "@types/node": "npm:^18.19.15"
-    "@types/pako": "npm:^2"
     "@types/react": "npm:^18.2.54"
     "@types/react-instantsearch-dom": "npm:^6"
     "@types/react-modal": "npm:^3"
@@ -5334,7 +5326,6 @@ __metadata:
     "@types/resolve": "npm:^1.20.0"
     "@types/semver": "npm:^7.1.0"
     "@types/three": "npm:^0.144.0"
-    "@types/unist": "npm:^3.0.2"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5354,7 +5345,6 @@ __metadata:
     fast-glob: "npm:^3.2.2"
     git-url-parse: "npm:^13.1.0"
     github-markdown-css: "npm:^5.1.0"
-    js-untar: "npm:^2.0.0"
     lodash: "npm:^4.17.15"
     markdown-it: "npm:^13.0.1"
     markdown-it-br: "npm:^1.0.0"
@@ -5363,10 +5353,8 @@ __metadata:
     mdast-util-mdx-jsx: "npm:^3.0.0"
     monaco-editor: "npm:^0.24.0"
     os-browserify: "npm:^0.3.0"
-    pako: "npm:^2.0.4"
     path-browserify: "npm:^1.0.1"
     prism-react-renderer: "npm:^2.3.1"
-    process: "npm:^0.11.10"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-instantsearch-dom: "npm:^6.36.0"
@@ -12992,13 +12980,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-untar@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "js-untar@npm:2.0.0"
-  checksum: 10/e91e77ee7ea97aa7240a1079474623ccaf69b828619bcc27001b8f29e1782483cfcdea8fa61b92689c218b0b57a9df65afaa35d4e20767301f2ffe3cb43da61b
-  languageName: node
-  linkType: hard
-
 "js-yaml@npm:^3.10.0, js-yaml@npm:^3.13.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
@@ -15455,13 +15436,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pako@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "pako@npm:2.0.4"
-  checksum: 10/b1383742061dbbf2d6e5eb0bb5de827fa5cdd74fc18e157478632443f049a62e47c29b761fb5f1268e6f6979b5b8cff2864f63c2b8156d555065c39c43992505
-  languageName: node
-  linkType: hard
-
 "param-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
@@ -16446,13 +16420,6 @@ pem@dexus/pem:
   version: 2.0.0
   resolution: "process-nextick-args@npm:2.0.0"
   checksum: 10/15209b12304b0e52ce9a1817fe28280bf126758ba3a6636cbfda41af872ea6212b3fce57dbff07fc27c2c4bb4c32c5e4bd1f66b066366edf95a0165766c01c69
-  languageName: node
-  linkType: hard
-
-"process@npm:^0.11.10":
-  version: 0.11.10
-  resolution: "process@npm:0.11.10"
-  checksum: 10/dbaa7e8d1d5cf375c36963ff43116772a989ef2bb47c9bdee20f38fd8fc061119cf38140631cf90c781aca4d3f0f0d2c834711952b728953f04fd7d238f59f5b
   languageName: node
   linkType: hard
 
