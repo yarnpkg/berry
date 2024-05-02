@@ -18,6 +18,7 @@ function compile(tsConfigPath, folder, ...opts) {
       rootDir: `sources`,
       outDir: inline ? `sources` : `lib`,
       emitDeclarationOnly,
+      noEmit: false,
     },
     include: [`sources/**/*.ts`, `sources/**/*.tsx`],
   }, ts.sys, folder);

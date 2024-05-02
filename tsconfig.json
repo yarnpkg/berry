@@ -24,7 +24,8 @@
     "declaration": true,
     "importHelpers": true,
     "alwaysStrict": false,
-    "jsx": "react"
+    "jsx": "react",
+    "noEmit": true,
   },
   "exclude": [
     ".pnp.cjs",

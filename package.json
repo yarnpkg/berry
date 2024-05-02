@@ -60,7 +60,7 @@
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' --exclude '*.tsx' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
     "test:lint": "eslint --max-warnings 0 \"./**/*.@(tsx|ts|js)\"",
     "test:unit": "jest",
-    "typecheck:all": "tsc --noEmit -p ."
+    "typecheck:all": "tsc -p ."
   },
   "sherlock": {
     "requireList": [
