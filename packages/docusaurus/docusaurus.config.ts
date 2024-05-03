@@ -161,7 +161,7 @@ export default async function (): Promise<Config> {
         options: {
           loader: `tsx`,
           format: isServer ? `cjs` : undefined,
-          target: isServer ? `node18` : `es2022`,
+          target: isServer ? `node18` : `es2017`,
         },
       }),
     },
