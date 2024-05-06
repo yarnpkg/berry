@@ -48,8 +48,9 @@ export default class VersionCommand extends BaseCommand {
     description: `Bump the version immediately`,
   });
 
-
-  strategy = Option.String({name: `strategy|semver`, required: false, description: `The strategy or semver range to use for bumping the version`});
+  strategy = Option.String({
+    name: `strategy|semver`,
+  });
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
