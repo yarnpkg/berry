@@ -1,11 +1,21 @@
-import {NativePath, PortablePath}     from '@yarnpkg/fslib';
-import fs                             from 'fs';
-import moduleExports, {isBuiltin}     from 'module';
-import {fileURLToPath, pathToFileURL} from 'url';
+import {PortablePath}                        from '@yarnpkg/fslib';
+import fs                                    from 'fs';
+import esmModule, {createRequire, isBuiltin} from 'module';
+import {fileURLToPath, pathToFileURL}        from 'url';
 
-import {packageImportsResolve}        from '../../node/resolve';
-import {PnpApi}                       from '../../types';
-import * as loaderUtils               from '../loaderUtils';
+import {packageImportsResolve}               from '../../node/resolve';
+import * as loaderUtils                      from '../loaderUtils';
+
+let findPnpApi: any = (esmModule as any).findPnpApi;
+if (!findPnpApi) {
+  // @ts-expect-error
+  const require = createRequire(import.meta.url);
+
+  const pnpApi = require(`./.pnp.cjs`);
+  pnpApi.setup();
+
+  findPnpApi = (esmModule as any).findPnpApi;
+}
 
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 const isRelativeRegexp = /^\.{0,2}\//;
@@ -51,7 +61,6 @@ export async function resolve(
   context: ResolveContext,
   nextResolve: typeof resolve,
 ): Promise<{ url: string, shortCircuit: boolean }> {
-  const {findPnpApi} = (moduleExports as unknown) as { findPnpApi?: (path: NativePath) => null | PnpApi };
   if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
 

@@ -7,6 +7,7 @@
     "watchDirectory": "useFsEvents"
   },
   "npm.packageManager": "yarn",
+  "eslint.experimental.useFlatConfig": true,
   "eslint.validate": [
     "javascript",
     "typescript",
