@@ -243,7 +243,7 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   (loaderFlags.HAS_UNFLAGGED_JSON_MODULES ? test : test.skip)(
-    `it should not resolve JSON modules without an import assertion`,
+    `it should not resolve JSON modules without an import assertion/attribute`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -259,14 +259,14 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
-          stderr: expect.stringContaining(`ERR_IMPORT_ASSERTION_TYPE_MISSING`),
+          stderr: expect.stringContaining(loaderFlags.SUPPORTS_IMPORT_ATTRIBUTES_ONLY ? `ERR_IMPORT_ATTRIBUTE_MISSING` : `ERR_IMPORT_ASSERTION_TYPE_MISSING`),
         });
       },
     ),
   );
 
   (loaderFlags.HAS_UNFLAGGED_JSON_MODULES ? test : test.skip)(
-    `it should resolve JSON modules with an import assertion`,
+    `it should resolve JSON modules with an import assertion/attribute`,
     makeTemporaryEnv(
       {
         type: `module`,
@@ -277,7 +277,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await xfs.writeFilePromise(
           ppath.join(path, `index.js` as Filename),
           `
-          import foo from './foo.json' assert { type: 'json' };
+          import foo from './foo.json' ${loaderFlags.SUPPORTS_IMPORT_ATTRIBUTES ? `with` : `assert`} { type: 'json' };
           console.log(foo.name);
           `,
         );
