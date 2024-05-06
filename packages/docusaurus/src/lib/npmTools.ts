@@ -209,7 +209,7 @@ function resolveQualifier(releaseInfo: ReleaseInfo, qualifier: string) {
   }
 }
 
-export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions, extensions}: {mainFields: Array<string>, conditions: Array<string>, extensions?: Array<string>}) {
+export function useResolution({name, version}: {name: string, version: string}, {mainFields, conditions, extensions}: {mainFields: Array<keyof ReleaseNpmInfo>, conditions: Array<string>, extensions?: Array<string>}) {
   const releaseInfo = useReleaseInfo({
     name,
     version,

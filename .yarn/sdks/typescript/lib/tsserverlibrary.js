@@ -9,6 +9,13 @@ const relPnpApiPath = "../../../../.pnp.cjs";
 const absPnpApiPath = resolve(__dirname, relPnpApiPath);
 const absRequire = createRequire(absPnpApiPath);
 
+if (existsSync(absPnpApiPath)) {
+  if (!process.versions.pnp) {
+    // Setup the environment to be able to require typescript/lib/tsserverlibrary.js
+    require(absPnpApiPath).setup();
+  }
+}
+
 const moduleWrapper = tsserver => {
   if (!process.versions.pnp) {
     return tsserver;
@@ -214,11 +221,11 @@ const moduleWrapper = tsserver => {
   return tsserver;
 };
 
-if (existsSync(absPnpApiPath)) {
-  if (!process.versions.pnp) {
-    // Setup the environment to be able to require typescript/lib/tsserverlibrary.js
-    require(absPnpApiPath).setup();
-  }
+const [major, minor] = absRequire(`typescript/package.json`).version.split(`.`, 2).map(value => parseInt(value, 10));
+// In TypeScript@>=5.5 the tsserver uses the public TypeScript API so that needs to be patched as well.
+// Ref https://github.com/microsoft/TypeScript/pull/55326
+if (major > 5 || (major === 5 && minor >= 5)) {
+  moduleWrapper(absRequire(`typescript`));
 }
 
 // Defer to the real typescript/lib/tsserverlibrary.js your application uses

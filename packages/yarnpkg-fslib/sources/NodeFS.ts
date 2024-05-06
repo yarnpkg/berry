@@ -3,7 +3,7 @@ import fs, {BigIntStats, Stats}                                                 
 import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, WatchFileCallback, WatchFileOptions, OpendirOptions, ReaddirOptions, DirentNoPath} from './FakeFS';
 import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                      from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                                                   from './FakeFS';
-import {MkdirOptions, RmdirOptions, WatchOptions, WatchCallback, Watcher}                                                                                       from './FakeFS';
+import {MkdirOptions, RmdirOptions, RmOptions, WatchOptions, WatchCallback, Watcher}                                                                            from './FakeFS';
 import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                                               from './path';
 
 function direntToPortable(dirent: Dirent<NativePath>): Dirent<PortablePath> {
@@ -426,6 +426,21 @@ export class NodeFS extends BasePortableFakeFS {
 
   rmdirSync(p: PortablePath, opts?: RmdirOptions) {
     return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
+  }
+
+  async rmPromise(p: PortablePath, opts?: RmOptions) {
+    return await new Promise<void>((resolve, reject) => {
+      // TODO: always pass opts when min node version is 12.10+
+      if (opts) {
+        this.realFs.rm(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.rm(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    });
+  }
+
+  rmSync(p: PortablePath, opts?: RmOptions) {
+    return this.realFs.rmSync(npath.fromPortablePath(p), opts);
   }
 
   async linkPromise(existingP: PortablePath, newP: PortablePath) {

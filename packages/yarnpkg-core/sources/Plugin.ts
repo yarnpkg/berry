@@ -12,8 +12,6 @@ import {Workspace}                                                              
 import * as httpUtils                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
 
-type ProcessEnvironment = {[key: string]: string};
-
 export type CommandContext = {
   cwd: PortablePath;
   env: Record<string, string | undefined>;
@@ -65,7 +63,7 @@ export interface Hooks {
    */
   setupScriptEnvironment?: (
     project: Project,
-    env: ProcessEnvironment,
+    env: NodeJS.ProcessEnv,
     makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
   ) => Promise<void>;
 
@@ -80,7 +78,7 @@ export interface Hooks {
     project: Project,
     locator: Locator,
     scriptName: string,
-    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
+    extra: {script: string, args: Array<string>, cwd: PortablePath, env: NodeJS.ProcessEnv, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>;
 
   /**

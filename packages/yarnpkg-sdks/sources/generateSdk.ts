@@ -126,10 +126,6 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
   `const absRequire = createRequire(absPnpApiPath);\n`,
   `\n`,
-  ...(wrapModule ? [
-    `const moduleWrapper = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
-    `\n`,
-  ] : []),
   `if (existsSync(absPnpApiPath)) {\n`,
   `  if (!process.versions.pnp) {\n`,
   `    // Setup the environment to be able to require ${module}\n`,
@@ -164,6 +160,10 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   `}\n`,
   `\n`,
+  ...(wrapModule ? [
+    `const moduleWrapper = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
+    `\n`,
+  ] : []),
   `// Defer to the real ${module} your application uses\n`,
   wrapModule ? `module.exports = moduleWrapper(absRequire(\`${module}\`));\n` : `module.exports = absRequire(\`${module}\`);\n`,
 ].join(``);
