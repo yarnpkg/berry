@@ -106,7 +106,7 @@ export async function detectPackageManager(location: PortablePath): Promise<Pack
 }
 
 export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack, lifecycleScript, baseEnv = project?.configuration.env ?? process.env}: {project?: Project, locator?: Locator, binFolder: PortablePath, ignoreCorepack?: boolean, lifecycleScript?: string, baseEnv?: Record<string, string | undefined>}) {
-  const scriptEnv: {[key: string]: string} = {};
+  const scriptEnv: NodeJS.ProcessEnv = {};
 
   // Ensure that the PATH environment variable is properly capitalized (Windows)
   for (const [key, value] of Object.entries(baseEnv))
