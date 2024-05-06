@@ -267,7 +267,14 @@ const SLICES = [
     from: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
     to: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
     onto: `db6b2a980280a9c87799b9c1edd6d71e92bb255b`,
-    range: `>=5.4.1-rc`,
+    range: `>=5.4.1-rc <5.5.0-beta`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.5-beta
+  {
+    from: `f90eb7508e66a3d5066b1d8a06606c6c23f3df43`,
+    to: `43d2cbd6ac423e35a5a095a509fc90c03f0c22ba`,
+    onto: `b574864abc989d0f8b15367baea1058819e126ba`,
+    range: `>=5.5.0-beta`,
   },
 ];
 
@@ -531,10 +538,10 @@ async function main() {
     const patch = await run(slice);
     const versions = await fetchVersions(slice.range);
 
-    for (const version of versions) {
+    await Promise.all(versions.map(async version => {
       console.log(`Validating ${version}...`);
       await validate(version, patch);
-    }
+    }));
 
     patches.push(patch);
   }
