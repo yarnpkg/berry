@@ -1,6 +1,6 @@
 import {BigIntStats, constants, Stats}                                                                                                               from 'fs';
 
-import {WatchOptions, WatchCallback, Watcher, StatOptions, StatSyncOptions, ReaddirOptions, DirentNoPath}                                            from './FakeFS';
+import {WatchOptions, WatchCallback, Watcher, StatOptions, StatSyncOptions, ReaddirOptions, DirentNoPath, RmOptions}                                 from './FakeFS';
 import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from './FakeFS';
 import {Dirent, SymlinkType}                                                                                                                         from './FakeFS';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileOptions, WatchFileCallback, StatWatcher} from './FakeFS';
@@ -752,6 +752,22 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
+
+  async rmPromise(p: PortablePath, opts?: RmOptions) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.rmPromise(p, opts);
+    }, async (mountFs, {subPath}) => {
+      return await mountFs.rmPromise(subPath, opts);
+    });
+  }
+
+  rmSync(p: PortablePath, opts?: RmOptions) {
+    return this.makeCallSync(p, () => {
+      return this.baseFs.rmSync(p, opts);
+    }, (mountFs, {subPath}) => {
+      return mountFs.rmSync(subPath, opts);
+    });
+  }
   async linkPromise(existingP: PortablePath, newP: PortablePath) {
     return await this.makeCallPromise(newP, async () => {
       return await this.baseFs.linkPromise(existingP, newP);
