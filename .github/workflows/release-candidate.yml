@@ -19,7 +19,7 @@ jobs:
       NODE_OPTIONS: --max_old_space_size=8192
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         ref: master
         token: ${{secrets.YARNBOT_TOKEN}}

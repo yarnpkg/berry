@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - run: |
         git fetch --no-tags --unshallow origin HEAD master
 
@@ -155,7 +155,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: 'Use Node.js ${{ env.node-version }}'
       uses: actions/setup-node@v4
@@ -179,7 +179,7 @@ jobs:
         node ./scripts/run-yarn.js build:plugin-workspace-tools
       shell: bash
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: yarn-artifacts
         path: |
@@ -193,7 +193,7 @@ jobs:
       if: |
         success() || failure()
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: vscode-zipfs
         path: ./packages/vscode-zipfs/vscode-zipfs-*.vsix
@@ -222,14 +222,14 @@ jobs:
     needs: build
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: 'Use Node.js ${{matrix.node}}.x'
       uses: actions/setup-node@v4
       with:
         node-version: ${{matrix.node}}.x
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: yarn-artifacts
         path: packages
