@@ -35,7 +35,7 @@ export default class VersionCommand extends BaseCommand {
       `Prepare the version to be bumped to the next major`,
       `yarn version major --deferred`,
     ], [
-      `Immediately bump to the bumped the specified version`,
+      `Immediately bump to the specified version`,
       `yarn version 1.2.3-alpha.1`,
     ]],
   });
