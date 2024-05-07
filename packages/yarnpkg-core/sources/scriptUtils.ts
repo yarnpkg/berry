@@ -317,6 +317,9 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // read a logfile telling them to open another logfile
             env.YARN_ENABLE_INLINE_BUILDS = `1`;
 
+            // Propagate enableScripts config
+            env.YARN_ENABLE_SCRIPTS = configuration.settings.get(`enableScripts`) ? `1` :  `0`;
+
             // If a lockfile doesn't exist we create a empty one to
             // prevent the project root detection from thinking it's in an
             // undeclared workspace when the user has a lockfile in their home
@@ -329,7 +332,14 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // so we leverage that. We also don't need the "set version" call since
             // we're already operating within a Yarn 2 context (plus people should
             // really check-in their Yarn versions anyway).
-            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            const pack = await execUtils.pipevp(`yarn`, [
+              ...workspaceCli,
+              `pack`,
+              `--install-if-needed`,
+              `--filename`,
+              npath.fromPortablePath(outputPath),
+            ], {cwd, env, stdin, stdout, stderr},
+            );
             if (pack.code !== 0)
               return pack.code;
 
