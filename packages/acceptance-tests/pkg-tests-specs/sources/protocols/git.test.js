@@ -139,6 +139,26 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it should not call Yarn Classic when enableScripts is disabled`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+          },
+        },
+        async ({run, source}) => {
+          await expect(run(`install`, {
+            env: {
+              YARN_ENABLE_SCRIPTS: `false`,
+            },
+          })).resolves.toBeTruthy();
+
+          await expect(source(`require('yarn-1-project')`)).resolves.toMatch(/\byarn\/1\.[0-9]+/);
+        },
+      ),
+    );
+
+    test(
       `it should use npm to setup npm repositories`,
       makeTemporaryEnv(
         {
@@ -148,6 +168,26 @@ describe(`Protocols`, () => {
         },
         async ({path, run, source}) => {
           await run(`install`);
+
+          await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
+        },
+      ),
+    );
+
+    test(
+      `it should not call npm when enableScripts is disabled`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`npm-project`]: startPackageServer().then(url => `${url}/repositories/npm-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, {
+            env: {
+              YARN_ENABLE_SCRIPTS: `false`,
+            },
+          })).resolves.toBeTruthy();
 
           await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
         },
