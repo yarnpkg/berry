@@ -21,7 +21,6 @@
     "@mdx-js/react": "^3.0.0",
     "@monaco-editor/react": "^4.4.6",
     "@primer/octicons-react": "^17.7.0",
-    "@types/three": "^0.144.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
@@ -95,6 +94,7 @@
     "@types/react-window": "^1",
     "@types/resolve": "^1.20.0",
     "@types/semver": "^7.1.0",
+    "@types/three": "^0.144.0",
     "clipanion": "^4.0.0-rc.2",
     "mdast-util-mdx-jsx": "^3.0.0",
     "unified": "^11.0.4"
