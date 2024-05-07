@@ -51,14 +51,12 @@ export class GithubFetcher implements Fetcher {
       const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
       const packagePath = ppath.join(extractPath, `package.tgz`);
 
-      if (opts.project.configuration.settings.get(`enableScripts`)) {
-        await scriptUtils.prepareExternalProject(extractPath, packagePath, {
-          configuration: opts.project.configuration,
-          report: opts.report,
-          workspace: repoUrlParts.extra.workspace,
-          locator,
-        });
-      }
+      await scriptUtils.prepareExternalProject(extractPath, packagePath, {
+        configuration: opts.project.configuration,
+        report: opts.report,
+        workspace: repoUrlParts.extra.workspace,
+        locator,
+      });
 
       const packedBuffer = await xfs.readFilePromise(packagePath);
 
