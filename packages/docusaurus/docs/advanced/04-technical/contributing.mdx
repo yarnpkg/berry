@@ -57,7 +57,7 @@ yarn test:integration
 
 Note that because we want to avoid adding the `esbuild` overhead to each Yarn call the CLI will need to be prebuilt for the integration tests to run - that's what the `yarn build:cli` command is for. This unfortunately means that you will need to rebuild the CLI after each modification if you want the integration tests to pick up your changes.
 
-Both unit tests and integration tests use Jest, which means that you can filter the tests you want to run by using the `-t` flag (or simply the file path):
+Both unit tests and integration tests use Jest, which means that you can filter the tests you want to run by using the <code>-t</code> flag (or simply the file path):
 
 ```commandline
 yarn test:unit yarnpkg-shell
@@ -91,9 +91,9 @@ We use [constraints](/features/constraints) to enforce various rules across the 
 
 Constraints can be checked with `yarn constraints`, and fixed with `yarn constraints --fix`. Generally speaking:
 
-- Workspaces must not depend on conflicting ranges of dependencies. Use the `-i,--interactive` flag and select "Reuse" when installing dependencies and you shouldn't ever have to deal with this rule.
+- Workspaces must not depend on conflicting ranges of dependencies. Use the `-i,--interactive` flag and select "Reuse" when running `yarn add` and you shouldn't ever have to deal with this rule.
 
-- Workspaces must not depend on non-workspace ranges of available workspaces. Use the `-i,--interactive` flag and select "Reuse" or "Attach" when installing dependencies and you shouldn't ever have to deal with this rule.
+- Workspaces must not depend on non-workspace ranges of available workspaces. Use the `-i,--interactive` flag and select "Reuse" or "Attach" when running `yarn add` and you shouldn't ever have to deal with this rule.
 
 - Workspaces that are part of the standard bundle or plugins must have specific build scripts. The ones that aren't, must be declared inside the `constraints.pro` file with `inline_compile`.
 

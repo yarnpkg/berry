@@ -65,10 +65,13 @@ export function Positional({children}: {children: string}) {
 }
 
 export function Option({children, tooltip}: {children: string, tooltip?: string}) {
-  const [,dashes, option] = children.match(/^(-*)(.+)$/s)!;
+  const [,dashes, option] = children.match(/^(--(?:no-)?|-?)(.+)$/s)!;
   return <>
     <span className={styles.token} data-type={`dash`}>{dashes}</span>
-    <Token type={`option`} tooltip={tooltip}>{option}</Token>
+    {dashes === `-`
+      ? Array.from(option, (name, i) => (<Token key={i} type={`option`} tooltip={tooltip}>{name}</Token>))
+      : <Token type={`option`} tooltip={tooltip}>{option}</Token>
+    }
   </>;
 }
 

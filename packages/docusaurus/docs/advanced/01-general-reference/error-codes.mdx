@@ -292,11 +292,11 @@ The automerge logic is pretty simple: it will take the lockfile from the pulled 
 
 ## YN0050 - `DEPRECATED_CLI_SETTINGS`
 
-This error is triggered when passing options to a CLI command through its arguments (for example `--cache-folder`).
+This error is triggered when passing options to a CLI command through its arguments (for example <code>--cache-folder</code>).
 
-Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using `--cache-folder` on all your commands or just the install). CLI options will now only be used to control the *one-time-behaviors* of a particular command (like `--verbose`).
+Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using <code>--cache-folder</code> on all your commands or just the install). CLI options will now only be used to control the *one-time-behaviors* of a particular command (like <code>--verbose</code>).
 
-**Special note for Netlify users:** Netlify currently [automatically passes](https://github.com/netlify/build-image/blob/f9c7f9a87c10314e4d65b121d45d68dc976817a2/run-build-functions.sh#L109) the `--cache-folder` option to Yarn, and you cannot disable it. For this reason we decided to make it a warning rather than an error when we detect that Yarn is running on Netlify (we still ignore the flag). We suggest upvoting [the relevant issue](https://github.com/netlify/build-image/issues/319) on their repository, as we're likely to remove this special case in a future major release.
+**Special note for Netlify users:** Netlify currently [automatically passes](https://github.com/netlify/build-image/blob/f9c7f9a87c10314e4d65b121d45d68dc976817a2/run-build-functions.sh#L109) the <code>--cache-folder</code> option to Yarn, and you cannot disable it. For this reason we decided to make it a warning rather than an error when we detect that Yarn is running on Netlify (we still ignore the flag). We suggest upvoting [the relevant issue](https://github.com/netlify/build-image/issues/319) on their repository, as we're likely to remove this special case in a future major release.
 
 ## YN0059 - `INVALID_RANGE_PEER_DEPENDENCY`
 
@@ -334,7 +334,7 @@ An external soft link (portal) cannot be installed, because incompatible version
 
 ## YN0072 - `NM_PRESERVE_SYMLINKS_REQUIRED`
 
-A portal dependency with subdependencies is used in the project. `--preserve-symlinks` Node option must be used
+A portal dependency with subdependencies is used in the project. <code>--preserve-symlinks</code> Node option must be used
 to start the application in order for portal dependency to find its subdependencies and peer dependencies.
 
 ## YN0074 - `NM_HARDLINKS_MODE_DOWNGRADED`
