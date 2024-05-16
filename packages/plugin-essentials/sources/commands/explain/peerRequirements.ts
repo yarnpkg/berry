@@ -70,9 +70,9 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
     if (seen.has(request.requester.locatorHash)) {
       return {
         value: formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: request.requester, descriptor: request.descriptor}),
-        children: [
-          {value: formatUtils.tuple(formatUtils.Type.NO_HINT, `...`)},
-        ],
+        children: request.children.size > 0
+          ? [{value: formatUtils.tuple(formatUtils.Type.NO_HINT, `...`)}]
+          : [],
       };
     }
 
