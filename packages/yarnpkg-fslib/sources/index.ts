@@ -18,7 +18,7 @@ export type {CreateWriteStreamOptions}               from './FakeFS';
 export type {Dirent, DirentNoPath, Dir, SymlinkType} from './FakeFS';
 export type {MkdirOptions}                           from './FakeFS';
 export type {ReaddirOptions}                         from './FakeFS';
-export type {RmdirOptions}                           from './FakeFS';
+export type {RmdirOptions, RmOptions}                from './FakeFS';
 export type {WatchOptions}                           from './FakeFS';
 export type {WatchCallback}                          from './FakeFS';
 export type {Watcher}                                from './FakeFS';

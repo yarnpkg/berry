@@ -1,12 +1,13 @@
-import {miscUtils}                                                                             from '@yarnpkg/core';
-import pnpApi                                                                                  from 'pnpapi';
-import {Application, Converter, DeclarationReflection, ProjectReflection, SignatureReflection} from 'typedoc';
+import {miscUtils}                                                                                           from '@yarnpkg/core';
+// @ts-expect-error
+import pnpApi                                                                                                from 'pnpapi';
+import {Application, Converter, DeclarationReflection, ProjectReflection, SignatureReflection, type Context} from 'typedoc';
 
 function resolveVirtual(path: string) {
   return pnpApi.resolveVirtual(path)?.replaceAll(`\\`, `/`) ?? path;
 }
 
-function remapPaths(context, ref: DeclarationReflection | ProjectReflection | SignatureReflection) {
+function remapPaths(context: Context, ref: DeclarationReflection | ProjectReflection | SignatureReflection) {
   if (`sources` in ref && ref.sources !== undefined) {
     const seen = new Set<string>();
     ref.sources = miscUtils.mapAndFilter(ref.sources, source => {

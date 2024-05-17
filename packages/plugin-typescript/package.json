@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-typescript",
-  "version": "4.0.0",
+  "version": "4.1.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -49,5 +49,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.0"
+  "stableVersion": "4.1.1"
 }

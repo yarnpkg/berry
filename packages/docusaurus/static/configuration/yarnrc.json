@@ -835,7 +835,7 @@
     "tsEnableAutoTypes": {
       "_package": "@yarnpkg/plugin-typescript",
       "title": "Define whether to automatically install @types dependencies.",
-      "description": "If true, Yarn will automatically add `@types` dependencies when running `yarn add` with packages that don't provide their own typings (as reported by the Algolia npm database). This behavior is enabled by default if you have a tsconfig file at the root of your project.",
+      "description": "If true, Yarn will automatically add `@types` dependencies when running `yarn add` with packages that don't provide their own typings (as reported by the Algolia npm database). This behavior is enabled by default if you have a tsconfig.json file at the root of your project, or in your current workspace.",
       "type": "boolean",
       "examples": [true]
     },
