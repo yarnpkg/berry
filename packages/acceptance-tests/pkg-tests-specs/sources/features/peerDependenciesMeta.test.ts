@@ -40,7 +40,7 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           const {stdout} = await run(`install`);
 
-          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0, which doesn't satisfy what mismatched-peer-deps-lvl0 \(p[a-f0-9]{5}\) and other dependencies request \(1\.0\.0\)/);
+          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{5}\), which doesn't satisfy what mismatched-peer-deps-lvl0 and other dependencies request \(1\.0\.0\)/);
         },
       ),
     );

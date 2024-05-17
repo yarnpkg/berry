@@ -1,17 +1,18 @@
-import {Filename, PortablePath}                 from '@yarnpkg/fslib';
-import querystring                              from 'querystring';
-import semver                                   from 'semver';
-import {makeParser}                             from 'tinylogic';
+import {Filename, PortablePath}                    from '@yarnpkg/fslib';
+import querystring                                 from 'querystring';
+import semver                                      from 'semver';
+import {makeParser}                                from 'tinylogic';
 
-import {Configuration}                          from './Configuration';
-import {Workspace}                              from './Workspace';
-import * as formatUtils                         from './formatUtils';
-import * as hashUtils                           from './hashUtils';
-import * as miscUtils                           from './miscUtils';
-import * as nodeUtils                           from './nodeUtils';
-import * as structUtils                         from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash} from './types';
-import {Ident, Descriptor, Locator, Package}    from './types';
+import {Configuration}                             from './Configuration';
+import type {PeerRequestNode, PeerRequirementNode} from './Project';
+import {Workspace}                                 from './Workspace';
+import * as formatUtils                            from './formatUtils';
+import * as hashUtils                              from './hashUtils';
+import * as miscUtils                              from './miscUtils';
+import * as nodeUtils                              from './nodeUtils';
+import * as structUtils                            from './structUtils';
+import {IdentHash, DescriptorHash, LocatorHash}    from './types';
+import {Ident, Descriptor, Locator, Package}       from './types';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
@@ -878,4 +879,24 @@ export function isPackageCompatible(pkg: Package, architectures: nodeUtils.Archi
 
     return supported ? supported.includes(value) : true;
   });
+}
+
+export function allPeerRequests(root: PeerRequestNode | PeerRequirementNode): Iterable<PeerRequestNode> {
+  const requests = new Set<PeerRequestNode>();
+
+  if (`children` in root) {
+    requests.add(root);
+  } else {
+    for (const request of root.requests.values()) {
+      requests.add(request);
+    }
+  }
+
+  for (const request of requests) {
+    for (const child of request.children.values()) {
+      requests.add(child);
+    }
+  }
+
+  return requests;
 }
