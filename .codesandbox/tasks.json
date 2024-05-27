@@ -1,0 +1,78 @@
+{
+  // These tasks will run in order when initializing your CodeSandbox project.
+  "setupTasks": [
+    {
+      "name": "Install Dependencies",
+      "command": "yarn install"
+    }
+  ],
+
+  // These tasks can be run from CodeSandbox. Running one will open a log in the app.
+  "tasks": {
+    "bench": {
+      "name": "bench",
+      "command": "yarn bench",
+      "runAtStart": true
+    },
+    "build:plugin-constraints": {
+      "name": "build:plugin-constraints",
+      "command": "yarn build:plugin-constraints",
+      "runAtStart": false
+    },
+    "build:plugin-exec": {
+      "name": "build:plugin-exec",
+      "command": "yarn build:plugin-exec",
+      "runAtStart": false
+    },
+    "build:plugin-interactive-tools": {
+      "name": "build:plugin-interactive-tools",
+      "command": "yarn build:plugin-interactive-tools",
+      "runAtStart": false
+    },
+    "build:plugin-stage": {
+      "name": "build:plugin-stage",
+      "command": "yarn build:plugin-stage",
+      "runAtStart": false
+    },
+    "build:plugin-typescript": {
+      "name": "build:plugin-typescript",
+      "command": "yarn build:plugin-typescript",
+      "runAtStart": false
+    },
+    "build:plugin-version": {
+      "name": "build:plugin-version",
+      "command": "yarn build:plugin-version",
+      "runAtStart": false
+    },
+    "build:plugin-workspace-tools": {
+      "name": "build:plugin-workspace-tools",
+      "command": "yarn build:plugin-workspace-tools",
+      "runAtStart": false
+    },
+    "build:plugin-commands": {
+      "name": "build:plugin-commands",
+      "command": "yarn build:plugin-commands",
+      "runAtStart": false
+    },
+    "build:compile": {
+      "name": "build:compile",
+      "command": "yarn build:compile",
+      "runAtStart": false
+    },
+    "test:lint": {
+      "name": "test:lint",
+      "command": "yarn test:lint",
+      "runAtStart": false
+    },
+    "test:unit": {
+      "name": "test:unit",
+      "command": "yarn test:unit",
+      "runAtStart": false
+    },
+    "typecheck:all": {
+      "name": "typecheck:all",
+      "command": "yarn typecheck:all",
+      "runAtStart": false
+    }
+  }
+}
