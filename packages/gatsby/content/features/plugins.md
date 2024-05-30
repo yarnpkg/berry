@@ -117,4 +117,6 @@ This is just a centralized list of third-party plugins to make discovery easier.
 
 - [**yarn-plugin-env-vars**](https://github.com/scinos/yarn-plugin-env-vars) by [**Sergio Cinos**](https://github.com/scinos) - A Yarn plugin that ensures your environment variables are set before running any npm scripts. 
 
+- [**yarn-plugin-cyclonedx**](https://github.com/CycloneDX/cyclonedx-node-yarn) by [**OWASP CycloneDX**](https://github.com/CycloneDX) - Create CycloneDX Software Bill of Materials (SBOM) from Yarn projects.
+
 If you wrote a plugin yourself, feel free to [open a PR](https://github.com/yarnpkg/berry/edit/master/packages/gatsby/content/features/plugins.md) to add it at the end of this list!
