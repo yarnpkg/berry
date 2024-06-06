@@ -6,7 +6,7 @@ import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
-import moduleExports, { isBuiltin } from 'module';
+import esmModule, { createRequire, isBuiltin } from 'module';
 import assert from 'assert';
 
 const SAFE_TIME = 456789e3;
@@ -833,6 +833,12 @@ class ProxiedFS extends FakeFS {
   rmdirSync(p, opts) {
     return this.baseFs.rmdirSync(this.mapToBase(p), opts);
   }
+  async rmPromise(p, opts) {
+    return this.baseFs.rmPromise(this.mapToBase(p), opts);
+  }
+  rmSync(p, opts) {
+    return this.baseFs.rmSync(this.mapToBase(p), opts);
+  }
   async linkPromise(existingP, newP) {
     return this.baseFs.linkPromise(this.mapToBase(existingP), this.mapToBase(newP));
   }
@@ -1213,6 +1219,18 @@ class NodeFS extends BasePortableFakeFS {
   }
   rmdirSync(p, opts) {
     return this.realFs.rmdirSync(npath.fromPortablePath(p), opts);
+  }
+  async rmPromise(p, opts) {
+    return await new Promise((resolve, reject) => {
+      if (opts) {
+        this.realFs.rm(npath.fromPortablePath(p), opts, this.makeCallback(resolve, reject));
+      } else {
+        this.realFs.rm(npath.fromPortablePath(p), this.makeCallback(resolve, reject));
+      }
+    });
+  }
+  rmSync(p, opts) {
+    return this.realFs.rmSync(npath.fromPortablePath(p), opts);
   }
   async linkPromise(existingP, newP) {
     return await new Promise((resolve, reject) => {
@@ -1957,6 +1975,13 @@ function packageImportsResolve({ name, base, conditions, readFileSyncFn }) {
   throwImportNotDefined(name, packageJSONUrl, base);
 }
 
+let findPnpApi = esmModule.findPnpApi;
+if (!findPnpApi) {
+  const require = createRequire(import.meta.url);
+  const pnpApi = require(`./.pnp.cjs`);
+  pnpApi.setup();
+  findPnpApi = esmModule.findPnpApi;
+}
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 const isRelativeRegexp = /^\.{0,2}\//;
 function tryReadFile(filePath) {
@@ -1984,7 +2009,6 @@ async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
   }
 }
 async function resolve$1(originalSpecifier, context, nextResolve) {
-  const { findPnpApi } = moduleExports;
   if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
   let specifier = originalSpecifier;
