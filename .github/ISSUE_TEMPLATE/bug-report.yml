@@ -26,17 +26,6 @@ body:
       label: To reproduce
       description: |
         The _minimal_ information needed to reproduce your issue (ideally a package.json with a single dep). Note that bugs without minimal reproductions **will** be closed as non-actionable.
-
-        **IMPORTANT**: We **strongly** prefer reproductions that use Sherlock. Please check our documentation for more information: https://yarnpkg.com/advanced/sherlock
-      placeholder: |
-        ```js repro
-        // Sherlock reproduction. For instance:
-        await packageJsonAndInstall({
-          dependencies: {
-            [`packageName`]: `x.y.z`,
-          },
-        });
-        ```
     validations:
         required: true
 
