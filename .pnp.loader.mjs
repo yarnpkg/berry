@@ -6,7 +6,7 @@ import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
-import moduleExports, { isBuiltin } from 'module';
+import esmModule, { createRequire, isBuiltin } from 'module';
 import assert from 'assert';
 
 const SAFE_TIME = 456789e3;
@@ -1975,6 +1975,13 @@ function packageImportsResolve({ name, base, conditions, readFileSyncFn }) {
   throwImportNotDefined(name, packageJSONUrl, base);
 }
 
+let findPnpApi = esmModule.findPnpApi;
+if (!findPnpApi) {
+  const require = createRequire(import.meta.url);
+  const pnpApi = require(`./.pnp.cjs`);
+  pnpApi.setup();
+  findPnpApi = esmModule.findPnpApi;
+}
 const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:node:)?(?:@[^/]+\/)?[^/]+)\/*(.*|)$/;
 const isRelativeRegexp = /^\.{0,2}\//;
 function tryReadFile(filePath) {
@@ -2002,7 +2009,6 @@ async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
   }
 }
 async function resolve$1(originalSpecifier, context, nextResolve) {
-  const { findPnpApi } = moduleExports;
   if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
   let specifier = originalSpecifier;

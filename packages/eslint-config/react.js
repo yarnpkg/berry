@@ -1,5 +1,6 @@
-module.exports = {
-  extends: [
-    `./rules/react`,
-  ].map(require.resolve),
-};
+import react from './rules/react.js';
+
+// eslint-disable-next-line arca/no-default-export
+export default [
+  ...react,
+];

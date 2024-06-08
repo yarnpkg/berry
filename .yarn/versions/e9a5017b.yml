@@ -1,0 +1,10 @@
+releases:
+  "@yarnpkg/eslint-config": major
+  "@yarnpkg/pnp": patch
+  "@yarnpkg/sdks": patch
+
+declined:
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/nm"
+  - "@yarnpkg/pnpify"

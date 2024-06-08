@@ -23,7 +23,7 @@
     "@yarnpkg/sdks": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
     "esbuild-wasm": "0.17.5",
-    "eslint": "^8.45.0",
+    "eslint": "^8.57.0",
     "jest": "^29.2.1",
     "pirates": "^4.0.5",
     "tslib": "^2.4.0",
