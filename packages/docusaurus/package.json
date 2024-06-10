@@ -11,16 +11,28 @@
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^1.15.0",
+    
+<<<<<< snyk-fix-c5b4952db433f2657d54273a53f7d464
+    
+    "@docusaurus/core": "^3.0.0",
+    "@docusaurus/plugin-content-docs": "^2.4.3",
+    "@docusaurus/preset-classic": "^3.0.0",
+    
+=====
+    
     "@docusaurus/core": "^3.2.1",
     "@docusaurus/plugin-content-docs": "^3.2.1",
     "@docusaurus/preset-classic": "^3.2.1",
+    
+>>>>> master
+    
     "@fontsource/pt-sans": "^5.0.5",
     "@mdx-js/react": "^3.0.0",
     "@monaco-editor/react": "^4.4.6",
     "@primer/octicons-react": "^17.7.0",
     "@types/three": "^0.144.0",
-    "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/cli": "2.1.0",
+    "@yarnpkg/core": "2.1.0",
     "@yarnpkg/parsers": "workspace:^",
     "algoliasearch": "^4.14.2",
     "clipanion": "^4.0.0-rc.2",
@@ -65,8 +77,7 @@
     "webpack": "^5.88.2",
     "xterm": "^5.3.0",
     "xterm-addon-serialize": "^0.11.0",
-    "xterm-headless": "^5.3.0"
-  },
+    "xterm-headless": "^5.3.0   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.2.1",
     "@docusaurus/theme-classic": "^3.2.1",
@@ -89,8 +100,18 @@
     "@types/react-window": "^1",
     "@types/resolve": "^1.20.0",
     "@types/semver": "^7.1.0",
+    
+<<<<<< snyk-fix-c5b4952db433f2657d54273a53f7d464
+    
+    "@yarnpkg/core": "2.1.0",
+    
+=====
+    
     "@types/unist": "^3.0.2",
     "@yarnpkg/core": "workspace:^",
+    
+>>>>> master
+    
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",

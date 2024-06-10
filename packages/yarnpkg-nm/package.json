@@ -9,9 +9,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/core": "2.2.0",
     "@yarnpkg/fslib": "workspace:^",
-    "@yarnpkg/pnp": "workspace:^"
+    "@yarnpkg/pnp": "2.1.0"
   },
   "scripts": {
     "postpack": "rm -rf lib",
