@@ -1,7 +1,7 @@
 {
   "title": "JSON Schema for Yarn Manifest files",
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
-  "description": "Manifest files (also called `package.json` because of their name) contain everything needed to describe the settings unique to one particular package. Project will contain multiple such manifests if they use the workspace feature, as each workspace is described through its own manifest. Note that defaults for these fields can be set via the `initFields` settings.",
+  "description": "Manifest files (commonly known as package.json) contain all the necessary information to describe the settings unique to a specific package. In projects utilizing the workspace feature, there will be multiple manifest files since each workspace has its own manifest. Additionally, default values for these fields can be established using the initFields settings.",
   "__info": [
     "This file contains the JSON Schema for Yarn Manifest files and is:",
     "1) Hosted on the Yarn Website at http://yarnpkg.com/configuration/manifest.json",
