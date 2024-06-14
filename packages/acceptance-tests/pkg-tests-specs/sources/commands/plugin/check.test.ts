@@ -5,7 +5,8 @@ import {createMockPlugin, mockPluginServer} from '../../features/plugins.utility
 
 describe(`Commands`, () => {
   describe(`plugin check`, () => {
-    test(
+    // FIXME: Fails with `RequestError: unsuitable certificate purpose` on win32
+    (process.platform === `win32` ? test.skip : test)(
       `it should run successfully and do nothing`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await mockPluginServer(async mockServer => {
@@ -26,7 +27,8 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    // FIXME: Fails with `RequestError: unsuitable certificate purpose` on win32
+    (process.platform === `win32` ? test.skip : test)(
       `it should print out the plugin when it has a different checksum`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await mockPluginServer(async mockServer => {

@@ -29,7 +29,8 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    // FIXME: Fails with `RequestError: unsuitable certificate purpose` on win32
+    (process.platform === `win32` ? test.skip : test)(
       `it should update plugin's checksum, if it's different`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await mockPluginServer(async mockServer => {
@@ -60,7 +61,8 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    // FIXME: Fails with `RequestError: unsuitable certificate purpose` on win32
+    (process.platform === `win32` ? test.skip : test)(
       `it should clear the plugin's checksum, if it using \`--no-checksum\` option`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await mockPluginServer(async mockServer => {
