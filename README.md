@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://yarnpkg.com/">
-    <img alt="Yarn" src="https://github.com/yarnpkg/assets/blob/master/yarn-kitten-full.png?raw=true" width="546">
+    <img alt="Yarn" src="https://github.com/yarnpkg/assets/blob/master/yarn-kitten-full.png?raw=true" width="546"/>
   </a>
 </p>
 
@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yarnpkg/berry"><img alt="GitHub Actions status" src="https://github.com/yarnpkg/berry/workflows/Integration/badge.svg"></a>
-  <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"></a>
-  <a href="https://github.com/yarnpkg/berry"><img alt="Latest CLI Release" src="https://img.shields.io/npm/v/@yarnpkg/cli/latest?label=latest"></a>
+  <a href="https://github.com/yarnpkg/berry"><img alt="GitHub Actions status" src="https://github.com/yarnpkg/berry/workflows/Integration/badge.svg"/></a>
+  <a href="https://discord.gg/yarnpkg"><img alt="Discord Chat" src="https://img.shields.io/discord/226791405589233664.svg"/></a>
+  <a href="https://github.com/yarnpkg/berry"><img alt="Latest CLI Release" src="https://img.shields.io/npm/v/@yarnpkg/cli/latest?label=latest"/></a>
 </p>
 
 ---
@@ -74,11 +74,11 @@ Yarn is a modern package manager split into various packages. Its novel architec
   <tr>
     <td>
       <a href="https://sysgears.com/">
-        <img src="https://cdn3.sysgears.com/images/logo-128bacee32b1c70b00b6454397eeedc5.svg" width="140"/>
+        <img src="https://github.com/yarnpkg/berry/assets/1259926/c4d46d45-4f45-4b20-811e-d1f9d9e452dd" width="140"/>
       </a>
     </td>
     <td>
-      <b><a href="https://sysgears.com/">Sysgears</a></b> also sponsored time from very early in the 2.x development. In particular, their strong investment is the reason why Yarn 2 supports node_modules installs even better than it used to.
+      <b><a href="https://sysgears.com/">SysGears</a></b> also sponsored time from very early in the 2.x development. In particular, their strong investment is the reason why Yarn 2 supports node_modules installs even better than it used to.
     </td>
   </tr>
   <tr>

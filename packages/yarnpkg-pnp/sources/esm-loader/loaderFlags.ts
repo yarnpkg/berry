@@ -14,3 +14,9 @@ export const HAS_LOADERS_AFFECTING_LOADERS = major > 19 || (major === 19 && mino
 
 // https://github.com/nodejs/node/pull/49869
 export const ALLOWS_EXTENSIONLESS_FILES = major >= 21 || (major === 20 && minor >= 10) || (major === 18 && minor >= 19);
+
+// https://github.com/nodejs/node/pull/50140
+export const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || (major === 20 && minor >= 10) || (major === 18 && minor >= 20);
+
+// https://github.com/nodejs/node/pull/52104
+export const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;

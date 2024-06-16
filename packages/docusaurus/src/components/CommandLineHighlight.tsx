@@ -1,10 +1,10 @@
-import Link                               from '@docusaurus/Link';
-import {stringifyArgument}                from '@yarnpkg/parsers';
-import React                              from 'react';
+import Link                                    from '@docusaurus/Link';
+import {stringifyArgument}                     from '@yarnpkg/parsers';
+import React                                   from 'react';
 
-import {CommandLine, RawLine, ScriptLine} from '../remark/commandLineHighlight';
+import type {CommandLine, RawLine, ScriptLine} from '../remark/commandLineHighlight';
 
-import styles                             from './CommandLineHighlight.module.css';
+import styles                                  from './CommandLineHighlight.module.css';
 
 const getTooltip = ({tooltip}: {tooltip: string | null}) => tooltip ? {
   [`data-tooltip-id`]: `tooltip`,

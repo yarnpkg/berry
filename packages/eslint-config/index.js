@@ -1,22 +1,35 @@
-// Workaround for https://github.com/eslint/eslint/issues/3458
-require(`@rushstack/eslint-patch/modern-module-resolution`);
+import tsParser      from '@typescript-eslint/parser';
+import globals       from 'globals';
 
-module.exports = {
-  extends: [
-    `./rules/best-practices`,
-    `./rules/errors`,
-    `./rules/style`,
-    `./rules/typescript`,
-  ].map(require.resolve),
+import bestPractices from './rules/best-practices.js';
+import errors        from './rules/errors.js';
+import style         from './rules/style.js';
+import typescript    from './rules/typescript.js';
 
-  parser: require.resolve(`@typescript-eslint/parser`),
+// eslint-disable-next-line arca/no-default-export
+export default [
+  ...bestPractices,
+  ...errors,
+  ...style,
+  ...typescript,
 
-  env: {
-    node: true,
-    es2021: true,
+  {
+    languageOptions: {
+      parser: tsParser,
+      sourceType: `module`,
+      globals: {
+        ...globals.node,
+        ...globals.es2021,
+      },
+    },
   },
 
-  parserOptions: {
-    sourceType: `module`,
+  {
+    files: [`**/*.test.*`],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
   },
-};
+];

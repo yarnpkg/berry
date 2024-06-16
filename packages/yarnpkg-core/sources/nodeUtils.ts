@@ -39,7 +39,7 @@ function getLibc() {
   // Since the getReport can be prohibitely expensive (it also queries DNS which, if misconfigured, can take a long time to timeout),
   // we first check if the ldd binary is glibc or musl, and only then run the getReport() if we can't determine the libc variant.
   if (typeof header !== `undefined`) {
-    if (header && header.includes(`GLIBC`))
+    if (header && (header.includes(`GLIBC`) || header.includes(`libc`)))
       return `glibc`;
     if (header && header.includes(`musl`)) {
       return `musl`;
