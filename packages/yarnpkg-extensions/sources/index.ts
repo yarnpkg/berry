@@ -996,7 +996,8 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/vuejs/core/pull/10468
-  [`@vue/runtime-dom`, {
+  // https://github.com/vuejs/core/commit/ec424f6cd96b7e6ba74fc244c484c00fa5590aac
+  [`@vue/runtime-dom@<3.4.28`, {
     dependencies: {
       `@vue/reactivity`: `*`,
     },
