@@ -1471,11 +1471,7 @@ export class Project {
     for (const [, explain] of miscUtils.sortMap(skippedBuildLogs, ([locator]) => structUtils.stringifyLocator(locator)))
       explain(report);
 
-    const readyPackages = new Set(this.storedPackages.keys());
     const buildablePackages = new Set(packageBuildDirectives.keys());
-
-    for (const locatorHash of buildablePackages)
-      readyPackages.delete(locatorHash);
 
     const globalHashGenerator = createHash(`sha512`);
     globalHashGenerator.update(process.versions.node);
