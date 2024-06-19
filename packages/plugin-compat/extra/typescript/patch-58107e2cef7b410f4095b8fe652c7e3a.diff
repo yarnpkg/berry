@@ -1,9 +1,9 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index 06f7f5ec9..4a7e28076 100644
-semver exclusivity >=5.5.0-beta <5.5.2
+index e3dc24d79..d287f962a 100644
+semver exclusivity >=5.5.2
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
-@@ -5120,6 +5120,9 @@ var sys = (() => {
+@@ -5067,6 +5067,9 @@ var sys = (() => {
        }
      }
      function isFileSystemCaseSensitive() {
@@ -13,7 +13,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        if (platform === "win32" || platform === "win64") {
          return false;
        }
-@@ -38652,6 +38655,48 @@ function getDefaultValueForOption(option) {
+@@ -38558,6 +38561,48 @@ function getDefaultValueForOption(option) {
    }
  }
  
@@ -62,7 +62,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  // src/compiler/moduleNameResolver.ts
  function trace(host, message, ...args) {
    host.trace(formatMessage(message, ...args));
-@@ -38882,7 +38927,7 @@ function getEffectiveTypeRoots(options, host) {
+@@ -38775,7 +38820,7 @@ function getEffectiveTypeRoots(options, host) {
      return getDefaultTypeRoots(currentDirectory);
    }
  }
@@ -71,7 +71,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    let typeRoots;
    forEachAncestorDirectory(normalizePath(currentDirectory), (directory) => {
      const atTypes = combinePaths(directory, nodeModulesAtTypes);
-@@ -38895,6 +38940,15 @@ function arePathsEqual(path1, path2, host) {
+@@ -38788,6 +38833,15 @@ function arePathsEqual(path1, path2, host) {
    const useCaseSensitiveFileNames2 = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
    return comparePaths(path1, path2, !useCaseSensitiveFileNames2) === 0 /* EqualTo */;
  }
@@ -87,7 +87,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  function getOriginalAndResolvedFileName(fileName, host, traceEnabled) {
    const resolvedFileName = realPath(fileName, host, traceEnabled);
    const pathsAreEqual = arePathsEqual(fileName, resolvedFileName, host);
-@@ -40823,7 +40877,15 @@ function loadModuleFromNearestNodeModulesDirectoryWorker(extensions, moduleName,
+@@ -40676,7 +40730,15 @@ function loadModuleFromNearestNodeModulesDirectoryWorker(extensions, moduleName,
      return lookup(secondaryExtensions);
    }
    function lookup(extensions2) {
@@ -104,7 +104,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        if (getBaseFileName(ancestorDirectory) !== "node_modules") {
          const resolutionFromCache = tryFindNonRelativeModuleNameInCache(cache, moduleName, mode, ancestorDirectory, redirectedReference, state);
          if (resolutionFromCache) {
-@@ -40858,11 +40920,40 @@ function loadModuleFromImmediateNodeModulesDirectory(extensions, moduleName, dir
+@@ -40711,11 +40773,40 @@ function loadModuleFromImmediateNodeModulesDirectory(extensions, moduleName, dir
      return loadModuleFromSpecificNodeModulesDirectory(4 /* Declaration */, mangleScopedPackageNameWithTrace(moduleName, state), nodeModulesAtTypes2, nodeModulesAtTypesExists, state, cache, redirectedReference);
    }
  }
@@ -146,7 +146,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    let rootPackageInfo;
    let packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
    if (rest !== "" && packageInfo && (!(state.features & 8 /* Exports */) || !hasProperty(((_a = rootPackageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state)) == null ? void 0 : _a.contents.packageJsonContent) ?? emptyArray, "exports"))) {
-@@ -41167,6 +41258,18 @@ function traceIfEnabled(state, diagnostic, ...args) {
+@@ -41016,6 +41107,18 @@ function traceIfEnabled(state, diagnostic, ...args) {
  function useCaseSensitiveFileNames(state) {
    return !state.host.useCaseSensitiveFileNames ? true : typeof state.host.useCaseSensitiveFileNames === "boolean" ? state.host.useCaseSensitiveFileNames : state.host.useCaseSensitiveFileNames();
  }
@@ -165,7 +165,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  
  // src/compiler/binder.ts
  function getModuleInstanceState(node, visited) {
-@@ -44615,7 +44718,15 @@ function getAllModulePathsWorker(info, importedFileName, host, compilerOptions,
+@@ -44433,7 +44536,15 @@ function getAllModulePathsWorker(info, importedFileName, host, compilerOptions,
      /*preferSymlinks*/
      true,
      (path, isRedirect) => {
@@ -182,7 +182,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        allFileNames.set(path, { path: info.getCanonicalFileName(path), isRedirect, isInNodeModules });
        importedFileFromNodeModules = importedFileFromNodeModules || isInNodeModules;
      }
-@@ -44914,7 +45025,41 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+@@ -44724,7 +44835,41 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
    if (!host.fileExists || !host.readFile) {
      return void 0;
    }
@@ -225,7 +225,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    if (!parts) {
      return void 0;
    }
-@@ -44952,14 +45097,16 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+@@ -44761,14 +44906,16 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
    if (isRedirect && !isPackageRootPath) {
      return void 0;
    }
@@ -249,8 +249,8 @@ semver exclusivity >=5.5.0-beta <5.5.2
    function tryDirectoryWithPackageJson(packageRootIndex) {
      var _a, _b;
      const packageRootPath = path.substring(0, packageRootIndex);
-@@ -44972,9 +45119,9 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
-       const importMode = overrideMode || getDefaultResolutionModeForFile(importingSourceFile, host, options);
+@@ -44781,9 +44928,9 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+       const importMode = overrideMode || importingSourceFile.impliedNodeFormat;
        if (getResolvePackageJsonExports(options)) {
          const nodeModulesDirectoryName2 = packageRootPath.substring(parts.topLevelPackageNameIndex + 1);
 -        const packageName2 = getPackageNameFromTypesPackageName(nodeModulesDirectoryName2);
@@ -261,7 +261,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
          if (fromExports) {
            return { ...fromExports, verbatimFromExports: true };
          }
-@@ -125700,6 +125847,11 @@ function createWatchProgram(host) {
+@@ -125757,6 +125904,11 @@ function createWatchProgram(host) {
    if (configFileName) {
      configFileWatcher = watchFile2(configFileName, scheduleProgramReload, 2e3 /* High */, watchOptions, WatchType.ConfigFile);
    }
@@ -273,7 +273,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    const compilerHost = createCompilerHostFromProgramHost(host, () => compilerOptions, directoryStructureHost);
    setGetSourceFileAsHashVersioned(compilerHost);
    const getNewSourceFile = compilerHost.getSourceFile;
-@@ -125763,6 +125915,10 @@ function createWatchProgram(host) {
+@@ -125819,6 +125971,10 @@ function createWatchProgram(host) {
        configFileWatcher.close();
        configFileWatcher = void 0;
      }
@@ -284,7 +284,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      extendedConfigCache == null ? void 0 : extendedConfigCache.clear();
      extendedConfigCache = void 0;
      if (sharedExtendedConfigFileWatchers) {
-@@ -125798,7 +125954,7 @@ function createWatchProgram(host) {
+@@ -125854,7 +126010,7 @@ function createWatchProgram(host) {
    function getCurrentProgram() {
      return builderProgram && builderProgram.getProgramOrUndefined();
    }
@@ -293,7 +293,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      writeLog(`Synchronizing program`);
      Debug.assert(compilerOptions);
      Debug.assert(rootFileNames);
-@@ -125810,7 +125966,7 @@ function createWatchProgram(host) {
+@@ -125866,7 +126022,7 @@ function createWatchProgram(host) {
          resolutionCache.onChangesAffectModuleResolution();
        }
      }
@@ -302,7 +302,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      const {
        originalReadFile,
        originalFileExists,
-@@ -126022,13 +126178,19 @@ function createWatchProgram(host) {
+@@ -126074,13 +126230,19 @@ function createWatchProgram(host) {
      updateLevel = 2 /* Full */;
      scheduleProgramUpdate();
    }
@@ -323,7 +323,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      switch (updateLevel) {
        case 1 /* RootNamesAndUpdate */:
          (_a = perfLogger) == null ? void 0 : _a.logStartUpdateProgram("PartialConfigReload");
-@@ -126038,12 +126200,19 @@ function createWatchProgram(host) {
+@@ -126090,12 +126252,19 @@ function createWatchProgram(host) {
          (_b = perfLogger) == null ? void 0 : _b.logStartUpdateProgram("FullConfigReload");
          reloadConfigFile();
          break;
@@ -346,8 +346,8 @@ semver exclusivity >=5.5.0-beta <5.5.2
    }
    function reloadFileNamesFromConfigFile() {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 50cc6659c..9cefc330a 100644
-semver exclusivity >=5.5.0-beta <5.5.2
+index 398a3a1ed..8a81feff1 100644
+semver exclusivity >=5.5.2
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -33,6 +33,25 @@ var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "defau
@@ -376,7 +376,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  // src/tsserver/common.ts
  function getLogLevel(level) {
    if (level) {
-@@ -240,6 +259,10 @@ function initializeNodeSystem() {
+@@ -237,6 +256,10 @@ function initializeNodeSystem() {
          }
          try {
            const args = [(0, typescript_exports.combinePaths)(libDirectory, "watchGuard.js"), path];
@@ -387,7 +387,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
            if (logger.hasLevel(typescript_exports.server.LogLevel.verbose)) {
              logger.info(`Starting ${process.execPath} with args:${typescript_exports.server.stringifyIndented(args)}`);
            }
-@@ -422,6 +445,10 @@ function startNodeSession(options, logger, cancellationToken) {
+@@ -417,6 +440,10 @@ function startNodeSession(options, logger, cancellationToken) {
            break;
          }
        }
@@ -399,11 +399,11 @@ semver exclusivity >=5.5.0-beta <5.5.2
        this.installer = childProcess.fork(typingsInstaller, args, { execArgv });
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
-index f4c59a844..631850d94 100644
-semver exclusivity >=5.5.0-beta <5.5.2
+index fbb3e4912..e601e3d32 100644
+semver exclusivity >=5.5.2
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
-@@ -9339,6 +9339,8 @@ declare namespace ts {
+@@ -9350,6 +9350,8 @@ declare namespace ts {
           *  - Updating the program
           */
          Full = 2,
@@ -413,11 +413,11 @@ semver exclusivity >=5.5.0-beta <5.5.2
      function findConfigFile(searchPath: string, fileExists: (fileName: string) => boolean, configName?: string): string | undefined;
      function resolveTripleslashReference(moduleName: string, containingFile: string): string;
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 6b52dd675..22cf43d26 100644
-semver exclusivity >=5.5.0-beta <5.5.2
+index 4b7a6252d..f30375f31 100644
+semver exclusivity >=5.5.2
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
-@@ -8708,6 +8708,9 @@ var sys = (() => {
+@@ -8626,6 +8626,9 @@ var sys = (() => {
        }
      }
      function isFileSystemCaseSensitive() {
@@ -427,7 +427,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        if (platform === "win32" || platform === "win64") {
          return false;
        }
-@@ -43194,6 +43197,69 @@ function getDefaultValueForOption(option) {
+@@ -43044,6 +43047,69 @@ function getDefaultValueForOption(option) {
    }
  }
  
@@ -497,7 +497,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  // src/compiler/moduleNameResolver.ts
  function trace(host, message, ...args) {
    host.trace(formatMessage(message, ...args));
-@@ -43436,7 +43502,7 @@ function getEffectiveTypeRoots(options, host) {
+@@ -43269,7 +43335,7 @@ function getEffectiveTypeRoots(options, host) {
      return getDefaultTypeRoots(currentDirectory);
    }
  }
@@ -506,7 +506,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    let typeRoots;
    forEachAncestorDirectory(normalizePath(currentDirectory), (directory) => {
      const atTypes = combinePaths(directory, nodeModulesAtTypes);
-@@ -43449,6 +43515,15 @@ function arePathsEqual(path1, path2, host) {
+@@ -43282,6 +43348,15 @@ function arePathsEqual(path1, path2, host) {
    const useCaseSensitiveFileNames2 = typeof host.useCaseSensitiveFileNames === "function" ? host.useCaseSensitiveFileNames() : host.useCaseSensitiveFileNames;
    return comparePaths(path1, path2, !useCaseSensitiveFileNames2) === 0 /* EqualTo */;
  }
@@ -522,7 +522,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  function getOriginalAndResolvedFileName(fileName, host, traceEnabled) {
    const resolvedFileName = realPath(fileName, host, traceEnabled);
    const pathsAreEqual = arePathsEqual(fileName, resolvedFileName, host);
-@@ -43701,6 +43776,21 @@ function getConditions(options, resolutionMode) {
+@@ -43531,6 +43606,21 @@ function getConditions(options, resolutionMode) {
  }
  function resolvePackageNameToPackageJson(packageName, containingDirectory, options, host, cache) {
    const moduleResolutionState = getTemporaryModuleResolutionState(cache == null ? void 0 : cache.getPackageJsonInfoCache(), host, options);
@@ -544,7 +544,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    return forEachAncestorDirectory(containingDirectory, (ancestorDirectory) => {
      if (getBaseFileName(ancestorDirectory) !== "node_modules") {
        const nodeModulesFolder = combinePaths(ancestorDirectory, "node_modules");
-@@ -45529,7 +45619,15 @@ function loadModuleFromNearestNodeModulesDirectoryWorker(extensions, moduleName,
+@@ -45322,7 +45412,15 @@ function loadModuleFromNearestNodeModulesDirectoryWorker(extensions, moduleName,
      return lookup(secondaryExtensions);
    }
    function lookup(extensions2) {
@@ -561,7 +561,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        if (getBaseFileName(ancestorDirectory) !== "node_modules") {
          const resolutionFromCache = tryFindNonRelativeModuleNameInCache(cache, moduleName, mode, ancestorDirectory, redirectedReference, state);
          if (resolutionFromCache) {
-@@ -45564,11 +45662,40 @@ function loadModuleFromImmediateNodeModulesDirectory(extensions, moduleName, dir
+@@ -45357,11 +45455,40 @@ function loadModuleFromImmediateNodeModulesDirectory(extensions, moduleName, dir
      return loadModuleFromSpecificNodeModulesDirectory(4 /* Declaration */, mangleScopedPackageNameWithTrace(moduleName, state), nodeModulesAtTypes2, nodeModulesAtTypesExists, state, cache, redirectedReference);
    }
  }
@@ -603,7 +603,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    let rootPackageInfo;
    let packageInfo = getPackageJsonInfo(candidate, !nodeModulesDirectoryExists, state);
    if (rest !== "" && packageInfo && (!(state.features & 8 /* Exports */) || !hasProperty(((_a = rootPackageInfo = getPackageJsonInfo(packageDirectory, !nodeModulesDirectoryExists, state)) == null ? void 0 : _a.contents.packageJsonContent) ?? emptyArray, "exports"))) {
-@@ -45873,6 +46000,18 @@ function traceIfEnabled(state, diagnostic, ...args) {
+@@ -45662,6 +45789,18 @@ function traceIfEnabled(state, diagnostic, ...args) {
  function useCaseSensitiveFileNames(state) {
    return !state.host.useCaseSensitiveFileNames ? true : typeof state.host.useCaseSensitiveFileNames === "boolean" ? state.host.useCaseSensitiveFileNames : state.host.useCaseSensitiveFileNames();
  }
@@ -622,7 +622,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
  
  // src/compiler/binder.ts
  var ModuleInstanceState = /* @__PURE__ */ ((ModuleInstanceState2) => {
-@@ -49440,7 +49579,15 @@ function getAllModulePathsWorker(info, importedFileName, host, compilerOptions,
+@@ -49197,7 +49336,15 @@ function getAllModulePathsWorker(info, importedFileName, host, compilerOptions,
      /*preferSymlinks*/
      true,
      (path, isRedirect) => {
@@ -639,7 +639,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        allFileNames.set(path, { path: info.getCanonicalFileName(path), isRedirect, isInNodeModules });
        importedFileFromNodeModules = importedFileFromNodeModules || isInNodeModules;
      }
-@@ -49739,7 +49886,41 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+@@ -49488,7 +49635,41 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
    if (!host.fileExists || !host.readFile) {
      return void 0;
    }
@@ -682,7 +682,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    if (!parts) {
      return void 0;
    }
-@@ -49777,14 +49958,16 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+@@ -49525,14 +49706,16 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
    if (isRedirect && !isPackageRootPath) {
      return void 0;
    }
@@ -706,8 +706,8 @@ semver exclusivity >=5.5.0-beta <5.5.2
    function tryDirectoryWithPackageJson(packageRootIndex) {
      var _a, _b;
      const packageRootPath = path.substring(0, packageRootIndex);
-@@ -49797,9 +49980,9 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
-       const importMode = overrideMode || getDefaultResolutionModeForFile(importingSourceFile, host, options);
+@@ -49545,9 +49728,9 @@ function tryGetModuleNameAsNodeModule({ path, isRedirect }, { getCanonicalFileNa
+       const importMode = overrideMode || importingSourceFile.impliedNodeFormat;
        if (getResolvePackageJsonExports(options)) {
          const nodeModulesDirectoryName2 = packageRootPath.substring(parts.topLevelPackageNameIndex + 1);
 -        const packageName2 = getPackageNameFromTypesPackageName(nodeModulesDirectoryName2);
@@ -718,7 +718,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
          if (fromExports) {
            return { ...fromExports, verbatimFromExports: true };
          }
-@@ -122821,6 +123004,7 @@ var ProgramUpdateLevel = /* @__PURE__ */ ((ProgramUpdateLevel2) => {
+@@ -122919,6 +123102,7 @@ var ProgramUpdateLevel = /* @__PURE__ */ ((ProgramUpdateLevel2) => {
    ProgramUpdateLevel2[ProgramUpdateLevel2["Update"] = 0] = "Update";
    ProgramUpdateLevel2[ProgramUpdateLevel2["RootNamesAndUpdate"] = 1] = "RootNamesAndUpdate";
    ProgramUpdateLevel2[ProgramUpdateLevel2["Full"] = 2] = "Full";
@@ -726,7 +726,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    return ProgramUpdateLevel2;
  })(ProgramUpdateLevel || {});
  function updateSharedExtendedConfigFileWatcher(projectPath, options, extendedConfigFilesMap, createExtendedConfigFileWatch, toPath3) {
-@@ -130835,6 +131019,11 @@ function createWatchProgram(host) {
+@@ -130823,6 +131007,11 @@ function createWatchProgram(host) {
    if (configFileName) {
      configFileWatcher = watchFile2(configFileName, scheduleProgramReload, 2e3 /* High */, watchOptions, WatchType.ConfigFile);
    }
@@ -738,7 +738,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    const compilerHost = createCompilerHostFromProgramHost(host, () => compilerOptions, directoryStructureHost);
    setGetSourceFileAsHashVersioned(compilerHost);
    const getNewSourceFile = compilerHost.getSourceFile;
-@@ -130898,6 +131087,10 @@ function createWatchProgram(host) {
+@@ -130885,6 +131074,10 @@ function createWatchProgram(host) {
        configFileWatcher.close();
        configFileWatcher = void 0;
      }
@@ -749,7 +749,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      extendedConfigCache == null ? void 0 : extendedConfigCache.clear();
      extendedConfigCache = void 0;
      if (sharedExtendedConfigFileWatchers) {
-@@ -130933,7 +131126,7 @@ function createWatchProgram(host) {
+@@ -130920,7 +131113,7 @@ function createWatchProgram(host) {
    function getCurrentProgram() {
      return builderProgram && builderProgram.getProgramOrUndefined();
    }
@@ -758,7 +758,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      writeLog(`Synchronizing program`);
      Debug.assert(compilerOptions);
      Debug.assert(rootFileNames);
-@@ -130945,7 +131138,7 @@ function createWatchProgram(host) {
+@@ -130932,7 +131125,7 @@ function createWatchProgram(host) {
          resolutionCache.onChangesAffectModuleResolution();
        }
      }
@@ -767,7 +767,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      const {
        originalReadFile,
        originalFileExists,
-@@ -131157,13 +131350,19 @@ function createWatchProgram(host) {
+@@ -131140,13 +131333,19 @@ function createWatchProgram(host) {
      updateLevel = 2 /* Full */;
      scheduleProgramUpdate();
    }
@@ -788,7 +788,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      switch (updateLevel) {
        case 1 /* RootNamesAndUpdate */:
          (_a = perfLogger) == null ? void 0 : _a.logStartUpdateProgram("PartialConfigReload");
-@@ -131173,12 +131372,19 @@ function createWatchProgram(host) {
+@@ -131156,12 +131355,19 @@ function createWatchProgram(host) {
          (_b = perfLogger) == null ? void 0 : _b.logStartUpdateProgram("FullConfigReload");
          reloadConfigFile();
          break;
@@ -810,7 +810,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      return getCurrentBuilderProgram();
    }
    function reloadFileNamesFromConfigFile() {
-@@ -138135,7 +138341,14 @@ function createPackageJsonImportFilter(fromFile, preferences, host) {
+@@ -137947,7 +138153,14 @@ function createPackageJsonImportFilter(fromFile, preferences, host) {
      return false;
    }
    function getNodeModulesPackageNameFromFileName(importedFileName, moduleSpecifierResolutionHost) {
@@ -826,7 +826,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        return void 0;
      }
      const specifier = ts_moduleSpecifiers_exports.getNodeModulesPackageName(
-@@ -138693,6 +138906,9 @@ function isImportableFile(program, from, to, preferences, packageJsonFilter, mod
+@@ -138520,6 +138733,9 @@ function isImportableFile(program, from, to, preferences, packageJsonFilter, mod
    return hasImportablePath;
  }
  function isImportablePath(fromPath, toPath3, getCanonicalFileName, globalCachePath) {
@@ -836,7 +836,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    const toNodeModules = forEachAncestorDirectory(toPath3, (ancestor) => getBaseFileName(ancestor) === "node_modules" ? ancestor : void 0);
    const toNodeModulesParent = toNodeModules && getDirectoryPath(getCanonicalFileName(toNodeModules));
    return toNodeModulesParent === void 0 || startsWith(getCanonicalFileName(fromPath), toNodeModulesParent) || !!globalCachePath && startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent);
-@@ -166731,7 +166947,34 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, p
+@@ -166808,7 +167024,33 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, c
            );
          }
        };
@@ -857,7 +857,6 @@ semver exclusivity >=5.5.0-beta <5.5.2
 +            fragmentSubpath,
 +            packageDirectory,
 +            extensionOptions,
-+            program,
 +            host,
 +            keys,
 +            (key) => singleElementArray(getPatternFromFirstMatchingCondition(exports2[key], conditions)),
@@ -872,7 +871,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
          const nodeModulesDirectoryLookup = ancestorLookup;
          ancestorLookup = (ancestor) => {
            const components = getPathComponents(fragment);
-@@ -166750,35 +166993,53 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, p
+@@ -166827,34 +167069,52 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, c
            const packageDirectory = combinePaths(ancestor, "node_modules", packagePath);
            const packageFile = combinePaths(packageDirectory, "package.json");
            if (tryFileExists(host, packageFile)) {
@@ -922,7 +921,6 @@ semver exclusivity >=5.5.0-beta <5.5.2
 +                subPath,
                  packageDirectory,
                  extensionOptions,
-                 program,
                  host,
 -                keys,
 -                (key) => singleElementArray(getPatternFromFirstMatchingCondition(exports2[key], conditions)),
@@ -946,7 +944,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      }
    }
    return arrayFrom(result.values());
-@@ -166912,9 +167173,15 @@ function getCompletionEntriesFromTypings(host, program, scriptPath, fragmentDire
+@@ -166985,9 +167245,15 @@ function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDire
    for (const root of typeRoots) {
      getCompletionEntriesFromDirectories(root);
    }
@@ -965,7 +963,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    }
    return result;
    function getCompletionEntriesFromDirectories(directory) {
-@@ -184102,6 +184369,29 @@ var ConfiguredProject2 = class extends Project3 {
+@@ -184304,6 +184570,29 @@ var ConfiguredProject2 = class extends Project3 {
      return this.projectReferences;
    }
    updateReferences(refs) {
@@ -995,7 +993,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      this.projectReferences = refs;
      this.potentialProjectReferences = void 0;
    }
-@@ -184807,6 +185097,7 @@ var _ProjectService = class _ProjectService {
+@@ -185018,6 +185307,7 @@ var _ProjectService = class _ProjectService {
        log,
        getDetailWatchInfo
      );
@@ -1003,7 +1001,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      (_a = opts.incrementalVerifier) == null ? void 0 : _a.call(opts, this);
    }
    toPath(fileName) {
-@@ -186737,7 +187028,7 @@ Dynamic files must always be opened with service's current directory or service
+@@ -186900,7 +187190,7 @@ Dynamic files must always be opened with service's current directory or service
      this.performanceEventHandler = performanceEventHandler;
    }
    setHostConfiguration(args) {
@@ -1012,7 +1010,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      if (args.file) {
        const info = this.getScriptInfoForNormalizedPath(toNormalizedPath(args.file));
        if (info) {
-@@ -186786,6 +187077,8 @@ Dynamic files must always be opened with service's current directory or service
+@@ -186949,6 +187239,8 @@ Dynamic files must always be opened with service's current directory or service
          this.hostConfiguration.watchOptions = substitution;
          this.hostConfiguration.beforeSubstitution = substitution === watchOptions ? void 0 : watchOptions;
          this.logger.info(`Host watch options changed to ${JSON.stringify(this.hostConfiguration.watchOptions)}, it will be take effect for next watches.`);
@@ -1021,7 +1019,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        }
      }
    }
-@@ -187736,6 +188029,29 @@ Dynamic files must always be opened with service's current directory or service
+@@ -187947,6 +188239,29 @@ Dynamic files must always be opened with service's current directory or service
      });
    }
    /** @internal */
