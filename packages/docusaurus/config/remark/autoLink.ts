@@ -3,7 +3,6 @@ import type {MdxJsxFlowElement} from 'mdast-util-mdx-jsx';
 import type {Parent, Root}      from 'mdast';
 import type {Transformer}       from 'unified';
 import {visitParents as visit}  from 'unist-util-visit-parents';
-import {pathToFileURL}          from 'url';
 
 export type AutoLinkSpec = {
   sourceType: `json-schema`;
@@ -95,8 +94,7 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
     });
 
     if (hasAutoLinks) {
-      const url = pathToFileURL(require.resolve(`../components/AutoLink.tsx`));
-      const code = `import {AutoLink} from ${JSON.stringify(url)};\n`;
+      const code = `import {AutoLink} from "@site/src/components/AutoLink.tsx";\n`;
       ast.children.unshift({
         type: `mdxjsEsm`,
         value: code,

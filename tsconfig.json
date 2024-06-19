@@ -2,7 +2,7 @@
   "compilerOptions": {
     // Typechecking
     "target": "ES2021",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022"],
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,

@@ -1,13 +1,12 @@
 import {YarnCli, getCli}        from '@yarnpkg/cli';
 import {parseShell}             from '@yarnpkg/parsers';
-import {Definition, Token}      from 'clipanion';
+import type {Definition, Token} from 'clipanion';
 import {fromJs}                 from 'esast-util-from-js';
 import {capitalize}             from 'lodash';
 import type {MdxJsxFlowElement} from 'mdast-util-mdx-jsx';
 import type {Parent, Root}      from 'mdast';
 import type {Transformer}       from 'unified';
 import {visitParents as visit}  from 'unist-util-visit-parents';
-import {pathToFileURL}          from 'url';
 
 export type ScriptLine =
   | RawLine
@@ -198,8 +197,7 @@ export const plugin = () => () => {
     });
 
     if (highlightNodes.length > 0) {
-      const url = pathToFileURL(require.resolve(`../components/CommandLineHighlight.tsx`));
-      const code = `import {CommandLineHighlight} from ${JSON.stringify(url)};\n`;
+      const code = `import {CommandLineHighlight} from "@site/src/components/CommandLineHighlight.tsx";\n`;
       ast.children.unshift({
         type: `mdxjsEsm`,
         value: code,
