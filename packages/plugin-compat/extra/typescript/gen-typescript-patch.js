@@ -278,9 +278,9 @@ const SLICES = [
   },
   // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.5
   {
-    from: `bef5e4fac5227dff8f6810461234cf6555d0cd54`,
-    to: `c05bf3f7112047b036d7e079fb4bffd75d702e85`,
-    onto: `5367ae10f58edfacd6d3b1e77bd05576036b8ca2`,
+    from: `5b321aa5835f9f4dba6d55553fd559985d44b1a9`,
+    to: `c41328460d8dba2fac56c220803c68ca961d7cd5`,
+    onto: `ce2e60e4ea15a65992e54a9e8877d16be9d42abb`,
     range: `>=5.5.2`,
   },
 ];

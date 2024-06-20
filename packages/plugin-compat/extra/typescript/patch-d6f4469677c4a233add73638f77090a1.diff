@@ -413,7 +413,7 @@ semver exclusivity >=5.5.2
      function findConfigFile(searchPath: string, fileExists: (fileName: string) => boolean, configName?: string): string | undefined;
      function resolveTripleslashReference(moduleName: string, containingFile: string): string;
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 4b7a6252d..f30375f31 100644
+index 714953f46..e30a70401 100644
 semver exclusivity >=5.5.2
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -836,7 +836,7 @@ semver exclusivity >=5.5.2
    const toNodeModules = forEachAncestorDirectory(toPath3, (ancestor) => getBaseFileName(ancestor) === "node_modules" ? ancestor : void 0);
    const toNodeModulesParent = toNodeModules && getDirectoryPath(getCanonicalFileName(toNodeModules));
    return toNodeModulesParent === void 0 || startsWith(getCanonicalFileName(fromPath), toNodeModulesParent) || !!globalCachePath && startsWith(getCanonicalFileName(globalCachePath), toNodeModulesParent);
-@@ -166808,7 +167024,33 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, c
+@@ -166819,7 +167035,33 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, c
            );
          }
        };
@@ -871,7 +871,7 @@ semver exclusivity >=5.5.2
          const nodeModulesDirectoryLookup = ancestorLookup;
          ancestorLookup = (ancestor) => {
            const components = getPathComponents(fragment);
-@@ -166827,34 +167069,52 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, c
+@@ -166838,34 +167080,52 @@ function getCompletionEntriesForNonRelativeModules(fragment, scriptPath, mode, c
            const packageDirectory = combinePaths(ancestor, "node_modules", packagePath);
            const packageFile = combinePaths(packageDirectory, "package.json");
            if (tryFileExists(host, packageFile)) {
@@ -944,7 +944,7 @@ semver exclusivity >=5.5.2
      }
    }
    return arrayFrom(result.values());
-@@ -166985,9 +167245,15 @@ function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDire
+@@ -166996,9 +167256,15 @@ function getCompletionEntriesFromTypings(host, options, scriptPath, fragmentDire
    for (const root of typeRoots) {
      getCompletionEntriesFromDirectories(root);
    }
@@ -963,7 +963,7 @@ semver exclusivity >=5.5.2
    }
    return result;
    function getCompletionEntriesFromDirectories(directory) {
-@@ -184304,6 +184570,29 @@ var ConfiguredProject2 = class extends Project3 {
+@@ -184315,6 +184581,29 @@ var ConfiguredProject2 = class extends Project3 {
      return this.projectReferences;
    }
    updateReferences(refs) {
@@ -993,7 +993,7 @@ semver exclusivity >=5.5.2
      this.projectReferences = refs;
      this.potentialProjectReferences = void 0;
    }
-@@ -185018,6 +185307,7 @@ var _ProjectService = class _ProjectService {
+@@ -185029,6 +185318,7 @@ var _ProjectService = class _ProjectService {
        log,
        getDetailWatchInfo
      );
@@ -1001,7 +1001,7 @@ semver exclusivity >=5.5.2
      (_a = opts.incrementalVerifier) == null ? void 0 : _a.call(opts, this);
    }
    toPath(fileName) {
-@@ -186900,7 +187190,7 @@ Dynamic files must always be opened with service's current directory or service
+@@ -186911,7 +187201,7 @@ Dynamic files must always be opened with service's current directory or service
      this.performanceEventHandler = performanceEventHandler;
    }
    setHostConfiguration(args) {
@@ -1010,7 +1010,7 @@ semver exclusivity >=5.5.2
      if (args.file) {
        const info = this.getScriptInfoForNormalizedPath(toNormalizedPath(args.file));
        if (info) {
-@@ -186949,6 +187239,8 @@ Dynamic files must always be opened with service's current directory or service
+@@ -186960,6 +187250,8 @@ Dynamic files must always be opened with service's current directory or service
          this.hostConfiguration.watchOptions = substitution;
          this.hostConfiguration.beforeSubstitution = substitution === watchOptions ? void 0 : watchOptions;
          this.logger.info(`Host watch options changed to ${JSON.stringify(this.hostConfiguration.watchOptions)}, it will be take effect for next watches.`);
@@ -1019,7 +1019,7 @@ semver exclusivity >=5.5.2
        }
      }
    }
-@@ -187947,6 +188239,29 @@ Dynamic files must always be opened with service's current directory or service
+@@ -187958,6 +188250,29 @@ Dynamic files must always be opened with service's current directory or service
      });
    }
    /** @internal */
