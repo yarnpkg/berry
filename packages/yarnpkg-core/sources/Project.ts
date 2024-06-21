@@ -326,9 +326,15 @@ export class Project {
     if (workspace)
       return {project, workspace, locator: workspace.anchoredLocator};
 
+    const nodeLinker = configuration.get(`nodeLinker`);
+
+    const pnpPackageCwd = `${packageCwd}/`;
+    const pnpmPackageCwd = packageCwd;
+
+    const parsedPackageCwd = nodeLinker === `pnpm` ? pnpmPackageCwd : pnpPackageCwd;
     // Otherwise, we need to ask the project (which will in turn ask the linkers for help)
     // Note: the trailing slash is caused by a quirk in the PnP implementation that requires folders to end with a trailing slash to disambiguate them from regular files
-    const locator = await project.findLocatorForLocation(`${packageCwd}/` as PortablePath, {strict: true});
+    const locator = await project.findLocatorForLocation(parsedPackageCwd as PortablePath, {strict: true});
     if (locator)
       return {project, locator, workspace: null};
 
