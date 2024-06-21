@@ -1,12 +1,15 @@
-import eslintConfig from '@yarnpkg/eslint-config';
 import reactEslintConfig from '@yarnpkg/eslint-config/react';
+import eslintConfig      from '@yarnpkg/eslint-config';
 
+// eslint-disable-next-line arca/no-default-export
 export default [
   ...eslintConfig,
   ...reactEslintConfig,
 
   {
     ignores: [
+      `*.json`,
+      `**/coverage/**`,
       `.yarn`,
 
       `packages/docusaurus/.docusaurus`,
@@ -32,7 +35,7 @@ export default [
 
       // Minimize the diff with upstream`,
       `packages/yarnpkg-pnp/sources/node`,
-      `packages/yarnpkg-pnp/sources/loader/node-options*`
+      `packages/yarnpkg-pnp/sources/loader/node-options*`,
     ],
   },
 
