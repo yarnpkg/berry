@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "3.8.2",
+  "version": "3.8.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "dependencies": {
