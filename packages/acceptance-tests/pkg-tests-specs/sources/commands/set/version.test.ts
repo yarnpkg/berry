@@ -1,3 +1,5 @@
+import {getPluginConfiguration}             from '@yarnpkg/cli';
+import {Configuration}                      from '@yarnpkg/core';
 import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
 
 const yarnrcRegexp = /^yarnPath:/;
@@ -143,7 +145,10 @@ describe(`Commands`, () => {
 });
 
 async function check(path: PortablePath, checks: {corepackVersion: string | RegExp, usePath: boolean}) {
-  const releasesPath = ppath.join(path, `.yarn/releases`);
+  const configuration = await Configuration.find(path, getPluginConfiguration());
+  const yarnPath = configuration.get(`yarnPath`);
+
+  const releasesPath = ppath.resolve(path, yarnPath ? ppath.dirname(yarnPath) : `.yarn/releases`);
   const yarnrcPath = ppath.join(path, Filename.rc);
   const manifestPath = ppath.join(path, Filename.manifest);
 
