@@ -216,7 +216,7 @@ export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack
 const MAX_PREPARE_CONCURRENCY = 2;
 const prepareLimit = pLimit(MAX_PREPARE_CONCURRENCY);
 
-export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator = null}: {configuration: Configuration, report: Report, workspace?: string | null, locator?: Locator | null}) {
+export async function prepareExternalProject(cwd: PortablePath, outputPath: PortablePath, {configuration, report, workspace = null, locator = null, trusted = false}: {configuration: Configuration, report: Report, workspace?: string | null, locator?: Locator | null, trusted?: boolean}) {
   await prepareLimit(async () => {
     await xfs.mktempPromise(async logDir => {
       const logFile = ppath.join(logDir, `pack.log`);
@@ -234,7 +234,14 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
 
       stdout.write(`Packing ${name} from sources\n`);
 
-      const packageManagerSelection = await detectPackageManager(cwd);
+      // Skip package-specific scripts  and external package manager callout if
+      // enableScripts is not enabled and this is not a trusted package
+      const packageManagerSelection = trusted && configuration.settings.get(`enableScripts`)
+        ? await detectPackageManager(cwd)
+        : {
+          packageManager: PackageManager.Yarn2,
+          reason: `not_trusted`,
+        };
       let effectivePackageManager: PackageManager;
 
       if (packageManagerSelection !== null) {
@@ -252,6 +259,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
       const ignoreCorepack =
         effectivePackageManager === PackageManager.Yarn2 &&
         !packageManagerSelection?.packageManagerField;
+
 
       await xfs.mktempPromise(async binFolder => {
         const env = await makeScriptEnv({binFolder, ignoreCorepack});
@@ -309,6 +317,9 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // read a logfile telling them to open another logfile
             env.YARN_ENABLE_INLINE_BUILDS = `1`;
 
+            // Propagate enableScripts config
+            env.YARN_ENABLE_SCRIPTS = configuration.settings.get(`enableScripts`) ? `1` :  `0`;
+
             // If a lockfile doesn't exist we create a empty one to
             // prevent the project root detection from thinking it's in an
             // undeclared workspace when the user has a lockfile in their home
@@ -321,7 +332,14 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // so we leverage that. We also don't need the "set version" call since
             // we're already operating within a Yarn 2 context (plus people should
             // really check-in their Yarn versions anyway).
-            const pack = await execUtils.pipevp(`yarn`, [...workspaceCli, `pack`, `--install-if-needed`, `--filename`, npath.fromPortablePath(outputPath)], {cwd, env, stdin, stdout, stderr});
+            const pack = await execUtils.pipevp(`yarn`, [
+              ...workspaceCli,
+              `pack`,
+              `--install-if-needed`,
+              `--filename`,
+              npath.fromPortablePath(outputPath),
+            ], {cwd, env, stdin, stdout, stderr},
+            );
             if (pack.code !== 0)
               return pack.code;
 
