@@ -22,16 +22,6 @@ export default [
 
       '@typescript-eslint/comma-spacing': 2,
 
-      '@typescript-eslint/naming-convention': [`error`, {
-        selector: `default`,
-        format: [`camelCase`, `UPPER_CASE`, `PascalCase`],
-        filter: {
-          regex: `^(__.*|__non_webpack_require__|npm(_[a-z]+)+)$`,
-          match: false,
-        },
-        leadingUnderscore: `allow`,
-      }],
-
       '@typescript-eslint/func-call-spacing': 2,
 
       '@typescript-eslint/indent': [`error`, 2, {
