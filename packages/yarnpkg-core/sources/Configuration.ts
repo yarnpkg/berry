@@ -1261,8 +1261,11 @@ export class Configuration {
     const thirdPartyPlugins = new Map<string, Plugin>([]);
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
-      for (const request of builtinModules)
-        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
+      for (const request of builtinModules) {
+        const dr = () => miscUtils.dynamicRequire(request);
+        requireEntries.set(request, dr);
+        requireEntries.set(`node:${request}`, dr);
+      }
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
