@@ -73,10 +73,4 @@ export default [
       'valid-typeof': 2,
     },
   },
-  {
-    files: [`*.test.{js,ts}`],
-    env: {
-      jest: true,
-    },
-  },
 ];
