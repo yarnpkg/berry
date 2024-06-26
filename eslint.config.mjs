@@ -3,9 +3,6 @@ import eslintConfig      from '@yarnpkg/eslint-config';
 
 // eslint-disable-next-line arca/no-default-export
 export default [
-  ...eslintConfig,
-  ...reactEslintConfig,
-
   {
     ignores: [
       `**/coverage/**`,
@@ -33,10 +30,6 @@ export default [
       `packages/yarnpkg-libui/sources/**/*.js`,
       `packages/yarnpkg-libui/sources/**/*.d.ts`,
 
-      // Build output for libui
-      `packages/yarnpkg-libui/sources/**/*.js`,
-      `packages/yarnpkg-libui/sources/**/*.d.ts`,
-
       // Pre-compiled from C sources
       `packages/yarnpkg-libzip/sources/libzipAsync.js`,
       `packages/yarnpkg-libzip/sources/libzipSync.js`,
@@ -53,12 +46,16 @@ export default [
       // Generated PEG.js grammars
       `packages/yarnpkg-parsers/sources/grammars/*.js`,
 
-      // Patched packages
+      // Patched fsevents
       `packages/plugin-compat/extra/fsevents/fsevents-*.js`,
     ],
   },
 
+  ...eslintConfig,
+  ...reactEslintConfig,
+
   {
+    name: `berry/naming-convention`,
     files: [`**/*.ts`, `**/*.cts`, `**/*.mts`, `**/*.tsx`],
     ignores: [`packages/*/sources/{index,Plugin}.ts`],
     rules: {
@@ -74,6 +71,7 @@ export default [
   },
 
   {
+    name: `berry/env/acceptance-tests`,
     files: [`packages/acceptance-tests/pkg-tests-specs/**/*.test.{js,ts}`],
     languageOptions: {
       globals: {
@@ -84,6 +82,7 @@ export default [
   },
 
   {
+    name: `berry/rules`,
     rules: {
       'no-restricted-properties': [2,
         {

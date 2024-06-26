@@ -3,6 +3,8 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 // eslint-disable-next-line arca/no-default-export
 export default [
   {
+    name: `@yarnpkg/configs/typescript`,
+
     files: [`**/*.ts`, `**/*.cts`, `**/*.mts`, `**/*.tsx`],
 
     plugins: {
