@@ -130,7 +130,7 @@ export default class BuildPluginCommand extends Command {
           target: `node${semver.minVersion(pkg.engines.node)!.version}`,
           supported: {
             /*
-            Yarn plugin runtime did not support builtin modules prefixed with "node:".
+            Yarn plugin-runtime did not support builtin modules prefixed with "node:".
             See https://github.com/yarnpkg/berry/pull/5997
             As a solution, and for backwards compatibility, esbuild should strip these prefixes.
             */
