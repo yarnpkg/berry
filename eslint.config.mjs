@@ -8,39 +8,59 @@ export default [
 
   {
     ignores: [
-      `*.json`,
       `**/coverage/**`,
+      `**/__snapshots__/**`,
       `.yarn`,
+      `.pnp.cjs`,
+      `.pnp.loader.mjs`,
 
-      `packages/docusaurus/.docusaurus`,
-
-      `packages/yarnpkg-pnp/sources/hook.js`,
-      `packages/yarnpkg-pnp/sources/esm-loader/built-loader.js`,
-
-      `packages/yarnpkg-libzip/sources/libzipAsync.js`,
-      `packages/yarnpkg-libzip/sources/libzipSync.js`,
-
-      // The parsers are auto-generated
-      `packages/yarnpkg-parsers/sources/grammars/*.js`,
-
-      `packages/yarnpkg-core/sources/worker-zip/index.js`,
-      `packages/yarnpkg-cli/bundles/yarn.js`,
-
+      // Pre-compiled binaries
       `packages/*/lib`,
       `packages/*/bin`,
       `packages/*/build`,
-      `packages/**/*fixtures*`,
-      `packages/yarnpkg-libzip/artifacts`,
-      `packages/plugin-compat/extra/fsevents/fsevents-*.js`,
+      `packages/*/bundles`,
 
-      // Minimize the diff with upstream`,
+      // Test fixtures
+      `packages/**/*fixtures*`,
+
+      // Generated files for website
+      `packages/docusaurus/.docusaurus`,
+
+      // Generated compressed worker
+      `packages/yarnpkg-core/sources/worker-zip/index.js`,
+
+      // Build output for libui
+      `packages/yarnpkg-libui/sources/**/*.js`,
+      `packages/yarnpkg-libui/sources/**/*.d.ts`,
+
+      // Build output for libui
+      `packages/yarnpkg-libui/sources/**/*.js`,
+      `packages/yarnpkg-libui/sources/**/*.d.ts`,
+
+      // Pre-compiled from C sources
+      `packages/yarnpkg-libzip/sources/libzipAsync.js`,
+      `packages/yarnpkg-libzip/sources/libzipSync.js`,
+      // The C sources themselves
+      `packages/yarnpkg-libzip/artifacts`,
+
+      // Generated compressed hooks
+      `packages/yarnpkg-pnp/sources/hook.js`,
+      `packages/yarnpkg-pnp/sources/esm-loader/built-loader.js`,
+      // Minimize the diff with upstream
       `packages/yarnpkg-pnp/sources/node`,
       `packages/yarnpkg-pnp/sources/loader/node-options*`,
+
+      // Generated PEG.js grammars
+      `packages/yarnpkg-parsers/sources/grammars/*.js`,
+
+      // Patched packages
+      `packages/plugin-compat/extra/fsevents/fsevents-*.js`,
     ],
   },
 
   {
-    files: [`!packages/*/sources/{index,Plugin}.ts`],
+    files: [`**/*.ts`, `**/*.cts`, `**/*.mts`, `**/*.tsx`],
+    ignores: [`packages/*/sources/{index,Plugin}.ts`],
     rules: {
       '@typescript-eslint/naming-convention': [`error`, {
         selector: `typeLike`,
