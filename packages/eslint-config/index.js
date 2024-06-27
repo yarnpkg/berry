@@ -8,28 +8,35 @@ import typescript    from './rules/typescript.js';
 
 // eslint-disable-next-line arca/no-default-export
 export default [
-  ...bestPractices,
-  ...errors,
-  ...style,
-  ...typescript,
-
   {
+    name: `@yarnpkg/setup`,
     languageOptions: {
       parser: tsParser,
       sourceType: `module`,
+    },
+  },
+  {
+    name: `@yarnpkg/env`,
+    languageOptions: {
       globals: {
         ...globals.node,
         ...globals.es2021,
       },
     },
   },
-
   {
+    name: `@yarnpkg/env/tests`,
     files: [`**/*.test.*`],
+    ignores: [`**/__snapshots__/**`],
     languageOptions: {
       globals: {
         ...globals.jest,
       },
     },
   },
+
+  ...bestPractices,
+  ...errors,
+  ...style,
+  ...typescript,
 ];

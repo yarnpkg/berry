@@ -3,44 +3,61 @@ import eslintConfig      from '@yarnpkg/eslint-config';
 
 // eslint-disable-next-line arca/no-default-export
 export default [
+  {
+    ignores: [
+      `**/coverage/**`,
+      `**/__snapshots__/**`,
+      `.yarn`,
+      `.pnp.cjs`,
+      `.pnp.loader.mjs`,
+
+      // Pre-compiled binaries
+      `packages/*/lib`,
+      `packages/*/bin`,
+      `packages/*/build`,
+      `packages/*/bundles`,
+
+      // Test fixtures
+      `packages/**/*fixtures*`,
+
+      // Generated files for website
+      `packages/docusaurus/.docusaurus`,
+
+      // Generated compressed worker
+      `packages/yarnpkg-core/sources/worker-zip/index.js`,
+
+      // Build output for libui
+      `packages/yarnpkg-libui/sources/**/*.js`,
+      `packages/yarnpkg-libui/sources/**/*.d.ts`,
+
+      // Pre-compiled from C sources
+      `packages/yarnpkg-libzip/sources/libzipAsync.js`,
+      `packages/yarnpkg-libzip/sources/libzipSync.js`,
+      // The C sources themselves
+      `packages/yarnpkg-libzip/artifacts`,
+
+      // Generated compressed hooks
+      `packages/yarnpkg-pnp/sources/hook.js`,
+      `packages/yarnpkg-pnp/sources/esm-loader/built-loader.js`,
+      // Minimize the diff with upstream
+      `packages/yarnpkg-pnp/sources/node`,
+      `packages/yarnpkg-pnp/sources/loader/node-options*`,
+
+      // Generated PEG.js grammars
+      `packages/yarnpkg-parsers/sources/grammars/*.js`,
+
+      // Patched fsevents
+      `packages/plugin-compat/extra/fsevents/fsevents-*.js`,
+    ],
+  },
+
   ...eslintConfig,
   ...reactEslintConfig,
 
   {
-    ignores: [
-      `*.json`,
-      `**/coverage/**`,
-      `.yarn`,
-
-      `packages/docusaurus/.docusaurus`,
-
-      `packages/yarnpkg-pnp/sources/hook.js`,
-      `packages/yarnpkg-pnp/sources/esm-loader/built-loader.js`,
-
-      `packages/yarnpkg-libzip/sources/libzipAsync.js`,
-      `packages/yarnpkg-libzip/sources/libzipSync.js`,
-
-      // The parsers are auto-generated
-      `packages/yarnpkg-parsers/sources/grammars/*.js`,
-
-      `packages/yarnpkg-core/sources/worker-zip/index.js`,
-      `packages/yarnpkg-cli/bundles/yarn.js`,
-
-      `packages/*/lib`,
-      `packages/*/bin`,
-      `packages/*/build`,
-      `packages/**/*fixtures*`,
-      `packages/yarnpkg-libzip/artifacts`,
-      `packages/plugin-compat/extra/fsevents/fsevents-*.js`,
-
-      // Minimize the diff with upstream`,
-      `packages/yarnpkg-pnp/sources/node`,
-      `packages/yarnpkg-pnp/sources/loader/node-options*`,
-    ],
-  },
-
-  {
-    files: [`!packages/*/sources/{index,Plugin}.ts`],
+    name: `berry/naming-convention`,
+    files: [`**/*.ts`, `**/*.cts`, `**/*.mts`, `**/*.tsx`],
+    ignores: [`packages/*/sources/{index,Plugin}.ts`],
     rules: {
       '@typescript-eslint/naming-convention': [`error`, {
         selector: `typeLike`,
@@ -54,6 +71,7 @@ export default [
   },
 
   {
+    name: `berry/env/acceptance-tests`,
     files: [`packages/acceptance-tests/pkg-tests-specs/**/*.test.{js,ts}`],
     languageOptions: {
       globals: {
@@ -64,6 +82,7 @@ export default [
   },
 
   {
+    name: `berry/rules`,
     rules: {
       'no-restricted-properties': [2,
         {
