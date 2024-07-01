@@ -285,7 +285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.18.10, @babel/core@npm:^7.19.6, @babel/core@npm:^7.23.3":
+"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.19.6, @babel/core@npm:^7.23.3":
   version: 7.23.9
   resolution: "@babel/core@npm:7.23.9"
   dependencies:
@@ -1536,7 +1536,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.18.10, @babel/preset-env@npm:^7.19.4, @babel/preset-env@npm:^7.22.9":
+"@babel/preset-env@npm:^7.19.4, @babel/preset-env@npm:^7.22.9":
   version: 7.23.9
   resolution: "@babel/preset-env@npm:7.23.9"
   dependencies:
@@ -5449,10 +5449,6 @@ __metadata:
   resolution: "@yarnpkg/monorepo@workspace:."
   dependencies:
     "@arcanis/sherlock": "npm:^2.0.3"
-    "@babel/core": "npm:^7.18.10"
-    "@babel/preset-env": "npm:^7.18.10"
-    "@babel/preset-react": "npm:^7.18.6"
-    "@babel/preset-typescript": "npm:^7.18.6"
     "@iarna/toml": "npm:^2.2.5"
     "@types/jest": "npm:^28.1.6"
     "@types/micromatch": "npm:^4.0.1"
