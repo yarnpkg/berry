@@ -24,6 +24,6 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yes | yarn create svelte@next my-app && cd my-app
+        yes | yarn create svelte my-app && cd my-app
         yarn
         yarn build
