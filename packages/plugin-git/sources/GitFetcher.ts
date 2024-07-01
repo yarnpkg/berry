@@ -1,7 +1,7 @@
 import {Fetcher, FetchOptions, MinimalFetchOptions, FetchResult} from '@yarnpkg/core';
 import {Locator}                                                 from '@yarnpkg/core';
 import {miscUtils, scriptUtils, structUtils, tgzUtils}           from '@yarnpkg/core';
-import {ppath, xfs}                                              from '@yarnpkg/fslib';
+import {PortablePath, ppath, xfs}                                from '@yarnpkg/fslib';
 
 import * as gitUtils                                             from './gitUtils';
 import {Hooks}                                                   from './index';
@@ -48,12 +48,14 @@ export class GitFetcher implements Fetcher {
   }
 
   async cloneFromRemote(locator: Locator, opts: FetchOptions) {
-    const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
-
     const repoUrlParts = gitUtils.splitRepoUrl(locator.reference);
-    const packagePath = ppath.join(cloneTarget, `package.tgz`);
 
-    await scriptUtils.prepareExternalProject(cloneTarget, packagePath, {
+    const cloneTarget = await gitUtils.clone(locator.reference, opts.project.configuration);
+    const projectPath = ppath.resolve(cloneTarget, repoUrlParts.extra.cwd ?? PortablePath.dot);
+
+    const packagePath = ppath.join(projectPath, `package.tgz`);
+
+    await scriptUtils.prepareExternalProject(projectPath, packagePath, {
       configuration: opts.project.configuration,
       report: opts.report,
       workspace: repoUrlParts.extra.workspace,

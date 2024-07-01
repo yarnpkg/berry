@@ -1,9 +1,7 @@
-const {
-  tests: {startPackageServer},
-} = require(`pkg-tests-core`);
-const {parseSyml} = require(`@yarnpkg/parsers`);
-const {execUtils, semverUtils} = require(`@yarnpkg/core`);
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+import {execUtils, semverUtils}      from '@yarnpkg/core';
+import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
+import {parseSyml}                   from '@yarnpkg/parsers';
+import {tests}                       from 'pkg-tests-core';
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -15,19 +13,19 @@ const TESTED_URLS = {
   // through our test server (cf following tests); still, these tests are
   // useful since they test various different protocols such as ssh.
 
-  [`git://github.com/yarnpkg/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
-  [`git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, ci: false},
-  [`https://github.com/yarnpkg/util-deprecate.git#semver:^1.0.0`]: {version: `1.0.2`, ci: false},
-  [`https://github.com/yarnpkg/util-deprecate.git#semver:>=1.0.0 <1.0.2`]: {version: `1.0.1`, ci: false},
-  [`https://github.com/yarnpkg/util-deprecate.git#v1.0.0`]: {version: `1.0.0`},
-  [`https://github.com/yarnpkg/util-deprecate.git#master`]: {version: `1.0.2`},
-  [`https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`},
+  [`git://github.com/yarnpkg/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, runOnCI: false},
+  [`git+ssh://git@github.com/yarnpkg/util-deprecate.git#v1.0.1`]: {version: `1.0.1`, runOnCI: false},
+  [`https://github.com/yarnpkg/util-deprecate.git#semver:^1.0.0`]: {version: `1.0.2`, runOnCI: false},
+  [`https://github.com/yarnpkg/util-deprecate.git#semver:>=1.0.0 <1.0.2`]: {version: `1.0.1`, runOnCI: false},
+  [`https://github.com/yarnpkg/util-deprecate.git#v1.0.0`]: {version: `1.0.0`, runOnCI: true},
+  [`https://github.com/yarnpkg/util-deprecate.git#master`]: {version: `1.0.2`, runOnCI: true},
+  [`https://github.com/yarnpkg/util-deprecate.git#b3562c2798507869edb767da869cd7b85487726d`]: {version: `1.0.0`, runOnCI: true},
 };
 
 describe(`Protocols`, () => {
   describe(`git:`, () => {
-    for (const [url, {ci = true, version}] of Object.entries(TESTED_URLS)) {
-      const testFn = !process.env.GITHUB_ACTIONS || ci
+    for (const [url, {version, runOnCI}] of Object.entries(TESTED_URLS)) {
+      const testFn = !process.env.GITHUB_ACTIONS || runOnCI
         ? test
         : test.skip;
 
@@ -40,7 +38,7 @@ describe(`Protocols`, () => {
           async ({path, run, source}) => {
             await run(`install`);
 
-            const content = await xfs.readFilePromise(`${path}/yarn.lock`, `utf8`);
+            const content = await xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`);
             const lock = parseSyml(content);
 
             const key = `util-deprecate@${url}`;
@@ -62,7 +60,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`has-prepack`]: startPackageServer().then(url => `${url}/repositories/has-prepack.git`),
+            [`has-prepack`]: tests.startPackageServer().then(url => `${url}/repositories/has-prepack.git`),
           },
         },
         async ({path, run, source}) => {
@@ -78,7 +76,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`no-prepack`]: startPackageServer().then(url => `${url}/repositories/no-prepack.git`),
+            [`no-prepack`]: tests.startPackageServer().then(url => `${url}/repositories/no-prepack.git`),
           },
         },
         async ({path, run, source}) => {
@@ -90,12 +88,65 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it should support installing packages from projects in subfolders`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pkg-a`]: tests.startPackageServer().then(url => `${url}/repositories/deep-projects.git#cwd=projects/pkg-a`),
+            [`pkg-b`]: tests.startPackageServer().then(url => `${url}/repositories/deep-projects.git#cwd=projects/pkg-b`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('pkg-a/package.json')`)).resolves.toMatchObject({
+            name: `pkg-a`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('pkg-b/package.json')`)).resolves.toMatchObject({
+            name: `pkg-b`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should support installing workspace packages from projects in subfolders`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`lib-a`]: tests.startPackageServer().then(url => `${url}/repositories/deep-projects.git#cwd=projects/pkg-a&workspace=lib`),
+            [`lib-b`]: tests.startPackageServer().then(url => `${url}/repositories/deep-projects.git#cwd=projects/pkg-b&workspace=lib`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('lib-a/package.json')`)).resolves.toMatchObject({
+            name: `lib`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('lib-b/package.json')`)).resolves.toMatchObject({
+            name: `lib`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('lib-a')`)).resolves.toEqual(`pkg-a`);
+          await expect(source(`require('lib-b')`)).resolves.toEqual(`pkg-b`);
+        },
+      ),
+    );
+
+    test(
       `it should support installing specific workspaces`,
       makeTemporaryEnv(
         {
           dependencies: {
-            [`pkg-a`]: startPackageServer().then(url => `${url}/repositories/workspaces.git#workspace=pkg-a`),
-            [`pkg-b`]: startPackageServer().then(url => `${url}/repositories/workspaces.git#workspace=pkg-b`),
+            [`pkg-a`]: tests.startPackageServer().then(url => `${url}/repositories/workspaces.git#workspace=pkg-a`),
+            [`pkg-b`]: tests.startPackageServer().then(url => `${url}/repositories/workspaces.git#workspace=pkg-b`),
           },
         },
         async ({path, run, source}) => {
@@ -119,7 +170,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+            [`yarn-1-project`]: tests.startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
           },
         },
         async ({path, run, source}) => {
@@ -143,7 +194,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`npm-project`]: startPackageServer().then(url => `${url}/repositories/npm-project.git`),
+            [`npm-project`]: tests.startPackageServer().then(url => `${url}/repositories/npm-project.git`),
           },
         },
         async ({path, run, source}) => {
@@ -159,7 +210,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`npm-has-prepack`]: startPackageServer().then(url => `${url}/repositories/npm-has-prepack.git`),
+            [`npm-has-prepack`]: tests.startPackageServer().then(url => `${url}/repositories/npm-has-prepack.git`),
           },
         },
         async ({path, run, source}) => {
@@ -177,7 +228,7 @@ describe(`Protocols`, () => {
               npm_config_production: `true`,
 
               // also force npm to use the package server as the registry so that the `has-bin-entry` dependency can be resolved
-              NPM_CONFIG_REGISTRY: await startPackageServer(),
+              NPM_CONFIG_REGISTRY: await tests.startPackageServer(),
             },
           })).resolves.toBeTruthy();
           await expect(source(`require('npm-has-prepack')`)).resolves.toEqual(42);
@@ -190,8 +241,8 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`pkg-a`]: startPackageServer().then(url => `${url}/repositories/npm-workspaces.git#workspace=pkg-a`),
-            [`pkg-b`]: startPackageServer().then(url => `${url}/repositories/npm-workspaces.git#workspace=pkg-b`),
+            [`pkg-a`]: tests.startPackageServer().then(url => `${url}/repositories/npm-workspaces.git#workspace=pkg-a`),
+            [`pkg-b`]: tests.startPackageServer().then(url => `${url}/repositories/npm-workspaces.git#workspace=pkg-b`),
           },
         },
         async ({path, run, source}) => {
@@ -226,7 +277,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+            [`yarn-1-project`]: tests.startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
           },
         },
         async ({path, run, source}) => {
@@ -250,7 +301,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`no-lockfile-project`]: startPackageServer().then(url => `${url}/repositories/no-lockfile-project.git`),
+            [`no-lockfile-project`]: tests.startPackageServer().then(url => `${url}/repositories/no-lockfile-project.git`),
           },
         },
         async ({path, run, source}) => {
@@ -269,7 +320,7 @@ describe(`Protocols`, () => {
       makeTemporaryEnv(
         {
           dependencies: {
-            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+            [`yarn-1-project`]: tests.startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
           },
         },
         async ({path, run, source}) => {
