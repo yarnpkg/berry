@@ -173,11 +173,11 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `  : exports => exports;\n`,
   `\n`,
   ...(wrapModule ? [
-    `const moduleWrapperFn = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
-    `\n`,
     `const moduleWrapper = exports => {\n`,
     `  return wrapWithUserWrapper(moduleWrapperFn(exports));\n`,
     `};\n`,
+    `\n`,
+    `const moduleWrapperFn = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
     `\n`,
   ] : []),
   `// Defer to the real ${module} your application uses\n`,
