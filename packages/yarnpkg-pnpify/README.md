@@ -10,4 +10,4 @@ A CLI tool designed for running commands with a virtual node_modules folder.
 
 ## Commands
 
-- [`pnpify run`](https://yarnpkg.com/pnpify/cli/run) - Run a command with a virtual node_modules folder.
+- [`pnpify run`](https://yarnpkg.com/cli/pnpify/run) - Run a command with a virtual node_modules folder.

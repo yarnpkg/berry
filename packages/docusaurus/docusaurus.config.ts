@@ -1,4 +1,5 @@
 import '@yarnpkg/monorepo/scripts/setup-local-plugins';
+import '@yarnpkg/monorepo/scripts/setup-ts-execution';
 import type {Options}                                               from '@docusaurus/preset-classic';
 import type {Config}                                                from '@docusaurus/types';
 import {YarnVersion}                                                from '@yarnpkg/core';
@@ -150,6 +151,12 @@ export default async function (): Promise<Config> {
         },
       ],
       [
+        require.resolve(`./config/docusaurus/plugins/cli-docs.ts`),
+        {
+          remarkPlugins,
+        },
+      ],
+      [
         `docusaurus-plugin-typedoc-api`,
         await typedocPluginConfig(),
       ],
@@ -229,8 +236,7 @@ export default async function (): Promise<Config> {
             label: `Features`,
           },
           {
-            type: `docSidebar`,
-            sidebarId: `cli`,
+            to: `cli`,
             label: `CLI`,
             position: `left`,
           },

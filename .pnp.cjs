@@ -9008,7 +9008,6 @@ const RAW_RUNTIME_STATE =
           ["@mdx-js/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.0.0"],\
           ["@monaco-editor/react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:4.4.6"],\
           ["@primer/octicons-react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:17.7.0"],\
-          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/dompurify", "npm:3.0.2"],\
           ["@types/git-url-parse", "npm:9.0.0"],\
           ["@types/lodash", "npm:4.14.172"],\
@@ -9024,18 +9023,20 @@ const RAW_RUNTIME_STATE =
           ["@types/resolve", "npm:1.20.2"],\
           ["@types/semver", "npm:7.5.8"],\
           ["@types/three", "npm:0.144.0"],\
+          ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
+          ["@yarnpkg/pnpify", "workspace:packages/yarnpkg-pnpify"],\
+          ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
           ["algoliasearch", "npm:4.22.1"],\
           ["ansi-to-html", "npm:0.7.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["clsx", "npm:1.2.1"],\
-          ["cross-spawn", "npm:7.0.3"],\
           ["docusaurus-plugin-typedoc-api", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch::version=4.2.0&hash=b02f93"],\
           ["dompurify", "npm:3.0.5"],\
           ["esast-util-from-js", "npm:2.0.1"],\
@@ -9043,6 +9044,7 @@ const RAW_RUNTIME_STATE =
           ["fast-glob", "npm:3.2.12"],\
           ["git-url-parse", "npm:13.1.0"],\
           ["github-markdown-css", "npm:5.1.0"],\
+          ["jiti", "npm:1.21.0"],\
           ["lodash", "npm:4.17.21"],\
           ["markdown-it", "npm:13.0.1"],\
           ["markdown-it-br", "npm:1.0.0"],\
