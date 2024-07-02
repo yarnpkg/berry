@@ -125,6 +125,7 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
   `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
+  `const absUserWrapperPath = resolve(__dirname, \`./sdk.user.cjs\`);\n`,
   `const absRequire = createRequire(absPnpApiPath);\n`,
   `\n`,
   `const absPnpLoaderPath = resolve(absPnpApiPath, \`../.pnp.loader.mjs\`);\n`,
@@ -167,12 +168,24 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   `}\n`,
   `\n`,
+  `const wrapWithUserWrapper = existsSync(absUserWrapperPath)\n`,
+  `  ? exports => absRequire(absUserWrapperPath)(exports)\n`,
+  `  : exports => exports;\n`,
+  `\n`,
   ...(wrapModule ? [
-    `const moduleWrapper = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
+    `const moduleWrapperFn = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
+    `\n`,
+    `const moduleWrapper = exports => {\n`,
+    `  return wrapWithUserWrapper(moduleWrapperFn(exports));\n`,
+    `};\n`,
     `\n`,
   ] : []),
   `// Defer to the real ${module} your application uses\n`,
-  wrapModule ? `module.exports = moduleWrapper(absRequire(\`${module}\`));\n` : `module.exports = absRequire(\`${module}\`);\n`,
+  ...(wrapModule ? [
+    `module.exports = moduleWrapper(absRequire(\`${module}\`));\n`,
+  ] : [
+    `module.exports = wrapWithUserWrapper(absRequire(\`${module}\`));\n`,
+  ]),
 ].join(``);
 
 export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<Wrapper>;
