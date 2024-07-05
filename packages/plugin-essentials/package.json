@@ -10,7 +10,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
-    "ci-info": "^3.2.0",
+    "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
     "enquirer": "^2.3.6",
     "lodash": "^4.17.15",
