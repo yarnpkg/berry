@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from 'react';
-import * as THREE                 from 'three';
+import React, {useEffect, useRef, useState} from 'react';
+import * as THREE                           from 'three';
 
-import styles                     from './StarrySky.module.css';
+import styles                               from './StarrySky.module.css';
 
 const r = 1000;
 const FACTOR = 4;
