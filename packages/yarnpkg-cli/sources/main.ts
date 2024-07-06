@@ -25,7 +25,7 @@ function runBinary(path: PortablePath) {
       },
     });
   } else {
-    execFileSync(physicalPath, process.argv.slice(2), {
+    execFileSync(process.execPath, process.argv.slice(2), {
       stdio: `inherit`,
       env: {
         ...process.env,
