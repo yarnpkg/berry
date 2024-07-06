@@ -10,6 +10,13 @@ import {pluginCommands}                                                         
 function runBinary(path: PortablePath) {
   const physicalPath = npath.fromPortablePath(path);
 
+  if (!physicalPath) {
+    throw Object.assign(
+      new Error(`runBinary ${path} ENOENT`),
+      {code: `ENOENT`, errno: -2},
+    );
+  }
+
   process.on(`SIGINT`, () => {
     // We don't want SIGINT to kill our process; we want it to kill the
     // innermost process, whose end will cause our own to exit.
@@ -99,14 +106,16 @@ export async function main({binaryVersion, pluginConfiguration}: {binaryVersion:
       await exec(cli);
       return;
     } else if (yarnPath !== null && !ignorePath) {
-      if (!xfs.existsSync(yarnPath)) {
-        process.stdout.write(cli.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`)));
-        process.exitCode = 1;
-      } else {
-        try {
-          runBinary(yarnPath);
-        } catch (error) {
-          process.exitCode = error.code || 1;
+      try {
+        runBinary(yarnPath);
+      } catch (error) {
+        if (error.code === `ENOENT`)
+          process.stdout.write(cli.error(new Error(`The "yarn-path" option has been set (in ${configuration.sources.get(`yarnPath`)}), but the specified location doesn't exist (${yarnPath}).`)));
+
+        if (typeof error.code === `number`) {
+          process.exitCode = error.code;
+        } else {
+          process.exitCode = 1;
         }
       }
     } else {
