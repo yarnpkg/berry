@@ -22,25 +22,14 @@ function runBinary(path: PortablePath) {
     // innermost process, whose end will cause our own to exit.
   });
 
-  if (physicalPath) {
-    execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
-      stdio: `inherit`,
-      env: {
-        ...process.env,
-        YARN_IGNORE_PATH: `1`,
-        YARN_IGNORE_CWD: `1`,
-      },
-    });
-  } else {
-    execFileSync(process.execPath, process.argv.slice(2), {
-      stdio: `inherit`,
-      env: {
-        ...process.env,
-        YARN_IGNORE_PATH: `1`,
-        YARN_IGNORE_CWD: `1`,
-      },
-    });
-  }
+  execFileSync(process.execPath, [physicalPath, ...process.argv.slice(2)], {
+    stdio: `inherit`,
+    env: {
+      ...process.env,
+      YARN_IGNORE_PATH: `1`,
+      YARN_IGNORE_CWD: `1`,
+    },
+  });
 }
 
 export async function main({binaryVersion, pluginConfiguration}: {binaryVersion: string, pluginConfiguration: PluginConfiguration}) {
