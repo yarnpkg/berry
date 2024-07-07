@@ -8,7 +8,7 @@ export default [
 
   {
     ignores: [
-      `*.json`,
+      `**/*.json`,
       `**/coverage/**`,
       `.yarn`,
 
