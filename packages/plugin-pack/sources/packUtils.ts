@@ -29,6 +29,7 @@ const ALWAYS_IGNORE = [
   `.github`,
   `.git`,
   `.hg`,
+  `.sl`,
   `node_modules`,
 
   `.npmignore`,
