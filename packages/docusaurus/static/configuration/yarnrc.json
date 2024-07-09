@@ -526,7 +526,7 @@
     },
     "npmAuditExcludePackages": {
       "_package": "@yarnpkg/plugin-npm-cli",
-      "title": "Array of advisory ID glob patterns of packages to exclude from `yarn npm audit`.",
+      "title": "Array of package names to exclude from `yarn npm audit`.",
       "type": "array",
       "items": {
         "type": "string"
