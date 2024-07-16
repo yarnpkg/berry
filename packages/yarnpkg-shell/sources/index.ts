@@ -124,7 +124,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     if (!stat.isDirectory())
       throw new ShellError(`cd: not a directory: ${target}`);
 
+    state.environment.PWD = npath.fromPortablePath(resolvedTarget);
+    state.environment.OLDPWD = npath.fromPortablePath(state.cwd);
     state.cwd = resolvedTarget;
+
     return 0;
   }],
 
@@ -1065,7 +1068,10 @@ export async function execute(command: string, args: Array<string> = [], {
     glob,
   }, {
     cwd,
-    environment: normalizedEnv,
+    environment: Object.assign({}, normalizedEnv, {
+      PWD: cwd,
+      OLDPWD: ``,
+    }),
     exitCode: null,
     procedures: {},
     stdin,
