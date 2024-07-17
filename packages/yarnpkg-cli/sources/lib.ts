@@ -187,6 +187,11 @@ export async function runExit(argv: Array<string>, {cwd = ppath.cwd(), selfPath,
   const cli = getBaseCli({cwd, pluginConfiguration});
 
   try {
+    // The exit code is set to an error code before the CLI runs so that
+    // if the event loop becomes empty and node terminates without
+    // finishing the execution of this function it counts as an error.
+    // https://github.com/yarnpkg/berry/issues/6398
+    process.exitCode = 42;
     process.exitCode = await run(cli, argv, {selfPath, pluginConfiguration});
   } catch (error) {
     Cli.defaultContext.stdout.write(cli.error(error));
