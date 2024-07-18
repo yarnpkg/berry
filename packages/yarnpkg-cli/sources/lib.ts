@@ -186,6 +186,12 @@ export async function getCli({cwd = ppath.cwd(), pluginConfiguration = getPlugin
 export async function runExit(argv: Array<string>, {cwd = ppath.cwd(), selfPath, pluginConfiguration}: {cwd: PortablePath, selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
   const cli = getBaseCli({cwd, pluginConfiguration});
 
+  function unexpectedTerminationHandler() {
+    Cli.defaultContext.stdout.write(`ERROR: Yarn is terminating due to an unexpected empty event loop.\nPlease report this issue at https://github.com/yarnpkg/berry/issues.`);
+  }
+
+  process.once(`beforeExit`, unexpectedTerminationHandler);
+
   try {
     // The exit code is set to an error code before the CLI runs so that
     // if the event loop becomes empty and node terminates without
@@ -197,6 +203,7 @@ export async function runExit(argv: Array<string>, {cwd = ppath.cwd(), selfPath,
     Cli.defaultContext.stdout.write(cli.error(error));
     process.exitCode = 1;
   } finally {
+    process.off(`beforeExit`, unexpectedTerminationHandler);
     await xfs.rmtempPromise();
   }
 }
