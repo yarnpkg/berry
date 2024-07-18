@@ -5303,7 +5303,6 @@ __metadata:
     "@mdx-js/react": "npm:^3.0.0"
     "@monaco-editor/react": "npm:^4.4.6"
     "@primer/octicons-react": "npm:^17.7.0"
-    "@types/cross-spawn": "npm:6.0.0"
     "@types/dompurify": "npm:^3"
     "@types/git-url-parse": "npm:^9.0.0"
     "@types/lodash": "npm:^4.14.136"
@@ -5319,18 +5318,20 @@ __metadata:
     "@types/resolve": "npm:^1.20.0"
     "@types/semver": "npm:^7.1.0"
     "@types/three": "npm:^0.144.0"
+    "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/pnpify": "workspace:^"
+    "@yarnpkg/sdks": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
     algoliasearch: "npm:^4.14.2"
     ansi-to-html: "npm:^0.7.2"
     clipanion: "npm:^4.0.0-rc.2"
     clsx: "npm:^1.2.1"
-    cross-spawn: "npm:7.0.3"
     docusaurus-plugin-typedoc-api: "patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch"
     dompurify: "npm:^3.0.5"
     esast-util-from-js: "npm:^2.0.1"
@@ -5338,6 +5339,7 @@ __metadata:
     fast-glob: "npm:^3.2.2"
     git-url-parse: "npm:^13.1.0"
     github-markdown-css: "npm:^5.1.0"
+    jiti: "npm:^1.21.0"
     lodash: "npm:^4.17.15"
     markdown-it: "npm:^13.0.1"
     markdown-it-br: "npm:^1.0.0"
@@ -13154,7 +13156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.20.0":
+"jiti@npm:^1.20.0, jiti@npm:^1.21.0":
   version: 1.21.0
   resolution: "jiti@npm:1.21.0"
   bin:
