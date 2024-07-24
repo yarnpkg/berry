@@ -810,7 +810,7 @@
       "type": "number",
       "default": "os.availableParallelism()"
     },
-    "workerPoolMode": {
+    "taskPoolMode": {
       "_package": "@yarnpkg/core",
       "title": "Execution strategy for heavy tasks.",
       "description": "By default will use workers when performing heavy tasks, such as converting tgz files to zip. This setting can be used to disable workers and use a regular in-thread async processing.",
