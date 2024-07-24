@@ -7,6 +7,7 @@
   ],
   "devDependencies": {
     "@arcanis/sherlock": "^2.0.3",
+    "@eslint/config-inspector": "^0.5.0",
     "@types/jest": "^28.1.6",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^18.17.15",
@@ -54,7 +55,7 @@
     "build:plugin-workspace-tools": "yarn node -r ./scripts/setup-ts-execution ./scripts/create-mock-plugin.ts workspace-tools",
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/yarnpkg-cli/sources/pluginCommands.ts",
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' --exclude '*.tsx' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
-    "test:lint": "eslint --max-warnings 0 \"./**/*.@(tsx|ts|js|mjs)\"",
+    "test:lint": "eslint --max-warnings 0 .",
     "test:unit": "jest",
     "typecheck:all": "tsc -p ."
   },
