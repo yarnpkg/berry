@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup upterm session
       uses: lhotari/action-upterm@d23c2722bdab893785c9fbeae314cbf080645bd7
       with:

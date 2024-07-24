@@ -8,4 +8,7 @@ module.exports = {
   ],
   setupFiles: [require.resolve(`@yarnpkg/cli/polyfills`)],
   testTimeout: 50000,
+  transform: {
+    "\\.[jt]sx?$": require.resolve(`./scripts/setup-ts-jest.js`),
+  },
 };

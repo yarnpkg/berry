@@ -99,7 +99,11 @@ export default defineConfig([
       file: `./sources/esm-loader/built-loader.js`,
       format: `esm`,
       generatedCode: `es2015`,
+      banner: `/* eslint-disable */\n// @ts-nocheck\n`,
     },
+    external: [
+      `../.pnp.cjs`,
+    ],
     plugins: [
       resolve({
         extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],

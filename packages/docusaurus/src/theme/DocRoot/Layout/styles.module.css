@@ -1,0 +1,59 @@
+.docRoot {
+  display: flex;
+  width: 100%;
+
+  margin: 40px 40px 0;
+  width: calc(100vw - 80px);
+  min-height: calc(100vh - var(--ifm-navbar-height) - 40px);
+
+  background: white;
+  border-radius: 10px 10px 0 0;
+}
+
+.docsWrapper {
+  display: flex;
+  flex: 1 0 auto;
+}
+
+.modalParent {
+  display: flex;
+
+  position: fixed;
+
+  inset: 0;
+  z-index: calc(var(--ifm-z-index-fixed) - 1);
+
+  padding-top: calc(var(--ifm-navbar-height) - 1px);
+}
+
+@media (max-width: 768px) {
+  .modalParent {
+    display: none;
+  }
+}
+
+.modalOverlay {
+  position: absolute;
+
+  inset: 0;
+  z-index: -1;
+
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.modalContent {
+  margin: auto;
+
+  max-width: calc((100vw - 80px - var(--doc-sidebar-width)) * 9 / 12);
+  max-height: 70vh;
+  overflow-y: scroll;
+
+  background: #ffffff;
+  border-radius: 10px;
+
+  padding: 0 30px;
+}
+
+.modalContent :global(.markdown) {
+  padding-bottom: 30px;
+}

@@ -145,7 +145,7 @@ function SearchBar() {
   };
 
   return (
-    <input className={clsx(indexStyles.search, styles.search)} autoFocus={true} placeholder={`Search packages (i.e. babel, webpack, react, ...)`} value={query} onChange={handleChange}/>
+    <input className={clsx(indexStyles.search, styles.search)} autoFocus={true} placeholder={`Search packages (e.g. babel, webpack, react, ...)`} value={query} onChange={handleChange}/>
   );
 }
 
