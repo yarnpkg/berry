@@ -5875,7 +5875,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@nodelib/fs.walk", "npm:1.2.8"],\
           ["@nodelib/fs.scandir", "npm:2.1.5"],\
-          ["fastq", "npm:1.13.0"]\
+          ["fastq", "npm:1.17.1"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -19016,13 +19016,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["acorn", [\
-      ["npm:8.11.3", {\
-        "packageLocation": "./.yarn/cache/acorn-npm-8.11.3-0d7ab48b38-b688e7e3c6.zip/node_modules/acorn/",\
-        "packageDependencies": [\
-          ["acorn", "npm:8.11.3"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:8.12.0", {\
         "packageLocation": "./.yarn/cache/acorn-npm-8.12.0-10680c055b-550cc50331.zip/node_modules/acorn/",\
         "packageDependencies": [\
@@ -19044,7 +19037,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["acorn-import-assertions", "virtual:95b1fa19db5d1fcc480a4bbd2645ed26f5170690debaee18f0e60b2f694c39ece4caa4347fdee72e7b63a80f62b520941af2e68e357305b34a5e10556465afed#npm:1.9.0"],\
           ["@types/acorn", null],\
-          ["acorn", "npm:8.11.3"]\
+          ["acorn", "npm:8.12.0"]\
         ],\
         "packagePeers": [\
           "@types/acorn",\
@@ -19066,7 +19059,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["acorn-jsx", "virtual:a50722a5a9326b6a5f12350c494c4db3aa0f4caeac45e3e9e5fe071da20014ecfe738fe2ebe2c9c98abae81a4ea86b42f56d776b3bd5ec37f9ad3670c242b242#npm:5.3.2"],\
           ["@types/acorn", null],\
-          ["acorn", "npm:8.11.3"]\
+          ["acorn", "npm:8.12.0"]\
         ],\
         "packagePeers": [\
           "@types/acorn",\
@@ -23055,7 +23048,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["esast-util-from-js", "npm:2.0.1"],\
           ["@types/estree-jsx", "npm:1.0.4"],\
-          ["acorn", "npm:8.11.3"],\
+          ["acorn", "npm:8.12.0"],\
           ["esast-util-from-estree", "npm:2.0.0"],\
           ["vfile-message", "npm:4.0.2"]\
         ],\
@@ -23534,7 +23527,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/espree-npm-9.6.1-a50722a5a9-255ab260f0.zip/node_modules/espree/",\
         "packageDependencies": [\
           ["espree", "npm:9.6.1"],\
-          ["acorn", "npm:8.11.3"],\
+          ["acorn", "npm:8.12.0"],\
           ["acorn-jsx", "virtual:a50722a5a9326b6a5f12350c494c4db3aa0f4caeac45e3e9e5fe071da20014ecfe738fe2ebe2c9c98abae81a4ea86b42f56d776b3bd5ec37f9ad3670c242b242#npm:5.3.2"],\
           ["eslint-visitor-keys", "npm:3.4.3"]\
         ],\
@@ -23981,14 +23974,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["fastq", [\
-      ["npm:1.13.0", {\
-        "packageLocation": "./.yarn/cache/fastq-npm-1.13.0-a45963881c-0902cb9b81.zip/node_modules/fastq/",\
-        "packageDependencies": [\
-          ["fastq", "npm:1.13.0"],\
-          ["reusify", "npm:1.0.4"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:1.17.1", {\
         "packageLocation": "./.yarn/cache/fastq-npm-1.17.1-56d4554993-a443180068.zip/node_modules/fastq/",\
         "packageDependencies": [\
@@ -28919,7 +28904,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/micromark-extension-mdxjs-npm-3.0.0-c1ee8da220-66e0df7b2d.zip/node_modules/micromark-extension-mdxjs/",\
         "packageDependencies": [\
           ["micromark-extension-mdxjs", "npm:3.0.0"],\
-          ["acorn", "npm:8.11.3"],\
+          ["acorn", "npm:8.12.0"],\
           ["acorn-jsx", "virtual:a50722a5a9326b6a5f12350c494c4db3aa0f4caeac45e3e9e5fe071da20014ecfe738fe2ebe2c9c98abae81a4ea86b42f56d776b3bd5ec37f9ad3670c242b242#npm:5.3.2"],\
           ["micromark-extension-mdx-expression", "npm:3.0.0"],\
           ["micromark-extension-mdx-jsx", "npm:3.0.0"],\
@@ -35134,7 +35119,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["terser", "npm:5.27.0"],\
           ["@jridgewell/source-map", "npm:0.3.5"],\
-          ["acorn", "npm:8.11.3"],\
+          ["acorn", "npm:8.12.0"],\
           ["commander", "npm:2.20.0"],\
           ["source-map-support", "npm:0.5.20"]\
         ],\
@@ -36606,7 +36591,7 @@ const RAW_RUNTIME_STATE =
           ["@webassemblyjs/ast", "npm:1.11.6"],\
           ["@webassemblyjs/wasm-edit", "npm:1.11.6"],\
           ["@webassemblyjs/wasm-parser", "npm:1.11.6"],\
-          ["acorn", "npm:8.11.3"],\
+          ["acorn", "npm:8.12.0"],\
           ["acorn-import-assertions", "virtual:95b1fa19db5d1fcc480a4bbd2645ed26f5170690debaee18f0e60b2f694c39ece4caa4347fdee72e7b63a80f62b520941af2e68e357305b34a5e10556465afed#npm:1.9.0"],\
           ["browserslist", "npm:4.22.3"],\
           ["chrome-trace-event", "npm:1.0.2"],\
@@ -36640,7 +36625,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["webpack-bundle-analyzer", "npm:4.10.1"],\
           ["@discoveryjs/json-ext", "npm:0.5.7"],\
-          ["acorn", "npm:8.11.3"],\
+          ["acorn", "npm:8.12.0"],\
           ["acorn-walk", "npm:8.2.0"],\
           ["commander", "npm:7.2.0"],\
           ["debounce", "npm:1.2.1"],\
