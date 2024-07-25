@@ -60,6 +60,7 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
   });
 
   const listing = await fastGlob([pattern, ...dirPatterns], {
+    absolute: true,
     cwd: npath.fromPortablePath(cwd),
     onlyFiles: false,
   });
