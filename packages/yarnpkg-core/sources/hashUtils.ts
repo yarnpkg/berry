@@ -1,6 +1,6 @@
-import {PortablePath, xfs, npath, FakeFS} from '@yarnpkg/fslib';
-import {createHash, BinaryLike}           from 'crypto';
-import fastGlob                           from 'fast-glob';
+import {PortablePath, xfs, npath, FakeFS, ppath} from '@yarnpkg/fslib';
+import {createHash, BinaryLike}                  from 'crypto';
+import fastGlob                                  from 'fast-glob';
 
 export function makeHash<T extends string = string>(...args: Array<BinaryLike | null>): T {
   const hash = createHash(`sha512`);
@@ -60,7 +60,6 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
   });
 
   const listing = await fastGlob([pattern, ...dirPatterns], {
-    absolute: true,
     cwd: npath.fromPortablePath(cwd),
     onlyFiles: false,
   });
@@ -71,7 +70,7 @@ export async function checksumPattern(pattern: string, {cwd}: {cwd: PortablePath
   const hashes = await Promise.all(listing.map(async entry => {
     const parts: Array<Buffer> = [Buffer.from(entry)];
 
-    const p = npath.toPortablePath(entry);
+    const p = ppath.join(cwd, npath.toPortablePath(entry));
     const stat = await xfs.lstatPromise(p);
 
     if (stat.isSymbolicLink())
