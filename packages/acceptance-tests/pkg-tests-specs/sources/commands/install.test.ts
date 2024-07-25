@@ -900,5 +900,30 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(`it should exit with an error code after an unexpected empty event loop`,
+      makeTemporaryEnv({}, async ({path, run}) => {
+        await xfs.writeFilePromise(ppath.join(path, `plugin.cjs`), `
+module.exports = {
+  name: 'test',
+  factory() {
+    return {
+      hooks: {
+        afterAllInstalled: () => new Promise(() => {}),
+      },
+    };
+  },
+};
+`);
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          plugins: [`./plugin.cjs`],
+        });
+
+        await expect(run(`install`)).rejects.toMatchObject({
+          code: 42,
+          stdout: expect.stringContaining(`Yarn is terminating due to an unexpected empty event loop`),
+        });
+      }),
+    );
   });
 });

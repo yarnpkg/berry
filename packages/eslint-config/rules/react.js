@@ -4,6 +4,8 @@ import reactEslint from 'eslint-plugin-react';
 // eslint-disable-next-line arca/no-default-export
 export default [
   {
+    name: `@yarnpkg/configs/react`,
+
     plugins: {
       [`arca`]: arcaEslint,
       [`react`]: reactEslint,
