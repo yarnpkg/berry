@@ -30,6 +30,7 @@ import * as nodeUtils                                                           
 import * as semverUtils                                                                                          from './semverUtils';
 import * as structUtils                                                                                          from './structUtils';
 import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
+import { WriteStream } from 'tty';
 
 const isPublicRepository = (function () {
   if (!GITHUB_ACTIONS || !process.env.GITHUB_EVENT_PATH)
@@ -313,6 +314,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: !isCI,
     defaultText: `<dynamic>`,
   },
+  /**
+   * @internal Prefer using `Configuration#isInteractive`.
+   */
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,
@@ -1784,6 +1788,13 @@ export class Configuration {
       libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
 
     return {os, cpu, libc};
+  }
+
+  isInteractive({interactive, stdout}: {interactive?: boolean, stdout: Writable}): boolean {
+    if (!(stdout as WriteStream).isTTY)
+      return false;
+
+    return interactive ?? this.get(`preferInteractive`);
   }
 
   private packageExtensions: PackageExtensions | null = null;
