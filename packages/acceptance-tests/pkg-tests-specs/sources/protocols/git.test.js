@@ -3,7 +3,7 @@ const {
 } = require(`pkg-tests-core`);
 const {parseSyml} = require(`@yarnpkg/parsers`);
 const {execUtils, semverUtils} = require(`@yarnpkg/core`);
-const {npath, xfs} = require(`@yarnpkg/fslib`);
+const {Filename, npath, ppath, xfs} = require(`@yarnpkg/fslib`);
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -139,6 +139,25 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it should not call Yarn Classic when enableScripts is disabled`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`yarn-1-project`]: startPackageServer().then(url => `${url}/repositories/yarn-1-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+            enableScripts: false,
+          });
+          await expect(run(`install`)).resolves.toBeTruthy();
+
+          await expect(source(`require('yarn-1-project')`)).resolves.toMatch(/\byarn\/1\.[0-9]+/);
+        },
+      ),
+    );
+
+    test(
       `it should use npm to setup npm repositories`,
       makeTemporaryEnv(
         {
@@ -148,6 +167,25 @@ describe(`Protocols`, () => {
         },
         async ({path, run, source}) => {
           await run(`install`);
+
+          await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
+        },
+      ),
+    );
+
+    test(
+      `it should not call npm when enableScripts is disabled`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`npm-project`]: startPackageServer().then(url => `${url}/repositories/npm-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+            enableScripts: false,
+          });
+          await expect(run(`install`)).resolves.toBeTruthy();
 
           await expect(source(`require('npm-project')`)).resolves.toMatch(/\bnpm\/[0-9]+/);
         },
