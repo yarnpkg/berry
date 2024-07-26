@@ -8,6 +8,7 @@ import {parse as parseDotEnv}                                                   
 import {builtinModules}                                                                                          from 'module';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
+import {WriteStream}                                                                                             from 'tty';
 
 import {CorePlugin}                                                                                              from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
@@ -30,7 +31,6 @@ import * as nodeUtils                                                           
 import * as semverUtils                                                                                          from './semverUtils';
 import * as structUtils                                                                                          from './structUtils';
 import {IdentHash, Package, Descriptor, PackageExtension, PackageExtensionType, PackageExtensionStatus, Locator} from './types';
-import { WriteStream } from 'tty';
 
 const isPublicRepository = (function () {
   if (!GITHUB_ACTIONS || !process.env.GITHUB_EVENT_PATH)
