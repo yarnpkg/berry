@@ -5,6 +5,8 @@ title: "Contributing"
 description: Yarn's contributing guide.
 ---
 
+import {Inline as I, Command as C, Binary as B} from '@site/src/components/CommandLineHighlight2.tsx'
+
 Thanks for being here! Yarn gives a lot of importance to being a community project, and we rely on your help as much as you rely on ours. In order to help you help us, we've invested in an infra and documentation that should make contributing to Yarn very easy. If you have any feedback on what we could improve, please open an issue to discuss it!
 
 ## Opening an issue
@@ -33,7 +35,7 @@ Finally, feel free to pop on our [Discord channel](https://discordapp.com/invite
 
 ## Writing your feature
 
-Our repository is set up in such a way that calling `yarn` inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `esbuild` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
+Our repository is set up in such a way that calling <I><C><B>yarn</B></C></I> inside it will always use the TypeScript sources themselves - you don't have to rebuild anything for your changes to be applied there (we use `esbuild` to automatically transpile the files as we require them). The downside is that it's slower than the regular Yarn, but the improved developer experience is well worth it.
 
 ```commandline
 # Will automatically pick up any changes you made to sources
