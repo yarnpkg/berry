@@ -141,7 +141,7 @@ let lastUsedDefinition: Definition | null = null;
 const pendingOptions: Array<{ parent: Parent, index: number, node: InlineCode }> = [];
 
 const makeYarnCommand = (args: Array<string>, cli: YarnCli): MdxJsxTextElement => {
-  const [, ...argv] = args;
+  const argv = args.slice(args[1]?.includes(`/`) ? 2 : 1);
 
   // Define `yarn global` as an unknown command instead of implicit run
   if (argv.length === 1 && argv[0] === `global`) {
@@ -240,9 +240,13 @@ const makeYarnCommand = (args: Array<string>, cli: YarnCli): MdxJsxTextElement =
     pendingOptions.length = 0;
   }
 
+  const children = nodes.map(makeMdastNode);
+  if (args[1]?.includes(`/`))
+    children.unshift(mdx(`${NAMESPACE}.Value`, {}, args[1]));
+
   return mdx(`${NAMESPACE}.Command`, {}, [
     mdx(`${NAMESPACE}.Binary`, {}, cli.binaryName),
-    ...nodes.map(makeMdastNode),
+    ...children,
   ]);
 };
 
