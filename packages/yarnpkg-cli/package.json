@@ -37,7 +37,7 @@
     "@yarnpkg/plugin-version": "workspace:^",
     "@yarnpkg/plugin-workspace-tools": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
-    "ci-info": "^3.2.0",
+    "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
     "semver": "^7.1.2",
     "tslib": "^2.4.0",

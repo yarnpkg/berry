@@ -526,7 +526,7 @@
     },
     "npmAuditExcludePackages": {
       "_package": "@yarnpkg/plugin-npm-cli",
-      "title": "Array of advisory ID glob patterns of packages to exclude from `yarn npm audit`.",
+      "title": "Array of package name glob patterns to exclude from `yarn npm audit`.",
       "type": "array",
       "items": {
         "type": "string"
@@ -810,7 +810,7 @@
       "type": "number",
       "default": "os.availableParallelism()"
     },
-    "workerPoolMode": {
+    "taskPoolMode": {
       "_package": "@yarnpkg/core",
       "title": "Execution strategy for heavy tasks.",
       "description": "By default will use workers when performing heavy tasks, such as converting tgz files to zip. This setting can be used to disable workers and use a regular in-thread async processing.",

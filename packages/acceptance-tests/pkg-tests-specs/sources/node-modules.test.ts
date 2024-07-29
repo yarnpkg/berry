@@ -1871,7 +1871,7 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
           `.yarn-state.yml`,
