@@ -4,6 +4,8 @@ import arcaEslint       from 'eslint-plugin-arca';
 // eslint-disable-next-line arca/no-default-export
 export default [
   {
+    name: `@yarnpkg/configs/errors`,
+
     plugins: {
       [`arca`]: arcaEslint,
       [`@typescript-eslint`]: typescriptEslint,
@@ -71,12 +73,6 @@ export default [
       'no-unsafe-negation': 2,
 
       'valid-typeof': 2,
-    },
-  },
-  {
-    files: [`*.test.{js,ts}`],
-    env: {
-      jest: true,
     },
   },
 ];
