@@ -1667,11 +1667,10 @@ describe(`Plug'n'Play`, () => {
 
       expect(xfs.existsSync(ppath.join(path, Filename.pnpData))).toBeTruthy();
 
-      await writeFile(ppath.join(path, `file.js`), `
-        console.log(require.resolve('no-deps'));
-      `);
-
-      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+      await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+        name: `no-deps`,
+        version: `1.0.0`,
+      });
     }),
   );
 
@@ -1702,9 +1701,9 @@ describe(`Plug'n'Play`, () => {
         xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
       ]);
 
-      await expect(run(`node`, `file.js`, {
+      await run(`node`, `file.js`, {
         projectFolder: testSandboxPath,
-      })).resolves.toBeTruthy();
+      });
     }),
   );
 
