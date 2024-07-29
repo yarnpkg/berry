@@ -8,6 +8,8 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+- Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
+
 ## 4.1.0
 
 - Tweaks `-,--verbose` in `yarn workspaces foreach`; `-v` will now only print the prefixes, `-vv` will be necessary to also print the timings.
