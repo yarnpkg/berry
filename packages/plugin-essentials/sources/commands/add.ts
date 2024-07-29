@@ -135,7 +135,10 @@ export default class AddCommand extends BaseCommand {
     });
 
     const fixed = this.fixed;
-    const interactive = this.interactive ?? configuration.get(`preferInteractive`);
+    const interactive = configuration.isInteractive({
+      interactive: this.interactive,
+      stdout: this.context.stdout,
+    });
     const reuse = interactive || configuration.get(`preferReuse`);
 
     const modifier = suggestUtils.getModifier(this, project);
