@@ -1871,8 +1871,6 @@ describe(`Node_Modules`, () => {
         const trueInstallDir = ppath.resolve(path, `target`);
         await xfs.mkdirPromise(trueInstallDir);
 
-        await xfs.mkdirpPromise(ppath.join(path, `target`));
-
         await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}`), {
           name: `ws`,
           devDependencies: {
