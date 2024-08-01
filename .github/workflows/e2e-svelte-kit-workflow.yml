@@ -34,3 +34,19 @@ jobs:
 
         yarn
         yarn build
+
+    - name: 'Running the TypeScript integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh
+
+        yarn init -p
+        yarn add -D create-svelte@latest
+
+        yarn node -e "import('create-svelte').then(({create}) => create('my-app', {name:'my-app', template:'default', types:'typescript'}))"
+        cd my-app
+        touch yarn.lock
+
+        yarn
+        yarn build
+      if: |
+        success() || failure()
