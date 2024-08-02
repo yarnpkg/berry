@@ -2,12 +2,16 @@ import {xfs, npath}          from '@yarnpkg/fslib';
 import {fs as fsUtils, misc} from 'pkg-tests-core';
 import tar                   from 'tar';
 
-async function genPackList(run) {
-  const {stdout} = await run(`pack`, `--dry-run`, `--json`);
-
+function parseJsonStream(stdout) {
   return misc.parseJsonStream(stdout).map(entry => {
     return entry.location;
   }).filter(location => !!location);
+}
+
+async function genPackList(run) {
+  const {stdout} = await run(`pack`, `--dry-run`, `--json`);
+
+  return parseJsonStream(stdout);
 }
 
 describe(`Commands`, () => {
@@ -888,6 +892,50 @@ describe(`Commands`, () => {
 
         expect(originalManifest.dependencies).toBe(undefined);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:*`);
+      }),
+    );
+
+    test(
+      `pack packages with workspace root LICENSE if no own LICENSE is present`,
+      makeTemporaryMonorepoEnv({
+        name: `monorepo`,
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+      }, {
+        [`packages/foo`]: {
+          name: `foo`,
+          version: `1.0.0`,
+        },
+        [`packages/bar`]: {
+          name: `bar`,
+          version: `1.0.0`,
+        },
+      }, async ({path, run}) => {
+        await run(`install`);
+
+        await xfs.writeFilePromise(npath.toPortablePath(`${path}/LICENSE`), `# title\n`);
+        await xfs.writeFilePromise(npath.toPortablePath(`${path}/LICENSE.md`), `# title\n`);
+
+        const {stdout: fooStdout} = await run(`workspace`, `foo`, `pack`, `--dry-run`, `--json`);
+        const fooPackList = parseJsonStream(fooStdout);
+
+        expect(fooPackList).toEqual([
+          `package.json`,
+          `LICENSE`,
+          `LICENSE.md`,
+        ]);
+
+        await xfs.writeFilePromise(npath.toPortablePath(`${path}/packages/bar/LICENSE.txt`), `# title\n`);
+
+        const {stdout: barStdout} = await run(`workspace`, `bar`, `pack`, `--dry-run`, `--json`);
+        const barPackList = parseJsonStream(barStdout);
+
+        expect(barPackList).toEqual([
+          `LICENSE.txt`,
+          `package.json`,
+        ]);
       }),
     );
   });
