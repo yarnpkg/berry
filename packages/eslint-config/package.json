@@ -33,5 +33,6 @@
   },
   "devDependencies": {
     "eslint": "^8.57.0"
-  }
+  },
+  "stableVersion": "2.1.0"
 }
