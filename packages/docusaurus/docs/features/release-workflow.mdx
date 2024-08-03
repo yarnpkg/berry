@@ -36,7 +36,7 @@ Of course it's not that important when the packages from the monorepo are always
 
 Starting from the 2.0, the `yarn version` command now accepts a new flag: `--deferred`. When set, this flag will cause the command to not immediately change the `version` field of the local manifest, but to instead internally record an entry stating that the current package will need to receive an upgrade during the next release cycle. For example, the following:
 
-```
+```commandline
 yarn version minor --deferred
 ```
 

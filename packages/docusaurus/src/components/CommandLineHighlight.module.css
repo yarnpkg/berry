@@ -1,4 +1,5 @@
 :root {
+  --cli-color-block-prompt: #969faf80;
   --cli-color-block-binary: #9e95fa;
   --cli-color-block-path: #9bd1f4;
   --cli-color-block-positional: #89b6db;
@@ -6,7 +7,9 @@
   --cli-color-block-option: #b0b2fe;
   --cli-color-block-assign: #b37ed3;
   --cli-color-block-value: #d7a856;
+  --cli-color-block-unknown: #969faf;
 
+  --cli-color-inline-prompt: #969faf80;
   --cli-color-inline-binary: #7a5ecc;
   --cli-color-inline-path: #50569a;
   --cli-color-inline-positional: #6c92c0;
@@ -14,11 +17,14 @@
   --cli-color-inline-option: #6d6fc3;
   --cli-color-inline-assign: #b37ed3;
   --cli-color-inline-value: #d7a856;
+  --cli-color-inline-unknown: #969faf;
 }
 
 .block {
   --ifm-pre-background: #393A34;
+  color: white;
 
+  --cli-color-prompt: var(--cli-color-block-prompt);
   --cli-color-binary: var(--cli-color-block-binary);
   --cli-color-path: var(--cli-color-block-path);
   --cli-color-positional: var(--cli-color-block-positional);
@@ -26,9 +32,11 @@
   --cli-color-option: var(--cli-color-block-option);
   --cli-color-assign: var(--cli-color-block-assign);
   --cli-color-value: var(--cli-color-block-value);
+  --cli-color-unknown: var(--cli-color-block-unknown);
 }
 
 .inline {
+  --cli-color-prompt: var(--cli-color-inline-prompt);
   --cli-color-binary: var(--cli-color-inline-binary);
   --cli-color-path: var(--cli-color-inline-path);
   --cli-color-positional: var(--cli-color-inline-positional);
@@ -36,14 +44,20 @@
   --cli-color-option: var(--cli-color-inline-option);
   --cli-color-assign: var(--cli-color-inline-assign);
   --cli-color-value: var(--cli-color-inline-value);
+  --cli-color-unknown: var(--cli-color-inline-unknown);
 }
 
-.inline code > div {
+.inline code>div {
   display: inline;
 }
 
 .comment {
   color: #bababa;
+}
+
+.prompt {
+  color: var(--cli-color-prompt);
+  user-select: none;
 }
 
 .path {
@@ -64,10 +78,6 @@ a.path:hover {
   text-underline-offset: 2px;
 
   cursor: help;
-}
-
-.token {
-  user-select: contain;
 }
 
 .token[data-type='binary'] {
@@ -96,4 +106,8 @@ a.path:hover {
 
 .token[data-type='value'] {
   color: var(--cli-color-value);
+}
+
+.token[data-type='unknown'] {
+  color: var(--cli-color-unknown);
 }
