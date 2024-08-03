@@ -160,6 +160,14 @@ jobs:
       if: |
         success() || failure()
 
+    - name: 'Check for outdated e2e status list (fix w/ "node ./scripts/generate-e2e-status-list.mjs")'
+      run: |
+        node ./scripts/generate-e2e-status-list.mjs
+        git diff --exit-code
+      shell: bash
+      if: |
+        success() || failure()
+
   build:
     name: 'Build artifacts'
     runs-on: ubuntu-latest
