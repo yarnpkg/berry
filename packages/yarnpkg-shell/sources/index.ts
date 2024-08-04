@@ -166,6 +166,15 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return await setTimeout(1000 * seconds, 0);
   }],
 
+  [`unset`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    for (const name of args) {
+      delete state.environment[name];
+      delete state.variables[name];
+    }
+
+    return 0;
+  }],
+
   [`__ysh_run_procedure`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     const procedure = state.procedures[args[0]];
 
