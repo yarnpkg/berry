@@ -166,15 +166,11 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return await setTimeout(1000 * seconds, 0);
   }],
 
-  [`unset`, async ([name, ...rest]: Array<string>, opts: ShellOptions, state: ShellState) => {
-    if (typeof name === `undefined`)
-      throw new ShellError(`unset: missing name`);
-
-    if (!Object.hasOwn(state.environment, name) && !Object.hasOwn(state.variables, name))
-      throw new ShellError(`unset: unbound variable "${name}"`);
-
-    delete state.environment[name];
-    delete state.variables[name];
+  [`unset`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    for (const name of args) {
+      delete state.environment[name];
+      delete state.variables[name];
+    }
 
     return 0;
   }],

@@ -2096,30 +2096,21 @@ describe(`Shell`, () => {
     });
 
     describe(`unset`, () => {
-      it(`should throw a recoverable error when the variable name is missing`, async () => {
-        await expectResult(bufferResult(
-          `unset`,
-        ), {
-          exitCode: 1,
-          stderr: `unset: missing name\n`,
-        });
-      });
-
-      it(`should throw a recoverable error when the variable is unbound`, async () => {
-        await expectResult(bufferResult(
-          `unset FOO`,
-        ), {
-          exitCode: 1,
-          stderr: `unset: unbound variable "FOO"\n`,
-        });
-      });
-
-      it(`should unset the variable`, async () => {
+      it(`should unset one variable`, async () => {
         await expectResult(bufferResult(
           `FOO=bar; unset FOO; echo $FOO`,
         ), {
           exitCode: 1,
           stderr: `Unbound variable "FOO"\n`,
+        });
+      });
+
+      it(`should unset multiple variables`, async () => {
+        await expectResult(bufferResult(
+          `A=1 B=2; unset A B; echo $A; echo $B`,
+        ), {
+          exitCode: 1,
+          stderr: `Unbound variable "A"\nUnbound variable "B"\n`,
         });
       });
     });
