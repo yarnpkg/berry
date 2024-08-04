@@ -156,7 +156,8 @@ describe(`Features`, () => {
       expect(configuration.get(`baz`)).toBe(true);
     }));
 
-    test(`it should fetch missing plugins`, makeTemporaryEnv(
+    // FIXME: Fails with `RequestError: unsuitable certificate purpose` on win32
+    (process.platform === `win32` ? test.skip : test)(`it should fetch missing plugins`, makeTemporaryEnv(
       {},
       async ({path, run, source}) => {
         await mockPluginServer(async mockServer => {
