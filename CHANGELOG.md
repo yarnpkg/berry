@@ -1,5 +1,5 @@
 :::tip
-Yarn now accepts sponsors! Please give a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
+Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details.
 :::
 
 ## Master
@@ -8,13 +8,48 @@ Yarn now accepts sponsors! Please give a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+- Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
+
+## 4.1.0
+
+- Tweaks `-,--verbose` in `yarn workspaces foreach`; `-v` will now only print the prefixes, `-vv` will be necessary to also print the timings.
+- Adds a new `--json` option to `yarn run` when called without script name
+
+- Fixes `node-modules` linker `link:` dependencies mistreatment as inner workspaces, when they point to a parent folder of a workspace
+- Fixes spurious "No candidates found" errors
+- Fixes missing executable permissions when using `nodeLinker: pnpm`
+- Fixes packages being incorrectly flagged as optional
+- Fixes cache key corruptions due to uncontrolled git merges
+- Fixes `yarn version apply --all --dry-run` making unexpected changes
+- Fixes `yarn npm login` when the remote registry is Verdaccio
+
+## 4.0.1
+
+- Fixes creation of symlinks for `node-modules` linker when inner workspace depends on outer workspace
+- Fixes progress bars when the terminal is too large
+- Fixes crashes while running Yarn within Docker within GitHub Actions
+- Fixes `yarn npm audit --ignore NUM` which didn't apply to deprecations
+- Fixes `yarn npm audit --json` which didn't print the right output format
+- Fixes an incorrect type export in `@yarnpkg/core`
+- Implements back the `yarn explain peer-requirements` command
+
+## 4.0.0
+
 ### **Major Changes**
 
-- With Node.js 16's End of Life [approaching fast](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
+- With Node.js 16's [now being End of Life'd](https://nodejs.org/en/blog/announcements/nodejs16-eol), we dropped support for Node.js versions lower than 18.12.
 
 - Some important defaults have changed:
-  - `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible.
+
+  - `yarn init` and `yarn set version` will prefer using `packageManager` rather than `yarnPath` when possible (when they detect `COREPACK_ROOT` in your environment variables).
+
   - `yarn init` will no longer use zero-install by default. You still can enable it, but it should make it easier to start one-of projects without having to rewrite the configuration afterwards.
+    - As a result, `enableGlobalCache` now defaults to `true`. If your project uses Zero-Installs, the first `yarn install` you run after migrating to 4.0 will automatically set `enableGlobalCache: false` in your local `.yarnrc.yml`.
+
+  - `yarn workspaces foreach` now requires one of `--all`, `--recursive`, `--since`, or `--worktree` to be explicitly specified; the previous default was `--worktree`, but it was rarely what users expected.
+
+  - `compressionLevel` now defaults to `0` rather than `mixed`. It's been proved significantly faster on installs, and the size impact was reasonable enough to change the default. Note that it benefits you **even if you use Zero-Installs**: as per our tests, a zero-compression is actually easier to handle for Git (you can see by yourself with those examples using [`compressionLevel: 0`](https://github.com/yarnpkg/example-repo-zip0) vs [`compressionLevel: mixed`](https://github.com/yarnpkg/example-repo-zipn)).
+    - To avoid making the upgrade too disruptive, Yarn will check whether Zero-Installs are enabled the first time you run `yarn install` after migrating from 3.6 to 4.0. If you do, it will automatically set the old default (`compressionLevel: mixed`) in your `.yarnrc.yml` file. You can then remove it whenever you feel ready to actually change the compression settings.
 
 - All official Yarn plugins are now included by default in the bundle we provide. You no longer need to run `yarn plugin import` for *official* plugins (you still need to do it for third-party plugins, of course).
   - This doesn't change anything to the plugin API we provide, which will keep being maintained.
@@ -94,6 +129,12 @@ The following changes only affect people writing Yarn plugins:
   - `workspace.anchoredLocator` to get the locator that's used throughout the dependency tree.
   - `workspace.manifest.version` to get the workspace version.
 
+- `configuration.{packageExtensions,refreshPackageExtensions}` have been removed. Use `configuration.getPackageExtensions` instead.
+
+- `configuration.normalizePackage` now requires a `packageExtensions` option.
+
+- `ProjectLookup` has been removed. Both `Configuration.find` and `Configuration.findProjectCwd` now always do a lockfile lookup.
+
 ### Installs
 
 - Yarn now caches npm version metadata, leading to faster resolution steps and decreased network data usage.
@@ -102,6 +143,7 @@ The following changes only affect people writing Yarn plugins:
 
 ### Features
 
+- `enableOfflineMode` is a new setting that, when set, will instruct Yarn to only use the metadata and archives already stored on the local machine rather than download them from the registry. This can be useful when performing local development under network-constrained environments (trains, planes, ...).
 - `yarn run bin` now injects the environment variables defined in `.env.yarn` when spawning a process. This can be configured using the `injectEnvironmentFiles` variable.
 - `yarn workspaces foreach` now automatically enables the `yarn workspaces foreach ! --verbose` flag in interactive terminals.
 - Constraints can now be written in JavaScript. See the [revamped documentation](/features/constraints) for more information.
@@ -521,7 +563,7 @@ yarn set version 2.4.0
 
 ### Compatibility
 
-- Some patches went missing for TypeScript <4. This is now fixed.
+- Some patches went missing for TypeScript &lt;4. This is now fixed.
 
 - Calling `fs.exists(undefined)` won't crash anymore.
 
@@ -692,7 +734,7 @@ yarn set version 2.1.0
 
 - Registry auth settings can now be declared per-scope (they previously had to be per-registry). This will be handy with the GitHub Package Registry model, where each scope may have different access tokens.
 - The configuration file now interpolates the values with the environment variables using the `${name}` syntax (strict by default; use `${name:-default}` to provide a default value).
-- The new `changesetIgnorePatterns` setting can be used to ignore some paths from the changeset detection from `yarn version check` (changes to those paths won't be taken into account when deciding which workspaces need to fresh releases).
+- The new `changesetIgnorePatterns` setting can be used to ignore some paths from the changeset detection from `yarn version check` (changes to those paths won't be taken into account when deciding which workspaces need to fresh releases).
 - The new `changesetBaseRef` setting can be used to change the name of the master branch that `yarn version check` will use in its changeset heuristic.
 - The new `httpTimeout` and `httpRetry` settings allow you to configure the behavior of the HTTP(s) requests.
 - The new `preferTruncatedLines` setting allow you to tell Yarn that it's ok if info and warning messages are truncated to fit in a single line (errors will always wrap as much as needed, and piping Yarn's output will toggle off this behaviour altogether).

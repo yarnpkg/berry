@@ -1,5 +1,6 @@
-import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {pathToFileURL}               from 'url';
+import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                          from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -9,7 +10,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -31,7 +32,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -53,7 +54,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -78,7 +79,7 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -100,7 +101,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -124,7 +125,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import './foo.mjs?cache=false'`);
         await xfs.writeFilePromise(ppath.join(path, `foo.mjs`), ``);
@@ -146,7 +147,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
           (async () => {
@@ -177,7 +178,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
           import(new URL('./foo.mjs?cache=false', import.meta.url))
@@ -200,7 +201,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -219,13 +220,13 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
-    `it should not resolve JSON modules without an import assertion`,
+    `it should not resolve JSON modules without an import assertion/attribute`,
     makeTemporaryEnv(
       {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -235,25 +236,25 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await expect(run(`node`, `./index.js`)).rejects.toMatchObject({
           code: 1,
-          stderr: expect.stringContaining(`ERR_IMPORT_ASSERTION_TYPE_MISSING`),
+          stderr: expect.stringContaining(SUPPORTS_IMPORT_ATTRIBUTES_ONLY ? `ERR_IMPORT_ATTRIBUTE_MISSING` : `ERR_IMPORT_ASSERTION_TYPE_MISSING`),
         });
       },
     ),
   );
 
   test(
-    `it should resolve JSON modules with an import assertion`,
+    `it should resolve JSON modules with an import assertion/attribute`,
     makeTemporaryEnv(
       {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
           `
-          import foo from './foo.json' assert { type: 'json' };
+          import foo from './foo.json' ${SUPPORTS_IMPORT_ATTRIBUTES ? `with` : `assert`} { type: 'json' };
           console.log(foo.name);
           `,
         );
@@ -287,7 +288,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `import foo from 'foo';\nconsole.log(foo)`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
@@ -309,7 +310,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `import pkg from 'no-deps';\nconsole.log(pkg)`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
@@ -327,7 +328,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.ts`), `console.log(typeof require === 'undefined')`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index.ts`)).resolves.toMatchObject({
           code: 0,
@@ -346,7 +347,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.ts`), ``);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index.ts`)).rejects.toMatchObject({
           code: 1,
@@ -367,7 +368,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(typeof require === 'undefined')`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index`)).resolves.toMatchObject({
           code: 0,
@@ -389,7 +390,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await xfs.writeFilePromise(ppath.join(path, `lib/index`), `console.log(typeof require === 'undefined')`);
         await xfs.symlinkPromise(ppath.join(path, `lib` as Filename), ppath.join(path, `symlink`), `junction`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./symlink/index`)).resolves.toMatchObject({
           code: 0,
@@ -399,7 +400,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  (ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
       { },
@@ -410,7 +411,7 @@ describe(`Plug'n'Play - ESM`, () => {
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import bin from './cjs-bin';\nconsole.log(bin)`);
         await xfs.writeFilePromise(ppath.join(path, `cjs-bin`), `module.exports = {foo: 'bar'}`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index.mjs`)).rejects.toMatchObject({
           code: 1,
@@ -420,7 +421,27 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  (ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
+    `it should allow extensionless commonjs imports`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `import bin from './cjs-bin';\nconsole.log(bin)`);
+        await xfs.writeFilePromise(ppath.join(path, `cjs-bin`), `module.exports = 42`);
+
+        await run(`install`);
+
+        await expect(run(`node`, `./index.mjs`)).resolves.toMatchObject({
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  (ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless files with {"type": "module"}`,
     makeTemporaryEnv(
       {
@@ -430,13 +451,34 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index`), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(42)`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `./index`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension`),
+        });
+      },
+    ),
+  );
+
+  (ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
+    `it should allow extensionless files with {"type": "module"}`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index`), `console.log(42)`);
+
+        await run(`install`);
+
+        await expect(run(`node`, `./index`)).resolves.toMatchObject({
+          stdout: `42\n`,
         });
       },
     ),
@@ -451,7 +493,7 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`no-deps-bins-esm`)).resolves.toMatchObject({
           code: 0,
@@ -487,7 +529,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `import('no-deps').then(() => console.log(42))`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
         await expect(run(`node`, `index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: expect.stringMatching(`42\n`),
@@ -511,7 +553,7 @@ describe(`Plug'n'Play - ESM`, () => {
       async ({path, run, source}) => {
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `require('no-deps');\nimport('is-number').then(() => console.log(42))`);
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `index.js`)).resolves.toMatchObject({
           code: 0,
@@ -529,7 +571,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -558,7 +600,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), ``);
 
@@ -583,7 +625,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `
           try {
@@ -613,7 +655,7 @@ describe(`Plug'n'Play - ESM`, () => {
         pnpEnableEsmLoader: true,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `
           try {
@@ -638,7 +680,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `
           import("./foo.js").catch((err) => {
@@ -663,7 +705,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `
           import("./nonexistent.js").catch((err) => {
@@ -690,7 +732,7 @@ describe(`Plug'n'Play - ESM`, () => {
         },
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
           import('foo/bar').catch(err => {
@@ -717,7 +759,7 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(
           ppath.join(path, `index.js`),
@@ -727,6 +769,34 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  // Tests /packages/yarnpkg-pnp/sources/esm-loader/fspatch.ts
+  (HAS_LOADERS_AFFECTING_LOADERS ? it : it.skip)(
+    `should support loaders importing named exports from commonjs files`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-exports': `1.0.0`,
+        },
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `loader.mjs`), `
+          import {foo} from 'no-deps-exports';
+          console.log(foo);
+        `);
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), ``);
+
+        await run(`install`);
+
+        await expect(run(`node`, `--loader`, `./loader.mjs`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+          stderr: ``,
         });
       },
     ),
@@ -743,7 +813,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
@@ -775,7 +845,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
@@ -804,7 +874,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.mkdirPromise(ppath.join(path, `foo`));
           await xfs.writeJsonPromise(ppath.join(path, `foo/package.json`), {
@@ -845,7 +915,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
@@ -873,7 +943,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
@@ -898,7 +968,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
@@ -928,7 +998,7 @@ describe(`Plug'n'Play - ESM`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
@@ -955,7 +1025,7 @@ describe(`Plug'n'Play - ESM`, () => {
           type: `module`,
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).resolves.toMatchObject({code: 0});
+          await run(`install`);
 
           await xfs.writeFilePromise(
             ppath.join(path, `loader.js`),
@@ -1004,4 +1074,32 @@ describe(`Plug'n'Play - ESM`, () => {
       ),
     );
   });
+
+  it(
+    `should use the commonjs resolver in commonjs files imported from ESM`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `foo.js`), `import './bar.cjs';`);
+        await xfs.writeFilePromise(
+          ppath.join(path, `bar.cjs`),
+          `
+          require('module')._extensions['.custom'] = require('module')._extensions['.js'];
+          require('./baz');
+          `,
+        );
+        await xfs.writeFilePromise(ppath.join(path, `baz.custom`), `console.log(42);`);
+
+        await run(`install`);
+
+        await expect(run(`node`, `./foo.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+          stderr: ``,
+        });
+      },
+    ),
+  );
 });

@@ -176,17 +176,17 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
     const key = structUtils.stringifyLocator(pkg);
     parentChildren[key] = node;
 
+    // We don't want to print the children of our transitive workspace
+    // dependencies, as they will be printed in their own top-level branch
+    if (dependency !== null && project.tryWorkspaceByLocator(pkg))
+      return;
+
     // We don't want to reprint the children for a package that already got
     // printed as part of another branch
     if (printed.has(pkg.locatorHash))
       return;
 
     printed.add(pkg.locatorHash);
-
-    // We don't want to print the children of our transitive workspace
-    // dependencies, as they will be printed in their own top-level branch
-    if (dependency !== null && project.tryWorkspaceByLocator(pkg))
-      return;
 
     for (const dependency of pkg.dependencies.values()) {
       if (!peers && pkg.peerDependencies.has(dependency.identHash))

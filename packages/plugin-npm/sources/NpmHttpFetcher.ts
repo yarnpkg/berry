@@ -55,7 +55,7 @@ export class NpmHttpFetcher implements Fetcher {
     });
 
     return await tgzUtils.convertToZip(sourceBuffer, {
-      compressionLevel: opts.project.configuration.get(`compressionLevel`),
+      configuration: opts.project.configuration,
       prefixPath: structUtils.getIdentVendorPath(locator),
       stripComponents: 1,
     });

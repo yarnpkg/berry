@@ -55,7 +55,7 @@ export default function Home(): JSX.Element {
                       stable
                     </div>
                     <div className={styles.version}>
-                      {versions?.stable ?? `...`}
+                      {versions?.stable ?? `...`} {versions && versions?.stable === versions?.canary ? ` 🎉` : ``}
                     </div>
                   </div>
                   <div className={styles.versionLine}>
@@ -63,13 +63,16 @@ export default function Home(): JSX.Element {
                       canary
                     </div>
                     <div className={styles.version}>
-                      {versions?.canary ?? `...`}
+                      {versions?.canary ?? `...`} {versions && versions?.stable === versions?.canary ? ` 🎉` : ``}
                     </div>
                   </div>
                 </div>
               </h1>
               <p>Yarn is a package manager that doubles down as project manager. Whether you work on simple projects or industry monorepos, whether you're an open source developer or an enterprise user, Yarn has your back.</p>
-              <input className={styles.search} placeholder={`Search packages (i.e. babel, webpack, react, ...)`} autoFocus={true} onChange={handleChange}/>
+              <input className={styles.search} placeholder={`Search packages (e.g. babel, webpack, react, ...)`} autoFocus={true} onChange={handleChange}/>
+              <div className={styles.info}>
+                This documentation covers Yarn 4+. For the previous documentation dedicated to 3.6 and below, please refer to <a href={`https://v3.yarnpkg.com/`}>v3.yarnpkg.com</a>.
+              </div>
             </div>
           </div>
           <div className={styles.followUp}>

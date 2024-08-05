@@ -197,17 +197,21 @@ export class Workspace {
    * @returns all the child workspaces
    */
   getRecursiveWorkspaceChildren() {
-    const workspaceList: Array<Workspace> = [];
+    const workspaceSet = new Set<Workspace>([this]);
 
-    for (const childWorkspaceCwd of this.workspacesCwds) {
-      const childWorkspace = this.project.workspacesByCwd.get(childWorkspaceCwd);
+    for (const workspace of workspaceSet) {
+      for (const childWorkspaceCwd of workspace.workspacesCwds) {
+        const childWorkspace = this.project.workspacesByCwd.get(childWorkspaceCwd);
 
-      if (childWorkspace) {
-        workspaceList.push(childWorkspace, ...childWorkspace.getRecursiveWorkspaceChildren());
+        if (childWorkspace) {
+          workspaceSet.add(childWorkspace);
+        }
       }
     }
 
-    return workspaceList;
+    workspaceSet.delete(this);
+
+    return Array.from(workspaceSet);
   }
 
   async persistManifest() {

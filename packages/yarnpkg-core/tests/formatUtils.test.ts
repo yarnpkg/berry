@@ -27,11 +27,11 @@ describe(`formatUtils`, () => {
     });
 
     it(`should return cut the list of locators if needed`, () => {
-      expect(formatUtils.prettyTruncatedLocatorList(configuration, LOCATORS, 99)).toEqual(`foo@npm:1.0.0, foo@npm:2.0.0, foo@npm:3.0.0, foo@npm:4.0.0, foo@npm:5.0.0, and 2 more`);
+      expect(formatUtils.prettyTruncatedLocatorList(configuration, LOCATORS, 100)).toEqual(`foo@npm:1.0.0, foo@npm:2.0.0, foo@npm:3.0.0, foo@npm:4.0.0, foo@npm:5.0.0, and 2 more.`);
     });
 
     it(`should return cut the list of locators if needed (right on edge)`, () => {
-      expect(formatUtils.prettyTruncatedLocatorList(configuration, LOCATORS, 100)).toEqual(`foo@npm:1.0.0, foo@npm:2.0.0, foo@npm:3.0.0, foo@npm:4.0.0, foo@npm:5.0.0, foo@npm:6.0.0, and 1 more`);
+      expect(formatUtils.prettyTruncatedLocatorList(configuration, LOCATORS, 101)).toEqual(`foo@npm:1.0.0, foo@npm:2.0.0, foo@npm:3.0.0, foo@npm:4.0.0, foo@npm:5.0.0, foo@npm:6.0.0, and 1 more.`);
     });
   });
 });

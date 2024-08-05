@@ -13,8 +13,8 @@ import * as treeUtils   from './treeUtils';
 
 export {CACHE_VERSION, CACHE_CHECKPOINT, Cache}                                                                     from './Cache';
 export {DEFAULT_RC_FILENAME, LEGACY_PLUGINS, TAG_REGEXP}                                                            from './Configuration';
-export {Configuration, FormatType, ProjectLookup, SettingsType, WindowsLinkType}                                    from './Configuration';
-export type {PluginConfiguration, SettingsDefinition, PackageExtensionData}                                         from './Configuration';
+export {Configuration, FormatType, SettingsType, WindowsLinkType}                                                   from './Configuration';
+export type {PluginConfiguration, SettingsDefinition, PackageExtensionData, PackageExtensions}                      from './Configuration';
 export type {ConfigurationValueMap, ConfigurationDefinitionMap}                                                     from './Configuration';
 export type {Fetcher, FetchOptions, FetchResult, MinimalFetchOptions}                                               from './Fetcher';
 export {BuildDirectiveType}                                                                                         from './Installer';
@@ -28,11 +28,11 @@ export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMe
 export {MessageName, parseMessageName, stringifyMessageName}                                                        from './MessageName';
 export {MultiFetcher}                                                                                               from './MultiFetcher';
 export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                                 from './Plugin';
-export type {PeerRequirement}                                                                                       from './Project';
-export {LOCKFILE_VERSION, Project, InstallMode}                                                                     from './Project';
+export type {PeerRequirement, PeerWarning}                                                                          from './Project';
+export {LOCKFILE_VERSION, PeerWarningType, Project, InstallMode}                                                    from './Project';
 export {ReportError, Report}                                                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                                       from './Resolver';
-export {StreamReport}                                                                                               from './StreamReport';
+export {StreamReport, reportOptionDeprecations}                                                                     from './StreamReport';
 export {TelemetryManager}                                                                                           from './TelemetryManager';
 export {ThrowReport}                                                                                                from './ThrowReport';
 export {VirtualFetcher}                                                                                             from './VirtualFetcher';

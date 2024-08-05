@@ -35,6 +35,10 @@ export default class ConfigGetCommand extends BaseCommand {
     ]],
   });
 
+  why = Option.Boolean(`--why`, false, {
+    description: `Print the explanation for why a setting has its value`,
+  });
+
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });

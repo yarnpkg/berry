@@ -1,0 +1,103 @@
+---
+slug: release/3.1
+title: "Release: Yarn 3.1 🎃👻"
+authors: [arcanis]
+---
+
+Welcome to the release notes for **Yarn 3.1**! We're quite excited by this release, as it brings various improvements that we've all been looking forward to. Let's dig into that!
+
+As always, keep in mind those are only the highlights, the [full changelog](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md) is much more comprehensive.
+
+## Sponsoring
+
+The Yarn org needs your help to make our work more sustainable! Please take a look at our [OpenCollective](https://opencollective.com/yarnpkg) and [GitHub Sponsors](https://github.com/sponsors/yarnpkg) pages for more details 😊
+
+## Table of content
+
+- [Node.js Corepack Integration](#nodejs-corepack-integration)
+- [ESM Support](#esm-support)
+- [New Install Mode: `pnpm`](#new-install-mode-raw-pnpm-endraw-)
+- [Conditional Packages](#conditional-packages)
+- [Smart Changeset Filters](#smart-changeset-filters)
+- [New Workspace Syntax: `workspace:^`](#new-workspace-syntax-raw-workspace-endraw-)
+
+## Improvements
+
+### Node.js Corepack Integration
+
+Did you know that Yarn now ships with Node? This is done via the Node.js [Corepack project](https://nodejs.org/api/corepack.html), which includes both the Yarn and pnpm binaries as shims. By adding the `packageManager` field to your `package.json`, you can enforce the use of a specific package manager & package manager version in a completely transparent way:
+
+```json
+{
+  "packageManager": "yarn@3.1.0"
+}
+```
+
+Note that Corepack is available starting from Node.js 16.9, but is currently opt-in. Don't forget to run `corepack enable` a single time to make sure the shims are globally installed!
+
+We also improved in 3.1 the `init` command to properly support Corepack: running `yarn init -2` will now automatically setup a Yarn Modern project, setting its `packageManager` field as required 💫
+
+### ESM Support
+
+ESM has always been supported when using the [`node_modules` linker](https://yarnpkg.com/configuration/yarnrc#nodeLinker), since it's the same old install strategy that Node has always supported. However, with PnP taking ownership of the resolution pipeline, compatibility with ESM wasn't a given and had to be implemented using the [Loader Hook API](https://nodejs.org/dist/latest-v9.x/docs/api/esm.html#esm_loader_hooks).
+
+While the Loader Hook API isn't entirely stable yet, a large amount of work has been made lately and our team has been able to produce an initial experimental support for ESM modules. It should be enabled automatically if we detect that one of the packages in your dependency tree contains a `"type": "module"` field, but you can enable or disable it manually through your settings:
+
+```yaml
+pnpEnableEsmLoader: true
+```
+
+Being experimental, it's possible that some bugs may arise or that new Node releases bring some breaking changes around the API. Be sure to report issues on our [bug tracker](https://github.com/yarnpkg/berry)!
+
+### New Install Mode: `pnpm`
+
+The [pnpm package manager](https://pnpm.io/) was one of the first tools to advocate for using symlinks when installing packages within the `node_modules` folder. While we went another way with PnP, we decided that the implementation cost was low enough that it would be worth adding support for this symlink-based install strategy as well.
+
+Starting from Yarn 3.1, you can try out symlink-based installs by adding the following setting to your `.yarnrc.yml` file:
+
+```yaml
+nodeLinker: pnpm
+```
+
+### Conditional Packages
+
+[Esbuild](https://esbuild.github.io/) and [swc](https://swc.rs/) are two native packages that gained a lot of attention lately thanks to their impressive performances over their competitors. They recently revamped how their packages are built to avoid complex postinstall scripts, but did so in a way that was less efficient than before for Yarn projects.
+
+Yarn 3.1 features a new optimization that kicks in when a package is listed as `optionalDependencies` and lists `os` and/or `cpu` fields. When that happens, Yarn will skip fetching and installing those packages unless they match the current system parameters.
+
+In case you need to manually configure a strict set of package architectures to support (for example like in a zero-install case, where you want to read from an immutable set of packages), you can use the `supportedArchitectures` setting:
+
+```yml
+supportedArchitectures:
+  os: [linux, darwin]
+  cpu: [x64, arm64]
+```
+
+### Smart Changeset Filters
+
+The `yarn workspaces foreach` and `yarn workspaces list` commands now ships with brand new `--since` flags. When set, those commands will only execute against the packages that changed when compared to the main branch (either `main` or `master`, depending on the branches in your repository).
+
+This can come in handy if you wish to only run builds in some specific workspaces, or just get a list of the workspaces which changed for scripting purposes:
+
+```
+yarn workspaces foreach --since run eslint .
+yarn workspaces list --since
+```
+
+The `--since` flag also accepts an optional argument (`--since=${commit-ish}`) to manually define a source from which the changes should be derived. 
+
+### New Workspace Syntax: `workspace:^`
+
+Workspaces supported a special syntax via `workspace:*`, with those ranges being replaced at publish-time by exact ranges corresponding to the real version of the target workspace. However, if you wanted to use a caret instead of an exact range, you had to use the verbose `workspace:^x.y.z` form, which Yarn updated repo-wide after each publish.
+
+Yarn now supports `workspace:^` and `workspace:~` as well, making it much easier to cross-reference workspaces within a monorepo where most packages are intended to be published, by preventing a good amount of the merge conflicts that used to happen after Yarn updated the verbose ranges.
+
+Additionally, as a special case, this syntax is now allowed in the `peerDependencies` field as well:
+
+```json
+{
+  "peerDependencies": {
+    "@my/other-package": "workspace:^"
+  }
+}
+```

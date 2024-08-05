@@ -1,0 +1,9 @@
+├─ [38;2;135;175;255mcacheFolder[39m
+│  ├─ [1mDescription[22m: Folder where the cache files must be written
+│  ├─ [1mSource[22m: [38;2;135;175;255m<internal>[39m
+│  └─ [1mValue[22m: [32m'/Users/global/.yarn/berry/cache'[39m
+│
+└─ [38;2;135;175;255menableHardenedMode[39m
+   ├─ [1mDescription[22m: If true, automatically enable --check-resolutions --refresh-lockfile on installs
+   ├─ [1mSource[22m: [38;2;135;175;255m<default>[39m
+   └─ [1mValue[22m: [1mnull[22m

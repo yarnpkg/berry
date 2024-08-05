@@ -118,22 +118,26 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   `#!/usr/bin/env node\n`,
   `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
-  `const {createRequire} = require(\`module\`);\n`,
+  `const {createRequire, register} = require(\`module\`);\n`,
   `const {resolve} = require(\`path\`);\n`,
+  `const {pathToFileURL} = require(\`url\`);\n`,
   `\n`,
   `const relPnpApiPath = ${JSON.stringify(npath.fromPortablePath(relPnpApiPath))};\n`,
   `\n`,
   `const absPnpApiPath = resolve(__dirname, relPnpApiPath);\n`,
+  `const absUserWrapperPath = resolve(__dirname, \`./sdk.user.cjs\`);\n`,
   `const absRequire = createRequire(absPnpApiPath);\n`,
   `\n`,
-  ...(wrapModule ? [
-    `const moduleWrapper = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
-    `\n`,
-  ] : []),
+  `const absPnpLoaderPath = resolve(absPnpApiPath, \`../.pnp.loader.mjs\`);\n`,
+  `const isPnpLoaderEnabled = existsSync(absPnpLoaderPath);\n`,
+  `\n`,
   `if (existsSync(absPnpApiPath)) {\n`,
   `  if (!process.versions.pnp) {\n`,
   `    // Setup the environment to be able to require ${module}\n`,
   `    require(absPnpApiPath).setup();\n`,
+  `    if (isPnpLoaderEnabled && register) {\n`,
+  `      register(pathToFileURL(absPnpLoaderPath));\n`,
+  `    }\n`,
   `  }\n`,
   ...(setupEnv ? [
     `\n`,
@@ -164,8 +168,24 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
   ] : []),
   `}\n`,
   `\n`,
+  `const wrapWithUserWrapper = existsSync(absUserWrapperPath)\n`,
+  `  ? exports => absRequire(absUserWrapperPath)(exports)\n`,
+  `  : exports => exports;\n`,
+  `\n`,
+  ...(wrapModule ? [
+    `const moduleWrapper = exports => {\n`,
+    `  return wrapWithUserWrapper(moduleWrapperFn(exports));\n`,
+    `};\n`,
+    `\n`,
+    `const moduleWrapperFn = ${wrapModule.trim().replace(/^ {4}/gm, ``)}\n`,
+    `\n`,
+  ] : []),
   `// Defer to the real ${module} your application uses\n`,
-  wrapModule ? `module.exports = moduleWrapper(absRequire(\`${module}\`));\n` : `module.exports = absRequire(\`${module}\`);\n`,
+  ...(wrapModule ? [
+    `module.exports = moduleWrapper(absRequire(\`${module}\`));\n`,
+  ] : [
+    `module.exports = wrapWithUserWrapper(absRequire(\`${module}\`));\n`,
+  ]),
 ].join(``);
 
 export type GenerateBaseWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<Wrapper>;
@@ -184,12 +204,21 @@ export type SupportedSdk =
   | 'svelte-language-server'
   | 'flow-bin';
 
-export type BaseSdks = Array<[SupportedSdk, GenerateBaseWrapper]>;
+export type BaseSdks = Array<[
+  SupportedSdk,
+  GenerateBaseWrapper,
+]>;
 
 export type IntegrationSdks = Array<
   | [null, GenerateDefaultWrapper | null]
   | [SupportedSdk, GenerateIntegrationWrapper | null]
 >;
+
+export type PackageExports =
+  | {[key: string]: PackageExports}
+  | Array<PackageExports>
+  | string
+  | null;
 
 export class Wrapper {
   private name: PortablePath;
@@ -199,16 +228,19 @@ export class Wrapper {
 
   private paths: Map<PortablePath, PortablePath> = new Map();
 
-  constructor(name: PortablePath, {pnpApi, target}: {pnpApi: PnpApi, target: PortablePath}) {
+  public readonly manifest: Record<string, any>;
+
+  constructor(name: PortablePath, {pnpApi, target, manifestOverrides = {}}: {pnpApi: PnpApi, target: PortablePath, manifestOverrides?: Record<string, any>}) {
     this.name = name;
 
     this.pnpApi = pnpApi;
     this.target = target;
+
+    this.manifest = this.loadManifest();
+    Object.assign(this.manifest, manifestOverrides);
   }
 
-  async writeManifest(rawManifest: Record<string, any> = {}) {
-    const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
-
+  private loadManifest() {
     const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
     const dependencyReference = topLevelInformation.packageDependencies.get(this.name)!;
 
@@ -216,16 +248,75 @@ export class Wrapper {
     if (pkgInformation === null)
       throw new Error(`Assertion failed: Package ${this.name} isn't a dependency of the top-level`);
 
-    const manifest = dynamicRequire(npath.join(pkgInformation.packageLocation, `package.json`));
+    const manifestPath = npath.join(pkgInformation.packageLocation, Filename.manifest);
+    const manifest = dynamicRequire(manifestPath);
 
-    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeJsonPromise(absWrapperPath, {
+    return {
       name: this.name,
       version: `${manifest.version}-sdk`,
       main: manifest.main,
       type: `commonjs`,
-      ...rawManifest,
-    });
+      bin: manifest.bin,
+      exports: manifest.exports,
+    };
+  }
+
+  async writeDefaults() {
+    if (this.manifest.main)
+      await this.writeFile(ppath.normalize(this.manifest.main as PortablePath), {requirePath: PortablePath.dot});
+
+    if (this.manifest.exports)
+      await this.writePackageExports();
+
+    if (this.manifest.bin)
+      await this.writePackageBinaries();
+
+    await this.writeManifest();
+  }
+
+  async writePackageBinaries() {
+    if (typeof this.manifest.bin === `string`) {
+      await this.writeBinary(ppath.normalize(this.manifest.bin as PortablePath));
+    } else {
+      for (const relPackagePath of Object.values(this.manifest.bin)) {
+        await this.writeBinary(ppath.normalize(relPackagePath as PortablePath));
+      }
+    }
+  }
+
+  async writePackageExports(packageExports: PackageExports = this.manifest.exports, requirePath = PortablePath.dot) {
+    if (typeof packageExports === `string`) {
+      if (!packageExports.includes(`*`)) {
+        await this.writeFile(ppath.normalize(packageExports as PortablePath), {requirePath});
+      }
+    } else if (Array.isArray(packageExports)) {
+      await Promise.all(
+        packageExports.map(packageExport => this.writePackageExports(packageExport, requirePath)),
+      );
+    } else if (packageExports !== null) {
+      await Promise.all(
+        Object.entries(packageExports).map(async ([key, value]) => {
+          if (key.startsWith(`.`)) {
+            await this.writePackageExports(value, key as PortablePath);
+          } else {
+            await this.writePackageExports(value, requirePath);
+          }
+        }),
+      );
+    }
+  }
+
+  async writeManifest() {
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const absWrapperPath = ppath.join(this.target, this.name, `package.json`);
+    const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
+
+    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
+    await xfs.writeJsonPromise(absWrapperPath, this.manifest);
+
+    this.paths.set(Filename.manifest, relProjectPath);
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath} = {}) {
@@ -242,10 +333,11 @@ export class Wrapper {
     const absPnpApiPath = npath.toPortablePath(this.pnpApi.resolveRequest(`pnpapi`, null)!);
     const relPnpApiPath = ppath.relative(ppath.dirname(absWrapperPath), absPnpApiPath);
 
+    const moduleReqPath = ppath.join(this.name, options.requirePath ?? relPackagePath);
+    const wrapperScript = TEMPLATE(relPnpApiPath, moduleReqPath, options);
+
     await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
-    await xfs.writeFilePromise(absWrapperPath, TEMPLATE(relPnpApiPath, ppath.join(this.name, options.requirePath ?? relPackagePath), options), {
-      mode: options.mode,
-    });
+    await xfs.writeFilePromise(absWrapperPath, wrapperScript, {mode: options.mode});
 
     this.paths.set(relPackagePath, relProjectPath);
 

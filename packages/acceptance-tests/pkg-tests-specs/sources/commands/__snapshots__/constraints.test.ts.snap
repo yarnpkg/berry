@@ -1,0 +1,2051 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Commands constraints test (empty project / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (empty project / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "├─ root-workspace-0b6124@workspace:.
+│  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "├─ root-workspace-0b6124@workspace:.
+│  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│     ├─ '1.0.0'
+│     └─ '2.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│     ├─ '1.0.0'
+│     └─ '2.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+│  └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "├─ workspace-a@workspace:packages/workspace-a
+│  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│  │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+│  │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+│  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+│     ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+│     └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+│
+└─ workspace-b@workspace:packages/workspace-b
+   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "├─ workspace-a@workspace:packages/workspace-a
+│  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│  │  ├─ '1.0.0'
+│  │  └─ undefined
+│  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+│     ├─ '1.0.0'
+│     └─ undefined
+│
+└─ workspace-b@workspace:packages/workspace-b
+   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+   │  ├─ '1.0.0'
+   │  └─ undefined
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ undefined
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "├─ root-workspace-0b6124@workspace:.
+│  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "├─ root-workspace-0b6124@workspace:.
+│  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+│     ├─ '1.0.0'
+│     └─ '2.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+│     ├─ '1.0.0'
+│     └─ '2.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ root-workspace-0b6124@workspace:.
+│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+│
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field _name; expected 'workspace-a'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Missing field _name; expected 'workspace-b'
+",
+}
+`;
+
+exports[`Commands constraints test (multiple workspaces / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+├─ workspace-a@workspace:packages/workspace-a
+│  └─ ⚙ Missing field _name; expected 'workspace-a'
+│
+└─ workspace-b@workspace:packages/workspace-b
+   └─ ⚙ Missing field _name; expected 'workspace-b'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (one regular dependency / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two development dependencies / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ root-workspace-0b6124@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (two regular dependencies, two development dependencies / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / empty constraints / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / empty constraints / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ foo@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ foo@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (extraneous) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (extraneous) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (extraneous2) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (extraneous2) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_dependency (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (ambiguous) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ foo@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (ambiguous) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "└─ foo@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
+      ├─ '1.0.0'
+      └─ '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (extraneous) / js) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (extraneous) / prolog) 1`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (incompatible) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (incompatible) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (missing) / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / gen_enforced_field (missing) / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ array FieldValue / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _files; expected [ '/a', '/b', '/c' ]
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ array FieldValue / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _files; expected [ '/a', '/b', '/c' ]
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ object FieldValue / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ object FieldValue / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ string FieldValue / js) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _name; expected 'foo'
+",
+}
+`;
+
+exports[`Commands constraints test (various field types / workspace_field w/ string FieldValue / prolog) 1`] = `
+{
+  "code": 1,
+  "stderr": "",
+  "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
+
+└─ foo@workspace:.
+   └─ ⚙ Missing field _name; expected 'foo'
+",
+}
+`;

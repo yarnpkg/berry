@@ -100,9 +100,18 @@ function checkCwd(cli: YarnCli, argv: Array<string>) {
   } else if (argv.length >= 1 && argv[0].startsWith(`--cwd=`)) {
     cwd = npath.toPortablePath(argv[0].slice(6));
     postCwdArgv = argv.slice(1);
+  } else if (argv[0] === `add` && argv[argv.length - 2] === `--cwd`) {
+    // CRA adds `--cwd` at the end of the command; it's not ideal, but since
+    // it's unlikely to receive more releases we can just special-case it
+    // TODO v5: remove this special case
+    cwd = npath.toPortablePath(argv[argv.length - 1]);
+    postCwdArgv = argv.slice(0, argv.length - 2);
   }
 
-  cli.defaultContext.cwd = ppath.resolve(cwd ?? ppath.cwd());
+  cli.defaultContext.cwd = cwd !== null
+    ? ppath.resolve(cwd)
+    : ppath.cwd();
+
   return postCwdArgv;
 }
 
@@ -113,8 +122,10 @@ function initTelemetry(cli: YarnCli, {configuration}: {configuration: Configurat
 
   Configuration.telemetry = new TelemetryManager(configuration, `puba9cdc10ec5790a2cf4969dd413a47270`);
 
+  const PLUGIN_REGEX = /^@yarnpkg\/plugin-(.*)$/;
+
   for (const name of configuration.plugins.keys())
-    if (pluginCommands.has(name.match(/^@yarnpkg\/plugin-(.*)$/)?.[1] ?? ``))
+    if (pluginCommands.has(name.match(PLUGIN_REGEX)?.[1] ?? ``))
       Configuration.telemetry?.reportPluginName(name);
 
   if (cli.binaryVersion) {
@@ -176,12 +187,24 @@ export async function getCli({cwd = ppath.cwd(), pluginConfiguration = getPlugin
 export async function runExit(argv: Array<string>, {cwd = ppath.cwd(), selfPath, pluginConfiguration}: {cwd: PortablePath, selfPath: PortablePath | null, pluginConfiguration: PluginConfiguration}) {
   const cli = getBaseCli({cwd, pluginConfiguration});
 
+  function unexpectedTerminationHandler() {
+    Cli.defaultContext.stdout.write(`ERROR: Yarn is terminating due to an unexpected empty event loop.\nPlease report this issue at https://github.com/yarnpkg/berry/issues.`);
+  }
+
+  process.once(`beforeExit`, unexpectedTerminationHandler);
+
   try {
+    // The exit code is set to an error code before the CLI runs so that
+    // if the event loop becomes empty and node terminates without
+    // finishing the execution of this function it counts as an error.
+    // https://github.com/yarnpkg/berry/issues/6398
+    process.exitCode = 42;
     process.exitCode = await run(cli, argv, {selfPath, pluginConfiguration});
   } catch (error) {
     Cli.defaultContext.stdout.write(cli.error(error));
     process.exitCode = 1;
   } finally {
+    process.off(`beforeExit`, unexpectedTerminationHandler);
     await xfs.rmtempPromise();
   }
 }

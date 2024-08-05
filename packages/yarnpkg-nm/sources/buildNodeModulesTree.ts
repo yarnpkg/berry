@@ -1,5 +1,5 @@
 import {structUtils, Project, MessageName, Locator}                           from '@yarnpkg/core';
-import {toFilename, npath, ppath}                                             from '@yarnpkg/fslib';
+import {npath, ppath}                                                         from '@yarnpkg/fslib';
 import {NativePath, PortablePath, Filename}                                   from '@yarnpkg/fslib';
 import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} from '@yarnpkg/pnp';
 
@@ -193,7 +193,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
     const pkg = pnp.getPackageInformation(locator);
     if (pkg) {
       const parentLocatorKey = parentLocator ? stringifyLocator(parentLocator) : ``;
-      if (stringifyLocator(locator) !== parentLocatorKey && pkg.linkType === LinkType.SOFT && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation)) {
+      if (stringifyLocator(locator) !== parentLocatorKey && pkg.linkType === LinkType.SOFT && !locator.reference.startsWith(`link:`) && !isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation)) {
         const location = getRealPackageLocation(pkg, locator, pnp);
         const prevLocator = workspaceLikeLocators.get(location);
         // Give workspaces a priority over portals and other protocols pointing to the same location
@@ -502,11 +502,11 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     const [nameOrScope, name] = identName.split(`/`);
 
     return name ? {
-      scope: toFilename(nameOrScope),
-      name: toFilename(name),
+      scope: nameOrScope as Filename,
+      name: name as Filename,
     } : {
       scope: null,
-      name: toFilename(nameOrScope),
+      name: nameOrScope as Filename,
     };
   };
 
@@ -521,7 +521,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     for (const dep of pkg.dependencies) {
       const depReferences = Array.from(dep.references).sort().join(`#`);
       // We do not want self-references in node_modules, since they confuse existing tools
-      if (dep.identName === pkg.identName && depReferences === pkgReferences)
+      if (dep.identName === pkg.identName.replace(WORKSPACE_NAME_SUFFIX, ``) && depReferences === pkgReferences)
         continue;
       const references = Array.from(dep.references).sort();
       const locator = {name: dep.identName, reference: references[0]};
@@ -544,9 +544,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
         isAnonymousWorkspace = !!(workspace && !workspace.manifest.name);
       }
 
-      const isCircularSymlink = leafNode.linkType === LinkType.SOFT && nodeModulesLocation.startsWith(leafNode.target);
-
-      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isAnonymousWorkspace && !isCircularSymlink) {
+      if (!dep.name.endsWith(WORKSPACE_NAME_SUFFIX) && !isAnonymousWorkspace) {
         const prevNode = tree.get(nodeModulesLocation);
         if (prevNode) {
           if (prevNode.dirList) {
@@ -571,7 +569,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
 
         for (let segCount = segments.length - 1; nodeModulesIdx >= 0 && segCount > nodeModulesIdx; segCount--) {
           const dirPath = npath.toPortablePath(segments.slice(0, segCount).join(ppath.sep));
-          const targetDir = toFilename(segments[segCount]);
+          const targetDir = segments[segCount] as Filename;
 
           const subdirs = tree.get(dirPath);
           if (!subdirs) {

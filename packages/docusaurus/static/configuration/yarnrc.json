@@ -31,9 +31,9 @@
       "_package": "@yarnpkg/core",
       "type": "string",
       "title": "Behavior that Yarn should follow when it detects that a cache entry is outdated.",
-      "description": "Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:\n\n- If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.\n- If `match-spec`, it'll also rebuild the file if the compression level has changed. If `always`, it'll always regenerate the cache files so they use the current cache version.\n- If `auto` (the default), it'll act as either `required-only` or `always` depending on whether `enableGlobalCache` is enabled (with `always` being selected in that case).",
-      "enum": ["required-only", "match-spec", "always", "auto"],
-      "default": "auto"
+      "description": "Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:\n\n- If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.\n- If `match-spec`, it'll also rebuild the file if the compression level has changed.\n- If `always` (the default), it'll always regenerate the cache files so they use the current cache version.",
+      "enum": ["required-only", "match-spec", "always"],
+      "default": "always"
     },
     "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
@@ -82,14 +82,14 @@
       "_package": "@yarnpkg/core",
       "type": ["number", "string"],
       "title": "Compression level employed for zip archives",
-      "description": "Possible values go from 0 (\"no compression, faster\") to 9 (\"heavy compression, slower\"). The default is 'mixed', which is a variant of 9 where files may be stored uncompressed if the builtin libzip heuristic thinks it will lead to a more sensible result.",
-      "enum": ["mixed", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "description": "Possible values go from `0` (\"no compression, faster\") to `9` (\"heavy compression, slower\"). The value `mixed` is a variant of `9` where files are stored uncompressed if the gzip overhead would exceed the size gain.\n\nThe default is `0`, which tends to be significantly faster to install. Projects using zero-installs are advised to keep it this way, as experiments showed that Git stores uncompressed package archives more efficiently than gzip-compressed ones.",
+      "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, "mixed"],
       "default": "mixed"
     },
     "constraintsPath": {
       "_package": "@yarnpkg/plugin-constraints",
       "title": "Path of the constraints file.",
-      "description": "This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.js` file.",
+      "description": "This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.cjs` file.",
       "type": "string",
       "format": "uri-reference",
       "default": "./constraints.pro"
@@ -130,10 +130,24 @@
       "type": "boolean",
       "examples": [true]
     },
+    "enableConstraintsChecks": {
+      "_package": "@yarnpkg/plugin-constraints",
+      "title": "Define whether constraints should run on every install.",
+      "description": "If true, Yarn will run your constraints right after finishing its installs. This may help decrease the feedback loop delay by catching errors long before your CI would even report them.",
+      "type": "boolean",
+      "examples": [true]
+    },
     "enableGlobalCache": {
       "_package": "@yarnpkg/core",
       "title": "Define whether the cache should be shared between all local projects.",
       "description": "If true (the default), Yarn will store the cache files into a folder located within `globalFolder` instead of respecting `cacheFolder`.",
+      "type": "boolean",
+      "default": true
+    },
+    "enableHardenedMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Define whether Yarn should attempt to check for malicious changes.",
+      "description": "If true, Yarn will query the remote registries to validate that the lockfile content matches the remote information. These checks make installs slower, so you should only run them on branches managed by users outside your circle of trust.\n\nYarn will automatically enable the hardened mode on GitHub pull requests from public repository. Should you want to disable it, explicitly set it to `false` in your yarnrc file.",
       "type": "boolean",
       "default": true
     },
@@ -193,6 +207,13 @@
       "type": "boolean",
       "default": true
     },
+    "enableOfflineMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Define whether Yarn should exclusively read package metadata from its cache",
+      "description": "If true, Yarn will replace any network requests by reads from its local caches - even if they contain old information. This can be useful when performing local work on environments without network access (trains, planes, ...), as you can at least leverage the packages you installed on the same machine in the past.\n\nSince this setting will lead to stale data being used, it's recommended to set it for the current session as an environment variable (by running `export YARN_ENABLE_OFFLINE_MODE=1` in your terminal) rather than by adding it to your `.yarnrc.yml` file.",
+      "type": "boolean",
+      "default": false
+    },
     "enableProgressBars": {
       "_package": "@yarnpkg/core",
       "title": "Define whether animated progress bars should be shown or not.",
@@ -241,7 +262,7 @@
       "description": "Various files we be stored there: global cache, metadata cache, ...",
       "type": "string",
       "format": "uri-reference",
-      "examples": ["${HOME}/.yarn/berry/global"]
+      "examples": ["${HOME}/.yarn/berry"]
     },
     "httpProxy": {
       "_package": "@yarnpkg/core",
@@ -321,6 +342,18 @@
         }
       },
       "_exampleKeys": ["homepage"]
+    },
+    "injectEnvironmentFiles": {
+      "_package": "@yarnpkg/core",
+      "title": "Array of .env files which will get injected into any subprocess spawned by Yarn.",
+      "description": "By default Yarn will automatically inject the variables stored in the `.env.yarn` file, but you can use this setting to change this behavior.\n\nNote that adding a question mark at the end of the path will silence the error Yarn would throw should the file be missing, which may come in handy when declaring local configuration files.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      },
+      "default": [],
+      "_exampleItems": [".my-env", ".my-local-env?"]
     },
     "installStatePath": {
       "_package": "@yarnpkg/core",
@@ -493,7 +526,7 @@
     },
     "npmAuditExcludePackages": {
       "_package": "@yarnpkg/plugin-npm-cli",
-      "title": "Array of advisory ID glob patterns of packages to exclude from `yarn npm audit`.",
+      "title": "Array of package name glob patterns to exclude from `yarn npm audit`.",
       "type": "array",
       "items": {
         "type": "string"
@@ -757,7 +790,7 @@
             "type": "string"
           },
           "default": [],
-          "_exampleItems": ["current", "x64", "ia32"]
+          "_exampleItems": ["current", "x64", "ia32", "arm64"]
         },
         "libc": {
           "title": "The list of standard C libraries to cover.",
@@ -769,6 +802,21 @@
           "_exampleItems": ["current", "glibc", "musl"]
         }
       }
+    },
+    "taskPoolConcurrency": {
+      "_package": "@yarnpkg/core",
+      "title": "Maximal amount of concurrent heavy task processing.",
+      "description": "We default to the platform parallelism, but for some CI, `os.cpus` may not report accurate values and may overwhelm their containers.",
+      "type": "number",
+      "default": "os.availableParallelism()"
+    },
+    "taskPoolMode": {
+      "_package": "@yarnpkg/core",
+      "title": "Execution strategy for heavy tasks.",
+      "description": "By default will use workers when performing heavy tasks, such as converting tgz files to zip. This setting can be used to disable workers and use a regular in-thread async processing.",
+      "type": "string",
+      "enum": ["async", "workers"],
+      "default": "workers"
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
@@ -787,7 +835,7 @@
     "tsEnableAutoTypes": {
       "_package": "@yarnpkg/plugin-typescript",
       "title": "Define whether to automatically install @types dependencies.",
-      "description": "If true, Yarn will automatically add `@types` dependencies when running `yarn add` with packages that don't provide their own typings (as reported by the Algolia npm database). This behavior is enabled by default if you have a tsconfig file at the root of your project.",
+      "description": "If true, Yarn will automatically add `@types` dependencies when running `yarn add` with packages that don't provide their own typings (as reported by the Algolia npm database). This behavior is enabled by default if you have a tsconfig.json file at the root of your project, or in your current workspace.",
       "type": "boolean",
       "examples": [true]
     },

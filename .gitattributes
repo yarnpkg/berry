@@ -16,7 +16,7 @@ packages/yarnpkg-libzip/sources/libzipSync.js           binary linguist-generate
 
 # Hide .yarn and docs from GitHub's language detection
 /.yarn/**               linguist-vendored
-/docs/**                linguist-documentation
+/packages/docusaurus/** linguist-documentation
 
 # Mark built javascript binaries as generated
 # Without this, the repo is marked as >90% javascript, while most code is actually typescript

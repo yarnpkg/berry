@@ -29,7 +29,24 @@ describe(`Features`, () => {
     );
 
     test(
-      `it should report collapsed a peer dependency warning when a set of mismatched peerDependency requirements is detected`,
+      `it should report collapsed a peer dependency warning when a direct peerDependency request is mismatched`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`mismatched-peer-deps-lvl1`]: `1.0.0`,
+            [`no-deps`]: `1.1.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          const {stdout} = await run(`install`);
+
+          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{5}\), which doesn't satisfy what mismatched-peer-deps-lvl1 and other dependencies request \(1\.0\.0\)/);
+        },
+      ),
+    );
+
+    test(
+      `it should report collapsed a peer dependency warning with corresponding root when a transitive peerDependency request is mismatched`,
       makeTemporaryEnv(
         {
           dependencies: {
@@ -40,7 +57,7 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           const {stdout} = await run(`install`);
 
-          expect(stdout).toContain(`no-deps is listed by your project with version 1.1.0, which doesn't satisfy what mismatched-peer-deps-lvl0 requests (1.0.0)`);
+          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{5}\), which doesn't satisfy what mismatched-peer-deps-lvl[12] \(via mismatched-peer-deps-lvl0\) and other dependencies request \(1\.0\.0\)/);
         },
       ),
     );

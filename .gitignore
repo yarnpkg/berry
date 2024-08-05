@@ -1,4 +1,4 @@
-# https://yarnpkg.com/getting-started/qa/#which-files-should-be-gitignored
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .yarn/*
 !.yarn/cache
 !.yarn/patches
@@ -37,9 +37,6 @@ package.tgz
 # Those packages are built inline and the artifacts must not be checked-in
 /packages/yarnpkg-libui/sources/**/*.js
 /packages/yarnpkg-libui/sources/**/*.d.ts
-
-# Only contains the Webpack cache
-/packages/docusaurus/.yarn
 
 # Used by /scripts/stable-versions-store.js
 /scripts/stable-versions-store.json

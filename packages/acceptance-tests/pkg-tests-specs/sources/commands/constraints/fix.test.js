@@ -1,6 +1,6 @@
-import {xfs}          from '@yarnpkg/fslib';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
 
-import {environments} from './environments';
+import {environments}         from './environments';
 
 describe(`Commands`, () => {
   const manifest = {
@@ -18,6 +18,32 @@ describe(`Commands`, () => {
   };
 
   describe(`constraints --fix`, () => {
+    it(`shouldn't crash due to an unending fix loop`, makeTemporaryEnv({
+      foo: ``,
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await xfs.writeFilePromise(ppath.join(path, `yarn.config.cjs`), `
+        exports.constraints = ({Yarn}) => {
+          for (const w of Yarn.workspaces()) {
+            w.set(['foo'], \`\${w.manifest.foo}x\`);
+          }
+        };
+      `);
+
+      await run(`constraints`, `--fix`, {
+        execArgv: [
+          `--require`, require.resolve(`@yarnpkg/monorepo/.pnp.cjs`),
+          `--require`, require.resolve(`@yarnpkg/monorepo/scripts/setup-ts-execution`),
+          `--require`, require.resolve(`@yarnpkg/monorepo/scripts/detect-unsafe-writes.ts`),
+        ],
+      });
+
+      await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+        foo: `xxxxxxxxxx`,
+      });
+    }));
+
     test(`test apply fix to dependencies`, makeTemporaryEnv(manifest, async ({path, run, source}) => {
       await xfs.writeFilePromise(`${path}/constraints.pro`, `
         gen_enforced_dependency('.', 'is-number', '2.0.0', dependencies).

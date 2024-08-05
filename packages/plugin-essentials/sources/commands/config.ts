@@ -1,8 +1,8 @@
-import {BaseCommand}                              from '@yarnpkg/cli';
-import {Configuration, MessageName, StreamReport} from '@yarnpkg/core';
-import {miscUtils}                                from '@yarnpkg/core';
-import {Command, Option, Usage}                   from 'clipanion';
-import {inspect}                                  from 'util';
+import {BaseCommand}                                                                                from '@yarnpkg/cli';
+import {Configuration, MessageName, StreamReport, formatUtils, reportOptionDeprecations, treeUtils} from '@yarnpkg/core';
+import {npath}                                                                                      from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                                                     from 'clipanion';
+import {inspect}                                                                                    from 'util';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigCommand extends BaseCommand {
@@ -21,27 +21,51 @@ export default class ConfigCommand extends BaseCommand {
     ]],
   });
 
-  verbose = Option.Boolean(`-v,--verbose`, false, {
-    description: `Print the setting description on top of the regular key/value information`,
-  });
-
-  why = Option.Boolean(`--why`, false, {
-    description: `Print the reason why a setting is set a particular way`,
+  noDefaults = Option.Boolean(`--no-defaults`, false, {
+    description: `Omit the default values from the display`,
   });
 
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });
 
+  // Legacy flags; will emit errors or warnings when used
+  verbose = Option.Boolean(`-v,--verbose`, {hidden: true});
+  why = Option.Boolean(`--why`, {hidden: true});
+
+  names = Option.Rest();
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins, {
       strict: false,
     });
 
+    const deprecationExitCode = await reportOptionDeprecations({
+      configuration,
+      stdout: this.context.stdout,
+      forceError: this.json,
+    }, [{
+      option: this.verbose,
+      message: `The --verbose option is deprecated, the settings' descriptions are now always displayed`,
+    }, {
+      option: this.why,
+      message: `The --why option is deprecated, the settings' sources are now always displayed`,
+    }]);
+
+    if (deprecationExitCode !== null)
+      return deprecationExitCode;
+
+    const names = this.names.length > 0
+      ? [...new Set(this.names)].sort()
+      : [...configuration.settings.keys()].sort();
+
+    let trailingValue: any;
+
     const report = await StreamReport.start({
       configuration,
       json: this.json,
       stdout: this.context.stdout,
+      includeFooter: false,
     }, async report => {
       if (configuration.invalid.size > 0 && !this.json) {
         for (const [key, source] of configuration.invalid)
@@ -51,62 +75,104 @@ export default class ConfigCommand extends BaseCommand {
       }
 
       if (this.json) {
-        const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
+        for (const name of names) {
+          const data = configuration.settings.get(name);
+          if (typeof data === `undefined`)
+            report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `No configuration key named "${name}"`);
 
-        for (const key of keys) {
-          const data = configuration.settings.get(key);
-
-          const effective = configuration.getSpecial(key, {
+          const effective = configuration.getSpecial(name, {
             hideSecrets: true,
             getNativePaths: true,
           });
 
-          const source = configuration.sources.get(key);
+          const source = configuration.sources.get(name) ?? `<default>`;
+          const sourceAsNativePath = source && source[0] !== `<`
+            ? npath.fromPortablePath(source)
+            : source;
 
-          if (this.verbose) {
-            report.reportJson({key, effective, source});
-          } else {
-            report.reportJson({key, effective, source, ...data});
-          }
+          report.reportJson({key: name, effective, source: sourceAsNativePath, ...data});
         }
       } else {
-        const keys = miscUtils.sortMap(configuration.settings.keys(), key => key);
-        const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
-
         const inspectConfig = {
           breakLength: Infinity,
           colors: configuration.get(`enableColors`),
           maxArrayLength: 2,
         };
 
-        if (this.why || this.verbose) {
-          const keysAndDescriptions = keys.map(key => {
-            const setting = configuration.settings.get(key);
+        const configTreeChildren: treeUtils.TreeMap = {};
+        const configTree: treeUtils.TreeNode = {children: configTreeChildren};
 
-            if (!setting)
-              throw new Error(`Assertion failed: This settings ("${key}") should have been registered`);
+        for (const name of names) {
+          if (this.noDefaults && !configuration.sources.has(name))
+            continue;
 
-            const description = this.why
-              ? configuration.sources.get(key) || `<default>`
-              : setting.description;
+          const setting = configuration.settings.get(name)!;
+          const source = configuration.sources.get(name) ?? `<default>`;
+          const value = configuration.getSpecial(name, {hideSecrets: true, getNativePaths: true});
 
-            return [key, description] as [string, string];
-          });
+          const fields: treeUtils.TreeMap = {
+            Description: {
+              label: `Description`,
+              value: formatUtils.tuple(formatUtils.Type.MARKDOWN, {text: setting.description, format: this.cli.format(), paragraphs: false}),
+            },
+            Source: {
+              label: `Source`,
+              value: formatUtils.tuple(source[0] === `<` ? formatUtils.Type.CODE : formatUtils.Type.PATH, source),
+            },
+          };
 
-          const maxDescriptionLength = keysAndDescriptions.reduce((max, [, description]) => {
-            return Math.max(max, description.length);
-          }, 0);
+          configTreeChildren[name] = {
+            value: formatUtils.tuple(formatUtils.Type.CODE, name),
+            children: fields,
+          };
 
-          for (const [key, description] of keysAndDescriptions) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${description.padEnd(maxDescriptionLength, ` `)}   ${inspect(configuration.getSpecial(key, {hideSecrets: true, getNativePaths: true}), inspectConfig)}`);
-          }
-        } else {
-          for (const key of keys) {
-            report.reportInfo(null, `${key.padEnd(maxKeyLength, ` `)}   ${inspect(configuration.getSpecial(key, {hideSecrets: true, getNativePaths: true}), inspectConfig)}`);
+          const setValueTo = (node: treeUtils.TreeMap, value: Map<any, any>) => {
+            for (const [key, subValue] of value) {
+              if (subValue instanceof Map) {
+                const subFields: treeUtils.TreeMap = {};
+                node[key] = {children: subFields};
+                setValueTo(subFields, subValue);
+              } else {
+                node[key] = {
+                  label: key,
+                  value: formatUtils.tuple(formatUtils.Type.NO_HINT, inspect(subValue, inspectConfig)),
+                };
+              }
+            }
+          };
+
+          if (value instanceof Map) {
+            setValueTo(fields, value);
+          } else {
+            fields.Value = {
+              label: `Value`,
+              value: formatUtils.tuple(formatUtils.Type.NO_HINT, inspect(value, inspectConfig)),
+            };
           }
         }
+
+        if (names.length !== 1)
+          trailingValue = undefined;
+
+        treeUtils.emitTree(configTree, {
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+          separators: 2,
+        });
       }
     });
+
+    if (!this.json && typeof trailingValue !== `undefined`) {
+      const name = names[0];
+
+      const value = inspect(configuration.getSpecial(name, {hideSecrets: true, getNativePaths: true}), {
+        colors: configuration.get(`enableColors`),
+      });
+
+      this.context.stdout.write(`\n`);
+      this.context.stdout.write(`${value}\n`);
+    }
 
     return report.exitCode();
   }

@@ -1,6 +1,0 @@
-releases:
-  "@yarnpkg/plugin-patch": patch
-
-declined:
-  - "@yarnpkg/plugin-compat"
-  - "@yarnpkg/cli"

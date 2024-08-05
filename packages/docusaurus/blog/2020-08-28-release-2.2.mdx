@@ -1,0 +1,101 @@
+---
+slug: release/2.2
+title: "Release: Yarn 2.2 🚅🌟"
+authors: [arcanis]
+---
+
+I hope you enjoyed the summer! As for us, we've been hard at work, and this update comes with its good chunk of improvements in various aspects. As usual we keep a detailed list in [our repository](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md), but let's go over the highlights!
+
+> **Don't know how to upgrade?** It's easy: just run `yarn set version berry` in your project, and you'll get the latest build. Want to skip the upgrade? Just revert the changes!
+
+## Dedupe command
+
+One of Yarn's core values is predictability. We want you to be confident that your project won't suddenly change in unexpected ways. The lockfile is a large part of this, ensuring that you always get the same dependencies during install, now or in the future.
+
+To explain what the dedupe command is, I first need to explain a bit the lockfile format. In Yarn, we have [descriptors](https://yarnpkg.com/advanced/lexicon#descriptor) (a combination of package name and range), and we associate them with [references](https://yarnpkg.com/advanced/lexicon#reference) (versions). A lockfile essentially stores which reference is linked to a specific range.
+
+So what happens when you add new ranges? For example if you already have `lodash@^4.0.0` in your lockfile, resolved to `4.0.0`, and suddenly add `lodash@^4.1.0`? Since this new range isn't compatible with the old one, Yarn will need to resolve it on its own - let's say to `4.1.0`. And now is the interesting part - remember when I said that Yarn tries to be predictable, and thus avoid to update things unless ordered to do so? In this case, it means that `lodash@^4.0.0` will **not** be updated to use `4.1.0`, even if they'd be compatible. Instead, it will keep using whatever else it was using before, meaning that you'll end up with both `4.0.0` and `4.1.0` in your tree.
+
+Functionally this isn't a problem, because both ranges will use versions compatible with what they advertise. In practice however, it may cause your lockfile to grow needlessly over time as it starts referencing multiple copies of packages, despite the fact that they would have been compatible if the lockfile had been allowed to make wider changes.
+
+The new [`yarn dedupe` command](https://yarnpkg.com/cli/dedupe) is our solution to that. By default, it will apply a resolution pass that will go over each range and use the highest compatible version that's already in the lockfile. This has various advantages:
+
+- It doesn't require the network, so very fast
+- In the end, most duplicates will be removed
+- It's very predictable: the highest version wins
+
+Of course, if you have incompatible ranges (for example `^1` and `^2`), they won't be deduped together, since that would lead to invalid trees. In this case, you'll have to fix your dependencies to remove references to the older range.
+
+Finally, if you want this kind of check to happen on your CI, the `-c,--check` option will cause the dedupe algorithm to report an error if optimizations would be possible.
+
+## Performances
+
+Better performances lead to better UX, and Yarn is a lot about a good UX. To this end, we've done various improvements in the 2.2 to improve the performances on real-world projects. For instance, Gatsby on cold cache went 92s → 83s, and 17s → 13s on hot cache.
+
+And because we think we should do better than flaunt about perf increases without live numbers to back them up and publicly track regressions, we've setup a [live dashboard](https://p.datadoghq.eu/sb/d2wdprp9uki7gfks-c562c42f4dfd0ade4885690fa719c818) with our friends at [Datadog](https://www.datadoghq.com/) that shows the results of the daily benchmarks we run against most common package managers. We're pretty happy about the results!
+
+![Yarn's Live Benchmarks](https://dev-to-uploads.s3.amazonaws.com/i/d47lr3ndqr657ls5xf7w.png)
+
+Note that Yarn currently does a bit more work than its siblings on cold cache installs because we need to convert the registry archives in zip format, more suitable for the usage we have. As registries get better at this, we expect cold cache performances to drastically improve 🚅
+
+## Size
+
+Since we're recommending checking-in the Yarn binary in your repository, we better be careful about how large we are. Our team made various improvements in this regard, and Yarn 2.2 is now exactly 1.8MB large. To give you an idea:
+
+- Yarn Classic is ~5MB large
+- pnpm is 35MB
+- npm is 61MB
+
+So, yeah. 1.8MB is nice, isn't it? 🙂
+
+## Telemetry
+
+One interesting change in the v2 is that we're going to enable basic opt-out telemetry. The full details are [here](https://yarnpkg.com/advanced/telemetry), but the gist is that we hope this will allow us to spend more time working on Yarn itself, and with a better understanding of how it's used in our community at large - which will then help inform the tradeoffs we make.
+
+The telemetry payload is easily [opt-out](https://yarnpkg.com/advanced/telemetry#how-can-i-disable-it), and we're committed to send as little information as possible. As soon as the data starts flowing we plan to build public dashboards (similar to our [benchmarks](https://p.datadoghq.eu/sb/d2wdprp9uki7gfks-c562c42f4dfd0ade4885690fa719c818)) that will help everyone get a better picture of the project.
+
+## Other works
+
+#### Smaller Improvements
+
+This is only a very short list, as always please look at our [official changelog](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md) for a comprehensive list, but the 2.2 also ships with:
+
+- The shell script language now supports more syntaxes (shell groups `{ echo foo; echo bar } > bar`, basic arithmetic `$(($RANDOM + 10))`)
+
+- The `--immutable` flag now accepts an [`immutablePatterns`](https://yarnpkg.com/configuration/yarnrc#immutablePatterns) settings that you can use to define additional paths that aren't allowed to change during an install - useful to prevent changes to `.pnp.js` or other artifacts
+
+- Packages referenced via the `file:` protocol will now update when running `yarn add` again (they're still stored in the cache - prefer `portal:` if you want a symlink-like behavior).
+
+- The new [`publishConfig.executableFiles` field](https://yarnpkg.com/configuration/manifest#publishConfig.executableFiles) lets you define paths in your package that should be flagged as executable. By default, since Windows has no way to express the executable flag, only files referenced in the `bin` field will be marked as such, but sometimes you might need others.
+
+- Error messages have been clarified in various contexts, such as when accessing Node builtin within Webpack's browser context, when running `yarn add` on unknown packages, or when a lingering package.json exists in a parent directory.
+
+#### Website
+
+Multiple improvements were made on the website. In particular:
+
+- The migration guide now features a [step-by-step section](https://yarnpkg.com/advanced/migration#step-by-step) that should help migrate without having to read the entire documentation beforehand.
+
+- The search engine now covers both the [manifest](https://yarnpkg.com/configuration/manifest) and [yarnrc](https://yarnpkg.com/configuration/yarnrc) pages, making it easier to find information about specific fields.
+
+#### "Package manager manager"
+
+We are [starting discussions](https://github.com/nodejs/TSC/issues/904) with the Node TSC to bundle Yarn with Node in some capacity (the current plan is to ship a shim that would, in turn, install Yarn transparently the first time you call it). The full proposal can be found on the following repository: [arcanis/pmm](https://github.com/arcanis/pmm). We strongly advise that you play with it and let us know what you think!
+
+As often, this kind of change benefits from wide support, so if you use Yarn (or pnpm), please feel free to follow the discussion and contribute when relevant. If you don't use either, remember that others do, and shutting the proposal down purely because you wouldn't directly benefit from it may not be representative of an inclusive community.
+
+## What's to come?
+
+We'll try to make more regular minor releases from now on, shipping exactly one minor per month (eventually leading up to the release of Yarn 3 in January 2021). Some topics we have in mind for the next one (come help us! we have a lot of [Good First Issues](https://github.com/yarnpkg/berry/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)!):
+
+- [All-new `yarn info`](https://twitter.com/arcanis/status/1298193746614312960)
+- New changelog generation capabilities
+- PnP support for the `exports` field, and ESM in general
+- And more...!
+
+Of course that's only on the top of my head, so it's possible our objectives shift during the next weeks depending on our own priorities - and of course depending on whether you help us or not 😛
+
+One very long-term topic we're starting to explore are package support for non-
+JavaScript languages (think C++, Python, Rust, PHP, ...). We already have a few ideas (we have an [experimental branch](https://github.com/yarnpkg/berry/pull/1697) generating CMake files, and another contributor played with Python), and we'll keep evaluating the work needed to get there during the next few months. If you're familiar with any of those ecosystems and are interested in helping Yarn become the universal package manager, please contact us on [Discord](https://discord.com/invite/yarnpkg)!
+
+Until then stay safe, wear a mask, and see you next month 😉

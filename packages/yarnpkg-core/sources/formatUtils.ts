@@ -476,7 +476,7 @@ export function prettyTruncatedLocatorList(configuration: Configuration, locator
       .slice(0, -2);
 
   const mark = `X`.repeat(locatorsCopy.length.toString().length);
-  const suffix = `and ${mark} more`;
+  const suffix = `and ${mark} more.`;
 
   let otherCount = locatorsCopy.length;
   while (named.length > 1 && remainingLength < suffix.length) {

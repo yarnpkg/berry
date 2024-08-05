@@ -771,10 +771,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       acorn: `^8.5.0`,
     },
   }],
-  // https://github.com/facebook/create-react-app/pull/11751
-  [`babel-preset-react-app@10.0.x`, {
+  // https://github.com/facebook/create-react-app/pull/12364
+  [`babel-preset-react-app@10.0.x <10.0.2`, {
     dependencies: {
-      '@babel/plugin-proposal-private-property-in-object': `^7.16.0`,
+      '@babel/plugin-proposal-private-property-in-object': `^7.16.7`,
     },
   }],
   // https://github.com/facebook/create-react-app/pull/11751
@@ -858,7 +858,8 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
     },
   }],
   // https://github.com/jdesboeufs/connect-mongo/pull/458
-  [`connect-mongo@*`, {
+  // https://github.com/jdesboeufs/connect-mongo/commit/f462a2598d1dea0722a89e1f101937d427462458
+  [`connect-mongo@<5.0.0`, {
     peerDependencies: {
       'express-session': `^1.17.1`,
     },
@@ -972,6 +973,26 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`graphql-compose@>=9.0.10`, {
     peerDependencies: {
       graphql: `^14.2.0 || ^15.0.0 || ^16.0.0`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vuetify-loader/commit/6634db3218dcc706db1c5c9e90f338ce76e9fff3
+  [`vite-plugin-vuetify@<=1.0.2`, {
+    peerDependencies: {
+      vue: `^3.0.0`,
+    },
+  }],
+  // https://github.com/vuetifyjs/vuetify-loader/commit/6634db3218dcc706db1c5c9e90f338ce76e9fff3
+  [`webpack-plugin-vuetify@<=2.0.1`, {
+    peerDependencies: {
+      vue: `^3.2.6`,
+    },
+  }],
+  // https://github.com/pzmosquito/eslint-import-resolver-vite/pull/22
+  // https://github.com/pzmosquito/eslint-import-resolver-vite/commit/97b8111b03d3f8c66506732ac965e906568e8dc1#diff-7ae45ad102eab3b6d7e7896acd08c427a9b25b346470d7bc6507b6481575d519
+  [`eslint-import-resolver-vite@<2.0.1`, {
+    dependencies: {
+      debug: `^4.3.4`,
+      resolve: `^1.22.8`,
     },
   }],
 ];

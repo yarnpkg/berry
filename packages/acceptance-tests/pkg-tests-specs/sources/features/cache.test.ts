@@ -1,4 +1,6 @@
-import {ppath, xfs} from '@yarnpkg/fslib';
+import {execUtils}            from '@yarnpkg/core';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {tests}                from 'pkg-tests-core';
 
 describe(`Cache`, () => {
   test(
@@ -12,17 +14,35 @@ describe(`Cache`, () => {
     }),
   );
 
-  test(
-    `it should make packages installable even without network`,
-    makeTemporaryEnv({
-      dependencies: {
-        [`no-deps`]: `1.0.0`,
-      },
-    }, async ({path, run, source}) => {
-      await run(`install`);
-      await run(`install`, {enableNetwork: false});
-    }),
-  );
+  for (const enableGlobalCache of [false, true]) {
+    for (const withLockfile of [false, true]) {
+      test(
+        `it should make packages installable even without network (${enableGlobalCache ? `global` : `local`} cache, ${withLockfile ? `with` : `without`} lockfile)`,
+        makeTemporaryEnv({
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        }, {
+          enableGlobalCache,
+        }, async ({path, run, source}) => {
+          await run(`install`);
+
+          if (!withLockfile)
+            await xfs.removePromise(ppath.join(path, Filename.lockfile));
+
+          const requests = await tests.startRegistryRecording(async () => {
+            await run(`install`);
+          });
+
+          if (withLockfile) {
+            expect(requests).toHaveLength(0);
+          } else {
+            expect(requests.filter(req => req.type !== tests.RequestType.PackageInfo)).toHaveLength(0);
+          }
+        }),
+      );
+    }
+  }
 
   test(
     `it should detect when the files checksum is incorrect`,
@@ -115,6 +135,41 @@ describe(`Cache`, () => {
   );
 
   test(
+    `it should ignore checksum mismatches and regenerate archives when their cache key is different from Yarn's own cache key, if cacheMigrationMode=always (global cache, hot)`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, {
+      cacheMigrationMode: `always`,
+      enableGlobalCache: true,
+    }, async ({path, run, source}) => {
+      await run(`install`, {
+        cacheVersionOverride: `2`,
+      });
+
+      const cacheFiles = await xfs.readdirPromise(ppath.join(path, `.yarn/global/cache`));
+      const cacheFile = ppath.join(path, `.yarn/global/cache`, cacheFiles.find(name => name.startsWith(`no-deps-`))!);
+
+      // Adding some data to give it a different checksum than what we'll have for
+      // "cache key v1"; zip archives allow pseudo-arbitrary content at their end
+      await xfs.appendFilePromise(cacheFile, `corrupted archive`);
+
+      // Removing the lockfile to make sure it'll be populated with "cache key v1" data
+      await xfs.removePromise(ppath.join(path, Filename.lockfile));
+
+      await run(`install`, {
+        cacheVersionOverride: `1`,
+      });
+
+      await run(`install`, {
+        cacheVersionOverride: `2`,
+        cacheCheckpointOverride: `1`,
+      });
+    }),
+  );
+
+  test(
     `it should update the cache files when changing the compression level, if cacheMigrationMode=match-spec`,
     makeTemporaryEnv({
       dependencies: {
@@ -143,6 +198,71 @@ describe(`Cache`, () => {
       await expect(xfs.readFilePromise(otherCacheFile)).resolves.not.toEqual(cacheData);
     }),
   );
+
+  test(`it should not confuse the cache key when merging an upgraded cache key branch into a feature branch`, makeTemporaryEnv({
+    dependencies: {
+      [`depA`]: `npm:no-deps@1.0.0`,
+      [`depB`]: `npm:no-deps@1.0.1`,
+      [`depC`]: `npm:no-deps@1.1.0`,
+    },
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    // First we create the main branch; it contains a bunch of various dependencies
+
+    await execUtils.execvp(`git`, [`init`], {cwd: path});
+
+    await execUtils.execvp(`git`, [`add`, `.`], {cwd: path});
+    await execUtils.execvp(`git`, [`commit`, `-m`, `test`], {cwd: path});
+
+    // We now create a new feature branch derived from the base one, and we add a new dependency
+
+    await execUtils.execvp(`git`, [`checkout`, `-b`, `feature`], {cwd: path});
+
+    await run(`add`, `depX@npm:no-deps@2.0.0`);
+
+    await execUtils.execvp(`git`, [`add`, `.`], {cwd: path});
+    await execUtils.execvp(`git`, [`commit`, `-m`, `new dep`], {cwd: path});
+
+    // Meanwhile, the base branch is updated with a new Yarn version:
+    //
+    // - we add an extra byte at the end of each file in the cache, to simulate a change in how zip archives are generated
+    // - we run an install with a new cache version and we persist the new checksums
+
+    await execUtils.execvp(`git`, [`checkout`, `-`], {cwd: path});
+
+    await run(`install`, {
+      cacheVersionOverride: `2`,
+      zipDataEpilogue: `<arbitrary data>`,
+    });
+
+    //throw new Error(`lol`);
+
+    await execUtils.execvp(`git`, [`add`, `.`], {cwd: path});
+    await execUtils.execvp(`git`, [`commit`, `-m`, `fake upgrade`], {cwd: path});
+
+    // Going back to our feature branch, we now merge the updated base branch into it
+
+    await execUtils.execvp(`git`, [`checkout`, `-`], {cwd: path});
+
+    await execUtils.execvp(`git`, [`merge`, `-`], {cwd: path});
+
+    // Running an install should work fine
+
+    await run(`install`, {
+      cacheVersionOverride: `2`,
+      zipDataEpilogue: `<arbitrary data>`,
+    });
+
+    // However, once we remove the cache and try to reinstall, we used to get an error because the wrong cache key had been encoded in the lockfile
+
+    await xfs.removePromise(ppath.join(path, `.yarn/cache`));
+
+    await run(`install`, {
+      cacheVersionOverride: `2`,
+      zipDataEpilogue: `<arbitrary data>`,
+    });
+  }));
 
   test(
     `it should ignore changes in the cache compression, if cacheMigrationMode=required-only`,

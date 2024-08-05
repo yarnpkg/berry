@@ -17,14 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: ./.github/actions/prepare
 
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx create-docusaurus@latest my-website classic && cd my-website
+        yarn dlx create-docusaurus@latest my-website classic --javascript && cd my-website
         yarn build
 
     - name: 'Running the TypeScript integration test'

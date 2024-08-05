@@ -111,6 +111,44 @@ export function formatNameWithHyperlink(name: MessageName | null, {configuration
   return formatUtils.applyHyperlink(configuration, code, href);
 }
 
+/**
+ * @internal
+ */
+export async function reportOptionDeprecations({configuration, stdout, forceError}: {configuration: Configuration, stdout: Writable, forceError?: boolean}, checks: Array<{option: unknown, message: string, error?: boolean, callback?: () => void}>) {
+  const deprecationReport = await StreamReport.start({
+    configuration,
+    stdout,
+    includeFooter: false,
+  }, async report => {
+    let hasWarnings = false;
+    let hasErrors = false;
+
+    for (const check of checks) {
+      if (typeof check.option !== `undefined`) {
+        if (check.error || forceError) {
+          hasErrors = true;
+          report.reportError(MessageName.DEPRECATED_CLI_SETTINGS, check.message);
+        } else {
+          hasWarnings = true;
+          report.reportWarning(MessageName.DEPRECATED_CLI_SETTINGS, check.message);
+        }
+
+        check.callback?.();
+      }
+    }
+
+    if (hasWarnings && !hasErrors) {
+      report.reportSeparator();
+    }
+  });
+
+  if (deprecationReport.hasErrors()) {
+    return deprecationReport.exitCode();
+  } else {
+    return null;
+  }
+}
+
 export class StreamReport extends Report {
   static async start(opts: StreamReportOptions, cb: (report: StreamReport) => Promise<void>) {
     const report = new this(opts);
@@ -231,10 +269,9 @@ export class StreamReport extends Report {
   }
 
   getRecommendedLength() {
-    const PREFIX_SIZE = `➤ YN0000: `.length;
+    const PREFIX_SIZE = `➤ YN0000: ⠋ `.length;
 
-    // The -1 is to account for terminals that would wrap after
-    // the last column rather before the first overwrite
+    // The `- 1` is to account for terminals that would wrap after the last column rather before the first overwrite
     const recommendedLength = this.progressStyle !== null
       ? (this.stdout as WriteStream).columns - 1
       : super.getRecommendedLength();

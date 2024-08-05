@@ -1,7 +1,6 @@
 import {PortablePath}                                                                         from '@yarnpkg/fslib';
 import {CommandClass}                                                                         from 'clipanion';
 import {Writable, Readable}                                                                   from 'stream';
-import {URL}                                                                                  from 'url';
 
 import {PluginConfiguration, Configuration, ConfigurationDefinitionMap, PackageExtensionData} from './Configuration';
 import {Fetcher}                                                                              from './Fetcher';
@@ -12,8 +11,6 @@ import {Resolver, ResolveOptions}                                               
 import {Workspace}                                                                            from './Workspace';
 import * as httpUtils                                                                         from './httpUtils';
 import {Locator, Descriptor}                                                                  from './types';
-
-type ProcessEnvironment = {[key: string]: string};
 
 export type CommandContext = {
   cwd: PortablePath;
@@ -66,7 +63,7 @@ export interface Hooks {
    */
   setupScriptEnvironment?: (
     project: Project,
-    env: ProcessEnvironment,
+    env: NodeJS.ProcessEnv,
     makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>,
   ) => Promise<void>;
 
@@ -81,7 +78,7 @@ export interface Hooks {
     project: Project,
     locator: Locator,
     scriptName: string,
-    extra: {script: string, args: Array<string>, cwd: PortablePath, env: ProcessEnvironment, stdin: Readable | null, stdout: Writable, stderr: Writable},
+    extra: {script: string, args: Array<string>, cwd: PortablePath, env: NodeJS.ProcessEnv, stdin: Readable | null, stdout: Writable, stderr: Writable},
   ) => Promise<() => Promise<number>>;
 
   /**

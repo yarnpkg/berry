@@ -53,7 +53,7 @@ Because of this restriction, and because generators will pretty much always need
 
 ### Runtime environment
 
-In order to let the script knows about the various predefined folders involved in the generation process, Yarn will inject a special `execEnv` global variable available to the script. This object's [interface](/api/interfaces/plugin_exec.execenv.html) is defined as such:
+In order to let the script knows about the various predefined folders involved in the generation process, Yarn will inject a special `execEnv` global variable available to the script. This object's [interface](https://yarnpkg.com/api/plugin-exec/interface/ExecEnv) is defined as such:
 
 | Property   | Type     | Description                                                                                                                                                     |
 | ---------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |

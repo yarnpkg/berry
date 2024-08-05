@@ -18,12 +18,12 @@ export type BigIntStats = NodeBigIntStats & {
   crc?: number;
 };
 
-export type Dirent<T extends Path> = Exclude<NodeDirent, 'name'> & {
+export type Dirent<T extends Path> = Omit<NodeDirent, 'name' | 'path'> & {
   name: Filename;
   path: T;
 };
 
-export type DirentNoPath = Exclude<NodeDirent, 'name'> & {
+export type DirentNoPath = Omit<NodeDirent, 'name' | 'path'> & {
   name: Filename;
 };
 
@@ -71,8 +71,16 @@ export type MkdirOptions = Partial<{
 
 export type RmdirOptions = Partial<{
   maxRetries: number;
-  recursive: boolean;
   retryDelay: number;
+  /** @deprecated Use `rm` instead of `rmdir` */
+  recursive: boolean;
+}>;
+
+export type RmOptions = Partial<{
+  maxRetries: number;
+  retryDelay: number;
+  force: boolean;
+  recursive: boolean;
 }>;
 
 export type WriteFileOptions = Partial<{
@@ -254,6 +262,9 @@ export abstract class FakeFS<P extends Path> {
 
   abstract rmdirPromise(p: P, opts?: RmdirOptions): Promise<void>;
   abstract rmdirSync(p: P, opts?: RmdirOptions): void;
+
+  abstract rmPromise(p: P, opts?: RmOptions): Promise<void>;
+  abstract rmSync(p: P, opts?: RmOptions): void;
 
   abstract linkPromise(existingP: P, newP: P): Promise<void>;
   abstract linkSync(existingP: P, newP: P): void;

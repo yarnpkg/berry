@@ -1294,13 +1294,8 @@ describe(`Plug'n'Play`, () => {
       async ({path, run, source}) => {
         await run(`install`);
 
-        const listing = await xfs.readdirPromise(`${path}/.yarn/unplugged`);
-        expect(listing).toHaveLength(1);
-
-        await writeFile(
-          `${path}/.yarn/unplugged/${listing[0]}/node_modules/no-deps/index.js`,
-          `module.exports = "unplugged";\n`,
-        );
+        const indexPath = npath.fromPortablePath(await source(`require.resolve('no-deps/index.js')`));
+        await writeFile(indexPath, `module.exports = "unplugged";\n`);
 
         await run(`install`);
 
@@ -1661,18 +1656,54 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should work with pnpEnableInlining set to false`,
-    makeTemporaryEnv({}, {
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, {
       pnpEnableInlining: false,
     }, async ({path, run, source}) => {
-      await run(`add`, `no-deps`);
+      await run(`install`);
 
-      expect(xfs.existsSync(`${path}/${Filename.pnpData}`)).toBeTruthy();
+      expect(xfs.existsSync(ppath.join(path, Filename.pnpData))).toBeTruthy();
 
-      await writeFile(`${path}/file.js`, `
+      await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+        name: `no-deps`,
+        version: `1.0.0`,
+      });
+    }),
+  );
+
+  test(
+    `it should work when working inside a sandbox environment full of symlinks, and pnpEnableInlining is set to false`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, {
+      pnpEnableInlining: false,
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `file.js`), `
         console.log(require.resolve('no-deps'));
       `);
 
-      await expect(run(`node`, `file.js`)).resolves.toBeTruthy();
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await xfs.mkdirpPromise(testSandboxPath);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpData), ppath.join(testSandboxPath, Filename.pnpData)),
+        xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
+      ]);
+
+      await run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      });
     }),
   );
 
@@ -1742,7 +1773,7 @@ describe(`Plug'n'Play`, () => {
 
         await run(`install`);
 
-        await expect(source(`require('portal')`)).resolves.toMatch(`peer-deps-fixed-virtual-`);
+        await expect(source(`require('portal')`)).resolves.toMatch(/[\\/]__virtual__[\\/].*[\\/]peer-deps-fixed[\\/]/);
       });
     }),
   );
@@ -1754,7 +1785,7 @@ describe(`Plug'n'Play`, () => {
         await xfs.writeJsonPromise(`${portalTarget}/package.json`, {
           name: `portal`,
           dependencies: {
-            [`no-deps`]: `*`,
+            [`no-deps`]: `1.0.0`,
           },
           peerDependencies: {
             [`left-pad`]: `*`,
@@ -1763,11 +1794,12 @@ describe(`Plug'n'Play`, () => {
 
         await xfs.writeFilePromise(
           `${portalTarget}/index.js`,
-          `module.exports = require.resolve('no-deps', {paths: [__dirname]})`,
+          `module.exports = require('no-deps')`,
         );
 
         await xfs.writeJsonPromise(`${path}/package.json`, {
           dependencies: {
+            [`no-deps`]: `2.0.0`,
             [`portal`]: `portal:${portalTarget}`,
           },
         });
@@ -1775,7 +1807,10 @@ describe(`Plug'n'Play`, () => {
         await run(`install`, {cwd: portalTarget});
         await run(`install`);
 
-        await expect(source(`require('portal')`)).resolves.toMatch(`no-deps-npm-2.0.0-`);
+        await expect(source(`require('portal')`)).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
       });
     }),
   );
@@ -1807,6 +1842,36 @@ describe(`Plug'n'Play`, () => {
           code: 1,
           stderr: expect.stringContaining(`is controlled by multiple pnpapi instances`),
         });
+      });
+    }),
+  );
+
+
+  test(
+    `it should initialize a symlinked pnpapi module only once when working inside a sandbox environment full of symlinks`,
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
+
+      await writeFile(ppath.join(path, `file.js`), `
+        console.log('found duplicate pnpapi instances:', require('pnpapi') !== require('module').findPnpApi(${JSON.stringify(ppath.join(path, Filename.manifest))}));
+      `);
+
+      const testSandboxPath = ppath.resolve(ppath.join(path, `..`, `test-sandbox-out`));
+      await xfs.mkdirpPromise(testSandboxPath);
+
+      await Promise.all([
+        xfs.symlinkPromise(ppath.join(path, `.yarn`), ppath.join(testSandboxPath, `.yarn`)),
+        xfs.symlinkPromise(ppath.join(path, Filename.lockfile), ppath.join(testSandboxPath, Filename.lockfile)),
+        xfs.symlinkPromise(ppath.join(path, Filename.manifest), ppath.join(testSandboxPath, Filename.manifest)),
+        xfs.symlinkPromise(ppath.join(path, Filename.pnpCjs), ppath.join(testSandboxPath, Filename.pnpCjs)),
+        xfs.symlinkPromise(ppath.join(path, `file.js`), ppath.join(testSandboxPath, `file.js`)),
+      ]);
+
+      await expect(run(`node`, `file.js`, {
+        projectFolder: testSandboxPath,
+      })).resolves.toMatchObject({
+        code: 0,
+        stdout: expect.stringContaining(`found duplicate pnpapi instances: false`),
       });
     }),
   );
@@ -1949,7 +2014,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       { },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(run(`node`, `-r`, `./.pnp.cjs`, `-p`, `42`)).resolves.toMatchObject({
           code: 0,
@@ -1961,32 +2026,25 @@ describe(`Plug'n'Play`, () => {
 
   test(
     `it should set bytesRead on Windows when input is a pipe and EOF is thrown`,
-    makeTemporaryEnv(
-      {
-        scripts: {
-          test: `echo '' | node index.js`,
-        },
-      },
-      async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+    makeTemporaryEnv({}, async ({path, run, source}) => {
+      await run(`install`);
 
-        await xfs.writeFilePromise(`${path}/index.js`, `
-          const fs = require('fs');
+      await xfs.writeFilePromise(`${path}/index.js`, `
+        const fs = require('fs');
 
-          fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
-            console.log(bytesRead);
-            fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead, buffer) => {
-              console.log(bytesRead);
+        module.exports = new Promise(resolve => {
+          fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead1, buffer) => {
+            fs.read(0, Buffer.alloc(10000), 0, 10000, null, (err, bytesRead2, buffer) => {
+              resolve([bytesRead1, bytesRead2]);
             });
           });
-        `);
-
-        await expect(run(`test`)).resolves.toMatchObject({
-          code: 0,
-          stdout: `1\n0\n`,
         });
-      },
-    ),
+      `);
+
+      await expect(source(`require('./index.js')`, {
+        stdin: `\n`,
+      })).resolves.toEqual([1, 0]);
+    }),
   );
 
   test(
@@ -2003,7 +2061,7 @@ describe(`Plug'n'Play`, () => {
         await xfs.writeFilePromise(`${path}/sub-project/yarn.lock`, ``);
 
         await expect(run(`install`, {cwd: `${path}/sub-project`})).resolves.toMatchObject({code: 0});
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(`${path}/sub-project/index.js`, `
           const path = require('path');
@@ -2021,11 +2079,12 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       { },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(`${path}/foo.js`, `
           module.exports.foo = 42;
         `);
+
         await xfs.writeFilePromise(`${path}/index.js`, `
           import('./foo.js').then((mod) => console.log(mod.foo));
         `);
@@ -2043,12 +2102,13 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       { },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(`${path}/foo.js`, `
           module.exports.foo = 42;
           require('./index.js');
         `);
+
         await xfs.writeFilePromise(`${path}/index.js`, `
           console.log(require('./foo.js').foo);
         `);
@@ -2066,7 +2126,7 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       { },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(`${path}/index.js`, `
           const fs = require('fs')
@@ -2111,7 +2171,7 @@ describe(`Plug'n'Play`, () => {
           },
         });
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(source(`require('pkg/test.node')`)).rejects.toMatchObject({
           externalException: {
@@ -2134,7 +2194,7 @@ describe(`Plug'n'Play`, () => {
         },
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await xfs.writeFilePromise(ppath.join(path, `custom.js`), `console.log('foo')`);
         await xfs.writeFilePromise(ppath.join(path, `index.js`), `require('#foo')`);
@@ -2181,7 +2241,7 @@ describe(`Plug'n'Play`, () => {
   test(
     `it should emit a warning for circular dependency exports access`,
     makeTemporaryEnv({}, async ({path, run, source}) => {
-      await expect(run(`install`)).resolves.toMatchObject({code: 0});
+      await run(`install`);
 
       await xfs.writeFilePromise(ppath.join(path, `a.js`), `require('./b.js');`);
       await xfs.writeFilePromise(ppath.join(path, `b.js`), `require('./a.js').foo;`);

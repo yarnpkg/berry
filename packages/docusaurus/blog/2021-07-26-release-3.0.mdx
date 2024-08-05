@@ -1,0 +1,98 @@
+---
+slug: release/3.0
+title: "Release: Yarn 3.0 🚀🤖"
+authors: [arcanis]
+---
+
+Hello! Long time no see! Back in December, we decided to start working on our next major release, the **3.0**. It took a bit of time to do everything we intended to do, but here we are! So let's talk a bit about what it changes, and what it brings. Note that these are only the highlights, the [full changelog](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md) is much more comprehensive.
+
+## Governance
+
+Back when the project was started in 2017, we didn't took the time to establish a formal governance document. This is now addressed, and our team composition can be found [here](https://github.com/yarnpkg/berry/blob/master/GOVERNANCE.md). It doesn't change anything in practice (this is how we worked for more than two years now), but we hope it may give you a better understanding as to how we work and reach consensus.
+
+## OpenCollective
+
+From 2017 to 2019 Yarn was mostly maintained by Facebook engineers. While it worked relatively well, the Yarn 1 -> 2 release also proved to be the right time to expand our active team to other horizons, and nowadays no two of our active contributors work at the same company - and none at Facebook.
+
+Consequently, we've decided to setup an [OpenCollective](https://opencollective.com/yarnpkg) (or [GitHub Sponsors](https://github.com/sponsors/yarnpkg)) to give our supporters a way to both express their thanks to our team, and give us resources we can then inject back into the project.
+
+## Breaking Changes
+
+While the migration from Yarn 1 to Yarn 2 brought some discomfort, the migration to Yarn 3 should prove easier - regardless of the version you come from. The user-facing breaking changes we made this season are mostly little details that may only affect you in very specific cases:
+
+- Node 10 isn't supported anymore
+- Plug'n'Play hooks are now called `.pnp.cjs` (vs `.pnp.js`)
+- Virtual folders are now called `__virtual__` (vs `$$virtual`)
+- The [editor SDKs](https://yarnpkg.com/getting-started/editor-sdks) have been moved to `@yarnpkg/sdks`
+- Etc; full list [here](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md)
+
+Even for Yarn 1 users, migrating from 1 to 3 should be easier: we made it so that Yarn will detect when this situation arises to then automatically enable the `node-modules` linker. That alone should address most of the problems you may have been hitting when attempting the upgrade - and for everything else, make sure to take a look at our [Migration Guide](https://yarnpkg.com/getting-started/migration#step-by-step) which got significantly improved over the past year.
+
+### Support for the `exports` field
+
+When using Yarn 3 w/ PnP, the [`exports`](https://nodejs.org/api/packages.html#packages_exports) field will be properly resolved *regardless of your Node version*. If you're not familiar with this field, you can see it as a way to:
+
+- Replace the `main` field
+- Soft-prevent accessing arbitrary files in the package
+- Conditionally remap files depending on the context (bundlers, ...)
+
+## Performances
+
+Various tweaks have been made to address some of the largest resource consumptions in Yarn. Installs have been improved (turning us faster than pnpm in some scenarios, which is quite a feat!), but not only: script execution tends to have a natural overhead, but bugs in 2.4 and prior caused this overhead to grow relative to the size of the project itself.  This is no longer the case, and the overhead should now be constant.
+
+## New `node_modules` linkers
+
+As you may know, Yarn is built around a few interfaces. One of them is called a "linker", and tells Yarn how to install packages on disk. It's how we can support both PnP and node_modules installs without changing much code.
+
+One advantage of this architecture is how it allows us to efficiently iterate on alternative install strategies. For this release, [larixer](https://github.com/larixer) implemented a new experimental `nmMode` setting that can be used to instruct the linker to use a specific copy scheme:
+
+- `hardlinks-local` will use hardlinks when the same package is found multiple times within the same project (but only if they have exactly the same version at the moment).
+
+- `hardlinks-global` will use hardlinks on identical files (even across different versions!), but will also make them point to a global content-addressable directory. This is similar to what pnpm does. Note that if the cache is corrupted (for example because you manually edited it), Yarn will automatically repair it on subsequent installs.
+
+I myself have been playing with a pnpm-style linker. It hasn't shipped yet since I'm cautious about adding complexity that could end up unmaintained, but given how small it is there's a decent chance we could add it in a later release as an experimental install mode.
+
+## Improved Shell
+
+As you may know, given that system shells are rarely portable across Windows and Posix, Yarn no longer uses them to run your `scripts` entries. Instead, we use our very own shell interpreter.
+
+We're happy to report that this shell just got smarter, and now provides two additional syntaxes that you can reliably use on both Windows and Posix:
+
+```
+build-js & build-css &    # Background jobs
+ls 2>/dev/null            # File descriptor redirections
+```
+
+Additionally, background jobs have their output color-coded, so you can clearly identify their output, even interlaced.
+
+## ESBuild support
+
+We now use ESBuild to generate the Yarn bundles and as such worked to ensure good compatibility with Plug'n'Play installs. The result is the new [`@yarnpkg/esbuild-plugin-pnp`](https://github.com/yarnpkg/berry/tree/master/packages/esbuild-plugin-pnp) package which lets you transparently build your code using the default Yarn installation mode. It's still relatively young, so feel free to drop us an issue if you notice something strange!
+
+While it won't change much for most end-users, the move to ESBuild also provided decent build speed improvements (around 6x faster), making it less frustrating to [build Yarn from sources](https://yarnpkg.com/cli/set/version/from/sources) ✨
+
+## New plugin APIs
+
+Yarn supports writing plugins that can inject themselves into various places and leverage some of the builtin modules provided by the core. While we didn't get the chance to make all the improvements we hoped, we've still been able to upgrade the command line framework to [Clipanion 3](https://mael.dev/clipanion/), which lets you write intuitive type-checked commands with a minimal syntactic overhead.
+
+## Conclusion
+
+According to DEV.to, those change notes take about 5 minutes to read - by contrast, the [2.0 release post](https://dev.to/arcanis/introducing-yarn-2-4eh1) was a whopping 15 minutes! Of course, this time around we didn't need to fully rewrite Yarn, hence a lower amount of "critical information" we need you to be aware of 😉 We expect that to be the norm from now on: majors won't have a lot of super impactful changes, mostly just some architecture cleaning and modernization, as new features will tend to land in minors.
+
+As for our team, we're very happy of the work we've been doing! Working on the codebase still feels like a treat, and features are often constrained to a few identifiable files - proving that our initial redesign bet was right. Our stats suggest that the result are visible to our users as well, and while I remain cautious about popularity metrics it's certainly nice to see.
+
+Finally, remember that Yarn now has an [OpenCollective](https://opencollective.com/yarnpkg) / [GitHub Sponsors](https://github.com/sponsors/yarnpkg)! If your company benefits from our work, or would like to see particular fixes land, sponsoring the project is a good way to engage with us 🙂
+
+### What's to come?
+
+A few features initially slated for 3.0 have been pushed back to the next minor so that we have more time to properly incubate them. Some of the things we have in motion:
+
+- [Corepack](https://github.com/nodejs/corepack) integration
+- ESM support under PnP mode
+- Builtin CLI completion
+- Changelog generation
+- Improved performances
+- pnpm-style linker
+- And more...!
+
+Of course that's only on the top of my head, so it's possible our objectives shift during the next weeks depending on our own priorities - and of course depending on whether you help us or not 😛

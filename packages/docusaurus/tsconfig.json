@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "../../tsconfig.json",
+    "@docusaurus/tsconfig"
+  ],
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+
+    "baseUrl": ".",
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": [],
+}

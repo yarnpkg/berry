@@ -1,10 +1,10 @@
-import buffer               from 'buffer';
-import {URL, fileURLToPath} from 'url';
-import {inspect}            from 'util';
+import buffer              from 'buffer';
+import {fileURLToPath}     from 'url';
+import {inspect}           from 'util';
 
-import {FakeFS}             from './FakeFS';
-import {ProxiedFS}          from './ProxiedFS';
-import {npath, NativePath}  from './path';
+import {FakeFS}            from './FakeFS';
+import {ProxiedFS}         from './ProxiedFS';
+import {npath, NativePath} from './path';
 
 /**
  * Adds support for file URLs and Buffers to the wrapped `baseFs`, but *not* inside the typings.

@@ -1,3 +1,6 @@
+import {ppath, xfs} from '@yarnpkg/fslib';
+import {misc}       from 'pkg-tests-core';
+
 describe(`Commands`, () => {
   for (const [description, args] of [[`with prefix`, [`run`]], [`without prefix`, []]]) {
     describe(`run ${description}`, () => {
@@ -21,6 +24,25 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await expect(run(...args, `foo`)).rejects.toMatchObject({
+          code: 42,
+        });
+      }));
+
+      test(`it should properly forward the script exit codes when calling into another yarnPath binary`, makeTemporaryEnv({
+        scripts: {
+          foo: `exit 0`,
+        },
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `yarn-test-secondary-binary.js`), [
+          `#!/usr/bin/env node`,
+          `process.exit(42);`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(run(...args, `foo`, {
+          yarnPath: `./yarn-test-secondary-binary.js`,
+        })).rejects.toMatchObject({
           code: 42,
         });
       }));
@@ -134,6 +156,27 @@ describe(`Commands`, () => {
         async ({path, run, source}) => {
           const {code, stdout, stderr} = await run(`run`);
           expect({code, stdout, stderr}).toMatchSnapshot();
+        },
+      ),
+    );
+    test(`it should print the list of available scripts as JSON if no parameters passed to command`,
+      makeTemporaryEnv(
+        {
+          scripts: {
+            foo: `echo hello`,
+            bar: `echo hi`,
+          },
+        },
+        async ({path, run, source}) => {
+          const {stdout} = await run(`run`, `--json`);
+
+          expect(misc.parseJsonStream(stdout)).toEqual([{
+            name: `foo`,
+            script: `echo hello`,
+          }, {
+            name: `bar`,
+            script: `echo hi`,
+          }]);
         },
       ),
     );

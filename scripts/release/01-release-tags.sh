@@ -65,7 +65,7 @@ echo
 
 # Regenerate the local versions for the elements that get released
 yarn workspaces foreach \
-  --verbose --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
+  --verbose --all --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
   run update-local
 
 # The v1 still uses the "berry.js" file path when using "policies set-version"

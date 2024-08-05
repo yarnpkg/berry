@@ -1,0 +1,31 @@
+---
+slug: bun
+title: "A word about Bun 💬"
+authors: [arcanis]
+---
+
+I'm sure many of you are curious about our position regarding [Bun](https://bun.sh/), the product from Oven, the company behind Bun (we're going in cycles). It's so fast, is there any merits to using Yarn?
+
+First, we feel useful to point out that this sentence isn't particularly new. We heard the same (often from the same people) asking why use Yarn when npm/pnpm/whateverpm have all its features or outspeed it. Answering that is a little tough, because the premise is wrong: other package managers don't have its features[^1][^,2], and the speed differences are at best marginal. They are a good fight, but we believe Yarn ultimately has a unique position that no other package managers emulates today.
+
+Bun is an interesting case, though. It's definitely much faster[^3]. Can Yarn compete? We believe so.
+
+First, remember today's iteration of Yarn was developed over the course of two years by a team already experienced in package managers. Those tools are fickle beasts, and many edge cases loom around[^4]. Bun may be fast, but is it correct? That's something the community will have to figure out over time.
+
+But stability isn't everything: the feature set is an important facet of what makes a tool appealing. The developer experience (which includes the user interface) is another. The governance yet another. Yarn stills fits its niche: a complete tool that empowers its users, advocates for good practices, isn't afraid to explore uncharted territories, and is protected from perverse corporate incentives.
+
+With that said, I believe there's a couple of things we can learn from Bun. Yarn was always intended to be distributed as a unique JS file for extreme portability across Node.js supported architectures. With [Corepack](https://nodejs.org/api/corepack.html) now being the preferred install strategy, does it still matter? Should we experiment with native modules for future releases, that Corepack would transparently fetch as needed? Bun proved untapped performances could be exploited.
+
+Of course it's not just a matter of being native - Oven's work follows [interesting code patterns](https://twitter.com/jarredsumner/status/1708650105828692054), and I'm curious how much of an impact they have on the resulting speed (at the cost of increased complexity, and making contributions harder).
+
+I always fought against the idea that one package manager was enough for every single project out there, Yarn included. Our users are engineers: they have different requirements, different priorities, and different sensibilities. I found Yarn the appropriate tool for my projects, but I'm sure Zoltan is perfectly happy with pnpm and Microsoft with npm.
+
+Will Bun reach some of your hearts? More than likely. Will it be a replacement? I can't imagine that.
+
+[^1]: For example the [portable shell](/features/scripting#portable-shell), the [constraints](/features/constraints), the [patching](/features/patching), ...
+
+[^,2]: Or delegate to Yarn; did you know pnpm's [hoisted linker](https://pnpm.io/npmrc#node-linker) is literally [using Yarn as a dependency](https://github.com/pnpm/pnpm/blob/ee6e0734e911d48f6ff786aa0f05b9b9926e4815/pkg-manager/real-hoist/src/index.ts#L7)?
+
+[^3]: Although [not as much as they pretend](https://twitter.com/arcanis/status/1702297503465611278), which is a bit of a letdown. Marketing corrupts, eh?
+
+[^4]: [Here be dragons](https://github.com/yarnpkg/berry/blob/master/packages/acceptance-tests/pkg-tests-specs/sources/dragon.test.js).

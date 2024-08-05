@@ -1,8 +1,9 @@
-import {BaseCommand}                                                                                                          from '@yarnpkg/cli';
-import {Configuration, MessageName, miscUtils, Project, StreamReport, structUtils, semverUtils, formatUtils, PeerRequirement} from '@yarnpkg/core';
-import {Command, Option}                                                                                                      from 'clipanion';
-import {Writable}                                                                                                             from 'stream';
-import * as t                                                                                                                 from 'typanion';
+import {BaseCommand}                                                                                                                          from '@yarnpkg/cli';
+import type {PeerRequestNode}                                                                                                                 from '@yarnpkg/core/sources/Project';
+import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType, miscUtils, type LocatorHash} from '@yarnpkg/core';
+import {Command, Option}                                                                                                                      from 'clipanion';
+import {Writable}                                                                                                                             from 'stream';
+import * as t                                                                                                                                 from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
@@ -13,26 +14,26 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   static usage = Command.Usage({
     description: `explain a set of peer requirements`,
     details: `
-      A set of peer requirements represents all peer requirements that a dependent must satisfy when providing a given peer request to a requester and its descendants.
+      A peer requirement represents all peer requests that a subject must satisfy when providing a requested package to requesters.
 
-      When the hash argument is specified, this command prints a detailed explanation of all requirements of the set corresponding to the hash and whether they're satisfied or not.
+      When the hash argument is specified, this command prints a detailed explanation of the peer requirement corresponding to the hash and whether it is satisfied or not.
 
-      When used without arguments, this command lists all sets of peer requirements and the corresponding hash that can be used to get detailed information about a given set.
+      When used without arguments, this command lists all peer requirements and the corresponding hash that can be used to get detailed information about a given requirement.
 
       **Note:** A hash is a six-letter p-prefixed code that can be obtained from peer dependency warnings or from the list of all peer requirements (\`yarn explain peer-requirements\`).
     `,
     examples: [[
-      `Explain the corresponding set of peer requirements for a hash`,
+      `Explain the corresponding peer requirement for a hash`,
       `$0 explain peer-requirements p1a4ed`,
     ], [
-      `List all sets of peer requirements`,
+      `List all peer requirements`,
       `$0 explain peer-requirements`,
     ]],
   });
 
   hash = Option.String({
     required: false,
-    validator: t.applyCascade(t.isString(), [
+    validator: t.cascade(t.isString(), [
       t.matchesRegExp(/^p[0-9a-f]{5}$/),
     ]),
   });
@@ -45,174 +46,207 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
-    // peerRequirements aren't stored inside the install state
     await project.applyLightResolution();
 
     if (typeof this.hash !== `undefined`) {
-      return await explainPeerRequirements(this.hash, project, {
+      return await explainPeerRequirement(this.hash, project, {
+        stdout: this.context.stdout,
+      });
+    } else {
+      return await explainPeerRequirements(project, {
         stdout: this.context.stdout,
       });
     }
-
-    const report = await StreamReport.start({
-      configuration,
-      stdout: this.context.stdout,
-      includeFooter: false,
-    }, async report => {
-      const sortCriterias: Array<(opts: [string, PeerRequirement]) => string> = [
-        ([, requirement]) => structUtils.stringifyLocator(project.storedPackages.get(requirement.subject)!),
-        ([, requirement]) => structUtils.stringifyIdent(requirement.requested),
-      ];
-
-      for (const [hash, requirement] of miscUtils.sortMap(project.peerRequirements, sortCriterias)) {
-        const subject = project.storedPackages.get(requirement.subject);
-        if (typeof subject === `undefined`)
-          throw new Error(`Assertion failed: Expected the subject package to have been registered`);
-
-        const rootRequester = project.storedPackages.get(requirement.rootRequester);
-        if (typeof rootRequester === `undefined`)
-          throw new Error(`Assertion failed: Expected the root package to have been registered`);
-
-        const providedDescriptor = subject.dependencies.get(requirement.requested.identHash) ?? null;
-
-        const prettyHash = formatUtils.pretty(configuration, hash, formatUtils.Type.CODE);
-        const prettySubject = structUtils.prettyLocator(configuration, subject);
-        const prettyIdent = structUtils.prettyIdent(configuration, requirement.requested);
-        const prettyRoot = structUtils.prettyIdent(configuration, rootRequester);
-
-        const descendantCount = requirement.allRequesters.length - 1;
-
-        const pluralized = `descendant${descendantCount === 1 ? `` : `s`}`;
-        const maybeDescendants = descendantCount > 0 ? ` and ${descendantCount} ${pluralized}` : ``;
-        const provides = providedDescriptor !== null ? `provides` : `doesn't provide`;
-
-        report.reportInfo(null, `${prettyHash} → ${prettySubject} ${provides} ${prettyIdent} to ${prettyRoot}${maybeDescendants}`);
-      }
-    });
-
-    return report.exitCode();
   }
 }
 
-export async function explainPeerRequirements(peerRequirementsHash: string, project: Project, opts: {stdout: Writable}) {
-  const {configuration} = project;
-
-  const requirement = project.peerRequirements.get(peerRequirementsHash);
-  if (typeof requirement === `undefined`)
+export async function explainPeerRequirement(peerRequirementsHash: string, project: Project, opts: {stdout: Writable}) {
+  const root = project.peerRequirementNodes.get(peerRequirementsHash);
+  if (typeof root === `undefined`)
     throw new Error(`No peerDependency requirements found for hash: "${peerRequirementsHash}"`);
 
+  const seen = new Set<LocatorHash>();
+  const makeTreeNode = (request: PeerRequestNode): treeUtils.TreeNode => {
+    if (seen.has(request.requester.locatorHash)) {
+      return {
+        value: formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: request.requester, descriptor: request.descriptor}),
+        children: request.children.size > 0
+          ? [{value: formatUtils.tuple(formatUtils.Type.NO_HINT, `...`)}]
+          : [],
+      };
+    }
+
+    seen.add(request.requester.locatorHash);
+    return {
+      value: formatUtils.tuple(formatUtils.Type.DEPENDENT, {locator: request.requester, descriptor: request.descriptor}),
+      children: Object.fromEntries(
+        Array.from(request.children.values(), child => {
+          return [
+            structUtils.stringifyLocator(child.requester),
+            makeTreeNode(child),
+          ];
+        }),
+      ),
+    };
+  };
+
+  const warning = project.peerWarnings.find(warning => {
+    return warning.hash === peerRequirementsHash;
+  });
+
   const report = await StreamReport.start({
-    configuration,
+    configuration: project.configuration,
     stdout: opts.stdout,
     includeFooter: false,
+    includePrefix: false,
   }, async report => {
-    const subject = project.storedPackages.get(requirement.subject);
-    if (typeof subject === `undefined`)
-      throw new Error(`Assertion failed: Expected the subject package to have been registered`);
+    const Marks = formatUtils.mark(project.configuration);
+    const mark = warning ? Marks.Cross : Marks.Check;
 
-    const rootRequester = project.storedPackages.get(requirement.rootRequester);
-    if (typeof rootRequester === `undefined`)
-      throw new Error(`Assertion failed: Expected the root package to have been registered`);
-
-    const providedDescriptor = subject.dependencies.get(requirement.requested.identHash) ?? null;
-
-    const providedResolution = providedDescriptor !== null
-      ? project.storedResolutions.get(providedDescriptor.descriptorHash)
-      : null;
-
-    if (typeof providedResolution === `undefined`)
-      throw new Error(`Assertion failed: Expected the resolution to have been registered`);
-
-    const provided = providedResolution !== null
-      ? project.storedPackages.get(providedResolution)
-      : null;
-
-    if (typeof provided === `undefined`)
-      throw new Error(`Assertion failed: Expected the provided package to have been registered`);
-
-    const allRequesters = [...requirement.allRequesters.values()].map(requesterHash => {
-      const pkg = project.storedPackages.get(requesterHash);
-      if (typeof pkg === `undefined`)
-        throw new Error(`Assertion failed: Expected the package to be registered`);
-
-      const devirtualizedLocator = structUtils.devirtualizeLocator(pkg);
-      const devirtualizedPkg = project.storedPackages.get(devirtualizedLocator.locatorHash);
-      if (typeof devirtualizedPkg === `undefined`)
-        throw new Error(`Assertion failed: Expected the package to be registered`);
-
-      const peerDependency = devirtualizedPkg.peerDependencies.get(requirement.requested.identHash);
-      if (typeof peerDependency === `undefined`)
-        throw new Error(`Assertion failed: Expected the peer dependency to be registered`);
-
-      return {pkg, peerDependency};
-    });
-
-    if (provided !== null) {
-      const satisfiesAllRanges = allRequesters.every(({peerDependency}) => {
-        return semverUtils.satisfiesWithPrereleases(provided.version, peerDependency.range);
-      });
-
-      report.reportInfo(MessageName.UNNAMED, `${
-        structUtils.prettyLocator(configuration, subject)
-      } provides ${
-        structUtils.prettyLocator(configuration, provided)
-      } with version ${
-        structUtils.prettyReference(configuration, provided.version ?? `<missing>`)
-      }, which ${satisfiesAllRanges ? `satisfies` : `doesn't satisfy`} the following requirements:`);
-    } else {
-      report.reportInfo(MessageName.UNNAMED, `${
-        structUtils.prettyLocator(configuration, subject)
-      } doesn't provide ${
-        structUtils.prettyIdent(configuration, requirement.requested)
-      }, breaking the following requirements:`);
-    }
+    report.reportInfo(MessageName.UNNAMED, `Package ${
+      formatUtils.pretty(project.configuration, root.subject, formatUtils.Type.LOCATOR)
+    } is requested to provide ${
+      formatUtils.pretty(project.configuration, root.ident, formatUtils.Type.IDENT)
+    } by its descendants`);
 
     report.reportSeparator();
 
-    const Mark = formatUtils.mark(configuration);
+    report.reportInfo(MessageName.UNNAMED, formatUtils.pretty(project.configuration, root.subject, formatUtils.Type.LOCATOR));
+    treeUtils.emitTree({
+      children: Object.fromEntries(
+        Array.from(root.requests.values(), request => {
+          return [
+            structUtils.stringifyLocator(request.requester),
+            makeTreeNode(request),
+          ];
+        }),
+      ),
+    }, {
+      configuration: project.configuration,
+      stdout: opts.stdout,
+      json: false,
+    });
 
-    const requirements: Array<{
-      stringifiedLocator: string;
-      prettyLocator: string;
-      prettyRange: string;
-      mark: string;
-    }> = [];
+    report.reportSeparator();
 
-    for (const {pkg, peerDependency} of miscUtils.sortMap(allRequesters, requester => structUtils.stringifyLocator(requester.pkg))) {
-      const isSatisfied = provided !== null
-        ? semverUtils.satisfiesWithPrereleases(provided.version, peerDependency.range)
-        : false;
+    if (root.provided.range === `missing:`) {
+      const problem = warning ? `` : ` , but all peer requests are optional`;
 
-      const mark = isSatisfied ? Mark.Check : Mark.Cross;
+      report.reportInfo(MessageName.UNNAMED, `${mark} Package ${
+        formatUtils.pretty(project.configuration, root.subject, formatUtils.Type.LOCATOR)
+      } does not provide ${
+        formatUtils.pretty(project.configuration, root.ident, formatUtils.Type.IDENT)
+      }${problem}.`);
+    } else {
+      const providedLocatorHash = project.storedResolutions.get(root.provided.descriptorHash);
+      if (!providedLocatorHash)
+        throw new Error(`Assertion failed: Expected the descriptor to be registered`);
 
-      requirements.push({
-        stringifiedLocator: structUtils.stringifyLocator(pkg),
-        prettyLocator: structUtils.prettyLocator(configuration, pkg),
-        prettyRange: structUtils.prettyRange(configuration, peerDependency.range),
-        mark,
-      });
-    }
+      const providedPackage = project.storedPackages.get(providedLocatorHash);
+      if (!providedPackage)
+        throw new Error(`Assertion failed: Expected the package to be registered`);
 
-    const maxStringifiedLocatorLength = Math.max(...requirements.map(({stringifiedLocator}) => stringifiedLocator.length));
-    const maxPrettyRangeLength = Math.max(...requirements.map(({prettyRange}) => prettyRange.length));
+      report.reportInfo(MessageName.UNNAMED, `${mark} Package ${
+        formatUtils.pretty(project.configuration, root.subject, formatUtils.Type.LOCATOR)
+      } provides ${
+        formatUtils.pretty(project.configuration, root.ident, formatUtils.Type.IDENT)
+      } with version ${
+        structUtils.prettyReference(project.configuration, providedPackage.version ?? `0.0.0`)
+      }, ${warning ? `which does not satisfy all requests.` : `which satisfies all requests`}`);
 
-    for (const {stringifiedLocator, prettyLocator, prettyRange, mark} of miscUtils.sortMap(requirements, ({stringifiedLocator}) => stringifiedLocator)) {
-      report.reportInfo(null, `${
-        // We have to do this because prettyLocators can contain multiple colors
-        prettyLocator.padEnd(maxStringifiedLocatorLength + (prettyLocator.length - stringifiedLocator.length), ` `)
-      } → ${
-        prettyRange.padEnd(maxPrettyRangeLength, ` `)
-      } ${mark}`);
-    }
-
-    if (requirements.length > 1) {
-      report.reportSeparator();
-
-      report.reportInfo(MessageName.UNNAMED, `Note: these requirements start with ${
-        structUtils.prettyLocator(project.configuration, rootRequester)
-      }`);
+      if (warning?.type === PeerWarningType.NodeNotCompatible) {
+        if (warning.range) {
+          report.reportInfo(MessageName.UNNAMED, `  The combined requested range is ${formatUtils.pretty(project.configuration, warning.range, formatUtils.Type.RANGE)}`);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, `  Unfortunately, the requested ranges have no overlap`);
+        }
+      }
     }
   });
+
+
+  return report.exitCode();
+}
+
+export async function explainPeerRequirements(project: Project, opts: {stdout: Writable}) {
+  const report = await StreamReport.start({
+    configuration: project.configuration,
+    stdout: opts.stdout,
+    includeFooter: false,
+    includePrefix: false,
+  }, async report => {
+    const Marks = formatUtils.mark(project.configuration);
+
+    const sorted = miscUtils.sortMap(project.peerRequirementNodes, [
+      ([, requirement]) => structUtils.stringifyLocator(requirement.subject),
+      ([, requirement]) => structUtils.stringifyIdent(requirement.ident),
+    ]);
+
+    for (const [,peerRequirement] of sorted.values()) {
+      if (!peerRequirement.root)
+        continue;
+
+      const warning = project.peerWarnings.find(warning => {
+        return warning.hash === peerRequirement.hash;
+      });
+
+      const allRequests = [...structUtils.allPeerRequests(peerRequirement)];
+      let andOthers;
+      if (allRequests.length > 2)
+        andOthers = ` and ${allRequests.length - 1} other dependencies`;
+      else if (allRequests.length === 2)
+        andOthers = ` and 1 other dependency`;
+      else
+        andOthers = ``;
+
+      if (peerRequirement.provided.range !== `missing:`) {
+        const providedResolution = project.storedResolutions.get(peerRequirement.provided.descriptorHash);
+        if (!providedResolution)
+          throw new Error(`Assertion failed: Expected the resolution to have been registered`);
+
+        const providedPkg = project.storedPackages.get(providedResolution);
+        if (!providedPkg)
+          throw new Error(`Assertion failed: Expected the provided package to have been registered`);
+
+        const message = `${
+          formatUtils.pretty(project.configuration, peerRequirement.hash, formatUtils.Type.CODE)
+        } → ${
+          warning ? Marks.Cross : Marks.Check
+        } ${
+          structUtils.prettyLocator(project.configuration, peerRequirement.subject)
+        } provides ${
+          structUtils.prettyLocator(project.configuration, providedPkg)
+        } to ${
+          structUtils.prettyLocator(project.configuration, allRequests[0]!.requester)
+        }${andOthers}`;
+
+        if (warning) {
+          report.reportWarning(MessageName.UNNAMED, message);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, message);
+        }
+      } else {
+        const message = `${
+          formatUtils.pretty(project.configuration, peerRequirement.hash, formatUtils.Type.CODE)
+        } → ${
+          warning ? Marks.Cross : Marks.Check
+        } ${
+          structUtils.prettyLocator(project.configuration, peerRequirement.subject)
+        } doesn't provide ${
+          structUtils.prettyIdent(project.configuration, peerRequirement.ident)
+        } to ${
+          structUtils.prettyLocator(project.configuration, allRequests[0]!.requester)
+        }${andOthers}`;
+
+        if (warning) {
+          report.reportWarning(MessageName.UNNAMED, message);
+        } else {
+          report.reportInfo(MessageName.UNNAMED, message);
+        }
+      }
+    }
+  });
+
 
   return report.exitCode();
 }

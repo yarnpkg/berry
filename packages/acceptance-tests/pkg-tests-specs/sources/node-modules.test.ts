@@ -169,6 +169,37 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should not treat link: dependencies as an inner workspaces`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        dependencies: {
+          [`one-fixed-dep`]: `2.0.0`,
+          [`app`]: `link:./app`,
+        },
+        workspaces: [
+          `app/plugins/*`,
+        ],
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run, source}) => {
+        await writeJson(npath.toPortablePath(`${path}/app/plugins/foo-plugin/package.json`), {
+          name: `foo-plugin`,
+          version: `1.0.0`,
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(npath.toPortablePath(`${path}/app/node_modules`))).toBe(false);
+      },
+    ),
+  );
+
   test(`should support replacement of regular dependency with portal: protocol dependency`,
     makeTemporaryEnv(
       {
@@ -601,6 +632,31 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         expect(await xfs.existsPromise(`${path}/ws/node_modules/ws` as PortablePath)).toEqual(false);
+      },
+    ),
+  );
+
+  test(`should create circular symlinks when inner workspace depends on outer workspace`,
+    makeTemporaryEnv(
+      {
+        name: `foo`,
+        workspaces: [`ws`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        await writeJson(npath.toPortablePath(`${path}/ws/package.json`), {
+          name: `ws`,
+          dependencies: {
+            foo: `workspace:*`,
+          },
+        });
+
+        await run(`install`);
+
+        expect(await xfs.existsPromise(`${path}/ws/node_modules/foo` as PortablePath)).toEqual(true);
       },
     ),
   );
@@ -1815,7 +1871,7 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
           `.yarn-state.yml`,
