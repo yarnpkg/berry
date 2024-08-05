@@ -60,6 +60,10 @@ describe(`pnpUtils`, () => {
       expect(pnpUtils.cleanNodeOptions(`--require="\\/\\p\\a\\t\\h\\/\\t\\o\\/\\.\\p\\n\\p\\.\\c\\j\\s" --max-http-header-size="100000"`)).toStrictEqual(`--max-http-header-size="100000"`);
     });
 
+    it(`should treat backslashes literally outside of double quotes`, () => {
+      expect(pnpUtils.cleanNodeOptions(`--require=/path/to/.\\pnp.\\cjs --max-http-header-size="100000"`)).toStrictEqual(`--require=/path/to/.\\pnp.\\cjs --max-http-header-size="100000"`);
+    });
+
     it(`shouldn't remove arguments between 2 PnP hook requires`, () => {
       expect(pnpUtils.cleanNodeOptions(`--require "C:\\foo\\.pnp.cjs" --foo="true" --require foo.bar.pnp.cjs`)).toStrictEqual(`--foo="true"`);
     });
