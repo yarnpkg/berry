@@ -25,16 +25,7 @@ export const quotePathIfNeeded = (path: string) => {
 };
 
 async function setupScriptEnvironment(project: Project, env: NodeJS.ProcessEnv, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
-  // We still support .pnp.js files to improve multi-project compatibility.
-  // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
-  // TODO: Support `-r` as an alias for `--require` (in all packages)
-  const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
-  const esmLoaderExpression = /\s*--experimental-loader\s+\S*\.pnp\.loader\.mjs\s*/;
-
-  const nodeOptions = (env.NODE_OPTIONS ?? ``)
-    .replace(pnpRegularExpression, ` `)
-    .replace(esmLoaderExpression, ` `)
-    .trim();
+  const nodeOptions = pnpUtils.cleanNodeOptions(env.NODE_OPTIONS ?? ``);
 
   // We remove the PnP hook from NODE_OPTIONS because the process can have
   // NODE_OPTIONS set while changing linkers, which affects build scripts.

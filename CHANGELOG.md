@@ -9,6 +9,7 @@ Features in `master` can be tried out by running `yarn set version from sources`
 :::
 
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
+- Fixes `NODE_OPTIONS` parsing when removing the injected hooks (`--require .pnp.cjs --experimental-loader .pnp.loader.mjs`).
 
 ## 4.1.0
 

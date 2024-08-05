@@ -5866,6 +5866,7 @@ __metadata:
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/plugin-pnp": "workspace:^"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
