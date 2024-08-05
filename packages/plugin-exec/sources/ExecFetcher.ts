@@ -2,6 +2,7 @@ import {execUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
 import {Locator, formatUtils}                          from '@yarnpkg/core';
 import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs, NativePath}   from '@yarnpkg/fslib';
+import {pnpUtils}                                      from '@yarnpkg/plugin-pnp';
 
 import {PROTOCOL}                                      from './constants';
 import {loadGeneratorFile}                             from './execUtils';
@@ -137,12 +138,7 @@ export class ExecFetcher implements Fetcher {
           });
         `);
 
-        let nodeOptions = env.NODE_OPTIONS || ``;
-
-        const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
-        nodeOptions = nodeOptions.replace(pnpRegularExpression, ` `).trim();
-
-        env.NODE_OPTIONS = nodeOptions;
+        env.NODE_OPTIONS = pnpUtils.cleanNodeOptions(env.NODE_OPTIONS ?? ``);
 
         const {stdout, stderr} = opts.project.configuration.getSubprocessStreams(logFile, {
           header: `# This file contains the result of Yarn generating a package (${structUtils.stringifyLocator(locator)})\n`,
