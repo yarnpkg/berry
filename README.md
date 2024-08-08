@@ -139,7 +139,6 @@ On top of our classic integration tests, we also run Yarn every day against the 
 
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml)<br/>
-[![](https://github.com/yarnpkg/berry/actions/workflows/e2e-cra-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-cra-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-create-vue-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-create-vue-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-gatsby-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gatsby-workflow.yml)<br/>
 [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-gulp-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-gulp-workflow.yml)<br/>
