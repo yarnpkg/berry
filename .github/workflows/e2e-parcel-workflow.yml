@@ -29,6 +29,13 @@ jobs:
         yarn init -p
         yarn add -D parcel@nightly lodash @babel/core
 
+        # See https://github.com/parcel-bundler/parcel/issues/9114
+
+        echo "packageExtensions:
+  \"@parcel/fs@*\":
+    dependencies:
+      \"@parcel/core\": '*'" > .yarnrc.yml
+
         # JavaScript
 
         echo "import _ from 'lodash';function printHello() { console.log(_.join(['Hello', 'JS'], ' '))}; printHello();" | tee index.js
