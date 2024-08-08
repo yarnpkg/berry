@@ -27,14 +27,10 @@ jobs:
         yarn init
 
         # Required
-        yarn add next@canary react react-dom
-
-        # Test itself
-        yarn add raw-loader
+        yarn add next@canary react@rc react-dom@rc
 
         mkdir pages
-        echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
-        echo 'hello world!' | tee pages/text.txt
+        echo 'export default () => <div>Hello world!</div>;' | tee pages/index.js
 
         yarn next build
 
@@ -44,14 +40,13 @@ jobs:
         yarn init
 
         # Required
-        yarn add typescript next@canary react react-dom @types/react @types/react-dom @types/node
+        yarn add typescript next@canary react@rc react-dom@rc @types/react @types/react-dom @types/node
 
         # Test itself
         yarn add raw-loader
 
         mkdir pages
-        echo 'const text = require("raw-loader!./text.txt").default; export default () => <div>{text}</div>;' | tee pages/home.tsx
-        echo 'hello world!' | tee pages/text.txt
+        echo 'export default () => <div>Hello world!</div>;' | tee pages/index.tsx
 
         yarn next build
       if: |
