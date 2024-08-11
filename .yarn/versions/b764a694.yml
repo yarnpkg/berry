@@ -1,16 +1,14 @@
 releases:
-  "@yarnpkg/cli": minor
-  "@yarnpkg/plugin-git": minor
+  "@yarnpkg/cli": patch
+  "@yarnpkg/plugin-nm": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
   - "@yarnpkg/plugin-essentials"
-  - "@yarnpkg/plugin-github"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
-  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"

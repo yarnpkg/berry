@@ -9,6 +9,7 @@ Features in `master` can be tried out by running `yarn set version from sources`
 :::
 
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
+- `node-modules` linker now honors user-defined symlinks for `<workspace>/node_modules` directories
 
 ## 4.1.0
 
