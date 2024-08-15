@@ -1,7 +1,7 @@
-import React, {useEffect, useRef} from 'react';
-import * as THREE                 from 'three';
+import React, {useEffect, useRef, useState} from 'react';
+import * as THREE                           from 'three';
 
-import styles                     from './StarrySky.module.css';
+import styles                               from './StarrySky.module.css';
 
 const r = 1000;
 const FACTOR = 4;
@@ -143,10 +143,18 @@ function installSky(canvas: HTMLCanvasElement) {
 
 export function StarrySky() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isCrashed, setIsCrashed] = useState(false);
 
   useEffect(() => {
-    return installSky(canvasRef.current!);
+    try {
+      installSky(canvasRef.current!);
+    } catch {
+      setIsCrashed(true);
+    }
   }, []);
+
+  if (isCrashed)
+    return null;
 
   return (
     <canvas className={styles.canvas} ref={canvasRef}/>

@@ -14,7 +14,7 @@ const mte = generatePkgDriver({
   async runDriver(
     path,
     [command, ...args],
-    {cwd, execArgv = [], projectFolder, registryUrl, env, ...config},
+    {cwd, execArgv = [], projectFolder, registryUrl, env, stdin, ...config},
   ) {
     const rcEnv: Record<string, any> = {};
     for (const [key, value] of Object.entries(config))
@@ -32,6 +32,7 @@ const mte = generatePkgDriver({
 
     const res = await execFile(process.execPath, [...execArgv, yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
+      stdin,
       env: {
         [`HOME`]: nativeHomePath,
         [`USERPROFILE`]: nativeHomePath,

@@ -2678,6 +2678,27 @@ function applyVirtualResolutionMutations({
   }
 }
 
+function * allPeerRequestsWithRoot(root: PeerRequestNode | PeerRequirementNode) {
+  const roots = new Map<PeerRequestNode, PeerRequestNode>();
+
+  if (`children` in root) {
+    roots.set(root, root);
+  } else {
+    for (const request of root.requests.values()) {
+      roots.set(request, request);
+    }
+  }
+
+  for (const [request, root] of roots) {
+    yield {request, root};
+    for (const child of request.children.values()) {
+      if (!roots.has(child)) {
+        roots.set(child, root);
+      }
+    }
+  }
+}
+
 function emitPeerDependencyWarnings(project: Project, report: Report) {
   const incompatibleWarnings: Array<string> = [];
   const missingWarnings: Array<string> = [];
@@ -2701,6 +2722,14 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       if (typeof peerPackage === `undefined`)
         throw new Error(`Assertion failed: Expected the package to be registered`);
 
+      const requester = miscUtils.mapAndFind(allPeerRequestsWithRoot(warning.node), ({request, root}) => {
+        if (!semverUtils.satisfiesWithPrereleases(peerPackage.version ?? `0.0.0`, request.descriptor.range))
+          return request === root
+            ? structUtils.prettyIdent(project.configuration, request.requester)
+            : `${structUtils.prettyIdent(project.configuration, request.requester)} (via ${structUtils.prettyIdent(project.configuration, root.requester)})`;
+
+        return miscUtils.mapAndFind.skip;
+      });
       const otherPackages = [...structUtils.allPeerRequests(warning.node)].length > 1
         ? `and other dependencies request`
         : `requests`;
@@ -2715,9 +2744,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
         structUtils.prettyReference(project.configuration, peerPackage.version ?? `0.0.0`)
       } (${
         formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-      }), which doesn't satisfy what ${
-        structUtils.prettyIdent(project.configuration, warning.node.requests.values().next().value.requester)
-      } ${otherPackages} (${rangeDescription}).`);
+      }), which doesn't satisfy what ${requester} ${otherPackages} (${rangeDescription}).`);
     }
 
     if (warning.type === PeerWarningType.NodeNotProvided) {

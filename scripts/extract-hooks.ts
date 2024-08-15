@@ -75,7 +75,7 @@ async function processFile(file: ts.SourceFile) {
   return hooks;
 }
 
-async function execute(files: Array<string>) {
+export async function execute(files: Array<string>) {
   const allHooks = new Map<string, HookDefinition>();
 
   for (const relativePath of files) {
@@ -114,8 +114,6 @@ async function execute(files: Array<string>) {
 
   return allHooksArray;
 }
-
-exports.execute = execute;
 
 if (require.main === module) {
   Cli.from([
