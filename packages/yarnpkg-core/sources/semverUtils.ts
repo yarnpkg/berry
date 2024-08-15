@@ -234,18 +234,18 @@ export function simplifyRanges(ranges: Array<string>) {
   return alternatives.map(comparator => stringifyComparator(comparator)).join(` || `);
 }
 
-function removeSubsets(rangeString: string){
-  const parts = rangeString.split('||');
+function removeSubsets(rangeString: string) {
+  const parts = rangeString.split(`||`);
   if (parts.length > 1) {
     const newParts: Set<string> = new Set();
-    for (let potentialSubset of parts) {
+    for (const potentialSubset of parts) {
       if (!parts.some(part => part !== potentialSubset && semver.subset(potentialSubset, part))) {
         newParts.add(potentialSubset);
       }
     }
 
     if (newParts.size < parts.length) {
-      const newRange = [...newParts].join(' || ');
+      const newRange = [...newParts].join(` || `);
       return newRange;
     }
   }
