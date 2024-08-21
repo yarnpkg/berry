@@ -38,9 +38,8 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     ]),
   });
 
-  warnings = Option.Boolean(`--warnings`, {
+  warnings = Option.Boolean(`--warnings`, false, {
     description: `Only show umnet peer requirements.`,
-    required: false,
   });
 
   async execute() {
@@ -60,7 +59,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     } else {
       return await explainPeerRequirements(project, {
         stdout: this.context.stdout,
-        onlyWarnings: this.warnings ?? false,
+        onlyWarnings: this.warnings,
       });
     }
   }
