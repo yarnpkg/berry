@@ -95,7 +95,7 @@ describe(`Features`, () => {
       }));
 
       await expect(run(`a`, `path`)).resolves.toMatchObject({
-        stdout: 'a/b\n',
+        stdout: `a/b\n`,
       });
     }));
 
