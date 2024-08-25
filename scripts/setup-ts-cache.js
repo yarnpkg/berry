@@ -1,5 +1,5 @@
 const crypto = require(`crypto`);
-const esbuild = require(`esbuild-wasm`);
+const esbuild = require(`esbuild`);
 const fs = require(`fs`);
 const path = require(`path`);
 const v8 = require(`v8`);

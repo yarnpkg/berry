@@ -8,6 +8,7 @@ import {parse as parseDotEnv}                                                   
 import {builtinModules}                                                                                          from 'module';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
+import {WriteStream}                                                                                             from 'tty';
 
 import {CorePlugin}                                                                                              from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
@@ -313,6 +314,9 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: !isCI,
     defaultText: `<dynamic>`,
   },
+  /**
+   * @internal Prefer using `Configuration#isInteractive`.
+   */
   preferInteractive: {
     description: `If true, the CLI will automatically use the interactive mode when called from a TTY`,
     type: SettingsType.BOOLEAN,
@@ -1784,6 +1788,13 @@ export class Configuration {
       libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
 
     return {os, cpu, libc};
+  }
+
+  isInteractive({interactive, stdout}: {interactive?: boolean, stdout: Writable}): boolean {
+    if (!(stdout as WriteStream).isTTY)
+      return false;
+
+    return interactive ?? this.get(`preferInteractive`);
   }
 
   private packageExtensions: PackageExtensions | null = null;

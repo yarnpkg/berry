@@ -159,5 +159,20 @@ describe(`Features`, () => {
         },
       ),
     );
+
+    it(`shouldn't fail when running an install from a subdirectory`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, Filename.rc), `immutablePatterns: [".pnp.cjs"]`);
+
+          const subPath = ppath.join(path, `subdir`);
+          await xfs.mkdirPromise(subPath);
+
+          await run(`install`, {cwd: subPath});
+          await run(`install`, `--immutable`, {cwd: subPath});
+        },
+      ),
+    );
   });
 });

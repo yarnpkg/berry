@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -54,7 +54,7 @@
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-pnp": "workspace:^",
     "comment-json": "^2.2.0",
-    "esbuild": "npm:esbuild-wasm@^0.15.15",
+    "esbuild": "npm:esbuild-wasm@^0.23.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2"
@@ -83,5 +83,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.1"
+  "stableVersion": "4.1.2"
 }

@@ -1,6 +1,6 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
 index e3dc24d79..d287f962a 100644
-semver exclusivity >=5.5.2
+semver exclusivity >=5.5.2 <5.6.0-beta
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
 @@ -5067,6 +5067,9 @@ var sys = (() => {
@@ -347,7 +347,7 @@ semver exclusivity >=5.5.2
    function reloadFileNamesFromConfigFile() {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
 index 398a3a1ed..8a81feff1 100644
-semver exclusivity >=5.5.2
+semver exclusivity >=5.5.2 <5.6.0-beta
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
 @@ -33,6 +33,25 @@ var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "defau
@@ -400,7 +400,7 @@ semver exclusivity >=5.5.2
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
 index fbb3e4912..e601e3d32 100644
-semver exclusivity >=5.5.2
+semver exclusivity >=5.5.2 <5.6.0-beta
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
 @@ -9350,6 +9350,8 @@ declare namespace ts {
@@ -414,7 +414,7 @@ semver exclusivity >=5.5.2
      function resolveTripleslashReference(moduleName: string, containingFile: string): string;
 diff --git a/lib/typescript.js b/lib/typescript.js
 index 714953f46..e30a70401 100644
-semver exclusivity >=5.5.2
+semver exclusivity >=5.5.2 <5.6.0-beta
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
 @@ -8626,6 +8626,9 @@ var sys = (() => {

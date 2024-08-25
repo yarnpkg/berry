@@ -281,7 +281,21 @@ const SLICES = [
     from: `5b321aa5835f9f4dba6d55553fd559985d44b1a9`,
     to: `c41328460d8dba2fac56c220803c68ca961d7cd5`,
     onto: `ce2e60e4ea15a65992e54a9e8877d16be9d42abb`,
-    range: `>=5.5.2`,
+    range: `>=5.5.2 <5.6.0-beta`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.6-beta
+  {
+    from: `b774b54693034b8aeae7f9a7b24d25fcacdbc8a5`,
+    to: `b774b54693034b8aeae7f9a7b24d25fcacdbc8a5`,
+    onto: `b4732bdd6199ec353ec0873f334515f391d80d3b`,
+    range: `>=5.6.0-beta <5.6.1-rc`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.6-rc
+  {
+    from: `0102e47303cb33503219740015f711e2fe7d89ab`,
+    to: `0102e47303cb33503219740015f711e2fe7d89ab`,
+    onto: `6212132b835145b1a8fd49982680ac668caf3ddc`,
+    range: `>=5.6.1-rc`,
   },
 ];
 
