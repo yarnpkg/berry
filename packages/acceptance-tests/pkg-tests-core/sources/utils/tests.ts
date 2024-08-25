@@ -38,6 +38,7 @@ interface RunDriverOptions extends Record<string, any> {
   projectFolder?: PortablePath;
   registryUrl: string;
   env?: Record<string, string | undefined>;
+  stdin?: string;
 }
 
 export type PackageRunDriver = (
@@ -926,6 +927,7 @@ export const getHttpsCertificates = async () => {
     csr,
     clientKey,
     selfSigned: true,
+    config: [`[v3_req]`, `basicConstraints = critical,CA:TRUE\``].join(`\n`),
   });
 
   const serverCSRResult = await createCSR({commonName: `localhost`});

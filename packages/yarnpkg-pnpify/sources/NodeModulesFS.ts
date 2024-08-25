@@ -1,6 +1,6 @@
 import {BigIntStats, DirentNoPath, ReaddirOptions, Stats}                                                                          from '@yarnpkg/fslib';
 import {Dirent, Filename, MkdirOptions, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, OpendirOptions, Dir} from '@yarnpkg/fslib';
-import {RmdirOptions}                                                                                                              from '@yarnpkg/fslib';
+import {RmdirOptions, RmOptions}                                                                                                   from '@yarnpkg/fslib';
 import {FSPath, NativePath, PortablePath, npath, ppath, opendir}                                                                   from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher}                                                                                      from '@yarnpkg/fslib';
 import {NodeFS, FakeFS, WriteFileOptions, ProxiedFS}                                                                               from '@yarnpkg/fslib';
@@ -469,6 +469,14 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   rmdirSync(p: PortablePath, opts?: RmdirOptions) {
     return this.baseFs.rmdirSync(this.resolveDirOrFilePath(p), opts);
+  }
+
+  async rmPromise(p: PortablePath, opts?: RmOptions) {
+    return await this.baseFs.rmPromise(this.resolveDirOrFilePath(p), opts);
+  }
+
+  rmSync(p: PortablePath, opts?: RmOptions) {
+    return this.baseFs.rmSync(this.resolveDirOrFilePath(p), opts);
   }
 
   async linkPromise(existingP: PortablePath, newP: PortablePath) {

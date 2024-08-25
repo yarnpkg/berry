@@ -1855,6 +1855,47 @@ describe(`Node_Modules`, () => {
       }),
   );
 
+  it(`should work with user-created <workspace>/node_modules symlinks`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws`],
+        dependencies: {
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        await xfs.mkdirpPromise(ppath.join(path, `ws`));
+        const trueInstallDir = ppath.resolve(path, `target`);
+        await xfs.mkdirPromise(trueInstallDir);
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}`), {
+          name: `ws`,
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.symlinkPromise(trueInstallDir, ppath.join(path, `ws/node_modules`));
+
+        await run(`install`);
+
+        expect(xfs.existsSync(ppath.join(trueInstallDir, `no-deps`))).toBeTruthy();
+        expect(xfs.lstatSync(ppath.join(path, `ws/node_modules`)).isSymbolicLink()).toBeTruthy();
+
+        await xfs.writeJsonPromise(ppath.join(path, `ws/${Filename.manifest}`), {
+          name: `ws`,
+        });
+
+        await run(`install`);
+
+        expect(xfs.existsSync(ppath.join(trueInstallDir, `no-deps`))).toBeFalsy();
+        expect(xfs.lstatSync(ppath.join(path, `ws/node_modules`)).isSymbolicLink()).toBeTruthy();
+      }),
+  );
+
   it(`should support supportedArchitectures`,
     makeTemporaryEnv(
       {
@@ -1871,7 +1912,7 @@ describe(`Node_Modules`, () => {
           },
         });
 
-        await expect(run(`install`)).resolves.toMatchObject({code: 0});
+        await run(`install`);
 
         await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
           `.yarn-state.yml`,

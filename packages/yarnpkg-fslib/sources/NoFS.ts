@@ -174,6 +174,14 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async rmPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  rmSync(): never {
+    throw makeError();
+  }
+
   async linkPromise(): Promise<never> {
     throw makeError();
   }

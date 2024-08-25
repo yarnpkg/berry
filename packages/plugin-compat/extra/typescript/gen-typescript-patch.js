@@ -267,7 +267,35 @@ const SLICES = [
     from: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
     to: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
     onto: `db6b2a980280a9c87799b9c1edd6d71e92bb255b`,
-    range: `>=5.4.1-rc`,
+    range: `>=5.4.1-rc <5.5.0-beta`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.5-beta
+  {
+    from: `f90eb7508e66a3d5066b1d8a06606c6c23f3df43`,
+    to: `43d2cbd6ac423e35a5a095a509fc90c03f0c22ba`,
+    onto: `b574864abc989d0f8b15367baea1058819e126ba`,
+    range: `>=5.5.0-beta <5.5.2`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.5
+  {
+    from: `5b321aa5835f9f4dba6d55553fd559985d44b1a9`,
+    to: `c41328460d8dba2fac56c220803c68ca961d7cd5`,
+    onto: `ce2e60e4ea15a65992e54a9e8877d16be9d42abb`,
+    range: `>=5.5.2 <5.6.0-beta`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.6-beta
+  {
+    from: `b774b54693034b8aeae7f9a7b24d25fcacdbc8a5`,
+    to: `b774b54693034b8aeae7f9a7b24d25fcacdbc8a5`,
+    onto: `b4732bdd6199ec353ec0873f334515f391d80d3b`,
+    range: `>=5.6.0-beta <5.6.1-rc`,
+  },
+  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.6-rc
+  {
+    from: `0102e47303cb33503219740015f711e2fe7d89ab`,
+    to: `0102e47303cb33503219740015f711e2fe7d89ab`,
+    onto: `6212132b835145b1a8fd49982680ac668caf3ddc`,
+    range: `>=5.6.1-rc`,
   },
 ];
 
@@ -531,10 +559,10 @@ async function main() {
     const patch = await run(slice);
     const versions = await fetchVersions(slice.range);
 
-    for (const version of versions) {
+    await Promise.all(versions.map(async version => {
       console.log(`Validating ${version}...`);
       await validate(version, patch);
-    }
+    }));
 
     patches.push(patch);
   }

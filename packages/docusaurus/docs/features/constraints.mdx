@@ -11,7 +11,10 @@ This page documents the new JavaScript-based constraints. The older constraints,
 
 ## Overview
 
-Constraints are a solution to a very basic need: you have a lot of [workspaces](/features/workspaces), and you need to make sure they use the same version of their dependencies. Or that they don't depend on a specific package. Or that they use a specific type of dependency. Whatever is the exact logic, your goal is the same: you want to automatically enforce some kind of rule across all your workspaces. That's exactly what constraints are for.
+Constraints allow enforcement of rules across [workspace](/features/workspaces) packages. For example, these rules might include the following:
+
+* Ensuring the same version of dependencies across packages.
+* Prohibiting the use of specific dependencies in packages.
 
 ## What can we enforce?
 
@@ -133,7 +136,7 @@ const {defineConfig} = require(`@yarnpkg/types`);
 /**
  * This rule will enforce that a workspace MUST depend on the same version of
  * a dependency as the one used by the other workspaces.
- * 
+ *
  * @param {Context} context
  */
 function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
