@@ -8,7 +8,7 @@ import {mockPluginServer}         from './plugins.utility';
 const COMMANDS_PLUGIN = (name: string, {async = false, printOnBoot = false, thirdParty = false} = {}) => `
 const factory = ${async ? `async` : ``} r => {
   const {Command} = r('clipanion');
-  const {path} = r('node:path');
+  const path = r('node:path');
 
   if (${printOnBoot})
     console.log('Booting ${name.toUpperCase()}');
@@ -28,7 +28,7 @@ const factory = ${async ? `async` : ``} r => {
           static paths = [['${name}', 'path']];
 
           async execute() {
-            this.context.stdout.write('\${path.posix.join('a', 'b')}\\n');
+            this.context.stdout.write(path.posix.join('a', 'b') + '\\n');
           }
         },
       ],
