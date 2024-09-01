@@ -83,7 +83,7 @@ describe(`hoist`, () => {
   //   //   -> A
   //   //   -> B
   //   //   -> C
-  //   // but its difficult and its okay if hoister at least doesn't loop and leave the graph in original state
+  //   // but it's difficult and it's okay if hoister at least doesn't loop and leave the graph in original state
 
   //   const tree = {
   //     '.': {dependencies: [`D`]},

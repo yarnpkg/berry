@@ -71,7 +71,7 @@ Ensures that third party tools (CRA, Next, Vue-cli, etc) resolve their own versi
 
 When loaders and plugins are included as strings e.g `loader: 'file-loader'` in a `webpack.config.js` then Webpack will try to resolve it from the point of view of the project root.
 
-If the webpack config is located in a dependency, as with tools such as Create-React-App, Next.js and Gatsby, then Webpack might accidentally use an different hoisted version of a plugin. This can cause various weird bugs and crashes.
+If the webpack config is located in a dependency, as with tools such as Create-React-App, Next.js and Gatsby, then Webpack might accidentally use a different hoisted version of a plugin. This can cause various weird bugs and crashes.
 
 The third party tool should use `require.resolve('file-loader')` so that Webpack loads the plugin through an absolute path and it will use the loader/plugin it specifies in its own package.json.
 
