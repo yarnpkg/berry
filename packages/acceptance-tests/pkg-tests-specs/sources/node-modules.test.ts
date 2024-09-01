@@ -708,7 +708,7 @@ describe(`Node_Modules`, () => {
 
   test(`should support dependencies hoist border`,
     // . -> workspace -> dep1 -> dep2 -> dep3
-    // should be hoised to:
+    // should be hoisted to:
     // . -> workspace -> dep1 -> dep2
     //                        -> dep3
     makeTemporaryEnv(

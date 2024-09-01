@@ -60,7 +60,7 @@ export class NodeFS extends BasePortableFakeFS {
       // We need a way to tell TS that the values returned by the `read`
       // methods are compatible with `Dir`, especially the `name` field.
       //
-      // We also can't use `Object.assign` to set the because the `path`
+      // We also can't use `Object.assign` to set them because the `path`
       // field to a Filename, because the property isn't writable, so
       // we need to use defineProperty instead.
       //
@@ -86,7 +86,7 @@ export class NodeFS extends BasePortableFakeFS {
     // We need a way to tell TS that the values returned by the `read`
     // methods are compatible with `Dir`, especially the `name` field.
     //
-    // We also can't use `Object.assign` to set the because the `path`
+    // We also can't use `Object.assign` to set them because the `path`
     // field to a Filename, because the property isn't writable, so
     // we need to use defineProperty instead.
     //

@@ -719,7 +719,7 @@ export abstract class FakeFS<P extends Path> {
     } finally {
       try {
         // closePromise needs to come before unlinkPromise otherwise another process can attempt
-        // to get the file handle after the unlink but before close resuling in
+        // to get the file handle after the unlink but before close resulting in
         // EPERM: operation not permitted, open
         await this.closePromise(fd);
         await this.unlinkPromise(lockPath);

@@ -56,7 +56,7 @@ export type FetchResult = {
  * Fetchers are the component tasked from taking a locator and fetching its
  * file data from whatever location the fetcher deems right. For example, the
  * npm fetcher would download them from the npm registry while the workspace
- * fetcher would simply return an plain link to the filesystem.
+ * fetcher would simply return a plain link to the filesystem.
  */
 
 export interface Fetcher {
@@ -81,7 +81,7 @@ export interface Fetcher {
   getLocalPath(locator: Locator, opts: FetchOptions): PortablePath | null;
 
   /**
-   * This function must return a object describing where the package manager
+   * This function must return an object describing where the package manager
    * can find the data for the specified package on disk.
    *
    * The return value is a more complex than a regular path (cf FetchResult)

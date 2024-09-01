@@ -65,7 +65,7 @@ You're free to do whatever you want inside `execEnv.tempDir` but, at the end of 
 
 ### Example
 
-Generate an hello world package:
+Generate a hello world package:
 
 ```ts
 fs.writeFileSync(path.join(execEnv.buildDir, 'package.json'), JSON.stringify({

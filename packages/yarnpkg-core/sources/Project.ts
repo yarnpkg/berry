@@ -98,7 +98,7 @@ export type InstallOptions = {
   resolver?: Resolver;
 
   /**
-   * Provide a report instance that'll be use to store the information emitted
+   * Provide a report instance that'll be used to store the information emitted
    * during the install process.
    */
   report: Report;
@@ -873,7 +873,7 @@ export class Project {
         // current resolution pass fully ends, and the next one starts).
         //
         // To avoid V8 printing an UnhandledPromiseRejectionWarning, we
-        // bind a empty `catch`.
+        // bind an empty `catch`.
         //
         dependencyResolutions.catch(() => {});
 

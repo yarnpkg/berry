@@ -131,12 +131,12 @@ export function getNetworkSettings(target: string | URL, opts: {configuration: C
     httpsCertFilePath: undefined,
   };
 
-  const mergableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
+  const mergeableKeys = Object.keys(mergedNetworkSettings) as Array<keyof NetworkSettingsType>;
 
   const url = typeof target === `string` ? new URL(target) : target;
   for (const [glob, config] of networkSettings) {
     if (micromatch.isMatch(url.hostname, glob)) {
-      for (const key of mergableKeys) {
+      for (const key of mergeableKeys) {
         const setting = config.get(key);
         if (setting !== null && typeof mergedNetworkSettings[key] === `undefined`) {
           mergedNetworkSettings[key] = setting as any;
@@ -146,7 +146,7 @@ export function getNetworkSettings(target: string | URL, opts: {configuration: C
   }
 
   // Apply defaults
-  for (const key of mergableKeys)
+  for (const key of mergeableKeys)
     if (typeof mergedNetworkSettings[key] === `undefined`)
       mergedNetworkSettings[key] = opts.configuration.get(key) as any;
 
