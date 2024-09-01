@@ -29,16 +29,16 @@ export interface ResolvedPath {
   resolvedPath: PortablePath;
 
   /**
-   * This field is returned for pathes ending with `/node_modules[/@scope]`.
+   * This field is returned for paths ending with `/node_modules[/@scope]`.
    *
-   * These pathes are special in the sense they do not exists as physical dirs in PnP projects.
+   * These paths are special in the sense they do not exist as physical dirs in PnP projects.
    *
-   * We emulate these pathes by forwarding to real physical path on underlying fs.
+   * We emulate these paths by forwarding to real physical path on underlying fs.
    */
   forwardedDirPath?: PortablePath;
 
   /**
-   * Directory entries list, returned for pathes ending with `/node_modules[/@scope]`
+   * Directory entries list, returned for paths ending with `/node_modules[/@scope]`
    */
   dirList?: Set<Filename>;
 

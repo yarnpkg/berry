@@ -20,7 +20,7 @@ const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
-const MTIME_ACCURANCY = 1000;
+const MTIME_ACCURACY = 1000;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
@@ -471,7 +471,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
 
   const locatorState = parseSyml(await xfs.readFilePromise(installStatePath, `utf8`));
 
-  // If we have a higher serialized version than we can handle, ignore the state alltogether
+  // If we have a higher serialized version than we can handle, ignore the state altogether
   if (locatorState.__metadata.version > STATE_FILE_VERSION)
     return null;
 
@@ -711,19 +711,19 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
       try {
         const stats = await xfs.statPromise(contentFilePath);
 
-        if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
+        if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURACY)) {
           const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
           if (contentDigest !== entry.digest) {
             // If file content was modified by the user, or corrupted, we first move it out of the way
             const tmpPath = ppath.join(globalHardlinksStore, `${crypto.randomBytes(16).toString(`hex`)}.tmp`);
             await xfs.renamePromise(contentFilePath, tmpPath);
 
-            // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
+            // Then we overwrite the temporary file, thus restoring content of original file in all the linked projects
             const content = await baseFs.readFilePromise(srcPath);
             await xfs.writeFilePromise(tmpPath, content);
 
             try {
-            // Then we try to move content file back on its place, if its still free
+            // Then we try to move content file back on its place, if it's still free
             // If we fail here, it means that some other process or thread has created content file
             // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
               await xfs.linkPromise(tmpPath, contentFilePath);
