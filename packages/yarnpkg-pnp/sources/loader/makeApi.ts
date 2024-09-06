@@ -35,17 +35,11 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
   // Matches if the path starts with a relative path qualifier (./, ../)
   const isRelativeRegexp = /^\.{0,2}\//;
 
-  // We only instantiate one of those so that we can use strict-equal comparisons
-  const topLevelLocator = {name: null, reference: null};
-
   // Used for compatibility purposes - cf setupCompatibilityLayer
   const fallbackLocators: Array<PackageLocator> = [];
 
   // To avoid emitting the same warning multiple times
   const emittedWarnings = new Set<string>();
-
-  if (runtimeState.enableTopLevelFallback === true)
-    fallbackLocators.push(topLevelLocator);
 
   if (opts.compatibilityMode !== false) {
     // ESLint currently doesn't have any portable way for shared configs to
@@ -84,6 +78,14 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     packageRegistry,
     packageLocatorsByLocations,
   } = runtimeState as RuntimeState;
+
+  const topLevelEntry = packageLocatorsByLocations.get(`./` as PortablePath);
+  if (!topLevelEntry)
+    throw new Error(`Assertion failed: The top-level locator should always be registered`);
+
+  const topLevelLocator = topLevelEntry.locator;
+  if (runtimeState.enableTopLevelFallback === true)
+    fallbackLocators.unshift(topLevelLocator);
 
   /**
    * Allows to print useful logs just be setting a value in the environment

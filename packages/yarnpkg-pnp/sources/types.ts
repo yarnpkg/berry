@@ -104,7 +104,7 @@ export type ResolveRequestOptions =
 export type PnpApi = {
   VERSIONS: {std: number, [key: string]: number};
 
-  topLevel: {name: null, reference: null};
+  topLevel: {name: null, reference: null} | {name: string, reference: string};
   getLocator: (name: string, referencish: string | [string, string]) => PhysicalPackageLocator;
 
   getDependencyTreeRoots: () => Array<PhysicalPackageLocator>;
