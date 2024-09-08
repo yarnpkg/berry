@@ -6,16 +6,10 @@ import {PortablePath, npath, ppath, xfs}                                        
 import {Cli, Command, Builtins, Option}                                                                                                                                                     from 'clipanion';
 import globby                                                                                                                                                                               from 'globby';
 import micromatch                                                                                                                                                                           from 'micromatch';
-import {Module}                                                                                                                                                                             from 'module';
+import {isBuiltin}                                                                                                                                                                          from 'module';
 import * as ts                                                                                                                                                                              from 'typescript';
 
 import * as ast                                                                                                                                                                             from './ast';
-
-const BUILTINS = new Set([
-  ...(Module.builtinModules || []),
-  ...(Module.builtinModules || []).map(mod => `node:${mod}`),
-  `pnpapi`,
-]);
 
 function probablyMinified(content: string) {
   if (content.length > 1024 * 1024)
@@ -84,7 +78,7 @@ function isValidDependency(ident: Ident, {workspace}: {workspace: Workspace}) {
 }
 
 function checkForUndeclaredDependency(workspace: Workspace, referenceNode: ts.Node, moduleName: string, {configuration, report}: {configuration: Configuration, report: Report}) {
-  if (BUILTINS.has(moduleName))
+  if (isBuiltin(moduleName) || moduleName === `pnpapi`)
     return;
 
   const idents = extractIdents(moduleName);

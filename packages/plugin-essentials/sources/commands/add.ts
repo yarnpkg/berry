@@ -63,6 +63,9 @@ export default class AddCommand extends BaseCommand {
     ], [
       `Add a package from a specific branch of a GitHub repository to the current workspace using the GitHub protocol (shorthand)`,
       `$0 add lodash-es@lodash/lodash#es`,
+    ], [
+      `Add a local package (gzipped tarball format) to the current workspace`,
+      `$0 add local-package-name@file:../path/to/local-package-name-v0.1.2.tgz`,
     ]],
   });
 
@@ -132,7 +135,10 @@ export default class AddCommand extends BaseCommand {
     });
 
     const fixed = this.fixed;
-    const interactive = this.interactive ?? configuration.get(`preferInteractive`);
+    const interactive = configuration.isInteractive({
+      interactive: this.interactive,
+      stdout: this.context.stdout,
+    });
     const reuse = interactive || configuration.get(`preferReuse`);
 
     const modifier = suggestUtils.getModifier(this, project);

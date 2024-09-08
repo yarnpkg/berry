@@ -24,7 +24,7 @@ export const quotePathIfNeeded = (path: string) => {
   return /\s/.test(path) ? JSON.stringify(path) : path;
 };
 
-async function setupScriptEnvironment(project: Project, env: {[key: string]: string}, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
+async function setupScriptEnvironment(project: Project, env: NodeJS.ProcessEnv, makePathWrapper: (name: string, argv0: string, args: Array<string>) => Promise<void>) {
   // We still support .pnp.js files to improve multi-project compatibility.
   // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
   // TODO: Support `-r` as an alias for `--require` (in all packages)
@@ -39,7 +39,9 @@ async function setupScriptEnvironment(project: Project, env: {[key: string]: str
   // We remove the PnP hook from NODE_OPTIONS because the process can have
   // NODE_OPTIONS set while changing linkers, which affects build scripts.
   if (project.configuration.get(`nodeLinker`) !== `pnp`) {
-    env.NODE_OPTIONS = nodeOptions;
+    // When set to an empty string, some tools consider it as explicitly set
+    // to the empty value, and do not set their own value.
+    env.NODE_OPTIONS = nodeOptions ? nodeOptions : undefined;
     return;
   }
 

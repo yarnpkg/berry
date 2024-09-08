@@ -120,7 +120,9 @@ export const VERSIONS: {std: number, [key: string]: number};
 
 The `VERSIONS` object contains a set of numbers that detail which version of the API is currently exposed. The only version that is guaranteed to be there is `std`, which will refer to the version of this document. Other keys are meant to be used to describe extensions provided by third-party implementors. Versions will only be bumped when the signatures of the public API change.
 
-**Note:** The current version is 3. We bump it responsibly and strive to make each version backward-compatible with the previous ones, but as you can probably guess some features are only available with the latest versions.
+:::note
+The current version is 3. We bump it responsibly and strive to make each version backward-compatible with the previous ones, but as you can probably guess some features are only available with the latest versions.
+:::
 
 ### `topLevel`
 
@@ -132,7 +134,9 @@ The `topLevel` object is a simple package locator pointing to the top-level pack
 
 This object is provided for convenience and doesn't necessarily needs to be used; you may create your own top-level locator by using your own locator literal with both fields set to `null`.
 
-**Note:** These special top-level locators are merely aliases to physical locators, which can be accessed by calling `findPackageLocator`.
+:::note
+These special top-level locators are merely aliases to physical locators, which can be accessed by calling `findPackageLocator`.
+:::
 
 ### `getLocator(...)`
 
@@ -152,7 +156,9 @@ export function getDependencyTreeRoots(): PackageLocator[];
 
 The `getDependencyTreeRoots` function will return the set of locators that constitute the roots of individual dependency trees. In Yarn, there is exactly one such locator for each workspace in the project.
 
-**Note:** This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section.
+:::note
+This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section.
+:::
 
 ### `getAllLocators(...)`
 
@@ -160,7 +166,9 @@ The `getDependencyTreeRoots` function will return the set of locators that const
 export function getAllLocators(): PackageLocator[];
 ```
 
-**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnpapi#versions) dictionary contains a valid `getAllLocators` property.
+:::warning important
+This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnpapi#versions) dictionary contains a valid `getAllLocators` property.
+:::
 
 The `getAllLocators` function will return all locators from the dependency tree, in no particular order (although it'll always be a consistent order between calls for the same API). It can be used when you wish to know more about the packages themselves, but not about the exact tree layout.
 
@@ -180,7 +188,9 @@ export function findPackageLocator(location: string): PackageLocator | null;
 
 Given a location on the disk, the `findPackageLocator` function will return the package locator for the package that "owns" the path. For example, running this function on something conceptually similar to `/path/to/node_modules/foo/index.js` would return a package locator pointing to the `foo` package (and its exact version).
 
-**Note:** This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section. You can leverage this property to extract the physical locator for the top-level package:
+:::note
+This function will always return the physical locators, so it'll never return the special top-level locator described in the `topLevel` section. You can leverage this property to extract the physical locator for the top-level package:
+:::
 
 ```ts
 const virtualLocator = pnpApi.topLevel;
@@ -265,7 +275,9 @@ This function will return `null` if the request is a builtin module, unless `con
 export function resolveVirtual(path: string): string | null;
 ```
 
-**Important:** This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnpapi#versions) dictionary contains a valid `resolveVirtual` property.
+:::warning important
+This function is not part of the Plug'n'Play specification and only available as a Yarn extension. In order to use it, you first must check that the [`VERSIONS`](/advanced/pnpapi#versions) dictionary contains a valid `resolveVirtual` property.
+:::
 
 The `resolveVirtual` function will accept any path as parameter and return the same path minus any [virtual component](/advanced/lexicon#virtual-package). This makes it easier to store the location to the files in a portable way as long as you don't care about losing the dependency tree information in the process (requiring files through those paths will prevent them from accessing their peer dependencies).
 
@@ -302,7 +314,9 @@ console.log(crossFs.readFileSync(`C:\\path\\to\\archive.zip\\package.json`));
 
 The following function implements a tree traversal in order to print the list of locators from the tree.
 
-**Important note:** This implementation iterates over **all** the nodes in the tree, even if they are found multiple times (which is very often the case). As a result the execution time is way higher than it could be. Optimize as needed 🙂
+:::warning important
+This implementation iterates over **all** the nodes in the tree, even if they are found multiple times (which is very often the case). As a result the execution time is way higher than it could be. Optimize as needed 🙂
+:::
 
 ```ts
 const pnp = require(`pnpapi`);

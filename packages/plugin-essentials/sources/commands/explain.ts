@@ -16,7 +16,7 @@ export async function getErrorCodeDetails(configuration: Configuration) {
     ? YarnVersion
     : await resolveTag(configuration, `canary`);
 
-  const errorCodesUrl = `https://repo.yarnpkg.com/${version}/packages/gatsby/content/advanced/error-codes.md`;
+  const errorCodesUrl = `https://repo.yarnpkg.com/${version}/packages/docusaurus/docs/advanced/01-general-reference/error-codes.mdx`;
   const raw: Buffer = await httpUtils.get(errorCodesUrl, {configuration});
 
   return new Map<string, string>(Array.from(raw.toString().matchAll(ERROR_CODE_DOC_REGEXP), ({groups}) => {
@@ -88,7 +88,7 @@ export default class ExplainCommand extends BaseCommand {
         : `This error code does not have a description.\n\nYou can help us by editing this page on GitHub 🙂:\n${
           formatUtils.jsonOrPretty(this.json, configuration, formatUtils.tuple(
             formatUtils.Type.URL,
-            `https://github.com/yarnpkg/berry/blob/master/packages/gatsby/content/advanced/error-codes.md`,
+            `https://github.com/yarnpkg/berry/blob/master/packages/docusaurus/docs/advanced/01-general-reference/error-codes.mdx`,
           ))
         }\n`;
 

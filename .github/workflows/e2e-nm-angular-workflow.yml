@@ -36,7 +36,7 @@ jobs:
     - name: Enable git longpaths
       run: git config --global core.longpaths true
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: ./.github/actions/prepare
 

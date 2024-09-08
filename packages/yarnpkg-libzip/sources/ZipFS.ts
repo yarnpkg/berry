@@ -1,6 +1,6 @@
 import {Dirent, DirentNoPath, ReaddirOptions}                                                                                                        from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from '@yarnpkg/fslib';
-import {FakeFS, MkdirOptions, RmdirOptions, WriteFileOptions, OpendirOptions}                                                                        from '@yarnpkg/fslib';
+import {FakeFS, MkdirOptions, RmdirOptions, RmOptions, WriteFileOptions, OpendirOptions}                                                             from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
 import {NodeFS}                                                                                                                                      from '@yarnpkg/fslib';
 import {opendir}                                                                                                                                     from '@yarnpkg/fslib';
@@ -1350,6 +1350,34 @@ export class ZipFS extends BasePortableFakeFS {
     const index = this.entries.get(resolvedP);
     if (typeof index === `undefined`)
       throw errors.EINVAL(`rmdir '${p}'`);
+
+    this.deleteEntry(p, index);
+  }
+  async rmPromise(p: PortablePath, opts?: RmOptions) {
+    return this.rmSync(p, opts);
+  }
+
+  rmSync(p: PortablePath, {recursive = false}: RmOptions = {}) {
+    if (this.readOnly)
+      throw errors.EROFS(`rm '${p}'`);
+
+    if (recursive) {
+      this.removeSync(p);
+      return;
+    }
+
+    const resolvedP = this.resolveFilename(`rm '${p}'`, p);
+
+    const directoryListing = this.listings.get(resolvedP);
+    if (!directoryListing)
+      throw errors.ENOTDIR(`rm '${p}'`);
+
+    if (directoryListing.size > 0)
+      throw errors.ENOTEMPTY(`rm '${p}'`);
+
+    const index = this.entries.get(resolvedP);
+    if (typeof index === `undefined`)
+      throw errors.EINVAL(`rm '${p}'`);
 
     this.deleteEntry(p, index);
   }

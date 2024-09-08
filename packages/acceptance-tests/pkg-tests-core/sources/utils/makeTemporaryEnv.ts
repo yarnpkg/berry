@@ -14,7 +14,7 @@ const mte = generatePkgDriver({
   async runDriver(
     path,
     [command, ...args],
-    {cwd, execArgv = [], projectFolder, registryUrl, env, ...config},
+    {cwd, execArgv = [], projectFolder, registryUrl, env, stdin, ...config},
   ) {
     const rcEnv: Record<string, any> = {};
     for (const [key, value] of Object.entries(config))
@@ -27,12 +27,12 @@ const mte = generatePkgDriver({
       ? [projectFolder]
       : [];
 
-    const yarnBinary = process.env.TEST_FROM_SOURCES
-      ? require.resolve(`${__dirname}/../../../../../scripts/run-yarn.js`)
-      : require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
+    const yarnBinary = process.env.TEST_BINARY
+      ?? require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
 
     const res = await execFile(process.execPath, [...execArgv, yarnBinary, ...cwdArgs, command, ...args], {
       cwd: cwd || path,
+      stdin,
       env: {
         [`HOME`]: nativeHomePath,
         [`USERPROFILE`]: nativeHomePath,

@@ -1,15 +1,18 @@
-**What's the problem this PR addresses?**
+## What's the problem this PR addresses?
+
 <!-- Describe the rationale of your PR. -->
 <!-- Link all issues that it closes. (Closes/Resolves #xxxx.) -->
 
 ...
 
-**How did you fix it?**
+## How did you fix it?
+
 <!-- A detailed description of your implementation. -->
 
 ...
 
-**Checklist**
+## Checklist
+
 <!--- Don't worry if you miss something, chores are automatically tested. -->
 <!--- This checklist exists to help you remember doing the chores when you submit a PR. -->
 <!--- Put an `x` in all the boxes that apply. -->
