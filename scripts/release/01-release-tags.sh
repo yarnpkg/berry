@@ -12,6 +12,7 @@ fi
 
 export BABEL_CACHE_PATH=$(mktemp -d)/cache.json
 mkdir -p "$(dirname "$BABEL_CACHE_PATH")"
+
 CURRENT_COMMIT=$(git rev-parse HEAD)
 
 PRERELEASE=0
