@@ -12,7 +12,6 @@ fi
 
 export BABEL_CACHE_PATH=$(mktemp -d)/cache.json
 mkdir -p "$(dirname "$BABEL_CACHE_PATH")"
-
 CURRENT_COMMIT=$(git rev-parse HEAD)
 
 PRERELEASE=0
@@ -67,6 +66,15 @@ echo
 yarn workspaces foreach \
   --verbose --all --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
   run update-local
+
+# Generate the signature
+openssl dgst -sha1 -sign /tmp/yarn.key \
+  -out "$REPO_DIR"/packages/berry-cli/bin/berry.js.sign \
+  "$REPO_DIR"/packages/berry-cli/bin/berry.js
+
+# Let's also copy the public key
+cp /tmp/yarn.pem \
+  "$REPO_DIR"/packages/berry-cli/bin/berry.pem
 
 # The v1 still uses the "berry.js" file path when using "policies set-version"
 cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js \
