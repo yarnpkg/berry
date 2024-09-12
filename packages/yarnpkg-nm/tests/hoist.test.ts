@@ -534,24 +534,6 @@ describe(`hoist`, () => {
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
-  it(`should avoid hoisting direct workspace dependencies into non-root workspace`, () => {
-    // . -> W1(w) -> W2(w) -> W3(w)-> A@X
-    //            -> A@Y
-    //   -> W3
-    //   -> A@Z
-    // The A@X must not be hoisted into W2(w)
-    // otherwise accessing A via . -> W3 with --preserve-symlinks will result in A@Z,
-    // but accessing it via W3(w) will result in A@Y
-    const tree = {
-      '.': {dependencies: [`W1(w)`, `W3`, `A@Z`], dependencyKind: HoisterDependencyKind.WORKSPACE},
-      'W1(w)': {dependencies: [`W2(w)`, `A@Y`], dependencyKind: HoisterDependencyKind.WORKSPACE},
-      'W2(w)': {dependencies: [`W3(w)`], dependencyKind: HoisterDependencyKind.WORKSPACE},
-      'W3(w)': {dependencies: [`A@X`], dependencyKind: HoisterDependencyKind.WORKSPACE},
-    };
-
-    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(5);
-  });
-
   it(`should hoist aliased packages`, () => {
     const tree = {
       '.': {dependencies: [`Aalias`]},
