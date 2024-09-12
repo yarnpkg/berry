@@ -10,6 +10,8 @@ Features in `master` can be tried out by running `yarn set version from sources`
 
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
 - `node-modules` linker now honors user-defined symlinks for `<workspace>/node_modules` directories
+- `node-modules` linker supports hoisting into inner workspaces that are parents of other workspaces
+- `node-modules` linker attemps to hoist tree more exhaustivel until nothing can be hoisted
 
 ## 4.1.0
 

@@ -534,14 +534,15 @@ describe(`hoist`, () => {
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(2);
   });
 
-  it(`should avoid hoisting direct workspace dependencies into non-root workspace`, () => {
+  it(`should hoist direct workspace dependencies into non-root workspace`, () => {
     // . -> W1(w) -> W2(w) -> W3(w)-> A@X
     //            -> A@Y
     //   -> W3
     //   -> A@Z
-    // The A@X must not be hoisted into W2(w)
-    // otherwise accessing A via . -> W3 with --preserve-symlinks will result in A@Z,
-    // but accessing it via W3(w) will result in A@Y
+    // The A@X must be hoisted into W2(w)
+    // Accessing A via . -> W3 with --preserve-symlinks will result in A@Z,
+    // but accessing it via W3(w) will result in A@Y, however if we don't do it,
+    // inner workspaces will have multiple unexpected copies of dependencies
     const tree = {
       '.': {dependencies: [`W1(w)`, `W3`, `A@Z`], dependencyKind: HoisterDependencyKind.WORKSPACE},
       'W1(w)': {dependencies: [`W2(w)`, `A@Y`], dependencyKind: HoisterDependencyKind.WORKSPACE},
@@ -549,7 +550,36 @@ describe(`hoist`, () => {
       'W3(w)': {dependencies: [`A@X`], dependencyKind: HoisterDependencyKind.WORKSPACE},
     };
 
-    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(5);
+    expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
+  });
+
+  it(`should hoist dependencies to the top from workspaces that have no hoist borders given there is workspace with hoist borders`, () => {
+    // . -> W1(w)| -> A@X --> B
+    //             -> B@X
+    //   -> W2(w)  -> A@Y --> B
+    //             -> B@Y
+    // should be hoisted to:
+    // . -> W1(w)| -> A@X -->B
+    //             -> B@X
+    //   -> W2(w)
+    //   -> A@Y --> B
+    //   -> B@Y
+
+    const tree = {
+      '.': {dependencies: [`W1(w)`, `W2(w)`], dependencyKind: HoisterDependencyKind.WORKSPACE},
+      'W1(w)': {dependencies: [`A@X`, `B@X`], dependencyKind: HoisterDependencyKind.WORKSPACE},
+      'A@X': {dependencies: [`B@X`], peerNames: [`B`]},
+      'A@Y': {dependencies: [`B@Y`], peerNames: [`B`]},
+      'W2(w)': {dependencies: [`A@Y`, `B@Y`], dependencyKind: HoisterDependencyKind.WORKSPACE},
+    };
+
+    const hoistingLimits = new Map([
+      [`.@`, new Set([`W1(w)`])],
+    ]);
+
+    const hoistedTree = hoist(toTree(tree), {check: true, hoistingLimits});
+    const W2 = Array.from(Array.from(hoistedTree.dependencies).filter(x => x.name === `W2(w)`)[0].dependencies);
+    expect(W2).toEqual([]);
   });
 
   it(`should hoist aliased packages`, () => {

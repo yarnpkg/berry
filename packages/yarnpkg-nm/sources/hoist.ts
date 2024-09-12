@@ -132,7 +132,8 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   let anotherRoundNeeded = false;
   let round = 0;
   do {
-    anotherRoundNeeded = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options).anotherRoundNeeded;
+    const result = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options);
+    anotherRoundNeeded = result.anotherRoundNeeded || result.isGraphChanged;
     options.fastLookupPossible = false;
     round++;
   } while (anotherRoundNeeded);
@@ -477,24 +478,6 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     isHoistable = !hasUnhoistedDependencies(node);
     if (outputReason && !isHoistable) {
       reason = `- external soft link with unhoisted dependencies`;
-    }
-  }
-
-  if (isHoistable) {
-    // Direct workspace dependencies must be hoisted to any common ancestor workspace of all the
-    // graph paths that include the dependency, because otherwise running app with
-    // `--preserve-symlinks` will become broken (without this flag the Node.js will pick dependency
-    // from the ancestor on the file system and with this flag it will pick ancestor from the graph
-    // and if these ancestors are different, the behavious of the application will be different).
-    // Another problem, which is prevented - is a creation of multiple hoisting layouts
-    // for the same workspace, because different dependencies of the same workspace might be hoisted
-    // differently, depending on the recepient workspace.
-    // It is difficult to find all common ancestors, but there is one easy to find common ancestor -
-    // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
-    // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
-    isHoistable = parentNode.dependencyKind !== HoisterDependencyKind.WORKSPACE || parentNode.hoistedFrom.has(node.name) || rootNodePathLocators.size === 1;
-    if (outputReason && !isHoistable) {
-      reason = parentNode.reasons.get(node.name)!;
     }
   }
 
