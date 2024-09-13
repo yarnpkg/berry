@@ -1,4 +1,4 @@
-import throttle               from 'lodash/throttle';
+import {throttle}             from 'es-toolkit/compat';
 import {PassThrough}          from 'stream';
 import {StringDecoder}        from 'string_decoder';
 

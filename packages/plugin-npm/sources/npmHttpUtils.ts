@@ -2,7 +2,7 @@ import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, s
 import {MessageName, ReportError}                                                                                                 from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                                                                                       from '@yarnpkg/fslib';
 import {prompt}                                                                                                                   from 'enquirer';
-import pick                                                                                                                       from 'lodash/pick';
+import {pick}                                                                                                                     from 'es-toolkit/compat';
 import semver                                                                                                                     from 'semver';
 
 import {Hooks}                                                                                                                    from './index';
