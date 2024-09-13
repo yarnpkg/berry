@@ -43,13 +43,15 @@ jobs:
         yarn init -p
         yarn add eslint typescript typescript-eslint
 
-        echo "import tseslint from 'typescript-eslint';\n
-export default tseslint.config({
-  files: ['**/*.ts'],
-  plugins: { '@typescript-eslint': tseslint.plugin },
-  languageOptions: { parser: tseslint.parser },
-  rules: { '@typescript-eslint/explicit-function-return-type': 'error' }
-});" > eslint.config.mjs
+        cat > eslint.config.mjs <<EOF
+        import tseslint from 'typescript-eslint';\n
+        export default tseslint.config({
+          files: ['**/*.ts'],
+          plugins: { '@typescript-eslint': tseslint.plugin },
+          languageOptions: { parser: tseslint.parser },
+          rules: { '@typescript-eslint/explicit-function-return-type': 'error' }
+        });
+        EOF
 
         echo 'const f = (): number => 42;' | tee ok.ts
         yarn eslint ok.ts
