@@ -33,7 +33,7 @@ function safeURL(url: string) {
 // attempt to correct an scp style url so that it will parse with `new URL()`
 function correctURL(gitURL: string) {
   // ignore @ that come after the first hash since the denotes the start
-  // of a commit hash which can contain @ characters
+  // of a committish which can contain @ characters
   const firstAt = lastIndexOfBefore(gitURL, `@`, `#`);
   // ignore colons that come after the hash since that could include colons such as:
   // git@github.com:user/package-2#semver:^1.0.0
