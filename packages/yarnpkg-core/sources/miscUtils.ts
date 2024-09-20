@@ -475,17 +475,21 @@ export function replaceEnvVariables(value: string, { env }: { env: { [key: strin
 
     const variableValue = env[variableName];
 
+    // If the variable exists, return its value
     if (variableValue !== undefined) {
       return variableValue;
     }
-
+    
+    // If the variable does not exist but a fallback is provided, return the fallback
     if (fallback != null) {
       return fallback;
     }
 
+    // Throw an error if the variable does not exist and no fallback is provided
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
 }
+
 
 
 export function parseBoolean(value: unknown): boolean {
