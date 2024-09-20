@@ -467,25 +467,26 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   }).join(`|`);
 }
 
-export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
-  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
+export function replaceEnvVariables(value: string, { env }: { env: { [key: string]: string | undefined } }) {
+  const regex = /\${(?<variableName>[\w_]+)(?::(?<fallback>[^}]*))?}/g;
 
   return value.replace(regex, (...args) => {
-    const {variableName, colon, fallback} = args[args.length - 1];
+    const { variableName, fallback } = args[args.length - 1];
 
-    const variableExist = Object.hasOwn(env, variableName);
     const variableValue = env[variableName];
 
-    if (variableValue)
+    if (variableValue !== undefined) {
       return variableValue;
-    if (variableExist && !colon)
-      return variableValue;
-    if (fallback != null)
+    }
+
+    if (fallback != null) {
       return fallback;
+    }
 
     throw new UsageError(`Environment variable not found (${variableName})`);
   });
 }
+
 
 export function parseBoolean(value: unknown): boolean {
   switch (value) {
