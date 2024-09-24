@@ -1,7 +1,7 @@
 import {BaseCommand}                            from '@yarnpkg/cli';
 import {Configuration, StreamReport, miscUtils} from '@yarnpkg/core';
 import {Command, Option, Usage, UsageError}     from 'clipanion';
-import getPath                                  from 'lodash/get';
+import {get as getPath}                         from 'es-toolkit/compat';
 import {inspect}                                from 'util';
 
 // eslint-disable-next-line arca/no-default-export
