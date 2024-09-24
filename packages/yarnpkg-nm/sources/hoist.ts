@@ -298,10 +298,10 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, preferenceMap: PreferenceMa
     const entry2 = preferenceMap.get(key2)!;
     if (entry2.hoistPriority !== entry1.hoistPriority) {
       return entry2.hoistPriority - entry1.hoistPriority;
-    } else if (entry2.peerDependents.size !== entry1.peerDependents.size) {
-      return entry2.peerDependents.size - entry1.peerDependents.size;
     } else {
-      return entry2.dependents.size - entry1.dependents.size;
+      const entry1Usages = entry1.dependents.size + entry1.peerDependents.size;
+      const entry2Usages = entry2.dependents.size + entry2.peerDependents.size;
+      return entry2Usages - entry1Usages;
     }
   });
 
