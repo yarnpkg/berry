@@ -265,6 +265,43 @@ describe(`hoist`, () => {
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(3);
   });
 
+  it(`should honor package popularity considering number of all references over number of references by peers`, () => {
+    // . -> A -> Z@X
+    //   -> B -> Z@X
+    //   -> C -> Z@X
+    //   -> D -> Z@Y
+    //        -> U -> Z@Y
+    // should be hoisted to:
+    // . -> A
+    //   -> B
+    //   -> C
+    //   -> D -> U
+    //        -> Z@Y
+    //   -> Z@X
+    const tree = toTree({
+      '.': {dependencies: [`A`, `B`, `C`, `D`]},
+      A: {dependencies: [`Z@X`]},
+      B: {dependencies: [`Z@X`]},
+      C: {dependencies: [`Z@X`]},
+      D: {dependencies: [`Z@Y`, `U`]},
+      U: {dependencies: [`Z@Y`], peerNames: [`Z`]},
+    });
+    const result = hoist(tree, {check: true});
+    expect(getTreeHeight(result)).toEqual(3);
+
+    const topLevelDeps = [...result.dependencies];
+    const hoistedZ = topLevelDeps.find(x => x.name === `Z`)!;
+    expect(hoistedZ.references).toContain(`X`);
+    expect(hoistedZ.references).not.toContain(`Y`);
+
+    const D = topLevelDeps.find(x => x.name === `D`)!;
+    const dDeps = [...D.dependencies];
+    expect(dDeps.length).toEqual(2);
+    const nestedZ = dDeps.find(x => x.name === `Z`)!;
+    expect(nestedZ.references).not.toContain(`X`);
+    expect(nestedZ.references).toContain(`Y`);
+  });
+
   it(`should hoist dependencies after hoisting peer dep`, () => {
     // . -> A -> B --> D@X
     //      -> D@X
