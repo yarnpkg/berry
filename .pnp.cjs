@@ -9534,7 +9534,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/libui", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui"],\
           ["@types/ink", null],\
           ["@types/react", "npm:16.14.56"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["react", "npm:17.0.2"],\
           ["tslib", "npm:2.6.2"]\
         ],\
@@ -9551,7 +9551,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@yarnpkg/libui", "workspace:packages/yarnpkg-libui"],\
           ["@types/react", "npm:16.14.56"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["react", "npm:17.0.2"],\
           ["tslib", "npm:2.6.2"]\
         ],\
@@ -12358,7 +12358,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12392,7 +12392,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12426,7 +12426,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12460,7 +12460,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12494,7 +12494,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12528,7 +12528,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12562,7 +12562,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12596,7 +12596,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12630,7 +12630,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12664,7 +12664,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12698,7 +12698,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12732,7 +12732,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12766,7 +12766,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12800,7 +12800,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12834,7 +12834,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12868,7 +12868,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12902,7 +12902,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12936,7 +12936,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -12970,7 +12970,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -13001,7 +13001,7 @@ const RAW_RUNTIME_STATE =
           ["algoliasearch", "npm:4.22.1"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["diff", "npm:5.1.0"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["ink-text-input", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:4.0.3"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17699,7 +17699,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17733,7 +17733,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17767,7 +17767,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17801,7 +17801,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17835,7 +17835,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17869,7 +17869,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17903,7 +17903,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17937,7 +17937,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -17971,7 +17971,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18005,7 +18005,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18039,7 +18039,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18073,7 +18073,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18107,7 +18107,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18141,7 +18141,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18175,7 +18175,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18209,7 +18209,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18243,7 +18243,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18277,7 +18277,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18311,7 +18311,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -18342,7 +18342,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/plugin-git", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-git"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:17.0.2"],\
           ["semver", "npm:7.6.0"],\
@@ -25866,17 +25866,17 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["ink", [\
-      ["npm:3.2.0", {\
-        "packageLocation": "./.yarn/cache/ink-npm-3.2.0-2f1df5b094-cfbd8808cd.zip/node_modules/ink/",\
+      ["patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f", {\
+        "packageLocation": "./.yarn/cache/ink-patch-68b5a63278-04dad338ca.zip/node_modules/ink/",\
         "packageDependencies": [\
-          ["ink", "npm:3.2.0"]\
+          ["ink", "patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"]\
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0", {\
-        "packageLocation": "./.yarn/__virtual__/ink-virtual-249bd298df/0/cache/ink-npm-3.2.0-2f1df5b094-cfbd8808cd.zip/node_modules/ink/",\
+      ["virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f", {\
+        "packageLocation": "./.yarn/__virtual__/ink-virtual-167f13f3d8/0/cache/ink-patch-68b5a63278-04dad338ca.zip/node_modules/ink/",\
         "packageDependencies": [\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["@types/react", "npm:16.14.56"],\
           ["ansi-escapes", "npm:4.3.1"],\
           ["auto-bind", "npm:4.0.0"],\
@@ -25891,7 +25891,7 @@ const RAW_RUNTIME_STATE =
           ["patch-console", "npm:1.0.0"],\
           ["react", "npm:17.0.2"],\
           ["react-devtools-core", "npm:4.28.5"],\
-          ["react-reconciler", "virtual:249bd298dfd07821de4dd68a913ecfec7f5b7ed137a84d7e8da4762b83e238eacd3c1afdbfa2b521e265623a3c34c9adf53c5a588c78bdf8a70ef6c84bb43588#npm:0.26.2"],\
+          ["react-reconciler", "virtual:167f13f3d8147f64cfafafd5e1cbfb87735fea52cab5467bb1ddb22825953d85e33db876d002d631e38ad8f3cc72c9e86821acf26c280d32a78b2fc221c3e423#npm:0.26.2"],\
           ["scheduler", "npm:0.20.2"],\
           ["signal-exit", "npm:3.0.7"],\
           ["slice-ansi", "npm:3.0.0"],\
@@ -25900,7 +25900,7 @@ const RAW_RUNTIME_STATE =
           ["type-fest", "npm:0.12.0"],\
           ["widest-line", "npm:3.1.0"],\
           ["wrap-ansi", "npm:6.2.0"],\
-          ["ws", "virtual:249bd298dfd07821de4dd68a913ecfec7f5b7ed137a84d7e8da4762b83e238eacd3c1afdbfa2b521e265623a3c34c9adf53c5a588c78bdf8a70ef6c84bb43588#npm:7.5.10"],\
+          ["ws", "virtual:167f13f3d8147f64cfafafd5e1cbfb87735fea52cab5467bb1ddb22825953d85e33db876d002d631e38ad8f3cc72c9e86821acf26c280d32a78b2fc221c3e423#npm:7.5.10"],\
           ["yoga-layout-prebuilt", "patch:yoga-layout-prebuilt@npm%3A1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch::version=1.10.0&hash=79d122&locator=%40yarnpkg%2Fmonorepo%40workspace%3A."]\
         ],\
         "packagePeers": [\
@@ -25925,7 +25925,7 @@ const RAW_RUNTIME_STATE =
           ["@types/ink", null],\
           ["@types/react", "npm:16.14.56"],\
           ["chalk", "npm:4.1.2"],\
-          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#npm:3.2.0"],\
+          ["ink", "virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"],\
           ["react", "npm:17.0.2"],\
           ["type-fest", "npm:0.15.1"]\
         ],\
@@ -32771,10 +32771,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:249bd298dfd07821de4dd68a913ecfec7f5b7ed137a84d7e8da4762b83e238eacd3c1afdbfa2b521e265623a3c34c9adf53c5a588c78bdf8a70ef6c84bb43588#npm:0.26.2", {\
-        "packageLocation": "./.yarn/__virtual__/react-reconciler-virtual-862c2f6a6a/0/cache/react-reconciler-npm-0.26.2-284c00acc7-7b9369a12e.zip/node_modules/react-reconciler/",\
+      ["virtual:167f13f3d8147f64cfafafd5e1cbfb87735fea52cab5467bb1ddb22825953d85e33db876d002d631e38ad8f3cc72c9e86821acf26c280d32a78b2fc221c3e423#npm:0.26.2", {\
+        "packageLocation": "./.yarn/__virtual__/react-reconciler-virtual-52aef8aa52/0/cache/react-reconciler-npm-0.26.2-284c00acc7-7b9369a12e.zip/node_modules/react-reconciler/",\
         "packageDependencies": [\
-          ["react-reconciler", "virtual:249bd298dfd07821de4dd68a913ecfec7f5b7ed137a84d7e8da4762b83e238eacd3c1afdbfa2b521e265623a3c34c9adf53c5a588c78bdf8a70ef6c84bb43588#npm:0.26.2"],\
+          ["react-reconciler", "virtual:167f13f3d8147f64cfafafd5e1cbfb87735fea52cab5467bb1ddb22825953d85e33db876d002d631e38ad8f3cc72c9e86821acf26c280d32a78b2fc221c3e423#npm:0.26.2"],\
           ["@types/react", "npm:16.14.56"],\
           ["loose-envify", "npm:1.4.0"],\
           ["object-assign", "npm:4.1.1"],\
@@ -37157,10 +37157,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:249bd298dfd07821de4dd68a913ecfec7f5b7ed137a84d7e8da4762b83e238eacd3c1afdbfa2b521e265623a3c34c9adf53c5a588c78bdf8a70ef6c84bb43588#npm:7.5.10", {\
-        "packageLocation": "./.yarn/__virtual__/ws-virtual-1314392e5c/0/cache/ws-npm-7.5.10-878ccb886b-9c796b84ba.zip/node_modules/ws/",\
+      ["virtual:167f13f3d8147f64cfafafd5e1cbfb87735fea52cab5467bb1ddb22825953d85e33db876d002d631e38ad8f3cc72c9e86821acf26c280d32a78b2fc221c3e423#npm:7.5.10", {\
+        "packageLocation": "./.yarn/__virtual__/ws-virtual-79f3a0ad82/0/cache/ws-npm-7.5.10-878ccb886b-9c796b84ba.zip/node_modules/ws/",\
         "packageDependencies": [\
-          ["ws", "virtual:249bd298dfd07821de4dd68a913ecfec7f5b7ed137a84d7e8da4762b83e238eacd3c1afdbfa2b521e265623a3c34c9adf53c5a588c78bdf8a70ef6c84bb43588#npm:7.5.10"],\
+          ["ws", "virtual:167f13f3d8147f64cfafafd5e1cbfb87735fea52cab5467bb1ddb22825953d85e33db876d002d631e38ad8f3cc72c9e86821acf26c280d32a78b2fc221c3e423#npm:7.5.10"],\
           ["@types/bufferutil", null],\
           ["@types/utf-8-validate", null],\
           ["bufferutil", null],\

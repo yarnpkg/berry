@@ -12166,7 +12166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ink@npm:^3.2.0":
+"ink@npm:3.2.0":
   version: 3.2.0
   resolution: "ink@npm:3.2.0"
   dependencies:
@@ -12200,6 +12200,43 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10/cfbd8808cd1ee995440aac7a89af1156e587fec271bc3bc7460788b8b0c844eaf6364ac3d19dd4caa9f8f19bfb97d3fa0a51a5f7d89b6c6b990686ac68f083f6
+  languageName: node
+  linkType: hard
+
+"ink@patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch":
+  version: 3.2.0
+  resolution: "ink@patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"
+  dependencies:
+    ansi-escapes: "npm:^4.2.1"
+    auto-bind: "npm:4.0.0"
+    chalk: "npm:^4.1.0"
+    cli-boxes: "npm:^2.2.0"
+    cli-cursor: "npm:^3.1.0"
+    cli-truncate: "npm:^2.1.0"
+    code-excerpt: "npm:^3.0.0"
+    indent-string: "npm:^4.0.0"
+    is-ci: "npm:^2.0.0"
+    lodash: "npm:^4.17.20"
+    patch-console: "npm:^1.0.0"
+    react-devtools-core: "npm:^4.19.1"
+    react-reconciler: "npm:^0.26.2"
+    scheduler: "npm:^0.20.2"
+    signal-exit: "npm:^3.0.2"
+    slice-ansi: "npm:^3.0.0"
+    stack-utils: "npm:^2.0.2"
+    string-width: "npm:^4.2.2"
+    type-fest: "npm:^0.12.0"
+    widest-line: "npm:^3.1.0"
+    wrap-ansi: "npm:^6.2.0"
+    ws: "npm:^7.5.5"
+    yoga-layout-prebuilt: "npm:^1.9.6"
+  peerDependencies:
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/04dad338ca81d886584f98cc535d7fd47b34f54731279b7469262b8deff6f9fcfa4e65579a6f4115b31e753a2b7bfcaa9b70e9633d80f95ed1f56d1b2c31be5d
   languageName: node
   linkType: hard
 
