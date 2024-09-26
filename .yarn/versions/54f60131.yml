@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/cli": patch
+  "@yarnpkg/libui": patch
+  "@yarnpkg/plugin-interactive-tools": patch
+  "@yarnpkg/plugin-version": patch
