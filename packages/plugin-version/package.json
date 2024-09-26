@@ -12,9 +12,9 @@
     "@yarnpkg/libui": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
-    "ink": "^3.0.8",
+    "ink": "^5.0.1",
     "lodash": "^4.17.15",
-    "react": "^16.13.1",
+    "react": "^18.2.0",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
-    "@types/react": "^16.8.0",
+    "@types/react": "^18.3.9",
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
