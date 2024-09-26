@@ -5,6 +5,7 @@ import {NpmRemapResolver}                                      from './NpmRemapR
 import {NpmSemverFetcher}                                      from './NpmSemverFetcher';
 import {NpmSemverResolver}                                     from './NpmSemverResolver';
 import {NpmTagResolver}                                        from './NpmTagResolver';
+import {NpmTarballResolver}                                    from './NpmTarballResolver';
 import * as npmConfigUtils                                     from './npmConfigUtils';
 import * as npmHttpUtils                                       from './npmHttpUtils';
 import * as npmPublishUtils                                    from './npmPublishUtils';
@@ -132,6 +133,7 @@ const plugin: Plugin = {
     NpmRemapResolver,
     NpmSemverResolver,
     NpmTagResolver,
+    NpmTarballResolver,
   ],
 };
 
