@@ -1,0 +1,11 @@
+[build]
+  publish = 'packages/docusaurus/build'
+  command = 'yarn packages/docusaurus build --no-minify'
+
+[build.environment]
+  NODE_VERSION = '18.16'
+  NODE_OPTIONS = '--max-old-space-size=4096'
+  DOCUSAURUS_SSR_CONCURRENCY = '1'
+
+[build.processing.html]
+  pretty_urls = false

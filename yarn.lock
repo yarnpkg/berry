@@ -5692,12 +5692,12 @@ __metadata:
   resolution: "@yarnpkg/libui@workspace:packages/yarnpkg-libui"
   dependencies:
     "@types/react": "npm:^16.8.0"
-    ink: "npm:^3.0.8"
-    react: "npm:^16.13.1"
+    ink: "npm:^3.2.0"
+    react: "npm:^17.0.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
     ink: ^3.0.8
-    react: ^16.8.4
+    react: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -5959,9 +5959,9 @@ __metadata:
     algoliasearch: "npm:^4.2.0"
     clipanion: "npm:^4.0.0-rc.2"
     diff: "npm:^5.1.0"
-    ink: "npm:^3.0.8"
-    ink-text-input: "npm:^4.0.1"
-    react: "npm:^16.13.1"
+    ink: "npm:^3.2.0"
+    ink-text-input: "npm:^4.0.3"
+    react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6177,9 +6177,9 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
-    ink: "npm:^3.0.8"
+    ink: "npm:^3.2.0"
     lodash: "npm:^4.17.15"
-    react: "npm:^16.13.1"
+    react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6530,7 +6530,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-regex@npm:^4.0.0, ansi-regex@npm:^4.1.0":
+"ansi-regex@npm:^4.0.0":
   version: 4.1.0
   resolution: "ansi-regex@npm:4.1.0"
   checksum: 10/97aa4659538d53e5e441f5ef2949a3cffcb838e57aeaad42c4194e9d7ddb37246a6526c4ca85d3940a9d1e19b11cc2e114530b54c9d700c8baf163c31779baf8
@@ -6810,13 +6810,6 @@ __metadata:
   version: 1.0.0
   resolution: "assign-symbols@npm:1.0.0"
   checksum: 10/c0eb895911d05b6b2d245154f70461c5e42c107457972e5ebba38d48967870dee53bcdf6c7047990586daa80fab8dab3cc6300800fbd47b454247fdedd859a2c
-  languageName: node
-  linkType: hard
-
-"astral-regex@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "astral-regex@npm:1.0.0"
-  checksum: 10/93417fc0879531cd95ace2560a54df865c9461a3ac0714c60cbbaa5f1f85d2bee85489e78d82f70b911b71ac25c5f05fc5a36017f44c9bb33c701bee229ff848
   languageName: node
   linkType: hard
 
@@ -12160,22 +12153,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ink-text-input@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "ink-text-input@npm:4.0.1"
+"ink-text-input@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "ink-text-input@npm:4.0.3"
   dependencies:
     chalk: "npm:^4.1.0"
     type-fest: "npm:^0.15.1"
   peerDependencies:
     ink: ^3.0.0-3
-    react: ^16.5.2
-  checksum: 10/486f4164733d402192bee4c81f4cb92550a0b61041eacab533f9b39523345f0200744581c3844b1160bcdc62a18b4e0c9683d2ae692f9ef34a7d703b3a383fdb
+    react: ^16.5.2 || ^17.0.0
+  checksum: 10/214db7e7d0b1fb27b1a03ce21e373f71098e6fb87055782e4484fd0318c663b6d80c29a2d878622340e39dce99d66069ff3d6f9ad360cf3794511204089ea0d5
   languageName: node
   linkType: hard
 
-"ink@npm:3.0.8":
-  version: 3.0.8
-  resolution: "ink@npm:3.0.8"
+"ink@npm:3.2.0":
+  version: 3.2.0
+  resolution: "ink@npm:3.2.0"
   dependencies:
     ansi-escapes: "npm:^4.2.1"
     auto-bind: "npm:4.0.0"
@@ -12188,17 +12181,17 @@ __metadata:
     is-ci: "npm:^2.0.0"
     lodash: "npm:^4.17.20"
     patch-console: "npm:^1.0.0"
-    react-devtools-core: "npm:^4.6.0"
-    react-reconciler: "npm:^0.24.0"
-    scheduler: "npm:^0.18.0"
+    react-devtools-core: "npm:^4.19.1"
+    react-reconciler: "npm:^0.26.2"
+    scheduler: "npm:^0.20.2"
     signal-exit: "npm:^3.0.2"
     slice-ansi: "npm:^3.0.0"
     stack-utils: "npm:^2.0.2"
-    string-length: "npm:^3.1.0"
+    string-width: "npm:^4.2.2"
     type-fest: "npm:^0.12.0"
     widest-line: "npm:^3.1.0"
     wrap-ansi: "npm:^6.2.0"
-    ws: "npm:^7.2.5"
+    ws: "npm:^7.5.5"
     yoga-layout-prebuilt: "npm:^1.9.6"
   peerDependencies:
     "@types/react": ">=16.8.0"
@@ -12206,13 +12199,13 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10/7bf10005768add83c056454834493f075f286847db05d866b2f48a59a5ac2046843372589e31bb5466c63412b5a7c6a4c29fe122366681ba884169d5f0391b29
+  checksum: 10/cfbd8808cd1ee995440aac7a89af1156e587fec271bc3bc7460788b8b0c844eaf6364ac3d19dd4caa9f8f19bfb97d3fa0a51a5f7d89b6c6b990686ac68f083f6
   languageName: node
   linkType: hard
 
-"ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch":
-  version: 3.0.8
-  resolution: "ink@patch:ink@npm%3A3.0.8#~/.yarn/patches/ink-npm-3.0.8-3a8005f59f.patch::version=3.0.8&hash=2bdc6c"
+"ink@patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch":
+  version: 3.2.0
+  resolution: "ink@patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch::version=3.2.0&hash=b7953f"
   dependencies:
     ansi-escapes: "npm:^4.2.1"
     auto-bind: "npm:4.0.0"
@@ -12225,17 +12218,17 @@ __metadata:
     is-ci: "npm:^2.0.0"
     lodash: "npm:^4.17.20"
     patch-console: "npm:^1.0.0"
-    react-devtools-core: "npm:^4.6.0"
-    react-reconciler: "npm:^0.24.0"
-    scheduler: "npm:^0.18.0"
+    react-devtools-core: "npm:^4.19.1"
+    react-reconciler: "npm:^0.26.2"
+    scheduler: "npm:^0.20.2"
     signal-exit: "npm:^3.0.2"
     slice-ansi: "npm:^3.0.0"
     stack-utils: "npm:^2.0.2"
-    string-length: "npm:^3.1.0"
+    string-width: "npm:^4.2.2"
     type-fest: "npm:^0.12.0"
     widest-line: "npm:^3.1.0"
     wrap-ansi: "npm:^6.2.0"
-    ws: "npm:^7.2.5"
+    ws: "npm:^7.5.5"
     yoga-layout-prebuilt: "npm:^1.9.6"
   peerDependencies:
     "@types/react": ">=16.8.0"
@@ -12243,7 +12236,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10/0285ba15e29d63eb49bd7b9d0b67a8241a1992a2b0ca5b861de24743e9a21a7b6cb3f5fb616dfa3eda13950bb100bd53b83d21eaeb0fcb05c1dd4165216bd85d
+  checksum: 10/04dad338ca81d886584f98cc535d7fd47b34f54731279b7469262b8deff6f9fcfa4e65579a6f4115b31e753a2b7bfcaa9b70e9633d80f95ed1f56d1b2c31be5d
   languageName: node
   linkType: hard
 
@@ -17558,13 +17551,13 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react-devtools-core@npm:^4.6.0":
-  version: 4.9.0
-  resolution: "react-devtools-core@npm:4.9.0"
+"react-devtools-core@npm:^4.19.1":
+  version: 4.28.5
+  resolution: "react-devtools-core@npm:4.28.5"
   dependencies:
     shell-quote: "npm:^1.6.1"
     ws: "npm:^7"
-  checksum: 10/0f82288e6c5b67d20ee6a988f94fb9b35d50c40a7e7e6534be8c7da73bf896492240dc351f8be3c82f7d2c6eca02550f2b7ebff87ec5fc77be08f769bda6db68
+  checksum: 10/7c951a6a9b773e4fd56b2f1894c83aaec417373cf01aa261bd2dd286e6c6f1d8c67a3749ecb1d106dbf9e8cda0e6ed1bfd6ce1b61c81e035f2527be3dd9eebc2
   languageName: node
   linkType: hard
 
@@ -17793,17 +17786,16 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react-reconciler@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "react-reconciler@npm:0.24.0"
+"react-reconciler@npm:^0.26.2":
+  version: 0.26.2
+  resolution: "react-reconciler@npm:0.26.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
     object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-    scheduler: "npm:^0.18.0"
+    scheduler: "npm:^0.20.2"
   peerDependencies:
-    react: ^16.0.0
-  checksum: 10/f544f94e107bdc3f8b96ee6fd630c604f398f04ff30f9f63cea291f9f59b51f0afd453da88f5a467462ba3f77ee933116a8a4b9c1c4703135cc4f6dd2a8d7036
+    react: ^17.0.2
+  checksum: 10/7b9369a12e57859088aaef052abe03138ad8eefe67308bf8be6ef8f529be06276dc4977a4d665dc9b9e08188bd308b2a0d58dc181253c0205c98e03d7c0901b7
   languageName: node
   linkType: hard
 
@@ -17948,14 +17940,13 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react@npm:^16.13.1":
-  version: 16.13.1
-  resolution: "react@npm:16.13.1"
+"react@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
     object-assign: "npm:^4.1.1"
-    prop-types: "npm:^15.6.2"
-  checksum: 10/b907b97f3b1bf31abf691ea15bd2d674ab0ac9063e15b79e1a7dac0b75c0a0cd5728f69b55c687bd023af58ca586ab7794724ee466fc863d190954e7e1d3885e
+  checksum: 10/ece60c31c1d266d132783aaaffa185d2e4c9b4db144f853933ec690cee1e0600c8929a1dd0a9e79323eea8e2df636c9a06d40f6cfdc9f797f65225433e67f707
   languageName: node
   linkType: hard
 
@@ -18757,13 +18748,13 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "scheduler@npm:0.18.0"
+"scheduler@npm:^0.20.2":
+  version: 0.20.2
+  resolution: "scheduler@npm:0.20.2"
   dependencies:
     loose-envify: "npm:^1.1.0"
     object-assign: "npm:^4.1.1"
-  checksum: 10/5e6da4509a6a93e9255afa8aa6dfdb085d4cd75dbaf8eaa5492a5a9d6cd20d62136c4d8d7514d7504da68ac7adbd6a1fa55017973dd1ca4c2e2c2bfb87c77284
+  checksum: 10/898917fa475386953d998add9107c04bf2c335eee86172833995dee126d12a68bee3c29edbd61fa0bcbcb8ee511c422eaab23b86b02f95aab26ecfaed8df5e64
   languageName: node
   linkType: hard
 
@@ -19536,16 +19527,6 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"string-length@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "string-length@npm:3.1.0"
-  dependencies:
-    astral-regex: "npm:^1.0.0"
-    strip-ansi: "npm:^5.2.0"
-  checksum: 10/b09ccacc2f96ba3ade9f2b3163901e05f668a2b14bc353853165c1f3b19185421ac004e9957b62827083d163e049c41a1b15170e252eaf44fdd686553c372714
-  languageName: node
-  linkType: hard
-
 "string-length@npm:^4.0.1":
   version: 4.0.1
   resolution: "string-length@npm:4.0.1"
@@ -19556,7 +19537,7 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
+"string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.2, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
   dependencies:
@@ -19681,15 +19662,6 @@ pem@dexus/pem:
     is-obj: "npm:^1.0.1"
     is-regexp: "npm:^1.0.0"
   checksum: 10/973782f09a3df3f39a2cf07dbf43fb9ba6cb32976f3616cd0f6c10e0a5c5415dd72b7b700e72920e8da2bf57c3001b8e37b5af7174bab9a748ce0416989e19b1
-  languageName: node
-  linkType: hard
-
-"strip-ansi@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "strip-ansi@npm:5.2.0"
-  dependencies:
-    ansi-regex: "npm:^4.1.0"
-  checksum: 10/bdb5f76ade97062bd88e7723aa019adbfacdcba42223b19ccb528ffb9fb0b89a5be442c663c4a3fb25268eaa3f6ea19c7c3fbae830bd1562d55adccae1fcec46
   languageName: node
   linkType: hard
 
@@ -21559,9 +21531,9 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"ws@npm:^7, ws@npm:^7.2.5, ws@npm:^7.3.1":
-  version: 7.5.9
-  resolution: "ws@npm:7.5.9"
+"ws@npm:^7, ws@npm:^7.3.1, ws@npm:^7.5.5":
+  version: 7.5.10
+  resolution: "ws@npm:7.5.10"
   peerDependencies:
     bufferutil: ^4.0.1
     utf-8-validate: ^5.0.2
@@ -21570,7 +21542,7 @@ pem@dexus/pem:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 10/171e35012934bd8788150a7f46f963e50bac43a4dc524ee714c20f258693ac4d3ba2abadb00838fdac42a47af9e958c7ae7e6f4bc56db047ba897b8a2268cf7c
+  checksum: 10/9c796b84ba80ffc2c2adcdfc9c8e9a219ba99caa435c9a8d45f9ac593bba325563b3f83edc5eb067cc6d21b9a6bf2c930adf76dd40af5f58a5ca6859e81858f0
   languageName: node
   linkType: hard
 
