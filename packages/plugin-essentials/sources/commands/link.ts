@@ -93,11 +93,9 @@ export default class LinkCommand extends BaseCommand {
         ? ppath.relative(project.cwd, workspace.cwd)
         : workspace.cwd;
 
-      // Windows-specific path handling
       if (process.platform === 'win32') {
         const windowsPath = npath.fromPortablePath(target);
         
-        // Check if we need to use extended-length path syntax
         if (windowsPath.length >= constants.MAX_PATH) {
           // For virtual packages, try to shorten the path first
           if (structUtils.isVirtualLocator(workspace.anchoredLocator)) {
@@ -106,7 +104,6 @@ export default class LinkCommand extends BaseCommand {
             target = ppath.resolve(project.cwd, `node_modules/${shortName}` as any);
           }
           
-          // If still too long, use extended-length path syntax
           const finalWindowsPath = npath.fromPortablePath(target);
           if (finalWindowsPath.length >= constants.MAX_PATH) {
             target = npath.toPortablePath(`\\\\?\\${finalWindowsPath}`);
