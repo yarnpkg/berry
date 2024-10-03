@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}        from '@yarnpkg/cli';
+import {BaseCommand, WorkspaceRequiredError}                from '@yarnpkg/cli';
 import {Cache, Configuration, Project, structUtils, report} from '@yarnpkg/core';
-import {npath, ppath, constants}                    from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}         from 'clipanion';
+import {npath, ppath, constants}                            from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                 from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
@@ -87,15 +87,15 @@ export default class LinkCommand extends BaseCommand {
       }
     }
 
-    const processWorkspace = async (workspace) => {
+    const processWorkspace = async workspace => {
       const fullName = structUtils.stringifyIdent(workspace.anchoredLocator);
       let target = this.relative
         ? ppath.relative(project.cwd, workspace.cwd)
         : workspace.cwd;
 
-      if (process.platform === 'win32') {
+      if (process.platform === `win32`) {
         const windowsPath = npath.fromPortablePath(target);
-        
+
         if (windowsPath.length >= constants.MAX_PATH) {
           // For virtual packages, try to shorten the path first
           if (structUtils.isVirtualLocator(workspace.anchoredLocator)) {
@@ -103,7 +103,7 @@ export default class LinkCommand extends BaseCommand {
             const shortName = `${workspace.manifest.name.name}-${hash}`;
             target = ppath.resolve(project.cwd, `node_modules/${shortName}` as any);
           }
-          
+
           const finalWindowsPath = npath.fromPortablePath(target);
           if (finalWindowsPath.length >= constants.MAX_PATH) {
             target = npath.toPortablePath(`\\\\?\\${finalWindowsPath}`);
@@ -128,8 +128,8 @@ export default class LinkCommand extends BaseCommand {
           reference,
         ]);
 
-        return report.reportInfo(null, `The following packages have been linked:`) + '\n' +
-               report.reportIndex(null, rows);
+        return `${report.reportInfo(null, `The following packages have been linked:`)}\n${
+          report.reportIndex(null, rows)}`;
       },
     }, {
       cache,
