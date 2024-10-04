@@ -1,7 +1,7 @@
-import {structUtils}                               from '@yarnpkg/core';
-import {ppath, npath, PortablePath, Filename, xfs} from '@yarnpkg/fslib';
+import {structUtils}                     from '@yarnpkg/core';
+import {ppath, npath, PortablePath, xfs} from '@yarnpkg/fslib';
 
-import {generatePath}                              from '../sources/commands/link';
+import {generatePath}                    from '../sources/commands/link';
 
 describe(`Link`, () => {
   describe(`generatePath`, () => {

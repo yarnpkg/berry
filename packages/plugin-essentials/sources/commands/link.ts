@@ -52,7 +52,7 @@ export default class LinkCommand extends BaseCommand {
     });
 
     const topLevelWorkspace = project.topLevelWorkspace;
-    const linkedWorkspaces = [];
+    const linkedWorkspaces: Array<any> = [];
 
     for (const destination of this.destinations) {
       const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(destination));
@@ -89,7 +89,7 @@ export default class LinkCommand extends BaseCommand {
       }
     }
 
-    const processWorkspace = async workspace => {
+    const processWorkspace = async (workspace: any) => {
       const fullName = structUtils.stringifyIdent(workspace.anchoredLocator);
       let target = this.relative
         ? ppath.relative(project.cwd, workspace.cwd)
