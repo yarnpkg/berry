@@ -1,7 +1,8 @@
-import {BaseCommand, WorkspaceRequiredError}                from '@yarnpkg/cli';
-import {Cache, Configuration, Project, structUtils, report} from '@yarnpkg/core';
-import {npath, ppath, constants}                            from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                 from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
+import {Cache, Configuration, Project, structUtils} from '@yarnpkg/core';
+import {npath, ppath, constants} from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError} from 'clipanion';
+import {Report} from '../../../yarnpkg-core/sources';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
@@ -128,8 +129,8 @@ export default class LinkCommand extends BaseCommand {
           reference,
         ]);
 
-        return `${report.reportInfo(null, `The following packages have been linked:`)}\n${
-          report.reportIndex(null, rows)}`;
+        return `${Report.reportInfo(null, `The following packages have been linked:`)}\n${
+          Report.reportIndex(null, rows)}`;
       },
     }, {
       cache,
