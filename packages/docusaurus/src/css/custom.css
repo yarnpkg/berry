@@ -111,6 +111,14 @@ html.blog-wrapper .container {
 
 .navbar {
   top: -1px;
+  height: auto;
+}
+
+.navbar__items {
+  flex: 1 0 min-content;
+}
+.navbar__items--right {
+  margin-left: auto;
 }
 
 .navbar__brand {
