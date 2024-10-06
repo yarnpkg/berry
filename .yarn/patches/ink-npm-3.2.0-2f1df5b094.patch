@@ -1,5 +1,5 @@
 diff --git a/build/ink.js b/build/ink.js
-index f292bccdd049835ded848da83a6daac1e4f70416..54c4ebf36dc0c8f7f2580a5e69869848c83dc46f 100644
+index 3c578b82d95eaeda5a0d7b9b03e88a41c503813b..70a98636304393a9296d8b3656e97d888806245d 100644
 --- a/build/ink.js
 +++ b/build/ink.js
 @@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {

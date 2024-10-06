@@ -112,6 +112,9 @@ describe(`semverUtils`, () => {
       [[`<=1.5.3`, `1.5.3`], `1.5.3`],
       [[`1.5.3`, `1.5.3`], `1.5.3`],
       [[`1.5.0`, `1.5.3`], null],
+      [[`~1.0.1 || ~1.0.2`], `~1.0.1`],
+      [[`~1.0.1 || ~1.0.2`, `~1.0.1 || ~1.0.2`], `~1.0.1`],
+      [(new Array(1000)).fill(`~1.0.1 || ~1.0.2`), `~1.0.1`],
     ])(`should simplify %s into %s`, (ranges, expected) => {
       expect(semverUtils.simplifyRanges(ranges)).toEqual(expected);
     });
