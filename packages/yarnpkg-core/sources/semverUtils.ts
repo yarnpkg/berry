@@ -204,7 +204,7 @@ export function stringifyComparator(comparator: Comparator) {
 }
 
 export function simplifyRanges(ranges: Array<string>) {
-  const parsedRanges = ranges.map(range => validRange(range)!.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
+  const parsedRanges = ranges.map(removeSubsets).map(range => validRange(range)!.set.map(comparators => comparators.map(comparator => getComparator(comparator))));
 
   let alternatives = parsedRanges.shift()!.map(comparators => mergeComparators(comparators))
     .filter((range): range is Comparator => range !== null);
@@ -232,4 +232,23 @@ export function simplifyRanges(ranges: Array<string>) {
     return null;
 
   return alternatives.map(comparator => stringifyComparator(comparator)).join(` || `);
+}
+
+function removeSubsets(rangeString: string) {
+  const parts = rangeString.split(`||`);
+  if (parts.length > 1) {
+    const newParts: Set<string> = new Set();
+    for (const potentialSubset of parts) {
+      if (!parts.some(part => part !== potentialSubset && semver.subset(potentialSubset, part))) {
+        newParts.add(potentialSubset);
+      }
+    }
+
+    if (newParts.size < parts.length) {
+      const newRange = [...newParts].join(` || `);
+      return newRange;
+    }
+  }
+
+  return rangeString;
 }
