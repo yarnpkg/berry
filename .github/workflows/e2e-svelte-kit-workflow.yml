@@ -24,6 +24,26 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yes | yarn create svelte@next my-app && cd my-app
+
+        # TODO: Modify if the create-svelte command allows arguments.
+        yarn init -p
+        yarn add create-svelte
+
+        cat > create-svelte.mjs << EOF
+        import('create-svelte').then(module => {
+          module.create('.', {
+            name: '.',
+            template: 'default', // or 'skeleton' or 'skeletonlib'
+            types: 'checkjs', // or 'typescript' or null;
+            prettier: false,
+            eslint: false,
+            playwright: false,
+            vitest: false
+          })
+        })
+        EOF
+
+        yarn node create-svelte.mjs
+
         yarn
         yarn build
