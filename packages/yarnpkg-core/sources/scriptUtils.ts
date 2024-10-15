@@ -254,7 +254,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
         !packageManagerSelection?.packageManagerField;
 
       await xfs.mktempPromise(async binFolder => {
-        const env = await makeScriptEnv({binFolder, ignoreCorepack});
+        const env = await makeScriptEnv({binFolder, ignoreCorepack, baseEnv: {...process.env, COREPACK_ENABLE_AUTO_PIN: `0`}});
 
         const workflows = new Map([
           [PackageManager.Yarn1, async () => {
