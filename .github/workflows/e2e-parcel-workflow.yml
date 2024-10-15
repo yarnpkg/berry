@@ -32,9 +32,9 @@ jobs:
         # See https://github.com/parcel-bundler/parcel/issues/9114
 
         echo "packageExtensions:
-  \"@parcel/fs@*\":
-    dependencies:
-      \"@parcel/core\": '*'" > .yarnrc.yml
+          \"@parcel/fs@*\":
+            dependencies:
+              \"@parcel/core\": '*'" > .yarnrc.yml
 
         # JavaScript
 
