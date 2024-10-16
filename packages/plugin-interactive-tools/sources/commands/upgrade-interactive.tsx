@@ -88,8 +88,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       if (from === to)
         return to;
 
-      const parsedFrom = structUtils.parseRange(from);
-      const parsedTo = structUtils.parseRange(to);
+      const parsedFrom = structUtils.parseRange(from.replace(/^patch:/, ''));
+      const parsedTo = structUtils.parseRange(to.replace(/^patch:/, ''));
 
       const matchedFrom = parsedFrom.selector.match(SIMPLE_SEMVER);
       const matchedTo = parsedTo.selector.match(SIMPLE_SEMVER);
@@ -133,34 +133,43 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const fetchSuggestions = async (descriptor: Descriptor): Promise<UpgradeSuggestions> => {
-      const referenceRange = semver.valid(descriptor.range)
-        ? `^${descriptor.range}`
-        : descriptor.range;
+      // patch:@amplitude/analytics-browser@npm%3A2.11.0#~/.yarn/patches/@amplitude-analytics-browser-npm-2.11.0-790ed576a5.patch
+      const {protocol, source, selector, params } = structUtils.parseRange(descriptor.range);
+      const isPatched = protocol === 'patch:' && source;
+      const [patchPackageName, descriptorRange] = isPatched
+        ? source.split(':')
+        : [undefined, descriptor.range];
+
+      const referenceRange = semver.valid(descriptorRange)
+        ? `^${descriptorRange}`
+        : descriptorRange
 
       const [resolution, latest] = await Promise.all([
-        fetchUpdatedDescriptor(descriptor, descriptor.range, referenceRange).catch(() => null),
-        fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`).catch(() => null),
+        fetchUpdatedDescriptor(descriptor, descriptorRange, referenceRange).catch(() => null),
+        fetchUpdatedDescriptor(descriptor, descriptorRange, `latest`).catch(() => null),
       ]);
 
       const suggestions: Array<{value: string | null, label: string}> = [{
         value: null,
-        label: descriptor.range,
+        label: isPatched ? `patch:${descriptorRange}` : descriptorRange,
       }];
 
-      if (resolution && resolution !== descriptor.range) {
-        suggestions.push({
-          value: resolution,
-          label: colorizeVersionDiff(descriptor.range, resolution),
-        });
+      if (resolution && resolution !== descriptorRange) {
+        const value = isPatched
+          ? `patch:${patchPackageName}%3A${resolution}#${selector}${params ? `?${params}` : ``}`
+          : resolution;
+        const label = `${isPatched ? 'patch:' : ''}${colorizeVersionDiff(descriptorRange, resolution)}`;
+        suggestions.push({ value, label });
       } else {
         suggestions.push({value: null, label: ``});
       }
 
-      if (latest && latest !== resolution && latest !== descriptor.range) {
-        suggestions.push({
-          value: latest,
-          label: colorizeVersionDiff(descriptor.range, latest),
-        });
+      if (latest && latest !== resolution && latest !== descriptorRange) {
+        const value = isPatched
+          ? `patch:${patchPackageName}%3A:${latest}#${selector}${params ? `?${params}` : ``}`
+          : latest;
+        const label = `${isPatched ? 'patch:' : ''}${colorizeVersionDiff(descriptorRange, latest)}`;
+        suggestions.push({ value, label });
       } else {
         suggestions.push({value: null, label: ``});
       }
