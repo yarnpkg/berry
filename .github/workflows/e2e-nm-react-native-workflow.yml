@@ -46,7 +46,7 @@ jobs:
       run: |
         source scripts/e2e-setup-ci.sh nm
 
-        yarn dlx react-native init MyProject
+        yarn dlx @react-native-community/cli init MyProject
         cd MyProject
         yarn react-native build-android
 
