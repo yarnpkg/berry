@@ -2253,4 +2253,31 @@ describe(`Plug'n'Play`, () => {
       });
     }),
   );
+
+  testIf(
+    () => process.platform !== `win32`,
+    `it can resolve files from zips that are symlinks`,
+    makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await run(`install`);
+
+      const allFiles = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
+      const zipFiles = allFiles.filter(file => file.endsWith(`.zip`));
+
+      await xfs.mkdirPromise(ppath.join(path, `store`));
+      for (const filename of zipFiles) {
+        const zipFile = ppath.join(path, `.yarn/cache`, filename);
+        const storePath = ppath.join(path, `store`, filename);
+        await xfs.movePromise(zipFile, storePath);
+        await xfs.symlinkPromise(storePath, zipFile);
+      }
+
+      await expect(
+        source(`require('no-deps')`),
+      ).resolves.toEqual({name: `no-deps`, version: `1.0.0`});
+    }),
+  );
 });
