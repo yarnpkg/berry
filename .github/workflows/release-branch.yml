@@ -44,6 +44,11 @@ jobs:
         echo "yarnPath: '$TMPBIN/yarn.js'" >> .yarnrc.yml
         git update-index --skip-worktree -- .yarnrc.yml
 
+    - name: 'Store the secrets'
+      run: |
+        printf "${{secrets.SIGN_PRIVATE_KEY}}" > /tmp/yarn.key
+        printf "${{secrets.SIGN_PUBLIC_KEY}}" > /tmp/yarn.pem
+
     - name: 'Generate the release commits'
       run: |
         git config user.name "Yarn Bot"
