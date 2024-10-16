@@ -150,6 +150,7 @@ On top of our classic integration tests, we also run Yarn every day against the 
 - [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-angular-workflow.yml)
 - [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-babel-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-babel-workflow.yml)
 - [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-berry-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-berry-workflow.yml)
+- [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-react-native-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nm-react-native-workflow.yml)
 - [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-nyc-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-nyc-workflow.yml)
 - [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-parcel-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-parcel-workflow.yml)
 - [![](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml/badge.svg?event=schedule)](https://github.com/yarnpkg/berry/actions/workflows/e2e-pnp-angular-workflow.yml)
