@@ -315,8 +315,9 @@ function getStoreLocation(project: Project) {
 function getPackagePaths(locator: Locator, {project}: {project: Project}) {
   const pkgKey = structUtils.slugifyLocator(locator);
   const storeLocation = getStoreLocation(project);
+  const pkgPath = structUtils.stringifyIdent(locator) as PortablePath;
 
-  const packageLocation = ppath.join(storeLocation, pkgKey, `package`);
+  const packageLocation = ppath.join(storeLocation, pkgKey, pkgPath);
   const dependenciesLocation = ppath.join(storeLocation, pkgKey, Filename.nodeModules);
 
   return {packageLocation, dependenciesLocation};
