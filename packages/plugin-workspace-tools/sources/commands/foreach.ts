@@ -260,7 +260,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       }
 
       if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude))) {
-        log(`Excluding ${workspace.relativeCwd} because it matches the --include filter`);
+        log(`Excluding ${workspace.relativeCwd} because it matches the --exclude filter`);
         continue;
       }
 
