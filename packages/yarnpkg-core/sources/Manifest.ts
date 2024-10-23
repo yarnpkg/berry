@@ -871,6 +871,9 @@ export class Manifest {
       data.dependencies = Object.assign({}, ...structUtils.sortDescriptors(regularDependencies).map(dependency => {
         return {[structUtils.stringifyIdent(dependency)]: dependency.range};
       }));
+      if (data.name && data.dependencies[data.name]) {
+        delete data.dependencies[data.name];
+      }
     } else {
       delete data.dependencies;
     }
@@ -887,6 +890,9 @@ export class Manifest {
       data.devDependencies = Object.assign({}, ...structUtils.sortDescriptors(this.devDependencies.values()).map(dependency => {
         return {[structUtils.stringifyIdent(dependency)]: dependency.range};
       }));
+      if (data.name && data.devDependencies[data.name]) {
+        delete data.devDependencies[data.name];
+      }
     } else {
       delete data.devDependencies;
     }
@@ -895,6 +901,9 @@ export class Manifest {
       data.peerDependencies = Object.assign({}, ...structUtils.sortDescriptors(this.peerDependencies.values()).map(dependency => {
         return {[structUtils.stringifyIdent(dependency)]: dependency.range};
       }));
+      if (data.name && data.peerDependencies[data.name]) {
+        delete data.peerDependencies[data.name];
+      }
     } else {
       delete data.peerDependencies;
     }
