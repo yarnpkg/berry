@@ -995,4 +995,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       resolve: `^1.22.8`,
     },
   }],
+  // https://github.com/vuejs/core/pull/10468
+  // https://github.com/vuejs/core/commit/ec424f6cd96b7e6ba74fc244c484c00fa5590aac
+  [`@vue/runtime-dom@<3.4.28`, {
+    dependencies: {
+      `@vue/reactivity`: `*`,
+    },
+  }],
 ];
