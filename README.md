@@ -240,3 +240,13 @@ The following packages are meant to be used by Yarn itself, and probably won't b
 
 - [@yarnpkg/builder](packages/yarnpkg-builder) contains a CLI tool to package berry and its plugins.
 - [@yarnpkg/cli](packages/yarnpkg-cli) is a CLI entry point built on top of [@yarnpkg/core](packages/yarnpkg-core).
+
+## Using Yarn with VS Code
+
+We imagine a future where using VS Code with your Yarn Berry projects [will work seamlessly](https://github.com/yarnpkg/berry/issues/6569#issuecomment-2427942103). Here are specific issues we hope will be addressed in that project:
+
+- https://github.com/microsoft/vscode/issues/75559
+- https://github.com/microsoft/TypeScript/pull/35206
+
+Please add a 👍 on the top post of each of those issues. Microsoft directly reviews the 👍 when deciding which features to implement.
+
