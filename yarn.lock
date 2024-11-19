@@ -6279,7 +6279,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^4.0.0-rc.2"
-    cross-spawn: "npm:7.0.3"
+    cross-spawn: "npm:^7.0.3"
     fast-glob: "npm:^3.2.2"
     micromatch: "npm:^4.0.2"
     strip-ansi: "npm:^6.0.0"
@@ -8449,17 +8449,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:7.0.3, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-spawn@npm:7.0.3"
-  dependencies:
-    path-key: "npm:^3.1.0"
-    shebang-command: "npm:^2.0.0"
-    which: "npm:^2.0.1"
-  checksum: 10/e1a13869d2f57d974de0d9ef7acbf69dc6937db20b918525a01dacb5032129bd552d290d886d981e99f1b624cb03657084cc87bd40f115c07ecf376821c729ce
-  languageName: node
-  linkType: hard
-
 "cross-spawn@npm:^6.0.0":
   version: 6.0.5
   resolution: "cross-spawn@npm:6.0.5"
@@ -8470,6 +8459,17 @@ __metadata:
     shebang-command: "npm:^1.2.0"
     which: "npm:^1.2.9"
   checksum: 10/f07e643b4875f26adffcd7f13bc68d9dff20cf395f8ed6f43a23f3ee24fc3a80a870a32b246fd074e514c8fd7da5f978ac6a7668346eec57aa87bac89c1ed3a1
+  languageName: node
+  linkType: hard
+
+"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
+  version: 7.0.3
+  resolution: "cross-spawn@npm:7.0.3"
+  dependencies:
+    path-key: "npm:^3.1.0"
+    shebang-command: "npm:^2.0.0"
+    which: "npm:^2.0.1"
+  checksum: 10/e1a13869d2f57d974de0d9ef7acbf69dc6937db20b918525a01dacb5032129bd552d290d886d981e99f1b624cb03657084cc87bd40f115c07ecf376821c729ce
   languageName: node
   linkType: hard
 
