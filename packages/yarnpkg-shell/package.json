@@ -14,13 +14,13 @@
     "@yarnpkg/parsers": "workspace:^",
     "chalk": "^3.0.0",
     "clipanion": "^4.0.0-rc.2",
-    "cross-spawn": "7.0.3",
+    "cross-spawn": "7.0.6",
     "fast-glob": "^3.2.2",
     "micromatch": "^4.0.2",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@types/cross-spawn": "6.0.0",
+    "@types/cross-spawn": "6.0.6",
     "@types/micromatch": "^4.0.1",
     "@yarnpkg/monorepo": "workspace:^",
     "strip-ansi": "^6.0.0"
