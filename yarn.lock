@@ -5512,7 +5512,7 @@ __metadata:
     ci-info: "npm:^4.0.0"
     clipanion: "npm:^4.0.0-rc.2"
     comment-json: "npm:^2.2.0"
-    cross-spawn: "npm:7.0.3"
+    cross-spawn: "npm:^7.0.3"
     diff: "npm:^5.1.0"
     dotenv: "npm:^16.3.1"
     esbuild: "npm:esbuild-wasm@^0.23.0"
