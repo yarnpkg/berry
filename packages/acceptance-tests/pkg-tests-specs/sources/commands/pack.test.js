@@ -710,6 +710,7 @@ describe(`Commands`, () => {
 
         await run(`pack`);
         expect(xfs.existsSync(`${path}/package.tgz`)).toEqual(true);
+        throw new Error(`foo`);
       }),
     );
 
