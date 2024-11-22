@@ -5,6 +5,7 @@
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
+    "./hoist": "./sources/hoist.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -23,6 +24,7 @@
     "main": "./lib/index.js",
     "exports": {
       ".": "./lib/index.js",
+      "./hoist": "./lib/hoist.js",
       "./package.json": "./package.json"
     }
   },
