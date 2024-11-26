@@ -21,19 +21,19 @@ The SDKs workaround that by generating indirection packages. When required, thes
 
 Generate both the base SDK and the editor settings:
 
-```
+```commandline
 yarn dlx @yarnpkg/sdks vscode vim ...
 ```
 
 Generate the base SDK, but no editor settings:
 
-```
+```commandline
 yarn dlx @yarnpkg/sdks base
 ```
 
 Update all installed SDKs & editor settings:
 
-```
+```commandline
 yarn dlx @yarnpkg/sdks
 ```
 
@@ -62,7 +62,7 @@ If you'd like to contribute more, [take a look here!](https://github.com/yarnpkg
 
 2. Run the following command, which will generate a `.vim/coc-settings.json` file:
 
-```bash
+```commandline
 yarn dlx @yarnpkg/sdks vim
 ```
 
@@ -72,7 +72,7 @@ The SDK comes with a typescript-language-server wrapper which enables you to use
 
 1. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
-```bash
+```commandline
 yarn dlx @yarnpkg/sdks base
 ```
 
@@ -90,7 +90,7 @@ yarn dlx @yarnpkg/sdks base
 
 2. Run the following command, which will generate a new directory called `.yarn/sdks`:
 
-```bash
+```commandline
 yarn dlx @yarnpkg/sdks base
 ```
 
@@ -102,7 +102,7 @@ TypeScript support should then work out of the box with [nvim-lspconfig](https:/
 
 2. Run the following command, which will generate a `.vscode/settings.json` file:
 
-```bash
+```commandline
 yarn dlx @yarnpkg/sdks vscode
 ```
 
