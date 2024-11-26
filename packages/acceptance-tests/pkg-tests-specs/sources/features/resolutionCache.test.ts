@@ -43,7 +43,7 @@ describe(`Features`, () => {
         // Now, we need a way to force the resolution cache to be used before resolving
         // a version that it isn't aware of. To that end, we create a package.json with
         // a dependency on one-fixed-dep@2, and we run 'yarn add no-dep@1.0.0'. This
-        // ensure that Yarn will run getCandidate on no-deps@1.0.0 first (because it's
+        // ensures that Yarn will run getCandidate on no-deps@1.0.0 first (because it's
         // required before adding it to the package.json), and no-deps@2.0.0 later.
 
         await xfs.writeFilePromise(ppath.join(path, Filename.manifest), JSON.stringify({

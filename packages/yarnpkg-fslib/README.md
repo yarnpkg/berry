@@ -4,7 +4,7 @@ A TypeScript library abstracting the Node filesystem APIs. We use it for three m
 
 ## Type-safe paths
 
-Our library has two path types, `NativePath` and `PortablePath`. Most interfaces only accept the later, and instances of the former need to be transformed back and forth using our type-safe utilities before being usable.
+Our library has two path types, `NativePath` and `PortablePath`. Most interfaces only accept the latter, and instances of the former need to be transformed back and forth using our type-safe utilities before being usable.
 
 ## Custom filesystems
 
