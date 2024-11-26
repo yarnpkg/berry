@@ -5,6 +5,8 @@
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
+    "./structUtils": "./sources/structUtils.ts",
+    "./semverUtils": "./sources/semverUtils.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -69,6 +71,8 @@
     "main": "./lib/index.js",
     "exports": {
       ".": "./lib/index.js",
+      "./structUtils": "./lib/structUtils.js",
+      "./semverUtils": "./lib/semverUtils.js",
       "./package.json": "./package.json"
     }
   },
