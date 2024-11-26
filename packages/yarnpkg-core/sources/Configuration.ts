@@ -567,6 +567,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  enableCacheClean: {
+    description: `If false, disallows the \`cache clean\` command`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   checksumBehavior: {
     description: `Enumeration defining what to do when a checksum doesn't match expectations`,
     type: SettingsType.STRING,
