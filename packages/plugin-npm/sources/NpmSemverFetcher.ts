@@ -81,6 +81,13 @@ export class NpmSemverFetcher implements Fetcher {
     registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
     url = url.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
 
+    // some registries store the tar ball in a path with duplicated scope,
+    // e.g. `https://my.registry.com/@my-scope/package-a/-/@my-scope/package-a-0.0.1.tgz`
+    url = url.replace(/%2f/g, `/`)
+      .replace(
+        new RegExp(`^(.+)\\/@${locator.scope}\\/(.+)\\/@${locator.scope}\\/(.+)$`),
+        `$1/@${locator.scope}/$2/$3`);
+
     if (url === registry + path)
       return true;
     if (url === registry + path.replace(/%2f/g, `/`))

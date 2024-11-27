@@ -20,8 +20,10 @@ describe(`NpmSemverFetcher`, () => {
 
       const locator = structUtils.makeLocator(structUtils.makeIdent(`scope`, `foo`), `npm:1.0.0`);
       const url = `${configuration.get(`npmRegistryServer`)}/@scope/foo/-/foo-1.0.0.tgz`;
+      const url2 = `${configuration.get(`npmRegistryServer`)}/@scope/foo/-/@scope/foo-1.0.0.tgz`;
 
       expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(true);
+      expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url2, {configuration})).toEqual(true);
     });
 
     it(`it should detect a conventional path (@scope%2ffoo)`, async () => {
@@ -29,8 +31,10 @@ describe(`NpmSemverFetcher`, () => {
 
       const locator = structUtils.makeLocator(structUtils.makeIdent(`scope`, `foo`), `npm:1.0.0`);
       const url = `${configuration.get(`npmRegistryServer`)}/@scope%2ffoo/-/foo-1.0.0.tgz`;
+      const url2 = `${configuration.get(`npmRegistryServer`)}/@scope%2ffoo/-/@scope%2ffoo-1.0.0.tgz`;
 
       expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(true);
+      expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url2, {configuration})).toEqual(true);
     });
 
     it(`it should detect non-conventional path (different registry)`, async () => {
