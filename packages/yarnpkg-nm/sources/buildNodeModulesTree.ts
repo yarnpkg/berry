@@ -300,12 +300,13 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packa
     }
 
     const isExternalSoftLinkPackage = isExternalSoftLink(pkg, locator, pnp, topPkgPortableLocation);
+    const isWorkspaceWithTransitivePeers = locator.reference.includes(`workspace:`) && [...pkg.packagePeers].some(a => parentPkg.packagePeers.has(a));
 
     if (!node) {
       let dependencyKind = HoisterDependencyKind.REGULAR;
       if (isExternalSoftLinkPackage)
         dependencyKind = HoisterDependencyKind.EXTERNAL_SOFT_LINK;
-      else if (pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX))
+      else if (pkg.linkType === LinkType.SOFT && locator.name.endsWith(WORKSPACE_NAME_SUFFIX) || isWorkspaceWithTransitivePeers)
         dependencyKind = HoisterDependencyKind.WORKSPACE;
 
 
