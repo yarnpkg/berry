@@ -5514,7 +5514,7 @@ __metadata:
     cross-spawn: "npm:^7.0.3"
     diff: "npm:^5.1.0"
     dotenv: "npm:^16.3.1"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     fast-glob: "npm:^3.2.2"
     got: "npm:^11.7.0"
@@ -5601,7 +5601,7 @@ __metadata:
     clsx: "npm:^1.2.1"
     docusaurus-plugin-typedoc-api: "patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch"
     dompurify: "npm:^3.0.5"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     esast-util-from-js: "npm:^2.0.1"
     esbuild-loader: "npm:^2.20.0"
     fast-glob: "npm:^3.2.2"
@@ -5805,7 +5805,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/types": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     tau-prolog: "npm:^0.2.66"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -5843,7 +5843,7 @@ __metadata:
     ci-info: "npm:^4.0.0"
     clipanion: "npm:^4.0.0-rc.2"
     enquirer: "npm:^2.3.6"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
@@ -5890,7 +5890,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     git-url-parse: "npm:^13.1.0"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
@@ -6035,7 +6035,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
     enquirer: "npm:^2.3.6"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     semver: "npm:^7.1.2"
     ssri: "npm:^6.0.1"
     tslib: "npm:^2.4.0"
@@ -6170,7 +6170,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     ink: "npm:^3.2.0"
     react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
@@ -6193,7 +6193,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
@@ -6253,7 +6253,7 @@ __metadata:
     chalk: "npm:^3.0.0"
     clipanion: "npm:^4.0.0-rc.2"
     comment-json: "npm:^2.2.0"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     tslib: "npm:^2.4.0"
   bin:
     sdks: ./sources/boot-cli-dev.js
@@ -9617,10 +9617,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-toolkit@npm:^1.19.0":
-  version: 1.19.0
-  resolution: "es-toolkit@npm:1.19.0"
-  checksum: 10/ad511bfb5eb3fcfce9d28535d06ccc64e61764d4db6ab24ba751705dcc4ab2a1681b344e73edb6de37128eefbf79472186cb991b739adbe8d333a0312f3dd74b
+"es-toolkit@npm:^1.29.0":
+  version: 1.29.0
+  resolution: "es-toolkit@npm:1.29.0"
+  dependenciesMeta:
+    "@trivago/prettier-plugin-sort-imports@4.3.0":
+      unplugged: true
+    prettier-plugin-sort-re-exports@0.0.1:
+      unplugged: true
+  checksum: 10/3985879b51f9e8bb7233528c8c7dc7988a9b1a6b755ec167531ff4fcaa7da199d147c3efba714b5e43d68936fa1bbca9cdea4f7e7e1506817bf1c7306828bbca
   languageName: node
   linkType: hard
 
@@ -16665,7 +16670,7 @@ pem@dexus/pem:
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
-    es-toolkit: "npm:^1.19.0"
+    es-toolkit: "npm:^1.29.0"
     pkg-tests-core: "workspace:^"
     tar: "npm:^6.0.5"
     tslib: "npm:^2.4.0"

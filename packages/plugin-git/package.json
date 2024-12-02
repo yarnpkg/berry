@@ -11,7 +11,7 @@
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
-    "es-toolkit": "^1.19.0",
+    "es-toolkit": "^1.29.0",
     "git-url-parse": "^13.1.0",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
