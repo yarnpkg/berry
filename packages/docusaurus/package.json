@@ -35,7 +35,7 @@
     "clsx": "^1.2.1",
     "docusaurus-plugin-typedoc-api": "patch:docusaurus-plugin-typedoc-api@npm%3A4.2.0#~/.yarn/patches/docusaurus-plugin-typedoc-api-npm-4.2.0-fb78ec678c.patch",
     "dompurify": "^3.0.5",
-    "es-toolkit": "^1.19.0",
+    "es-toolkit": "^1.29.0",
     "esast-util-from-js": "^2.0.1",
     "esbuild-loader": "^2.20.0",
     "fast-glob": "^3.2.2",
