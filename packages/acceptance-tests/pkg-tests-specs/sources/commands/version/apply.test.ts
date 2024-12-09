@@ -164,6 +164,28 @@ describe(`Commands`, () => {
       ),
     );
 
+    test(
+      `it should successfully apply an exact version bump (deferred)`,
+      makeTemporaryEnv(
+        {
+          version: `^1.0.0`,
+        },
+        async ({path, run}) => {
+          await run(`version`, `3.4.5`, `--deferred`);
+
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            version: `^1.0.0`,
+          });
+
+          await run(`version`, `apply`, `--exact`);
+
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            version: `3.4.5`,
+          });
+        },
+      ),
+    );
+
     const alternatives = [
       [`implicit`, `1.0.0`, true],
       [`implicit range`, `^1.0.0`, true],
