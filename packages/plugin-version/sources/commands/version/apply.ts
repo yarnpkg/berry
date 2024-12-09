@@ -49,7 +49,7 @@ export default class VersionApplyCommand extends BaseCommand {
   });
 
   exact = Option.Boolean(`--exact`, false, {
-    description: `Use the exact version of each package, removes any range`,
+    description: `Use the exact version of each package, removes any range. Useful for nightly releases where the range might match another version.`,
   });
 
   recursive = Option.Boolean(`-R,--recursive`, {
