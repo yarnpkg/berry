@@ -164,27 +164,6 @@ describe(`Commands`, () => {
       ),
     );
 
-    test(
-      `it should successfully apply an exact version bump (deferred)`,
-      makeTemporaryEnv(
-        {
-          version: `^1.0.0`,
-        },
-        async ({path, run}) => {
-          await run(`version`, `3.4.5`, `--deferred`);
-
-          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-            version: `^1.0.0`,
-          });
-
-          await run(`version`, `apply`, `--exact`);
-
-          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-            version: `3.4.5`,
-          });
-        },
-      ),
-    );
 
     const alternatives = [
       [`implicit`, `1.0.0`, true],
@@ -233,6 +212,55 @@ describe(`Commands`, () => {
               version: `1.0.0`,
               dependencies: {
                 [`pkg-b`]: dependency.replace(/1\.0\.0/, `1.0.1`),
+              },
+            });
+
+            await expect(xfs.readJsonPromise(ppath.join(pkgB, Filename.manifest))).resolves.toMatchObject({
+              version: `1.0.1`,
+            });
+          },
+        ),
+      );
+
+      test(
+        `it should update the dependencies (${name}) to exact matches`,
+        makeTemporaryEnv(
+          {
+            private: true,
+            workspaces: [
+              `packages/*`,
+            ],
+          },
+          async ({path, run}) => {
+            const pkgA = ppath.join(path, `packages/pkg-a`);
+            const pkgB = ppath.join(path, `packages/pkg-b`);
+
+            await xfs.mkdirpPromise(pkgA);
+            await xfs.mkdirpPromise(pkgB);
+
+            await xfs.writeJsonPromise(ppath.join(pkgA, Filename.manifest), {
+              name: `pkg-a`,
+              version: `1.0.0`,
+              dependencies: {
+                [`pkg-b`]: dependency,
+              },
+            });
+
+            await xfs.writeJsonPromise(ppath.join(pkgB, Filename.manifest), {
+              name: `pkg-b`,
+              version: `1.0.0`,
+            });
+
+            await run(`version`, `patch`, `--deferred`, {
+              cwd: pkgB,
+            });
+
+            await run(`version`, `apply`, `--all`, `--exact`);
+
+            await expect(xfs.readJsonPromise(ppath.join(pkgA, Filename.manifest))).resolves.toMatchObject({
+              version: `1.0.0`,
+              dependencies: {
+                [`pkg-b`]: dependency.replace(/1\.0\.0/, `1.0.1`).replace(/\^/, ``),
               },
             });
 
