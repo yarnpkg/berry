@@ -9521,6 +9521,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/yarnpkg-fslib/",\
         "packageDependencies": [\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
+          ["@iarna/toml", "npm:2.2.5"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["tslib", "npm:2.6.2"]\
         ],\
