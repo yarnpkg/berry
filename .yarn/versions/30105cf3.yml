@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/fslib": minor
+  "@yarnpkg/sdks": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -32,5 +33,4 @@ declined:
   - "@yarnpkg/nm"
   - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
-  - "@yarnpkg/sdks"
   - "@yarnpkg/shell"
