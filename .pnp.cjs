@@ -42993,7 +42993,10 @@ Require stack:
   };
   const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
   require$$0.Module._extensions[`.js`] = function(module, filename) {
-    if (filename.endsWith(`.js`)) {
+    if (
+      // @ts-expect-error - Missing types
+      !process.features.require_module && filename.endsWith(`.js`)
+    ) {
       const pkg = readPackageScope(filename);
       if (pkg && pkg.data?.type === `module`) {
         const err = ERR_REQUIRE_ESM(filename, module.parent?.filename);

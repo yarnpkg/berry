@@ -278,7 +278,11 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
   const originalExtensionJSFunction = Module._extensions[`.js`] as (module: NodeModule, filename: string) => void;
   Module._extensions[`.js`] = function (module: NodeModule, filename: string) {
-    if (filename.endsWith(`.js`)) {
+    if (
+      // @ts-expect-error - Missing types
+      !process.features.require_module
+      && filename.endsWith(`.js`)
+    ) {
       const pkg = nodeUtils.readPackageScope(filename);
       if (pkg && pkg.data?.type === `module`) {
         const err = nodeUtils.ERR_REQUIRE_ESM(filename, module.parent?.filename);
