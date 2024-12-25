@@ -1,8 +1,8 @@
-on: [issues]
-
+on: blank_issues
+prod:
 env:
   node-version: '18.x'
-
+dev
 name: 'Sherlock for Yarn'
 jobs:
   issue:
