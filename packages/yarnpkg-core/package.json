@@ -1,10 +1,12 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.1.4",
+  "version": "4.1.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
+    "./structUtils": "./sources/structUtils.ts",
+    "./semverUtils": "./sources/semverUtils.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -20,7 +22,7 @@
     "chalk": "^3.0.0",
     "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
-    "cross-spawn": "7.0.3",
+    "cross-spawn": "^7.0.3",
     "diff": "^5.1.0",
     "dotenv": "^16.3.1",
     "fast-glob": "^3.2.2",
@@ -69,6 +71,8 @@
     "main": "./lib/index.js",
     "exports": {
       ".": "./lib/index.js",
+      "./structUtils": "./lib/structUtils.js",
+      "./semverUtils": "./lib/semverUtils.js",
       "./package.json": "./package.json"
     }
   },
@@ -83,5 +87,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.4"
+  "stableVersion": "4.1.6"
 }
