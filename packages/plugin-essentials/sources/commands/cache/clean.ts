@@ -1,7 +1,7 @@
 import {BaseCommand}                               from '@yarnpkg/cli';
 import {Configuration, Cache, StreamReport, Hooks} from '@yarnpkg/core';
 import {xfs}                                       from '@yarnpkg/fslib';
-import {Command, Option, Usage}                    from 'clipanion';
+import {Command, Option, Usage, UsageError}        from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class CacheCleanCommand extends BaseCommand {
@@ -34,6 +34,10 @@ export default class CacheCleanCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+    if (!configuration.get(`enableCacheClean`))
+      throw new UsageError(`Cache cleaning is currently disabled. To enable it, set \`enableCacheClean: true\` in your configuration file. Note: Cache cleaning is typically not required and should be avoided when using Zero-Installs.`);
+
     const cache = await Cache.find(configuration);
 
     const report = await StreamReport.start({
