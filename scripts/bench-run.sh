@@ -10,6 +10,11 @@ HERE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 cd "$BENCH_DIR"
 
+PACKAGE_MANAGER_BIN="${PACKAGE_MANAGER%-*}"
+PACKAGE_MANAGER_VERSION="$($PACKAGE_MANAGER_BIN --version)"
+
+echo "Package Manager: $PACKAGE_MANAGER_BIN@$PACKAGE_MANAGER_VERSION"
+
 bench() {
   SUBTEST_NAME=$1; shift
   echo "Testing $SUBTEST_NAME"
@@ -61,6 +66,8 @@ setup-pnpm() {
   >> "$BENCH_DIR/.npmrc" echo \
     "strict-peer-dependencies=false"
 }
+
+echo ""
 
 case $PACKAGE_MANAGER in
   classic)
