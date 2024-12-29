@@ -117,6 +117,11 @@ type TemplateOptions = {
 const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false, usePnpify = false, wrapModule}: TemplateOptions) => [
   `#!/usr/bin/env node\n`,
   `\n`,
+  // REUSE-IgnoreStart
+  `// SPDX-FileCopyrightText: 2016-present Yarn Contributors\n`,
+  `// SPDX-License-Identifier: BSD-2-Clause\n`,
+  // REUSE-IgnoreEnd
+  `\n`,
   `const {existsSync} = require(\`fs\`);\n`,
   `const {createRequire, register} = require(\`module\`);\n`,
   `const {resolve} = require(\`path\`);\n`,
@@ -272,6 +277,7 @@ export class Wrapper {
       await this.writePackageBinaries();
 
     await this.writeManifest();
+    await this.writeReuseToml();
   }
 
   async writePackageBinaries() {
@@ -317,6 +323,39 @@ export class Wrapper {
     await xfs.writeJsonPromise(absWrapperPath, this.manifest);
 
     this.paths.set(Filename.manifest, relProjectPath);
+  }
+
+  async writeReuseToml() {
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const absWrapperPath = ppath.join(this.target, this.name, `REUSE.toml`);
+    const relProjectPath = ppath.relative(projectRoot, absWrapperPath);
+
+    await xfs.mkdirPromise(ppath.dirname(absWrapperPath), {recursive: true});
+
+    const object = {
+      version: 1,
+      annotations: [
+        {
+          path: [
+            `package.json`,
+          ],
+          precedence: `closest`,
+          // REUSE-IgnoreStart
+          'SPDX-FileCopyrightText': [
+            `2016-present Yarn Contributors`,
+          ],
+          'SPDX-License-Identifier': [
+            `BSD-2-Clause`,
+          ],
+          // REUSE-IgnoreEnd
+        },
+      ],
+    };
+    await xfs.writeTomlPromise(absWrapperPath, object);
+
+    this.paths.set(Filename.reuseToml, relProjectPath);
   }
 
   async writeBinary(relPackagePath: PortablePath, options: TemplateOptions & {requirePath?: PortablePath} = {}) {
