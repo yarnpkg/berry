@@ -7,7 +7,7 @@ description: How exec dependencies work in Yarn.
 
 The `exec:` protocol executes a Node.js script inside a temporary directory at fetch-time with a preconfigured runtime environment. This script is then expected to populate a special directory defined in the environment, and exit once the generation has finished.
 
-```
+```commandline
 yarn add my-pkg@exec:./package-builder.js
 ```
 
