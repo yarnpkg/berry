@@ -1,9 +1,7 @@
-import {BaseCommand}                              from '@yarnpkg/cli';
-import {Configuration, StreamReport, MessageName} from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}       from 'clipanion';
-import cloneDeep                                  from 'lodash/cloneDeep';
-import hasPath                                    from 'lodash/has';
-import unsetPath                                  from 'lodash/unset';
+import {BaseCommand}                                   from '@yarnpkg/cli';
+import {Configuration, StreamReport, MessageName}      from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}            from 'clipanion';
+import {cloneDeep, has as hasPath, unset as unsetPath} from 'es-toolkit/compat';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ConfigUnsetCommand extends BaseCommand {
