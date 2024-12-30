@@ -15,7 +15,7 @@ export type ResolveOptions = MinimalResolveOptions & {
 
 /**
  * Resolvers are the components that do all the lifting needed in order to
- * produce a lockfile. In clear, they transfom the following:
+ * produce a lockfile. In clear, they transform the following:
  *
  *   webpack@^4.0.0
  *

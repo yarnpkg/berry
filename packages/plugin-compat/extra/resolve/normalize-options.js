@@ -83,7 +83,7 @@ module.exports = function (_, opts) {
     if (resolution == null)
       return getNodeModulePaths().concat(originalPaths);
 
-    // Stip the local named folder
+    // Strip the local named folder
     let nodeModules = path.dirname(resolution.packagePath);
 
     // Strip the scope named folder if needed

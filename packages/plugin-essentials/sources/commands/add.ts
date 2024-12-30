@@ -21,7 +21,7 @@ export default class AddCommand extends BaseCommand {
     details: `
       This command adds a package to the package.json for the nearest workspace.
 
-      - If it didn't exist before, the package will by default be added to the regular \`dependencies\` field, but this behavior can be overriden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
+      - If it didn't exist before, the package will by default be added to the regular \`dependencies\` field, but this behavior can be overridden thanks to the \`-D,--dev\` flag (which will cause the dependency to be added to the \`devDependencies\` field instead) and the \`-P,--peer\` flag (which will do the same but for \`peerDependencies\`).
 
       - If the package was already listed in your dependencies, it will by default be upgraded whether it's part of your \`dependencies\` or \`devDependencies\` (it won't ever update \`peerDependencies\`, though).
 

@@ -110,7 +110,7 @@ type InternalHoistOptions = {
 /**
  * Hoists package tree.
  *
- * The root node of a tree must has id: '.'.
+ * The root node of a tree must have id: '.'.
  * This function does not mutate its arguments, it hoists and returns tree copy.
  *
  * @param tree package tree (cycles in the tree are allowed)
@@ -371,10 +371,10 @@ const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTre
  * The regular and peer dependency promises are kept while performing transform
  * on tree branches of packages at a time:
  * `root package` -> `parent package 1` ... `parent package n` -> `dependency`
- * We check wether we can hoist `dependency` to `root package`, this boils down basically
+ * We check whether we can hoist `dependency` to `root package`, this boils down basically
  * to checking:
- * 1. Wether `root package` does not depend on other version of `dependency`
- * 2. Wether all the peer dependencies of a `dependency` had already been hoisted from all `parent packages`
+ * 1. Whether `root package` does not depend on other version of `dependency`
+ * 2. Whether all the peer dependencies of a `dependency` had already been hoisted from all `parent packages`
  *
  * If many versions of the `dependency` can be hoisted to the `root package` we choose the most used
  * `dependency` version in the project among them.

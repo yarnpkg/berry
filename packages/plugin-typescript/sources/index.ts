@@ -68,7 +68,7 @@ const afterWorkspaceDependencyAddition = async (
     const regularDependencyHash = workspace.manifest.dependencies.get(descriptor.identHash)?.descriptorHash;
     const devDependencyHash = workspace.manifest.devDependencies.get(descriptor.identHash)?.descriptorHash;
 
-    // We only want workspaces that depend the exact same range as the original package
+    // We only want workspaces that depend on the exact same range as the original package
     if (regularDependencyHash !== descriptor.descriptorHash && devDependencyHash !== descriptor.descriptorHash)
       return miscUtils.mapAndFind.skip;
 
