@@ -141,7 +141,7 @@ export default class BuildBundleCommand extends Command {
           // Default extensions + .mjs
           resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
-          format: `iife`,
+          format: `esm`,
           platform: `node`,
           plugins: [valLoader],
           minify: !this.noMinify,
