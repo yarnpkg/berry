@@ -12,9 +12,10 @@
     "algoliasearch": "^4.2.0",
     "clipanion": "^4.0.0-rc.2",
     "diff": "^5.1.0",
-    "ink": "^3.2.0",
-    "ink-text-input": "^4.0.3",
-    "react": "^17.0.2",
+    "ink": "^5.1.0",
+    "ink-text-input": "^6.0.0",
+    "react": "^18.3.1",
+    "react-devtools-core": "^4.19.1",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
@@ -25,7 +26,7 @@
   },
   "devDependencies": {
     "@types/diff": "^5.0.0",
-    "@types/react": "^16.8.0",
+    "@types/react": "^18.3.18",
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",

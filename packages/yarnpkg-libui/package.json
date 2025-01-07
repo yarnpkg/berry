@@ -7,13 +7,13 @@
     "sources"
   ],
   "peerDependencies": {
-    "ink": "^3.0.8",
-    "react": "^17.0.2"
+    "ink": "^5.1.0",
+    "react": "^18.3.1"
   },
   "devDependencies": {
-    "@types/react": "^16.8.0",
-    "ink": "^3.2.0",
-    "react": "^17.0.2"
+    "@types/react": "^18.3.18",
+    "ink": "^5.1.0",
+    "react": "^18.3.1"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "directory": "packages/yarnpkg-libui"
   },
   "dependencies": {
+    "react-devtools-core": "^4.19.1",
     "tslib": "^2.4.0"
   },
   "scripts": {
