@@ -39,6 +39,9 @@ export function getFileFormat(filepath: string): string | null {
     case `.mts`: {
       return `module`;
     }
+    case `.cts`: {
+      return `commonjs`;
+    }
     case `.cjs`: {
       return `commonjs`;
     }
