@@ -1485,6 +1485,12 @@ function getFileFormat(filepath) {
     case `.mjs`: {
       return `module`;
     }
+    case `.mts`: {
+      return `module`;
+    }
+    case `.cts`: {
+      return `commonjs`;
+    }
     case `.cjs`: {
       return `commonjs`;
     }
