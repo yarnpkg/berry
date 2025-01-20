@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "4.2.2",
+  "version": "4.3.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -54,5 +54,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.2.2"
+  "stableVersion": "4.3.0"
 }
