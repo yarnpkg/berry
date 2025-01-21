@@ -1002,4 +1002,10 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       csstype: `^3.0.10`,
     },
   }],
+  // https://github.com/typedoc2md/typedoc-plugin-markdown/issues/758
+  [`typedoc@^0.27.6`, {
+    dependencies: {
+      `typedoc-plugin-markdown`: `^4.4.1`,
+    },
+  }],
 ];
