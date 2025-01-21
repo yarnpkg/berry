@@ -1160,4 +1160,50 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+
+  describe(`Node builtin type stripping`, () => {
+    it(
+      `should be able to resolve a .cts file`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.cts`),
+            `const {TextDecoder} = require('node:util');\nconst decoder = new TextDecoder();\nconst u8arr = new Uint8Array([72, 101, 108, 108, 111]);\nconsole.log(decoder.decode(u8arr));`,
+          );
+
+          await expect(run(`node`, `./index.cts`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `Hello\n`,
+          });
+        },
+      ),
+    );
+
+    it(
+      `should be able to resolve a .mts file`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.mts`),
+            `import {TextDecoder} from 'node:util';\nconst decoder = new TextDecoder();\nconst u8arr = new Uint8Array([72, 101, 108, 108, 111]);\nconsole.log(decoder.decode(u8arr));`,
+          );
+
+          await expect(run(`node`, `./index.mts`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `Hello\n`,
+          });
+        },
+      ),
+    );
+  });
 });
