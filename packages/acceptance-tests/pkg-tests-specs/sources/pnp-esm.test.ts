@@ -1,6 +1,6 @@
-import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
-import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                                                                                                          from 'url';
+import {Filename, npath, ppath, xfs}                                                                                                                     from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, SUPPORTS_TYPE_STRIPPING} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                                                   from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -1161,7 +1161,7 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  describe(`Node builtin type stripping`, () => {
+  (SUPPORTS_TYPE_STRIPPING ? describe : describe.skip)(`Node builtin type stripping`, () => {
     it(
       `should be able to resolve a .cts file`,
       makeTemporaryEnv(
