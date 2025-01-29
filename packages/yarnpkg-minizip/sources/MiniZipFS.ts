@@ -15,7 +15,7 @@ import zlib from 'zlib';
 // unwatchAllFiles
 // native nodefs is faster??
 
-
+const UNIX = 3
 
 export type ZipPathOptions = {
   baseFs?: FakeFS<PortablePath>;
@@ -26,6 +26,7 @@ export interface Entry {
   name: string;
   compressionMethod: number;
   size: number;
+  os: number;
   crc: number //needed?
   compressedSize: number;
   attributes: number;
@@ -133,8 +134,10 @@ function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[
     let index = 0
     while (offset < centralDirBuffer.length && index < totalEntries) { // rm offset < centralDirBuffer.length?
       if (centralDirBuffer.readUInt32LE(offset) !== SIGNATURE.CENTRAL_DIRECTORY) break;
-
-      const compression = centralDirBuffer.readUInt16LE(offset + 10);
+      const versionMadeBy = centralDirBuffer.readUInt16LE(offset + 4);
+      const os = versionMadeBy >> 8;
+      const compressionMethod = centralDirBuffer.readUInt16LE(offset + 10);
+      const crc = centralDirBuffer.readUInt32LE(offset + 16);
       const nameLength = centralDirBuffer.readUInt16LE(offset + 28);
       const extraLength = centralDirBuffer.readUInt16LE(offset + 30);
       const commentLength = centralDirBuffer.readUInt16LE(offset + 32);
@@ -142,19 +145,15 @@ function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[
       const name = centralDirBuffer.toString('utf8', offset + 46, offset + 46 + nameLength);
       const fileContentOffset = localHeaderOffset + 30 + nameLength + extraLength
 
-
-      // Parse DOS datetime
-      // const dosTime = centralDirBuffer.readUInt16LE(offset + 12);
-      // const dosDate = centralDirBuffer.readUInt16LE(offset + 14);
-      // const modificationDate = parseDosDateTime(dosTime, dosDate);
-
       entries.push({
         index,
         name,
-        compression,
+        os,
+        mTime: 0, //we dont care,
+        crc, //needed?
+        compressionMethod,
         size: centralDirBuffer.readUInt32LE(offset + 24),
         compressedSize: centralDirBuffer.readUInt32LE(offset + 20),
-        // modificationDate,
         attributes: centralDirBuffer.readUInt32LE(offset + 38),
         fileContentOffset,
       });
@@ -162,9 +161,7 @@ function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[
       index += 1
       offset += 46 + nameLength + extraLength + commentLength;
     }
-    // const buffer = Buffer.alloc(fileSize)
-    // fs.readSync(fd, buffer, 0, fileSize, 0)
-    // fs.readFileSync(filePath)
+
     return entries;
   } finally {
     baseFs.closeSync(fd);
@@ -244,8 +241,6 @@ export class MiniZipFS extends BasePortableFakeFS {
 
     return false;
   }
-
-
 
   getRealPath() {
     if (!this.path)
@@ -625,10 +620,9 @@ export class MiniZipFS extends BasePortableFakeFS {
   }
 
   private getUnixMode(entry: Entry , defaultMode: number) {
-    const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
+    // const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
 
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+    if (entry.os !== UNIX)
       return defaultMode;
 
     return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
@@ -721,8 +715,8 @@ export class MiniZipFS extends BasePortableFakeFS {
     if (attrs === -1)
       throw this.makeLibzipError(this.libzip.getError(this.zip));
 
-    const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
+
+    if (entry.os !== UNIX)
       return false;
 
     const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
