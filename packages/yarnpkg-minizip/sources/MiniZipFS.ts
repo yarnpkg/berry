@@ -28,6 +28,7 @@ export interface Entry {
   compressionMethod: number;
   size: number;
   os: number;
+  isSymbolicLink: boolean;
   crc: number //needed?
   compressedSize: number;
   externalAttributes: number;
@@ -144,6 +145,7 @@ function readZipSync(baseFs: BasePortableFakeFS, fd: number): Entry[] {
       const localHeaderOffset = centralDirBuffer.readUInt32LE(offset + 42);
       const name = centralDirBuffer.toString('utf8', offset + 46, offset + 46 + nameLength);
       const fileContentOffset = localHeaderOffset + 30 + nameLength + extraLength
+      const externalAttributes = centralDirBuffer.readUInt32LE(offset + 38);
 
       entries.push({
         index,
@@ -152,9 +154,10 @@ function readZipSync(baseFs: BasePortableFakeFS, fd: number): Entry[] {
         mTime: 0, //we dont care,
         crc, //needed?
         compressionMethod,
+        isSymbolicLink: os === UNIX && ((externalAttributes >>> 16) & constants.S_IFMT) === constants.S_IFLNK,
         size: centralDirBuffer.readUInt32LE(offset + 24),
         compressedSize: centralDirBuffer.readUInt32LE(offset + 20),
-        externalAttributes: centralDirBuffer.readUInt32LE(offset + 38),
+        externalAttributes,
         fileContentOffset,
       });
 
@@ -189,8 +192,7 @@ export class MiniZipFS extends BasePortableFakeFS {
   private readonly fds: Map<number, { cursor: number, p: PortablePath }> = new Map();
   private nextFd: number = 0;
   private archiveFd: number;
-  private symlinkCount: number;
-
+  private hasSymlinks: boolean;
 
 
   constructor(p: PortablePath, opts: ZipPathOptions = {}) {
@@ -209,6 +211,7 @@ export class MiniZipFS extends BasePortableFakeFS {
     this.listings.set(PortablePath.root, new Set<Filename>());
 
     this.archiveFd = baseFs.openSync(p, 'r');
+    this.hasSymlinks = false
     for (const entry of readZipSync(this.baseFs, this.archiveFd)) {
       const raw = entry.name as PortablePath;
       if (ppath.isAbsolute(raw))
@@ -216,6 +219,9 @@ export class MiniZipFS extends BasePortableFakeFS {
 
       const p = ppath.resolve(PortablePath.root, raw);
       this.registerEntry(p, entry);
+      if (entry.isSymbolicLink)  {
+        this.hasSymlinks = true
+      }
 
       // If the raw path is a directory, register it
       // to prevent empty folder being skipped
@@ -223,8 +229,6 @@ export class MiniZipFS extends BasePortableFakeFS {
         this.registerListing(p);
       }
     }
-
-    this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
   }
 
 
@@ -406,7 +410,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
   existsSync(p: PortablePath): boolean {
 
-    if (this.symlinkCount === 0) {
+    if (!this.hasSymlinks) {
       const resolvedP = ppath.resolve(PortablePath.root, p);
       return this.entries.has(resolvedP) || this.listings.has(resolvedP);
     }
@@ -658,7 +662,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
     const entry = this.entries.get(resolvedP);
     if (resolveLastComponent && entry !== undefined) {
-      if (this.symlinkCount !== 0 && this.isSymbolicLink(entry)) {
+      if (this.hasSymlinks && this.isSymbolicLink(entry)) {
         const target = this.getFileSource(entry).toString() as PortablePath;
         return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true, throwIfNoEntry);
       } else {
@@ -684,7 +688,7 @@ export class MiniZipFS extends BasePortableFakeFS {
         throw errors.ENOTDIR(reason);
 
       resolvedP = ppath.resolve(parentP, ppath.basename(resolvedP));
-      if (!resolveLastComponent || this.symlinkCount === 0)
+      if (!resolveLastComponent || !this.hasSymlinks)
         break;
 
       const index = this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
@@ -705,14 +709,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
 
   private isSymbolicLink(entry: Entry) {
-    if (this.symlinkCount === 0)
-      return false;
-
-    if (entry.os !== UNIX)
-      return false;
-
-    const attributes = entry.externalAttributes >>> 16;
-    return (attributes & constants.S_IFMT) === constants.S_IFLNK;
+    return entry.isSymbolicLink
   }
 
   private getFileSource(entry: Entry): Buffer;
