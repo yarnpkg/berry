@@ -12,9 +12,7 @@ import { PassThrough } from 'stream';
 import zlib from 'zlib';
 
 // todo 
-// unwatchAllFiles
 // native nodefs is faster??
-// close archive fd
 
 const UNIX = 3
 
@@ -196,12 +194,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
 
   constructor(p: PortablePath, opts: ZipPathOptions = {}) {
-
-
     super();
-
-
-
     const { baseFs = new NodeFS() } = opts;
     this.baseFs = baseFs;
     this.path = p;
@@ -231,6 +224,16 @@ export class MiniZipFS extends BasePortableFakeFS {
     }
   }
 
+  saveAndClose() {
+    this.clean()
+  }
+  discardAndClose() {
+    this.clean()
+  }
+  private clean() {
+    unwatchAllFiles(this);
+    this.baseFs.closeSync(this.archiveFd);
+  }
 
   getExtractHint(hints: ExtractHintOptions) {
     for (const fileName of this.entries.keys()) {
