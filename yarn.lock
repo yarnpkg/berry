@@ -5715,6 +5715,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@yarnpkg/minizip@workspace:^, @yarnpkg/minizip@workspace:packages/yarnpkg-minizip":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/minizip@workspace:packages/yarnpkg-minizip"
+  dependencies:
+    "@types/prettier": "npm:1.19.0"
+    "@yarnpkg/fslib": "workspace:^"
+    prettier: "npm:^1.19.1"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@yarnpkg/fslib": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@yarnpkg/monorepo@workspace:., @yarnpkg/monorepo@workspace:^":
   version: 0.0.0-use.local
   resolution: "@yarnpkg/monorepo@workspace:."
@@ -6222,6 +6235,7 @@ __metadata:
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
+    "@yarnpkg/minizip": "workspace:^"
     arg: "npm:^5.0.2"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     rollup: "npm:^2.59.0"

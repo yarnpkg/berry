@@ -167,6 +167,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:packages/yarnpkg-libzip"\
     },\
     {\
+      "name": "@yarnpkg/minizip",\
+      "reference": "workspace:packages/yarnpkg-minizip"\
+    },\
+    {\
       "name": "@yarnpkg/nm",\
       "reference": "workspace:packages/yarnpkg-nm"\
     },\
@@ -208,6 +212,7 @@ const RAW_RUNTIME_STATE =
     ["@yarnpkg/fslib", ["workspace:packages/yarnpkg-fslib"]],\
     ["@yarnpkg/libui", ["virtual:8d898fef98e932beba43b4d6618011f697787e7fd2f52624eb7daef58d4ae47c2c0be4a00e4cbfbae536ebdaf948ef2fd37ad5cb2fa89c56ad66c9e7ff10f073#workspace:packages/yarnpkg-libui", "workspace:packages/yarnpkg-libui"]],\
     ["@yarnpkg/libzip", ["virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip", "workspace:packages/yarnpkg-libzip"]],\
+    ["@yarnpkg/minizip", ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-minizip", "workspace:packages/yarnpkg-minizip"]],\
     ["@yarnpkg/monorepo", ["workspace:."]],\
     ["@yarnpkg/nm", ["workspace:packages/yarnpkg-nm"]],\
     ["@yarnpkg/parsers", ["workspace:packages/yarnpkg-parsers"]],\
@@ -9589,6 +9594,35 @@ const RAW_RUNTIME_STATE =
         "linkType": "SOFT"\
       }]\
     ]],\
+    ["@yarnpkg/minizip", [\
+      ["virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-minizip", {\
+        "packageLocation": "./.yarn/__virtual__/@yarnpkg-minizip-virtual-e90355b441/1/packages/yarnpkg-minizip/",\
+        "packageDependencies": [\
+          ["@yarnpkg/minizip", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-minizip"],\
+          ["@types/prettier", "npm:1.19.0"],\
+          ["@types/yarnpkg__fslib", null],\
+          ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
+          ["prettier", "npm:1.19.1"],\
+          ["tslib", "npm:2.6.2"]\
+        ],\
+        "packagePeers": [\
+          "@types/yarnpkg__fslib",\
+          "@yarnpkg/fslib"\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["workspace:packages/yarnpkg-minizip", {\
+        "packageLocation": "./packages/yarnpkg-minizip/",\
+        "packageDependencies": [\
+          ["@yarnpkg/minizip", "workspace:packages/yarnpkg-minizip"],\
+          ["@types/prettier", "npm:1.19.0"],\
+          ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
+          ["prettier", "npm:1.19.1"],\
+          ["tslib", "npm:2.6.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
     ["@yarnpkg/monorepo", [\
       ["workspace:.", {\
         "packageLocation": "./",\
@@ -18953,6 +18987,7 @@ const RAW_RUNTIME_STATE =
           ["@types/semver", "npm:7.5.8"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
+          ["@yarnpkg/minizip", "virtual:16110bda3ce959c103b1979c5d750ceb8ac9cfbd2049c118b6278e46e65aa65fd17e71e04a0ce5f75b7ca3203efd8e9c9b03c948a76c7f4bca807539915b5cfc#workspace:packages/yarnpkg-minizip"],\
           ["arg", "npm:5.0.2"],\
           ["esbuild", [\
             "esbuild-wasm",\

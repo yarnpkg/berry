@@ -1,5 +1,6 @@
 import {FakeFS, NodeFS, NativePath, PortablePath, VirtualFS, ProxiedFS, ppath} from '@yarnpkg/fslib';
 import {ZipOpenFS}                                                             from '@yarnpkg/libzip';
+import {MiniZipOpenFS}                                                             from '@yarnpkg/minizip';
 import fs                                                                      from 'fs';
 import Module                                                                  from 'module';
 import StringDecoder                                                           from 'string_decoder';
@@ -26,8 +27,10 @@ const defaultPnpapiResolution = __filename;
 // 1. all requests inside a folder named "__virtual___" will be remapped according the virtual folder rules
 // 2. all requests going inside a Zip archive will be handled by the Zip fs implementation
 // 3. any remaining request will be forwarded to Node as-is
+const zipFSImpl = process.env.USE_MINIZIP ? MiniZipOpenFS : ZipOpenFS;
+
 const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
-  baseFs: new ZipOpenFS({
+  baseFs: new zipFSImpl({
     baseFs: nodeFs,
     maxOpenFiles: 80,
     readOnlyArchives: true,
