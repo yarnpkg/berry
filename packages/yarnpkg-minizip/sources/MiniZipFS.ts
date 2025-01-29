@@ -694,12 +694,18 @@ export class MiniZipFS extends BasePortableFakeFS {
       if (!resolveLastComponent || !this.hasSymlinks)
         break;
 
-      const index = this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
-      if (index === -1)
-        break;
+      // I'm not sure this is correct
+      const entry = this.entries.get(resolvedP.slice(1) as PortablePath);
+      if (!entry) {
+        break
+      }
+      // const index = this.libzip.name.locate(this.zip, resolvedP.slice(1), 0);
+      // if (index === -1)
+      //   break;
+      //
 
-      if (this.isSymbolicLink(index)) {
-        const target = this.getFileSource(index).toString() as PortablePath;
+      if (this.isSymbolicLink(entry)) {
+        const target = this.getFileSource(entry).toString() as PortablePath;
         resolvedP = ppath.resolve(ppath.dirname(resolvedP), target);
       } else {
         break;
@@ -708,7 +714,6 @@ export class MiniZipFS extends BasePortableFakeFS {
 
     return resolvedP;
   }
-
 
 
   private isSymbolicLink(entry: Entry) {
