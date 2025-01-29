@@ -17,6 +17,7 @@
     "@yarnpkg/eslint-config": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
+    "@yarnpkg/minizip": "workspace:^",
     "@yarnpkg/sdks": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
     "esbuild": "npm:esbuild-wasm@^0.23.0",

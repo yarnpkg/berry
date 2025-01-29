@@ -5744,6 +5744,7 @@ __metadata:
     "@yarnpkg/eslint-config": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
+    "@yarnpkg/minizip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     "@yarnpkg/types": "workspace:^"
     chalk: "npm:^3.0.0"
