@@ -1,139 +1,226 @@
-import {Dirent, DirentNoPath, ReaddirOptions}                                                                                                        from '@yarnpkg/fslib';
-import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from '@yarnpkg/fslib';
-import {FakeFS, MkdirOptions, RmdirOptions, RmOptions, WriteFileOptions, OpendirOptions}                                                             from '@yarnpkg/fslib';
-import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
-import {NodeFS}                                                                                                                                      from '@yarnpkg/fslib';
-import {opendir}                                                                                                                                     from '@yarnpkg/fslib';
-import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from '@yarnpkg/fslib';
-import {errors, statUtils}                                                                                                                           from '@yarnpkg/fslib';
-import {FSPath, PortablePath, ppath, Filename}                                                                                                       from '@yarnpkg/fslib';
-import {Libzip}                                                                                                                                      from '@yarnpkg/libzip';
-import {ReadStream, WriteStream, constants}                                                                                                          from 'fs';
-import {PassThrough}                                                                                                                                 from 'stream';
-import {types}                                                                                                                                       from 'util';
-import zlib                                                                                                                                          from 'zlib';
+import { Dirent, DirentNoPath, ReaddirOptions } from '@yarnpkg/fslib';
+import { WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions } from '@yarnpkg/fslib';
+import { FakeFS, MkdirOptions, RmdirOptions, RmOptions, WriteFileOptions, OpendirOptions } from '@yarnpkg/fslib';
+import { CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher } from '@yarnpkg/fslib';
+import { NodeFS } from '@yarnpkg/fslib';
+import { opendir } from '@yarnpkg/fslib';
+import { watchFile, unwatchFile, unwatchAllFiles } from '@yarnpkg/fslib';
+import { errors, statUtils } from '@yarnpkg/fslib';
+import { FSPath, PortablePath, ppath, Filename } from '@yarnpkg/fslib';
+import { ReadStream, WriteStream, constants } from 'fs';
+import { PassThrough } from 'stream';
+import zlib from 'zlib';
+
+// todo 
+// unwatchAllFiles
+// native nodefs is faster??
 
 
 
-
-
-export type ZipBufferOptions = {
-  stats?: Stats;
-};
-
-export type ZipPathOptions = ZipBufferOptions & {
+export type ZipPathOptions = {
   baseFs?: FakeFS<PortablePath>;
 
 };
 
+export interface Entry {
+  name: string;
+  compressionMethod: number;
+  size: number;
+  crc: number //needed?
+  compressedSize: number;
+  attributes: number;
+  mTime: number
+  fileContentOffset: number;
+  index: number;
+}
+
+
+const SIGNATURE = {
+  CENTRAL_DIRECTORY: 0x02014b50,
+  END_OF_CENTRAL_DIRECTORY: 0x06054b50,
+};
+
+const noCommentCDSize = 22;
+
+// const error = () => { throw new Error('not supported algo'); };
+
+// type Decompress = (buf: Buffer) => Buffer;
+
+// const COMPRESSION_METHODS: Record<number, null | Decompress> = {
+//   0: null, // 'STORED'
+//   1: error, // 'SHRUNK'
+//   // 8: null,
+//   8: buf => zlib.inflateRawSync(buf), // 'DEFLATED'
+//   9: error, // 'DEFLATE64'
+//   12: error, // 'BZIP2'
+//   14: error, // 'LZMA'
+//   19: error, // 'LZ77'
+//   93: error, // 'ZSTD'
+//   97: error, // 'XZ
+// };
+
+
+
+// function readFile(baseFs: BasePortableFakeFS, fd: number, entry: Entry) {
+//   const contentBuffer = Buffer.alloc(entry.compressedSize);
+//   baseFs.readSync(fd, contentBuffer, 0, entry.compressedSize, entry.fileContentOffset);
+//   const decompress = COMPRESSION_METHODS[entry.compressionMethod];
+//   if (decompress === null) {
+//     return contentBuffer;
+//   }
+//   return decompress(contentBuffer);
+// }
+
+function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[] {
+  const fd = baseFs.openSync(filePath, 'r');
+  try {
+    const stats = baseFs.fstatSync(fd);
+    const fileSize = stats.size;
+
+    if (fileSize < noCommentCDSize) {
+      throw new Error('Invalid ZIP file: EOCD not found');
+    }
+
+    let eocdOffset = -1;
+
+    // fast read if no comment
+    let cdBuffer = Buffer.alloc(noCommentCDSize);
+    baseFs.readSync(
+      fd,
+      cdBuffer,
+      0,
+      noCommentCDSize,
+      fileSize - noCommentCDSize
+    );
+
+    if (cdBuffer.readUInt32LE(0) === SIGNATURE.END_OF_CENTRAL_DIRECTORY) {
+      eocdOffset = 0
+    } else {
+      const bufferSize = Math.min(65557, fileSize);
+      cdBuffer = Buffer.alloc(bufferSize);
+
+      // Read potential EOCD area
+      baseFs.readSync(
+        fd,
+        cdBuffer,
+        0,
+        bufferSize,
+        Math.max(0, fileSize - bufferSize)
+      );
+
+      // Find EOCD signature
+      for (let i = cdBuffer.length - 4; i >= 0; i--) {
+        if (cdBuffer.readUInt32LE(i) === SIGNATURE.END_OF_CENTRAL_DIRECTORY) {
+          eocdOffset = i;
+          break;
+        }
+      }
+      if (eocdOffset === -1) throw new Error('Invalid ZIP file: EOCD not found');
+    }
+
+
+
+    const totalEntries = cdBuffer.readUInt16LE(eocdOffset + 10);
+    const centralDirSize = cdBuffer.readUInt32LE(eocdOffset + 12);
+    const centralDirOffset = cdBuffer.readUInt32LE(eocdOffset + 16);
+
+    // Read central directory
+    const centralDirBuffer = Buffer.alloc(centralDirSize);
+    baseFs.readSync(fd, centralDirBuffer, 0, centralDirBuffer.length, centralDirOffset);
+
+    const entries: Entry[] = [];
+    let offset = 0;
+    let index = 0
+    while (offset < centralDirBuffer.length && index < totalEntries) { // rm offset < centralDirBuffer.length?
+      if (centralDirBuffer.readUInt32LE(offset) !== SIGNATURE.CENTRAL_DIRECTORY) break;
+
+      const compression = centralDirBuffer.readUInt16LE(offset + 10);
+      const nameLength = centralDirBuffer.readUInt16LE(offset + 28);
+      const extraLength = centralDirBuffer.readUInt16LE(offset + 30);
+      const commentLength = centralDirBuffer.readUInt16LE(offset + 32);
+      const localHeaderOffset = centralDirBuffer.readUInt32LE(offset + 42);
+      const name = centralDirBuffer.toString('utf8', offset + 46, offset + 46 + nameLength);
+      const fileContentOffset = localHeaderOffset + 30 + nameLength + extraLength
+
+
+      // Parse DOS datetime
+      // const dosTime = centralDirBuffer.readUInt16LE(offset + 12);
+      // const dosDate = centralDirBuffer.readUInt16LE(offset + 14);
+      // const modificationDate = parseDosDateTime(dosTime, dosDate);
+
+      entries.push({
+        index,
+        name,
+        compression,
+        size: centralDirBuffer.readUInt32LE(offset + 24),
+        compressedSize: centralDirBuffer.readUInt32LE(offset + 20),
+        // modificationDate,
+        attributes: centralDirBuffer.readUInt32LE(offset + 38),
+        fileContentOffset,
+      });
+
+      index += 1
+      offset += 46 + nameLength + extraLength + commentLength;
+    }
+    // const buffer = Buffer.alloc(fileSize)
+    // fs.readSync(fd, buffer, 0, fileSize, 0)
+    // fs.readFileSync(filePath)
+    return entries;
+  } finally {
+    baseFs.closeSync(fd);
+  }
+}
+
+
 
 export class MiniZipFS extends BasePortableFakeFS {
-  private readonly libzip: Libzip;
 
-  private readonly baseFs: FakeFS<PortablePath> | null;
+
+  private readonly baseFs!: FakeFS<PortablePath>
   private readonly path: PortablePath | null;
 
   private readonly stats: Stats;
-  private readonly zip: number;
 
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
-  private readonly entries: Map<PortablePath, number> = new Map();
+  private readonly entries: Map<PortablePath, Entry> = new Map();
 
   /**
    * A cache of indices mapped to file sources.
    * Populated by `setFileSource` calls.
    * Required for supporting read after write.
    */
-  private readonly fileSources: Map<number, Buffer> = new Map();
+  // private readonly fileSources: Map<number, Buffer> = new Map();
 
-  private readonly fds: Map<number, {cursor: number, p: PortablePath}> = new Map();
+  private readonly fds: Map<number, { cursor: number, p: PortablePath }> = new Map();
   private nextFd: number = 0;
 
-  private ready = false;
   private symlinkCount: number;
 
 
-  constructor();
-  constructor(p: PortablePath, opts?: ZipPathOptions);
-  /**
-   * Create a ZipFS in memory
-   * @param data If null; an empty zip file will be created
-   */
-  constructor(data: Buffer | null, opts?: ZipBufferOptions);
 
-  constructor(source?: PortablePath | Buffer | null, opts: ZipPathOptions | ZipBufferOptions = {}) {
+  constructor(p: PortablePath, opts: ZipPathOptions = {}) {
+
+
     super();
 
-    const pathOptions = opts as ZipPathOptions;
-
-    if (!source) {
-      throw new Error(`Readonly ZipFS requires a source`);
-    }
 
 
-    if (typeof source === `string`) {
-      const {baseFs = new NodeFS()} = pathOptions;
-      this.baseFs = baseFs;
-      this.path = source;
-    } else {
-      this.path = null;
-      this.baseFs = null;
-    }
+    const { baseFs = new NodeFS() } = opts;
+    this.baseFs = baseFs;
+    this.path = p;
 
-    if (opts.stats) {
-      this.stats = opts.stats;
-    } else {
-      if (typeof source === `string`) {
-        this.stats = this.baseFs!.statSync(source);
-      } else {
-        this.stats = statUtils.makeDefaultStats();
-      }
-    }
-
-    this.libzip = getInstance();
-
-    const errPtr = this.libzip.malloc(4);
-
-    try {
-      let flags = 0;
-
-  
-
-      if (typeof source === `string`)
-        source = pathOptions.create
-          ? makeEmptyArchive()
-          : this.baseFs!.readFileSync(source);
-
-      const lzSource = this.allocateUnattachedSource(source);
-
-      try {
-        this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
-        this.lzSource = lzSource;
-      } catch (error) {
-        this.libzip.source.free(lzSource);
-        throw error;
-      }
-
-      if (this.zip === 0) {
-        const error = this.libzip.struct.errorS();
-        this.libzip.error.initWithCode(error, this.libzip.getValue(errPtr, `i32`));
-
-        throw this.makeLibzipError(error);
-      }
-    } finally {
-      this.libzip.free(errPtr);
-    }
+    this.stats = this.baseFs!.statSync(p);
 
     this.listings.set(PortablePath.root, new Set<Filename>());
 
-    const entryCount = this.libzip.getNumEntries(this.zip, 0);
-    for (let t = 0; t < entryCount; ++t) {
-      const raw = this.libzip.getName(this.zip, t, 0) as PortablePath;
+
+    for (const entry of readZipSync(this.baseFs, p)) {
+      const raw = entry.name as PortablePath;
       if (ppath.isAbsolute(raw))
         continue;
 
       const p = ppath.resolve(PortablePath.root, raw);
-      this.registerEntry(p, t);
+      this.registerEntry(p, entry);
 
       // If the raw path is a directory, register it
       // to prevent empty folder being skipped
@@ -143,24 +230,9 @@ export class MiniZipFS extends BasePortableFakeFS {
     }
 
     this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
-    if (this.symlinkCount === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
 
-    this.ready = true;
   }
 
-  makeLibzipError(error: number) {
-    const errorCode = this.libzip.struct.errorCodeZip(error);
-    const strerror = this.libzip.error.strerror(error);
-
-    const libzipError = new LibzipError(strerror, this.libzip.errors[errorCode]);
-
-    // This error should never come up because of the file source cache
-    if (errorCode === this.libzip.errors.ZIP_ER_CHANGED)
-      throw new Error(`Assertion failed: Unexpected libzip error: ${libzipError.message}`);
-
-    return libzipError;
-  }
 
   getExtractHint(hints: ExtractHintOptions) {
     for (const fileName of this.entries.keys()) {
@@ -192,7 +264,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
   openSync(p: PortablePath, flags: string, mode?: number) {
     const fd = this.nextFd++;
-    this.fds.set(fd, {cursor: 0, p});
+    this.fds.set(fd, { cursor: 0, p });
     return fd;
   }
 
@@ -221,7 +293,7 @@ export class MiniZipFS extends BasePortableFakeFS {
       this.closeSync(fd);
     };
 
-    return opendir(this, resolvedP, entries, {onClose});
+    return opendir(this, resolvedP, entries, { onClose });
   }
 
   async readPromise(fd: number, buffer: Buffer, offset?: number, length?: number, position?: number | null) {
@@ -279,7 +351,7 @@ export class MiniZipFS extends BasePortableFakeFS {
     this.fds.delete(fd);
   }
 
-  createReadStream(p: PortablePath | null, {encoding}: CreateReadStreamOptions = {}): ReadStream {
+  createReadStream(p: PortablePath | null, { encoding }: CreateReadStreamOptions = {}): ReadStream {
     if (p === null)
       throw new Error(`Unimplemented`);
 
@@ -319,7 +391,7 @@ export class MiniZipFS extends BasePortableFakeFS {
     return stream;
   }
 
-  createWriteStream(p: PortablePath | null, {encoding}: CreateWriteStreamOptions = {}): WriteStream {
+  createWriteStream(p: PortablePath | null, { encoding }: CreateWriteStreamOptions = {}): WriteStream {
     throw errors.EROFS(`open '${p}'`);
   }
 
@@ -341,8 +413,6 @@ export class MiniZipFS extends BasePortableFakeFS {
   }
 
   existsSync(p: PortablePath): boolean {
-    if (!this.ready)
-      throw errors.EBUSY(`archive closed, existsSync '${p}'`);
 
     if (this.symlinkCount === 0) {
       const resolvedP = ppath.resolve(PortablePath.root, p);
@@ -383,22 +453,22 @@ export class MiniZipFS extends BasePortableFakeFS {
   async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
   async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
   async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
-  async statPromise(p: PortablePath, opts: StatOptions = {bigint: false}): Promise<Stats | BigIntStats> {
+  async statPromise(p: PortablePath, opts: StatOptions = { bigint: false }): Promise<Stats | BigIntStats> {
     if (opts.bigint)
-      return this.statSync(p, {bigint: true});
+      return this.statSync(p, { bigint: true });
 
     return this.statSync(p);
   }
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   statSync(p: PortablePath): Stats;
-  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
-  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
-  statSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
-  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
-  statSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
+  statSync(p: PortablePath, opts?: StatSyncOptions & { bigint?: false | undefined, throwIfNoEntry: false }): Stats | undefined;
+  statSync(p: PortablePath, opts: StatSyncOptions & { bigint: true, throwIfNoEntry: false }): BigIntStats | undefined;
+  statSync(p: PortablePath, opts?: StatSyncOptions & { bigint?: false | undefined }): Stats;
+  statSync(p: PortablePath, opts: StatSyncOptions & { bigint: true }): BigIntStats;
+  statSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
   statSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
-  statSync(p: PortablePath, opts: StatSyncOptions = {bigint: false, throwIfNoEntry: true}): Stats | BigIntStats | undefined {
+  statSync(p: PortablePath, opts: StatSyncOptions = { bigint: false, throwIfNoEntry: true }): Stats | BigIntStats | undefined {
     const resolvedP = this.resolveFilename(`stat '${p}'`, p, undefined, opts.throwIfNoEntry);
     if (resolvedP === undefined)
       return undefined;
@@ -417,21 +487,21 @@ export class MiniZipFS extends BasePortableFakeFS {
   }
 
   async fstatPromise(fd: number): Promise<Stats>;
-  async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
-  async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
-  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
+  async fstatPromise(fd: number, opts: { bigint: true }): Promise<BigIntStats>;
+  async fstatPromise(fd: number, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>;
+  async fstatPromise(fd: number, opts?: { bigint: boolean }) {
     return this.fstatSync(fd, opts);
   }
 
   fstatSync(fd: number): Stats;
-  fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
-  fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
-  fstatSync(fd: number, opts?: {bigint: boolean}) {
+  fstatSync(fd: number, opts: { bigint: true }): BigIntStats;
+  fstatSync(fd: number, opts?: { bigint: boolean }): BigIntStats | Stats;
+  fstatSync(fd: number, opts?: { bigint: boolean }) {
     const entry = this.fds.get(fd);
     if (typeof entry === `undefined`)
       throw errors.EBADF(`fstatSync`);
 
-    const {p} = entry;
+    const { p } = entry;
 
     const resolvedP = this.resolveFilename(`stat '${p}'`, p);
 
@@ -449,22 +519,22 @@ export class MiniZipFS extends BasePortableFakeFS {
   async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
   async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
   async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
-  async lstatPromise(p: PortablePath, opts: StatOptions = {bigint: false}): Promise<Stats | BigIntStats> {
+  async lstatPromise(p: PortablePath, opts: StatOptions = { bigint: false }): Promise<Stats | BigIntStats> {
     if (opts.bigint)
-      return this.lstatSync(p, {bigint: true});
+      return this.lstatSync(p, { bigint: true });
 
     return this.lstatSync(p);
   }
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
   lstatSync(p: PortablePath): Stats;
-  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined, throwIfNoEntry: false}): Stats | undefined;
-  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
-  lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
-  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & { bigint?: false | undefined, throwIfNoEntry: false }): Stats | undefined;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: true, throwIfNoEntry: false }): BigIntStats | undefined;
+  lstatSync(p: PortablePath, opts?: StatSyncOptions & { bigint?: false | undefined }): Stats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: true }): BigIntStats;
   lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
   lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
-  lstatSync(p: PortablePath, opts: StatSyncOptions = {bigint: false, throwIfNoEntry: true}): Stats | BigIntStats | undefined {
+  lstatSync(p: PortablePath, opts: StatSyncOptions = { bigint: false, throwIfNoEntry: true }): Stats | BigIntStats | undefined {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false, opts.throwIfNoEntry);
     if (resolvedP === undefined)
       return undefined;
@@ -482,28 +552,23 @@ export class MiniZipFS extends BasePortableFakeFS {
     return this.statImpl(`lstat '${p}'`, resolvedP, opts);
   }
 
-  private statImpl(reason: string, p: PortablePath, opts: {bigint: true}): BigIntStats;
-  private statImpl(reason: string, p: PortablePath, opts?: {bigint?: false}): Stats;
-  private statImpl(reason: string, p: PortablePath, opts?: {bigint?: boolean}): Stats | BigIntStats;
-  private statImpl(reason: string, p: PortablePath, opts: {bigint?: boolean} = {}): Stats | BigIntStats {
+  private statImpl(reason: string, p: PortablePath, opts: { bigint: true }): BigIntStats;
+  private statImpl(reason: string, p: PortablePath, opts?: { bigint?: false }): Stats;
+  private statImpl(reason: string, p: PortablePath, opts?: { bigint?: boolean }): Stats | BigIntStats;
+  private statImpl(reason: string, p: PortablePath, opts: { bigint?: boolean } = {}): Stats | BigIntStats {
     const entry = this.entries.get(p);
 
     // File, or explicit directory
     if (typeof entry !== `undefined`) {
-      const stat = this.libzip.struct.statS();
-
-      const rc = this.libzip.statIndex(this.zip, entry, 0, 0, stat);
-      if (rc === -1)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
 
       const uid = this.stats.uid;
       const gid = this.stats.gid;
 
-      const size = (this.libzip.struct.statSize(stat) >>> 0);
+      const size = (entry.size >>> 0);
       const blksize = 512;
       const blocks = Math.ceil(size / blksize);
 
-      const mtimeMs = (this.libzip.struct.statMtime(stat) >>> 0) * 1000;
+      const mtimeMs = (entry.mTime >>> 0) * 1000;
       const atimeMs = mtimeMs;
       const birthtimeMs = mtimeMs;
       const ctimeMs = mtimeMs;
@@ -524,9 +589,9 @@ export class MiniZipFS extends BasePortableFakeFS {
         : 0o644;
 
       const mode = type | (this.getUnixMode(entry, defaultMode) & 0o777);
-      const crc = this.libzip.struct.statCrc(stat);
+      const crc = entry.crc
 
-      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
+      const statInstance = Object.assign(new statUtils.StatEntry(), { uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc });
       return opts.bigint === true ? statUtils.convertToBigIntStats(statInstance) : statInstance;
     }
 
@@ -552,17 +617,15 @@ export class MiniZipFS extends BasePortableFakeFS {
       const mode = constants.S_IFDIR | 0o755;
       const crc = 0;
 
-      const statInstance = Object.assign(new statUtils.StatEntry(), {uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc});
+      const statInstance = Object.assign(new statUtils.StatEntry(), { uid, gid, size, blksize, blocks, atime, birthtime, ctime, mtime, atimeMs, birthtimeMs, ctimeMs, mtimeMs, mode, crc });
       return opts.bigint === true ? statUtils.convertToBigIntStats(statInstance) : statInstance;
     }
 
     throw new Error(`Unreachable`);
   }
 
-  private getUnixMode(index: number, defaultMode: number) {
+  private getUnixMode(entry: Entry , defaultMode: number) {
     const rc = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
 
     const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
     if (opsys !== this.libzip.ZIP_OPSYS_UNIX)
@@ -585,11 +648,11 @@ export class MiniZipFS extends BasePortableFakeFS {
     return newListing;
   }
 
-  private registerEntry(p: PortablePath, index: number) {
+  private registerEntry(p: PortablePath, entry: Entry) {
     const parentListing = this.registerListing(ppath.dirname(p));
     parentListing.add(ppath.basename(p));
 
-    this.entries.set(p, index);
+    this.entries.set(p, entry);
   }
 
 
@@ -598,17 +661,14 @@ export class MiniZipFS extends BasePortableFakeFS {
   private resolveFilename(reason: string, p: PortablePath, resolveLastComponent?: boolean): PortablePath;
   private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean | undefined, throwIfNoEntry: boolean | undefined): PortablePath | undefined;
   private resolveFilename(reason: string, p: PortablePath, resolveLastComponent: boolean = true, throwIfNoEntry = true): PortablePath | undefined {
-    if (!this.ready)
-      throw errors.EBUSY(`archive closed, ${reason}`);
-
     let resolvedP = ppath.resolve(PortablePath.root, p);
     if (resolvedP === `/`)
       return PortablePath.root;
 
-    const fileIndex = this.entries.get(resolvedP);
-    if (resolveLastComponent && fileIndex !== undefined) {
-      if (this.symlinkCount !== 0 && this.isSymbolicLink(fileIndex)) {
-        const target = this.getFileSource(fileIndex).toString() as PortablePath;
+    const entry = this.entries.get(resolvedP);
+    if (resolveLastComponent && entry !== undefined) {
+      if (this.symlinkCount !== 0 && this.isSymbolicLink(entry)) {
+        const target = this.getFileSource(entry).toString() as PortablePath;
         return this.resolveFilename(reason, ppath.resolve(ppath.dirname(resolvedP), target), true, throwIfNoEntry);
       } else {
         return resolvedP;
@@ -652,8 +712,8 @@ export class MiniZipFS extends BasePortableFakeFS {
   }
 
 
-  
-  private isSymbolicLink(index: number) {
+
+  private isSymbolicLink(entry: Entry) {
     if (this.symlinkCount === 0)
       return false;
 
@@ -669,67 +729,38 @@ export class MiniZipFS extends BasePortableFakeFS {
     return (attributes & constants.S_IFMT) === constants.S_IFLNK;
   }
 
-  private getFileSource(index: number): Buffer;
-  private getFileSource(index: number, opts: {asyncDecompress: false}): Buffer;
-  private getFileSource(index: number, opts: {asyncDecompress: true}): Promise<Buffer>;
-  private getFileSource(index: number, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer;
-  private getFileSource(index: number, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Promise<Buffer> | Buffer {
-    const cachedFileSource = this.fileSources.get(index);
-    if (typeof cachedFileSource !== `undefined`)
-      return cachedFileSource;
+  private getFileSource(entry: Entry): Buffer;
+  private getFileSource(entry: Entry, opts: { asyncDecompress: false }): Buffer;
+  private getFileSource(entry: Entry, opts: { asyncDecompress: true }): Promise<Buffer>;
+  private getFileSource(entry: Entry, opts: { asyncDecompress: boolean }): Promise<Buffer> | Buffer;
+  private getFileSource(entry: Entry, opts: { asyncDecompress: boolean } = { asyncDecompress: false }): Promise<Buffer> | Buffer {
+    // const { index } = entry;
+    // const cachedFileSource = this.fileSources.get(index); //fileSourceCache??
+    // if (typeof cachedFileSource !== `undefined`)
+    //   return cachedFileSource;
 
-    const stat = this.libzip.struct.statS();
 
-    const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
-    if (rc === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
+    const data = Buffer.alloc(entry.compressedSize);
+    this.baseFs.readSync(fd, data, 0, entry.compressedSize, entry.fileContentOffset);
 
-    const size = this.libzip.struct.statCompSize(stat);
-    const compressionMethod = this.libzip.struct.statCompMethod(stat);
-    const buffer = this.libzip.malloc(size);
-
-    try {
-      const file = this.libzip.fopenIndex(this.zip, index, 0, this.libzip.ZIP_FL_COMPRESSED);
-      if (file === 0)
-        throw this.makeLibzipError(this.libzip.getError(this.zip));
-
-      try {
-        const rc = this.libzip.fread(file, buffer, size, 0);
-
-        if (rc === -1)
-          throw this.makeLibzipError(this.libzip.file.getError(file));
-        else if (rc < size)
-          throw new Error(`Incomplete read`);
-        else if (rc > size)
-          throw new Error(`Overread`);
-
-        const memory = this.libzip.HEAPU8.subarray(buffer, buffer + size);
-        const data = Buffer.from(memory);
-
-        if (compressionMethod === 0) {
-          this.fileSources.set(index, data);
-          return data;
-        } else if (opts.asyncDecompress) {
-          return new Promise((resolve, reject) => {
-            zlib.inflateRaw(data, (error, result) => {
-              if (error) {
-                reject(error);
-              } else {
-                this.fileSources.set(index, result);
-                resolve(result);
-              }
-            });
-          });
-        } else {
-          const decompressedData = zlib.inflateRawSync(data);
-          this.fileSources.set(index, decompressedData);
-          return decompressedData;
-        }
-      } finally {
-        this.libzip.fclose(file);
-      }
-    } finally {
-      this.libzip.free(buffer);
+    if (entry.compressionMethod === 0) {
+      // this.fileSources.set(index, data);
+      return data;
+    } else if (opts.asyncDecompress) {
+      return new Promise((resolve, reject) => {
+        zlib.inflateRaw(data, (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            // this.fileSources.set(index, result);
+            resolve(result);
+          }
+        });
+      });
+    } else {
+      const decompressedData = zlib.inflateRawSync(data);
+      // this.fileSources.set(index, decompressedData);
+      return decompressedData;
     }
   }
 
@@ -838,7 +869,7 @@ export class MiniZipFS extends BasePortableFakeFS {
     return this.mkdirSync(p, opts);
   }
 
-  mkdirSync(p: PortablePath, {mode = 0o755, recursive = false}: MkdirOptions = {}) {
+  mkdirSync(p: PortablePath, { mode = 0o755, recursive = false }: MkdirOptions = {}) {
     throw errors.EROFS(`mkdir '${p}'`);
     return undefined;
   }
@@ -847,19 +878,19 @@ export class MiniZipFS extends BasePortableFakeFS {
     return this.rmdirSync(p, opts);
   }
 
-  rmdirSync(p: PortablePath, {recursive = false}: RmdirOptions = {}) {
+  rmdirSync(p: PortablePath, { recursive = false }: RmdirOptions = {}) {
     throw errors.EROFS(`rmdir '${p}'`);
   }
   async rmPromise(p: PortablePath, opts?: RmOptions) {
     return this.rmSync(p, opts);
   }
 
-  rmSync(p: PortablePath, {recursive = false}: RmOptions = {}) {
+  rmSync(p: PortablePath, { recursive = false }: RmOptions = {}) {
     throw errors.EROFS(`rm '${p}'`);
 
   }
 
- 
+
   async linkPromise(existingP: PortablePath, newP: PortablePath) {
     return this.linkSync(existingP, newP);
   }
@@ -885,7 +916,7 @@ export class MiniZipFS extends BasePortableFakeFS {
       // @ts-expect-error
       encoding = encoding ? encoding.encoding : undefined;
 
-    const data = await this.readFileBuffer(p, {asyncDecompress: true});
+    const data = await this.readFileBuffer(p, { asyncDecompress: true });
     return encoding ? data.toString(encoding) : data;
   }
 
@@ -903,10 +934,10 @@ export class MiniZipFS extends BasePortableFakeFS {
   }
 
   private readFileBuffer(p: FSPath<PortablePath>): Buffer;
-  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: false}): Buffer;
-  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: true}): Promise<Buffer>;
-  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer;
-  private readFileBuffer(p: FSPath<PortablePath>, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Buffer | Promise<Buffer> {
+  private readFileBuffer(p: FSPath<PortablePath>, opts: { asyncDecompress: false }): Buffer;
+  private readFileBuffer(p: FSPath<PortablePath>, opts: { asyncDecompress: true }): Promise<Buffer>;
+  private readFileBuffer(p: FSPath<PortablePath>, opts: { asyncDecompress: boolean }): Promise<Buffer> | Buffer;
+  private readFileBuffer(p: FSPath<PortablePath>, opts: { asyncDecompress: boolean } = { asyncDecompress: false }): Buffer | Promise<Buffer> {
     if (typeof p === `number`)
       p = this.fdToPath(p, `read`);
 
@@ -929,29 +960,29 @@ export class MiniZipFS extends BasePortableFakeFS {
   }
 
   async readdirPromise(p: PortablePath, opts?: null): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Promise<Array<DirentNoPath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
-  async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Promise<Array<DirentNoPath | Filename>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: true}): Promise<Array<Dirent<PortablePath>>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes?: false}): Promise<Array<PortablePath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | PortablePath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Promise<Array<Dirent<PortablePath> | DirentNoPath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<PortablePath>>;
-  async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: { recursive?: false, withFileTypes: true }): Promise<Array<DirentNoPath>>;
+  async readdirPromise(p: PortablePath, opts: { recursive?: false, withFileTypes?: false }): Promise<Array<Filename>>;
+  async readdirPromise(p: PortablePath, opts: { recursive?: false, withFileTypes: boolean }): Promise<Array<DirentNoPath | Filename>>;
+  async readdirPromise(p: PortablePath, opts: { recursive: true, withFileTypes: true }): Promise<Array<Dirent<PortablePath>>>;
+  async readdirPromise(p: PortablePath, opts: { recursive: true, withFileTypes?: false }): Promise<Array<PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: { recursive: true, withFileTypes: boolean }): Promise<Array<Dirent<PortablePath> | PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: { recursive: boolean, withFileTypes: true }): Promise<Array<Dirent<PortablePath> | DirentNoPath>>;
+  async readdirPromise(p: PortablePath, opts: { recursive: boolean, withFileTypes?: false }): Promise<Array<PortablePath>>;
+  async readdirPromise(p: PortablePath, opts: { recursive: boolean, withFileTypes: boolean }): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>>;
   async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
     return this.readdirSync(p, opts as any);
   }
 
   readdirSync(p: PortablePath, opts?: null): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Array<DirentNoPath>;
-  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Array<Filename>;
-  readdirSync(p: PortablePath, opts: {recursive?: false, withFileTypes: boolean}): Array<DirentNoPath | Filename>;
-  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: true}): Array<Dirent<PortablePath>>;
-  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes?: false}): Array<PortablePath>;
-  readdirSync(p: PortablePath, opts: {recursive: true, withFileTypes: boolean}): Array<Dirent<PortablePath> | PortablePath>;
-  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: true}): Array<Dirent<PortablePath> | DirentNoPath>;
-  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Array<PortablePath>;
-  readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
+  readdirSync(p: PortablePath, opts: { recursive?: false, withFileTypes: true }): Array<DirentNoPath>;
+  readdirSync(p: PortablePath, opts: { recursive?: false, withFileTypes?: false }): Array<Filename>;
+  readdirSync(p: PortablePath, opts: { recursive?: false, withFileTypes: boolean }): Array<DirentNoPath | Filename>;
+  readdirSync(p: PortablePath, opts: { recursive: true, withFileTypes: true }): Array<Dirent<PortablePath>>;
+  readdirSync(p: PortablePath, opts: { recursive: true, withFileTypes?: false }): Array<PortablePath>;
+  readdirSync(p: PortablePath, opts: { recursive: true, withFileTypes: boolean }): Array<Dirent<PortablePath> | PortablePath>;
+  readdirSync(p: PortablePath, opts: { recursive: boolean, withFileTypes: true }): Array<Dirent<PortablePath> | DirentNoPath>;
+  readdirSync(p: PortablePath, opts: { recursive: boolean, withFileTypes?: false }): Array<PortablePath>;
+  readdirSync(p: PortablePath, opts: { recursive: boolean, withFileTypes: boolean }): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
   readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
     const resolvedP = this.resolveFilename(`scandir '${p}'`, p);
     if (!this.entries.has(resolvedP) && !this.listings.has(resolvedP))
@@ -1015,7 +1046,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
   async readlinkPromise(p: PortablePath) {
     const entry = this.prepareReadlink(p);
-    return (await this.getFileSource(entry, {asyncDecompress: true})).toString() as PortablePath;
+    return (await this.getFileSource(entry, { asyncDecompress: true })).toString() as PortablePath;
   }
 
   readlinkSync(p: PortablePath): PortablePath {
@@ -1052,7 +1083,7 @@ export class MiniZipFS extends BasePortableFakeFS {
     if (typeof index === `undefined`)
       throw errors.EINVAL(`open '${p}'`);
 
-    const source = await this.getFileSource(index, {asyncDecompress: true});
+    const source = await this.getFileSource(index, { asyncDecompress: true });
 
     const truncated = Buffer.alloc(len, 0x00);
     source.copy(truncated);
@@ -1096,17 +1127,19 @@ export class MiniZipFS extends BasePortableFakeFS {
       } break;
 
       default: {
-        ({persistent = true} = a);
+        ({ persistent = true } = a);
       } break;
     }
 
     if (!persistent)
-      return {on: () => {}, close: () => {}};
+      return { on: () => { }, close: () => { } };
 
-    const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
-    return {on: () => {}, close: () => {
-      clearInterval(interval);
-    }};
+    const interval = setInterval(() => { }, 24 * 60 * 60 * 1000);
+    return {
+      on: () => { }, close: () => {
+        clearInterval(interval);
+      }
+    };
   }
 
   watchFile(p: PortablePath, cb: WatchFileCallback): StatWatcher;

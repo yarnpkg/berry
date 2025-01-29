@@ -84,8 +84,6 @@ export class MiniZipOpenFS extends MountFS<MiniZipFS> {
     const factorySync = (baseFs: FakeFS<PortablePath>, p: PortablePath) => {
       return new MiniZipFS(p, {
         baseFs,
-        readOnly: readOnlyArchives,
-        stats: baseFs.statSync(p),
       });
     };
 
