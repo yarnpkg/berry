@@ -14,6 +14,7 @@ import zlib from 'zlib';
 // todo 
 // unwatchAllFiles
 // native nodefs is faster??
+// close archive fd
 
 const UNIX = 3
 
@@ -72,9 +73,8 @@ const noCommentCDSize = 22;
 //   return decompress(contentBuffer);
 // }
 
-function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[] {
-  const fd = baseFs.openSync(filePath, 'r');
-  try {
+function readZipSync(baseFs: BasePortableFakeFS, fd: number): Entry[] {
+  
     const stats = baseFs.fstatSync(fd);
     const fileSize = stats.size;
 
@@ -162,10 +162,8 @@ function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[
       offset += 46 + nameLength + extraLength + commentLength;
     }
 
-    return entries;
-  } finally {
-    baseFs.closeSync(fd);
-  }
+  return entries;
+
 }
 
 
@@ -190,7 +188,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
   private readonly fds: Map<number, { cursor: number, p: PortablePath }> = new Map();
   private nextFd: number = 0;
-
+  private archiveFd: number;
   private symlinkCount: number;
 
 
@@ -210,8 +208,8 @@ export class MiniZipFS extends BasePortableFakeFS {
 
     this.listings.set(PortablePath.root, new Set<Filename>());
 
-
-    for (const entry of readZipSync(this.baseFs, p)) {
+    this.archiveFd = baseFs.openSync(p, 'r');
+    for (const entry of readZipSync(this.baseFs, this.archiveFd)) {
       const raw = entry.name as PortablePath;
       if (ppath.isAbsolute(raw))
         continue;
@@ -227,7 +225,6 @@ export class MiniZipFS extends BasePortableFakeFS {
     }
 
     this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);
-
   }
 
 
@@ -730,7 +727,7 @@ export class MiniZipFS extends BasePortableFakeFS {
 
 
     const data = Buffer.alloc(entry.compressedSize);
-    this.baseFs.readSync(fd, data, 0, entry.compressedSize, entry.fileContentOffset);
+    this.baseFs.readSync(this.archiveFd, data, 0, entry.compressedSize, entry.fileContentOffset);
 
     if (entry.compressionMethod === 0) {
       // this.fileSources.set(index, data);
