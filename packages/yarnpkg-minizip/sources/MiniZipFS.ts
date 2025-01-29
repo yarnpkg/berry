@@ -29,7 +29,7 @@ export interface Entry {
   os: number;
   crc: number //needed?
   compressedSize: number;
-  attributes: number;
+  externalAttributes: number;
   mTime: number
   fileContentOffset: number;
   index: number;
@@ -135,7 +135,7 @@ function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[
     while (offset < centralDirBuffer.length && index < totalEntries) { // rm offset < centralDirBuffer.length?
       if (centralDirBuffer.readUInt32LE(offset) !== SIGNATURE.CENTRAL_DIRECTORY) break;
       const versionMadeBy = centralDirBuffer.readUInt16LE(offset + 4);
-      const os = versionMadeBy >> 8;
+      const os = versionMadeBy >>> 8;
       const compressionMethod = centralDirBuffer.readUInt16LE(offset + 10);
       const crc = centralDirBuffer.readUInt32LE(offset + 16);
       const nameLength = centralDirBuffer.readUInt16LE(offset + 28);
@@ -154,7 +154,7 @@ function readZipSync(baseFs: BasePortableFakeFS, filePath: PortablePath): Entry[
         compressionMethod,
         size: centralDirBuffer.readUInt32LE(offset + 24),
         compressedSize: centralDirBuffer.readUInt32LE(offset + 20),
-        attributes: centralDirBuffer.readUInt32LE(offset + 38),
+        externalAttributes: centralDirBuffer.readUInt32LE(offset + 38),
         fileContentOffset,
       });
 
@@ -625,7 +625,7 @@ export class MiniZipFS extends BasePortableFakeFS {
     if (entry.os !== UNIX)
       return defaultMode;
 
-    return this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+    return entry.externalAttributes >>> 16;
   }
 
   private registerListing(p: PortablePath) {
@@ -711,15 +711,10 @@ export class MiniZipFS extends BasePortableFakeFS {
     if (this.symlinkCount === 0)
       return false;
 
-    const attrs = this.libzip.file.getExternalAttributes(this.zip, index, 0, 0, this.libzip.uint08S, this.libzip.uint32S);
-    if (attrs === -1)
-      throw this.makeLibzipError(this.libzip.getError(this.zip));
-
-
     if (entry.os !== UNIX)
       return false;
 
-    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 16;
+    const attributes = entry.externalAttributes >>> 16;
     return (attributes & constants.S_IFMT) === constants.S_IFLNK;
   }
 
