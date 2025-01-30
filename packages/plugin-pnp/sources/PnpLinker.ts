@@ -285,6 +285,7 @@ export class PnpInstaller implements Installer {
       fallbackExclusionList,
       fallbackPool,
       ignorePattern,
+      zipImplementation: this.opts.project.configuration.get(`minizip`) ? `minizip` : `libzip`,
       packageRegistry,
       shebang,
     });

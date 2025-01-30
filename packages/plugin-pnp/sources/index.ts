@@ -70,6 +70,7 @@ declare module '@yarnpkg/core' {
     nodeLinker: string;
     winLinkType: string;
     pnpMode: string;
+    minizip: boolean
     pnpShebang: string;
     pnpIgnorePatterns: Array<string>;
     pnpEnableEsmLoader: boolean;
@@ -89,6 +90,11 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       description: `The linker used for installing Node packages, one of: "pnp", "pnpm", or "node-modules"`,
       type: SettingsType.STRING,
       default: `pnp`,
+    },
+    minizip: {
+      description: `Whether Yarn should use minizip to extract archives`,
+      type: SettingsType.BOOLEAN,
+      default: false
     },
     winLinkType: {
       description: `Whether Yarn should use Windows Junctions or symlinks when creating links on Windows.`,

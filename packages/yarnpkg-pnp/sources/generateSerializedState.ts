@@ -107,7 +107,7 @@ export function generateSerializedState(settings: PnpSettings): SerializedState 
     dependencyTreeRoots: settings.dependencyTreeRoots,
     enableTopLevelFallback: settings.enableTopLevelFallback || false,
     ignorePatternData: settings.ignorePattern || null,
-
+    zipImplementation: settings.zipImplementation,
     fallbackExclusionList: generateFallbackExclusionList(settings),
     fallbackPool: generateFallbackPoolData(settings),
     packageRegistryData: generatePackageRegistryData(settings),
