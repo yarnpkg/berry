@@ -11,8 +11,6 @@ import { ReadStream, WriteStream, constants } from 'fs';
 import { PassThrough } from 'stream';
 import zlib from 'zlib';
 
-// todo 
-// native nodefs is faster??
 
 const UNIX = 3
 
@@ -896,6 +894,10 @@ export class MiniZipFS extends BasePortableFakeFS {
 
   symlinkSync(target: PortablePath, p: PortablePath) {
     throw errors.EROFS(`symlink '${target}' -> '${p}'`);
+  }
+
+  getAllFiles() {
+    return Array.from(this.entries.keys());
   }
 
   readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
