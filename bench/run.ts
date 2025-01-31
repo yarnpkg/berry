@@ -12,10 +12,17 @@ import { PortablePath } from '@yarnpkg/fslib';
 const cwd = '/Users/vadymh/.yarn/berry/cache';
 const files = fs.readdirSync(cwd).filter(f => f.endsWith('.zip'))
 
-console.log('files count: ' + files.length)
+let totalSize = 0
+for (const f of files) {
+  const file = `${cwd}/${f}`;
+  const stats = fs.statSync(file)
+  totalSize += stats.size
+}
+
 
 const formatMemoryUsage = (data: number) => `${Math.round(data / 1024 / 1024 * 100) / 100} MB`;
 
+console.log('files count: ' + files.length, 'size', formatMemoryUsage(totalSize))
 
 
 
