@@ -5749,6 +5749,7 @@ __metadata:
     "@yarnpkg/types": "workspace:^"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^4.0.0-rc.2"
+    enhanced-resolve: "npm:^5.18.0"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     eslint: "npm:^8.57.0"
     jest: "npm:^29.2.1"
@@ -9438,6 +9439,16 @@ __metadata:
     graceful-fs: "npm:^4.2.4"
     tapable: "npm:^2.2.0"
   checksum: 10/180c3f2706f9117bf4dc7982e1df811dad83a8db075723f299245ef4488e0cad7e96859c5f0e410682d28a4ecd4da021ec7d06265f7e4eb6eed30c69ca5f7d3e
+  languageName: node
+  linkType: hard
+
+"enhanced-resolve@npm:^5.18.0":
+  version: 5.18.0
+  resolution: "enhanced-resolve@npm:5.18.0"
+  dependencies:
+    graceful-fs: "npm:^4.2.4"
+    tapable: "npm:^2.2.0"
+  checksum: 10/e88463ef97b68d40d0da0cd0c572e23f43dba0be622d6d44eae5cafed05f0c5dac43e463a83a86c4f70186d029357f82b56d9e1e47e8fc91dce3d6602f8bd6ce
   languageName: node
   linkType: hard
 

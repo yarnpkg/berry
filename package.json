@@ -20,6 +20,7 @@
     "@yarnpkg/minizip": "workspace:^",
     "@yarnpkg/sdks": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
+    "enhanced-resolve": "^5.18.0",
     "esbuild": "npm:esbuild-wasm@^0.23.0",
     "eslint": "^8.57.0",
     "jest": "^29.2.1",
