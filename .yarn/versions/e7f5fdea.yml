@@ -1,0 +1,7 @@
+releases:
+  "@yarnpkg/plugin-pack": patch
+declined:
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/cli"
