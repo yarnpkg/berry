@@ -1406,10 +1406,10 @@ export class Configuration {
       const rcPath = ppath.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
-        const content = await xfs.readFilePromise(rcPath, `utf8`);
-
         let data;
+        let content;
         try {
+          content = await xfs.readFilePromise(rcPath, `utf8`);
           data = parseSyml(content) as any;
         } catch (error) {
           let tip = ``;
