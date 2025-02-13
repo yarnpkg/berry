@@ -374,6 +374,12 @@
           "format": "uri-reference",
           "examples": ["./build/index.d.ts"]
         }
+        "exports": {
+          "title": "Replacement of the package's `exports` field, used in the published tarball over the main one.",
+          "type": "object",
+          "format": "mapping of string to object or string",
+          "examples": ["./build/index.js", { "import": "./build/index.mjs", "require": "./build/index.cjs" }]
+        }
       },
       "_margin": true
     },
