@@ -1406,15 +1406,15 @@ export class Configuration {
       const rcPath = ppath.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
-        const content = await xfs.readFilePromise(rcPath, `utf8`);
-
         let data;
+        let content;
         try {
+          content = await xfs.readFilePromise(rcPath, `utf8`);
           data = parseSyml(content) as any;
         } catch (error) {
           let tip = ``;
 
-          if (content.match(/^\s+(?!-)[^:]+\s+\S+/m))
+          if (content?.match(/^\s+(?!-)[^:]+\s+\S+/m))
             tip = ` (in particular, make sure you list the colons after each key name)`;
 
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
