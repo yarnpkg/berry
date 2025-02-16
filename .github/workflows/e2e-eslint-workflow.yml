@@ -10,6 +10,10 @@ on:
     - .github/workflows/e2e-eslint-workflow.yml
     - scripts/e2e-setup-ci.sh
 
+env:
+  # https://eslint.org/docs/latest/use/configure/configuration-files-deprecated
+  ESLINT_USE_FLAT_CONFIG: 'false'
+
 name: 'E2E ESLint'
 jobs:
   chore:
