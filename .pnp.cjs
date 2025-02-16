@@ -9568,6 +9568,7 @@ const RAW_RUNTIME_STATE =
           ["@types/prettier", "npm:1.19.0"],\
           ["@types/yarnpkg__fslib", null],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
+          ["globby", "npm:11.1.0"],\
           ["prettier", "npm:1.19.1"],\
           ["tslib", "npm:2.6.2"]\
         ],\
@@ -9584,6 +9585,7 @@ const RAW_RUNTIME_STATE =
           ["@types/emscripten", "npm:1.39.6"],\
           ["@types/prettier", "npm:1.19.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
+          ["globby", "npm:11.1.0"],\
           ["prettier", "npm:1.19.1"],\
           ["tslib", "npm:2.6.2"]\
         ],\

@@ -94,7 +94,7 @@ export class LibZipImpl implements ZipImpl {
     const size = (this.libzip.struct.statSize(stat) >>> 0);
     const mtime = (this.libzip.struct.statMtime(stat) >>> 0);
 
-    const crc = this.libzip.struct.statCrc(stat);
+    const crc = this.libzip.struct.statCrc(stat) >>> 0;
 
     return {size, mtime, crc};
   }
@@ -126,8 +126,6 @@ export class LibZipImpl implements ZipImpl {
           throw this.makeLibzipError(this.libzip.getError(this.zip));
         }
       }
-
-
       return newIndex;
     } catch (error) {
       this.libzip.source.free(lzSource);
@@ -148,7 +146,7 @@ export class LibZipImpl implements ZipImpl {
       throw this.makeLibzipError(this.libzip.getError(this.zip));
 
     const opsys = this.libzip.getValue(this.libzip.uint08S, `i8`) >>> 0;
-    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`);
+    const attributes = this.libzip.getValue(this.libzip.uint32S, `i32`) >>> 0;
     return [opsys, attributes];
   }
 

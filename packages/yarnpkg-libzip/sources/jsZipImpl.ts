@@ -1,7 +1,7 @@
-import {FakeFS, PortablePath}                                                                     from '@yarnpkg/fslib';
-import {constants}                                                                                from 'fs';
+import { FakeFS, PortablePath } from '@yarnpkg/fslib';
+import { constants } from 'fs';
 
-import {CompressionMethod, Stat, ZIP_UNIX, type CompressionData, type ZipImpl, type ZipImplInput} from './ZipFS';
+import { CompressionMethod, Stat, ZIP_UNIX, type CompressionData, type ZipImpl, type ZipImplInput } from './ZipFS';
 
 
 const SIGNATURE = {
@@ -22,13 +22,14 @@ export interface Entry {
   compressedSize: number;
   externalAttributes: number;
   mtime: number;
-  fileContentOffset: number;
+  localHeaderOffset: number;
 }
 
 export class JsZipImpl implements ZipImpl {
   fd: number;
   baseFs: FakeFS<PortablePath>;
   entries: Array<Entry>;
+
 
   constructor(opts: ZipImplInput) {
     if (`buffer` in opts)
@@ -39,12 +40,11 @@ export class JsZipImpl implements ZipImpl {
 
     this.baseFs = opts.baseFs;
     this.fd = this.baseFs.openSync(opts.path, `r`);
-    this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs);
+
+    this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs, opts.size);
   }
 
-  static readZipSync(fd: number, baseFs: FakeFS<PortablePath>): Array<Entry> {
-    const stats = baseFs.fstatSync(fd);
-    const fileSize = stats.size;
+  static readZipSync(fd: number, baseFs: FakeFS<PortablePath>, fileSize: number): Array<Entry> {
 
     if (fileSize < noCommentCDSize)
       throw new Error(`Invalid ZIP file: EOCD not found`);
@@ -94,17 +94,33 @@ export class JsZipImpl implements ZipImpl {
     const centralDirSize = cdBuffer.readUInt32LE(eocdOffset + 12);
     const centralDirOffset = cdBuffer.readUInt32LE(eocdOffset + 16);
 
+    if (totalEntries == 0xffff || centralDirSize == 0xffffffff || centralDirOffset == 0xffffffff) {
+      // strictly speaking, not correct, should find zip64 signatures. But chances are 0 for false positives.
+      throw new Error('Zip 64 is not supported');
+    }
+
     // Read central directory
     const centralDirBuffer = Buffer.alloc(centralDirSize);
-    baseFs.readSync(fd, centralDirBuffer, 0, centralDirBuffer.length, centralDirOffset);
+    if (baseFs.readSync(fd, centralDirBuffer, 0, centralDirBuffer.length, centralDirOffset) !== centralDirBuffer.length) {
+      throw new Error(`Invalid ZIP file: Central directory not found`);
+    }
 
     const entries: Array<Entry> = [];
     let offset = 0;
     let index = 0;
-    while (offset < centralDirBuffer.length && index < totalEntries) {
-      if (centralDirBuffer.readUInt32LE(offset) !== SIGNATURE.CENTRAL_DIRECTORY) break;
+    let sumCompressedSize = 0
+    while (index < totalEntries) {
+      if (offset + 46 > centralDirBuffer.length) {
+        throw new Error('Not a zip archive');
+      }
+      if (centralDirBuffer.readUInt32LE(offset) !== SIGNATURE.CENTRAL_DIRECTORY) {
+        throw new Error('Not a zip archive');
+      };
       const versionMadeBy = centralDirBuffer.readUInt16LE(offset + 4);
       const os = versionMadeBy >>> 8;
+      // we don't care about data descriptor because we dont read size and crc from local file header
+      // const flags = centralDirBuffer.readUInt16LE(offset + 8);
+      // const hasDataDescriptor = (flags & 0x8) !== 0;
       const compressionMethod = centralDirBuffer.readUInt16LE(offset + 10) as CompressionMethod;
       const crc = centralDirBuffer.readUInt32LE(offset + 16);
       const nameLength = centralDirBuffer.readUInt16LE(offset + 28);
@@ -112,7 +128,8 @@ export class JsZipImpl implements ZipImpl {
       const commentLength = centralDirBuffer.readUInt16LE(offset + 32);
       const localHeaderOffset = centralDirBuffer.readUInt32LE(offset + 42);
       const name = centralDirBuffer.toString(`utf8`, offset + 46, offset + 46 + nameLength);
-      const fileContentOffset = localHeaderOffset + 30 + nameLength + extraLength;
+
+      const compressedSize = centralDirBuffer.readUInt32LE(offset + 20)
       const externalAttributes = centralDirBuffer.readUInt32LE(offset + 38);
 
       entries.push({
@@ -123,15 +140,19 @@ export class JsZipImpl implements ZipImpl {
         compressionMethod,
         isSymbolicLink: os === ZIP_UNIX && ((externalAttributes >>> 16) & constants.S_IFMT) === constants.S_IFLNK,
         size: centralDirBuffer.readUInt32LE(offset + 24),
-        compressedSize: centralDirBuffer.readUInt32LE(offset + 20),
+        compressedSize,
         externalAttributes,
-        fileContentOffset,
+        localHeaderOffset,
       });
 
+      sumCompressedSize += compressedSize;
       index += 1;
       offset += 46 + nameLength + extraLength + commentLength;
     }
-
+    if (sumCompressedSize > fileSize) {
+      // fast check for archive bombs
+      throw new Error('Invalid zip file');
+    }
     return entries;
   }
 
@@ -175,9 +196,23 @@ export class JsZipImpl implements ZipImpl {
 
   getFileSource(index: number): { data: Buffer, compressionMethod: CompressionMethod } {
     const entry = this.entries[index];
+
+    const localHeaderBuf = Buffer.alloc(30);
+    this.baseFs.readSync(
+      this.fd,
+      localHeaderBuf,
+      0,
+      localHeaderBuf.length,
+      entry.localHeaderOffset,
+    );
+    let nameLength = localHeaderBuf.readUInt16LE(26);
+    let extraLength = localHeaderBuf.readUInt16LE(28);
+
     const buffer = Buffer.alloc(entry.compressedSize);
-    this.baseFs.readSync(this.fd, buffer, 0, entry.compressedSize, entry.fileContentOffset);
-    return {data: buffer, compressionMethod: entry.compressionMethod};
+    if (this.baseFs.readSync(this.fd, buffer, 0, entry.compressedSize, entry.localHeaderOffset + 30 + nameLength + extraLength) !== entry.compressedSize) {
+      throw new Error(`Invalid ZIP file`); 
+    };
+    return { data: buffer, compressionMethod: entry.compressionMethod };
   }
   discard(): void {
 
