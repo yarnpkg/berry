@@ -10,8 +10,7 @@ let fsPatched = false;
 let pnp: PnpApi;
 try {
   pnp = dynamicRequire(`pnpapi`);
-} catch (e) {
-}
+} catch {}
 
 export const patchFs = () => {
   if (pnp && !fsPatched) {

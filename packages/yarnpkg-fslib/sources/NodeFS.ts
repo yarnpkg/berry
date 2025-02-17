@@ -193,8 +193,8 @@ export class NodeFS extends BasePortableFakeFS {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async statPromise(p: PortablePath): Promise<Stats>;
-  async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await new Promise<BigIntStats | Stats>((resolve, reject) => {
       if (opts) {
@@ -246,8 +246,8 @@ export class NodeFS extends BasePortableFakeFS {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async lstatPromise(p: PortablePath): Promise<Stats>;
-  async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await new Promise<BigIntStats | Stats>((resolve, reject) => {
       if (opts) {
@@ -264,7 +264,7 @@ export class NodeFS extends BasePortableFakeFS {
   lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
   lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
   lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
   lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     if (opts) {
       return this.realFs.lstatSync(npath.fromPortablePath(p), opts);

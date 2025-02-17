@@ -170,7 +170,7 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
 export type SettingsDefinitionNoDefault =
   | MapSettingsDefinition
   | ShapeSettingsDefinition
-  | Omit<SimpleSettingsDefinition, 'default'>;
+  | Omit<SimpleSettingsDefinition, `default`>;
 
 export type SettingsDefinition =
   | MapSettingsDefinition
@@ -711,7 +711,7 @@ export interface ConfigurationValueMap {
   }>>;
 }
 
-export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
+export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap[`packageExtensions`]>>;
 
 export type PackageExtensions = Map<IdentHash, Array<[string, Array<PackageExtension>]>>;
 
@@ -726,7 +726,7 @@ type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
 };
 
 type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
-  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
+  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, `default`>})
   : T extends miscUtils.ToMapValue<infer U>
     ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
     : SimpleDefinitionForType<T>;
@@ -1411,7 +1411,7 @@ export class Configuration {
         try {
           content = await xfs.readFilePromise(rcPath, `utf8`);
           data = parseSyml(content) as any;
-        } catch (error) {
+        } catch {
           let tip = ``;
 
           if (content?.match(/^\s+(?!-)[^:]+\s+\S+/m))

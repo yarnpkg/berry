@@ -11,7 +11,7 @@ try {
   } else {
     info = `Binary: ${execSync(`which yarn`).toString().trim()} (${execSync(`yarn --version`).toString().trim()})`;
   }
-} catch (error) {
+} catch {
   info = null;
 }
 

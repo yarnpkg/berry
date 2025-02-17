@@ -240,7 +240,7 @@ export async function resolveUrl(url: string, configuration: Configuration) {
   const tryResolve = (protocol: TreeishProtocols | string | null, request: string): string | null => {
     try {
       return resolve(protocol, request);
-    } catch (err) {
+    } catch {
       return null;
     }
   };
@@ -365,7 +365,7 @@ export async function fetchChangedWorkspaces({ref, project}: {ref: string | true
   }));
 }
 
-async function git(message: string, args: Array<string>, opts: Omit<execUtils.ExecvpOptions, 'strict'>, {configuration, normalizedRepoUrl}: {configuration: Configuration, normalizedRepoUrl: string}) {
+async function git(message: string, args: Array<string>, opts: Omit<execUtils.ExecvpOptions, `strict`>, {configuration, normalizedRepoUrl}: {configuration: Configuration, normalizedRepoUrl: string}) {
   try {
     return await execUtils.execvp(`git`, args, {
       ...opts,

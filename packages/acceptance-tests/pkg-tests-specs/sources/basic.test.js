@@ -144,7 +144,7 @@ describe(`Basic tests`, () => {
 
             await expect(
               source(
-                // eslint-disable-next-line
+
                 `require('dep-loop-entry') === require('dep-loop-entry').dependencies['dep-loop-exit'].dependencies['dep-loop-entry']`,
               ),
             );

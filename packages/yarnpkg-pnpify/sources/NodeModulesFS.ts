@@ -116,7 +116,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs;
   }
 
-  private resolvePath(p: PortablePath): ResolvedPath & { fullOriginalPath: PortablePath } {
+  private resolvePath(p: PortablePath): ResolvedPath & {fullOriginalPath: PortablePath} {
     if (typeof p === `number`) {
       return {resolvedPath: p, fullOriginalPath: p};
     } else {
@@ -162,7 +162,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       let stat;
       try {
         stat = this.baseFs.lstatSync(pnpPath.resolvedPath, statOptions);
-      } catch (e) {}
+      } catch {}
 
       if (stat) {
         return onSymlink(stat, this.pathUtils.relative(this.pathUtils.dirname(pnpPath.fullOriginalPath), pnpPath.resolvedPath));
@@ -201,9 +201,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
-      } catch (e) {
-        // Ignore errors
-      }
+      } catch {}
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
 
       return opendir(this, p, entries);
@@ -218,9 +216,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
-      } catch (e) {
-        // Ignore errors
-      }
+      } catch {}
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
 
       return opendir(this, p, entries);
@@ -339,8 +335,8 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   async lstatPromise(p: PortablePath): Promise<Stats>;
   async lstatPromise(p: PortablePath, opts: {bigint: true}): Promise<BigIntStats>;
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }): Promise<BigIntStats | Stats>;
-  async lstatPromise(p: PortablePath, opts?: { bigint: boolean }) {
+  async lstatPromise(p: PortablePath, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
+  async lstatPromise(p: PortablePath, opts?: {bigint: boolean}) {
     return this.resolveLink({
       p,
       op: `lstat`,
@@ -352,8 +348,8 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
 
   lstatSync(p: PortablePath): Stats;
   lstatSync(p: PortablePath, opts: {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats;
-  lstatSync(p: PortablePath, opts?: { bigint: boolean }): BigIntStats | Stats {
+  lstatSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats;
+  lstatSync(p: PortablePath, opts?: {bigint: boolean}): BigIntStats | Stats {
     return this.resolveLink({
       p,
       op: `lstat`,
@@ -528,9 +524,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = await this.baseFs.readdirPromise(pnpPath.resolvedPath);
-      } catch (e) {
-        // Ignore errors
-      }
+      } catch {}
 
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
       if (!opts?.withFileTypes)
@@ -566,9 +560,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
       let fsDirList: Array<Filename> = [];
       try {
         fsDirList = this.baseFs.readdirSync(pnpPath.resolvedPath);
-      } catch (e) {
-        // Ignore errors
-      }
+      } catch {}
 
       const entries = Array.from(pnpPath.dirList || [`node_modules` as Filename]).concat(fsDirList).sort();
       if (!opts?.withFileTypes)

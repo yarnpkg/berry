@@ -261,7 +261,7 @@ const buildWorkspaceMap = (pnp: PnpApi): WorkspaceMap => {
  *
  * @returns package tree, packages info and locators
  */
-const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): { packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean } => {
+const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): {packageTree: HoisterTree, hoistingLimits: Map<LocatorKey, Set<string>>, errors: NodeModulesTreeErrors, preserveSymlinksRequired: boolean} => {
   const errors: NodeModulesTreeErrors = [];
   let preserveSymlinksRequired = false;
 
@@ -498,7 +498,7 @@ const populateNodeModulesTree = (pnp: PnpApi, hoistedTree: HoisterResult, option
     };
   };
 
-  const getPackageName = (identName: string): { name: Filename, scope: Filename | null } => {
+  const getPackageName = (identName: string): {name: Filename, scope: Filename | null} => {
     const [nameOrScope, name] = identName.split(`/`);
 
     return name ? {

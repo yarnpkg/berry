@@ -195,14 +195,14 @@ export type GenerateIntegrationWrapper = (pnpApi: PnpApi, target: PortablePath, 
 export type GenerateDefaultWrapper = (pnpApi: PnpApi, target: PortablePath) => Promise<void>;
 
 export type SupportedSdk =
-  | '@astrojs/language-server'
-  | 'eslint'
-  | 'prettier'
-  | 'relay-compiler'
-  | 'typescript-language-server'
-  | 'typescript'
-  | 'svelte-language-server'
-  | 'flow-bin';
+  | `@astrojs/language-server`
+  | `eslint`
+  | `prettier`
+  | `relay-compiler`
+  | `typescript-language-server`
+  | `typescript`
+  | `svelte-language-server`
+  | `flow-bin`;
 
 export type BaseSdks = Array<[
   SupportedSdk,
