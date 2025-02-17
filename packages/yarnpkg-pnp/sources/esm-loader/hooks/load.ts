@@ -11,14 +11,14 @@ export async function load(
   context: {
     format: string | null | undefined;
     importAssertions?: {
-      type?: 'json';
+      type?: `json`;
     };
     importAttributes?: {
-      type?: 'json';
+      type?: `json`;
     };
   },
   nextLoad: typeof load,
-): Promise<{ format: string, source?: string, shortCircuit: boolean }> {
+): Promise<{format: string, source?: string, shortCircuit: boolean}> {
   const url = loaderUtils.tryParseURL(urlString);
   if (url?.protocol !== `file:`)
     return nextLoad(urlString, context, nextLoad);
@@ -32,14 +32,14 @@ export async function load(
   if (format === `json`) {
     if (SUPPORTS_IMPORT_ATTRIBUTES_ONLY) {
       if (context.importAttributes?.type !== `json`) {
-        const err = new TypeError(`[ERR_IMPORT_ATTRIBUTE_MISSING]: Module "${urlString}" needs an import attribute of "type: json"`) as TypeError & { code: string };
+        const err = new TypeError(`[ERR_IMPORT_ATTRIBUTE_MISSING]: Module "${urlString}" needs an import attribute of "type: json"`) as TypeError & {code: string};
         err.code = `ERR_IMPORT_ATTRIBUTE_MISSING`;
         throw err;
       }
     } else {
       const type = `importAttributes` in context ? context.importAttributes?.type : context.importAssertions?.type;
       if (type !== `json`) {
-        const err = new TypeError(`[ERR_IMPORT_ASSERTION_TYPE_MISSING]: Module "${urlString}" needs an import ${SUPPORTS_IMPORT_ATTRIBUTES ? `attribute` : `assertion`} of type "json"`) as TypeError & { code: string };
+        const err = new TypeError(`[ERR_IMPORT_ASSERTION_TYPE_MISSING]: Module "${urlString}" needs an import ${SUPPORTS_IMPORT_ATTRIBUTES ? `attribute` : `assertion`} of type "json"`) as TypeError & {code: string};
         err.code = `ERR_IMPORT_ASSERTION_TYPE_MISSING`;
         throw err;
       }

@@ -26,7 +26,7 @@ export const mtme = (
 
   if (typeof fn !== `function`) {
     throw new Error(
-      // eslint-disable-next-line
+
       `Invalid test function (got ${typeof fn}) - you probably put the closing parenthesis of the "makeTemporaryEnv" utility at the wrong place`,
     );
   }

@@ -37,7 +37,7 @@ module.exports = function (_, opts) {
     let manifestPath;
     try {
       manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {considerBuiltins: false});
-    } catch (err) {
+    } catch {
       return null;
     }
 

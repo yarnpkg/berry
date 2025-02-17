@@ -319,7 +319,7 @@ const packageServerUrls: {
   https: Promise<string> | null;
 } = {http: null, https: null};
 
-export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
+export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls} = {type: `http`}): Promise<string> => {
   const serverUrl = packageServerUrls[type];
   if (serverUrl !== null)
     return serverUrl;
@@ -474,7 +474,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         let body;
         try {
           body = JSON.parse(rawData);
-        } catch (e) {
+        } catch {
           return processError(response, 401, `Unauthorized`);
         }
 
@@ -507,7 +507,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         let body;
         try {
           body = JSON.parse(rawData);
-        } catch (e) {
+        } catch {
           return processError(response, 401, `Invalid`);
         }
 
@@ -537,7 +537,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         let body;
         try {
           body = JSON.parse(rawData);
-        } catch (e) {
+        } catch {
           return processError(response, 401, `Invalid`);
         }
 
@@ -774,7 +774,6 @@ export const generatePkgDriver = ({
 
       if (typeof fn !== `function`) {
         throw new Error(
-          // eslint-disable-next-line
           `Invalid test function (got ${typeof fn}) - you probably put the closing parenthesis of the "makeTemporaryEnv" utility at the wrong place`,
         );
       }
@@ -919,7 +918,7 @@ export const getHttpsCertificates = async () => {
   if (httpsCertificates)
     return httpsCertificates;
 
-  const createCSR = promisify<pem.CSRCreationOptions, { csr: string, clientKey: string }>(pem.createCSR);
+  const createCSR = promisify<pem.CSRCreationOptions, {csr: string, clientKey: string}>(pem.createCSR);
   const createCertificate = promisify<pem.CertificateCreationOptions, pem.CertificateCreationResult>(pem.createCertificate);
 
   const {csr, clientKey} = await createCSR({commonName: `yarn`});

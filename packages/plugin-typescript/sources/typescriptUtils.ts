@@ -26,7 +26,7 @@ export const hasDefinitelyTyped = async (
     const packageInfo = await index.getObject<AlgoliaObj>(stringifiedIdent, {attributesToRetrieve: [`types`]});
 
     return packageInfo.types?.ts === `definitely-typed`;
-  } catch (_e) {
+  } catch {
     return false;
   }
 };

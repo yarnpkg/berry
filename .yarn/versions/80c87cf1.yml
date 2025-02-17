@@ -1,0 +1,30 @@
+releases:
+  "@yarnpkg/eslint-config": major
+
+declined:
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-git"
+  - "@yarnpkg/plugin-github"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/plugin-workspace-tools"
+  - vscode-zipfs
+  - "@yarnpkg/core"
+  - "@yarnpkg/extensions"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/libui"
+  - "@yarnpkg/libzip"
+  - "@yarnpkg/nm"
+  - "@yarnpkg/parsers"
+  - "@yarnpkg/pnp"
+  - "@yarnpkg/pnpify"
+  - "@yarnpkg/sdks"
+  - "@yarnpkg/shell"

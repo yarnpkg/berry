@@ -52,7 +52,7 @@ export class NpmSemverFetcher implements Fetcher {
         configuration: opts.project.configuration,
         ident: locator,
       });
-    } catch (error) {
+    } catch {
       // The npm registry doesn't always support %2f when fetching the package tarballs 🤡
       // OK: https://registry.yarnpkg.com/@emotion%2fbabel-preset-css-prop/-/babel-preset-css-prop-10.0.7.tgz
       // KO: https://registry.yarnpkg.com/@xtuc%2fieee754/-/ieee754-1.2.0.tgz

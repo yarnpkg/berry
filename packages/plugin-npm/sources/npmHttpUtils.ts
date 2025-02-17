@@ -66,7 +66,7 @@ export function getIdentUrl(ident: Ident) {
   }
 }
 
-export type GetPackageMetadataOptions = Omit<Options, 'ident' | 'configuration'> & {
+export type GetPackageMetadataOptions = Omit<Options, `ident` | `configuration`> & {
   cache?: Cache;
   project: Project;
 
@@ -431,7 +431,7 @@ function normalizeRegistry(configuration: Configuration, {ident, registry}: Part
   return npmConfigUtils.normalizeRegistry(registry);
 }
 
-async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions['ident']}) {
+async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions[`ident`]}) {
   const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
 
@@ -555,7 +555,7 @@ function isOtpError(error: any) {
   try {
     const authMethods = error.originalError?.response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
     return authMethods.includes(`otp`);
-  } catch (e) {
+  } catch {
     return false;
   }
 }

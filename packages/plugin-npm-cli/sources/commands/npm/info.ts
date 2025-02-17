@@ -17,7 +17,7 @@ declare module '@npm/types' {
 /**
  * The combined type of `Packument` (without the `versions` field) and `PackumentVersion`
  */
-type CombinedPackument = Omit<npm.Packument, 'versions'> & npm.PackumentVersion;
+type CombinedPackument = Omit<npm.Packument, `versions`> & npm.PackumentVersion;
 
 /**
  * `CombinedPackument` with a `versions` field that is an array of tags
