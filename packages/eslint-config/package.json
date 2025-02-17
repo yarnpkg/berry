@@ -8,8 +8,8 @@
     "./react": "./react.js"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "eslint-plugin-arca": "^0.16.0",
     "eslint-plugin-react": "^7.34.1",
     "globals": "^15.1.0"
