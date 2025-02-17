@@ -16,7 +16,7 @@ export default class PackCommand extends BaseCommand {
     details: `
       This command will turn the active workspace into a compressed archive suitable for publishing. The archive will by default be stored at the root of the workspace (\`package.tgz\`).
 
-      If the \`-o,---out\` is set the archive will be created at the specified path. The \`%s\` and \`%v\` variables can be used within the path and will be respectively replaced by the package name and version.
+      If the \`-o,--out\` is set the archive will be created at the specified path. The \`%s\` and \`%v\` variables can be used within the path and will be respectively replaced by the package name and version.
     `,
     examples: [[
       `Create an archive from the active workspace`,

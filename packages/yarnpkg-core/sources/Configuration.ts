@@ -5,7 +5,7 @@ import camelcase                                                                
 import {isCI, isPR, GITHUB_ACTIONS}                                                                              from 'ci-info';
 import {UsageError}                                                                                              from 'clipanion';
 import {parse as parseDotEnv}                                                                                    from 'dotenv';
-import {builtinModules}                                                                                          from 'module';
+import {isBuiltin}                                                                                               from 'module';
 import pLimit, {Limit}                                                                                           from 'p-limit';
 import {PassThrough, Writable}                                                                                   from 'stream';
 import {WriteStream}                                                                                             from 'tty';
@@ -566,6 +566,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     description: `If true, the cache is reputed immutable and actions that would modify it will throw`,
     type: SettingsType.BOOLEAN,
     default: false,
+  },
+  enableCacheClean: {
+    description: `If false, disallows the \`cache clean\` command`,
+    type: SettingsType.BOOLEAN,
+    default: true,
   },
   checksumBehavior: {
     description: `Enumeration defining what to do when a checksum doesn't match expectations`,
@@ -1265,8 +1270,7 @@ export class Configuration {
     const thirdPartyPlugins = new Map<string, Plugin>([]);
     if (pluginConfiguration !== null) {
       const requireEntries = new Map();
-      for (const request of builtinModules)
-        requireEntries.set(request, () => miscUtils.dynamicRequire(request));
+
       for (const [request, embedModule] of pluginConfiguration.modules)
         requireEntries.set(request, () => embedModule);
 
@@ -1284,6 +1288,9 @@ export class Configuration {
 
         const pluginRequireEntries = new Map(requireEntries);
         const pluginRequire = (request: string) => {
+          if (isBuiltin(request))
+            return miscUtils.dynamicRequire(request);
+
           if (pluginRequireEntries.has(request)) {
             return pluginRequireEntries.get(request)();
           } else {
@@ -1399,15 +1406,15 @@ export class Configuration {
       const rcPath = ppath.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
-        const content = await xfs.readFilePromise(rcPath, `utf8`);
-
         let data;
+        let content;
         try {
+          content = await xfs.readFilePromise(rcPath, `utf8`);
           data = parseSyml(content) as any;
         } catch (error) {
           let tip = ``;
 
-          if (content.match(/^\s+(?!-)[^:]+\s+\S+/m))
+          if (content?.match(/^\s+(?!-)[^:]+\s+\S+/m))
             tip = ` (in particular, make sure you list the colons after each key name)`;
 
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);

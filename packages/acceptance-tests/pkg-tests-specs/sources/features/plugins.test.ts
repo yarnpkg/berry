@@ -8,6 +8,7 @@ import {mockPluginServer}         from './plugins.utility';
 const COMMANDS_PLUGIN = (name: string, {async = false, printOnBoot = false, thirdParty = false} = {}) => `
 const factory = ${async ? `async` : ``} r => {
   const {Command} = r('clipanion');
+  const path = r('node:path');
 
   if (${printOnBoot})
     console.log('Booting ${name.toUpperCase()}');
@@ -20,6 +21,14 @@ const factory = ${async ? `async` : ``} r => {
 
           async execute() {
             this.context.stdout.write('Executing ${name.toUpperCase()}\\n');
+          }
+        },
+
+        class MyCommandPath extends Command {
+          static paths = [['${name}', 'path']];
+
+          async execute() {
+            this.context.stdout.write(path.posix.join('a', 'b') + '\\n');
           }
         },
       ],
@@ -74,6 +83,19 @@ describe(`Features`, () => {
 
       await expect(run(`node`, `-e`, ``)).resolves.toMatchObject({
         stdout: `Booting A\nBooting A\n`,
+      });
+    }));
+
+    test(`it should support plugins using builtin modules`, makeTemporaryEnv({
+    }, async ({path, run, source}) => {
+      await xfs.writeFilePromise(`${path}/plugin-a.js` as PortablePath, COMMANDS_PLUGIN(`a`));
+
+      await xfs.writeFilePromise(`${path}/.yarnrc.yml` as PortablePath, stringifySyml({
+        plugins: [`./plugin-a.js`],
+      }));
+
+      await expect(run(`a`, `path`)).resolves.toMatchObject({
+        stdout: `a/b\n`,
       });
     }));
 

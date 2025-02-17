@@ -27,11 +27,9 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn dlx create-react-app my-cra && cd my-cra
+        yarn create react-app my-cra && cd my-cra
 
-        # TODO: Remove when create-react-app fixes their ESLint setup
-        yarn add -D eslint-config-react-app eslint
+        yarn add @babel/preset-env
 
-        yarn dlx -p @storybook/cli@next sb init --yes
+        yarn dlx storybook@latest init --yes --no-dev
         yarn build-storybook
-

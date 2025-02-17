@@ -995,4 +995,11 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       resolve: `^1.22.8`,
     },
   }],
+  // https://github.com/iamhosseindhv/notistack/issues/561
+  // https://github.com/iamhosseindhv/notistack/pull/562
+  [`notistack@^3.0.0`, {
+    dependencies: {
+      csstype: `^3.0.10`,
+    },
+  }],
 ];
