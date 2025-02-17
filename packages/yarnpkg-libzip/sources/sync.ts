@@ -1,4 +1,5 @@
 import {setFactory, getInstance} from './instance';
+import { LibZipImpl } from './libzipImpl';
 import createModule              from './libzipSync';
 import {makeInterface}           from './makeInterface';
 
@@ -18,3 +19,5 @@ export async function getLibzipPromise() {
 }
 
 export type {Libzip} from './makeInterface';
+export {JsZipImpl} from './jsZipImpl';
+export {LibZipImpl} from './libzipImpl' 
