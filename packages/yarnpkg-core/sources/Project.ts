@@ -1016,9 +1016,9 @@ export class Project {
     const volatileDescriptors = new Set(this.resolutionAliases.values());
     const optionalBuilds = new Set(allPackages.keys());
     const accessibleLocators = new Set<LocatorHash>();
-    const peerRequirements: Project['peerRequirements'] = new Map();
-    const peerWarnings: Project['peerWarnings'] = [];
-    const peerRequirementNodes: Project['peerRequirementNodes'] = new Map();
+    const peerRequirements: Project[`peerRequirements`] = new Map();
+    const peerWarnings: Project[`peerWarnings`] = [];
+    const peerRequirementNodes: Project[`peerRequirementNodes`] = new Map();
 
     applyVirtualResolutionMutations({
       project: this,
@@ -2017,7 +2017,7 @@ export class Project {
     let currentContent = ``;
     try {
       currentContent = await xfs.readFilePromise(lockfilePath, `utf8`);
-    } catch (error) {
+    } catch {
       // ignore errors, no big deal
     }
 
@@ -2181,9 +2181,9 @@ function applyVirtualResolutionMutations({
 
   accessibleLocators?: Set<LocatorHash>;
   optionalBuilds?: Set<LocatorHash>;
-  peerRequirements?: Project['peerRequirements'];
-  peerWarnings?: Project['peerWarnings'];
-  peerRequirementNodes?: Project['peerRequirementNodes'];
+  peerRequirements?: Project[`peerRequirements`];
+  peerWarnings?: Project[`peerWarnings`];
+  peerRequirementNodes?: Project[`peerRequirementNodes`];
   volatileDescriptors?: Set<DescriptorHash>;
 }) {
   const virtualStack = new Map<LocatorHash, number>();
@@ -2223,6 +2223,7 @@ function applyVirtualResolutionMutations({
     xfs.writeFileSync(logFile, content);
 
     xfs.detachTemp(logDir);
+
     throw new ReportError(MessageName.STACK_OVERFLOW_RESOLUTION, `Encountered a stack overflow when resolving peer dependencies; cf ${npath.fromPortablePath(logFile)}`);
   };
 

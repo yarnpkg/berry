@@ -157,7 +157,7 @@ function resolveToVcs(cwd: PortablePath, path: PortablePath | null) {
     let stat;
     try {
       stat = xfs.statSync(path);
-    } catch (error) {
+    } catch {
       // ignore errors
       break;
     }

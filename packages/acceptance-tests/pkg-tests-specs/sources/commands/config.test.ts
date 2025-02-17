@@ -69,7 +69,7 @@ function cleanupJsonOutput(output: string, path: PortablePath, homePath: Portabl
   let outputObject;
   try {
     outputObject = JSON.parse(output);
-  } catch (e) {
+  } catch {
     return cleanupPlainOutput(output, path, homePath);
   }
 

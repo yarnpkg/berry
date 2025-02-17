@@ -39,7 +39,7 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
   let semverVersion: semver.SemVer;
   try {
     semverVersion = new semver.SemVer(version, semverRange);
-  } catch (err) {
+  } catch {
     return false;
   }
 

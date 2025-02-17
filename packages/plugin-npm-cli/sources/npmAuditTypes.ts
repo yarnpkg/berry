@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import {Locator} from '@yarnpkg/core';
 
 export enum Environment {

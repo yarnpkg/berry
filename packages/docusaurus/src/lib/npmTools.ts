@@ -61,7 +61,7 @@ export type PackageListingError =
 
 export type WithErrors<T, TError extends {type: string}> =
   | (T & {error?: null})
-  | { error: TError };
+  | {error: TError};
 
 export type PackageInfoQuery = ReturnType<typeof usePackageInfo>;
 export type ReleaseInfoQuery = ReturnType<typeof useReleaseInfo>;

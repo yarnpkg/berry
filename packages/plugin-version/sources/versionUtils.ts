@@ -300,7 +300,7 @@ export function getUndecidedWorkspaces(versionFile: VersionFile) {
   return undecided;
 }
 
-export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, 'project' | 'releases'>, {include = new Set()}: {include?: Set<Workspace>} = {}) {
+export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, `project` | `releases`>, {include = new Set()}: {include?: Set<Workspace>} = {}) {
   const undecided = [];
 
   const bumpedWorkspaces = new Map(miscUtils.mapAndFilter([...versionFile.releases], ([workspace, decision]) => {

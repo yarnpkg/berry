@@ -107,7 +107,7 @@ export const Driver = {
     return await stageUtils.findVcsRoot(cwd, {marker: `.git` as Filename});
   },
 
-  async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>, opts?: { staged?: boolean }) {
+  async filterChanges(cwd: PortablePath, yarnRoots: Set<PortablePath>, yarnNames: Set<string>, opts?: {staged?: boolean}) {
     const {stdout} = await execUtils.execvp(`git`, [`status`, `-s`], {cwd, strict: true});
     const lines = stdout.toString().split(/\n/g);
 

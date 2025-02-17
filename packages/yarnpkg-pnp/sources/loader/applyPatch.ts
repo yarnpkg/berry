@@ -263,7 +263,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
         } else {
           resolution = originalFindPath.call(Module, request, [path], isMain);
         }
-      } catch (error) {
+      } catch {
         continue;
       }
 

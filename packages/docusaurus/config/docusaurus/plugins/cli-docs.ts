@@ -18,7 +18,7 @@ const loader = jiti(__filename, {
   requireCache: false,
 });
 
-const binaries: Array<{ name: string, getCli: () => Promise<Cli<BaseContext>>, watch: Array<string> }> = [
+const binaries: Array<{name: string, getCli: () => Promise<Cli<BaseContext>>, watch: Array<string>}> = [
   {
     name: `@yarnpkg/cli`,
     getCli: async () => {

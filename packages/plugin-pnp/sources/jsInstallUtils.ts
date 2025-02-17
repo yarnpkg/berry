@@ -6,7 +6,7 @@ export function checkManifestCompatibility(pkg: Package) {
 }
 
 export type ExtractBuildScriptDataRequirements = {
-  manifest: Pick<Manifest, 'scripts'>;
+  manifest: Pick<Manifest, `scripts`>;
   misc: {
     hasBindingGyp: boolean;
   };

@@ -424,7 +424,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           return;
         }
 
-        const results: Array<{ workspace: Workspace, exitCode: number }> = await Promise.all(commandPromises);
+        const results: Array<{workspace: Workspace, exitCode: number}> = await Promise.all(commandPromises);
         results.forEach(({workspace, exitCode}) => {
           if (exitCode !== 0) {
             report.reportError(MessageName.UNNAMED, `The command failed in workspace ${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} with exit code ${exitCode}`);

@@ -23,7 +23,7 @@ export type Assertions = {
   fail?: Array<[/*request: */string, {message: string, code: string, pnpCode?: string}]>;
 };
 
-export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<Manifest, 'name'>, files: Array<string>, {pass, fail}: Assertions) {
+export function makeTemporaryExportsEnv(testPackageName: string, manifest: Omit<Manifest, `name`>, files: Array<string>, {pass, fail}: Assertions) {
   return makeTemporaryEnv({
     dependencies: {
       [testPackageName]: `file:./${testPackageName}`,

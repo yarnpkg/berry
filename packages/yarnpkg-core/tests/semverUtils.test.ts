@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-properties */
 import semver           from 'semver';
 
 import * as semverUtils from '../sources/semverUtils';

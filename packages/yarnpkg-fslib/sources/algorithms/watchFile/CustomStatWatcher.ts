@@ -23,7 +23,7 @@ export function assertStatus<T extends Status>(current: Status, expected: T): as
 }
 
 // `bigint` can only be set class-wide, because that's what Node does
-export type ListenerOptions = Omit<Required<WatchFileOptions>, 'bigint'>;
+export type ListenerOptions = Omit<Required<WatchFileOptions>, `bigint`>;
 
 export type CustomStatWatcherOptions = {
   bigint?: boolean;
@@ -96,7 +96,7 @@ export class CustomStatWatcher<P extends Path> extends EventEmitter implements S
   stat() {
     try {
       return this.fakeFs.statSync(this.path, {bigint: this.bigint});
-    } catch (error) {
+    } catch {
       // From observation, all errors seem to be mostly ignored by Node.
       // Checked with ENOENT, ENOTDIR, EPERM
       const statInstance = this.bigint
