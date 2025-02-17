@@ -14,7 +14,8 @@
     "@typescript-eslint/parser": "^8.24.0",
     "eslint-plugin-arca": "^0.16.0",
     "eslint-plugin-react": "^7.37.4",
-    "globals": "^15.15.0"
+    "globals": "^15.15.0",
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "eslint": "*",
@@ -34,7 +35,8 @@
     "node": ">=18.12.0"
   },
   "devDependencies": {
-    "eslint": "^9.20.1"
+    "eslint": "^9.20.1",
+    "typescript": "^5.5.2"
   },
   "stableVersion": "2.1.0"
 }

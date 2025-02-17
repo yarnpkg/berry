@@ -5731,6 +5731,8 @@ __metadata:
     eslint-plugin-arca: "npm:^0.16.0"
     eslint-plugin-react: "npm:^7.37.4"
     globals: "npm:^15.15.0"
+    tslib: "npm:^2.4.0"
+    typescript: "npm:^5.5.2"
   peerDependencies:
     eslint: "*"
     typescript: "*"
