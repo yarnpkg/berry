@@ -4,7 +4,7 @@ import useDocusaurusContext                                       from '@docusau
 import {CodeIcon, FileDirectoryIcon}                              from '@primer/octicons-react';
 import Layout                                                     from '@theme/Layout';
 import clsx                                                       from 'clsx';
-import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch-hooks-web';
+import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch';
 import Skeleton                                                   from 'react-loading-skeleton';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -61,9 +61,7 @@ function useHitsWithDefaults(query: string): Array<any> {
   const [defaults, setDefaults] = useState<Array<any> | null>(null);
 
   useEffect(() => {
-    searchClient.customRequest({method: `POST`, path: `/1/indexes/*/objects`}, {
-      data: {requests: defaultRequests},
-    }).then(({results}: any) => {
+    searchClient.getObjects({requests: defaultRequests}).then(({results}: any) => {
       setDefaults(results);
     });
   }, []);

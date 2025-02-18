@@ -201,7 +201,7 @@ export default class SearchCommand extends BaseCommand {
       const fetchNextPageHits = async () => {
         const res = await search(query, page + 1);
 
-        if (res.query === query && res.page - 1 === page) {
+        if (res.query === query && res.page !== undefined && res.page - 1 === page) {
           setPage(res.page);
           setHits([...hits, ...res.hits]);
         }

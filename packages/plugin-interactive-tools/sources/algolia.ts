@@ -1,4 +1,4 @@
-import algoliasearch from 'algoliasearch';
+import {algoliasearch} from 'algoliasearch';
 
 const algolia = {
   appId: `OFCNCOG2CU`,
@@ -6,9 +6,7 @@ const algolia = {
   indexName: `npm-search`,
 };
 
-const client = algoliasearch(algolia.appId, algolia.apiKey).initIndex(
-  algolia.indexName,
-);
+const client = algoliasearch(algolia.appId, algolia.apiKey);
 
 export interface AlgoliaPackage {
   objectID: string;
@@ -34,9 +32,10 @@ export const search = async (
   query: string,
   page: number = 0,
 ) => {
-  const res = await client.search<AlgoliaPackage>(
-    query,
-    {
+  const res = await client.searchSingleIndex<AlgoliaPackage>({
+    indexName: algolia.indexName,
+    searchParams: {
+      query,
       analyticsTags: [`yarn-plugin-interactive-tools`],
       attributesToRetrieve: [
         `name`,
@@ -47,7 +46,8 @@ export const search = async (
       ],
       page,
       hitsPerPage: 10,
-    });
+    },
+  });
 
   return res;
 };

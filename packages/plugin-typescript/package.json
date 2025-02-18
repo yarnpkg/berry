@@ -10,7 +10,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/plugin-pack": "workspace:^",
-    "algoliasearch": "^4.2.0",
+    "algoliasearch": "^5.19.0",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
@@ -20,7 +20,7 @@
     "@yarnpkg/plugin-essentials": "workspace:^"
   },
   "devDependencies": {
-    "@algolia/requester-common": "4.0.0-beta.14",
+    "@algolia/client-common": "^5.19.0",
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
