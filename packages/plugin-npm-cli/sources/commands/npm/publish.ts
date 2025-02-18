@@ -93,6 +93,11 @@ export default class NpmPublishCommand extends BaseCommand {
       await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
 
       await packUtils.prepareForPack(workspace, {report}, async () => {
+        if (workspace.manifest.name === null || workspace.manifest.version === null)
+          throw new UsageError(`Workspaces must have valid names and versions to be published on an external registry`);
+
+        const ident = workspace.manifest.name;
+
         const files = await packUtils.genPackList(workspace);
 
         for (const file of files)
