@@ -312,7 +312,7 @@ To give you an idea, we've built a [typescript plugin](https://github.com/yarnpk
 
 One very common piece of feedback we got regarding Yarn 1 was about our configuration pipeline. When Yarn was released we tried to be as compatible with npm as possible, which prompted us to for example try to read the npm configuration files etc. This made it fairly difficult for our users to understand where settings should be configured.
 
-```yml
+```yaml
 initScope: yarnpkg
 npmPublishAccess: public
 yarnPath: scripts/run-yarn.js
@@ -328,7 +328,7 @@ Packages aren't allowed to require other packages unless they actually list them
 // Error: Something that got detected as your top-level application
 // (because it doesn't seem to belong to any package) tried to access
 // a package that is not declared in your dependencies
-// 
+//
 // Required package: not-a-dependency (via "not-a-dependency")
 // Required by: /Users/mael/my-app/
 require(`not-a-dependency`);
