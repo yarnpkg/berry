@@ -164,6 +164,7 @@ export default class UpCommand extends BaseCommand {
     const fixed = this.fixed;
     const interactive = configuration.isInteractive({
       interactive: this.interactive,
+      stdin: this.context.stdin,
       stdout: this.context.stdout,
     });
 
