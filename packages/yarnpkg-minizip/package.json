@@ -1,0 +1,50 @@
+{
+  "name": "@yarnpkg/minizip",
+  "version": "3.1.0",
+  "license": "BSD-2-Clause",
+  "main": "./sources/index.ts",
+  "exports": {
+    ".": {
+      "default": "./sources/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "postpack": "rm -rf lib",
+    "prepack": "run build:compile \"$(pwd)\"",
+    "release": "yarn npm publish"
+  },
+  "publishConfig": {
+    "main": "./lib/index.js",
+    "browser": "./lib/index.js",
+    "exports": {
+      ".": {
+        "default": "./lib/index.js"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "/lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "directory": "packages/yarnpkg-minizip"
+  },
+  "devDependencies": {
+    "@types/prettier": "1.19.0",
+    "prettier": "^1.19.1"
+  },
+  "dependencies": {
+    "@yarnpkg/fslib": "workspace:^",
+    "tslib": "^2.4.0"
+  },
+  "peerDependencies": {
+    "@yarnpkg/fslib": "workspace:^"
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "stableVersion": "3.1.0"
+}
