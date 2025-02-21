@@ -273,7 +273,7 @@ jobs:
         shard: ['1/4', '2/4', '3/4', '4/4']
 
     name: 'Big-endian debian w/ Node.js latest (${{matrix.shard}})'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     if: |
       github.ref == 'refs/heads/master'
     needs: build
