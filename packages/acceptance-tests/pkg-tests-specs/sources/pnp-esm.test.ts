@@ -1,6 +1,6 @@
-import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
-import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                                                                                                          from 'url';
+import {Filename, npath, ppath, xfs}                                                                                                                     from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, SUPPORTS_TYPE_STRIPPING} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                                                   from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -1160,4 +1160,50 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+
+  (SUPPORTS_TYPE_STRIPPING ? describe : describe.skip)(`Node builtin type stripping`, () => {
+    it(
+      `should be able to resolve a .cts file`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.cts`),
+            `const {TextDecoder} = require('node:util');\nconst decoder = new TextDecoder();\nconst u8arr = new Uint8Array([72, 101, 108, 108, 111]);\nconsole.log(decoder.decode(u8arr));`,
+          );
+
+          await expect(run(`node`, `./index.cts`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `Hello\n`,
+          });
+        },
+      ),
+    );
+
+    it(
+      `should be able to resolve a .mts file`,
+      makeTemporaryEnv(
+        {
+          type: `module`,
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await xfs.writeFilePromise(
+            ppath.join(path, `index.mts`),
+            `import {TextDecoder} from 'node:util';\nconst decoder = new TextDecoder();\nconst u8arr = new Uint8Array([72, 101, 108, 108, 111]);\nconsole.log(decoder.decode(u8arr));`,
+          );
+
+          await expect(run(`node`, `./index.mts`)).resolves.toMatchObject({
+            code: 0,
+            stdout: `Hello\n`,
+          });
+        },
+      ),
+    );
+  });
 });
