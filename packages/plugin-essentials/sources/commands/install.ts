@@ -2,8 +2,10 @@ import {BaseCommand, WorkspaceRequiredError}                                    
 import {Configuration, Cache, MessageName, Project, ReportError, StreamReport, formatUtils, InstallMode, execUtils, structUtils, LEGACY_PLUGINS, ConfigurationValueMap, YarnVersion, httpUtils, reportOptionDeprecations} from '@yarnpkg/core';
 import {xfs, ppath, Filename, PortablePath}                                                                                                                                                                               from '@yarnpkg/fslib';
 import {parseSyml, stringifySyml}                                                                                                                                                                                         from '@yarnpkg/parsers';
+import {gitUtils}                                                                                                                                                                                                         from '@yarnpkg/plugin-git';
 import CI                                                                                                                                                                                                                 from 'ci-info';
 import {Command, Option, Usage, UsageError}                                                                                                                                                                               from 'clipanion';
+import {prompt}                                                                                                                                                                                                           from 'enquirer';
 import semver                                                                                                                                                                                                             from 'semver';
 import * as t                                                                                                                                                                                                             from 'typanion';
 
@@ -215,7 +217,7 @@ export default class YarnCommand extends BaseCommand {
           changed = true;
         }
 
-        if (await autofixMergeConflicts(configuration, immutable)) {
+        if (await autofixMergeConflicts(configuration, immutable, this.context)) {
           report.reportInfo(MessageName.AUTOMERGE_SUCCESS, `Automatically fixed merge conflicts 👍`);
           changed = true;
         }
@@ -374,7 +376,10 @@ export default class YarnCommand extends BaseCommand {
 
 const MERGE_CONFLICT_START = `<<<<<<<`;
 
-async function autofixMergeConflicts(configuration: Configuration, immutable: boolean) {
+type MergeType = `MERGE` | `REBASE` | `CHERRY_PICK`;
+type MergeConflictPlan = `combine` | `current` | `incoming`;
+
+async function autofixMergeConflicts(configuration: Configuration, immutable: boolean, context: YarnCommand['context']) {
   if (!configuration.projectCwd)
     return false;
 
@@ -389,17 +394,20 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (immutable)
     throw new ReportError(MessageName.AUTOMERGE_IMMUTABLE, `Cannot autofix a lockfile when running an immutable install`);
 
+  let mergeType: MergeType = `MERGE`;
   let commits = await execUtils.execvp(`git`, [`rev-parse`, `MERGE_HEAD`, `HEAD`], {
     cwd: configuration.projectCwd,
   });
 
   if (commits.code !== 0) {
+    mergeType = `REBASE`;
     commits = await execUtils.execvp(`git`, [`rev-parse`, `REBASE_HEAD`, `HEAD`], {
       cwd: configuration.projectCwd,
     });
   }
 
   if (commits.code !== 0) {
+    mergeType = `CHERRY_PICK`;
     commits = await execUtils.execvp(`git`, [`rev-parse`, `CHERRY_PICK_HEAD`, `HEAD`], {
       cwd: configuration.projectCwd,
     });
@@ -408,7 +416,9 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   if (commits.code !== 0)
     throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Git returned an error when trying to find the commits pertaining to the conflict`);
 
-  let variants = await Promise.all(commits.stdout.trim().split(/\n/).map(async hash => {
+  const commitHashes = await getDesiredCommitHashes(configuration, commits.stdout.trim().split(/\n/), mergeType, context);
+
+  let variants = await Promise.all(commitHashes.map(async hash => {
     const content = await execUtils.execvp(`git`, [`show`, `${hash}:./${Filename.lockfile}`], {
       cwd: configuration.projectCwd!,
     });
@@ -484,6 +494,63 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
   });
 
   return true;
+}
+
+async function getDesiredCommitHashes(configuration: Configuration, commitHashes: Array<string>, mergeType: MergeType, context: YarnCommand['context']) {
+  if (!configuration.get(`enableMergeConflictPrompt`))
+    return commitHashes;
+
+  const gitRoot = await gitUtils.fetchRoot(configuration.projectCwd!);
+
+  if (!gitRoot)
+    throw new ReportError(MessageName.AUTOMERGE_GIT_ERROR, `Failed to find the Git root to find more information about the conflict`);
+
+  const mergeMsgContent = await xfs.readFilePromise(ppath.join(gitRoot, `.git`, `MERGE_MSG`), `utf8`);
+  const mergeMsgFirstLine = mergeMsgContent.split(/\r?\n/)[0];
+  let incomingName = mergeMsgFirstLine;
+  if (mergeType === `MERGE`) {
+    const match = mergeMsgFirstLine.match(/^Merge branch '(.+?)'/);
+    if (match) {
+      incomingName = match[1];
+    }
+  }
+
+  const {mergeConflictPlan} = await prompt<{mergeConflictPlan: MergeConflictPlan}>({
+    type: `select`,
+    name: `mergeConflictPlan`,
+    message: `How do you want to resolve merge conflicts in the lockfile?`,
+    choices: [
+      {
+        name: `combine`,
+        message: `Combine all changes (default)`,
+      },
+      {
+        name: `current`,
+        message: `Prefer current changes (HEAD)`,
+      },
+      {
+        name: `incoming`,
+        message: `Prefer incoming changes (${incomingName})`,
+      },
+    ],
+    onCancel: () => process.exit(130),
+    result(name: MergeConflictPlan) {
+      return name;
+    },
+    stdin: context.stdin as NodeJS.ReadStream,
+    stdout: context.stdout as NodeJS.WriteStream,
+  });
+
+  switch (mergeConflictPlan) {
+    case `combine`:
+      return commitHashes;
+    case `current`:
+      return [commitHashes[commitHashes.length - 1]];
+    case `incoming`:
+      return [commitHashes[0]];
+    default:
+      return commitHashes;
+  }
 }
 
 async function autofixLegacyPlugins(configuration: Configuration, immutable: boolean) {
