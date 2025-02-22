@@ -3,7 +3,7 @@ import {PortablePath, npath, ppath, xfs}                                        
 import {parseSyml, stringifySyml}                                                                                                            from '@yarnpkg/parsers';
 import {gitUtils}                                                                                                                            from '@yarnpkg/plugin-git';
 import {UsageError}                                                                                                                          from 'clipanion';
-import omit                                                                                                                                  from 'lodash/omit';
+import {omit}                                                                                                                                from 'es-toolkit/compat';
 import semver                                                                                                                                from 'semver';
 
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
