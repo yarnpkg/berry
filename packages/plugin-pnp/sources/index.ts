@@ -1,6 +1,7 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType, WindowsLinkType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}                          from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                                from '@yarnpkg/plugin-stage';
+import {ExperimentalZipImplementation}                                      from '@yarnpkg/pnp';
 import {pathToFileURL}                                                      from 'url';
 
 import {PnpLinker}                                                          from './PnpLinker';
@@ -70,12 +71,14 @@ declare module '@yarnpkg/core' {
     nodeLinker: string;
     winLinkType: string;
     pnpMode: string;
+    minizip: boolean;
     pnpShebang: string;
     pnpIgnorePatterns: Array<string>;
     pnpEnableEsmLoader: boolean;
     pnpEnableInlining: boolean;
     pnpFallbackMode: string;
     pnpUnpluggedFolder: PortablePath;
+    experimentalZipImplementation: ExperimentalZipImplementation;
   }
 }
 
@@ -89,6 +92,11 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       description: `The linker used for installing Node packages, one of: "pnp", "pnpm", or "node-modules"`,
       type: SettingsType.STRING,
       default: `pnp`,
+    },
+    minizip: {
+      description: `Whether Yarn should use minizip to extract archives`,
+      type: SettingsType.BOOLEAN,
+      default: false,
     },
     winLinkType: {
       description: `Whether Yarn should use Windows Junctions or symlinks when creating links on Windows.`,
@@ -114,6 +122,15 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       type: SettingsType.STRING,
       default: [],
       isArray: true,
+    },
+    experimentalZipImplementation: {
+      description: `Whether to use the experimental js implementation for the ZipFS`,
+      type: SettingsType.STRING,
+      values: [
+        `libzip`,
+        `js`,
+      ],
+      default: `libzip`,
     },
     pnpEnableEsmLoader: {
       description: `If true, Yarn will generate an ESM loader (\`.pnp.loader.mjs\`). If this is not explicitly set Yarn tries to automatically detect whether ESM support is required.`,

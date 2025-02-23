@@ -285,6 +285,7 @@ export class PnpInstaller implements Installer {
       fallbackExclusionList,
       fallbackPool,
       ignorePattern,
+      experimentalZipImplementation: this.opts.project.configuration.get(`experimentalZipImplementation`) ?? `libzip`,
       packageRegistry,
       shebang,
     });
