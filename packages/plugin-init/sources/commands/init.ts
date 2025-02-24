@@ -38,6 +38,14 @@ export default class InitCommand extends BaseCommand {
     ]],
   });
 
+  deps = Option.Array(`--deps`, {
+    description: `Adds the specified dependencies to the project`,
+  });
+
+  devDeps = Option.Array(`--dev-deps`, {
+    description: `Adds the specified devDependencies to the project`,
+  });
+
   private = Option.Boolean(`-p,--private`, false, {
     description: `Initialize a private package`,
   });
@@ -180,6 +188,10 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/sdks`,
         `!.yarn/versions`,
         ``,
+        `# Whether you use PnP or not, the node_modules folder is often used to store`,
+        `# build artifacts that should be gitignored`,
+        `node_modules`,
+        ``,
         `# Swap the comments on the following lines if you wish to use zero-installs`,
         `# In that case, don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/caching#zero-installs`,
@@ -217,13 +229,11 @@ export default class InitCommand extends BaseCommand {
 
       const editorConfigProperties = {
         [`*`]: {
-          endOfLine: `lf`,
-          insertFinalNewline: true,
-        },
-        [`*.{js,json,yml}`]: {
           charset: `utf-8`,
-          indentStyle: `space`,
+          endOfLine: `lf`,
           indentSize: 2,
+          indentStyle: `space`,
+          insertFinalNewline: true,
         },
       };
 
@@ -242,6 +252,18 @@ export default class InitCommand extends BaseCommand {
       if (!xfs.existsSync(editorConfigPath)) {
         await xfs.writeFilePromise(editorConfigPath, editorConfigBody);
         changedPaths.push(editorConfigPath);
+      }
+
+      if (this.deps) {
+        await this.cli.run([`add`, ...this.deps], {
+          quiet: true,
+        });
+      }
+
+      if (this.devDeps) {
+        await this.cli.run([`add`, `-D`, ...this.devDeps], {
+          quiet: true,
+        });
       }
 
       await this.cli.run([`install`], {
