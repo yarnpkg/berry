@@ -19,7 +19,7 @@
 }, {
   "message": "**Did you know?** Package transpilation should be performed in `prepack` and not `prepublish`, which should only do package validation."
 }, {
-  "message": "**Did you know?** The `main`, `bin`, `exports`, ... fields can be overriden on publish by their counterparts found in `publishConfig`."
+  "message": "**Did you know?** The `main`, `bin`, `exports`, ... fields can be overridden on publish by their counterparts found in `publishConfig`."
 }, {
   "message": "**Did you know?** The Yarn shell lets you use `$1`, `$2`, and even `$@` in your `scripts` entries."
 }, {
