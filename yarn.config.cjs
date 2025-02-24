@@ -222,7 +222,7 @@ module.exports = defineConfig({
       // - packages/yarnpkg-builder/sources/commands/new/plugin.ts
       [`engines.node`]: `>=18.12.0`,
       [`repository.type`]: `git`,
-      [`repository.url`]: `ssh://git@github.com/yarnpkg/berry.git`,
+      [`repository.url`]: `git+https://github.com/yarnpkg/berry.git`,
       [`repository.directory`]: workspace => workspace.cwd,
     });
   },
