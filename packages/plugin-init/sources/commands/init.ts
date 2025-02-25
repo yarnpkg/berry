@@ -255,6 +255,8 @@ export default class InitCommand extends BaseCommand {
       });
 
       if (this.initializer) {
+        this.context.stdout.write(`\n`);
+
         await this.cli.run([`dlx`, this.initializer], {
           quiet: true,
         });
