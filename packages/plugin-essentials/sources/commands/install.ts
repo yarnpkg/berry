@@ -455,7 +455,7 @@ async function autofixMergeConflicts(configuration: Configuration, immutable: bo
         continue;
 
       const checksum = variant[key].checksum;
-      if (typeof checksum === `string` && checksum.includes(`/`))
+      if (typeof checksum === `string` && checksum.includes(`/`) || typeof checksum === `undefined`)
         continue;
 
       variant[key].checksum = `${variant.__metadata.cacheKey}/${checksum}`;
