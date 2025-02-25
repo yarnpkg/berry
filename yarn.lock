@@ -2218,7 +2218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/logger@npm:3.4.0":
+"@docusaurus/logger@npm:3.4.0, @docusaurus/logger@npm:^3.4.0":
   version: 3.4.0
   resolution: "@docusaurus/logger@npm:3.4.0"
   dependencies:
@@ -5630,6 +5630,7 @@ __metadata:
   dependencies:
     "@codesandbox/sandpack-react": "npm:^1.15.0"
     "@docusaurus/core": "npm:^3.4.0"
+    "@docusaurus/logger": "npm:^3.4.0"
     "@docusaurus/mdx-loader": "npm:^3.4.0"
     "@docusaurus/module-type-aliases": "npm:^3.4.0"
     "@docusaurus/plugin-content-docs": "npm:^3.4.0"
@@ -5684,7 +5685,10 @@ __metadata:
     markdown-it-br: "npm:^1.0.0"
     marked: "npm:^5.1.1"
     marked-base-url: "npm:^1.0.1"
+    mdast-util-from-markdown: "npm:^2.0.1"
+    mdast-util-mdx: "npm:^3.0.0"
     mdast-util-mdx-jsx: "npm:^3.0.0"
+    micromark-extension-mdxjs: "npm:^3.0.0"
     monaco-editor: "npm:^0.24.0"
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
@@ -5710,6 +5714,7 @@ __metadata:
     typedoc: "npm:^0.25.7"
     typescript: "npm:^5.5.2"
     unified: "npm:^11.0.4"
+    unist-util-visit: "npm:^5.0.0"
     unist-util-visit-parents: "npm:^6.0.1"
     usehooks-ts: "npm:^2.9.1"
     webpack: "npm:^5.88.2"
@@ -14578,9 +14583,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdast-util-from-markdown@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "mdast-util-from-markdown@npm:2.0.0"
+"mdast-util-from-markdown@npm:^2.0.0, mdast-util-from-markdown@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "mdast-util-from-markdown@npm:2.0.1"
   dependencies:
     "@types/mdast": "npm:^4.0.0"
     "@types/unist": "npm:^3.0.0"
@@ -14594,7 +14599,7 @@ __metadata:
     micromark-util-symbol: "npm:^2.0.0"
     micromark-util-types: "npm:^2.0.0"
     unist-util-stringify-position: "npm:^4.0.0"
-  checksum: 10/960e28a8ff3d989cc25a615d14e9a1d95d145b938dc08323ce44689be6dd052ece544d2acf5242cedb8ad6ccdc3ffe854989b7c2516c6e62f2fca42b6d11a2da
+  checksum: 10/4172759cdd8cf9990701796c5617c8b6a4bd3f9863e730bb4e9689189daec80af3122e77eed2ab09090f1a2d396c4f5754416a41769d7c49efd165a1c0a033c8
   languageName: node
   linkType: hard
 

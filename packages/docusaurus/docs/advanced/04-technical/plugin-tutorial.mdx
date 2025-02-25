@@ -80,7 +80,9 @@ module.exports = {
 };
 ```
 
-Now, try to run `yarn hello`. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`typanion`](https://github.com/arcanis/typanion) library, which we provide. Here's an example where we only accept numbers as parameter:
+import {Inline as I, Command as C, Binary as B, Path as P} from '@site/src/components/CommandLineHighlight2.tsx'
+
+Now, try to run <I><C><B>yarn</B><P>hello</P></C></I>. You'll see your message appear! Note that you can use the full set of features provided by clipanion, including short options, long options, variadic argument lists, ... You can even validate your options using the [`typanion`](https://github.com/arcanis/typanion) library, which we provide. Here's an example where we only accept numbers as parameter:
 
 ```js
 module.exports = {
