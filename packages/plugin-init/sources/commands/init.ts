@@ -38,14 +38,6 @@ export default class InitCommand extends BaseCommand {
     ]],
   });
 
-  deps = Option.Array(`--deps`, {
-    description: `Adds the specified dependencies to the project`,
-  });
-
-  devDeps = Option.Array(`--dev-deps`, {
-    description: `Adds the specified devDependencies to the project`,
-  });
-
   private = Option.Boolean(`-p,--private`, false, {
     description: `Initialize a private package`,
   });
@@ -61,6 +53,10 @@ export default class InitCommand extends BaseCommand {
 
   name = Option.String(`-n,--name`, {
     description: `Initialize a package with the given name`,
+  });
+
+  initializer = Option.String({
+    required: false,
   });
 
   // Options that only mattered on v1
@@ -254,21 +250,15 @@ export default class InitCommand extends BaseCommand {
         changedPaths.push(editorConfigPath);
       }
 
-      if (this.deps) {
-        await this.cli.run([`add`, ...this.deps], {
-          quiet: true,
-        });
-      }
-
-      if (this.devDeps) {
-        await this.cli.run([`add`, `-D`, ...this.devDeps], {
-          quiet: true,
-        });
-      }
-
       await this.cli.run([`install`], {
         quiet: true,
       });
+
+      if (this.initializer) {
+        await this.cli.run([`dlx`, this.initializer], {
+          quiet: true,
+        });
+      }
 
       if (!xfs.existsSync(ppath.join(this.context.cwd, `.git`))) {
         await execUtils.execvp(`git`, [`init`], {
