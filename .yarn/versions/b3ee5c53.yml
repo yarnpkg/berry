@@ -1,0 +1,9 @@
+releases:
+  "@yarnpkg/pnp": patch
+
+declined:
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/nm"
+  - "@yarnpkg/pnpify"
+  - "@yarnpkg/sdks"
