@@ -248,7 +248,8 @@ export default class InitCommand extends BaseCommand {
         quiet: true,
       });
 
-      if (!xfs.existsSync(ppath.join(this.context.cwd, `.git`))) {
+      const isGitRepo = (await execUtils.execvp(`git`, [`rev-parse`, `--is-inside-work-tree`], {cwd: this.context.cwd})).code === 0;
+      if (!isGitRepo) {
         await execUtils.execvp(`git`, [`init`], {
           cwd: this.context.cwd,
         });
