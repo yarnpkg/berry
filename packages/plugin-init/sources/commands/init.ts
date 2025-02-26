@@ -55,6 +55,10 @@ export default class InitCommand extends BaseCommand {
     description: `Initialize a package with the given name`,
   });
 
+  initializer = Option.String({
+    required: false,
+  });
+
   // Options that only mattered on v1
   usev2 = Option.Boolean(`-2`, false, {hidden: true});
   yes = Option.Boolean(`-y,--yes`, {hidden: true});
@@ -180,6 +184,10 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/sdks`,
         `!.yarn/versions`,
         ``,
+        `# Whether you use PnP or not, the node_modules folder is often used to store`,
+        `# build artifacts that should be gitignored`,
+        `node_modules`,
+        ``,
         `# Swap the comments on the following lines if you wish to use zero-installs`,
         `# In that case, don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/caching#zero-installs`,
@@ -217,13 +225,11 @@ export default class InitCommand extends BaseCommand {
 
       const editorConfigProperties = {
         [`*`]: {
-          endOfLine: `lf`,
-          insertFinalNewline: true,
-        },
-        [`*.{js,json,yml}`]: {
           charset: `utf-8`,
-          indentStyle: `space`,
+          endOfLine: `lf`,
           indentSize: 2,
+          indentStyle: `space`,
+          insertFinalNewline: true,
         },
       };
 
@@ -247,6 +253,14 @@ export default class InitCommand extends BaseCommand {
       await this.cli.run([`install`], {
         quiet: true,
       });
+
+      if (this.initializer) {
+        this.context.stdout.write(`\n`);
+
+        await this.cli.run([`dlx`, this.initializer], {
+          quiet: true,
+        });
+      }
 
       if (!xfs.existsSync(ppath.join(this.context.cwd, `.git`))) {
         await execUtils.execvp(`git`, [`init`], {
