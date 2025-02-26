@@ -1,12 +1,12 @@
 releases:
   "@yarnpkg/cli": patch
-  "@yarnpkg/core": patch
   "@yarnpkg/plugin-essentials": patch
-  "@yarnpkg/plugin-interactive-tools": patch
-  "@yarnpkg/plugin-npm": patch
-  "@yarnpkg/plugin-typescript": patch
 
 declined:
+  - "@yarnpkg/core"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-typescript"
   - "@yarnpkg/plugin-compat"
   - "@yarnpkg/plugin-constraints"
   - "@yarnpkg/plugin-dlx"
