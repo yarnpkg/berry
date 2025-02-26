@@ -7,8 +7,8 @@ import {UsageError}                                                             
 import {parse as parseDotEnv}                                                                                    from 'dotenv';
 import {isBuiltin}                                                                                               from 'module';
 import pLimit, {Limit}                                                                                           from 'p-limit';
-import {PassThrough, Writable}                                                                                   from 'stream';
-import {WriteStream}                                                                                             from 'tty';
+import {PassThrough, Readable, Writable}                                                                         from 'stream';
+import {ReadStream, WriteStream}                                                                                 from 'tty';
 
 import {CorePlugin}                                                                                              from './CorePlugin';
 import {Manifest, PeerDependencyMeta}                                                                            from './Manifest';
@@ -1797,7 +1797,10 @@ export class Configuration {
     return {os, cpu, libc};
   }
 
-  isInteractive({interactive, stdout}: {interactive?: boolean, stdout: Writable}): boolean {
+  isInteractive({interactive, stdin, stdout}: {interactive?: boolean, stdin: Readable, stdout: Writable}): boolean {
+    if (!(stdin as ReadStream).isTTY)
+      return false;
+
     if (!(stdout as WriteStream).isTTY)
       return false;
 
