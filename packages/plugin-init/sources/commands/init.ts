@@ -55,10 +55,6 @@ export default class InitCommand extends BaseCommand {
     description: `Initialize a package with the given name`,
   });
 
-  initializer = Option.String({
-    required: false,
-  });
-
   // Options that only mattered on v1
   usev2 = Option.Boolean(`-2`, false, {hidden: true});
   yes = Option.Boolean(`-y,--yes`, {hidden: true});
@@ -115,6 +111,9 @@ export default class InitCommand extends BaseCommand {
 
       return code;
     });
+  }
+
+  async initialize() {
   }
 
   async executeRegular(configuration: Configuration) {
@@ -254,13 +253,7 @@ export default class InitCommand extends BaseCommand {
         quiet: true,
       });
 
-      if (this.initializer) {
-        this.context.stdout.write(`\n`);
-
-        await this.cli.run([`dlx`, this.initializer], {
-          quiet: true,
-        });
-      }
+      await this.initialize();
 
       if (!xfs.existsSync(ppath.join(this.context.cwd, `.git`))) {
         await execUtils.execvp(`git`, [`init`], {
