@@ -481,6 +481,14 @@
       "type": "string",
       "default": "pnp"
     },
+    "pnpmStoreFolder": {
+      "_package": "@yarnpkg/plugin-pnpm",
+      "title": "Path where the pnpm store will be stored",
+      "description": "By default, the store is stored in the `node_modules/.store` of the project. Sometimes in CI scenario's it is convenient to store this in a different location so it can be cached and reused.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": [".cache/.store"]
+    },
     "winLinkType": {
       "_package": "@yarnpkg/core",
       "title": "Define whether to use junctions or symlinks when creating links on Windows.",
