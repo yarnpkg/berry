@@ -21,6 +21,8 @@ export default class InitCommand extends BaseCommand {
 
       If the \`-i,--install\` option is given a value, Yarn will first download it using \`yarn set version\` and only then forward the init call to the newly downloaded bundle. Without arguments, the downloaded bundle will be \`latest\`.
 
+      If the  \`-2\` is used Yarn will automatically setup a Yarn Modern project, setting its packageManager field as required.
+
       The initial settings of the manifest can be changed by using the \`initScope\` and \`initFields\` configuration values. Additionally, Yarn will generate an EditorConfig file whose rules can be altered via \`initEditorConfig\`, and will initialize a Git repository in the current directory.
     `,
     examples: [[
