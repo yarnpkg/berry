@@ -6,12 +6,14 @@ description: A short overview of Yarn's most used commands.
 sidebar_position: 4
 ---
 
+import {Inline as I, Command as C, Binary as B, Path as P} from '@site/src/components/CommandLineHighlight2.tsx'
+
 If you're coming from npm, the main changes are:
 
-- Running `yarn` is enough to run an install! It's an alias to `yarn install`.
+- Running <I><C><B>yarn</B></C></I> is enough to run an install! It's an alias to `yarn install`.
 - Adding or updating a dependency to a single package is done with `yarn add`.
 - Upgrading a dependency across the whole project is done with `yarn up`.
 - Your scripts are aliased. Calling `yarn build` is the same as `yarn run build`!
-- Most registry-related commands are moved behind <CommandLineHighlight type={`inlineCode`} lines={[{type: `command`, command: {name: `yarn`, path: [`npm`], argv: [`npm`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `npm`}]}]}/> (ex: `yarn npm audit`).
+- Most registry-related commands are moved behind <I><C><B>yarn</B><P>npm</P></C></I> (ex: `yarn npm audit`).
 
 To see the full list of commands, check the [CLI reference](/cli).

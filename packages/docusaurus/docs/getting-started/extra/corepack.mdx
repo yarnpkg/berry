@@ -6,6 +6,8 @@ description: About Corepack, the Node.js package manager provider.
 sidebar_position: 2
 ---
 
+import {Command as C, Binary as B, Path as P, Option as O, Value as V} from '@site/src/components/CommandLineHighlight2.tsx';
+
 You may notice by reading our [installation guide](/getting-started/install) that we don't tell you to run `npm install -g yarn` to install Yarn - we even recommend against it. The reason is simple: **just like your project dependencies must be locked, so should be the package manager itself.**
 
 Installing Yarn as a global binary meant you always used whatever was the latest version published. Most of the time it worked fine, but every once in a while something was shipped that could impact the way your project was installed - be it a bugfix, new bug, or breaking change.
@@ -36,9 +38,9 @@ If you use an airgapped network, as is often the case in company CIs, you may hi
 
 Volta doesn't currently integrate with Corepack, as it installs its own shims which prevent the Corepack ones from being applied. You will need to run the following two commands to force the integration:
 
-```bash
+```commandline
 npm install -g corepack
 
 # Specifying an explicit install-directory makes corepack overwrite volta's yarn shims, which is what we want
-corepack enable --install-directory ~/.volta/bin
+<C><B>corepack</B><P>enable</P><O>--install-directory</O><V>~/.volta/bin</V></C> # commandline-raw
 ```

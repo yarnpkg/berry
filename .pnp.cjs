@@ -9418,6 +9418,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/docusaurus", "workspace:packages/docusaurus"],\
           ["@codesandbox/sandpack-react", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.15.0"],\
           ["@docusaurus/core", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.4.0"],\
+          ["@docusaurus/logger", "npm:3.4.0"],\
           ["@docusaurus/mdx-loader", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.4.0"],\
           ["@docusaurus/module-type-aliases", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.4.0"],\
           ["@docusaurus/plugin-content-docs", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.4.0"],\
@@ -9472,7 +9473,10 @@ const RAW_RUNTIME_STATE =
           ["markdown-it-br", "npm:1.0.0"],\
           ["marked", "npm:5.1.1"],\
           ["marked-base-url", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.0.1"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
+          ["mdast-util-mdx", "npm:3.0.0"],\
           ["mdast-util-mdx-jsx", "npm:3.0.0"],\
+          ["micromark-extension-mdxjs", "npm:3.0.0"],\
           ["monaco-editor", "npm:0.24.0"],\
           ["os-browserify", "npm:0.3.0"],\
           ["path-browserify", "npm:1.0.1"],\
@@ -9498,6 +9502,7 @@ const RAW_RUNTIME_STATE =
           ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.8"],\
           ["typescript", "patch:typescript@npm%3A5.5.2#optional!builtin<compat/typescript>::version=5.5.2&hash=379a07"],\
           ["unified", "npm:11.0.4"],\
+          ["unist-util-visit", "npm:5.0.0"],\
           ["unist-util-visit-parents", "npm:6.0.1"],\
           ["usehooks-ts", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:2.9.1"],\
           ["webpack", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:5.90.1"],\
@@ -28555,7 +28560,7 @@ const RAW_RUNTIME_STATE =
           ["@types/mdast", "npm:4.0.3"],\
           ["@types/unist", "npm:3.0.2"],\
           ["devlop", "npm:1.1.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"],\
           ["parse-entities", "npm:4.0.1"],\
           ["stringify-entities", "npm:4.0.3"],\
@@ -28578,10 +28583,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["mdast-util-from-markdown", [\
-      ["npm:2.0.0", {\
-        "packageLocation": "./.yarn/cache/mdast-util-from-markdown-npm-2.0.0-7358a7473f-960e28a8ff.zip/node_modules/mdast-util-from-markdown/",\
+      ["npm:2.0.1", {\
+        "packageLocation": "./.yarn/cache/mdast-util-from-markdown-npm-2.0.1-37ffa6064d-4172759cdd.zip/node_modules/mdast-util-from-markdown/",\
         "packageDependencies": [\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["@types/mdast", "npm:4.0.3"],\
           ["@types/unist", "npm:3.0.2"],\
           ["decode-named-character-reference", "npm:1.0.2"],\
@@ -28606,7 +28611,7 @@ const RAW_RUNTIME_STATE =
           ["@types/mdast", "npm:4.0.3"],\
           ["devlop", "npm:1.1.0"],\
           ["escape-string-regexp", "npm:5.0.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"],\
           ["micromark-extension-frontmatter", "npm:2.0.0"]\
         ],\
@@ -28618,7 +28623,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/mdast-util-gfm-npm-3.0.0-c4b06d0013-3e0c8e9982.zip/node_modules/mdast-util-gfm/",\
         "packageDependencies": [\
           ["mdast-util-gfm", "npm:3.0.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-gfm-autolink-literal", "npm:2.0.0"],\
           ["mdast-util-gfm-footnote", "npm:2.0.0"],\
           ["mdast-util-gfm-strikethrough", "npm:2.0.0"],\
@@ -28650,7 +28655,7 @@ const RAW_RUNTIME_STATE =
           ["mdast-util-gfm-footnote", "npm:2.0.0"],\
           ["@types/mdast", "npm:4.0.3"],\
           ["devlop", "npm:1.1.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"],\
           ["micromark-util-normalize-identifier", "npm:2.0.0"]\
         ],\
@@ -28663,7 +28668,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["mdast-util-gfm-strikethrough", "npm:2.0.0"],\
           ["@types/mdast", "npm:4.0.3"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"]\
         ],\
         "linkType": "HARD"\
@@ -28677,7 +28682,7 @@ const RAW_RUNTIME_STATE =
           ["@types/mdast", "npm:4.0.3"],\
           ["devlop", "npm:1.1.0"],\
           ["markdown-table", "npm:3.0.3"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"]\
         ],\
         "linkType": "HARD"\
@@ -28690,7 +28695,7 @@ const RAW_RUNTIME_STATE =
           ["mdast-util-gfm-task-list-item", "npm:2.0.0"],\
           ["@types/mdast", "npm:4.0.3"],\
           ["devlop", "npm:1.1.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"]\
         ],\
         "linkType": "HARD"\
@@ -28701,7 +28706,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/mdast-util-mdx-npm-3.0.0-02a6734e33-547d928f0d.zip/node_modules/mdast-util-mdx/",\
         "packageDependencies": [\
           ["mdast-util-mdx", "npm:3.0.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-mdx-expression", "npm:2.0.0"],\
           ["mdast-util-mdx-jsx", "npm:3.0.0"],\
           ["mdast-util-mdxjs-esm", "npm:2.0.1"],\
@@ -28719,7 +28724,7 @@ const RAW_RUNTIME_STATE =
           ["@types/hast", "npm:3.0.4"],\
           ["@types/mdast", "npm:4.0.3"],\
           ["devlop", "npm:1.1.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"]\
         ],\
         "linkType": "HARD"\
@@ -28736,7 +28741,7 @@ const RAW_RUNTIME_STATE =
           ["@types/unist", "npm:3.0.2"],\
           ["ccount", "npm:2.0.1"],\
           ["devlop", "npm:1.1.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"],\
           ["parse-entities", "npm:4.0.1"],\
           ["stringify-entities", "npm:4.0.3"],\
@@ -28756,7 +28761,7 @@ const RAW_RUNTIME_STATE =
           ["@types/hast", "npm:3.0.4"],\
           ["@types/mdast", "npm:4.0.3"],\
           ["devlop", "npm:1.1.0"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["mdast-util-to-markdown", "npm:2.1.0"]\
         ],\
         "linkType": "HARD"\
@@ -33520,7 +33525,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["remark-parse", "npm:11.0.0"],\
           ["@types/mdast", "npm:4.0.3"],\
-          ["mdast-util-from-markdown", "npm:2.0.0"],\
+          ["mdast-util-from-markdown", "npm:2.0.1"],\
           ["micromark-util-types", "npm:2.0.0"],\
           ["unified", "npm:11.0.4"]\
         ],\
