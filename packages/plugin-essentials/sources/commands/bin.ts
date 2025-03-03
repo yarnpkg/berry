@@ -1,7 +1,6 @@
-import {BaseCommand}                          from '@yarnpkg/cli';
-import {Configuration, Project, StreamReport} from '@yarnpkg/core';
-import {scriptUtils, structUtils}             from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}   from 'clipanion';
+import {BaseCommand}                                                    from '@yarnpkg/cli';
+import {Configuration, Project, scriptUtils, StreamReport, structUtils} from '@yarnpkg/core';
+import {Command, Option, Usage}                                         from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class BinCommand extends BaseCommand {
@@ -33,20 +32,32 @@ export default class BinCommand extends BaseCommand {
     description: `Format the output as an NDJSON stream`,
   });
 
+  topLevel = Option.Boolean(`-T,--top-level`, false, {
+    description: `Check the root workspace for binaries instead of the current one`,
+  });
+
+  currentWorkspaceOnly = Option.Boolean(`-C,--current-workspace-only`, false, {
+    description: `Stick to the current workspace for binaries and do not look elsewhere if unavailable`,
+  });
+
   name = Option.String({required: false});
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, locator} = await Project.find(configuration, this.context.cwd);
+    const topLevelLocator = project.topLevelWorkspace.anchoredLocator;
+    const effectiveLocator = this.topLevel ? topLevelLocator : locator;
 
     await project.restoreInstallState();
 
     if (this.name) {
-      const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
+      const binaries = await scriptUtils.getPackageAccessibleBinaries(effectiveLocator, {project, currentWorkspaceOnly: this.currentWorkspaceOnly, topLevel: this.topLevel});
 
       const binary = binaries.get(this.name);
-      if (!binary)
-        throw new UsageError(`Couldn't find a binary named "${this.name}" for package "${structUtils.prettyLocator(configuration, locator)}"`);
+      if (!binary) {
+        console.error(`Couldn't find a binary named "${this.name}" for package "${structUtils.prettyLocator(configuration, effectiveLocator)}"`);
+        return 1;
+      }
 
       const [/*pkg*/, binaryFile] = binary;
       this.context.stdout.write(`${binaryFile}\n`);
@@ -59,7 +70,7 @@ export default class BinCommand extends BaseCommand {
       json: this.json,
       stdout: this.context.stdout,
     }, async report => {
-      const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project});
+      const binaries = await scriptUtils.getPackageAccessibleBinaries(locator, {project, currentWorkspaceOnly: this.currentWorkspaceOnly, topLevel: this.topLevel});
 
       const keys = Array.from(binaries.keys());
       const maxKeyLength = keys.reduce((max, key) => Math.max(max, key.length), 0);
