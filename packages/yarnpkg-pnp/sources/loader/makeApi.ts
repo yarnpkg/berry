@@ -394,7 +394,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    * We export a special symbol for easy access to the top level locator.
    */
 
-  const topLevel = topLevelLocator;
+  const topLevel = {name: null, reference: null};
 
   /**
    * Gets the package information for a given locator. Returns null if they cannot be retrieved.

@@ -44342,7 +44342,7 @@ function makeApi(runtimeState, opts) {
     }
   }
   const VERSIONS = { std: 3, resolveVirtual: 1, getAllLocators: 1 };
-  const topLevel = topLevelLocator;
+  const topLevel = { name: null, reference: null };
   function getPackageInformation({ name, reference }) {
     const packageInformationStore = packageRegistry.get(name);
     if (!packageInformationStore)
