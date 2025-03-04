@@ -94,6 +94,7 @@ describe(`Plug'n'Play API`, () => {
       test(
         `it should return the package dependencies`,
         makeTemporaryEnv({
+          name: `root-workspace`,
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -104,6 +105,7 @@ describe(`Plug'n'Play API`, () => {
             source(`[...require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies]`),
           ).resolves.toEqual([
             [`no-deps`, `npm:1.0.0`],
+            [`root-workspace`, `workspace:.`],
           ]);
         }),
       );
