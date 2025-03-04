@@ -191,7 +191,7 @@ describe(`Features`, () => {
     );
 
     test(
-      `it should error when legacy glob syntax is used`,
+      `it should warn when legacy glob syntax is used`,
       makeTemporaryEnv(
         {
           resolutions: {
@@ -199,7 +199,9 @@ describe(`Features`, () => {
           },
         },
         async ({path, run, source}) => {
-          await expect(run(`install`)).rejects.toThrow();
+          const {stdout} = await run(`install`);
+
+          expect(stdout).toContain(`YN0057`);
         },
       ),
     );
