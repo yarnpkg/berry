@@ -26,10 +26,10 @@ export type DependencyTarget =
 export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, DependencyTarget>, packagePeers: Set<string>, linkType: LinkType, discardFromLookup: boolean};
 export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, DependencyTarget]>, packagePeers?: Array<string>, linkType: LinkType, discardFromLookup?: boolean};
 
-export type PackageStore = Map<string | null, PackageInformation<PortablePath>>;
+export type PackageStore = Map<string, PackageInformation<PortablePath>>;
 export type PackageStoreData = Array<[string | null, PackageInformationData<PortablePath>]>;
 
-export type PackageRegistry = Map<string | null, PackageStore>;
+export type PackageRegistry = Map<string, PackageStore>;
 export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
 export type LocationLengthData = Array<number>;
