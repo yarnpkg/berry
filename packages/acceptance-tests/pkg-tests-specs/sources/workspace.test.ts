@@ -9,7 +9,7 @@ const getWorkspaces = async (run: tests.Run) => {
     .trim()
     .split(`\n`)
     .map(line => JSON.parse(line))
-    .map(({location}) => location || `.`);
+    .map(({location}) => location);
 
   return workspaces;
 };
