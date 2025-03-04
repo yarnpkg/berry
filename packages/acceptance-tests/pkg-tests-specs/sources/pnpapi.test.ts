@@ -166,11 +166,7 @@ describe(`Plug'n'Play API`, () => {
           await expect(
             source(`{
               const pnp = require('pnpapi');
-
-              const roots = pnp.getDependencyTreeRoots();
-              const fooLocator = roots.find(({name}) => name === 'foo');
-
-              const deps = pnp.getPackageInformation(fooLocator).packageDependencies;
+              const deps = pnp.getPackageInformation(pnp.findPackageLocator('packages/foo/package.json')).packageDependencies;
               return [...pnp.getPackageInformation(pnp.getLocator('bar', deps.get('bar'))).packagePeers];
             }`),
           ).resolves.toEqual([
@@ -213,11 +209,7 @@ describe(`Plug'n'Play API`, () => {
           await expect(
             source(`{
               const pnp = require('pnpapi');
-
-              const roots = pnp.getDependencyTreeRoots();
-              const barLocator = roots.find(({name}) => name === 'bar');
-
-              return [...pnp.getPackageInformation(barLocator).packagePeers || []];
+              return [...pnp.getPackageInformation(pnp.findPackageLocator('packages/bar')).packagePeers || []];
             }`),
           ).resolves.toEqual([]);
         }),
