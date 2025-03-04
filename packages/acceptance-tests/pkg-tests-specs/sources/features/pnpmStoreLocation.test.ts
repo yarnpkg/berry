@@ -17,6 +17,7 @@ describe(`Features`, () => {
         {
           nodeLinker: `pnpm`,
           pnpmStoreFolder: customStoreFolderName,
+          winLinkType: `symlinks`,
         },
         async ({path, run, source}) => {
           await run(`install`);
@@ -26,8 +27,7 @@ describe(`Features`, () => {
           expect(xfs.existsSync(absolutePnpmStorePath)).toEqual(true);
 
           // Ensure that the default node_modules/.store folder is not created
-          const defaultStorePath = ppath.join(path, `node_modules`, `.store`);
-          expect(xfs.existsSync(defaultStorePath)).toEqual(false);
+          expect(xfs.existsSync(ppath.join(path, `node_modules`, `.store`))).toEqual(false);
 
           // Ensure that the installed package is a symbolic link
           const installedPackagePath = ppath.join(path, `node_modules`, `no-deps`);
