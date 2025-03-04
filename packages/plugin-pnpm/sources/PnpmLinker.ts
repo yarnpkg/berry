@@ -309,7 +309,7 @@ function getNodeModulesLocation(project: Project) {
 }
 
 function getStoreLocation(project: Project) {
-  return ppath.join(getNodeModulesLocation(project), `.store`);
+  return project.configuration.get(`pnpmStoreFolder`);
 }
 
 function getPackagePaths(locator: Locator, {project}: {project: Project}) {
