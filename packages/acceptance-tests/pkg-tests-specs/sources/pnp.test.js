@@ -1631,20 +1631,18 @@ describe(`Plug'n'Play`, () => {
         },
       },
       async ({path, run, source}) => {
+        await writeFile(`${path}/dep/index.js`, `module.exports = require('./package.json');`);
+
         await writeJson(npath.toPortablePath(`${path}/dep/package.json`), {
           name: `dep`,
           version: `1.0.0`,
           os: [`!${process.platform}`],
           scripts: {
-            postinstall: `echo 'Shall not be run'`,
+            postinstall: `echo 'module.exports = 42;' > index.js`,
           },
         });
-        await writeFile(`${path}/dep/index.js`, `module.exports = require('./package.json');`);
 
-        const stdout = (await run(`install`)).stdout;
-
-        expect(stdout).not.toContain(`Shall not be run`);
-        expect(stdout).toMatch(new RegExp(`dep@file:./dep.*The ${process.platform}-${process.arch}(-[a-z]+)? architecture is incompatible with this package, build skipped.`));
+        await run(`install`);
 
         await expect(source(`require('dep')`)).resolves.toMatchObject({
           name: `dep`,
@@ -1956,22 +1954,17 @@ describe(`Plug'n'Play`, () => {
         },
       },
       async ({path, run, source}) => {
-        await expect(run(`install`)).resolves.toMatchObject({
-          code: 0,
-          stdout: expect.stringContaining(`YN0007`),
-        });
-
-        await expect(run(`install`)).resolves.toMatchObject({
-          code: 0,
-          stdout: expect.not.stringContaining(`YN0007`),
-        });
+        await run(`install`);
 
         await xfs.removePromise(ppath.join(path, `.yarn/unplugged`));
 
-        await expect(run(`install`)).resolves.toMatchObject({
-          code: 0,
-          stdout: expect.stringContaining(`YN0007`),
-        });
+        await run(`install`);
+
+        await expect(source(`require('no-deps-scripted/log')`)).resolves.toEqual([
+          `preinstall`,
+          `install`,
+          `postinstall`,
+        ]);
       },
     ),
   );

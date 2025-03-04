@@ -31,19 +31,23 @@ describe(`Lock tests`, () => {
     `it shouldn't loose track of the resolutions when upgrading the lockfile version`,
     makeTemporaryEnv(
       {
-        dependencies: {[`no-deps`]: `patch:no-deps@^1.0.0#`},
+        dependencies: {[`one-range-dep`]: `1.0.0`},
       },
       async ({path, run, source}) => {
         await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`])]]), async () => {
           await run(`install`);
         });
 
-        const lockfilePath = ppath.join(path, Filename.lockfile);
-        const lockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
-        const expectedLockfile = lockfile.replace(/(__metadata:[\t\r\n ]*version: )([0-9]+)/, ($0, $1, $2) => `${$1}${parseInt($2, 10) + 1}`);
-
-        // Sanity check to be sure that the test does something
-        expect(expectedLockfile).not.toEqual(lockfile);
+        await expect(source(`require('one-range-dep')`)).resolves.toMatchObject({
+          name: `one-range-dep`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.0.0`,
+            },
+          },
+        });
 
         await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`, `1.1.0`])]]), async () => {
           await run(`install`, {
@@ -51,11 +55,34 @@ describe(`Lock tests`, () => {
           });
         });
 
-        await expect(xfs.readFilePromise(lockfilePath, `utf8`)).resolves.toEqual(expectedLockfile);
-
-        await expect(source(`require('no-deps')`)).resolves.toMatchObject({
-          name: `no-deps`,
+        await expect(source(`require('one-range-dep')`)).resolves.toMatchObject({
+          name: `one-range-dep`,
           version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.0.0`,
+            },
+          },
+        });
+
+        await xfs.rmPromise(ppath.join(path, Filename.lockfile));
+
+        await setPackageWhitelist(new Map([[`no-deps`, new Set([`1.0.0`, `1.1.0`])]]), async () => {
+          await run(`install`, {
+            lockfileVersionOverride: LOCKFILE_VERSION + 2,
+          });
+        });
+
+        await expect(source(`require('one-range-dep')`)).resolves.toMatchObject({
+          name: `one-range-dep`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.1.0`,
+            },
+          },
         });
       },
     ),

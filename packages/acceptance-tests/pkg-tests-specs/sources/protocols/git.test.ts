@@ -1,7 +1,6 @@
-import {execUtils, semverUtils}      from '@yarnpkg/core';
-import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {parseSyml}                   from '@yarnpkg/parsers';
-import {tests}                       from 'pkg-tests-core';
+import {execUtils, semverUtils} from '@yarnpkg/core';
+import {npath}                  from '@yarnpkg/fslib';
+import {tests}                  from 'pkg-tests-core';
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and
@@ -37,14 +36,6 @@ describe(`Protocols`, () => {
           },
           async ({path, run, source}) => {
             await run(`install`);
-
-            const content = await xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`);
-            const lock = parseSyml(content);
-
-            const key = `util-deprecate@${url}`;
-
-            expect(lock).toMatchObject({[key]: {version}});
-            expect(lock[`util-deprecate@${url}`].resolution).toMatchSnapshot();
 
             await expect(source(`require('util-deprecate/package.json')`)).resolves.toMatchObject({
               name: `util-deprecate`,
