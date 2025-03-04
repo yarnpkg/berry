@@ -19,7 +19,7 @@ export type Argument =
 
 export type RedirectArgument = {
   type: `redirection`;
-  subtype: `>` | `<` | '>&' | '<&' | `>>` | `<<<`;
+  subtype: `>` | `<` | `>&` | `<&` | `>>` | `<<<`;
   fd: number | null;
   args: Array<ValueArgument>;
 };
@@ -69,7 +69,7 @@ export type CommandLineThen = {
 };
 
 export type ShellLine = Array<{
-  type: ';' | '&';
+  type: `;` | `&`;
   command: CommandLine;
 }>;
 

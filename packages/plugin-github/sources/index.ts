@@ -19,7 +19,7 @@ const plugin: Plugin<GitHooks> = {
 
       try {
         return await fetcher.fetch(locator, opts);
-      } catch (error) {
+      } catch {
         return null;
       }
     },

@@ -52,7 +52,7 @@ export enum HoisterDependencyKind {
 export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number, dependencyKind?: HoisterDependencyKind};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
-type AliasedLocator = string & { __aliasedLocator: true };
+type AliasedLocator = string & {__aliasedLocator: true};
 type Ident = string;
 type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Map<PackageName, Array<string>>, hoistedTo: Map<PackageName, string>, hoistPriority: number, dependencyKind: HoisterDependencyKind};
 
@@ -61,7 +61,7 @@ type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident
  * e.g. which one among the group of packages with the same name should be hoisted.
  * The package having the biggest number of parents using this package will be hoisted.
  */
-type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident>, hoistPriority: number }>;
+type PreferenceMap = Map<string, {peerDependents: Set<Ident>, dependents: Set<Ident>, hoistPriority: number}>;
 
 enum Hoistable {
   YES, NO, DEPENDS,
@@ -132,7 +132,8 @@ export const hoist = (tree: HoisterTree, opts: HoistOptions = {}): HoisterResult
   let anotherRoundNeeded = false;
   let round = 0;
   do {
-    anotherRoundNeeded = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options).anotherRoundNeeded;
+    const result = hoistTo(treeCopy, [treeCopy], new Set([treeCopy.locator]), new Map(), options);
+    anotherRoundNeeded = result.anotherRoundNeeded || result.isGraphChanged;
     options.fastLookupPossible = false;
     round++;
   } while (anotherRoundNeeded);
@@ -297,10 +298,10 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, preferenceMap: PreferenceMa
     const entry2 = preferenceMap.get(key2)!;
     if (entry2.hoistPriority !== entry1.hoistPriority) {
       return entry2.hoistPriority - entry1.hoistPriority;
-    } else if (entry2.peerDependents.size !== entry1.peerDependents.size) {
-      return entry2.peerDependents.size - entry1.peerDependents.size;
     } else {
-      return entry2.dependents.size - entry1.dependents.size;
+      const entry1Usages = entry1.dependents.size + entry1.peerDependents.size;
+      const entry2Usages = entry2.dependents.size + entry2.peerDependents.size;
+      return entry2Usages - entry1Usages;
     }
   });
 
@@ -477,24 +478,6 @@ const getNodeHoistInfo = (rootNode: HoisterWorkTree, rootNodePathLocators: Set<L
     isHoistable = !hasUnhoistedDependencies(node);
     if (outputReason && !isHoistable) {
       reason = `- external soft link with unhoisted dependencies`;
-    }
-  }
-
-  if (isHoistable) {
-    // Direct workspace dependencies must be hoisted to any common ancestor workspace of all the
-    // graph paths that include the dependency, because otherwise running app with
-    // `--preserve-symlinks` will become broken (without this flag the Node.js will pick dependency
-    // from the ancestor on the file system and with this flag it will pick ancestor from the graph
-    // and if these ancestors are different, the behavious of the application will be different).
-    // Another problem, which is prevented - is a creation of multiple hoisting layouts
-    // for the same workspace, because different dependencies of the same workspace might be hoisted
-    // differently, depending on the recepient workspace.
-    // It is difficult to find all common ancestors, but there is one easy to find common ancestor -
-    // the root workspace, so, for now, we either hoist direct dependencies into the root workspace, or we keep them
-    // unhoisted, thus we are safe from various pathological cases with `--preserve-symlinks`
-    isHoistable = parentNode.dependencyKind !== HoisterDependencyKind.WORKSPACE || parentNode.hoistedFrom.has(node.name) || rootNodePathLocators.size === 1;
-    if (outputReason && !isHoistable) {
-      reason = parentNode.reasons.get(node.name)!;
     }
   }
 
@@ -1012,7 +995,7 @@ const MAX_NODES_TO_DUMP = 50000;
  *
  * @returns sorted node_modules tree
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const dumpDepTree = (tree: HoisterWorkTree) => {
   let nodeCount = 0;
   const dumpPackage = (pkg: HoisterWorkTree, parents: Set<HoisterWorkTree>, prefix = ``): string => {

@@ -1,10 +1,11 @@
 {
   "name": "@yarnpkg/nm",
-  "version": "4.0.2",
+  "version": "4.0.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
     ".": "./sources/index.ts",
+    "./hoist": "./sources/hoist.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -23,6 +24,7 @@
     "main": "./lib/index.js",
     "exports": {
       ".": "./lib/index.js",
+      "./hoist": "./lib/hoist.js",
       "./package.json": "./package.json"
     }
   },
@@ -31,11 +33,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/yarnpkg-nm"
   },
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.2"
+  "stableVersion": "4.0.6"
 }

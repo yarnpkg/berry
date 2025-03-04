@@ -9,7 +9,7 @@ import {copyPromise, LinkStrategy}                       from './algorithms/copy
 import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
-export type BufferEncodingOrBuffer = BufferEncoding | 'buffer';
+export type BufferEncodingOrBuffer = BufferEncoding | `buffer`;
 
 export type Stats = NodeStats & {
   crc?: number;
@@ -18,12 +18,12 @@ export type BigIntStats = NodeBigIntStats & {
   crc?: number;
 };
 
-export type Dirent<T extends Path> = Omit<NodeDirent, 'name' | 'path'> & {
+export type Dirent<T extends Path> = Omit<NodeDirent, `name` | `path`> & {
   name: Filename;
   path: T;
 };
 
-export type DirentNoPath = Omit<NodeDirent, 'name' | 'path'> & {
+export type DirentNoPath = Omit<NodeDirent, `name` | `path`> & {
   name: Filename;
 };
 
@@ -61,7 +61,7 @@ export type CreateReadStreamOptions = Partial<{
 export type CreateWriteStreamOptions = Partial<{
   encoding: BufferEncoding;
   fd: number;
-  flags: 'a';
+  flags: `a`;
 }>;
 
 export type MkdirOptions = Partial<{
@@ -130,7 +130,7 @@ export type ExtractHintOptions = {
   relevantExtensions: Set<string>;
 };
 
-export type SymlinkType = 'file' | 'dir' | 'junction';
+export type SymlinkType = `file` | `dir` | `junction`;
 
 export interface StatOptions {
   bigint?: boolean | undefined;
@@ -211,8 +211,8 @@ export abstract class FakeFS<P extends Path> {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract statPromise(p: P): Promise<Stats>;
-  abstract statPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  abstract statPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  abstract statPromise(p: P, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  abstract statPromise(p: P, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   abstract statPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats>;
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
@@ -233,8 +233,8 @@ export abstract class FakeFS<P extends Path> {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   abstract lstatPromise(p: P): Promise<Stats>;
-  abstract lstatPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  abstract lstatPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  abstract lstatPromise(p: P, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  abstract lstatPromise(p: P, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   abstract lstatPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats>;
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L931-L967
@@ -243,7 +243,7 @@ export abstract class FakeFS<P extends Path> {
   abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
   abstract lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
   abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
-  abstract lstatSync(p: P, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  abstract lstatSync(p: P, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
   abstract lstatSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
 
   abstract chmodPromise(p: P, mask: number): Promise<void>;
@@ -558,7 +558,7 @@ export abstract class FakeFS<P extends Path> {
     let current = Buffer.alloc(0);
     try {
       current = await this.readFilePromise(p);
-    } catch (error) {
+    } catch {
       // ignore errors, no big deal
     }
 
@@ -572,7 +572,7 @@ export abstract class FakeFS<P extends Path> {
     let current = ``;
     try {
       current = await this.readFilePromise(p, `utf8`);
-    } catch (error) {
+    } catch {
       // ignore errors, no big deal
     }
 
@@ -600,7 +600,7 @@ export abstract class FakeFS<P extends Path> {
     let current = Buffer.alloc(0);
     try {
       current = this.readFileSync(p);
-    } catch (error) {
+    } catch {
       // ignore errors, no big deal
     }
 
@@ -614,7 +614,7 @@ export abstract class FakeFS<P extends Path> {
     let current = ``;
     try {
       current = this.readFileSync(p, `utf8`);
-    } catch (error) {
+    } catch {
       // ignore errors, no big deal
     }
 
@@ -671,9 +671,9 @@ export abstract class FakeFS<P extends Path> {
 
       try {
         ([pid] = await this.readJsonPromise(lockPath));
-      } catch (error) {
+      } catch {
         // If we can't read the file repeatedly, we assume the process was
-        // aborted before even writing finishing writing the payload.
+        // aborted before even finishing writing the payload.
         return Date.now() - startTime < 500;
       }
 
@@ -682,7 +682,7 @@ export abstract class FakeFS<P extends Path> {
         // existence of a process" - so we check whether it's alive.
         process.kill(pid, 0);
         return true;
-      } catch (error) {
+      } catch {
         return false;
       }
     };
@@ -696,7 +696,7 @@ export abstract class FakeFS<P extends Path> {
             try {
               await this.unlinkPromise(lockPath);
               continue;
-            } catch (error) {
+            } catch {
               // No big deal if we can't remove it. Just fallback to wait for
               // it to be eventually released by its owner.
             }
@@ -723,7 +723,7 @@ export abstract class FakeFS<P extends Path> {
         // EPERM: operation not permitted, open
         await this.closePromise(fd);
         await this.unlinkPromise(lockPath);
-      } catch (error) {
+      } catch {
         // noop
       }
     }

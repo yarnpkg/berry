@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/builder",
-  "version": "4.1.1",
+  "version": "4.2.1",
   "license": "BSD-2-Clause",
   "bin": "./sources/boot-cli-dev.js",
   "exports": {
@@ -41,11 +41,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/yarnpkg-builder"
   },
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.1"
+  "stableVersion": "4.2.1"
 }

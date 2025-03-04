@@ -10,12 +10,11 @@ import {WriteStream}                                                            
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
-// eslint-disable-next-line @typescript-eslint/comma-dangle -- the trailing comma is required because of parsing ambiguities
-const partition = <T,>(array: Array<T>, size: number): Array<Array<T>> => {
+function partition<T>(array: Array<T>, size: number): Array<Array<T>> {
   return array.length > 0
     ? [array.slice(0, size)].concat(partition(array.slice(size), size))
     : [];
-};
+}
 
 type UpgradeSuggestion = {value: string | null, label: string};
 type UpgradeSuggestions = Array<UpgradeSuggestion>;

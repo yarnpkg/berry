@@ -507,7 +507,7 @@ describe(`Shell`, () => {
       });
 
       it(`should support the $RANDOM variable`, async () => {
-        async function getNumbers(result: Promise<{ exitCode: number, stdout: string, stderr: string }>): Promise<Array<number>> {
+        async function getNumbers(result: Promise<{exitCode: number, stdout: string, stderr: string}>): Promise<Array<number>> {
           const {exitCode, stdout, stderr} = await result;
 
           if (exitCode !== 0)
@@ -2091,6 +2091,26 @@ describe(`Shell`, () => {
           exitCode: 0,
           stdout: `KO\n`,
           stderr: `sleep: invalid time interval 'invalid'\n`,
+        });
+      });
+    });
+
+    describe(`unset`, () => {
+      it(`should unset one variable`, async () => {
+        await expectResult(bufferResult(
+          `FOO=bar; unset FOO; echo $FOO`,
+        ), {
+          exitCode: 1,
+          stderr: `Unbound variable "FOO"\n`,
+        });
+      });
+
+      it(`should unset multiple variables`, async () => {
+        await expectResult(bufferResult(
+          `A=1 B=2; unset A B; echo $A; echo $B`,
+        ), {
+          exitCode: 1,
+          stderr: `Unbound variable "A"\nUnbound variable "B"\n`,
         });
       });
     });

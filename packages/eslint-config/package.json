@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/eslint-config",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "license": "BSD-2-Clause",
   "type": "module",
   "exports": {
@@ -8,11 +8,14 @@
     "./react": "./react.js"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@stylistic/eslint-plugin": "^3.1.0",
+    "@stylistic/eslint-plugin-jsx": "^3.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
     "eslint-plugin-arca": "^0.16.0",
-    "eslint-plugin-react": "^7.34.1",
-    "globals": "^15.1.0"
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.15.0",
+    "tslib": "^2.4.0"
   },
   "peerDependencies": {
     "eslint": "*",
@@ -25,14 +28,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/eslint-config"
   },
   "engines": {
     "node": ">=18.12.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.0"
+    "eslint": "^9.20.1",
+    "typescript": "^5.5.2"
   },
-  "stableVersion": "2.0.0"
+  "stableVersion": "3.0.0"
 }

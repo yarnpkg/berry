@@ -229,7 +229,7 @@ export default class InfoCommand extends BaseCommand {
     const fetcher = configuration.makeFetcher();
     const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), cacheOptions: {skipIntegrityCheck: true}};
 
-    const builtinInfoBuilders: Array<Exclude<Hooks['fetchPackageInfo'], undefined>> = [
+    const builtinInfoBuilders: Array<Exclude<Hooks[`fetchPackageInfo`], undefined>> = [
       // Manifest fields
       async (pkg, extra, registerData) => {
         if (!extra.has(`manifest`))

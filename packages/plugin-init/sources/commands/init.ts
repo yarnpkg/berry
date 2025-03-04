@@ -113,6 +113,9 @@ export default class InitCommand extends BaseCommand {
     });
   }
 
+  async initialize() {
+  }
+
   async executeRegular(configuration: Configuration) {
     let existingProject: Project | null = null;
     try {
@@ -180,6 +183,10 @@ export default class InitCommand extends BaseCommand {
         `!.yarn/sdks`,
         `!.yarn/versions`,
         ``,
+        `# Whether you use PnP or not, the node_modules folder is often used to store`,
+        `# build artifacts that should be gitignored`,
+        `node_modules`,
+        ``,
         `# Swap the comments on the following lines if you wish to use zero-installs`,
         `# In that case, don't forget to run \`yarn config set enableGlobalCache false\`!`,
         `# Documentation here: https://yarnpkg.com/features/caching#zero-installs`,
@@ -217,13 +224,11 @@ export default class InitCommand extends BaseCommand {
 
       const editorConfigProperties = {
         [`*`]: {
-          endOfLine: `lf`,
-          insertFinalNewline: true,
-        },
-        [`*.{js,json,yml}`]: {
           charset: `utf-8`,
-          indentStyle: `space`,
+          endOfLine: `lf`,
           indentSize: 2,
+          indentStyle: `space`,
+          insertFinalNewline: true,
         },
       };
 
@@ -247,6 +252,8 @@ export default class InitCommand extends BaseCommand {
       await this.cli.run([`install`], {
         quiet: true,
       });
+
+      await this.initialize();
 
       if (!xfs.existsSync(ppath.join(this.context.cwd, `.git`))) {
         await execUtils.execvp(`git`, [`init`], {

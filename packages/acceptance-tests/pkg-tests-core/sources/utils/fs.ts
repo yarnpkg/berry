@@ -72,7 +72,7 @@ export const readSyml = async (source: PortablePath): Promise<any> => {
 
   try {
     return parseSyml(fileContent);
-  } catch (error) {
+  } catch {
     throw new Error(`Invalid syml file (${source})`);
   }
 };

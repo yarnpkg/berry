@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import {useLocation}                                 from '@docusaurus/router';
 import {useDocsSidebar}                              from '@docusaurus/theme-common/internal';
 import BackToTopButton                               from '@theme/BackToTopButton';

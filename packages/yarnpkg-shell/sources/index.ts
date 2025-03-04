@@ -166,6 +166,15 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     return await setTimeout(1000 * seconds, 0);
   }],
 
+  [`unset`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    for (const name of args) {
+      delete state.environment[name];
+      delete state.variables[name];
+    }
+
+    return 0;
+  }],
+
   [`__ysh_run_procedure`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     const procedure = state.procedures[args[0]];
 
@@ -373,7 +382,7 @@ async function applyEnvVariables(environmentSegments: Array<EnvSegment>, opts: S
   return interpolatedEnvs.reduce((envs, env) => {
     envs[env.name] = env.value;
     return envs;
-  }, {} as ShellState['environment']);
+  }, {} as ShellState[`environment`]);
 }
 
 function split(raw: string) {
@@ -1045,9 +1054,9 @@ export async function execute(command: string, args: Array<string> = [], {
     if (chain.type === `command`) {
       chain.args = chain.args.concat(args.map(arg => {
         return {
-          type: `argument` as 'argument',
+          type: `argument` as `argument`,
           segments: [{
-            type: `text` as 'text',
+            type: `text` as `text`,
             text: arg,
           }],
         };

@@ -328,7 +328,7 @@ const transforms = {
 type AllTransforms = typeof transforms;
 
 export type Source<T> = T extends keyof AllTransforms
-  ? Parameters<AllTransforms[T]['json']>[0] | null
+  ? Parameters<AllTransforms[T][`json`]>[0] | null
   : string | null;
 
 export type Tuple<T extends Type = Type> =

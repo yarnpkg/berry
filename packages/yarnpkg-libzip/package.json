@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/libzip",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "license": "BSD-2-Clause",
   "main": "./sources/sync.ts",
   "browser": "./sources/async.ts",
@@ -33,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/yarnpkg-libzip"
   },
   "devDependencies": {
@@ -51,5 +51,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "3.1.0"
+  "stableVersion": "3.1.1"
 }

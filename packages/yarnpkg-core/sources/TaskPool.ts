@@ -4,7 +4,7 @@ import {Worker}        from 'worker_threads';
 const kTaskInfo = Symbol(`kTaskInfo`);
 
 type PoolWorker<TOut> = Worker & {
-  [kTaskInfo]: null | { resolve: (value: TOut) => void, reject: (reason?: any) => void };
+  [kTaskInfo]: null | {resolve: (value: TOut) => void, reject: (reason?: any) => void};
 };
 
 export interface TaskPool<TIn, TOut> {

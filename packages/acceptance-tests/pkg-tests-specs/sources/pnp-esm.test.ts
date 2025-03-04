@@ -326,11 +326,11 @@ describe(`Plug'n'Play - ESM`, () => {
       {
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.ts`), `console.log(typeof require === 'undefined')`);
+        await xfs.writeFilePromise(ppath.join(path, `index.foo`), `console.log(typeof require === 'undefined')`);
 
         await run(`install`);
 
-        await expect(run(`node`, `./index.ts`)).resolves.toMatchObject({
+        await expect(run(`node`, `./index.foo`)).resolves.toMatchObject({
           code: 0,
           stdout: `false\n`,
         });
@@ -345,13 +345,13 @@ describe(`Plug'n'Play - ESM`, () => {
         type: `module`,
       },
       async ({path, run, source}) => {
-        await xfs.writeFilePromise(ppath.join(path, `index.ts`), ``);
+        await xfs.writeFilePromise(ppath.join(path, `index.foo`), ``);
 
         await run(`install`);
 
-        await expect(run(`node`, `./index.ts`)).rejects.toMatchObject({
+        await expect(run(`node`, `./index.foo`)).rejects.toMatchObject({
           code: 1,
-          stderr: expect.stringContaining(`Unknown file extension ".ts"`),
+          stderr: expect.stringContaining(`Unknown file extension ".foo"`),
         });
       },
     ),
@@ -613,7 +613,8 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  // @ts-expect-error - Missing types
+  (process.features.require_module ? it.skip : it)(
     `it should throw ERR_REQUIRE_ESM when requiring a file with type=module`,
     makeTemporaryEnv(
       {
@@ -643,7 +644,36 @@ describe(`Plug'n'Play - ESM`, () => {
     ),
   );
 
-  test(
+  // @ts-expect-error - Missing types
+  (process.features.require_module ? it : it.skip)(
+    `it should not throw ERR_REQUIRE_ESM when requiring a file with type=module`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-esm': `1.0.0`,
+        },
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `
+          require('no-deps-esm')
+          console.log('ESM required')
+        `);
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ESM required\n`,
+        });
+      },
+    ),
+  );
+
+  // @ts-expect-error - Missing types
+  (process.features.require_module ? it.skip : it)(
     `it should throw ERR_REQUIRE_ESM when requiring a .mjs file`,
     makeTemporaryEnv(
       {
@@ -668,6 +698,34 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `ERR_REQUIRE_ESM\n`,
+        });
+      },
+    ),
+  );
+
+  // @ts-expect-error - Missing types
+  (process.features.require_module ? it : it.skip)(
+    `it should not throw ERR_REQUIRE_ESM when requiring a .mjs file`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          'no-deps-mjs': `1.0.0`,
+        },
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `
+          require('no-deps-mjs/index.mjs')
+          console.log('ESM required')
+        `);
+
+        await expect(run(`node`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `ESM required\n`,
         });
       },
     ),

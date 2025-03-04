@@ -133,7 +133,7 @@ const makeCommandLine = (line: string, cli: YarnCli) => {
 const makeCommandOrRawLine = (line: string, cli: YarnCli) => {
   try {
     return makeCommandLine(line, cli);
-  } catch (err: any) {
+  } catch {
     console.log(`Failed to parse "${line}"`);
     return makeRawLine(line);
   }

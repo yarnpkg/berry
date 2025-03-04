@@ -36,7 +36,7 @@ function tryReadFile(filePath: string) {
   }
 }
 
-async function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext, nextResolve: typeof resolve): Promise<{ url: string, shortCircuit: boolean }> {
+async function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext, nextResolve: typeof resolve): Promise<{url: string, shortCircuit: boolean}> {
   const resolved = packageImportsResolve({
     name: specifier,
     base: pathToFileURL(issuer),
@@ -60,7 +60,7 @@ export async function resolve(
   originalSpecifier: string,
   context: ResolveContext,
   nextResolve: typeof resolve,
-): Promise<{ url: string, shortCircuit: boolean }> {
+): Promise<{url: string, shortCircuit: boolean}> {
   if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
 

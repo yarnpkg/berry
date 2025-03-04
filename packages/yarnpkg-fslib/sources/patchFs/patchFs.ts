@@ -112,7 +112,7 @@ type ReadSyncArgumentsOptions = [
 //#endregion
 
 //#region read types
-type ReadOptions = ReadSyncOptions & { buffer?: Buffer };
+type ReadOptions = ReadSyncOptions & {buffer?: Buffer};
 
 type ReadCallback = (
   err: NodeJS.ErrnoException | null,
@@ -250,7 +250,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     setupFn(patchedFs, `existsSync`, (p: string) => {
       try {
         return fakeFs.existsSync(p);
-      } catch (error) {
+      } catch {
         return false;
       }
     });

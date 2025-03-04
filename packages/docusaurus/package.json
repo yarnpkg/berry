@@ -107,6 +107,6 @@
   "repository": {
     "directory": "packages/docusaurus",
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git"
+    "url": "git+https://github.com/yarnpkg/berry.git"
   }
 }
