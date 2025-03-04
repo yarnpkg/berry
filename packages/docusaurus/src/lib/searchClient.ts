@@ -1,4 +1,4 @@
-import algoliasearch from 'algoliasearch/lite';
+import {liteClient as algoliasearch} from 'algoliasearch/lite';
 
 // Note that the appId and appKey are specific to Yarn's website - please
 // don't use them anywhere else without asking Algolia's permission
