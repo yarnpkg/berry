@@ -1,8 +1,6 @@
-import {execUtils, semverUtils}      from '@yarnpkg/core';
-import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
-import {name}                        from '@yarnpkg/monorepo/scripts/plugin-hello-universe';
-import {parseSyml}                   from '@yarnpkg/parsers';
-import {tests}                       from 'pkg-tests-core';
+import {execUtils, semverUtils} from '@yarnpkg/core';
+import {npath}                  from '@yarnpkg/fslib';
+import {tests}                  from 'pkg-tests-core';
 
 const TESTED_URLS = {
   // We've picked util-deprecate because it doesn't have any dependency, and

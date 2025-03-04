@@ -44117,8 +44117,11 @@ function makeApi(runtimeState, opts) {
   const isStrictRegExp = /^(\/|\.{1,2}(\/|$))/;
   const isDirRegExp = /\/$/;
   const isRelativeRegexp = /^\.{0,2}\//;
+  const topLevelLocator = { name: null, reference: null };
   const fallbackLocators = [];
   const emittedWarnings = /* @__PURE__ */ new Set();
+  if (runtimeState.enableTopLevelFallback === true)
+    fallbackLocators.push(topLevelLocator);
   if (opts.compatibilityMode !== false) {
     for (const name of [`react-scripts`, `gatsby`]) {
       const packageStore = runtimeState.packageRegistry.get(name);
@@ -44138,12 +44141,6 @@ function makeApi(runtimeState, opts) {
     packageRegistry,
     packageLocatorsByLocations
   } = runtimeState;
-  const topLevelEntry = packageLocatorsByLocations.get(`./`);
-  if (!topLevelEntry)
-    throw new Error(`Assertion failed: The top-level locator should always be registered`);
-  const topLevelLocator = topLevelEntry.locator;
-  if (runtimeState.enableTopLevelFallback === true)
-    fallbackLocators.unshift(topLevelLocator);
   function makeLogEntry(name, args) {
     return {
       fn: name,
@@ -44342,7 +44339,7 @@ function makeApi(runtimeState, opts) {
     }
   }
   const VERSIONS = { std: 3, resolveVirtual: 1, getAllLocators: 1 };
-  const topLevel = { name: null, reference: null };
+  const topLevel = topLevelLocator;
   function getPackageInformation({ name, reference }) {
     const packageInformationStore = packageRegistry.get(name);
     if (!packageInformationStore)
