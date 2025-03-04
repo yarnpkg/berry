@@ -62,18 +62,30 @@ function generateFallbackPoolData(settings: PnpSettings): Array<[string, string 
 function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData {
   const packageRegistryData: PackageRegistryData = [];
 
+  const topLevelPackageLocator = settings.dependencyTreeRoots.find(locator => {
+    return settings.packageRegistry.get(locator.name)?.get(locator.reference)?.packageLocation === `./`;
+  });
+
   for (const [packageName, packageStore] of sortMap(settings.packageRegistry, ([packageName]) => packageName === null ? `0` : `1${packageName}`)) {
+    if (packageName === null)
+      continue;
+
     const packageStoreData: PackageStoreData = [];
     packageRegistryData.push([packageName, packageStoreData]);
 
     for (const [packageReference, {packageLocation, packageDependencies, packagePeers, linkType, discardFromLookup}] of sortMap(packageStore, ([packageReference]) => packageReference === null ? `0` : `1${packageReference}`)) {
+      if (packageReference === null)
+        continue;
+
       const normalizedDependencies: Array<[string, string | [string, string] | null]> = [];
 
       if (packageName !== null && packageReference !== null && !packageDependencies.has(packageName))
         normalizedDependencies.push([packageName, packageReference]);
 
-      for (const [dependencyName, dependencyReference] of sortMap(packageDependencies.entries(), ([dependencyName]) => dependencyName))
+      for (const [dependencyName, dependencyReference] of packageDependencies)
         normalizedDependencies.push([dependencyName, dependencyReference]);
+
+      const sortedDependencies = sortMap(normalizedDependencies, ([dependencyName]) => dependencyName);
 
       const normalizedPeers = packagePeers && packagePeers.size > 0
         ? Array.from(packagePeers)
@@ -83,13 +95,19 @@ function generatePackageRegistryData(settings: PnpSettings): PackageRegistryData
         ? discardFromLookup
         : undefined;
 
-      packageStoreData.push([packageReference, {
+      const packageData = {
         packageLocation,
-        packageDependencies: normalizedDependencies,
+        packageDependencies: sortedDependencies,
         packagePeers: normalizedPeers,
         linkType,
         discardFromLookup: normalizedDiscardFromLookup,
-      }]);
+      };
+
+      packageStoreData.push([packageReference, packageData]);
+
+      if (topLevelPackageLocator && packageName === topLevelPackageLocator.name && packageReference === topLevelPackageLocator.reference) {
+        packageRegistryData.unshift([null, [[null, packageData]]]);
+      }
     }
   }
 

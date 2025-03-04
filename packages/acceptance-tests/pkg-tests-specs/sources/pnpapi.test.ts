@@ -94,7 +94,7 @@ describe(`Plug'n'Play API`, () => {
       test(
         `it should return the package dependencies`,
         makeTemporaryEnv({
-          name: `top-level`,
+          name: `root-workspace`,
           dependencies: {
             [`no-deps`]: `1.0.0`,
           },
@@ -105,7 +105,7 @@ describe(`Plug'n'Play API`, () => {
             source(`[...require('pnpapi').getPackageInformation(require('pnpapi').topLevel).packageDependencies].sort((a, b) => a[0].localeCompare(b[0]))`),
           ).resolves.toEqual([
             [`no-deps`, `npm:1.0.0`],
-            [`top-level`, expect.stringContaining(`workspace:`)],
+            [`root-workspace`, expect.stringContaining(`workspace:`)],
           ]);
         }),
       );

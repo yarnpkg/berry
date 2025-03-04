@@ -258,10 +258,6 @@ export class PnpInstaller implements Installer {
       });
     }
 
-    this.packageRegistry.set(null, new Map([
-      [null, this.getPackageInformation(this.opts.project.topLevelWorkspace.anchoredLocator)],
-    ]));
-
     const pnpFallbackMode = this.opts.project.configuration.get(`pnpFallbackMode`);
 
     const dependencyTreeRoots = this.opts.project.workspaces.map(({anchoredLocator}) => ({name: structUtils.stringifyIdent(anchoredLocator), reference: anchoredLocator.reference}));
