@@ -282,7 +282,7 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
   const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
 
-  const {stdout, stderr} = await execUtils.execvp(`git`, [`-c`, `core.safecrlf=false`, `diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, `--no-renames`, `--text`, folderAN, folderBN], {
+  const {stdout, stderr} = await execUtils.execvp(`git`, [`-c`, `core.safecrlf=false`, `diff`, `--src-prefix=a/`, `--dst-prefix=b/`, `--ignore-cr-at-eol`, `--full-index`, `--no-index`, `--no-renames`, `--text`, folderAN, folderBN, `':(exclude,icase).ds_store'`], {
     cwd: npath.toPortablePath(process.cwd()),
     env: {
       ...process.env,
