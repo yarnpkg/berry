@@ -209,8 +209,9 @@ describe(`Plug'n'Play API`, () => {
 
           await expect(
             source(`{
+              const path = require('path');
               const pnp = require('pnpapi');
-              return [...pnp.getPackageInformation(pnp.findPackageLocator('packages/bar')).packagePeers || []];
+              return [...pnp.getPackageInformation(pnp.findPackageLocator(path.resolve('packages/bar'))).packagePeers || []];
             }`),
           ).resolves.toEqual([]);
         }),
