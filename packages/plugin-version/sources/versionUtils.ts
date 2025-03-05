@@ -342,7 +342,7 @@ export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, `
         // We only care about workspaces, and we only care about workspaces that will be bumped
         if (bumpedWorkspaces.has(matchingWorkspace.anchoredLocator.locatorHash)) {
           // Quick note: we don't want to check whether the workspace pointer
-          // by `resolution` is private, because while it doesn't makes sense
+          // by `resolution` is private, because while it doesn't make sense
           // to bump a private package because its dependencies changed, the
           // opposite isn't true: a (public) package might need to be bumped
           // because one of its dev dependencies is a (private) package whose
