@@ -1,4 +1,4 @@
-import {xfs} from '@yarnpkg/fslib';
+import {ppath, xfs} from '@yarnpkg/fslib';
 
 const {
   fs: {writeFile, writeJson},
@@ -110,6 +110,56 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should support overriding a packages with another, but only if its parent package has a specific version`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`one-fixed-dep`]: `1.0.0`,
+          },
+          resolutions: {
+            [`one-fixed-dep@1.0.0/no-deps`]: `1.0.1`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `1.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `1.0.1`,
+              },
+            },
+          });
+
+          await xfs.writeJsonPromise(ppath.join(path, `package.json`), {
+            dependencies: {
+              [`one-fixed-dep`]: `2.0.0`,
+            },
+            resolutions: {
+              [`one-fixed-dep@1.0.0/no-deps`]: `1.0.1`,
+            },
+          });
+
+          await run(`install`);
+
+          await expect(source(`require('one-fixed-dep')`)).resolves.toMatchObject({
+            name: `one-fixed-dep`,
+            version: `2.0.0`,
+            dependencies: {
+              [`no-deps`]: {
+                name: `no-deps`,
+                version: `2.0.0`,
+              },
+            },
+          });
+        },
+      ),
+    );
+
+    test(
       `it should support overriding packages with portals`,
       makeTemporaryEnv(
         {
@@ -141,7 +191,7 @@ describe(`Features`, () => {
     );
 
     test(
-      `it should error when legacy glob syntax is used`,
+      `it should warn when legacy glob syntax is used`,
       makeTemporaryEnv(
         {
           resolutions: {

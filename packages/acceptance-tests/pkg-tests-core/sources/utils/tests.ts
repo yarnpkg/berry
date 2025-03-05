@@ -51,6 +51,7 @@ export enum RequestType {
   Login = `login`,
   PackageInfo = `packageInfo`,
   PackageTarball = `packageTarball`,
+  PackageVersion = `packageVersion`,
   Whoami = `whoami`,
   Repository = `repository`,
   Publish = `publish`,
@@ -66,6 +67,12 @@ export type Request = {
   type: RequestType.PackageInfo;
   scope?: string;
   localName: string;
+} | {
+  registry?: string;
+  type: RequestType.PackageVersion;
+  scope?: string;
+  localName: string;
+  version: string;
 } | {
   registry?: string;
   type: RequestType.PackageTarball;
@@ -409,6 +416,37 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       response.end(data);
     },
 
+    async [RequestType.PackageVersion](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.PackageVersion)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {scope, localName, version} = parsedRequest;
+      const name = scope ? `${scope}/${localName}` : localName;
+
+      const packageEntry = await getPackageEntry(name);
+      if (!packageEntry) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
+      const packageVersionEntry = packageEntry.get(version);
+      invariant(packageVersionEntry, `This can only exist`);
+
+      const data = JSON.stringify({
+        [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
+          dist: {
+            shasum: await getPackageArchiveHash(name, version),
+            tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
+              ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
+              : await getPackageHttpArchivePath(name, version),
+          },
+        }),
+      });
+
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.end(data);
+    },
+
     async [RequestType.PackageTarball](parsedRequest, request, response) {
       if (parsedRequest.type !== RequestType.PackageTarball)
         throw new Error(`Assertion failed: Invalid request type`);
@@ -627,6 +665,16 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
           type: RequestType.PackageInfo,
           scope,
           localName,
+        };
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/([0-9]+\.[0-9]+\.[0-9]+(?:-[^/]+)?)$/))) {
+        const [, scope, localName, version] = match;
+
+        return {
+          ...registry,
+          type: RequestType.PackageVersion,
+          scope,
+          localName,
+          version,
         };
       } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz(\?.*)?$/))) {
         const [, scope, localName, split, version] = match;

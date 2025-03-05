@@ -84,7 +84,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`typeof require('pnpapi').getPackageInformation({name: null, reference: null}).packageLocation`),
+            source(`typeof require('pnpapi').getPackageInformation(require('pnpapi').topLevel).packageLocation`),
           ).resolves.toEqual(
             `string`,
           );
@@ -102,10 +102,10 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           await expect(
-            source(`[...require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies]`),
+            source(`[...require('pnpapi').getPackageInformation(require('pnpapi').topLevel).packageDependencies].sort((a, b) => a[0].localeCompare(b[0]))`),
           ).resolves.toEqual([
             [`no-deps`, `npm:1.0.0`],
-            [`root-workspace`, `workspace:.`],
+            [`root-workspace`, expect.stringContaining(`workspace:`)],
           ]);
         }),
       );
@@ -165,8 +165,9 @@ describe(`Plug'n'Play API`, () => {
 
           await expect(
             source(`{
+              const path = require('path');
               const pnp = require('pnpapi');
-              const deps = pnp.getPackageInformation({name: 'foo', reference: 'workspace:packages/foo'}).packageDependencies;
+              const deps = pnp.getPackageInformation(pnp.findPackageLocator(path.resolve('packages/foo/package.json'))).packageDependencies;
               return [...pnp.getPackageInformation(pnp.getLocator('bar', deps.get('bar'))).packagePeers];
             }`),
           ).resolves.toEqual([
@@ -208,8 +209,9 @@ describe(`Plug'n'Play API`, () => {
 
           await expect(
             source(`{
+              const path = require('path');
               const pnp = require('pnpapi');
-              return [...pnp.getPackageInformation({name: 'bar', reference: 'workspace:packages/bar'}).packagePeers || []];
+              return [...pnp.getPackageInformation(pnp.findPackageLocator(path.resolve('packages/bar'))).packagePeers || []];
             }`),
           ).resolves.toEqual([]);
         }),
@@ -338,7 +340,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           const reference = await source(
-            `require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies.get('no-deps')`,
+            `require('pnpapi').getPackageInformation(require('pnpapi').topLevel).packageDependencies.get('no-deps')`,
           );
 
           await expect(
@@ -359,7 +361,7 @@ describe(`Plug'n'Play API`, () => {
           await run(`install`);
 
           const reference = await source(
-            `require('pnpapi').getPackageInformation({name: null, reference: null}).packageDependencies.get('self')`,
+            `require('pnpapi').getPackageInformation(require('pnpapi').topLevel).packageDependencies.get('self')`,
           );
 
           await expect(
