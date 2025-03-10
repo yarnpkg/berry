@@ -527,13 +527,13 @@ export function parseRange<Opts extends ParseRangeOptions>(range: string, opts?:
     : null;
 
   return {
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     protocol,
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     source,
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     selector,
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     params,
   };
 }

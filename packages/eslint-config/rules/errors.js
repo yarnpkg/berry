@@ -50,7 +50,7 @@ export default [
 
       'no-misleading-character-class': 2,
 
-      'no-new-symbol': 2,
+      'no-new-native-nonconstructor': 2,
 
       'no-redeclare': 2,
 

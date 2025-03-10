@@ -83,7 +83,7 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
             process.off(`SIGTERM`, sigtermHandler);
           }
 
-          // @ts-expect-error
+          // @ts-expect-error - reason TBS
           switch (error.code) {
             case `ENOENT`: {
               stdio[2].write(`command not found: ${name}\n`);

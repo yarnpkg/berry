@@ -31,9 +31,9 @@ export function makeManager(pnpapi: PnpApi, opts: MakeManagerOptions) {
   function loadApiInstance(pnpApiPath: PortablePath): PnpApi {
     const nativePath = npath.fromPortablePath(pnpApiPath);
 
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     const module = new Module(nativePath, null);
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     module.load(nativePath);
 
     return module.exports;

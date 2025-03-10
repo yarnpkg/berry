@@ -1,7 +1,7 @@
 import {normalizeRepoUrl}          from '@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl';
 import DOMPurify                   from 'dompurify';
 import gitUrlParse                 from 'git-url-parse';
-// @ts-expect-error
+// @ts-expect-error - reason TBS
 import {Marked}                    from 'marked';
 import {useQuery}                  from 'react-query';
 import {resolve as resolveExports} from 'resolve.exports';

@@ -20,7 +20,7 @@ export default [
         ignoreRestSiblings: true,
       }],
 
-      '@typescript-eslint/prefer-ts-expect-error': 2,
+      '@typescript-eslint/ban-ts-comment': 2,
 
       'arca/no-default-export': 2,
 

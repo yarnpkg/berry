@@ -8,7 +8,7 @@ import * as loaderUtils                      from '../loaderUtils';
 
 let findPnpApi: any = (esmModule as any).findPnpApi;
 if (!findPnpApi) {
-  // @ts-expect-error
+  // @ts-expect-error - reason TBS
   const require = createRequire(import.meta.url);
 
   const pnpApi = require(`./.pnp.cjs`);

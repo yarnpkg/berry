@@ -1,0 +1,13 @@
+releases:
+  "@yarnpkg/eslint-config": patch
+
+declined:
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/core"
+  - "@yarnpkg/doctor"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/libzip"
+  - "@yarnpkg/pnp"
+  - "@yarnpkg/pnpify"
+  - "@yarnpkg/shell"

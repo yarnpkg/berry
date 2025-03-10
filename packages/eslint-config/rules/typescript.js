@@ -31,7 +31,7 @@ export default [
       'no-const-assign': 0,
 
       // Checked by Typescript - ts(2588)
-      'no-new-symbol': 0,
+      'no-new-native-nonconstructor': 0,
 
       // Checked by Typescript - ts(2376)
       'no-this-before-super': 0,
