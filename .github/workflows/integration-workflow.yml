@@ -286,10 +286,10 @@ jobs:
         name: yarn-artifacts
         path: packages
 
-    # https://github.com/multiarch/qemu-user-static
+    # https://github.com/tonistiigi/binfmt
     - name: 'Enable execution of multi-arch containers'
       run: |
-        docker run --rm --privileged multiarch/qemu-user-static --reset --persistent yes
+        docker run --rm --privileged tonistiigi/binfmt:latest --install all
       shell: bash
 
     # Apparently @babel/register is insanely slow inside the big-endian
