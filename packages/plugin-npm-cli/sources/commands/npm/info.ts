@@ -163,7 +163,7 @@ export default class NpmInfoCommand extends BaseCommand {
           serialized = {};
 
           for (const field of fields) {
-            // @ts-expect-error
+            // @ts-expect-error - reason TBS
             const value = packageInformation[field];
 
             if (typeof value !== `undefined`) {
