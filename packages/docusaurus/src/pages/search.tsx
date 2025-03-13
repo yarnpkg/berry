@@ -6,7 +6,7 @@ import Layout                                                     from '@theme/L
 import clsx                                                       from 'clsx';
 import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch-hooks-web';
 import Skeleton                                                   from 'react-loading-skeleton';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState, startTransition} from 'react';
 
 import {searchClient}                                             from '../lib/searchClient';
 
@@ -141,11 +141,13 @@ function SearchBar() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set(`q`, e.currentTarget.value);
-    history.replace(`?${searchParams.toString()}`);
+    startTransition(() => {
+      history.replace(`?${searchParams.toString()}`);
+    });
   };
 
   return (
-    <input className={clsx(indexStyles.search, styles.search)} autoFocus={true} placeholder={`Search packages (e.g. babel, webpack, react, ...)`} value={query} onChange={handleChange}/>
+    <input type="search" className={clsx(indexStyles.search, styles.search)} autoFocus={true} placeholder={`Search packages (e.g. babel, webpack, react, ...)`} value={query} onChange={handleChange}/>
   );
 }
 
