@@ -2045,7 +2045,7 @@ export class Configuration {
 
       const ret = await hook(...args);
       if (typeof ret !== `undefined`) {
-        // @ts-expect-error
+        // @ts-expect-error - reason TBS
         return ret;
       }
     }

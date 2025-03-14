@@ -622,7 +622,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     } else {
       return this.baseFs.watch(
         this.resolveDirOrFilePath(p),
-        // @ts-expect-error
+        // @ts-expect-error - reason TBS
         a,
         b,
       );
@@ -634,7 +634,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
   watchFile(p: PortablePath, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback): StatWatcher {
     return this.baseFs.watchFile(
       this.resolveDirOrFilePath(p),
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       a,
       b,
     );

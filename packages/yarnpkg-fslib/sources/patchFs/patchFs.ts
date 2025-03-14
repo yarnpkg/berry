@@ -327,7 +327,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     }
 
     setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       const fd = await fakeFs.openPromise(...args);
       return new FileHandle(fd, fakeFs);
     });
@@ -344,12 +344,12 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
     // https://github.com/nodejs/node/blob/dc79f3f37caf6f25b8efee4623bec31e2c20f595/lib/fs.js#L690-L691
     // and
     // https://github.com/nodejs/node/blob/ba684805b6c0eded76e5cd89ee00328ac7a59365/lib/internal/util.js#L293
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     patchedFs.read[promisify.custom] = async (fd: number, buffer: Buffer, ...args: Array<any>) => {
       const res = fakeFs.readPromise(fd, buffer, ...args);
       return {bytesRead: await res, buffer};
     };
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     patchedFs.write[promisify.custom] = async (fd: number, buffer: Buffer, ...args: Array<any>) => {
       const res = fakeFs.writePromise(fd, buffer, ...args);
       return {bytesWritten: await res, buffer};
