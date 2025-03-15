@@ -1434,7 +1434,7 @@ export class ZipFS extends BasePortableFakeFS {
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = await this.readFileBuffer(p, {asyncDecompress: true});
@@ -1447,7 +1447,7 @@ export class ZipFS extends BasePortableFakeFS {
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = this.readFileBuffer(p);

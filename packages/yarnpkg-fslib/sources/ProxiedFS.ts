@@ -381,7 +381,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.baseFs.watch(
       this.mapToBase(p),
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       a,
       b,
     );
@@ -392,7 +392,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   watchFile(p: P, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
     return this.baseFs.watchFile(
       this.mapToBase(p),
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       a,
       b,
     );

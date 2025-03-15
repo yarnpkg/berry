@@ -336,7 +336,7 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
    */
 
   function makeFakeModule(path: NativePath): NodeModule {
-    // @ts-expect-error
+    // @ts-expect-error - reason TBS
     const fakeModule = new Module(path, null);
     fakeModule.filename = path;
     fakeModule.paths = Module._nodeModulePaths(path);
