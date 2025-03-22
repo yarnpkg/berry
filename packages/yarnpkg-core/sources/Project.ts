@@ -2191,10 +2191,11 @@ function applyVirtualResolutionMutations({
 
   const allIdents = new Map<IdentHash, Ident>();
 
-  // We'll be keeping track of all virtual descriptors; once they have all
-  // been generated we'll check whether they can be deduplicated into one.
-  const allVirtualInstances = new Map<LocatorHash, Map<string, Descriptor>>();
-  const allVirtualDependents = new Map<DescriptorHash, Set<LocatorHash>>();
+  /** Maps dependency hashes to the first virtual locator encountered with that hash, for deduplication */
+  const allVirtualInstances = new Map<string, Locator>();
+  const allVirtualDependents = new Map<LocatorHash, Set<LocatorHash>>();
+  /** Maps virtual locators to all (virtual) descriptors that resolve to them, for deduplication */
+  const allVirtualResolutions = new Map<LocatorHash, Set<DescriptorHash>>();
 
   const allPeerRequests = new Map<LocatorHash, Map<IdentHash, PeerRequestNode>>();
 
@@ -2263,7 +2264,7 @@ function applyVirtualResolutionMutations({
     if (!parentPackage)
       throw new Error(`Assertion failed: The package (${structUtils.prettyLocator(project.configuration, parentLocator)}) should have been registered`);
 
-    const newVirtualInstances: Array<[Locator, Descriptor, Package]> = [];
+    const dedupeCandidates = new Set<LocatorHash>();
     const parentPeerRequirements = new Map<IdentHash, PeerRequirementNode>();
 
     const firstPass = [];
@@ -2322,16 +2323,15 @@ function applyVirtualResolutionMutations({
         virtualizedDescriptor = structUtils.virtualizeDescriptor(descriptor, parentLocator.locatorHash);
         virtualizedPackage = structUtils.virtualizePackage(pkg, parentLocator.locatorHash);
 
-        parentPackage.dependencies.delete(descriptor.identHash);
-        parentPackage.dependencies.set(virtualizedDescriptor.identHash, virtualizedDescriptor);
+        parentPackage.dependencies.set(descriptor.identHash, virtualizedDescriptor);
 
         allResolutions.set(virtualizedDescriptor.descriptorHash, virtualizedPackage.locatorHash);
         allDescriptors.set(virtualizedDescriptor.descriptorHash, virtualizedDescriptor);
 
         allPackages.set(virtualizedPackage.locatorHash, virtualizedPackage);
 
-        // Keep track of all new virtual packages since we'll want to dedupe them
-        newVirtualInstances.push([pkg, virtualizedDescriptor, virtualizedPackage]);
+        miscUtils.getSetWithDefault(allVirtualResolutions, virtualizedPackage.locatorHash).add(virtualizedDescriptor.descriptorHash);
+        dedupeCandidates.add(virtualizedPackage.locatorHash);
       });
 
       // In the second pass we resolve the peer requests to their provision.
@@ -2397,10 +2397,12 @@ function applyVirtualResolutionMutations({
 
           virtualizedPackage.dependencies.set(peerDescriptor.identHash, peerProvision);
 
-          // Need to track when a virtual descriptor is set as a dependency in case
-          // the descriptor will be deduplicated.
+          // Need to keep track when a virtual depends on a sibling virtual so
+          // that if and when the latter is deduplicated, we know the former
+          // needs to be deduplicated again
           if (structUtils.isVirtualDescriptor(peerProvision)) {
-            const dependents = miscUtils.getSetWithDefault(allVirtualDependents, peerProvision.descriptorHash);
+            const dependentLocatorHash = allResolutions.get(peerProvision.descriptorHash);
+            const dependents = miscUtils.getSetWithDefault(allVirtualDependents, dependentLocatorHash);
             dependents.add(virtualizedPackage.locatorHash);
           }
 
@@ -2447,11 +2449,7 @@ function applyVirtualResolutionMutations({
       // In the fourth pass, we register information about the peer requirement
       // and peer request trees, using the post-deduplication information.
       fourthPass.push(() => {
-        const finalDescriptor = parentPackage.dependencies.get(descriptor.identHash);
-        if (typeof finalDescriptor === `undefined`)
-          throw new Error(`Assertion failed: Expected the peer dependency to have been turned into a dependency`);
-
-        const finalResolution = allResolutions.get(finalDescriptor.descriptorHash)!;
+        const finalResolution = allResolutions.get(virtualizedDescriptor.descriptorHash)!;
         if (typeof finalResolution === `undefined`)
           throw new Error(`Assertion failed: Expected the descriptor to be registered`);
 
@@ -2464,10 +2462,10 @@ function applyVirtualResolutionMutations({
           if (!peerRequest)
             continue;
 
-          peerRequirement.requests.set(finalDescriptor.descriptorHash, peerRequest);
+          peerRequirement.requests.set(virtualizedDescriptor.descriptorHash, peerRequest);
           peerRequirementNodes.set(peerRequirement.hash, peerRequirement);
           if (!peerRequirement.root) {
-            parentPeerRequests.get(peerRequirement.ident.identHash)?.children.set(finalDescriptor.descriptorHash, peerRequest);
+            parentPeerRequests.get(peerRequirement.ident.identHash)?.children.set(virtualizedDescriptor.descriptorHash, peerRequest);
           }
         }
 
@@ -2483,76 +2481,63 @@ function applyVirtualResolutionMutations({
     for (const fn of [...firstPass, ...secondPass])
       fn();
 
-    let stable: boolean;
-    do {
-      stable = true;
+    for (const locatorHash of dedupeCandidates) {
+      // Remove locatorHash here so that if a dependency is deduped, it will be
+      // deduped again when added to the dedupe candidates
+      dedupeCandidates.delete(locatorHash);
 
-      for (const [physicalLocator, virtualDescriptor, virtualPackage] of newVirtualInstances) {
-        const otherVirtualInstances = miscUtils.getMapWithDefault(allVirtualInstances, physicalLocator.locatorHash);
+      const virtualPackage = allPackages.get(locatorHash)!;
 
-        // We take all the dependencies from the new virtual instance and
-        // generate a hash from it. By checking if this hash is already
-        // registered, we know whether we can trim the new version.
-        const dependencyHash = hashUtils.makeHash(
-          ...[...virtualPackage.dependencies.values()].map(descriptor => {
-            const resolution = descriptor.range !== `missing:`
-              ? allResolutions.get(descriptor.descriptorHash)
-              : `missing:`;
+      // We take all the dependencies from the new virtual instance and
+      // generate a hash from it. By checking if this hash is already
+      // registered, we know whether we can trim the new version.
+      const dependencyHash = hashUtils.makeHash(
+        structUtils.devirtualizeLocator(virtualPackage).locatorHash,
+        ...Array.from(virtualPackage.dependencies.values(), descriptor => {
+          const resolution = descriptor.range !== `missing:`
+            ? allResolutions.get(descriptor.descriptorHash)
+            : `missing:`;
 
-            if (typeof resolution === `undefined`)
-              throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
+          if (typeof resolution === `undefined`)
+            throw new Error(`Assertion failed: Expected the resolution for ${structUtils.prettyDescriptor(project.configuration, descriptor)} to have been registered`);
 
-            return resolution === top ? `${resolution} (top)` : resolution;
-          }),
-          // We use the identHash to disambiguate between virtual descriptors
-          // with different base idents being resolved to the same virtual package.
-          // Note: We don't use the descriptorHash because the whole point of duplicate
-          // virtual descriptors is that they have different `virtual:` ranges.
-          // This causes the virtual descriptors with different base idents
-          // to be preserved, while the virtual package they resolve to gets deduped.
-          virtualDescriptor.identHash,
-        );
+          return resolution === top ? `${resolution} (top)` : resolution;
+        }),
+      );
 
-        const masterDescriptor = otherVirtualInstances.get(dependencyHash);
-        if (typeof masterDescriptor === `undefined`) {
-          otherVirtualInstances.set(dependencyHash, virtualDescriptor);
-          continue;
-        }
+      const masterLocator = allVirtualInstances.get(dependencyHash);
+      if (typeof masterLocator === `undefined`) {
+        allVirtualInstances.set(dependencyHash, virtualPackage);
+        continue;
+      }
 
-        // Since we're applying multiple pass, we might have already registered
-        // ourselves as the "master" descriptor in the previous pass.
-        if (masterDescriptor === virtualDescriptor)
-          continue;
+      // Change every descriptor that is resolving to the virtual package to
+      // resolve to the master locator instead, then discard the virtual
+      // package
+      const masterResolutions = miscUtils.getSetWithDefault(allVirtualResolutions, masterLocator.locatorHash);
+      for (const descriptorHash of allVirtualResolutions.get(virtualPackage.locatorHash) ?? []) {
+        allResolutions.set(descriptorHash, masterLocator.locatorHash);
+        masterResolutions.add(descriptorHash);
+      }
+      allPackages.delete(virtualPackage.locatorHash);
+      accessibleLocators.delete(virtualPackage.locatorHash);
+      dedupeCandidates.delete(virtualPackage.locatorHash);
 
-        allPackages.delete(virtualPackage.locatorHash);
-        allDescriptors.delete(virtualDescriptor.descriptorHash);
-        allResolutions.delete(virtualDescriptor.descriptorHash);
+      const dependents = allVirtualDependents.get(virtualPackage.locatorHash);
+      if (dependents !== undefined) {
+        const masterDependents = miscUtils.getSetWithDefault(allVirtualDependents, masterLocator.locatorHash);
+        for (const dependent of dependents) {
+          // A dependent of the virtual package is now a dependent of the
+          // master package
+          masterDependents.add(dependent);
 
-        accessibleLocators.delete(virtualPackage.locatorHash);
-
-        const dependents = allVirtualDependents.get(virtualDescriptor.descriptorHash) || [];
-        const allDependents = [parentPackage.locatorHash, ...dependents];
-
-        allVirtualDependents.delete(virtualDescriptor.descriptorHash);
-
-        for (const dependent of allDependents) {
-          const pkg = allPackages.get(dependent);
-          if (typeof pkg === `undefined`)
-            continue;
-
-          if (pkg.dependencies.get(virtualDescriptor.identHash)!.descriptorHash !== masterDescriptor.descriptorHash)
-            stable = false;
-
-          pkg.dependencies.set(virtualDescriptor.identHash, masterDescriptor);
-        }
-
-        for (const peerRequirement of parentPeerRequirements.values()) {
-          if (peerRequirement.provided.descriptorHash === virtualDescriptor.descriptorHash) {
-            peerRequirement.provided = masterDescriptor;
-          }
+          // Virtual packages that depended on the deduplicated package would
+          // get a different dependency hash now, so we need to deduplicate
+          // them again
+          dedupeCandidates.add(dependent);
         }
       }
-    } while (!stable);
+    }
 
     for (const fn of [...thirdPass, ...fourthPass]) {
       fn();
