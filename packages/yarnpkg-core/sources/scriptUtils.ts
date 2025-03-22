@@ -400,6 +400,9 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
           }],
 
           [PackageManager.Pnpm, async () => {
+            // Remove environment variables that limit the install to just production dependencies
+            delete env.NODE_ENV;
+
             const install = await execUtils.pipevp(`pnpm`, [`install`], {cwd, env, stdin, stdout, stderr, end: execUtils.EndStrategy.ErrorCode});
             if (install.code !== 0)
               return install.code;
