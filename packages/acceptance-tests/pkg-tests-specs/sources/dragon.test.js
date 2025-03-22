@@ -726,4 +726,111 @@ describe(`Dragon tests`, () => {
       },
     ),
   );
+
+  test(`it should pass the dragon test 14`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `pkg-a`,
+          `pkg-b`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // This dragon test represents the following scenario:
+        //
+        // .
+        // ├── pkg-a/
+        // │   └── (alias-1) peer-deps@1.0.0
+        // │       └── (peer) does-not-matter
+        // └── pkg-b/
+        //     └── (alias-2) peer-deps@1.0.0
+        //         └── (peer) does-not-matter
+        //
+        // The same package is installed under two different aliases. This test
+        // checks that the two instances are properly deduplicated despite
+        // having different idents.
+
+        await xfs.mkdirpPromise(`${path}/pkg-a`);
+        await xfs.writeJsonPromise(`${path}/pkg-a/package.json`, {
+          name: `a`,
+          dependencies: {
+            [`alias-1`]: `npm:peer-deps@1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/pkg-b`);
+        await xfs.writeJsonPromise(`${path}/pkg-b/package.json`, {
+          name: `b`,
+          dependencies: {
+            [`alias-2`]: `npm:peer-deps@1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+
+        // The virtual descriptors should be different but the virtual package should be the same
+        const aPath = npath.fromPortablePath(ppath.join(path, `pkg-a/package.json`));
+        const bPath = npath.fromPortablePath(ppath.join(path, `pkg-b/package.json`));
+        await expect(source(`(
+          createRequire = require('module').createRequire,
+          createRequire(${JSON.stringify(aPath)}).resolve('alias-1/package.json') === createRequire(${JSON.stringify(bPath)}).resolve('alias-2/package.json')
+        )`)).resolves.toBe(true);
+      },
+    ),
+  );
+
+  test(`it should pass the dragon test 15`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [
+          `pkg-a`,
+          `pkg-b`,
+        ],
+      },
+      async ({path, run, source}) => {
+        // This dragon test represents the following scenario:
+        //
+        // .
+        // ├── pkg-a/
+        // │   └── (alias-1) peer-deps@1.0.0
+        // │       └── (peer) does-not-matter
+        // └── pkg-b/
+        //     └── (alias-1) peer-deps@1.0.0
+        //     │   └── (peer) does-not-matter
+        //     └── (alias-2) peer-deps@1.0.0
+        //         └── (peer) does-not-matter
+        //
+        // The same package is installed under two different aliases. When
+        // traversing pkg-b, we deduplicate the virtual package installed under
+        // alias-1 to the one under pkg-a, but the virtual package is the same
+        // one installed under alias-2. This test checks that we don't leave
+        // dangling references to the virtual package that was removed.
+
+        await xfs.mkdirpPromise(`${path}/pkg-a`);
+        await xfs.writeJsonPromise(`${path}/pkg-a/package.json`, {
+          name: `a`,
+          dependencies: {
+            [`alias-1`]: `npm:peer-deps@1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await xfs.mkdirpPromise(`${path}/pkg-b`);
+        await xfs.writeJsonPromise(`${path}/pkg-b/package.json`, {
+          name: `b`,
+          dependencies: {
+            [`alias-1`]: `npm:peer-deps@1.0.0`,
+            [`alias-2`]: `npm:peer-deps@1.0.0`,
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await expect(run(`install`)).resolves.toBeTruthy();
+      },
+    ),
+  );
 });
