@@ -31,3 +31,4 @@ declined:
   - "@yarnpkg/nm"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
+  - "@yarnpkg/extensions"
