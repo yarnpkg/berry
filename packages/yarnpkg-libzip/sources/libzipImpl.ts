@@ -311,6 +311,6 @@ export class LibZipImpl implements ZipImpl {
   }
 
   public discard(): void {
-
+    this.libzip.discard(this.zip);
   }
 }
