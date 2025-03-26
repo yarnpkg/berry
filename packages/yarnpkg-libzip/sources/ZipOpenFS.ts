@@ -86,6 +86,7 @@ export class ZipOpenFS extends MountFS<ZipFS> {
         baseFs,
         readOnly: readOnlyArchives,
         stats: baseFs.statSync(p),
+        customZipImplementation: opts.customZipImplementation,
       });
     };
 
@@ -94,6 +95,7 @@ export class ZipOpenFS extends MountFS<ZipFS> {
         baseFs,
         readOnly: readOnlyArchives,
         stats: await baseFs.statPromise(p),
+        customZipImplementation: opts.customZipImplementation,
       };
 
       return () => {
