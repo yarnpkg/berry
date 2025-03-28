@@ -1,7 +1,7 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType, WindowsLinkType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}                          from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                                from '@yarnpkg/plugin-stage';
-import {pnpZipBackend}                                                      from '@yarnpkg/pnp';
+import {PnpZipBackend}                                                      from '@yarnpkg/pnp';
 import {pathToFileURL}                                                      from 'url';
 
 import {PnpLinker}                                                          from './PnpLinker';
@@ -78,7 +78,7 @@ declare module '@yarnpkg/core' {
     pnpEnableInlining: boolean;
     pnpFallbackMode: string;
     pnpUnpluggedFolder: PortablePath;
-    pnpZipBackend: pnpZipBackend;
+    pnpZipBackend: PnpZipBackend;
   }
 }
 
