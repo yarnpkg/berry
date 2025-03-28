@@ -6,7 +6,7 @@ import {DependencyMeta, PeerDependencyMeta} from './Manifest';
  * Unique hash of a package descriptor. Used as key in various places so that
  * two descriptors can be quickly compared.
  */
-export type IdentHash = string & { __identHash: string };
+export type IdentHash = string & {__identHash: string};
 
 /**
  * Combination of a scope and name, bound with a hash suitable for comparisons.
@@ -38,7 +38,7 @@ export interface Ident {
  * Unique hash of a package descriptor. Used as key in various places so that
  * two descriptors can be quickly compared.
  */
-export type DescriptorHash = string & { __descriptorHash: string };
+export type DescriptorHash = string & {__descriptorHash: string};
 
 /**
  * Descriptors are just like idents (including their `identHash`), except that
@@ -65,7 +65,7 @@ export interface Descriptor extends Ident {
  * Unique hash of a package locator. Used as key in various places so that
  * two locators can be quickly compared.
  */
-export type LocatorHash = string & { __locatorHash: string };
+export type LocatorHash = string & {__locatorHash: string};
 
 /**
  * Locator are just like idents (including their `identHash`), except that

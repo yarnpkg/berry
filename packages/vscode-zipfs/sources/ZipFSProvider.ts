@@ -59,7 +59,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
     this.fs.writeFileSync(uri.fsPath, Buffer.from(content));
   }
 
-  rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean }): void {
+  rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: {overwrite: boolean}): void {
     throw new Error(`Not supported`);
   }
 

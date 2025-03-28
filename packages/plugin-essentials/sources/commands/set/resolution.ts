@@ -20,7 +20,7 @@ export default class SetResolutionCommand extends BaseCommand {
     `,
     examples: [[
       `Force all instances of lodash@npm:^1.2.3 to resolve to 1.5.0`,
-      `$0 set resolution lodash@npm:^1.2.3 1.5.0`,
+      `$0 set resolution lodash@npm:^1.2.3 npm:1.5.0`,
     ]],
   });
 

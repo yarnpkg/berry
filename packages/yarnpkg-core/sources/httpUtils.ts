@@ -113,14 +113,14 @@ async function prettyNetworkError(response: Promise<Response>, {configuration, c
 /**
  * Searches through networkSettings and returns the most specific match
  */
-export function getNetworkSettings(target: string | URL, opts: { configuration: Configuration }) {
+export function getNetworkSettings(target: string | URL, opts: {configuration: Configuration}) {
   // Sort the config by key length to match on the most specific pattern
   const networkSettings = [...opts.configuration.get(`networkSettings`)].sort(([keyA], [keyB]) => {
     return keyB.length - keyA.length;
   });
 
-  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap['networkSettings']>>;
-  type UndefinableSettings = { [P in keyof NetworkSettingsType]: NetworkSettingsType[P] | undefined; };
+  type NetworkSettingsType = MapValueToObjectValue<MapValue<ConfigurationValueMap[`networkSettings`]>>;
+  type UndefinableSettings = {[P in keyof NetworkSettingsType]: NetworkSettingsType[P] | undefined;};
 
   const mergedNetworkSettings: UndefinableSettings = {
     enableNetwork: undefined,
@@ -184,7 +184,7 @@ export type Options = {
   wrapNetworkRequest?: (executor: () => Promise<Response>, extra: WrapNetworkRequestInfo) => Promise<() => Promise<Response>>;
 };
 
-export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, wrapNetworkRequest}: Omit<Options, 'customErrorMessage'>) {
+export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, wrapNetworkRequest}: Omit<Options, `customErrorMessage`>) {
   const options = {target, body, configuration, headers, jsonRequest, jsonResponse, method};
 
   const realRequest = async () => await requestImpl(target, body, options);
@@ -241,7 +241,7 @@ export async function del(target: string, {customErrorMessage, ...options}: Opti
   return response.body;
 }
 
-async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, 'customErrorMessage'>): Promise<Response> {
+async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, `customErrorMessage`>): Promise<Response> {
   const url = typeof target === `string` ? new URL(target) : target;
 
   const networkConfig = getNetworkSettings(url, {configuration});

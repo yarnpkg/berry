@@ -25,14 +25,14 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^"
   },
-  "version": "4.0.5",
+  "version": "4.0.6",
   "nextVersion": {
     "semver": "2.0.0-rc.5",
     "nonce": "1989925236539513"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/plugin-nm"
   },
   "scripts": {
@@ -52,5 +52,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.5"
+  "stableVersion": "4.0.6"
 }

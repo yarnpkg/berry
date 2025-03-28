@@ -163,7 +163,7 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
 }
 
 export function stringifyArithmeticExpression(argument: ArithmeticExpression): string {
-  const getOperator = (type: ArithmeticExpression['type']) => {
+  const getOperator = (type: ArithmeticExpression[`type`]) => {
     switch (type) {
       case `addition`:
         return `+`;

@@ -266,9 +266,9 @@ export class FileHandle<P extends Path> {
     }
   }
 
-  async write(...args: WriteArgsString): Promise<{ bytesWritten: number, buffer: string }>;
-  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer>): Promise<{ bytesWritten: number, buffer: TBuffer }>;
-  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer> | WriteArgsString): Promise<{ bytesWritten: number, buffer: string | TBuffer }> {
+  async write(...args: WriteArgsString): Promise<{bytesWritten: number, buffer: string}>;
+  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer>): Promise<{bytesWritten: number, buffer: TBuffer}>;
+  async write<TBuffer extends Uint8Array>(...args: WriteArgsBuffer<TBuffer> | WriteArgsString): Promise<{bytesWritten: number, buffer: string | TBuffer}> {
     try {
       this[kRef](this.write);
       if (ArrayBuffer.isView(args[0])) {

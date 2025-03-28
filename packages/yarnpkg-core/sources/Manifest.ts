@@ -9,8 +9,8 @@ import * as structUtils                                   from './structUtils';
 import {Ident, Descriptor}                                from './types';
 import {IdentHash}                                        from './types';
 
-export type AllDependencies = 'dependencies' | 'devDependencies' | 'peerDependencies';
-export type HardDependencies = 'dependencies' | 'devDependencies';
+export type AllDependencies = `dependencies` | `devDependencies` | `peerDependencies`;
+export type HardDependencies = `dependencies` | `devDependencies`;
 
 export interface WorkspaceDefinition {
   pattern: string;
@@ -54,7 +54,7 @@ export class Manifest {
   public type: string | null = null;
 
   public packageManager: string | null = null;
-  public ["private"]: boolean = false;
+  public [`private`]: boolean = false;
   public license: string | null = null;
 
   public main: PortablePath | null = null;
@@ -170,7 +170,7 @@ export class Manifest {
     if (typeof data.name === `string`) {
       try {
         this.name = structUtils.parseIdent(data.name);
-      } catch (error) {
+      } catch {
         errors.push(new Error(`Parsing failed for the 'name' field`));
       }
     }
@@ -334,7 +334,7 @@ export class Manifest {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
-        } catch (error) {
+        } catch {
           errors.push(new Error(`Parsing failed for the dependency name '${name}'`));
           continue;
         }
@@ -355,7 +355,7 @@ export class Manifest {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
-        } catch (error) {
+        } catch {
           errors.push(new Error(`Parsing failed for the dependency name '${name}'`));
           continue;
         }
@@ -371,7 +371,7 @@ export class Manifest {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
-        } catch (error) {
+        } catch {
           errors.push(new Error(`Parsing failed for the dependency name '${name}'`));
           continue;
         }
@@ -595,7 +595,7 @@ export class Manifest {
         let ident;
         try {
           ident = structUtils.parseIdent(name);
-        } catch (error) {
+        } catch {
           errors.push(new Error(`Parsing failed for the dependency name '${name}'`));
           continue;
         }

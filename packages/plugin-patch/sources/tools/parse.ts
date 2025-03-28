@@ -154,7 +154,7 @@ const emptyHunk = (headerLine: string): Hunk => ({
   parts: [],
 });
 
-const hunkLinetypes: {[k: string]: PatchMutationPart['type'] | `pragma` | `header`} = {
+const hunkLinetypes: {[k: string]: PatchMutationPart[`type`] | `pragma` | `header`} = {
   [`@`]: `header`,
   [`-`]: PatchMutationType.Deletion,
   [`+`]: PatchMutationType.Insertion,
@@ -321,7 +321,7 @@ export function interpretParsedPatchFile(files: Array<FileDeets>): ParsedPatchFi
       hunks,
     } = file;
 
-    const type: PatchFilePart["type"] = renameFrom
+    const type: PatchFilePart[`type`] = renameFrom
       ? `rename`
       : deletedFileMode
         ? `file deletion`

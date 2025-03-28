@@ -1,7 +1,7 @@
 import {npath}     from '@yarnpkg/fslib';
 import * as vscode from 'vscode';
 
-type Link = vscode.TerminalLink & { data: string };
+type Link = vscode.TerminalLink & {data: string};
 
 /**
  * Regex patterns to match line and columns in filepaths

@@ -116,8 +116,8 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async statPromise(p: P): Promise<Stats>;
-  async statPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async statPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: P, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async statPromise(p: P, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async statPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return this.baseFs.statPromise(this.mapToBase(p), opts);
   }
@@ -149,8 +149,8 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   lstatPromise(p: P): Promise<Stats>;
-  lstatPromise(p: P, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  lstatPromise(p: P, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  lstatPromise(p: P, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  lstatPromise(p: P, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   lstatPromise(p: P, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return this.baseFs.lstatPromise(this.mapToBase(p), opts);
   }
@@ -161,7 +161,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   lstatSync(p: P, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
   lstatSync(p: P, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
   lstatSync(p: P, opts: StatSyncOptions & {bigint: true}): BigIntStats;
-  lstatSync(p: P, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: P, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
   lstatSync(p: P, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.baseFs.lstatSync(this.mapToBase(p), opts);
   }
@@ -381,7 +381,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {
     return this.baseFs.watch(
       this.mapToBase(p),
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       a,
       b,
     );
@@ -392,7 +392,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
   watchFile(p: P, a: WatchFileOptions | WatchFileCallback, b?: WatchFileCallback) {
     return this.baseFs.watchFile(
       this.mapToBase(p),
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       a,
       b,
     );

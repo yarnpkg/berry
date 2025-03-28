@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import {useLocation}                                 from '@docusaurus/router';
 import {useDocsSidebar}                              from '@docusaurus/theme-common/internal';
 import BackToTopButton                               from '@theme/BackToTopButton';
@@ -15,7 +14,7 @@ function getReactNodeFromDomNode(domNode: Element) {
   if (!fiberKey)
     throw new Error(`Assertion failed: Couldn't find the React node associated with the DOM node`);
 
-  // @ts-expect-error
+  // @ts-expect-error - reason TBS
   const {type: Type, memoizedProps} = domNode[fiberKey];
   return <Type {...memoizedProps}/>;
 }

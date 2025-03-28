@@ -1,5 +1,7 @@
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import arcaEslint       from 'eslint-plugin-arca';
+import stylisticJsxEslint from '@stylistic/eslint-plugin-jsx';
+import stylisticEslint    from '@stylistic/eslint-plugin';
+import typescriptEslint   from '@typescript-eslint/eslint-plugin';
+import arcaEslint         from 'eslint-plugin-arca';
 
 // eslint-disable-next-line arca/no-default-export
 export default [
@@ -9,6 +11,8 @@ export default [
     plugins: {
       [`arca`]: arcaEslint,
       [`@typescript-eslint`]: typescriptEslint,
+      [`@stylistic`]: stylisticEslint,
+      [`@stylistic-jsx`]: stylisticJsxEslint,
     },
 
     rules: {
@@ -16,22 +20,22 @@ export default [
         default: `generic`,
       }],
 
-      '@typescript-eslint/brace-style': 2,
+      '@stylistic/brace-style': 2,
 
-      '@typescript-eslint/comma-dangle': [`error`, `always-multiline`],
+      '@stylistic/comma-dangle': [`error`, `always-multiline`],
 
-      '@typescript-eslint/keyword-spacing': 2,
+      '@stylistic/keyword-spacing': 2,
 
-      '@typescript-eslint/comma-spacing': 2,
+      '@stylistic/comma-spacing': 2,
 
-      '@typescript-eslint/func-call-spacing': 2,
+      '@stylistic/func-call-spacing': 2,
 
-      '@typescript-eslint/indent': [`error`, 2, {
+      '@stylistic/indent': [`error`, 2, {
         SwitchCase: 1,
         ignoredNodes: [`TSTypeParameterInstantiation`],
       }],
 
-      '@typescript-eslint/member-delimiter-style': [`error`, {
+      '@stylistic/member-delimiter-style': [`error`, {
         multiline: {
           delimiter: `semi`,
           requireLast: true,
@@ -53,13 +57,13 @@ export default [
         },
       }],
 
-      '@typescript-eslint/quotes': [`error`, `backtick`],
+      '@stylistic/quotes': [`error`, `backtick`],
 
-      '@typescript-eslint/semi': 2,
+      '@stylistic/semi': 2,
 
-      '@typescript-eslint/space-infix-ops': 2,
+      '@stylistic/space-infix-ops': 2,
 
-      '@typescript-eslint/type-annotation-spacing': 2,
+      '@stylistic/type-annotation-spacing': 2,
 
       'arca/import-quotes': 2,
 
@@ -77,50 +81,50 @@ export default [
         enableOnelinerSections: true,
       }],
 
-      'array-bracket-spacing': 2,
+      '@stylistic/array-bracket-spacing': 2,
 
-      'arrow-parens': [`error`, `as-needed`],
+      '@stylistic/arrow-parens': [`error`, `as-needed`],
 
-      'arrow-spacing': 2,
+      '@stylistic/arrow-spacing': 2,
 
-      'computed-property-spacing': 2,
+      '@stylistic/computed-property-spacing': 2,
 
-      'eol-last': [`error`, `always`],
+      '@stylistic/eol-last': [`error`, `always`],
 
-      'generator-star-spacing': [`error`, {
+      '@stylistic/generator-star-spacing': [`error`, {
         before: true,
         after: true,
       }],
 
-      'jsx-quotes': 2,
+      '@stylistic/jsx-quotes': 2,
 
-      'key-spacing': 2,
+      '@stylistic/key-spacing': 2,
 
-      'no-extra-semi': 2,
+      '@stylistic/no-extra-semi': 2,
 
       'no-irregular-whitespace': 2,
 
-      'no-mixed-spaces-and-tabs': 2,
+      '@stylistic/no-mixed-spaces-and-tabs': 2,
 
-      'no-multiple-empty-lines': [`error`, {max: 2, maxBOF: 0, maxEOF: 0}],
+      '@stylistic/no-multiple-empty-lines': [`error`, {max: 2, maxBOF: 0, maxEOF: 0}],
 
-      'no-tabs': 2,
+      '@stylistic/no-tabs': 2,
 
-      'no-trailing-spaces': 2,
+      '@stylistic/no-trailing-spaces': 2,
 
-      'object-curly-spacing': 2,
+      '@stylistic/object-curly-spacing': 2,
 
-      'padded-blocks': [`error`, `never`],
+      '@stylistic/padded-blocks': [`error`, `never`],
 
-      'quote-props': [`error`, `as-needed`],
+      '@stylistic/quote-props': [`error`, `as-needed`],
 
-      'rest-spread-spacing': 2,
+      '@stylistic/rest-spread-spacing': 2,
 
-      'space-before-blocks': 2,
+      '@stylistic/space-before-blocks': 2,
 
-      'space-in-parens': 2,
+      '@stylistic/space-in-parens': 2,
 
-      'template-curly-spacing': 2,
+      '@stylistic/template-curly-spacing': 2,
     },
   },
 ];

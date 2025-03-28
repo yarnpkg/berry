@@ -27,7 +27,7 @@ const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtu
 
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
-  ? 150000
+  ? 300000
   : 75000;
 
 export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
@@ -51,6 +51,7 @@ export enum RequestType {
   Login = `login`,
   PackageInfo = `packageInfo`,
   PackageTarball = `packageTarball`,
+  PackageVersion = `packageVersion`,
   Whoami = `whoami`,
   Repository = `repository`,
   Publish = `publish`,
@@ -66,6 +67,12 @@ export type Request = {
   type: RequestType.PackageInfo;
   scope?: string;
   localName: string;
+} | {
+  registry?: string;
+  type: RequestType.PackageVersion;
+  scope?: string;
+  localName: string;
+  version: string;
 } | {
   registry?: string;
   type: RequestType.PackageTarball;
@@ -319,7 +326,7 @@ const packageServerUrls: {
   https: Promise<string> | null;
 } = {http: null, https: null};
 
-export const startPackageServer = ({type}: { type: keyof typeof packageServerUrls } = {type: `http`}): Promise<string> => {
+export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls} = {type: `http`}): Promise<string> => {
   const serverUrl = packageServerUrls[type];
   if (serverUrl !== null)
     return serverUrl;
@@ -409,6 +416,37 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
       response.end(data);
     },
 
+    async [RequestType.PackageVersion](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.PackageVersion)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {scope, localName, version} = parsedRequest;
+      const name = scope ? `${scope}/${localName}` : localName;
+
+      const packageEntry = await getPackageEntry(name);
+      if (!packageEntry) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
+      const packageVersionEntry = packageEntry.get(version);
+      invariant(packageVersionEntry, `This can only exist`);
+
+      const data = JSON.stringify({
+        [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
+          dist: {
+            shasum: await getPackageArchiveHash(name, version),
+            tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
+              ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
+              : await getPackageHttpArchivePath(name, version),
+          },
+        }),
+      });
+
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.end(data);
+    },
+
     async [RequestType.PackageTarball](parsedRequest, request, response) {
       if (parsedRequest.type !== RequestType.PackageTarball)
         throw new Error(`Assertion failed: Invalid request type`);
@@ -474,7 +512,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         let body;
         try {
           body = JSON.parse(rawData);
-        } catch (e) {
+        } catch {
           return processError(response, 401, `Unauthorized`);
         }
 
@@ -507,7 +545,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         let body;
         try {
           body = JSON.parse(rawData);
-        } catch (e) {
+        } catch {
           return processError(response, 401, `Invalid`);
         }
 
@@ -537,7 +575,7 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
         let body;
         try {
           body = JSON.parse(rawData);
-        } catch (e) {
+        } catch {
           return processError(response, 401, `Invalid`);
         }
 
@@ -627,6 +665,16 @@ export const startPackageServer = ({type}: { type: keyof typeof packageServerUrl
           type: RequestType.PackageInfo,
           scope,
           localName,
+        };
+      } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/([0-9]+\.[0-9]+\.[0-9]+(?:-[^/]+)?)$/))) {
+        const [, scope, localName, version] = match;
+
+        return {
+          ...registry,
+          type: RequestType.PackageVersion,
+          scope,
+          localName,
+          version,
         };
       } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)\/(-|tralala)\/\2-(.*)\.tgz(\?.*)?$/))) {
         const [, scope, localName, split, version] = match;
@@ -774,7 +822,6 @@ export const generatePkgDriver = ({
 
       if (typeof fn !== `function`) {
         throw new Error(
-          // eslint-disable-next-line
           `Invalid test function (got ${typeof fn}) - you probably put the closing parenthesis of the "makeTemporaryEnv" utility at the wrong place`,
         );
       }
@@ -919,7 +966,7 @@ export const getHttpsCertificates = async () => {
   if (httpsCertificates)
     return httpsCertificates;
 
-  const createCSR = promisify<pem.CSRCreationOptions, { csr: string, clientKey: string }>(pem.createCSR);
+  const createCSR = promisify<pem.CSRCreationOptions, {csr: string, clientKey: string}>(pem.createCSR);
   const createCertificate = promisify<pem.CertificateCreationOptions, pem.CertificateCreationResult>(pem.createCertificate);
 
   const {csr, clientKey} = await createCSR({commonName: `yarn`});
