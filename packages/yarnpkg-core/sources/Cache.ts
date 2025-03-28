@@ -7,7 +7,7 @@ import fs                                                        from 'fs';
 
 import {Configuration}                                           from './Configuration';
 import {MessageName}                                             from './MessageName';
-import {RefCountedCache}                                         from './RefCountedCache';
+import {RefCountedCache, RefCountedCacheEntry}                   from './RefCountedCache';
 import {ReportError}                                             from './Report';
 import * as hashUtils                                            from './hashUtils';
 import * as miscUtils                                            from './miscUtils';
@@ -470,23 +470,17 @@ export class Cache {
     if (!shouldMock)
       this.markedFiles.add(cachePath);
 
-    let releaseCacheEntry: () => void | undefined;
+    const createRefCount = () => this.refCountedZipFsCache.addOrCreate(cachePath, () => {
+      return shouldMock
+        ? makeMockPackage()
+        : new ZipFS(cachePath, {baseFs, readOnly: true});
+    });
 
-    const zipFsBuilder = shouldMock
-      ? () => makeMockPackage()
-      : () => {
-        const result = this.refCountedZipFsCache.addOrCreate(cachePath, () => {
-          return new ZipFS(cachePath, {baseFs, readOnly: true});
-        });
-        if (releaseCacheEntry !== undefined)
-          throw new Error(`Race condition in ZipFsBuild & RefCountedZipFsCache`);
-
-        releaseCacheEntry = result.release;
-        return result.value;
-      };
+    let refCountedCacheEntry: RefCountedCacheEntry<ZipFS> | undefined;
 
     const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
-      return zipFsBuilder();
+      refCountedCacheEntry = createRefCount();
+      return refCountedCacheEntry.value;
     }, message => {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
@@ -496,9 +490,7 @@ export class Cache {
     const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
 
     const releaseFs = () => {
-      if (releaseCacheEntry) {
-        releaseCacheEntry();
-      }
+      refCountedCacheEntry?.release();
     };
 
     // We hide the checksum if the package presence is conditional, because it becomes unreliable
