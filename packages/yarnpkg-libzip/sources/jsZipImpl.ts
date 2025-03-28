@@ -1,5 +1,4 @@
-import {FakeFS, PortablePath}                                                  from '@yarnpkg/fslib';
-import {constants}                                                             from 'fs';
+import {FakeFS, PortablePath, constants}                                       from '@yarnpkg/fslib';
 
 import {Stat, ZIP_UNIX, type CompressionData, type ZipImpl, type ZipImplInput} from './ZipFS';
 
@@ -150,7 +149,7 @@ export class JsZipImpl implements ZipImpl {
       entries.push({
         name,
         os,
-        mtime: 0, //we dont care,
+        mtime: constants.SAFE_TIME, //we dont care,
         crc,
         compressionMethod,
         isSymbolicLink: os === ZIP_UNIX && ((externalAttributes >>> 16) & constants.S_IFMT) === constants.S_IFLNK,
