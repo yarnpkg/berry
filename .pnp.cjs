@@ -43115,11 +43115,11 @@ class JsZipImpl {
       entries.push({
         name,
         os,
-        mtime: 0,
+        mtime: SAFE_TIME,
         //we dont care,
         crc,
         compressionMethod,
-        isSymbolicLink: os === ZIP_UNIX && (externalAttributes >>> 16 & fs.constants.S_IFMT) === fs.constants.S_IFLNK,
+        isSymbolicLink: os === ZIP_UNIX && (externalAttributes >>> 16 & S_IFMT) === S_IFLNK,
         size: cdBuffer.readUInt32LE(offset + 24),
         compressedSize,
         externalAttributes,
