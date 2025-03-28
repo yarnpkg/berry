@@ -68,7 +68,7 @@ export function hydrateRuntimeState(data: SerializedState, {basePath}: HydrateRu
     dependencyTreeRoots,
     enableTopLevelFallback,
     fallbackExclusionList,
-    experimentalZipImplementation: data.experimentalZipImplementation,
+    pnpZipBackend: data.pnpZipBackend,
     fallbackPool,
     ignorePattern,
     packageLocatorsByLocations,

@@ -16,8 +16,8 @@ import {LibZipImpl}                                                             
 
 export const ZIP_UNIX = 3;
 
-export const STORE = 0
-export const DEFLATE = 8
+export const STORE = 0;
+export const DEFLATE = 8;
 
 
 export type ZipCompression = `mixed` | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -1491,11 +1491,12 @@ export class ZipFS extends BasePortableFakeFS {
     }
 
     if (!persistent)
-      return {on: () => { }, close: () => { }};
+      return {on: () => {}, close: () => {}};
 
-    const interval = setInterval(() => { }, 24 * 60 * 60 * 1000);
+    const interval = setInterval(() => {}, 24 * 60 * 60 * 1000);
     return {
-      on: () => { }, close: () => {
+      on: () => {},
+      close: () => {
         clearInterval(interval);
       },
     };

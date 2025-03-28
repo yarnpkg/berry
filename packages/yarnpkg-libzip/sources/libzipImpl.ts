@@ -10,6 +10,7 @@ export class LibzipError extends Error {
 
   constructor(message: string, code: string) {
     super(message);
+
     this.name = `Libzip Error`;
     this.code = code;
   }
@@ -24,26 +25,19 @@ export class LibZipImpl implements ZipImpl {
   private readonly symlinkCount: number;
 
   constructor(opts: ZipImplInput) {
-    let buffer: Buffer;
-    if (`buffer` in opts)
-      buffer = opts.buffer;
-    else
-      buffer = opts.baseFs.readFileSync(opts.path);
-
+    const buffer = `buffer` in opts
+      ? opts.buffer
+      : opts.baseFs.readFileSync(opts.path);
 
     this.libzip = getInstance();
 
     const errPtr = this.libzip.malloc(4);
-
     try {
       let flags = 0;
-
       if (opts.readOnly)
         flags |= this.libzip.ZIP_RDONLY;
 
-
       const lzSource = this.allocateUnattachedSource(buffer);
-
       try {
         this.zip = this.libzip.openFromSource(lzSource, flags, errPtr);
         this.lzSource = lzSource;
@@ -63,11 +57,11 @@ export class LibZipImpl implements ZipImpl {
     }
 
     const entryCount = this.libzip.getNumEntries(this.zip, 0);
+
     const listings = new Array<string>(entryCount);
-    for (let t = 0; t < entryCount; ++t) {
-      const raw = this.libzip.getName(this.zip, t, 0);
-      listings[t] = raw;
-    }
+    for (let t = 0; t < entryCount; ++t)
+      listings[t] = this.libzip.getName(this.zip, t, 0);
+
     this.listings = listings;
 
     this.symlinkCount = this.libzip.ext.countSymlinks(this.zip);

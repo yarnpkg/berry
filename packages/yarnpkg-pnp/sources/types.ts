@@ -34,7 +34,7 @@ export type PackageRegistryData = Array<[string | null, PackageStoreData]>;
 
 export type LocationLengthData = Array<number>;
 
-export type ExperimentalZipImplementation = `libzip` | `js`;
+export type pnpZipBackend = `libzip` | `js`;
 
 // This is what is stored within the .pnp.data.json file
 export type SerializedState = {
@@ -43,7 +43,7 @@ export type SerializedState = {
   enableTopLevelFallback: boolean;
   fallbackExclusionList: Array<[string, Array<string>]>;
   fallbackPool: Array<[string, DependencyTarget]>;
-  experimentalZipImplementation: ExperimentalZipImplementation;
+  pnpZipBackend: pnpZipBackend;
   ignorePatternData: string | null;
   packageRegistryData: PackageRegistryData;
   dependencyTreeRoots: Array<PhysicalPackageLocator>;
@@ -55,7 +55,7 @@ export type RuntimeState = {
   enableTopLevelFallback: boolean;
   fallbackExclusionList: Map<string, Set<string>>;
   fallbackPool: Map<string, DependencyTarget>;
-  experimentalZipImplementation: ExperimentalZipImplementation;
+  pnpZipBackend: pnpZipBackend;
   ignorePattern: RegExp | null;
   packageLocatorsByLocations: Map<PortablePath, {locator: PhysicalPackageLocator, discardFromLookup: boolean}>;
   packageRegistry: PackageRegistry;
@@ -91,7 +91,7 @@ export type PnpSettings = {
   // locators.
   dependencyTreeRoots: Array<PhysicalPackageLocator>;
 
-  experimentalZipImplementation: ExperimentalZipImplementation;
+  pnpZipBackend: pnpZipBackend;
 };
 
 export type ResolveToUnqualifiedOptions = {

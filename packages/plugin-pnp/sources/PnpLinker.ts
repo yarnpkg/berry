@@ -271,6 +271,7 @@ export class PnpInstaller implements Installer {
     const ignorePattern = miscUtils.buildIgnorePattern([`.yarn/sdks/**`, ...this.opts.project.configuration.get(`pnpIgnorePatterns`)]);
     const packageRegistry = this.packageRegistry;
     const shebang = this.opts.project.configuration.get(`pnpShebang`);
+    const pnpZipBackend = this.opts.project.configuration.get(`pnpZipBackend`);
 
     if (pnpFallbackMode === `dependencies-only`)
       for (const pkg of this.opts.project.storedPackages.values())
@@ -285,7 +286,7 @@ export class PnpInstaller implements Installer {
       fallbackExclusionList,
       fallbackPool,
       ignorePattern,
-      experimentalZipImplementation: this.opts.project.configuration.get(`experimentalZipImplementation`) ?? `libzip`,
+      pnpZipBackend,
       packageRegistry,
       shebang,
     });

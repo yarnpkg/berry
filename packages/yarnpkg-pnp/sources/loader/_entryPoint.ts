@@ -27,7 +27,7 @@ const defaultPnpapiResolution = __filename;
 // 1. all requests inside a folder named "__virtual___" will be remapped according the virtual folder rules
 // 2. all requests going inside a Zip archive will be handled by the Zip fs implementation
 // 3. any remaining request will be forwarded to Node as-is
-const customZipImplementation = defaultRuntimeState.experimentalZipImplementation === `js` ? JsZipImpl : undefined;
+const customZipImplementation = defaultRuntimeState.pnpZipBackend === `js` ? JsZipImpl : undefined;
 
 const defaultFsLayer: FakeFS<PortablePath> = new VirtualFS({
   baseFs: new ZipOpenFS({

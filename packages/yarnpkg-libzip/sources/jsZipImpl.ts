@@ -1,8 +1,7 @@
-import {FakeFS, PortablePath}                                                                     from '@yarnpkg/fslib';
-import {constants}                                                                                from 'fs';
+import {FakeFS, PortablePath}                                                  from '@yarnpkg/fslib';
+import {constants}                                                             from 'fs';
 
-import { Stat, ZIP_UNIX, type CompressionData, type ZipImpl, type ZipImplInput} from './ZipFS';
-
+import {Stat, ZIP_UNIX, type CompressionData, type ZipImpl, type ZipImplInput} from './ZipFS';
 
 const SIGNATURE = {
   CENTRAL_DIRECTORY: 0x02014b50,
@@ -10,7 +9,6 @@ const SIGNATURE = {
 };
 
 const noCommentCDSize = 22;
-
 
 export interface Entry {
   name: string;
@@ -30,7 +28,6 @@ export class JsZipImpl implements ZipImpl {
   baseFs: FakeFS<PortablePath>;
   entries: Array<Entry>;
 
-
   constructor(opts: ZipImplInput) {
     if (`buffer` in opts)
       throw new Error(`Buffer based zip archives are not supported`);
@@ -47,7 +44,6 @@ export class JsZipImpl implements ZipImpl {
   static readZipSync(fd: number, baseFs: FakeFS<PortablePath>, fileSize: number): Array<Entry> {
     if (fileSize < noCommentCDSize)
       throw new Error(`Invalid ZIP file: EOCD not found`);
-
 
     let eocdOffset = -1;
 
@@ -83,11 +79,11 @@ export class JsZipImpl implements ZipImpl {
           break;
         }
       }
+
       if (eocdOffset === -1) {
         throw new Error(`Not a zip archive`);
       }
     }
-
 
     const totalEntries = eocdBuffer.readUInt16LE(eocdOffset + 10);
     const centralDirSize = eocdBuffer.readUInt32LE(eocdOffset + 12);
@@ -100,7 +96,6 @@ export class JsZipImpl implements ZipImpl {
     if (eocdOffset + commentLength + noCommentCDSize > eocdBuffer.length)
       throw new Error(`Zip archive inconsistent`);
 
-
     if (totalEntries == 0xffff || centralDirSize == 0xffffffff || centralDirOffset == 0xffffffff)
       // strictly speaking, not correct, should find zip64 signatures. But chances are 0 for false positives.
       throw new Error(`Zip 64 is not supported`);
@@ -111,17 +106,17 @@ export class JsZipImpl implements ZipImpl {
     if (totalEntries > centralDirSize / 46)
       throw new Error(`Zip archive inconsistent`);
 
-
     // Read central directory
     const cdBuffer = Buffer.alloc(centralDirSize);
     if (baseFs.readSync(fd, cdBuffer, 0, cdBuffer.length, centralDirOffset) !== cdBuffer.length)
       throw new Error(`Zip archive inconsistent`);
 
-
     const entries: Array<Entry> = [];
+
     let offset = 0;
     let index = 0;
     let sumCompressedSize = 0;
+
     while (index < totalEntries) {
       if (offset + 46 > cdBuffer.length)
         throw new Error(`Zip archive inconsistent`);
@@ -131,6 +126,7 @@ export class JsZipImpl implements ZipImpl {
 
       const versionMadeBy = cdBuffer.readUInt16LE(offset + 4);
       const os = versionMadeBy >>> 8;
+
       const flags = cdBuffer.readUInt16LE(offset + 8);
       if ((flags  & 0x0001)  !== 0)
         throw new Error(`Encrypted zip files are not supported`);
@@ -143,6 +139,7 @@ export class JsZipImpl implements ZipImpl {
       const extraLength = cdBuffer.readUInt16LE(offset + 30);
       const commentLength = cdBuffer.readUInt16LE(offset + 32);
       const localHeaderOffset = cdBuffer.readUInt32LE(offset + 42);
+
       const name = cdBuffer.toString(`utf8`, offset + 46, offset + 46 + nameLength).replaceAll(`\0`, ` `);
       if (name.includes(`\0`))
         throw new Error(`Invalid ZIP file`);
@@ -164,11 +161,13 @@ export class JsZipImpl implements ZipImpl {
       });
 
       sumCompressedSize += compressedSize;
+
       index += 1;
       offset += 46 + nameLength + extraLength + commentLength;
     }
+
+    // fast check for archive bombs
     if (sumCompressedSize > fileSize)
-      // fast check for archive bombs
       throw new Error(`Zip archive inconsistent`);
 
     if (offset !== cdBuffer.length)
@@ -188,16 +187,17 @@ export class JsZipImpl implements ZipImpl {
 
   getSymlinkCount(): number {
     let count = 0;
-    for (const entry of this.entries) {
-      if (entry.isSymbolicLink) {
+
+    for (const entry of this.entries)
+      if (entry.isSymbolicLink)
         count += 1;
-      }
-    }
+
     return count;
   }
 
   stat(index: number): Stat {
     const entry = this.entries[index];
+
     return {
       crc: entry.crc,
       mtime: entry.mtime,
@@ -207,18 +207,17 @@ export class JsZipImpl implements ZipImpl {
 
   locate(name: string): number {
     // https://github.com/nih-at/libzip/blob/f7f725d432db2dd1b266d336a3dccc693d988447/lib/zip_name_locate.c#L50
-    for (let ind = 0; ind < this.entries.length; ind++) {
-      if (this.entries[ind].name === name) {
+    for (let ind = 0; ind < this.entries.length; ind++)
+      if (this.entries[ind].name === name)
         return ind;
-      }
-    }
+
     return -1;
   }
 
   getFileSource(index: number): {data: Buffer, compressionMethod: number} {
     const entry = this.entries[index];
-
     const localHeaderBuf = Buffer.alloc(30);
+
     this.baseFs.readSync(
       this.fd,
       localHeaderBuf,
@@ -226,9 +225,9 @@ export class JsZipImpl implements ZipImpl {
       localHeaderBuf.length,
       entry.localHeaderOffset,
     );
+
     const nameLength = localHeaderBuf.readUInt16LE(26);
     // const flags = localHeaderBuf.readUInt16LE(6);
-
     const extraLength = localHeaderBuf.readUInt16LE(28);
 
     const buffer = Buffer.alloc(entry.compressedSize);
@@ -237,13 +236,14 @@ export class JsZipImpl implements ZipImpl {
 
     return {data: buffer, compressionMethod: entry.compressionMethod};
   }
-  discard(): void {
 
+  discard(): void {
   }
 
   addDirectory(path: string): number {
     throw new Error(`Not implemented`);
   }
+
   deleteEntry(index: number): void {
     throw new Error(`Not implemented`);
   }
@@ -251,9 +251,11 @@ export class JsZipImpl implements ZipImpl {
   setMtime(index: number, mtime: number): void {
     throw new Error(`Not implemented`);
   }
+
   getBufferAndClose(): Buffer {
     throw new Error(`Not implemented`);
   }
+
   setFileSource(target: PortablePath, compression: CompressionData, buffer: Buffer): number {
     throw new Error(`Not implemented`);
   }

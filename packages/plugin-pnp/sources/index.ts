@@ -1,7 +1,7 @@
 import {Hooks as CoreHooks, Plugin, Project, SettingsType, WindowsLinkType} from '@yarnpkg/core';
 import {Filename, PortablePath, npath, ppath, xfs}                          from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                                from '@yarnpkg/plugin-stage';
-import {ExperimentalZipImplementation}                                      from '@yarnpkg/pnp';
+import {pnpZipBackend}                                                      from '@yarnpkg/pnp';
 import {pathToFileURL}                                                      from 'url';
 
 import {PnpLinker}                                                          from './PnpLinker';
@@ -78,7 +78,7 @@ declare module '@yarnpkg/core' {
     pnpEnableInlining: boolean;
     pnpFallbackMode: string;
     pnpUnpluggedFolder: PortablePath;
-    experimentalZipImplementation: ExperimentalZipImplementation;
+    pnpZipBackend: pnpZipBackend;
   }
 }
 
@@ -123,7 +123,7 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       default: [],
       isArray: true,
     },
-    experimentalZipImplementation: {
+    pnpZipBackend: {
       description: `Whether to use the experimental js implementation for the ZipFS`,
       type: SettingsType.STRING,
       values: [
