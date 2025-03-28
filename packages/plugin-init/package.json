@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-init",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -42,5 +42,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.0"
+  "stableVersion": "4.1.1"
 }

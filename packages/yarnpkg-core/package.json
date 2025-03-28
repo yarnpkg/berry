@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.2.1",
+  "version": "4.3.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -87,5 +87,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.2.1"
+  "stableVersion": "4.3.0"
 }
