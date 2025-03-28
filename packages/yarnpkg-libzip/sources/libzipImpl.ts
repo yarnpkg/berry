@@ -21,6 +21,13 @@ export class LibZipImpl implements ZipImpl {
   private readonly lzSource: number;
   private readonly zip: number;
 
+  /**
+   * A cache of indices mapped to file sources.
+   * Populated by `setFileSource` calls.
+   * Required for supporting read after write.
+   */
+  private readonly fileSources: Map<number, Buffer> = new Map();
+
   private readonly listings: Array<string>;
   private readonly symlinkCount: number;
 
@@ -120,6 +127,7 @@ export class LibZipImpl implements ZipImpl {
           throw this.makeLibzipError(this.libzip.getError(this.zip));
         }
       }
+      this.fileSources.set(newIndex, buffer);
       return newIndex;
     } catch (error) {
       this.libzip.source.free(lzSource);
@@ -156,6 +164,10 @@ export class LibZipImpl implements ZipImpl {
   }
 
   getFileSource(index: number) {
+    const cachedFileSource = this.fileSources.get(index);
+    if (typeof cachedFileSource !== `undefined`)
+      return {data: cachedFileSource, compressionMethod: 0};
+
     const stat = this.libzip.struct.statS();
 
     const rc = this.libzip.statIndex(this.zip, index, 0, 0, stat);
@@ -194,6 +206,7 @@ export class LibZipImpl implements ZipImpl {
   }
 
   deleteEntry(index: number) {
+    this.fileSources.delete(index);
     const rc = this.libzip.delete(this.zip, index);
     if (rc === -1) {
       throw this.makeLibzipError(this.libzip.getError(this.zip));
