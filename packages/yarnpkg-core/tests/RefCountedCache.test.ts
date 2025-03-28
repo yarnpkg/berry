@@ -130,7 +130,6 @@ describe(`RefCountedCache`, () => {
       `release create a-1`,
       `create a-3`,
       `release create a-3`,
-      `create a-4`,
     ]);
   });
 
