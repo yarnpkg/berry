@@ -90,6 +90,8 @@ export default class PackCommand extends BaseCommand {
 
         if (!this.dryRun) {
           const pack = await packUtils.genPackStream(workspace, files);
+
+          await xfs.mkdirPromise(ppath.dirname(target), {recursive: true});
           const write = xfs.createWriteStream(target);
 
           pack.pipe(write);

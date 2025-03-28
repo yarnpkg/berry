@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/eslint-config",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "license": "BSD-2-Clause",
   "type": "module",
   "exports": {
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/eslint-config"
   },
   "engines": {
@@ -38,5 +38,5 @@
     "eslint": "^9.20.1",
     "typescript": "^5.5.2"
   },
-  "stableVersion": "2.1.0"
+  "stableVersion": "3.0.0"
 }

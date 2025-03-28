@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -81,11 +81,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/yarnpkg-core"
   },
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.2.0"
+  "stableVersion": "4.2.1"
 }

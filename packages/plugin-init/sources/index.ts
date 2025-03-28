@@ -1,8 +1,9 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
+import InitInitializerCommand from './commands/init-initializer';
 import InitCommand            from './commands/init';
 
-export {InitCommand};
+export {InitCommand, InitInitializerCommand};
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -38,6 +39,7 @@ const plugin: Plugin = {
   },
   commands: [
     InitCommand,
+    InitInitializerCommand,
   ],
 };
 

@@ -186,7 +186,7 @@ describe(`Scripts tests`, () => {
 
         for (const file of files) {
           if (!existsSync(join(process.env.BERRY_BIN_FOLDER, file))) {
-            console.error('Expected ' + file + ' to exist');
+            console.error('Expected ' + file + ' to exist in ' + process.env.BERRY_BIN_FOLDER);
             process.exit(1);
           }
         }
@@ -196,6 +196,7 @@ describe(`Scripts tests`, () => {
 
       await expect(run(`test`)).resolves.toMatchObject({
         stdout: `ok\n`,
+        stderr: ``,
       });
     }),
   );
@@ -666,7 +667,9 @@ describe(`Scripts tests`, () => {
 
           await run(`install`);
 
-          console.log(await run(`run`, `bar`, `--version`));
+          await expect(run(`run`, `bar`, `--version`)).resolves.toMatchObject({
+            stdout: expect.stringMatching(/^git version /),
+          });
         }),
       );
     });

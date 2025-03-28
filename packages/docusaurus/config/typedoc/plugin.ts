@@ -1,5 +1,5 @@
 import {miscUtils}                                                                                           from '@yarnpkg/core';
-// @ts-expect-error
+// @ts-expect-error - reason TBS
 import pnpApi                                                                                                from 'pnpapi';
 import {Application, Converter, DeclarationReflection, ProjectReflection, SignatureReflection, type Context} from 'typedoc';
 

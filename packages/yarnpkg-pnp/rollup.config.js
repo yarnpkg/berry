@@ -94,6 +94,35 @@ export default defineConfig([
     ],
   },
   {
+    input: `./sources/loader/_entryPoint.ts`,
+    output: {
+      file: `./sources/hook.raw.js`,
+      format: `cjs`,
+      exports: `default`,
+      strict: false,
+      generatedCode: `es2015`,
+    },
+    plugins: [
+      resolve({
+        extensions: [`.mjs`, `.js`, `.ts`, `.tsx`, `.json`],
+        rootDir: path.join(__dirname, `../../`),
+        jail: path.join(__dirname, `../../`),
+        preferBuiltins: true,
+      }),
+      esbuild({
+        tsconfig: false,
+        target: `node${semver.minVersion(pkg.engines.node).version}`,
+        define: {
+          document: `undefined`,
+          XMLHttpRequest: `undefined`,
+          crypto: `undefined`,
+        },
+      }),
+      cjs({transformMixedEsModules: true, extensions: [`.js`, `.ts`]}),
+      importURL(),
+    ],
+  },
+  {
     input: `./sources/esm-loader/loader.ts`,
     output: {
       file: `./sources/esm-loader/built-loader.js`,

@@ -5,10 +5,10 @@ import {PortablePath, ppath} from '../sources/path';
 describe(`ProxiedFS`, () => {
   it(`should resolve relative symlinks after remapping`, async () => {
     class SpyFS extends NoFS {
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       symlinkPromise = jest.fn(async () => {});
 
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       symlinkSync = jest.fn(() => {});
     }
 

@@ -1,10 +1,10 @@
 {
   "name": "@yarnpkg/plugin-constraints",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/plugin-constraints"
   },
   "main": "./sources/index.ts",
@@ -47,5 +47,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.2"
+  "stableVersion": "4.0.3"
 }

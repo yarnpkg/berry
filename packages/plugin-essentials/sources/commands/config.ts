@@ -76,6 +76,9 @@ export default class ConfigCommand extends BaseCommand {
 
       if (this.json) {
         for (const name of names) {
+          if (this.noDefaults && !configuration.sources.has(name))
+            continue;
+
           const data = configuration.settings.get(name);
           if (typeof data === `undefined`)
             report.reportError(MessageName.INVALID_CONFIGURATION_KEY, `No configuration key named "${name}"`);
