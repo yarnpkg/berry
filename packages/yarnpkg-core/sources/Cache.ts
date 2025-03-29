@@ -73,7 +73,9 @@ export class Cache {
     checksum: string | null,
   ]>> = new Map();
 
-  private refCountedZipFsCache = new RefCountedCache<string, ZipFS>(zipFs => zipFs.discardAndClose);
+  private refCountedZipFsCache = new RefCountedCache<string, ZipFS>(zipFs => {
+    zipFs.discardAndClose();
+  });
 
   /**
    * To ensure different instances of `Cache` doesn't end up copying to the same
