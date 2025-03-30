@@ -500,7 +500,7 @@ export enum LogLevel {
 }
 
 /**
- * Add support support for the `logFilters` setting to the specified Report
+ * Add support for the `logFilters` setting to the specified Report
  * instance.
  */
 export function addLogFilterSupport(report: Report, {configuration}: {configuration: Configuration}) {
