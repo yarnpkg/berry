@@ -4,6 +4,8 @@ import {PortablePath, ppath}                      from '@yarnpkg/fslib';
 import {Libzip}                                   from '@yarnpkg/libzip';
 import {ZipFS}                                    from '@yarnpkg/libzip';
 
+import {ZipImplementationClass}                   from './ZipFS';
+
 /**
  * Extracts the archive part (ending in the first instance of `extension`) from a path.
  *
@@ -41,7 +43,7 @@ export type ZipOpenFSOptions = Omit<MountFSOptions<ZipFS>,
 > & {
   libzip?: Libzip | (() => Libzip);
   readOnlyArchives?: boolean;
-
+  customZipImplementation?: ZipImplementationClass;
   /**
    * Which file extensions will be interpreted as zip files. Useful for supporting other formats
    * packaged as zips, such as .docx.
@@ -84,6 +86,7 @@ export class ZipOpenFS extends MountFS<ZipFS> {
         baseFs,
         readOnly: readOnlyArchives,
         stats: baseFs.statSync(p),
+        customZipImplementation: opts.customZipImplementation,
       });
     };
 
@@ -92,6 +95,7 @@ export class ZipOpenFS extends MountFS<ZipFS> {
         baseFs,
         readOnly: readOnlyArchives,
         stats: await baseFs.statPromise(p),
+        customZipImplementation: opts.customZipImplementation,
       };
 
       return () => {
