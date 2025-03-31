@@ -185,7 +185,7 @@ describe(`Commands`, () => {
 
         const lockfilePath = ppath.join(path, Filename.lockfile);
         const lockfileContent = await xfs.readFilePromise(lockfilePath, `utf8`);
-        const modifiedLockfile = lockfileContent.replace(/no-deps: "npm:1.0.0"/, `no-deps: "npm:2.0.0"`);
+        const modifiedLockfile = lockfileContent.replace(/(no-deps.*(?<!npm):.*)1.0.0/, ($0, $1) => `${$1}2.0.0`);
         await xfs.writeFilePromise(lockfilePath, modifiedLockfile);
 
         await run(`install`);
@@ -383,7 +383,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         dependencies: {},
       }, async ({path, run, source}) => {
-        await expect(run(`install`, `--immutable-cache`)).rejects.toThrowError(/Cache path does not exist/);
+        await expect(run(`install`, `--immutable-cache`)).rejects.toThrowError(/YN0091/);
       }),
     );
 
