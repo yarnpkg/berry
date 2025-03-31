@@ -24,7 +24,7 @@ const MTIME_ACCURANCY = 1000;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
-type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, 'bin'>>;
+type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, `bin`>>;
 
 export enum NodeModulesMode {
   CLASSIC = `classic`,
@@ -242,7 +242,7 @@ class NodeModulesInstaller implements Installer {
       let hoistingLimits = this.opts.project.configuration.get(`nmHoistingLimits`);
       try {
         hoistingLimits = miscUtils.validateEnum(NodeModulesHoistingLimits, workspace.manifest.installConfig?.hoistingLimits ?? hoistingLimits);
-      } catch (e) {
+      } catch {
         const workspaceName = structUtils.prettyWorkspace(this.opts.project.configuration, workspace);
         this.opts.report.reportWarning(MessageName.INVALID_MANIFEST, `${workspaceName}: Invalid 'installConfig.hoistingLimits' value. Expected one of ${Object.values(NodeModulesHoistingLimits).join(`, `)}, using default: "${hoistingLimits}"`);
       }
@@ -463,7 +463,7 @@ async function findInstallState(project: Project, {unrollAliases = false}: {unro
   let stats;
   try {
     stats = await xfs.statPromise(installStatePath);
-  } catch (e) {
+  } catch {
   }
 
   if (!stats)
@@ -564,7 +564,7 @@ const removeDir = async (dir: PortablePath, options: {contentsOnly: boolean, inn
 const CONCURRENT_OPERATION_LIMIT = 4;
 
 type LocatorKey = string;
-type LocationNode = { children: Map<Filename, LocationNode>, locator?: LocatorKey, linkType: LinkType };
+type LocationNode = {children: Map<Filename, LocationNode>, locator?: LocatorKey, linkType: LinkType};
 type LocationRoot = PortablePath;
 
 /**
@@ -675,7 +675,7 @@ const symlinkPromise = async (srcPath: PortablePath, dstPath: PortablePath, wind
     let stats;
     try {
       stats = await xfs.lstatPromise(srcPath);
-    } catch (e) {
+    } catch {
     }
 
     if (!stats || stats.isDirectory()) {
@@ -695,7 +695,7 @@ async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, cont
     await xfs.writeFilePromise(tmpPath, content);
     try {
       await xfs.linkPromise(tmpPath, dstPath);
-    } catch (e) {
+    } catch {
     }
   } finally {
     await xfs.unlinkPromise(tmpPath);
@@ -729,7 +729,7 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
               await xfs.linkPromise(tmpPath, contentFilePath);
               entry.mtimeMs = new Date().getTime();
               await xfs.unlinkPromise(tmpPath);
-            } catch (e) {
+            } catch {
             }
           } else if (!entry.mtimeMs) {
             entry.mtimeMs = Math.ceil(stats.mtimeMs);
@@ -738,7 +738,7 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
 
         await xfs.linkPromise(contentFilePath, dstPath);
         doesContentFileExist = true;
-      } catch (e) {
+      } catch {
         doesContentFileExist = false;
       }
 
@@ -825,7 +825,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
     const entriesJsonPath = ppath.join(globalHardlinksStore, packageChecksum.substring(0, 2) as Filename, `${packageChecksum.substring(2)}.json` as Filename);
     try {
       allEntries = new Map(Object.entries(JSON.parse(await xfs.readFilePromise(entriesJsonPath, `utf8`)))) as Map<PortablePath, DirEntry>;
-    } catch (e) {
+    } catch {
       allEntries = await getEntriesRecursive();
     }
   } else {
@@ -880,8 +880,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
       let stats;
       try {
         stats = xfs.statSync(entryPath);
-      } catch (e) {
-      }
+      } catch {}
 
       doesExistOnDisk = !!stats;
 
@@ -900,8 +899,7 @@ function syncPreinstallStateWithDisk(locationTree: LocationTree, binSymlinks: Bi
         let binStats;
         try {
           binStats = xfs.statSync(binPath);
-        } catch (e) {
-        }
+        } catch {}
 
         if (!binStats) {
           installChangedByUser = true;
@@ -1082,9 +1080,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   };
 
-  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options: { nmMode: {value: NodeModulesMode}, innerLoop?: boolean }) => {
+  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options: {nmMode: {value: NodeModulesMode}, innerLoop?: boolean}) => {
     const promise: Promise<any> = (async () => {
-      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options: { nmMode: {value: NodeModulesMode}, innerLoop?: boolean }) => {
+      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options: {nmMode: {value: NodeModulesMode}, innerLoop?: boolean}) => {
         try {
           if (!options.innerLoop)
             await xfs.mkdirPromise(dstDir, {recursive: true});

@@ -263,7 +263,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
         } else {
           resolution = originalFindPath.call(Module, request, [path], isMain);
         }
-      } catch (error) {
+      } catch {
         continue;
       }
 
@@ -275,20 +275,23 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
-  // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
-  const originalExtensionJSFunction = Module._extensions[`.js`] as (module: NodeModule, filename: string) => void;
-  Module._extensions[`.js`] = function (module: NodeModule, filename: string) {
-    if (filename.endsWith(`.js`)) {
-      const pkg = nodeUtils.readPackageScope(filename);
-      if (pkg && pkg.data?.type === `module`) {
-        const err = nodeUtils.ERR_REQUIRE_ESM(filename, module.parent?.filename);
-        Error.captureStackTrace(err);
-        throw err;
+  // @ts-expect-error - Missing types
+  if (!process.features.require_module) {
+    // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
+    const originalExtensionJSFunction = Module._extensions[`.js`] as (module: NodeModule, filename: string) => void;
+    Module._extensions[`.js`] = function (module: NodeModule, filename: string) {
+      if (filename.endsWith(`.js`)) {
+        const pkg = nodeUtils.readPackageScope(filename);
+        if (pkg && pkg.data?.type === `module`) {
+          const err = nodeUtils.ERR_REQUIRE_ESM(filename, module.parent?.filename);
+          Error.captureStackTrace(err);
+          throw err;
+        }
       }
-    }
 
-    originalExtensionJSFunction.call(this, module, filename);
-  };
+      originalExtensionJSFunction.call(this, module, filename);
+    };
+  }
 
   const originalDlopen = process.dlopen;
   process.dlopen = function (...args) {

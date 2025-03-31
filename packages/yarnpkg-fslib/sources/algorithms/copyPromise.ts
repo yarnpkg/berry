@@ -118,7 +118,7 @@ async function copyImpl<P1 extends Path, P2 extends Path>(prelayout: Operations,
 async function maybeLStat<P extends Path>(baseFs: FakeFS<P>, p: P) {
   try {
     return await baseFs.lstatPromise(p);
-  } catch (e) {
+  } catch {
     return null;
   }
 }

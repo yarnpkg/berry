@@ -47,7 +47,7 @@ export function ERR_REQUIRE_ESM(filename: string, parentPath: string | null = nu
     `require() of ES Module ${filename}${parentPath ? ` from ${parentPath}` : ``} not supported.
 Instead change the require of ${basename} in ${parentPath} to a dynamic import() which is available in all CommonJS modules.`;
 
-  const err = new Error(msg) as Error & { code: string };
+  const err = new Error(msg) as Error & {code: string};
   err.code = `ERR_REQUIRE_ESM`;
   return err;
 }

@@ -300,7 +300,7 @@ export function getUndecidedWorkspaces(versionFile: VersionFile) {
   return undecided;
 }
 
-export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, 'project' | 'releases'>, {include = new Set()}: {include?: Set<Workspace>} = {}) {
+export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, `project` | `releases`>, {include = new Set()}: {include?: Set<Workspace>} = {}) {
   const undecided = [];
 
   const bumpedWorkspaces = new Map(miscUtils.mapAndFilter([...versionFile.releases], ([workspace, decision]) => {
@@ -384,7 +384,7 @@ export function applyStrategy(version: string | null, strategy: string) {
   return nextVersion;
 }
 
-export function applyReleases(project: Project, newVersions: Map<Workspace, string>, {report}: {report: Report}) {
+export function applyReleases(project: Project, newVersions: Map<Workspace, string>, {report, exact}: {report: Report, exact?: boolean}) {
   const allDependents: Map<Workspace, Array<[
     Workspace,
     AllDependencies,
@@ -465,7 +465,7 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
         continue;
       }
 
-      let newRange = `${parsed[1]}${newVersion}`;
+      let newRange = exact ? `${newVersion}` : `${parsed[1]}${newVersion}`;
       if (useWorkspaceProtocol)
         newRange = `${WorkspaceResolver.protocol}${newRange}`;
 

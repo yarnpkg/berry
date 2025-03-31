@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "4.0.10",
+  "version": "4.0.11",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/plugin-compat"
   },
   "scripts": {
@@ -50,5 +50,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.10"
+  "stableVersion": "4.0.11"
 }

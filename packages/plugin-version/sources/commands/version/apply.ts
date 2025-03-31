@@ -48,6 +48,10 @@ export default class VersionApplyCommand extends BaseCommand {
     tolerateBoolean: true,
   });
 
+  exact = Option.Boolean(`--exact`, false, {
+    description: `Use the exact version of each package, removes any range. Useful for nightly releases where the range might match another version.`,
+  });
+
   recursive = Option.Boolean(`-R,--recursive`, {
     description: `Release the transitive workspaces as well`,
   });
@@ -104,7 +108,7 @@ export default class VersionApplyCommand extends BaseCommand {
         return;
       }
 
-      versionUtils.applyReleases(project, filteredReleases, {report});
+      versionUtils.applyReleases(project, filteredReleases, {report, exact: this.exact});
 
       if (!this.dryRun) {
         if (!prerelease) {

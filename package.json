@@ -20,7 +20,7 @@
     "@yarnpkg/sdks": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
     "esbuild": "npm:esbuild-wasm@^0.23.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.20.1",
     "jest": "^29.2.1",
     "pirates": "^4.0.5",
     "tslib": "^2.4.0",
@@ -66,7 +66,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "."
   },
   "engines": {

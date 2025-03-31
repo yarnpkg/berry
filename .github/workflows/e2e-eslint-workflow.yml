@@ -26,9 +26,22 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add eslint
+        yarn add eslint @stylistic/eslint-plugin
 
-        echo '{"rules": {"semi": ["error", "always"]}}' > .eslintrc
+        cat > eslint.config.mjs <<EOT
+        import stylistic from '@stylistic/eslint-plugin'
+
+        export default [
+          {
+            plugins: {
+              '@stylistic': stylistic
+            },
+            rules: {
+              '@stylistic/semi': 'error',
+            }
+          }
+        ]
+        EOT
 
         echo '42;' | tee ok.js
         yarn eslint ok.js
@@ -41,9 +54,20 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin
+        yarn add eslint typescript typescript-eslint
 
-        echo '{"parser": "@typescript-eslint/parser", "plugins": ["@typescript-eslint"], "rules": {"@typescript-eslint/explicit-function-return-type": "error"}}' > .eslintrc
+        cat > eslint.config.mjs <<EOT
+        import tseslint from 'typescript-eslint';
+
+        export default tseslint.config(
+          tseslint.configs.recommended,
+          {
+            rules: {
+              '@typescript-eslint/explicit-function-return-type': 'error',
+              '@typescript-eslint/no-unused-vars': 'off',
+            },
+          });
+        EOT
 
         echo 'const f = (): number => 42;' | tee ok.ts
         yarn eslint ok.ts

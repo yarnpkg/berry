@@ -38,7 +38,7 @@ export type SectionOptions = {
   skipIfEmpty?: boolean;
 };
 
-export type TimerOptions = Pick<SectionOptions, 'skipIfEmpty'>;
+export type TimerOptions = Pick<SectionOptions, `skipIfEmpty`>;
 
 export abstract class Report {
   cacheHits = new Set<LocatorHash>();

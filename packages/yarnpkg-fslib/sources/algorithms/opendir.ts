@@ -26,7 +26,7 @@ export class CustomDir<P extends Path> implements Dir<P> {
   async * [Symbol.asyncIterator]() {
     try {
       let dirent: DirentNoPath | null;
-      // eslint-disable-next-line no-cond-assign
+
       while ((dirent = await this.read()) !== null) {
         yield dirent;
       }

@@ -37,5 +37,16 @@ describe(`Commands`, () => {
       expect(xfs.existsSync(`${path}/.yarn/cache`)).toEqual(false);
       expect(xfs.existsSync(`${path}/.yarn/global/cache`)).toEqual(false);
     }));
+
+    test(`it should follow the enableCacheClean configuration`, makeTemporaryEnv({
+      dependencies: {
+        [`no-deps`]: `1.0.0`,
+      },
+    }, {
+      enableCacheClean: false,
+    }, async ({path, run, source}) => {
+      await run(`install`);
+      await expect(run(`cache`, `clean`)).rejects.toThrowError();
+    }));
   });
 });

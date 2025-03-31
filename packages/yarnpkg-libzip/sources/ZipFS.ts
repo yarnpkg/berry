@@ -554,7 +554,7 @@ export class ZipFS extends BasePortableFakeFS {
 
     try {
       resolvedP = this.resolveFilename(`stat '${p}'`, p, undefined, false);
-    } catch (error) {
+    } catch {
       return false;
     }
 
@@ -581,8 +581,8 @@ export class ZipFS extends BasePortableFakeFS {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async statPromise(p: PortablePath): Promise<Stats>;
-  async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
   async statPromise(p: PortablePath, opts: StatOptions = {bigint: false}): Promise<Stats | BigIntStats> {
     if (opts.bigint)
@@ -647,8 +647,8 @@ export class ZipFS extends BasePortableFakeFS {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async lstatPromise(p: PortablePath): Promise<Stats>;
-  async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
   async lstatPromise(p: PortablePath, opts: StatOptions = {bigint: false}): Promise<Stats | BigIntStats> {
     if (opts.bigint)
@@ -663,7 +663,7 @@ export class ZipFS extends BasePortableFakeFS {
   lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
   lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
   lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
   lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined;
   lstatSync(p: PortablePath, opts: StatSyncOptions = {bigint: false, throwIfNoEntry: true}): Stats | BigIntStats | undefined {
     const resolvedP = this.resolveFilename(`lstat '${p}'`, p, false, opts.throwIfNoEntry);
@@ -1434,7 +1434,7 @@ export class ZipFS extends BasePortableFakeFS {
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = await this.readFileBuffer(p, {asyncDecompress: true});
@@ -1447,7 +1447,7 @@ export class ZipFS extends BasePortableFakeFS {
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
-      // @ts-expect-error
+      // @ts-expect-error - reason TBS
       encoding = encoding ? encoding.encoding : undefined;
 
     const data = this.readFileBuffer(p);

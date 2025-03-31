@@ -40,7 +40,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       - If \`--dry-run\` is set, Yarn will explain what it would do without actually doing anything.
 
-      - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them.
+      - The command may apply to only some workspaces through the use of \`--include\` which acts as a whitelist. The \`--exclude\` flag will do the opposite and will be a list of packages that mustn't execute the script. Both flags accept glob patterns (if valid Idents and supported by [micromatch](https://github.com/micromatch/micromatch)). Make sure to escape the patterns, to prevent your own shell from trying to expand them. You can also use the \`--no-private\` flag to avoid running the command in private workspaces.
 
       The \`-v,--verbose\` flag can be passed up to twice: once to prefix output lines with the originating workspace's name, and again to include start/finish/timing log lines. Maximum verbosity is enabled by default in terminal environments.
 
@@ -48,7 +48,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     `,
     examples: [[
       `Publish all packages`,
-      `yarn workspaces foreach -A npm publish --tolerate-republish`,
+      `yarn workspaces foreach -A --no-private npm publish --tolerate-republish`,
     ], [
       `Run the build script on all descendant packages`,
       `yarn workspaces foreach -A run build`,
@@ -260,7 +260,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       }
 
       if (this.exclude.length > 0 && (micromatch.isMatch(structUtils.stringifyIdent(workspace.anchoredLocator), this.exclude) || micromatch.isMatch(workspace.relativeCwd,  this.exclude))) {
-        log(`Excluding ${workspace.relativeCwd} because it matches the --include filter`);
+        log(`Excluding ${workspace.relativeCwd} because it matches the --exclude filter`);
         continue;
       }
 
@@ -424,7 +424,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           return;
         }
 
-        const results: Array<{ workspace: Workspace, exitCode: number }> = await Promise.all(commandPromises);
+        const results: Array<{workspace: Workspace, exitCode: number}> = await Promise.all(commandPromises);
         results.forEach(({workspace, exitCode}) => {
           if (exitCode !== 0) {
             report.reportError(MessageName.UNNAMED, `The command failed in workspace ${structUtils.prettyLocator(configuration, workspace.anchoredLocator)} with exit code ${exitCode}`);

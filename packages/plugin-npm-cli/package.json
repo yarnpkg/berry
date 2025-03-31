@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-npm-cli",
-  "version": "4.0.4",
+  "version": "4.0.6",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/plugin-npm-cli"
   },
   "scripts": {
@@ -53,5 +53,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.4"
+  "stableVersion": "4.0.6"
 }

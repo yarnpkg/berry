@@ -30,6 +30,7 @@ package.tgz
 
 # Those files are meant to be local-only
 /packages/*/bundles
+/packages/yarnpkg-pnp/sources/hook.raw.js
 
 # Those folders are meant to contain the prepack build artifacts; we don't commit them
 /packages/*/lib/*

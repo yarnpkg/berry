@@ -7,6 +7,7 @@ import fs                                                        from 'fs';
 
 import {Configuration}                                           from './Configuration';
 import {MessageName}                                             from './MessageName';
+import {RefCountedCache, RefCountedCacheEntry}                   from './RefCountedCache';
 import {ReportError}                                             from './Report';
 import * as hashUtils                                            from './hashUtils';
 import * as miscUtils                                            from './miscUtils';
@@ -71,6 +72,10 @@ export class Cache {
     cachePath: PortablePath,
     checksum: string | null,
   ]>> = new Map();
+
+  private refCountedZipFsCache = new RefCountedCache<string, ZipFS>(zipFs => {
+    zipFs.discardAndClose();
+  });
 
   /**
    * To ensure different instances of `Cache` doesn't end up copying to the same
@@ -220,7 +225,7 @@ export class Cache {
     }
   }
 
-  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, ...opts}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS> } & CacheOptions): Promise<[FakeFS<PortablePath>, () => void, string | null]> {
+  async fetchPackageFromCache(locator: Locator, expectedChecksum: string | null, {onHit, onMiss, loader, ...opts}: {onHit?: () => void, onMiss?: () => void, loader?: () => Promise<ZipFS>} & CacheOptions): Promise<[FakeFS<PortablePath>, () => void, string | null]> {
     const mirrorPath = this.getLocatorMirrorPath(locator);
 
     const baseFs = new NodeFS();
@@ -467,14 +472,17 @@ export class Cache {
     if (!shouldMock)
       this.markedFiles.add(cachePath);
 
-    let zipFs: ZipFS | undefined;
+    const createRefCount = () => this.refCountedZipFsCache.addOrCreate(cachePath, () => {
+      return shouldMock
+        ? makeMockPackage()
+        : new ZipFS(cachePath, {baseFs, readOnly: true});
+    });
 
-    const zipFsBuilder = shouldMock
-      ? () => makeMockPackage()
-      : () => new ZipFS(cachePath, {baseFs, readOnly: true});
+    let refCountedCacheEntry: RefCountedCacheEntry<ZipFS> | undefined;
 
     const lazyFs = new LazyFS<PortablePath>(() => miscUtils.prettifySyncErrors(() => {
-      return zipFs = zipFsBuilder();
+      refCountedCacheEntry = createRefCount();
+      return refCountedCacheEntry.value;
     }, message => {
       return `Failed to open the cache entry for ${structUtils.prettyLocator(this.configuration, locator)}: ${message}`;
     }), ppath);
@@ -484,7 +492,7 @@ export class Cache {
     const aliasFs = new AliasFS(cachePath, {baseFs: lazyFs, pathUtils: ppath});
 
     const releaseFs = () => {
-      zipFs?.discardAndClose();
+      refCountedCacheEntry?.release();
     };
 
     // We hide the checksum if the package presence is conditional, because it becomes unreliable

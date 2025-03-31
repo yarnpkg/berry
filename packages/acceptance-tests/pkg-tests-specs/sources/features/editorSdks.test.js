@@ -168,14 +168,14 @@ describe(`Features`, () => {
             seq: 1,
             type: `request`,
             command: `typeDefinition`,
-            arguments: {file: ourUtilityFile, line: 7, offset: 9},
+            arguments: {file: ourUtilityFile, line: 5, offset: 9},
           });
 
           await runAndWait(yarnpkgCli, {
             seq: 2,
             type: `request`,
             command: `typeDefinition`,
-            arguments: {file: ourUtilityFile, line: 6, offset: 9},
+            arguments: {file: ourUtilityFile, line: 4, offset: 9},
           });
         } finally {
           child.stdin.end();

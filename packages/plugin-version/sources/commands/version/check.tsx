@@ -81,7 +81,7 @@ export default class VersionCheckCommand extends BaseCommand {
             </Box>
             <Box>
               <Text>
-                 Press <Text bold color={`cyanBright`}>{`<left>`}</Text>/<Text bold color={`cyanBright`}>{`<right>`}</Text> to select release strategies.
+                Press <Text bold color={`cyanBright`}>{`<left>`}</Text>/<Text bold color={`cyanBright`}>{`<right>`}</Text> to select release strategies.
               </Text>
             </Box>
           </Box>

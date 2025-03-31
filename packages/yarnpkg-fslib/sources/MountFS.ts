@@ -365,8 +365,8 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async statPromise(p: PortablePath): Promise<Stats>;
-  async statPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async statPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async statPromise(p: PortablePath, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async statPromise(p: PortablePath, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats>;
   async statPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await this.makeCallPromise(p, async () => {
@@ -394,7 +394,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   async fstatPromise(fd: number): Promise<Stats>;
   async fstatPromise(fd: number, opts: {bigint: true}): Promise<BigIntStats>;
   async fstatPromise(fd: number, opts?: {bigint: boolean}): Promise<BigIntStats | Stats>;
-  async fstatPromise(fd: number, opts?: { bigint: boolean }) {
+  async fstatPromise(fd: number, opts?: {bigint: boolean}) {
     if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fstatPromise(fd, opts);
 
@@ -409,7 +409,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   fstatSync(fd: number): Stats;
   fstatSync(fd: number, opts: {bigint: true}): BigIntStats;
   fstatSync(fd: number, opts?: {bigint: boolean}): BigIntStats | Stats;
-  fstatSync(fd: number, opts?: { bigint: boolean }) {
+  fstatSync(fd: number, opts?: {bigint: boolean}) {
     if ((fd & MOUNT_MASK) !== this.magic)
       return this.baseFs.fstatSync(fd, opts);
 
@@ -423,8 +423,8 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/51d793492d4c2e372b01257668dcd3afc58d7352/types/node/v16/fs.d.ts#L1042-L1059
   async lstatPromise(p: PortablePath): Promise<Stats>;
-  async lstatPromise(p: PortablePath, opts: (StatOptions & { bigint?: false | undefined }) | undefined): Promise<Stats>;
-  async lstatPromise(p: PortablePath, opts: StatOptions & { bigint: true }): Promise<BigIntStats>;
+  async lstatPromise(p: PortablePath, opts: (StatOptions & {bigint?: false | undefined}) | undefined): Promise<Stats>;
+  async lstatPromise(p: PortablePath, opts: StatOptions & {bigint: true}): Promise<BigIntStats>;
   async lstatPromise(p: PortablePath, opts?: StatOptions): Promise<Stats | BigIntStats> {
     return await this.makeCallPromise(p, async () => {
       return await this.baseFs.lstatPromise(p, opts);
@@ -439,7 +439,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true, throwIfNoEntry: false}): BigIntStats | undefined;
   lstatSync(p: PortablePath, opts?: StatSyncOptions & {bigint?: false | undefined}): Stats;
   lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: true}): BigIntStats;
-  lstatSync(p: PortablePath, opts: StatSyncOptions & { bigint: boolean, throwIfNoEntry?: false | undefined }): Stats | BigIntStats;
+  lstatSync(p: PortablePath, opts: StatSyncOptions & {bigint: boolean, throwIfNoEntry?: false | undefined}): Stats | BigIntStats;
   lstatSync(p: PortablePath, opts?: StatSyncOptions): Stats | BigIntStats | undefined {
     return this.makeCallSync(p, () => {
       return this.baseFs.lstatSync(p, opts);
@@ -578,7 +578,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
       let content;
       try {
         content = await sourceFs.readFilePromise(sourceP);
-      } catch (error) {
+      } catch {
         throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), {code: `EINVAL`});
       }
 
@@ -614,7 +614,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
       let content;
       try {
         content = sourceFs.readFileSync(sourceP);
-      } catch (error) {
+      } catch {
         throw Object.assign(new Error(`EINVAL: invalid argument, copyfile '${sourceP}' -> '${destP}'`), {code: `EINVAL`});
       }
 
@@ -924,14 +924,14 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
         p,
-        // @ts-expect-error
+        // @ts-expect-error - reason TBS
         a,
         b,
       );
     }, (mountFs, {subPath}) => {
       return mountFs.watch(
         subPath,
-        // @ts-expect-error
+        // @ts-expect-error - reason TBS
         a,
         b,
       );
@@ -944,7 +944,7 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     return this.makeCallSync(p, () => {
       return this.baseFs.watchFile(
         p,
-        // @ts-expect-error
+        // @ts-expect-error - reason TBS
         a,
         b,
       );

@@ -96,7 +96,7 @@ async function typedocPluginConfig(): Promise<Partial<DocusaurusPluginTypeDocApi
   };
 }
 
-async function getPreviousVersions(): Promise<Array<{ label: string, href: string }>> {
+async function getPreviousVersions(): Promise<Array<{label: string, href: string}>> {
   const [npmResponse, repoResponse] = await Promise.all([
     // eslint-disable-next-line no-restricted-globals
     fetch(`https://registry.npmjs.org/yarn`, {headers: {accept: `application/vnd.npm.install-v1+json`}})

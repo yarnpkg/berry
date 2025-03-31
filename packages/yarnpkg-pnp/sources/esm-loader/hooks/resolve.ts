@@ -8,7 +8,7 @@ import * as loaderUtils                      from '../loaderUtils';
 
 let findPnpApi: any = (esmModule as any).findPnpApi;
 if (!findPnpApi) {
-  // @ts-expect-error
+  // @ts-expect-error - reason TBS
   const require = createRequire(import.meta.url);
 
   const pnpApi = require(`./.pnp.cjs`);
@@ -36,7 +36,7 @@ function tryReadFile(filePath: string) {
   }
 }
 
-async function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext, nextResolve: typeof resolve): Promise<{ url: string, shortCircuit: boolean }> {
+async function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext, nextResolve: typeof resolve): Promise<{url: string, shortCircuit: boolean}> {
   const resolved = packageImportsResolve({
     name: specifier,
     base: pathToFileURL(issuer),
@@ -60,7 +60,7 @@ export async function resolve(
   originalSpecifier: string,
   context: ResolveContext,
   nextResolve: typeof resolve,
-): Promise<{ url: string, shortCircuit: boolean }> {
+): Promise<{url: string, shortCircuit: boolean}> {
   if (!findPnpApi || isBuiltin(originalSpecifier))
     return nextResolve(originalSpecifier, context, nextResolve);
 

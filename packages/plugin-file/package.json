@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-file",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/yarnpkg/berry.git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
     "directory": "packages/plugin-file"
   },
   "scripts": {
@@ -40,5 +40,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "3.0.0"
+  "stableVersion": "3.0.1"
 }

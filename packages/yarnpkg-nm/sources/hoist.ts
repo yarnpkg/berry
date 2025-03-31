@@ -52,7 +52,7 @@ export enum HoisterDependencyKind {
 export type HoisterTree = {name: PackageName, identName: PackageName, reference: string, dependencies: Set<HoisterTree>, peerNames: Set<PackageName>, hoistPriority?: number, dependencyKind?: HoisterDependencyKind};
 export type HoisterResult = {name: PackageName, identName: PackageName, references: Set<string>, dependencies: Set<HoisterResult>};
 type Locator = string;
-type AliasedLocator = string & { __aliasedLocator: true };
+type AliasedLocator = string & {__aliasedLocator: true};
 type Ident = string;
 type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident, locator: Locator, dependencies: Map<PackageName, HoisterWorkTree>, originalDependencies: Map<PackageName, HoisterWorkTree>, hoistedDependencies: Map<PackageName, HoisterWorkTree>, peerNames: ReadonlySet<PackageName>, decoupled: boolean, reasons: Map<PackageName, string>, isHoistBorder: boolean, hoistedFrom: Map<PackageName, Array<string>>, hoistedTo: Map<PackageName, string>, hoistPriority: number, dependencyKind: HoisterDependencyKind};
 
@@ -61,7 +61,7 @@ type HoisterWorkTree = {name: PackageName, references: Set<string>, ident: Ident
  * e.g. which one among the group of packages with the same name should be hoisted.
  * The package having the biggest number of parents using this package will be hoisted.
  */
-type PreferenceMap = Map<string, { peerDependents: Set<Ident>, dependents: Set<Ident>, hoistPriority: number }>;
+type PreferenceMap = Map<string, {peerDependents: Set<Ident>, dependents: Set<Ident>, hoistPriority: number}>;
 
 enum Hoistable {
   YES, NO, DEPENDS,
@@ -995,7 +995,7 @@ const MAX_NODES_TO_DUMP = 50000;
  *
  * @returns sorted node_modules tree
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const dumpDepTree = (tree: HoisterWorkTree) => {
   let nodeCount = 0;
   const dumpPackage = (pkg: HoisterWorkTree, parents: Set<HoisterWorkTree>, prefix = ``): string => {

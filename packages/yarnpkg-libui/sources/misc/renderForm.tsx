@@ -7,7 +7,7 @@ import {useKeypress}        from '../hooks/useKeypress';
 
 type InferProps<T extends React.ComponentType> = T extends React.ComponentType<infer P> ? P : never;
 
-export type SubmitInjectedComponent<T, C extends React.ComponentType = React.ComponentType> = React.ComponentType<InferProps<C> & { useSubmit: (value: T) => void }>;
+export type SubmitInjectedComponent<T, C extends React.ComponentType = React.ComponentType> = React.ComponentType<InferProps<C> & {useSubmit: (value: T) => void}>;
 
 export type RenderFormOptions = {
   stdin: Readable;

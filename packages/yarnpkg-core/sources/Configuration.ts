@@ -170,7 +170,7 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
 export type SettingsDefinitionNoDefault =
   | MapSettingsDefinition
   | ShapeSettingsDefinition
-  | Omit<SimpleSettingsDefinition, 'default'>;
+  | Omit<SimpleSettingsDefinition, `default`>;
 
 export type SettingsDefinition =
   | MapSettingsDefinition
@@ -567,6 +567,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.BOOLEAN,
     default: false,
   },
+  enableCacheClean: {
+    description: `If false, disallows the \`cache clean\` command`,
+    type: SettingsType.BOOLEAN,
+    default: true,
+  },
   checksumBehavior: {
     description: `Enumeration defining what to do when a checksum doesn't match expectations`,
     type: SettingsType.STRING,
@@ -706,7 +711,7 @@ export interface ConfigurationValueMap {
   }>>;
 }
 
-export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap['packageExtensions']>>;
+export type PackageExtensionData = miscUtils.MapValueToObjectValue<miscUtils.MapValue<ConfigurationValueMap[`packageExtensions`]>>;
 
 export type PackageExtensions = Map<IdentHash, Array<[string, Array<PackageExtension>]>>;
 
@@ -721,7 +726,7 @@ type SimpleDefinitionForType<T> = SimpleSettingsDefinition & {
 };
 
 type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
-  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, 'default'>})
+  ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, `default`>})
   : T extends miscUtils.ToMapValue<infer U>
     ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
     : SimpleDefinitionForType<T>;
@@ -1401,15 +1406,15 @@ export class Configuration {
       const rcPath = ppath.join(currentCwd, rcFilename as PortablePath);
 
       if (xfs.existsSync(rcPath)) {
-        const content = await xfs.readFilePromise(rcPath, `utf8`);
-
         let data;
+        let content;
         try {
+          content = await xfs.readFilePromise(rcPath, `utf8`);
           data = parseSyml(content) as any;
-        } catch (error) {
+        } catch {
           let tip = ``;
 
-          if (content.match(/^\s+(?!-)[^:]+\s+\S+/m))
+          if (content?.match(/^\s+(?!-)[^:]+\s+\S+/m))
             tip = ` (in particular, make sure you list the colons after each key name)`;
 
           throw new UsageError(`Parse error when loading ${rcPath}; please check it's proper Yaml${tip}`);
@@ -2040,7 +2045,7 @@ export class Configuration {
 
       const ret = await hook(...args);
       if (typeof ret !== `undefined`) {
-        // @ts-expect-error
+        // @ts-expect-error - reason TBS
         return ret;
       }
     }
