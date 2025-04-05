@@ -42,6 +42,10 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `The OTP token to use with the command`,
   });
 
+  provenance = Option.Boolean(`--provenance`, false, {
+    description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI.`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -107,6 +111,7 @@ export default class NpmPublishCommand extends BaseCommand {
           tag: this.tag,
           registry,
           gitHead,
+          provenance: this.provenance,
         });
 
         await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
