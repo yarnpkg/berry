@@ -2,26 +2,28 @@ import {execUtils, Ident}         from '@yarnpkg/core';
 import {Workspace, structUtils}   from '@yarnpkg/core';
 import {PortablePath, xfs, npath} from '@yarnpkg/fslib';
 import {packUtils}                from '@yarnpkg/plugin-pack';
-import {createHash}               from 'crypto';
-import ssri                       from 'ssri';
+import ssri, {type Integrity}     from 'ssri';
 
 import {normalizeRegistry}        from './npmConfigUtils';
+import {generateProvenance}       from './npmProvenance';
 
 type PublishAdditionalParams = {
   access: string | undefined;
   tag: string;
   registry: string;
   gitHead?: string;
+  provenance?: boolean;
 };
 
-export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead}: PublishAdditionalParams) {
+export async function makePublishBody(workspace: Workspace, buffer: Buffer, {access, tag, registry, gitHead, provenance}: PublishAdditionalParams) {
   const ident = workspace.manifest.name!;
   const version = workspace.manifest.version!;
 
   const name = structUtils.stringifyIdent(ident);
 
-  const shasum = createHash(`sha1`).update(buffer).digest(`hex`);
-  const integrity = ssri.fromData(buffer).toString();
+  const integrity = ssri.fromData(buffer, {
+    algorithms: [`sha1`, `sha512`],
+  }) as unknown as Record<`sha1` | `sha512`, Array<Integrity>>;
 
   const publishAccess = access ?? getPublishAccess(workspace, ident);
   const readmeContent = await getReadmeContent(workspace);
@@ -35,15 +37,33 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
   const tarballName = `${name}-${version}.tgz`;
   const tarballURL = new URL(`${normalizeRegistry(registry)}/${name}/-/${tarballName}`);
 
+  const _attachments = {
+    [tarballName]: {
+      [`content_type`]: `application/octet-stream`,
+      data: buffer.toString(`base64`),
+      length: buffer.length,
+    },
+  };
+
+  // Adapted from https://github.com/npm/cli/blob/04f53ce13201b460123067d7153f1681342548e1/workspaces/libnpmpublish/lib/publish.js#L138
+  if (provenance) {
+    const subject = {
+      // Adapted from https://github.com/npm/npm-package-arg/blob/fbbf22ef99ece449428fee761ae8950c08bc2cbf/lib/npa.js#L118
+      name: `pkg:npm/${name.replace(/^@/, `%40`)}@${version}`,
+      digest: {sha512: integrity.sha512[0].hexDigest()},
+    };
+    const provenanceBundle = await generateProvenance([subject]);
+    const serializedBundle = JSON.stringify(provenanceBundle);
+    _attachments[`${name}-${version}.sigstore`] = {
+      content_type: provenanceBundle.mediaType,
+      data: serializedBundle,
+      length: serializedBundle.length,
+    };
+  }
+
   return {
     _id: name,
-    _attachments: {
-      [tarballName]: {
-        [`content_type`]: `application/octet-stream`,
-        data: buffer.toString(`base64`),
-        length: buffer.length,
-      },
-    },
+    _attachments,
     name,
     access: publishAccess,
 
@@ -62,8 +82,8 @@ export async function makePublishBody(workspace: Workspace, buffer: Buffer, {acc
         gitHead,
 
         dist: {
-          shasum,
-          integrity,
+          shasum: integrity.sha1[0].hexDigest(),
+          integrity: integrity.sha512[0].toString(),
 
           // the npm registry requires a tarball path, but it seems useless 🤷
           tarball: tarballURL.toString(),
