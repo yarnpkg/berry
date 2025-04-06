@@ -362,6 +362,11 @@
           "format": "uri-reference",
           "examples": ["./build/index.mjs"]
         },
+        "provenance": {
+          "title": "Define whether to produce a provenance statement for the package when publishing. Overrides all other provenance settings.",
+          "type": "boolean",
+          "examples": [true]
+        },
         "registry": {
           "description": "If present, will replace whatever registry is defined in the configuration when the package is about to be pushed to a remote location.",
           "type": "string",

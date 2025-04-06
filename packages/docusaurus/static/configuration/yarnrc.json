@@ -529,8 +529,15 @@
       "_package": "@yarnpkg/plugin-npm-cli",
       "type": "string",
       "title": "Define the default access to use when publishing packages to the npm registry.",
-      "description": "Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the `publishConfig.access` field.",
+      "description": "Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the [`publishConfig.access`](manifest#publishConfig.access) field.",
       "enum": ["public", "restricted"]
+    },
+    "npmPublishProvenance": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "title": "Define whether to attach a provenance statement when publishing packages to the npm registry.",
+      "description": "If true, Yarn will generate and publish the provenance information when publishing packages. Can be overridden on a per-package basis using the [`publishConfig.provenance`](manifest#publishConfig.provenance) field.",
+      "type": "boolean",
+      "default": false
     },
     "npmAuditExcludePackages": {
       "_package": "@yarnpkg/plugin-npm-cli",
