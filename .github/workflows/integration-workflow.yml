@@ -241,6 +241,10 @@ jobs:
     runs-on: ${{matrix.platform[0]}}-${{matrix.platform[1]}}
     needs: build
 
+    # Permission required to produce a valid provenance statement during the tests
+    permissions:
+      id-token: write
+
     steps:
     - uses: actions/checkout@v4
 
