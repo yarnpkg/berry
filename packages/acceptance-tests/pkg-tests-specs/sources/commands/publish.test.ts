@@ -102,7 +102,10 @@ describe(`publish`, () =>   {
 
       await run(`npm`, `publish`, {
         env: {
+          // Forward GH env vars
           ...githubEnv,
+          // Forward the GH runner "id-token"
+          ACTIONS_ID_TOKEN_REQUEST_URL: process.env.ACTIONS_ID_TOKEN_REQUEST_URL,
           YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
           YARN_NPM_PUBLISH_PROVENANCE: `true`,
         },
