@@ -28,13 +28,14 @@ export interface PeerDependencyMeta {
 
 export interface PublishConfig {
   access?: string;
+  bin?: Map<string, PortablePath>;
+  browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
+  executableFiles?: Set<PortablePath>;
   main?: PortablePath;
   module?: PortablePath;
-  type?: string;
-  browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
-  bin?: Map<string, PortablePath>;
+  provenance?: boolean;
   registry?: string;
-  executableFiles?: Set<PortablePath>;
+  type?: string;
 }
 
 export interface InstallConfig {
