@@ -94,8 +94,15 @@ describe(`publish`, () =>   {
     }, async ({run}) => {
       await run(`install`);
 
+      const githubEnv = Object.fromEntries(
+        Object
+          .entries(process.env)
+          .filter(([key]) => key.startsWith(`GITHUB_`) || key.startsWith(`RUNNER_`)),
+      );
+
       await run(`npm`, `publish`, {
         env: {
+          ...githubEnv,
           YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
           YARN_NPM_PUBLISH_PROVENANCE: `true`,
         },
