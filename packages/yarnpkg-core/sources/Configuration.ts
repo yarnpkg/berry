@@ -1875,15 +1875,20 @@ export class Configuration {
     if (TAG_REGEXP.test(dependency.range))
       return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);
 
-    if (dependency.range.startsWith(`jsr:`))
-      return structUtils.makeDescriptor(dependency, `npm:${structUtils.wrapIdentIntoScope(dependency, `jsr`)}@${dependency.range.slice(4)}`);
-
     return dependency;
   }
 
   normalizeDependencyMap<TKey>(dependencyMap: Map<TKey, Descriptor>) {
     return new Map([...dependencyMap].map(([key, dependency]) => {
-      return [key, this.normalizeDependency(dependency)];
+      const normalizedDependency = this.normalizeDependency(dependency);
+
+      // We don't perform this check in `normalizeDependency` because we'd store the normalized dependency
+      // in the package.json when running `yarn add @luca/flag@jsr:2.0.0`. Doing this normalization in
+      // normalizeDependencyMap allows us to only translate dependencies in memory.
+      if (dependency.range.startsWith(`jsr:`))
+        return [key, structUtils.makeDescriptor(dependency, `npm:${structUtils.wrapIdentIntoScope(dependency, `jsr`)}@${dependency.range.slice(4)}`)];
+
+      return [key, normalizedDependency];
     }));
   }
 
