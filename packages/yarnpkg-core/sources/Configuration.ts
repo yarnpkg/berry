@@ -1885,8 +1885,15 @@ export class Configuration {
       // We don't perform this check in `normalizeDependency` because we'd store the normalized dependency
       // in the package.json when running `yarn add @luca/flag@jsr:2.0.0`. Doing this normalization in
       // normalizeDependencyMap allows us to only translate dependencies in memory.
-      if (dependency.range.startsWith(`jsr:`))
-        return [key, structUtils.makeDescriptor(dependency, `npm:${structUtils.wrapIdentIntoScope(dependency, `jsr`)}@${dependency.range.slice(4)}`)];
+      if (dependency.range.startsWith(`jsr:`)) {
+        if (semverUtils.validRange(dependency.range.slice(4)))
+          return [key, structUtils.makeDescriptor(dependency, `npm:${structUtils.wrapIdentIntoScope(dependency, `jsr`)}@${dependency.range.slice(4)}`)];
+
+        const parsedRange = structUtils.tryParseDescriptor(dependency.range.slice(4), true);
+        if (parsedRange !== null) {
+          return [key, structUtils.makeDescriptor(dependency, `npm:${structUtils.wrapIdentIntoScope(parsedRange, `jsr`)}@${parsedRange.range}`)];
+        }
+      }
 
       return [key, normalizedDependency];
     }));

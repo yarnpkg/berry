@@ -423,6 +423,16 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       const {scope, localName, version} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
+      if (parsedRequest.registry === `jsr` && scope !== `jsr`) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
+      if (parsedRequest.registry !== `jsr` && scope === `jsr`) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
       const packageEntry = await getPackageEntry(name);
       if (!packageEntry) {
         processError(response, 404, `Package not found: ${name}`);
