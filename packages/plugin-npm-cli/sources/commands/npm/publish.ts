@@ -43,7 +43,7 @@ export default class NpmPublishCommand extends BaseCommand {
   });
 
   provenance = Option.Boolean(`--provenance`, false, {
-    description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
+    description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
   });
 
   async execute() {
@@ -121,9 +121,6 @@ export default class NpmPublishCommand extends BaseCommand {
         } else if (configuration.get(`npmPublishProvenance`)) {
           provenance = true;
           report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
-        } else if (process.env.NPM_CONFIG_PROVENANCE) {
-          provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`NPM_CONFIG_PROVENANCE\` env var is set.`);
         }
 
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
