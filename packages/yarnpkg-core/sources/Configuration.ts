@@ -1875,6 +1875,9 @@ export class Configuration {
     if (TAG_REGEXP.test(dependency.range))
       return structUtils.makeDescriptor(dependency, `${this.get(`defaultProtocol`)}${dependency.range}`);
 
+    if (dependency.range.startsWith(`jsr:`))
+      return structUtils.makeDescriptor(dependency, `npm:${structUtils.wrapIdentIntoScope(dependency, `jsr`)}@${dependency.range.slice(4)}`);
+
     return dependency;
   }
 

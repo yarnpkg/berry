@@ -639,6 +639,14 @@ export function stringifyIdent(ident: Ident) {
   }
 }
 
+export function wrapIdentIntoScope(ident: Ident, scope: string) {
+  if (ident.scope) {
+    return `@${scope}/${ident.scope}__${ident.name}`;
+  } else {
+    return `@${scope}/${ident.name}`;
+  }
+}
+
 /**
  * Returns a string from a descriptor (eg. `@types/lodash@^1.0.0`).
  */
