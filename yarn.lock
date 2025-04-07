@@ -5782,6 +5782,7 @@ __metadata:
     "@types/emscripten": "npm:^1.39.6"
     "@types/prettier": "npm:1.19.0"
     "@yarnpkg/fslib": "workspace:^"
+    globby: "npm:^11.0.1"
     prettier: "npm:^1.19.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
