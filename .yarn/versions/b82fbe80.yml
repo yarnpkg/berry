@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": minor
   "@yarnpkg/core": minor
+  "@yarnpkg/plugin-jsr": minor
   "@yarnpkg/plugin-npm": minor
 
 declined:
