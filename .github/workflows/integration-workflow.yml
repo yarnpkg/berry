@@ -16,6 +16,9 @@ concurrency:
 env:
   node-version: '18.x'
 
+permissions:
+  id-token: write
+
 name: 'Integration'
 jobs:
   chore:

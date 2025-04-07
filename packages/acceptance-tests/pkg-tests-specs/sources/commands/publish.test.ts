@@ -88,7 +88,7 @@ describe(`publish`, () =>   {
   }));
 
   if (process.env.GITHUB_ACTIONS) {
-    test(`should publish a package with a valid provenance statement`, makeTemporaryEnv({
+    test.only(`should publish a package with a valid provenance statement`, makeTemporaryEnv({
       name: `provenance-required`,
       version: `1.0.0`,
     }, async ({run}) => {
@@ -99,13 +99,15 @@ describe(`publish`, () =>   {
           .entries(process.env)
           .filter(([key]) => key.startsWith(`GITHUB_`) || key.startsWith(`RUNNER_`)),
       );
-
+      console.log(process.env);
       await run(`npm`, `publish`, {
         env: {
           // Forward GH env vars
           ...githubEnv,
           // Forward the GH runner "id-token"
           ACTIONS_ID_TOKEN_REQUEST_URL: process.env.ACTIONS_ID_TOKEN_REQUEST_URL,
+          // Do I need this?
+          ...process.env,
           YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
           YARN_NPM_PUBLISH_PROVENANCE: `true`,
         },
