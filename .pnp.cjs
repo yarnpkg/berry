@@ -31127,6 +31127,7 @@ const RAW_RUNTIME_STATE =
           ["pkg-tests-fixtures", "workspace:packages/acceptance-tests/pkg-tests-fixtures"],\
           ["semver", "npm:7.6.0"],\
           ["serve-static", "npm:1.15.0"],\
+          ["sigstore", "npm:3.1.0"],\
           ["super-resolve", "npm:1.0.0"],\
           ["tar-fs", "npm:1.16.3"],\
           ["tslib", "npm:2.6.2"],\

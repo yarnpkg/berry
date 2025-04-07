@@ -86,4 +86,24 @@ describe(`publish`, () =>   {
       },
     });
   }));
+
+  if (process.env.GITHUB_ACTIONS) {
+    test(`should publish a package with a valid provenance statement`, makeTemporaryEnv({
+      name: `provenance-required`,
+      version: `1.0.0`,
+    }, async ({run}) => {
+      await run(`install`);
+
+      await run(`npm`, `publish`, {
+        env: {
+          YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
+          YARN_NPM_PUBLISH_PROVENANCE: `true`,
+        },
+      });
+    }));
+  } else {
+    test.skip(`should publish a package with a valid provenance statement`, () => {
+      // This test can only be run in GitHub Actions
+    });
+  }
 });
