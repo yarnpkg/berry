@@ -18,6 +18,10 @@ jobs:
     env:
       NODE_OPTIONS: --max_old_space_size=8192
 
+    # Mint a token to produce the provenance statement
+    permissions:
+      id-token: write
+
     steps:
     - uses: actions/checkout@v4
       with:
