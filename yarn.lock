@@ -5603,6 +5603,7 @@ __metadata:
     "@yarnpkg/plugin-http": "workspace:^"
     "@yarnpkg/plugin-init": "workspace:^"
     "@yarnpkg/plugin-interactive-tools": "workspace:^"
+    "@yarnpkg/plugin-jsr": "workspace:^"
     "@yarnpkg/plugin-link": "workspace:^"
     "@yarnpkg/plugin-nm": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
@@ -6120,6 +6121,18 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/plugin-essentials": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-jsr@workspace:^, @yarnpkg/plugin-jsr@workspace:packages/plugin-jsr":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-jsr@workspace:packages/plugin-jsr"
+  dependencies:
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/fslib": "workspace:^"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@yarnpkg/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
