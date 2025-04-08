@@ -197,6 +197,26 @@ describe(`Protocols`, () => {
     );
 
     test(
+      `it should use pnpm to setup pnpm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pnpm-project`]: tests.startPackageServer().then(url => `${url}/repositories/pnpm-project.git`),
+          },
+        },
+        async ({path, run, source}) => {
+          await expect(run(`install`, {
+            env: {
+              NODE_ENV: `production`,
+            },
+          })).resolves.toBeTruthy();
+
+          await expect(source(`require('pnpm-project')`)).resolves.toMatch(/\bpnpm\/[0-9]+/);
+        },
+      ),
+    );
+
+    test(
       `it should guarantee that all dependencies will be installed when using npm to setup npm repositories`,
       makeTemporaryEnv(
         {
@@ -259,6 +279,31 @@ describe(`Protocols`, () => {
           } else {
             await expect(run(`install`)).rejects.toThrow(`Workspaces aren't supported by npm@${npmVersion}`);
           }
+        },
+      ),
+    );
+
+    test(
+      `it should support installing specific workspaces from pnpm repositories`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`pkg-a`]: tests.startPackageServer().then(url => `${url}/repositories/pnpm-workspaces.git#workspace=pkg-a`),
+            [`pkg-b`]: tests.startPackageServer().then(url => `${url}/repositories/pnpm-workspaces.git#workspace=pkg-b`),
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('pkg-a/package.json')`)).resolves.toMatchObject({
+            name: `pkg-a`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('pkg-b/package.json')`)).resolves.toMatchObject({
+            name: `pkg-b`,
+            version: `1.0.0`,
+          });
         },
       ),
     );
