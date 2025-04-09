@@ -249,7 +249,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
-  const inference = !fixed
+  const inference = !fixed || request.range === `unknown`
     ? extractInferenceParametersFromRequest(request)
     : {type: `fixed`, range: request.range};
 
