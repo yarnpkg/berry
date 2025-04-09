@@ -641,10 +641,24 @@ export function stringifyIdent(ident: Ident) {
 
 export function wrapIdentIntoScope(ident: Ident, scope: string) {
   if (ident.scope) {
-    return `@${scope}/${ident.scope}__${ident.name}`;
+    return structUtils.makeIdent(scope, `${ident.scope}__${ident.name}`);
   } else {
-    return `@${scope}/${ident.name}`;
+    return structUtils.makeIdent(scope, ident.name);
   }
+}
+
+export function unwrapIdentFromScope(ident: Ident, scope: string) {
+  if (ident.scope !== scope)
+    return ident;
+
+  const underscoreUnderscore = ident.name.indexOf(`__`);
+  if (underscoreUnderscore === -1)
+    return makeIdent(null, ident.name);
+
+  const innerScope = ident.name.slice(0, underscoreUnderscore);
+  const innerName = ident.name.slice(underscoreUnderscore + 2);
+
+  return makeIdent(innerScope, innerName);
 }
 
 /**

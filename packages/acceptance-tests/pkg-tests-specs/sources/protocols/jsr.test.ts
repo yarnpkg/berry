@@ -5,6 +5,34 @@ import {tests}         from 'pkg-tests-core';
 describe(`Protocols`, () => {
   describe(`jsr:`, () => {
     test(
+      `is should allow adding a package with "yarn add"`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, `.yarnrc.yml`), JSON.stringify({
+            [`npmScopes`]: {
+              [`jsr`]: {
+                [`npmRegistryServer`]: `${await tests.startPackageServer()}/registry/jsr`,
+              },
+            },
+          }));
+
+          await run(`add`, `jsr:no-deps-jsr`);
+
+          await expect(source(`require('no-deps-jsr')`)).resolves.toMatchObject({
+            name: `@jsr/no-deps-jsr`,
+          });
+
+          await expect(xfs.readJsonPromise(ppath.join(path, `package.json`))).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps-jsr`]: `jsr:^1.0.0`,
+            },
+          });
+        },
+      ),
+    );
+
+    test(
       `it should allow installing a package from a jsr registry`,
       makeTemporaryEnv(
         {
