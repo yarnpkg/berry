@@ -1,7 +1,8 @@
 import {npath, xfs} from '@yarnpkg/fslib';
-import {testIf}     from 'pkg-tests-core/sources/utils/tests';
 
-export {};
+const {
+  tests: {testIf},
+} = require(`pkg-tests-core`);
 
 const {
   exec: {execFile},
