@@ -16872,6 +16872,7 @@ pem@dexus/pem:
     pkg-tests-fixtures: "workspace:^"
     semver: "npm:^7.1.2"
     serve-static: "npm:^1.14.1"
+    sigstore: "npm:^3.1.0"
     super-resolve: "npm:^1.0.0"
     tar-fs: "npm:^1.16.0"
     tslib: "npm:^2.4.0"

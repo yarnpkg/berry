@@ -13,6 +13,7 @@ import os                                          from 'os';
 import pem                                         from 'pem';
 import semver                                      from 'semver';
 import serveStatic                                 from 'serve-static';
+import * as sigstore                               from 'sigstore';
 import stream                                      from 'stream';
 import * as t                                      from 'typanion';
 import {promisify}                                 from 'util';
@@ -568,6 +569,15 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
 
         if (typeof body.versions[version].gitHead !== `undefined` && name === `githead-forbidden`)
           return processError(response, 400, `Unexpected gitHead`);
+
+        if (name === `provenance-required`) {
+          try {
+            const bundle = JSON.parse(body._attachments[`${name}-${version}.sigstore`].data);
+            sigstore.verify(bundle);
+          } catch (error) {
+            return processError(response, 400, (error as Error).message);
+          }
+        }
 
         response.writeHead(200, {[`Content-Type`]: `application/json`});
         return response.end(rawData);
