@@ -42,6 +42,10 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `The OTP token to use with the command`,
   });
 
+  provenance = Option.Boolean(`--provenance`, false, {
+    description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -102,11 +106,29 @@ export default class NpmPublishCommand extends BaseCommand {
         const buffer = await miscUtils.bufferStream(pack);
 
         const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
+
+        let provenance = false;
+        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+          provenance = Boolean(workspace.manifest.publishConfig.provenance);
+          if (provenance) {
+            report.reportInfo(null, `Generating provenance statement because \`publishConfig.provenance\` field is set.`);
+          } else {
+            report.reportInfo(null, `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`);
+          }
+        } else if (this.provenance) {
+          provenance = true;
+          report.reportInfo(null, `Generating provenance statement because \`--provenance\` flag is set.`);
+        } else if (configuration.get(`npmPublishProvenance`)) {
+          provenance = true;
+          report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
+        }
+
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
           tag: this.tag,
           registry,
           gitHead,
+          provenance,
         });
 
         await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {

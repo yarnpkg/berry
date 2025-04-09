@@ -444,3 +444,44 @@ Our research showed that even our power users aren't always aware of some of the
 When enabled, the `enableOfflineMode` flag tells Yarn to ignore remote registries and only pull data from its internal caches. This is a handy mode when working from within network-constrained environments such as planes or trains.
 
 To leave the offline work mode, check how it got enabled by running `yarn config --why`. If `<environment>`, run `unset YARN_ENABLE_OFFLINE_MODE` in your terminal. Otherwise, remove the `enableOfflineMode` flag from the relevant `.yarnrc.yml` files.
+
+## YN0091 - `INVALID_PROVENANCE_ENVIRONMENT`
+
+This error is triggered when the [provenance statement](https://docs.npmjs.com/generating-provenance-statements) cannot be generated in the current environment. GitHub Actions and GitLab CI are the only supported environments at the moment, and this error is triggered when either running in another environment or when credentials are missing.
+
+On GitHub Actions, you need to grant the `write-id` permission to your workflow. Here is an example of how to do that:
+
+```yaml
+name: Publish Package to npmjs
+on:
+  push:
+    branches: [main]
+jobs:
+  publish:
+    runs-on: ubuntu-latest # Must run on GitHub-hosted runners
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install -g corepack && corepack enable
+      - run: yarn && yarn build
+      - run: yarn config set npmAuthToken '${{ secrets.NPM_TOKEN }}'
+      - run: yarn publish --provenance --tolerate-republish
+```
+
+On GitLab CI, you need to produce a `SIGSTORE_ID_TOKEN` for your workflow. Here is an example of how to do that:
+
+```yaml
+publish:
+  image: 'node:22'
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  id_tokens:
+    SIGSTORE_ID_TOKEN:
+      aud: sigstore
+  script:
+    - npm install -g corepack && corepack enable
+    - yarn && yarn build
+    - yarn config set npmAuthToken $NPM_TOKEN
+    - yarn publish --provenance --tolerate-republish
+```

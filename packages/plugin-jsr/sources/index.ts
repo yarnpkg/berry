@@ -1,9 +1,9 @@
-import {Descriptor, Locator, MinimalResolveOptions, Package, Plugin, Project, ResolveOptions, Resolver, Workspace} from '@yarnpkg/core';
-import {structUtils, semverUtils}                                                                                  from '@yarnpkg/core';
+import {Plugin, Workspace}             from '@yarnpkg/core';
+import {structUtils}                   from '@yarnpkg/core';
 
-import {JsrFetcher}                                                                                                from './JsrFetcher';
-import {JsrResolver}                                                                                               from './JsrResolver';
-import {convertDescriptorFromJsrToNpm}                                                                             from './helpers';
+import {JsrFetcher}                    from './JsrFetcher';
+import {JsrResolver}                   from './JsrResolver';
+import {convertDescriptorFromJsrToNpm} from './helpers';
 
 const DEPENDENCY_TYPES = [`dependencies`, `devDependencies`, `peerDependencies`];
 
