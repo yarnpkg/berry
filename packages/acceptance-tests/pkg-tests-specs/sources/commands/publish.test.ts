@@ -1,4 +1,5 @@
 import {npath, xfs} from '@yarnpkg/fslib';
+import {testIf}     from 'pkg-tests-core/sources/utils/tests';
 
 export {};
 
@@ -87,8 +88,10 @@ describe(`publish`, () =>   {
     });
   }));
 
-  if (process.env.ACTIONS_ID_TOKEN_REQUEST_URL) {
-    test.only(`should publish a package with a valid provenance statement`, makeTemporaryEnv({
+  testIf(
+    () => !!process.env.ACTIONS_ID_TOKEN_REQUEST_URL,
+    `should publish a package with a valid provenance statement`,
+    makeTemporaryEnv({
       name: `provenance-required`,
       version: `1.0.0`,
     }, async ({run}) => {
@@ -107,10 +110,6 @@ describe(`publish`, () =>   {
           YARN_NPM_PUBLISH_PROVENANCE: `true`,
         },
       });
-    }));
-  } else {
-    test.skip(`should publish a package with a valid provenance statement`, () => {
-      // This test can only be run in GitHub Actions
-    });
-  }
+    }),
+  );
 });
