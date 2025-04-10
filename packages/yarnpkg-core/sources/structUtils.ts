@@ -684,11 +684,14 @@ export function stringifyLocator(locator: Locator) {
 }
 
 /**
- * Returns a string from an ident, formatted as a slug (eg. `@types-lodash`).
+ * Returns a string from an ident suitable for a filename (eg. `@types~lodash`).
  */
 export function slugifyIdent(ident: Ident) {
   if (ident.scope !== null) {
-    return `@${ident.scope}-${ident.name}`;
+    // We use ~ as a separator to distinguish @x/y-z from @x-y/z
+    // ~ is valid in a filename, but not in npm package names
+    // See https://github.com/yarnpkg/berry/issues/6761
+    return `@${ident.scope}~${ident.name}`;
   } else {
     return ident.name;
   }
