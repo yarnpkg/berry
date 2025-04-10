@@ -1,5 +1,6 @@
 releases:
   "@yarnpkg/core": patch
+  "@yarnpkg/plugin-npm": patch
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -16,7 +17,6 @@ declined:
   - "@yarnpkg/plugin-jsr"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-nm"
-  - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"

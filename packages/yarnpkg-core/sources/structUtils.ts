@@ -1,18 +1,18 @@
-import {Filename, PortablePath}                    from '@yarnpkg/fslib';
-import querystring                                 from 'querystring';
-import semver                                      from 'semver';
-import {makeParser}                                from 'tinylogic';
+import { Filename, PortablePath } from '@yarnpkg/fslib';
+import querystring from 'querystring';
+import semver from 'semver';
+import { makeParser } from 'tinylogic';
 
-import {Configuration}                             from './Configuration';
-import type {PeerRequestNode, PeerRequirementNode} from './Project';
-import {Workspace}                                 from './Workspace';
-import * as formatUtils                            from './formatUtils';
-import * as hashUtils                              from './hashUtils';
-import * as miscUtils                              from './miscUtils';
-import * as nodeUtils                              from './nodeUtils';
-import * as structUtils                            from './structUtils';
-import {IdentHash, DescriptorHash, LocatorHash}    from './types';
-import {Ident, Descriptor, Locator, Package}       from './types';
+import { Configuration } from './Configuration';
+import type { PeerRequestNode, PeerRequirementNode } from './Project';
+import { Workspace } from './Workspace';
+import * as formatUtils from './formatUtils';
+import * as hashUtils from './hashUtils';
+import * as miscUtils from './miscUtils';
+import * as nodeUtils from './nodeUtils';
+import * as structUtils from './structUtils';
+import { IdentHash, DescriptorHash, LocatorHash } from './types';
+import { Ident, Descriptor, Locator, Package } from './types';
 
 const VIRTUAL_PROTOCOL = `virtual:`;
 const VIRTUAL_ABBREVIATE = 5;
@@ -30,7 +30,7 @@ export function makeIdent(scope: string | null, name: string): Ident {
   if (scope?.startsWith(`@`))
     throw new Error(`Invalid scope: don't prefix it with '@'`);
 
-  return {identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name};
+  return { identHash: hashUtils.makeHash<IdentHash>(scope, name), scope, name };
 }
 
 /**
@@ -40,7 +40,7 @@ export function makeIdent(scope: string | null, name: string): Ident {
  * @param range The range to attach (eg. `^1.0.0`)
  */
 export function makeDescriptor(ident: Ident, range: string): Descriptor {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: hashUtils.makeHash<DescriptorHash>(ident.identHash, range), range};
+  return { identHash: ident.identHash, scope: ident.scope, name: ident.name, descriptorHash: hashUtils.makeHash<DescriptorHash>(ident.identHash, range), range };
 }
 
 /**
@@ -50,7 +50,7 @@ export function makeDescriptor(ident: Ident, range: string): Descriptor {
  * @param reference The reference to attach (eg. `1.0.0`)
  */
 export function makeLocator(ident: Ident, reference: string): Locator {
-  return {identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference};
+  return { identHash: ident.identHash, scope: ident.scope, name: ident.name, locatorHash: hashUtils.makeHash<LocatorHash>(ident.identHash, reference), reference };
 }
 
 /**
@@ -64,7 +64,7 @@ export function makeLocator(ident: Ident, reference: string): Locator {
  * @param source The data structure to convert into an ident.
  */
 export function convertToIdent(source: Descriptor | Locator | Package): Ident {
-  return {identHash: source.identHash, scope: source.scope, name: source.name};
+  return { identHash: source.identHash, scope: source.scope, name: source.name };
 }
 
 /**
@@ -77,7 +77,7 @@ export function convertToIdent(source: Descriptor | Locator | Package): Ident {
  * @param descriptor The descriptor to convert into a locator.
  */
 export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
-  return {identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash as unknown as LocatorHash, reference: descriptor.range};
+  return { identHash: descriptor.identHash, scope: descriptor.scope, name: descriptor.name, locatorHash: descriptor.descriptorHash as unknown as LocatorHash, reference: descriptor.range };
 }
 
 /**
@@ -89,7 +89,7 @@ export function convertDescriptorToLocator(descriptor: Descriptor): Locator {
  * @param locator The locator to convert into a descriptor.
  */
 export function convertLocatorToDescriptor(locator: Locator): Descriptor {
-  return {identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash as unknown as DescriptorHash, range: locator.reference};
+  return { identHash: locator.identHash, scope: locator.scope, name: locator.name, descriptorHash: locator.locatorHash as unknown as DescriptorHash, range: locator.reference };
 }
 
 /**
@@ -103,7 +103,7 @@ export function convertLocatorToDescriptor(locator: Locator): Descriptor {
  * @param pkg The package to convert into a locator.
  */
 export function convertPackageToLocator(pkg: Package): Locator {
-  return {identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference};
+  return { identHash: pkg.identHash, scope: pkg.scope, name: pkg.name, locatorHash: pkg.locatorHash, reference: pkg.reference };
 }
 
 /**
@@ -245,7 +245,7 @@ export function ensureDevirtualizedLocator(locator: Locator): Locator {
  * @param descriptor The original descriptor
  * @param params The parameters to encode in the range
  */
-export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: string}) {
+export function bindDescriptor(descriptor: Descriptor, params: { [key: string]: string }) {
   if (descriptor.range.includes(`::`))
     return descriptor;
 
@@ -267,7 +267,7 @@ export function bindDescriptor(descriptor: Descriptor, params: {[key: string]: s
  * @param params The parameters to encode in the reference
  */
 
-export function bindLocator(locator: Locator, params: {[key: string]: string}) {
+export function bindLocator(locator: Locator, params: { [key: string]: string }) {
   if (locator.reference.includes(`::`))
     return locator;
 
@@ -475,10 +475,10 @@ type ParseRangeOptions = {
 };
 
 type ParseRangeReturnType<Opts extends ParseRangeOptions> =
-  & ({params: Opts extends {requireBindings: true} ? querystring.ParsedUrlQuery : querystring.ParsedUrlQuery | null})
-  & ({protocol: Opts extends {requireProtocol: true | string} ? string : string | null})
-  & ({source: Opts extends {requireSource: true} ? string : string | null})
-  & ({selector: Opts extends {parseSelector: true} ? querystring.ParsedUrlQuery : string});
+  & ({ params: Opts extends { requireBindings: true } ? querystring.ParsedUrlQuery : querystring.ParsedUrlQuery | null })
+  & ({ protocol: Opts extends { requireProtocol: true | string } ? string : string | null })
+  & ({ source: Opts extends { requireSource: true } ? string : string | null })
+  & ({ selector: Opts extends { parseSelector: true } ? querystring.ParsedUrlQuery : string });
 
 const RANGE_REGEX = /^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/;
 
@@ -563,8 +563,8 @@ export function tryParseRange<Opts extends ParseRangeOptions>(range: string, opt
  * function wraps `parseRange` to automatically extract the parent locator
  * from the bindings and return it along with the selector.
  */
-export function parseFileStyleRange(range: string, {protocol}: {protocol: string}) {
-  const {selector, params} = parseRange(range, {
+export function parseFileStyleRange(range: string, { protocol }: { protocol: string }) {
+  const { selector, params } = parseRange(range, {
     requireProtocol: protocol,
     requireBindings: true,
   });
@@ -575,7 +575,7 @@ export function parseFileStyleRange(range: string, {protocol}: {protocol: string
   const parentLocator = parseLocator(params.locator, true);
   const path = selector as PortablePath;
 
-  return {parentLocator, path};
+  return { parentLocator, path };
 }
 
 function encodeUnsafeCharacters(str: string) {
@@ -596,7 +596,7 @@ function hasParams(params: querystring.ParsedUrlQuery | null): params is queryst
  * Turn the components returned by `parseRange` back into a string. Check
  * `parseRange` for more details.
  */
-export function makeRange({protocol, source, selector, params}: {protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null}) {
+export function makeRange({ protocol, source, selector, params }: { protocol: string | null, source: string | null, selector: string, params: querystring.ParsedUrlQuery | null }) {
   let range = ``;
 
   if (protocol !== null)
@@ -619,13 +619,13 @@ export function makeRange({protocol, source, selector, params}: {protocol: strin
  * this function strips them from a range.
  */
 export function convertToManifestRange(range: string) {
-  const {params, protocol, source, selector} = parseRange(range);
+  const { params, protocol, source, selector } = parseRange(range);
 
   for (const name in params)
     if (name.startsWith(`__`))
       delete params[name];
 
-  return makeRange({protocol, source, params, selector});
+  return makeRange({ protocol, source, params, selector });
 }
 
 /**
@@ -684,13 +684,22 @@ export function stringifyLocator(locator: Locator) {
 }
 
 /**
- * Returns a string from an ident suitable for a filename (eg. `@types~lodash`).
+ * Returns a string from an ident, formatted as a slug (eg. `@types-lodash`).
  */
 export function slugifyIdent(ident: Ident) {
   if (ident.scope !== null) {
-    // We use ~ as a separator to distinguish @x/y-z from @x-y/z
-    // ~ is valid in a filename, but not in npm package names
-    // See https://github.com/yarnpkg/berry/issues/6761
+    return `@${ident.scope}-${ident.name}`;
+  } else {
+    return ident.name;
+  }
+}
+
+/**
+ * Returns a string from an ident, formatted to be used as a file name.
+ */
+export function generateMetadataFileName(ident: Ident) {
+  if (ident.scope !== null) {
+    // We use ~ as a separator, as it is valid in filenames but not allowed in package names
     return `@${ident.scope}~${ident.name}`;
   } else {
     return ident.name;
@@ -703,7 +712,7 @@ const TRAILING_COLON_REGEX = /:$/;
  * Returns a string from a locator, formatted as a slug (eg. `@types-lodash-npm-1.0.0-abcdef1234`).
  */
 export function slugifyLocator(locator: Locator) {
-  const {protocol, selector} = parseRange(locator.reference);
+  const { protocol, selector } = parseRange(locator.reference);
 
   const humanProtocol = protocol !== null
     ? protocol.replace(TRAILING_COLON_REGEX, ``)

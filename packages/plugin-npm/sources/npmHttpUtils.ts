@@ -177,7 +177,7 @@ export async function getPackageMetadata(ident: Ident, {cache, project, registry
   registry = normalizeRegistry(configuration, {ident, registry});
 
   const registryFolder = getRegistryFolder(configuration, registry);
-  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
+  const identPath = ppath.join(registryFolder, `${structUtils.generateMetadataFileName(ident)}.json`);
 
   let cached: CachedMetadata | null = null;
 
