@@ -23,7 +23,7 @@ export interface Entry {
 }
 
 export class JsZipImpl implements ZipImpl {
-  fd: number;
+  fd: number | `closed`;
   baseFs: FakeFS<PortablePath>;
   entries: Array<Entry>;
 
@@ -37,7 +37,13 @@ export class JsZipImpl implements ZipImpl {
     this.baseFs = opts.baseFs;
     this.fd = this.baseFs.openSync(opts.path, `r`);
 
-    this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs, opts.size);
+    try {
+      this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs, opts.size);
+    } catch (error) {
+      this.baseFs.closeSync(this.fd);
+      this.fd = `closed`;
+      throw error;
+    }
   }
 
   static readZipSync(fd: number, baseFs: FakeFS<PortablePath>, fileSize: number): Array<Entry> {
@@ -214,6 +220,9 @@ export class JsZipImpl implements ZipImpl {
   }
 
   getFileSource(index: number): {data: Buffer, compressionMethod: number} {
+    if (this.fd === `closed`)
+      throw new Error(`ZIP file is closed`);
+
     const entry = this.entries[index];
     const localHeaderBuf = Buffer.alloc(30);
 
@@ -237,6 +246,10 @@ export class JsZipImpl implements ZipImpl {
   }
 
   discard(): void {
+    if (this.fd !== `closed`) {
+      this.baseFs.closeSync(this.fd);
+      this.fd = `closed`;
+    }
   }
 
   addDirectory(path: string): number {
