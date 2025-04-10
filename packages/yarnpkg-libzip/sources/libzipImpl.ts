@@ -20,9 +20,10 @@ export class LibZipImpl implements ZipImpl {
   private readonly libzip: Libzip;
   private readonly lzSource: number;
   private readonly zip: number;
-
   private readonly listings: Array<string>;
   private readonly symlinkCount: number;
+
+  public filesShouldBeCached = true;
 
   constructor(opts: ZipImplInput) {
     const buffer = `buffer` in opts

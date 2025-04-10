@@ -76,6 +76,7 @@ export interface Stat {
 }
 
 export interface ZipImpl {
+  filesShouldBeCached: boolean;
   deleteEntry(index: number): void;
   getFileSource(index: number): {data: Buffer, compressionMethod: number};
   setFileSource(target: PortablePath, compression: CompressionData, buffer: Buffer): number;
@@ -857,7 +858,9 @@ export class ZipFS extends BasePortableFakeFS {
 
     const {data, compressionMethod} = this.zipImpl.getFileSource(index);
     if (compressionMethod === STORE) {
-      this.fileSources.set(index, data);
+      if (this.zipImpl.filesShouldBeCached)
+        this.fileSources.set(index, data);
+
       return data;
     } else if (compressionMethod === DEFLATE) {
       if (opts.asyncDecompress) {
@@ -866,14 +869,16 @@ export class ZipFS extends BasePortableFakeFS {
             if (error) {
               reject(error);
             } else {
-              this.fileSources.set(index, result);
+              if (this.zipImpl.filesShouldBeCached)
+                this.fileSources.set(index, result);
               resolve(result);
             }
           });
         });
       } else {
         const decompressedData = zlib.inflateRawSync(data);
-        this.fileSources.set(index, decompressedData);
+        if (this.zipImpl.filesShouldBeCached)
+          this.fileSources.set(index, decompressedData);
         return decompressedData;
       }
     } else {
