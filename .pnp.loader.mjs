@@ -1488,6 +1488,12 @@ function getFileFormat(filepath) {
     case `.cjs`: {
       return `commonjs`;
     }
+    case `.mts`: {
+      return `module`;
+    }
+    case `.cts`: {
+      return `commonjs`;
+    }
     case `.wasm`: {
       throw new Error(
         `Unknown file extension ".wasm" for ${filepath}`
