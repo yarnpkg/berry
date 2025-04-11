@@ -694,18 +694,6 @@ export function slugifyIdent(ident: Ident) {
   }
 }
 
-/**
- * Returns a string from an ident, formatted to be used as a file name.
- */
-export function generateMetadataFileName(ident: Ident) {
-  if (ident.scope !== null) {
-    // We use ~ as a separator, as it is valid in filenames but not allowed in package names
-    return `@${ident.scope}~${ident.name}`;
-  } else {
-    return ident.name;
-  }
-}
-
 const TRAILING_COLON_REGEX = /:$/;
 
 /**
