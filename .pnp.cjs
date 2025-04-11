@@ -280,6 +280,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
           ["chalk", "npm:3.0.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
+          ["cross-spawn", "npm:7.0.3"],\
           ["esbuild", [\
             "esbuild-wasm",\
             "npm:0.23.0"\
@@ -9789,6 +9790,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
           ["chalk", "npm:3.0.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
+          ["cross-spawn", "npm:7.0.3"],\
           ["esbuild", [\
             "esbuild-wasm",\
             "npm:0.23.0"\
