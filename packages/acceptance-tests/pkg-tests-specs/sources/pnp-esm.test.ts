@@ -1,6 +1,6 @@
-import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
-import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                                                                                                          from 'url';
+import {Filename, npath, ppath, xfs}                                                                                                                     from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, SUPPORTS_TYPE_STRIPPING} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                                                   from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -361,7 +361,7 @@ describe(`Plug'n'Play - ESM`, () => {
   test(
     `it should load extensionless commonjs files as an entrypoint`,
     makeTemporaryEnv(
-      { },
+      {},
       {
         pnpEnableEsmLoader: true,
       },
@@ -381,7 +381,7 @@ describe(`Plug'n'Play - ESM`, () => {
   test(
     `it should load symlinked extensionless commonjs files as an entrypoint`,
     makeTemporaryEnv(
-      { },
+      {},
       {
         pnpEnableEsmLoader: true,
       },
@@ -403,7 +403,7 @@ describe(`Plug'n'Play - ESM`, () => {
   (ALLOWS_EXTENSIONLESS_FILES ? it.skip : it)(
     `it should not allow extensionless commonjs imports`,
     makeTemporaryEnv(
-      { },
+      {},
       {
         pnpEnableEsmLoader: true,
       },
@@ -424,7 +424,7 @@ describe(`Plug'n'Play - ESM`, () => {
   (ALLOWS_EXTENSIONLESS_FILES ? it : it.skip)(
     `it should allow extensionless commonjs imports`,
     makeTemporaryEnv(
-      { },
+      {},
       {
         pnpEnableEsmLoader: true,
       },
@@ -1160,4 +1160,67 @@ describe(`Plug'n'Play - ESM`, () => {
       },
     ),
   );
+  (SUPPORTS_TYPE_STRIPPING ? describe : describe.skip)(`Node builtin type stripping`, () => {
+    for (const type of [`module`, `commonjs`, undefined]) {
+      test(
+        `${type}: it should import mts typescript`,
+        makeTemporaryEnv(
+          {
+            type,
+            dependencies: {
+              "no-deps": `1.0.0`,
+            },
+          },
+          {
+            pnpEnableEsmLoader: true,
+          },
+          async ({path, run}) => {
+            await xfs.writeFilePromise(ppath.join(path, `mod.mts`), `export const foo = 42 as any;`);
+
+            await xfs.writeFilePromise(ppath.join(path, `index.mts`), `
+import * as fs from 'node:fs';
+import * as asd from 'no-deps/index.js';
+import {foo} from './mod.mts';
+console.log(foo as any);`,
+            );
+            await run(`install`);
+            await expect(run(`node`, `index.mts`)).resolves.toMatchObject({
+              code: 0,
+              stdout: `42\n`,
+            });
+          },
+        ),
+      );
+      test(
+        `${type}: it should import cts typescript`,
+        makeTemporaryEnv(
+          {
+            type,
+            dependencies: {
+              "no-deps": `1.0.0`,
+            },
+          },
+          {
+            pnpEnableEsmLoader: true,
+          },
+          async ({path, run}) => {
+            await xfs.writeFilePromise(ppath.join(path, `mod.cts`), `module.exports.foo = 42 as any;`);
+            
+            await xfs.writeFilePromise(ppath.join(path, `index.cts`), `
+const fs = require('node:fs');
+const asd = require('no-deps/index.js');
+const {foo} = require('./mod.cts');
+console.log(foo as any);`
+            );
+
+            await run(`install`);
+            await expect(run(`node`, `index.cts`)).resolves.toMatchObject({
+              code: 0,
+              stdout: `42\n`,
+            });
+          },
+        ),
+      );
+    }
+  });
 });
