@@ -229,13 +229,13 @@ jobs:
           - {node: 18, platform: [macos, latest], shard: 3/3}
           # We also run them on the maximum Node version we support, to catch potential regressions in Node.js.
           # Windows tests
-          - {node: 22, platform: [windows, latest], shard: 1/3}
-          - {node: 22, platform: [windows, latest], shard: 2/3}
-          - {node: 22, platform: [windows, latest], shard: 3/3}
+          - {node: 23, platform: [windows, latest], shard: 1/3}
+          - {node: 23, platform: [windows, latest], shard: 2/3}
+          - {node: 23, platform: [windows, latest], shard: 3/3}
           # macOS tests
-          - {node: 22, platform: [macos, latest], shard: 1/3}
-          - {node: 22, platform: [macos, latest], shard: 2/3}
-          - {node: 22, platform: [macos, latest], shard: 3/3}
+          - {node: 23, platform: [macos, latest], shard: 1/3}
+          - {node: 23, platform: [macos, latest], shard: 2/3}
+          - {node: 23, platform: [macos, latest], shard: 3/3}
 
     name: '${{matrix.platform[0]}}-latest w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
     runs-on: ${{matrix.platform[0]}}-${{matrix.platform[1]}}

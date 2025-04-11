@@ -22,4 +22,5 @@ export const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || (major === 20 && minor 
 export const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
 
 // https://github.com/nodejs/node/pull/53725
-export const SUPPORTS_TYPE_STRIPPING = major > 23 || (major === 23 && minor > 6);
+// https://nodejs.org/docs/v22.14.0/api/process.html#processfeaturestypescript
+export const SUPPORTS_TYPE_STRIPPING = Boolean((process.features as any).typescript)

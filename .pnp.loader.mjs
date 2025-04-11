@@ -428,6 +428,7 @@ function packageImportsResolve({ name, base, conditions, readFileSyncFn }) {
 
 const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
 const HAS_LAZY_LOADED_TRANSLATORS = major === 20 && minor < 6 || major === 19 && minor >= 3;
+Boolean(process.features.typescript);
 
 async function tryReadFile$1(path2) {
   try {
