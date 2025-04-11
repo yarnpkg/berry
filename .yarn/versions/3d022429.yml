@@ -1,0 +1,8 @@
+releases:
+  "@yarnpkg/plugin-npm": minor
+
+declined:
+  - "@yarnpkg/plugin-compat"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"
