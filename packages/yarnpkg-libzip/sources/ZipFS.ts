@@ -76,6 +76,7 @@ export interface Stat {
 }
 
 export interface ZipImpl {
+  filesShouldBeCached: boolean;
   deleteEntry(index: number): void;
   getFileSource(index: number): {data: Buffer, compressionMethod: number};
   setFileSource(target: PortablePath, compression: CompressionData, buffer: Buffer): number;
@@ -109,6 +110,12 @@ export class ZipFS extends BasePortableFakeFS {
   private readonly listings: Map<PortablePath, Set<Filename>> = new Map();
   private readonly entries: Map<PortablePath, number> = new Map();
 
+  /**
+   * A cache of indices mapped to file sources.
+   * Populated by `setFileSource` calls.
+   * Required for supporting read after write.
+   */
+  private readonly fileSources: Map<number, Buffer> = new Map();
 
   private symlinkCount: number;
 
@@ -736,6 +743,8 @@ export class ZipFS extends BasePortableFakeFS {
     if (typeof entry === `undefined`)
       return;
 
+    this.fileSources.delete(entry);
+
     if (this.isSymbolicLink(entry)) {
       this.symlinkCount--;
     }
@@ -819,6 +828,7 @@ export class ZipFS extends BasePortableFakeFS {
     }
 
     const newIndex = this.zipImpl.setFileSource(target, compression, buffer);
+    this.fileSources.set(newIndex, buffer);
 
     return newIndex;
   }
@@ -842,8 +852,15 @@ export class ZipFS extends BasePortableFakeFS {
   private getFileSource(index: number, opts: {asyncDecompress: true}): Promise<Buffer>;
   private getFileSource(index: number, opts: {asyncDecompress: boolean}): Promise<Buffer> | Buffer;
   private getFileSource(index: number, opts: {asyncDecompress: boolean} = {asyncDecompress: false}): Promise<Buffer> | Buffer {
+    const cachedFileSource = this.fileSources.get(index);
+    if (typeof cachedFileSource !== `undefined`)
+      return cachedFileSource;
+
     const {data, compressionMethod} = this.zipImpl.getFileSource(index);
     if (compressionMethod === STORE) {
+      if (this.zipImpl.filesShouldBeCached)
+        this.fileSources.set(index, data);
+
       return data;
     } else if (compressionMethod === DEFLATE) {
       if (opts.asyncDecompress) {
@@ -852,12 +869,17 @@ export class ZipFS extends BasePortableFakeFS {
             if (error) {
               reject(error);
             } else {
+              if (this.zipImpl.filesShouldBeCached)
+                this.fileSources.set(index, result);
               resolve(result);
             }
           });
         });
       } else {
-        return zlib.inflateRawSync(data);
+        const decompressedData = zlib.inflateRawSync(data);
+        if (this.zipImpl.filesShouldBeCached)
+          this.fileSources.set(index, decompressedData);
+        return decompressedData;
       }
     } else {
       throw new Error(`Unsupported compression method: ${compressionMethod}`);

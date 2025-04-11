@@ -23,9 +23,10 @@ export interface Entry {
 }
 
 export class JsZipImpl implements ZipImpl {
-  fd: number;
-  baseFs: FakeFS<PortablePath>;
-  entries: Array<Entry>;
+  private fd: number | `closed`;
+  private baseFs: FakeFS<PortablePath>;
+  private entries: Array<Entry>;
+  public filesShouldBeCached = false;
 
   constructor(opts: ZipImplInput) {
     if (`buffer` in opts)
@@ -37,7 +38,13 @@ export class JsZipImpl implements ZipImpl {
     this.baseFs = opts.baseFs;
     this.fd = this.baseFs.openSync(opts.path, `r`);
 
-    this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs, opts.size);
+    try {
+      this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs, opts.size);
+    } catch (error) {
+      this.baseFs.closeSync(this.fd);
+      this.fd = `closed`;
+      throw error;
+    }
   }
 
   static readZipSync(fd: number, baseFs: FakeFS<PortablePath>, fileSize: number): Array<Entry> {
@@ -213,7 +220,10 @@ export class JsZipImpl implements ZipImpl {
     return -1;
   }
 
-  getFileSource(index: number): {data: Buffer, compressionMethod: number} {
+  getFileSource(index: number) {
+    if (this.fd === `closed`)
+      throw new Error(`ZIP file is closed`);
+
     const entry = this.entries[index];
     const localHeaderBuf = Buffer.alloc(30);
 
@@ -237,6 +247,10 @@ export class JsZipImpl implements ZipImpl {
   }
 
   discard(): void {
+    if (this.fd !== `closed`) {
+      this.baseFs.closeSync(this.fd);
+      this.fd = `closed`;
+    }
   }
 
   addDirectory(path: string): number {
