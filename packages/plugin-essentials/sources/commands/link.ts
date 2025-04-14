@@ -1,7 +1,9 @@
 import {BaseCommand, WorkspaceRequiredError}        from '@yarnpkg/cli';
 import {Cache, Configuration, Project, structUtils} from '@yarnpkg/core';
-import {npath, ppath}                               from '@yarnpkg/fslib';
+import {npath, ppath, constants}                    from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}         from 'clipanion';
+
+import {Report}                                     from '../../../yarnpkg-core/sources';
 
 // eslint-disable-next-line arca/no-default-export
 export default class LinkCommand extends BaseCommand {
@@ -50,7 +52,7 @@ export default class LinkCommand extends BaseCommand {
     });
 
     const topLevelWorkspace = project.topLevelWorkspace;
-    const linkedWorkspaces = [];
+    const linkedWorkspaces: Array<any> = [];
 
     for (const destination of this.destinations) {
       const absoluteDestination = ppath.resolve(this.context.cwd, npath.toPortablePath(destination));
@@ -87,20 +89,50 @@ export default class LinkCommand extends BaseCommand {
       }
     }
 
-    for (const workspace of linkedWorkspaces) {
+    const processWorkspace = async (workspace: any) => {
       const fullName = structUtils.stringifyIdent(workspace.anchoredLocator);
-      const target = this.relative
+      let target = this.relative
         ? ppath.relative(project.cwd, workspace.cwd)
         : workspace.cwd;
 
-      topLevelWorkspace.manifest.resolutions.push({
+      if (process.platform === `win32`) {
+        const windowsPath = npath.fromPortablePath(target);
+
+        if (windowsPath.length >= constants.MAX_PATH) {
+          // For virtual packages, try to shorten the path first
+          if (structUtils.isVirtualLocator(workspace.anchoredLocator)) {
+            const hash = structUtils.slugifyLocator(workspace.anchoredLocator).slice(0, 8);
+            const shortName = `${workspace.manifest.name.name}-${hash}`;
+            target = ppath.resolve(project.cwd, `node_modules/${shortName}` as any);
+          }
+
+          const finalWindowsPath = npath.fromPortablePath(target);
+          if (finalWindowsPath.length >= constants.MAX_PATH) {
+            target = npath.toPortablePath(`\\\\?\\${finalWindowsPath}`);
+          }
+        }
+      }
+
+      return {
         pattern: {descriptor: {fullName}},
         reference: `portal:${target}`,
-      });
-    }
+      };
+    };
+
+    const resolutions = await Promise.all(linkedWorkspaces.map(processWorkspace));
+    topLevelWorkspace.manifest.resolutions.push(...resolutions);
 
     return await project.installWithNewReport({
       stdout: this.context.stdout,
+      reportFooter: () => {
+        const rows = resolutions.map(({pattern, reference}) => [
+          structUtils.prettyIdent(configuration, pattern.descriptor),
+          reference,
+        ]);
+
+        return `${Report.reportInfo(null, `The following packages have been linked:`)}\n${
+          Report.reportIndex(null, rows)}`;
+      },
     }, {
       cache,
     });

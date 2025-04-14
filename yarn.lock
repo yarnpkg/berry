@@ -5888,6 +5888,7 @@ __metadata:
     "@yarnpkg/types": "workspace:^"
     chalk: "npm:^3.0.0"
     clipanion: "npm:^4.0.0-rc.2"
+    cross-spawn: "npm:^7.0.3"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     eslint: "npm:^9.20.1"
     jest: "npm:^29.2.1"
