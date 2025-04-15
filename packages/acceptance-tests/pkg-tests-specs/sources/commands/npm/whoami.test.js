@@ -98,7 +98,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should thow an error when invalid auth config is found for a scope`,
+      `it should throw an error when invalid auth config is found for a scope`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const url = await startPackageServer();
 
