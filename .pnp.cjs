@@ -9822,7 +9822,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/js-yaml", "npm:3.12.5"],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
-          ["js-yaml", "npm:3.14.1"],\
+          ["js-yaml", "npm:4.1.0"],\
           ["pegjs", "npm:0.10.0"],\
           ["tslib", "npm:2.6.2"]\
         ],\
