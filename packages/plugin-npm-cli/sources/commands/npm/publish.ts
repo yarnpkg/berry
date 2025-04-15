@@ -140,7 +140,7 @@ export default class NpmPublishCommand extends BaseCommand {
         });
       });
 
-      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      report.reportInfo(MessageName.UNNAMED, `Package archive published: ${ident}@${version}`);
     });
 
     return report.exitCode();
