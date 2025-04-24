@@ -7918,16 +7918,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@types/tunnel", [\
-      ["npm:0.0.0", {\
-        "packageLocation": "./.yarn/cache/@types-tunnel-npm-0.0.0-60b0691686-bd3a79bd7b.zip/node_modules/@types/tunnel/",\
-        "packageDependencies": [\
-          ["@types/node", "npm:18.19.17"],\
-          ["@types/tunnel", "npm:0.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@types/unist", [\
       ["npm:2.0.3", {\
         "packageLocation": "./.yarn/cache/@types-unist-npm-2.0.3-4b26dedfde-c13ec9068d.zip/node_modules/@types/unist/",\
@@ -9468,7 +9458,6 @@ const RAW_RUNTIME_STATE =
           ["@types/semver", "npm:7.5.8"],\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/treeify", "npm:1.0.0"],\
-          ["@types/tunnel", "npm:0.0.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -9492,6 +9481,7 @@ const RAW_RUNTIME_STATE =
           ]],\
           ["fast-glob", "npm:3.3.2"],\
           ["got", "npm:11.8.2"],\
+          ["hpagent", "npm:1.2.0"],\
           ["lodash", "npm:4.17.21"],\
           ["micromatch", "npm:4.0.5"],\
           ["p-limit", "npm:2.2.0"],\
@@ -9503,8 +9493,7 @@ const RAW_RUNTIME_STATE =
           ["tar", "npm:6.1.11"],\
           ["tinylogic", "npm:2.0.0"],\
           ["treeify", "npm:1.1.0"],\
-          ["tslib", "npm:2.6.2"],\
-          ["tunnel", "npm:0.0.6"]\
+          ["tslib", "npm:2.6.2"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -25663,6 +25652,15 @@ const RAW_RUNTIME_STATE =
           ["obuf", "npm:1.1.2"],\
           ["readable-stream", "npm:2.3.6"],\
           ["wbuf", "npm:1.7.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["hpagent", [\
+      ["npm:1.2.0", {\
+        "packageLocation": "./.yarn/cache/hpagent-npm-1.2.0-0f725aa4fe-bad186449d.zip/node_modules/hpagent/",\
+        "packageDependencies": [\
+          ["hpagent", "npm:1.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\

@@ -1,9 +1,9 @@
 import {PortablePath, xfs}                       from '@yarnpkg/fslib';
 import type {ExtendOptions, RequestError}        from 'got';
+import {HttpProxyAgent, HttpsProxyAgent}         from 'hpagent';
 import {Agent as HttpsAgent}                     from 'https';
 import {Agent as HttpAgent, IncomingHttpHeaders} from 'http';
 import micromatch                                from 'micromatch';
-import tunnel, {ProxyOptions}                    from 'tunnel';
 
 import {ConfigurationValueMap, Configuration}    from './Configuration';
 import {MessageName}                             from './MessageName';
@@ -13,26 +13,13 @@ import * as formatUtils                          from './formatUtils';
 import {MapValue, MapValueToObjectValue}         from './miscUtils';
 import * as miscUtils                            from './miscUtils';
 
-export type {RequestError}                                   from 'got';
+export type {RequestError}                       from 'got';
 
 const cache = new Map<string, any>();
 const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
-
-function parseProxy(specifier: string) {
-  const url = new URL(specifier);
-  const proxy: ProxyOptions = {host: url.hostname, headers: {}};
-
-  if (url.port)
-    proxy.port = Number(url.port);
-
-  if (url.username && url.password)
-    proxy.proxyAuth = `${url.username}:${url.password}`;
-
-  return {proxy};
-}
 
 async function getCachedFile(filePath: PortablePath) {
   return miscUtils.getFactoryWithDefault(fileCache, filePath, () => {
@@ -253,10 +240,10 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
 
   const agent = {
     http: networkConfig.httpProxy
-      ? tunnel.httpOverHttp(parseProxy(networkConfig.httpProxy))
+      ? new HttpProxyAgent({proxy: networkConfig.httpProxy})
       : globalHttpAgent,
     https: networkConfig.httpsProxy
-      ? tunnel.httpsOverHttp(parseProxy(networkConfig.httpsProxy)) as HttpsAgent
+      ? new HttpsProxyAgent({proxy: networkConfig.httpsProxy})
       : globalHttpsAgent,
   };
 
