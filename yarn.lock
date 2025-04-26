@@ -4187,28 +4187,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@monaco-editor/loader@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "@monaco-editor/loader@npm:1.3.2"
+"@monaco-editor/loader@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@monaco-editor/loader@npm:1.5.0"
   dependencies:
     state-local: "npm:^1.0.6"
-  peerDependencies:
-    monaco-editor: ">= 0.21.0 < 1"
-  checksum: 10/600d388d027928c2dd60c12c463b341c596976da2ff4a92ea9ad7979edb99793c9f5f97ff2d69bcd1bdaf2566c5f38a43d012e2ba12cd64653976436f22656f4
+  checksum: 10/97d79916afa856809de4eaafaee1b1c6dc9443c0fdde81a7562f4ffa0c252496e97c4becf4c1f00c4119878c76d73390ce416a64305e59865a5830bded5afe55
   languageName: node
   linkType: hard
 
-"@monaco-editor/react@npm:^4.4.6":
-  version: 4.4.6
-  resolution: "@monaco-editor/react@npm:4.4.6"
+"@monaco-editor/react@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "@monaco-editor/react@npm:4.7.0"
   dependencies:
-    "@monaco-editor/loader": "npm:^1.3.2"
-    prop-types: "npm:^15.7.2"
+    "@monaco-editor/loader": "npm:^1.5.0"
   peerDependencies:
     monaco-editor: ">= 0.25.0 < 1"
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10/1305533090e76dd97939155e9052bbe5df94018e7b20b7f9f78ebf67230992706717b85019eb000d47d53d5828cba926b392c8725ea777ab2a9dfc202267c360
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10/d72392c4ed6faf8d830ba43421461e1b767b5978edba0739457d7781aa9533c66982be7f59bb156a77a2b578eddfb4711f50e0d84f0f0d25d28b5ab11140f5cc
   languageName: node
   linkType: hard
 
@@ -4392,12 +4389,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@primer/octicons-react@npm:^17.7.0":
-  version: 17.7.0
-  resolution: "@primer/octicons-react@npm:17.7.0"
+"@primer/octicons-react@npm:^19.15.1":
+  version: 19.15.1
+  resolution: "@primer/octicons-react@npm:19.15.1"
   peerDependencies:
-    react: ">=15"
-  checksum: 10/a76dd4c9dad05344f874e89c57d9ffc45f7ec1dea2968008ae1909df4d8487b1deaab8eb4166c30f578e8185f815c2ca159a68cc41d5df34f23707ce30ec50ac
+    react: ">=16.3"
+  checksum: 10/75caea92bf34b518a5b49a098b09ef11dbc87ca55f7b1b6980cc1da135f240ad9918dc10d45b1e67f581ed49a107e173b4e8c9800443df881f740d26e959c423
   languageName: node
   linkType: hard
 
@@ -6278,8 +6275,8 @@ __metadata:
     "@docusaurus/types": "npm:^3.7.0"
     "@fontsource/pt-sans": "npm:^5.0.5"
     "@mdx-js/react": "npm:^3.0.0"
-    "@monaco-editor/react": "npm:^4.4.6"
-    "@primer/octicons-react": "npm:^17.7.0"
+    "@monaco-editor/react": "npm:^4.7.0"
+    "@primer/octicons-react": "npm:^19.15.1"
     "@types/dompurify": "npm:^3"
     "@types/git-url-parse": "npm:^9.0.0"
     "@types/lodash": "npm:^4.14.136"
@@ -6327,8 +6324,8 @@ __metadata:
     os-browserify: "npm:^0.3.0"
     path-browserify: "npm:^1.0.1"
     prism-react-renderer: "npm:^2.3.1"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
+    react: "npm:^19.1.0"
+    react-dom: "npm:^19.1.0"
     react-instantsearch-dom: "npm:^6.36.0"
     react-instantsearch-hooks-web: "npm:^6.36.0"
     react-json-doc: "npm:^2.3.4"
@@ -18781,15 +18778,14 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.2.0":
-  version: 18.2.0
-  resolution: "react-dom@npm:18.2.0"
+"react-dom@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "react-dom@npm:19.1.0"
   dependencies:
-    loose-envify: "npm:^1.1.0"
-    scheduler: "npm:^0.23.0"
+    scheduler: "npm:^0.26.0"
   peerDependencies:
-    react: ^18.2.0
-  checksum: 10/ca5e7762ec8c17a472a3605b6f111895c9f87ac7d43a610ab7024f68cd833d08eda0625ce02ec7178cc1f3c957cf0b9273cdc17aa2cd02da87544331c43b1d21
+    react: ^19.1.0
+  checksum: 10/c5b58605862c7b0bb044416b01c73647bb8e89717fb5d7a2c279b11815fb7b49b619fe685c404e59f55eb52c66831236cc565c25ee1c2d042739f4a2cc538aa2
   languageName: node
   linkType: hard
 
@@ -19161,12 +19157,10 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"react@npm:^18.2.0":
-  version: 18.2.0
-  resolution: "react@npm:18.2.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10/b9214a9bd79e99d08de55f8bef2b7fc8c39630be97c4e29d7be173d14a9a10670b5325e94485f74cd8bff4966ef3c78ee53c79a7b0b9b70cba20aa8973acc694
+"react@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "react@npm:19.1.0"
+  checksum: 10/d0180689826fd9de87e839c365f6f361c561daea397d61d724687cae88f432a307d1c0f53a0ee95ddbe3352c10dac41d7ff1ad85530fb24951b27a39e5398db4
   languageName: node
   linkType: hard
 
@@ -19964,12 +19958,10 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"scheduler@npm:*, scheduler@npm:^0.23.0":
-  version: 0.23.0
-  resolution: "scheduler@npm:0.23.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 10/0c4557aa37bafca44ff21dc0ea7c92e2dbcb298bc62eae92b29a39b029134f02fb23917d6ebc8b1fa536b4184934314c20d8864d156a9f6357f3398aaf7bfda8
+"scheduler@npm:*, scheduler@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "scheduler@npm:0.26.0"
+  checksum: 10/1ecf2e5d7de1a7a132796834afe14a2d589ba7e437615bd8c06f3e0786a3ac3434655e67aac8755d9b14e05754c177e49c064261de2673aaa3c926bc98caa002
   languageName: node
   linkType: hard
 
