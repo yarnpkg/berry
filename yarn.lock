@@ -6112,6 +6112,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xterm/addon-serialize@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@xterm/addon-serialize@npm:0.13.0"
+  peerDependencies:
+    "@xterm/xterm": ^5.0.0
+  checksum: 10/c575623c9388fa0a901d0e240d948abd03b2ea83a22949e6729bed3e740f4c70850fcb1322922d3297c56d76cb7b2ca6c5f0a90f9c89faefccd7a80848feb5ba
+  languageName: node
+  linkType: hard
+
+"@xterm/headless@npm:^5.5.0":
+  version: 5.5.0
+  resolution: "@xterm/headless@npm:5.5.0"
+  checksum: 10/6c2e062553496cdcd1a65cc614fea25aeb3c042b4f1b8474effd365f0b49be7a2c508123e326c2fc4a60bac35e2b3006e86c08547a1faddda67efc2f1ac14916
+  languageName: node
+  linkType: hard
+
+"@xterm/xterm@npm:^5.5.0":
+  version: 5.5.0
+  resolution: "@xterm/xterm@npm:5.5.0"
+  checksum: 10/d4cdc402de81a83a3e0ef93f38072cb8f54abe4d65865f2e29b92cbc2593f86d052f6b993895c9e5dec97f47548f504e90bcea0aad6845917c09b03f2f3a4629
+  languageName: node
+  linkType: hard
+
 "@xtuc/ieee754@npm:^1.2.0":
   version: 1.2.0
   resolution: "@xtuc/ieee754@npm:1.2.0"
@@ -6301,6 +6324,9 @@ __metadata:
     "@types/resolve": "npm:^1.20.0"
     "@types/semver": "npm:^7.1.0"
     "@types/three": "npm:^0.144.0"
+    "@xterm/addon-serialize": "npm:^0.13.0"
+    "@xterm/headless": "npm:^5.5.0"
+    "@xterm/xterm": "npm:^5.5.0"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6355,9 +6381,6 @@ __metadata:
     unist-util-visit-parents: "npm:^6.0.1"
     usehooks-ts: "npm:^3.1.1"
     webpack: "npm:^5.88.2"
-    xterm: "npm:^5.3.0"
-    xterm-addon-serialize: "npm:^0.11.0"
-    xterm-headless: "npm:^5.3.0"
   languageName: unknown
   linkType: soft
 
@@ -22791,29 +22814,6 @@ pem@dexus/pem:
   version: 4.0.1
   resolution: "xtend@npm:4.0.1"
   checksum: 10/6148d4f9b978f858560b21f1666d1d2b8a799289671ce3274a0b2e8b843d960ba7507842d73c2f44705a87ca9adc25ab12d627aac41ba911038f78f9eb6e6d78
-  languageName: node
-  linkType: hard
-
-"xterm-addon-serialize@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "xterm-addon-serialize@npm:0.11.0"
-  peerDependencies:
-    xterm: ^5.0.0
-  checksum: 10/d1c4af6df2fcc8dfb3b4f17344279dc030b294a1f6d1185e665229bdefd50844b8812c6db6411917224381270e38d1cc246f02eac12335e645a88f31f898f077
-  languageName: node
-  linkType: hard
-
-"xterm-headless@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "xterm-headless@npm:5.3.0"
-  checksum: 10/a943688386ba3094c59fd8753a936893ab57bb542f2bdb256021aefbfe44355f3501f5f3bdcad761e8811e5f3e6522223d37e1acdd418b296c1d67c8fc08afa8
-  languageName: node
-  linkType: hard
-
-"xterm@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "xterm@npm:5.3.0"
-  checksum: 10/3690b6a6d744f1d2932279975bb8e6c786e70c675531045016ecfe0f9b7957e2fc6811b815335f3e0e84b40ffae654f6ee4afe55a5768534744497e62252dd50
   languageName: node
   linkType: hard
 
