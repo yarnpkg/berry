@@ -9,7 +9,6 @@
     "serve": "docusaurus serve"
   },
   "dependencies": {
-    "@codesandbox/sandpack-react": "^1.15.0",
     "@docusaurus/core": "^3.7.0",
     "@docusaurus/mdx-loader": "^3.7.0",
     "@docusaurus/plugin-content-docs": "^3.7.0",
@@ -47,9 +46,7 @@
     "jiti": "^1.21.0",
     "lodash": "^4.17.15",
     "markdown-it": "^13.0.1",
-    "markdown-it-br": "^1.0.0",
     "marked": "^5.1.1",
-    "marked-base-url": "^1.0.1",
     "monaco-editor": "^0.24.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
