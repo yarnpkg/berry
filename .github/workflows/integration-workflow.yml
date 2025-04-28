@@ -31,7 +31,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.node-version }}
-  
+
     - name: Enable Corepack
       run: |
         npm install -g corepack
@@ -258,6 +258,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{matrix.node}}.x
+
+    - name: Enable Corepack
+      run: |
+        npm install -g corepack
+        corepack enable
 
     - uses: actions/download-artifact@v4
       with:
