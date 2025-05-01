@@ -1,17 +1,17 @@
-import {PortablePath, xfs}                       from '@yarnpkg/fslib';
-import type {ExtendOptions, RequestError}        from 'got';
-import {HttpProxyAgent, HttpsProxyAgent}         from 'hpagent';
-import {Agent as HttpsAgent}                     from 'https';
-import {Agent as HttpAgent, IncomingHttpHeaders} from 'http';
-import micromatch                                from 'micromatch';
+import {PortablePath, xfs}                        from '@yarnpkg/fslib';
+import type {ExtendOptions, RequestError}         from 'got';
+import {HttpProxyAgent, HttpsProxyAgent}          from 'hpagent';
+import {Agent as HttpsAgent, type RequestOptions} from 'https';
+import {Agent as HttpAgent, IncomingHttpHeaders}  from 'http';
+import micromatch                                 from 'micromatch';
 
-import {ConfigurationValueMap, Configuration}    from './Configuration';
-import {MessageName}                             from './MessageName';
-import {WrapNetworkRequestInfo}                  from './Plugin';
-import {ReportError}                             from './Report';
-import * as formatUtils                          from './formatUtils';
-import {MapValue, MapValueToObjectValue}         from './miscUtils';
-import * as miscUtils                            from './miscUtils';
+import {ConfigurationValueMap, Configuration}     from './Configuration';
+import {MessageName}                              from './MessageName';
+import {WrapNetworkRequestInfo}                   from './Plugin';
+import {ReportError}                              from './Report';
+import * as formatUtils                           from './formatUtils';
+import {MapValue, MapValueToObjectValue}          from './miscUtils';
+import * as miscUtils                             from './miscUtils';
 
 export type {RequestError}                       from 'got';
 
@@ -238,16 +238,7 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new ReportError(MessageName.NETWORK_UNSAFE_HTTP, `Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
-  const agent = {
-    http: networkConfig.httpProxy
-      ? new HttpProxyAgent({proxy: networkConfig.httpProxy})
-      : globalHttpAgent,
-    https: networkConfig.httpsProxy
-      ? new HttpsProxyAgent({proxy: networkConfig.httpsProxy})
-      : globalHttpsAgent,
-  };
-
-  const gotOptions: ExtendOptions = {agent, headers, method};
+  const gotOptions: ExtendOptions = {headers, method};
   gotOptions.responseType = jsonResponse
     ? `json`
     : `buffer`;
@@ -280,11 +271,37 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     ? await getCachedFile(httpsKeyFilePath)
     : undefined;
 
+  const proxyRequestOptions: RequestOptions = {
+    rejectUnauthorized,
+    ca: certificateAuthority,
+    cert: certificate,
+    key,
+  };
+
+  const agent = {
+    http: networkConfig.httpProxy
+      ? new HttpProxyAgent({
+        proxy: networkConfig.httpProxy,
+        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
+        proxyRequestOptions,
+      })
+      : globalHttpAgent,
+    https: networkConfig.httpsProxy
+      ? new HttpsProxyAgent({
+        proxy: networkConfig.httpsProxy,
+        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
+        proxyRequestOptions,
+      })
+      : globalHttpsAgent,
+  };
+
+
   const gotClient = got.extend({
     timeout: {
       socket: socketTimeout,
     },
     retry,
+    agent,
     https: {
       rejectUnauthorized,
       certificateAuthority,
