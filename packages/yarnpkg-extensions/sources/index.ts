@@ -1002,12 +1002,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   }],
   // https://github.com/fastify/fastify-type-provider-typebox/issues/114
   // https://github.com/fastify/fastify-type-provider-typebox/pull/165
-  [`@fastify/type-provider-typebox^5.0.0`, {
+  [`@fastify/type-provider-typebox@^5.0.0`, {
     peerDependencies: {
       fastify: `^5.0.0`,
     },
   }],
-  [`@fastify/type-provider-typebox^4.0.0`, {
+  [`@fastify/type-provider-typebox@^4.0.0`, {
     peerDependencies: {
       fastify: `^4.0.0`,
     },
