@@ -19,7 +19,7 @@
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "camelcase": "^5.3.1",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
     "cross-spawn": "^7.0.3",

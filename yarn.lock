@@ -5570,7 +5570,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
-    chalk: "npm:^3.0.0"
+    chalk: "npm:^4.1.2"
     clipanion: "npm:^4.0.0-rc.2"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     semver: "npm:^7.1.2"
@@ -5656,7 +5656,7 @@ __metadata:
     "@yarnpkg/plugin-pnp": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
     camelcase: "npm:^5.3.1"
-    chalk: "npm:^3.0.0"
+    chalk: "npm:^4.1.2"
     ci-info: "npm:^4.0.0"
     clipanion: "npm:^4.0.0-rc.2"
     comment-json: "npm:^2.2.0"
@@ -5886,7 +5886,7 @@ __metadata:
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     "@yarnpkg/types": "workspace:^"
-    chalk: "npm:^3.0.0"
+    chalk: "npm:^4.1.2"
     clipanion: "npm:^4.0.0-rc.2"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     eslint: "npm:^9.20.1"
@@ -6424,7 +6424,7 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
-    chalk: "npm:^3.0.0"
+    chalk: "npm:^4.1.2"
     clipanion: "npm:^4.0.0-rc.2"
     comment-json: "npm:^2.2.0"
     lodash: "npm:^4.17.15"
@@ -6443,7 +6443,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
-    chalk: "npm:^3.0.0"
+    chalk: "npm:^4.1.2"
     clipanion: "npm:^4.0.0-rc.2"
     cross-spawn: "npm:^7.0.3"
     fast-glob: "npm:^3.2.2"
@@ -7780,16 +7780,6 @@ __metadata:
     escape-string-regexp: "npm:^1.0.5"
     supports-color: "npm:^5.3.0"
   checksum: 10/3d1d103433166f6bfe82ac75724951b33769675252d8417317363ef9d54699b7c3b2d46671b772b893a8e50c3ece70c4b933c73c01e81bc60ea4df9b55afa303
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "chalk@npm:3.0.0"
-  dependencies:
-    ansi-styles: "npm:^4.1.0"
-    supports-color: "npm:^7.1.0"
-  checksum: 10/37f90b31fd655fb49c2bd8e2a68aebefddd64522655d001ef417e6f955def0ed9110a867ffc878a533f2dafea5f2032433a37c8a7614969baa7f8a1cd424ddfc
   languageName: node
   linkType: hard
 
