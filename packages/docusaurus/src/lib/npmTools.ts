@@ -215,9 +215,10 @@ export function useResolution({name, version}: {name: string, version: string}, 
     version,
   });
 
-  const exportsResolution = resolveExports(releaseInfo.npm, `.`, {
-    conditions,
-  })?.[0];
+  let exportsResolution;
+  try {
+    exportsResolution = resolveExports(releaseInfo.npm, `.`, {conditions})?.[0];
+  } catch {}
 
   if (releaseInfo.npm.exports && !exportsResolution)
     return null;
