@@ -335,10 +335,10 @@ const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTre
   const seenDeps: Set<HoisterWorkTree> = new Set();
 
   const addDep = (dep: HoisterWorkTree) => {
-    if (seenDeps.has(dep)) 
+    if (seenDeps.has(dep))
       return;
     seenDeps.add(dep);
-    
+
     for (const peerName of dep.peerNames) {
       if (!node.peerNames.has(peerName)) {
         const peerDep = node.dependencies.get(peerName);
@@ -351,7 +351,7 @@ const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTre
   };
 
   for (const [name, dep] of node.dependencies) {
-    if (!node.peerNames.has(name)) { 
+    if (!node.peerNames.has(name)) {
       addDep(dep);
     }
   }
