@@ -332,25 +332,26 @@ const getHoistIdentMap = (rootNode: HoisterWorkTree, preferenceMap: PreferenceMa
  */
 const getSortedRegularDependencies = (node: HoisterWorkTree): Set<HoisterWorkTree> => {
   const dependencies: Set<HoisterWorkTree> = new Set();
+  const seenDeps: Set<HoisterWorkTree> = new Set();
 
-  const addDep = (dep: HoisterWorkTree, seenDeps = new Set()) => {
-    if (seenDeps.has(dep))
+  const addDep = (dep: HoisterWorkTree) => {
+    if (seenDeps.has(dep)) 
       return;
     seenDeps.add(dep);
-
+    
     for (const peerName of dep.peerNames) {
       if (!node.peerNames.has(peerName)) {
         const peerDep = node.dependencies.get(peerName);
         if (peerDep && !dependencies.has(peerDep)) {
-          addDep(peerDep, seenDeps);
+          addDep(peerDep);
         }
       }
     }
     dependencies.add(dep);
   };
 
-  for (const dep of node.dependencies.values()) {
-    if (!node.peerNames.has(dep.name)) {
+  for (const [name, dep] of node.dependencies) {
+    if (!node.peerNames.has(name)) { 
       addDep(dep);
     }
   }
