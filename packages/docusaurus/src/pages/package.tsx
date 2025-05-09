@@ -1,6 +1,6 @@
 import BrowserOnly                                                                                                                                                                from '@docusaurus/BrowserOnly';
+import {DocsSidebarProvider}                                                                                                                                                      from '@docusaurus/plugin-content-docs/client';
 import {useLocation}                                                                                                                                                              from '@docusaurus/router';
-import {DocsSidebarProvider}                                                                                                                                                      from '@docusaurus/theme-common/internal';
 import {HtmlClassNameProvider}                                                                                                                                                    from '@docusaurus/theme-common';
 import Editor                                                                                                                                                                     from '@monaco-editor/react';
 import {AlertIcon, ArrowLeftIcon, CheckIcon, FileDirectoryFillIcon, FileIcon, GearIcon, GlobeIcon, HomeIcon, HourglassIcon, ListUnorderedIcon, MarkGithubIcon, PlayIcon, TagIcon} from '@primer/octicons-react';
