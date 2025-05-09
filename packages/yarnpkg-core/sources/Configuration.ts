@@ -75,6 +75,11 @@ const IGNORED_ENV_VARIABLES = new Set([
   `cacheVersionOverride`,
   `lockfileVersionOverride`,
 
+  // Work-in-progress
+  `switchDefault`,
+  `switchDetectedRoot`,
+  `switchExecPath`,
+
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
   `binFolder`,
