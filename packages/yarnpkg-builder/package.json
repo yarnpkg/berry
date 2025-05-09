@@ -12,7 +12,7 @@
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "clipanion": "^4.0.0-rc.2",
     "esbuild": "npm:esbuild-wasm@^0.23.0",
     "semver": "^7.1.2",
