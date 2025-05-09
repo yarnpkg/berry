@@ -39,6 +39,12 @@ export function getFileFormat(filepath: string): string | null {
     case `.cjs`: {
       return `commonjs`;
     }
+    case `.mts`: {
+      return `module`;
+    }
+    case `.cts`: {
+      return `commonjs`;
+    }
     case `.wasm`: {
       // TODO: Enable if --experimental-wasm-modules is present
       // Waiting on https://github.com/nodejs/node/issues/36935
