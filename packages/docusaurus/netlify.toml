@@ -3,7 +3,7 @@
   command = 'yarn packages/docusaurus build --no-minify'
 
 [build.environment]
-  NODE_VERSION = '18.16'
+  NODE_VERSION = '22.15'
   NODE_OPTIONS = '--max-old-space-size=4096'
   DOCUSAURUS_SSR_CONCURRENCY = '1'
 
