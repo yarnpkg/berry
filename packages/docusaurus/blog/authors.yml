@@ -3,3 +3,9 @@ arcanis:
   title: Lead Yarn maintainer
   url: https://github.com/arcanis
   image_url: https://github.com/arcanis.png
+  socials:
+    mastodon: "@arcanis"
+    linkedin: maelnison
+    bluesky: mael.dev
+    github: arcanis
+    website: https://mael.dev

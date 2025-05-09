@@ -4,7 +4,7 @@ import useDocusaurusContext                                       from '@docusau
 import {CodeIcon, FileDirectoryIcon}                              from '@primer/octicons-react';
 import Layout                                                     from '@theme/Layout';
 import clsx                                                       from 'clsx';
-import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch-hooks-web';
+import {InstantSearch, useHits, useSearchBox}                     from 'react-instantsearch';
 import Skeleton                                                   from 'react-loading-skeleton';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -57,7 +57,7 @@ const defaultRequests = [
 }));
 
 function useHitsWithDefaults(query: string): Array<any> {
-  const {hits} = useHits({escapeHTML: false});
+  const {items} = useHits({escapeHTML: false});
   const [defaults, setDefaults] = useState<Array<any> | null>(null);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ function useHitsWithDefaults(query: string): Array<any> {
   }, []);
 
   if (query)
-    return hits;
+    return items;
 
   if (!defaults)
     return defaultRequests.map((_, index) => ({rev: `!${index}`}));

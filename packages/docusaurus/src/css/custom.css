@@ -170,8 +170,18 @@ html.blog-wrapper .container {
   padding: 0.5rem;
 }
 
+html[x-doc-route="/blog/archive"] main .container {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
 html[x-doc-route^="/configuration/"] .col {
   max-width: 100% !important;
+}
+
+html:not(.docs-wrapper) .main-wrapper > .container {
+  background: #ffffff;
+  border-radius: 10px;
 }
 
 html.search-page-wrapper .main-wrapper > .container {
