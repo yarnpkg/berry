@@ -9,6 +9,7 @@ import {IncomingMessage, ServerResponse}           from 'http';
 import http                                        from 'http';
 import invariant                                   from 'invariant';
 import {AddressInfo}                               from 'net';
+import net                                         from 'net';
 import os                                          from 'os';
 import pem                                         from 'pem';
 import semver                                      from 'semver';
@@ -797,6 +798,110 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       } else {
         throw new Error(`Invalid server type: ${type}`);
       }
+
+      // We don't want the server to prevent the process from exiting
+      server.unref();
+      server.listen(() => {
+        const {port} = server.address() as AddressInfo;
+        resolve(`${type}://localhost:${port}`);
+      });
+    })();
+  });
+};
+
+const proxyServerUrls: {
+  http: Promise<string> | null;
+  https: Promise<string> | null;
+} = {http: null, https: null};
+
+export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServerUrls} = {}): Promise<string> => {
+  const serverUrl = proxyServerUrls[type];
+  if (serverUrl !== null)
+    return serverUrl;
+
+  const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
+    res.writeHead(statusCode);
+    res.end(errorMessage);
+  };
+
+  return proxyServerUrls[type] = new Promise((resolve, reject) => {
+    const listener: http.RequestListener = (req, res) => {
+      void (async () => {
+        try {
+          if (!req.url) {
+            sendError(res, 400, `Missing URL in request`);
+            return;
+          }
+
+          const url = new URL(req.url);
+          const options = {
+            hostname: url.hostname,
+            port: url.port || (url.protocol === `https:` ? 443 : 80),
+            path: `${url.pathname}${url.search}`,
+            method: req.method,
+            headers: {...req.headers},
+          };
+
+          delete options.headers[`proxy-authorization`];
+          delete options.headers[`proxy-connection`];
+          options.headers.connection = `close`;
+
+          const proxyReq = (url.protocol === `https:` ? https : http).request(options, proxyRes => {
+            res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
+            proxyRes.pipe(res);
+          });
+
+          req.pipe(proxyReq);
+
+          proxyReq.on(`error`, err => {
+            sendError(res, 502, `Proxy error: ${err.message}`);
+          });
+        } catch (error) {
+          sendError(res, 500, `Proxy server error: ${error.message}`);
+        }
+      })();
+    };
+
+    (async () => {
+      let server: https.Server | http.Server;
+
+      if (type === `https`) {
+        const certs = await getHttpsCertificates();
+
+        server = https.createServer({
+          cert: certs.server.certificate,
+          key: certs.server.clientKey,
+          ca: certs.ca.certificate,
+        }, listener);
+      } else {
+        server = http.createServer(listener);
+      }
+
+      // Handle the CONNECT method using the 'connect' event
+      server.on(`connect`, (req, clientSocket, head) => {
+        // Parse the target and establish the connection
+        const [targetHost, targetPort] = (req.url || ``).split(`:`);
+        const port = parseInt(targetPort) || 443;
+
+        const serverSocket = net.connect(port, targetHost, () => {
+          clientSocket.write(
+            `HTTP/1.1 200 Connection Established\r\n` +
+            `\r\n`,
+          );
+
+          serverSocket.write(head);
+
+          serverSocket.pipe(clientSocket);
+          clientSocket.pipe(serverSocket);
+        });
+
+        serverSocket.on(`error`, () => {
+          clientSocket.end();
+        });
+        clientSocket.on(`error`, () => {
+          serverSocket.end();
+        });
+      });
 
       // We don't want the server to prevent the process from exiting
       server.unref();
