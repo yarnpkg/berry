@@ -20,8 +20,8 @@ export default class DlxCommand extends BaseCommand {
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,
     examples: [[
-      `Use create-react-app to create a new React app`,
-      `yarn dlx create-react-app ./my-app`,
+      `Use create-vite to scaffold a new Vite project`,
+      `yarn dlx create-vite`,
     ], [
       `Install multiple packages for a single command`,
       `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
