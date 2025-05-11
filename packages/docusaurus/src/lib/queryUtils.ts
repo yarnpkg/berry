@@ -1,5 +1,5 @@
-import {useQuery} from 'react-query';
-import {useMemo}  from 'react';
+import {useSuspenseQuery} from '@tanstack/react-query';
+import {useMemo}          from 'react';
 
 export type DataFor<T> = T extends {data: infer U}
   ? Exclude<U, undefined>
@@ -16,10 +16,11 @@ export function useMappedQuerySync<T extends {data: any}, TOut>(query: T, map: (
 }
 
 export function useMappedQueryPromise<T extends {data: any}, TOut>(query: T, map: (data: DataFor<T>) => Promise<TOut>, deps: Array<unknown> = []) {
-  return useQuery([`mapped`, query.data, ...deps], async () => {
-    return await map(query.data!);
-  }, {
-    enabled: !!query.data,
+  return useSuspenseQuery({
+    queryKey: [`mapped`, query.data, ...deps],
+    queryFn: async () => {
+      return query.data ? await map(query.data!) : undefined;
+    },
   });
 }
 

@@ -169,6 +169,7 @@ export default async function (): Promise<Config> {
           loader: `tsx`,
           format: isServer ? `cjs` : undefined,
           target: isServer ? `node18` : `es2017`,
+          jsx: `automatic`,
         },
       }),
     },

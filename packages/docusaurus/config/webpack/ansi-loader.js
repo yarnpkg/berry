@@ -1,5 +1,5 @@
-const {Terminal} = require(`xterm-headless`);
-const {SerializeAddon} = require(`xterm-addon-serialize`);
+const {Terminal} = require(`@xterm/headless`);
+const {SerializeAddon} = require(`@xterm/addon-serialize`);
 
 module.exports = function (content) {
   const callback = this.async();
