@@ -79,7 +79,7 @@ export interface Hooks {
     locator: Locator,
     scriptName: string,
     extra: {script: string, args: Array<string>, cwd: PortablePath, env: NodeJS.ProcessEnv, stdin: Readable | null, stdout: Writable, stderr: Writable},
-  ) => Promise<() => Promise<number>>;
+  ) => Promise<() => Promise<number>> | (() => Promise<number>);
 
   /**
    * Called when a network request is being made. The `executor` function
@@ -90,7 +90,7 @@ export interface Hooks {
   wrapNetworkRequest?: (
     executor: () => Promise<httpUtils.Response>,
     extra: WrapNetworkRequestInfo
-  ) => Promise<() => Promise<httpUtils.Response>>;
+  ) => Promise<() => Promise<httpUtils.Response>> | (() => Promise<httpUtils.Response>);
 
   /**
    * Called before the build, to compute a global hash key that we will use
