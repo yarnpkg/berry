@@ -12,7 +12,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "clipanion": "^4.0.0-rc.2",
     "cross-spawn": "^7.0.3",
     "fast-glob": "^3.2.2",

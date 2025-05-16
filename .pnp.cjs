@@ -278,7 +278,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
@@ -9252,7 +9252,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/monorepo", "workspace:."],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
@@ -10241,7 +10241,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-pnp", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-pnp"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
           ["camelcase", "npm:5.3.1"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["ci-info", "npm:4.0.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["comment-json", "npm:2.2.0"],\
@@ -10545,7 +10545,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
@@ -19980,7 +19980,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["comment-json", "npm:2.2.0"],\
           ["lodash", "npm:4.17.21"],\
@@ -19999,7 +19999,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["cross-spawn", "npm:7.0.6"],\
           ["fast-glob", "npm:3.3.2"],\
@@ -21618,15 +21618,6 @@ const RAW_RUNTIME_STATE =
           ["chalk", "npm:2.4.2"],\
           ["escape-string-regexp", "npm:1.0.5"],\
           ["supports-color", "npm:5.5.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/chalk-npm-3.0.0-e813208025-37f90b31fd.zip/node_modules/chalk/",\
-        "packageDependencies": [\
-          ["ansi-styles", "npm:4.2.0"],\
-          ["chalk", "npm:3.0.0"],\
-          ["supports-color", "npm:7.1.0"]\
         ],\
         "linkType": "HARD"\
       }],\
