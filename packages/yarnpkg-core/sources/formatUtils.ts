@@ -1,5 +1,5 @@
 import {npath}                                                              from '@yarnpkg/fslib';
-import chalk                                                                from 'chalk';
+import chalk, { Level }                                                     from 'chalk';
 import CI                                                                   from 'ci-info';
 import {ColorFormat, formatMarkdownish}                                     from 'clipanion';
 import micromatch                                                           from 'micromatch';
@@ -63,7 +63,7 @@ export enum Style {
   BOLD = 1 << 1,
 }
 
-const chalkOptions = CI.GITHUB_ACTIONS
+const chalkOptions: { level: Level } = CI.GITHUB_ACTIONS
   ? {level: 2}
   : chalk.supportsColor
     ? {level: chalk.supportsColor.level}
