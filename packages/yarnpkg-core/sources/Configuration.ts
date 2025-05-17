@@ -2015,7 +2015,7 @@ export class Configuration {
     }
   }
 
-  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V>) | undefined, initialValue: V, ...args: U): Promise<V> {
+  async reduceHook<U extends Array<any>, V, HooksDefinition = Hooks>(get: (hooks: HooksDefinition) => ((reduced: V, ...args: U) => Promise<V> | V) | undefined, initialValue: V, ...args: U): Promise<V> {
     let value = initialValue;
 
     for (const plugin of this.plugins.values()) {
