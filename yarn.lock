@@ -5361,15 +5361,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/tunnel@npm:^0.0.0":
-  version: 0.0.0
-  resolution: "@types/tunnel@npm:0.0.0"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10/bd3a79bd7be258cf709fb6bd83a0c3c43d83762a4f5faef3f3319ee04d2af5c00f798145dfd77a16ade46ce9aa5e755e7674cb43789516d304ff37d219beca32
-  languageName: node
-  linkType: hard
-
 "@types/unist@npm:*, @types/unist@npm:^3.0.0":
   version: 3.0.2
   resolution: "@types/unist@npm:3.0.2"
@@ -5856,7 +5847,6 @@ __metadata:
     "@types/semver": "npm:^7.1.0"
     "@types/tar": "npm:^4.0.4"
     "@types/treeify": "npm:^1.0.0"
-    "@types/tunnel": "npm:^0.0.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
@@ -5876,6 +5866,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.23.0"
     fast-glob: "npm:^3.2.2"
     got: "npm:^11.7.0"
+    hpagent: "npm:^1.2.0"
     lodash: "npm:^4.17.15"
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
@@ -5888,7 +5879,6 @@ __metadata:
     tinylogic: "npm:^2.0.0"
     treeify: "npm:^1.1.0"
     tslib: "npm:^2.4.0"
-    tunnel: "npm:^0.0.6"
   languageName: unknown
   linkType: soft
 
@@ -12044,6 +12034,13 @@ __metadata:
     readable-stream: "npm:^2.0.1"
     wbuf: "npm:^1.1.0"
   checksum: 10/6910e4b9d943a78fd8e84ac42729fdab9bd406789d6204ad160af9dc5aa4750fc01f208249bf7116c11dc0678207a387b4ade24e4b628b95385b251ceeeb719c
+  languageName: node
+  linkType: hard
+
+"hpagent@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "hpagent@npm:1.2.0"
+  checksum: 10/bad186449da7e3456788a8cbae459fc6c0a855d5872a7f460c48ce4a613020d8d914839dad10047297099299c4f9e6c65a0eec3f5886af196c0a516e4ad8a845
   languageName: node
   linkType: hard
 
@@ -20846,7 +20843,7 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"tunnel@npm:0.0.6, tunnel@npm:^0.0.6":
+"tunnel@npm:0.0.6":
   version: 0.0.6
   resolution: "tunnel@npm:0.0.6"
   checksum: 10/cf1ffed5e67159b901a924dbf94c989f20b2b3b65649cfbbe4b6abb35955ce2cf7433b23498bdb2c5530ab185b82190fce531597b3b4a649f06a907fc8702405
