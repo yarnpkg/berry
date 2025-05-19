@@ -108,7 +108,7 @@ export default class NpmPublishCommand extends BaseCommand {
         const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
 
         let provenance = false;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+        if (workspace.manifest.publishConfig?.provenance) {
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
           if (provenance) {
             report.reportInfo(null, `Generating provenance statement because \`publishConfig.provenance\` field is set.`);
