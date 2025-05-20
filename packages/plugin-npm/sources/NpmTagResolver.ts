@@ -78,7 +78,7 @@ export class NpmTagResolver implements Resolver {
       if (parsedRange.params?.__archiveUrl) {
         const newRange = structUtils.makeRange({protocol: PROTOCOL, selector: parsedRange.selector, source: null, params: null});
         const [resolvedLocator] = await opts.resolver.getCandidates(structUtils.makeDescriptor(descriptor, newRange), dependencies, opts);
-        if (locator.reference !== resolvedLocator.reference) {
+        if (resolvedLocator && locator.reference !== resolvedLocator.reference) {
           continue;
         }
       }
