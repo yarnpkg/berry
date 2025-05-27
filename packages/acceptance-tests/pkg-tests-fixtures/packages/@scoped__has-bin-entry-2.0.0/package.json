@@ -1,0 +1,7 @@
+{
+	"name": "@scoped/has-bin-entry",
+	"version": "2.0.0",
+	"bin": {
+		"@scoped/has-bin-entry": "./bin.js"
+	}
+}
