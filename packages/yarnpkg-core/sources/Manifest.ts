@@ -523,6 +523,9 @@ export class Manifest {
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
 
+      if (typeof data.publishConfig.provenance === `boolean`)
+        this.publishConfig.provenance = data.publishConfig.provenance;
+
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {
           this.publishConfig.bin = new Map([[this.name.name, normalizeSlashes(data.publishConfig.bin)]]);

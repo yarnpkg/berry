@@ -55,4 +55,21 @@ describe(`Manifest`, () => {
       expect(manifest.exportTo({}).bin).toEqual({bin2: `./bin2.js`});
     });
   });
+
+  describe(`publishConfig`, () => {
+    it(`should parse provenance field when set to true`, () => {
+      const manifest = Manifest.fromText(`{ "publishConfig": { "provenance": true } }`);
+      expect(manifest.publishConfig?.provenance).toBe(true);
+    });
+
+    it(`should parse provenance field when set to false`, () => {
+      const manifest = Manifest.fromText(`{ "publishConfig": { "provenance": false } }`);
+      expect(manifest.publishConfig?.provenance).toBe(false);
+    });
+
+    it(`should ignore non-boolean provenance values`, () => {
+      const manifest = Manifest.fromText(`{ "publishConfig": { "provenance": "true" } }`);
+      expect(manifest.publishConfig?.provenance).toBeUndefined();
+    });
+  });
 });
