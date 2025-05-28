@@ -100,6 +100,29 @@ describe(`Features`, () => {
         },
       ),
     );
+
+    test(
+      `it should correctly resolve nested dependencies with different versions of types packages`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            'peer-deps-implicit-types-conflict': `1.0.0`,
+            '@types/no-deps': `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(
+            source(`require('@types/no-deps').version`),
+          ).resolves.toEqual(`1.0.0`);
+
+          await expect(
+            source(`require(require.resolve('@types/no-deps', { paths: [require.resolve('peer-deps-implicit-types-conflict/package.json')] })).version`),
+          ).resolves.toEqual(`2.0.0`);
+        },
+      ),
+    );
   });
 });
 
