@@ -1780,6 +1780,81 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  it(`should set correct permissions on binaries in installed packages`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+        const {mode} = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/has-bin-entries/bin.js`));
+        const permissions = (mode & 0o777).toString(8);
+        expect(permissions).toBe(process.platform === `win32` ? `666` : `755`);
+      },
+    ),
+  );
+
+  it(`should set correct permissions on binaries in packages that were upgraded`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+          [`scoped/has-bin-entry`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+        await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+          dependencies: {
+            'has-bin-entries': `2.0.0`,
+            '@scoped/has-bin-entry': `2.0.0`,
+          },
+        });
+        await run(`install`);
+
+        const binaries = [
+          `has-bin-entries/bin.js`,
+          `@scoped/has-bin-entry/bin.js`,
+        ];
+
+        for (const binary of binaries) {
+          const {mode} = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/${binary}`));
+          const permissions = (mode & 0o777).toString(8);
+          expect(permissions).toBe(process.platform === `win32` ? `666` : `755`);
+        }
+      },
+    ),
+  );
+
+  it(`should reinstall and set correct permissions on next install when packages have been deleted by the user`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+        await xfs.removePromise(`${path}/node_modules/has-bin-entries` as PortablePath);
+        await run(`install`);
+        const {mode} = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/has-bin-entries/bin.js`));
+        const permissions = (mode & 0o777).toString(8);
+        expect(permissions).toBe(process.platform === `win32` ? `666` : `755`);
+      },
+    ),
+  );
+
   it(`should only reinstall scoped dependencies deleted by the user on the next install`,
     makeTemporaryEnv(
       {
