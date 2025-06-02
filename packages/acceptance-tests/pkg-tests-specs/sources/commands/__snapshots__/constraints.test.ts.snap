@@ -352,17 +352,21 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
-    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
-    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
-    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
-    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
-    at Array.map (<anonymous>)
-    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
-    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
-    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
-    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
-    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
+  "stdout": "├─ workspace-a@workspace:packages/workspace-a
+│  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│  │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+│  │  └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
+│  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+│     ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+│     └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
+│
+└─ workspace-b@workspace:packages/workspace-b
+   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+   │  └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -371,17 +375,21 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
-    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
-    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
-    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
-    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
-    at Array.map (<anonymous>)
-    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
-    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
-    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
-    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
-    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
+  "stdout": "├─ workspace-a@workspace:packages/workspace-a
+│  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+│  │  ├─ "1.0.0"
+│  │  └─ undefined
+│  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+│     ├─ "1.0.0"
+│     └─ undefined
+│
+└─ workspace-b@workspace:packages/workspace-b
+   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+   │  ├─ "1.0.0"
+   │  └─ undefined
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ "1.0.0"
+      └─ undefined
 ",
 }
 `;
@@ -734,17 +742,10 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
-    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
-    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
-    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
-    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
-    at Array.map (<anonymous>)
-    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
-    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
-    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
-    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
-    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -1013,17 +1014,10 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
-    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
-    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
-    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
-    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
-    at Array.map (<anonymous>)
-    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
-    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
-    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
-    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
-    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -1288,17 +1282,10 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
-    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
-    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
-    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
-    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
-    at Array.map (<anonymous>)
-    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
-    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
-    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
-    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
-    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;
@@ -1572,17 +1559,13 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
-    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
-    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
-    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
-    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
-    at Array.map (<anonymous>)
-    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
-    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
-    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
-    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
-    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
+  "stdout": "└─ root-workspace-0b6124@workspace:.
+   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
+   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+   │  └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
+   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
+      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
+      └─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:82)
 ",
 }
 `;

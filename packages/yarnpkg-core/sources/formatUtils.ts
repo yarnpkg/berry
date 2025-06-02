@@ -4,7 +4,6 @@ import CI                                                                   from
 import {ColorFormat, formatMarkdownish}                                     from 'clipanion';
 import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
-import {inspect}                                                            from 'util';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
@@ -144,6 +143,9 @@ function prettyObject(configuration: Configuration, value: any): string {
 
   if (typeof value === `object` && Object.getPrototypeOf(value) === Object.prototype)
     return applyColor(configuration, `{`, Type.CODE) + Object.entries(value).map(([key, value]) => `${prettyObject(configuration, key)}: ${prettyObject(configuration, value)}`).join(`, `) + applyColor(configuration, `}`, Type.CODE);
+
+  if (typeof value === `undefined`)
+    return applyColor(configuration, `undefined`, Type.NULL);
 
   throw new Error(`Assertion failed: The value doesn't seem to be a valid JSON object`);
 }
