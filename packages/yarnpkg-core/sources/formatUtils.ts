@@ -87,7 +87,7 @@ const colors = new Map<Type, [string, number] | null>([
   [Type.REFERENCE, [`#87afff`, 111]],
 
   [Type.NUMBER, [`#ffd700`, 220]],
-  [Type.STRING, [`#32aa50`, 34]],
+  [Type.STRING, [`#b4bd68`, 32]],
   [Type.BOOLEAN, [`#faa023`, 209]],
   [Type.PATH, [`#d75fd7`, 170]],
   [Type.URL, [`#d75fd7`, 170]],
