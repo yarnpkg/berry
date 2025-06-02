@@ -154,7 +154,7 @@ describe(`Commands`, () => {
         };
       `);
 
-      await expect(run(`constraints`)).rejects.toThrow(`Invalid field foo; expected { a: true, b: true }, found { b: true, a: true }`);
+      await expect(run(`constraints`)).rejects.toThrow(`Invalid field foo; expected {"a": true, "b": true}, found {"b": true, "a": true}`);
     }));
 
     for (const [environmentDescription, environment] of Object.entries(environments)) {

@@ -22,8 +22,8 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (amb
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -34,8 +34,8 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (amb
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -79,7 +79,7 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (inc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -91,7 +91,7 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (inc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -103,7 +103,7 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (mis
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -115,7 +115,7 @@ exports[`Commands constraints test (empty project / gen_enforced_dependency (mis
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -126,8 +126,8 @@ exports[`Commands constraints test (empty project / gen_enforced_field (ambiguou
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -138,8 +138,8 @@ exports[`Commands constraints test (empty project / gen_enforced_field (ambiguou
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -167,7 +167,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (incompat
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -179,7 +179,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (incompat
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -191,7 +191,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (missing)
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -203,7 +203,7 @@ exports[`Commands constraints test (empty project / gen_enforced_field (missing)
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -278,18 +278,18 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stderr": "",
   "stdout": "├─ root-workspace-0b6124@workspace:.
 │  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│     ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 ├─ workspace-a@workspace:packages/workspace-a
 │  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│     ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 └─ workspace-b@workspace:packages/workspace-b
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -300,18 +300,18 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stderr": "",
   "stdout": "├─ root-workspace-0b6124@workspace:.
 │  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0'
-│     └─ '2.0.0'
+│     ├─ "1.0.0"
+│     └─ "2.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
 │  └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0'
-│     └─ '2.0.0'
+│     ├─ "1.0.0"
+│     └─ "2.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -323,10 +323,10 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+│  └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -338,12 +338,12 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
-│  └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+│  ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
+│  └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
-   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -352,21 +352,17 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│  │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-│  │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
-│  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-│     ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-│     └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
-│
-└─ workspace-b@workspace:packages/workspace-b
-   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
-   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
+    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
+    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
+    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
+    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
+    at Array.map (<anonymous>)
+    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
+    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
+    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
+    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
+    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
 ",
 }
 `;
@@ -375,21 +371,17 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
 {
   "code": 1,
   "stderr": "",
-  "stdout": "├─ workspace-a@workspace:packages/workspace-a
-│  ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-│  │  ├─ '1.0.0'
-│  │  └─ undefined
-│  └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-│     ├─ '1.0.0'
-│     └─ undefined
-│
-└─ workspace-b@workspace:packages/workspace-b
-   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-   │  ├─ '1.0.0'
-   │  └─ undefined
-   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ undefined
+  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
+    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
+    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
+    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
+    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
+    at Array.map (<anonymous>)
+    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
+    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
+    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
+    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
+    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
 ",
 }
 `;
@@ -401,13 +393,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -419,13 +411,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -437,13 +429,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -455,13 +447,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -472,18 +464,18 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (am
   "stderr": "",
   "stdout": "├─ root-workspace-0b6124@workspace:.
 │  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│     ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 ├─ workspace-a@workspace:packages/workspace-a
 │  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-│     ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-│     └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+│     ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+│     └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 │
 └─ workspace-b@workspace:packages/workspace-b
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -494,18 +486,18 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (am
   "stderr": "",
   "stdout": "├─ root-workspace-0b6124@workspace:.
 │  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-│     ├─ '1.0.0'
-│     └─ '2.0.0'
+│     ├─ "1.0.0"
+│     └─ "2.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
 │  └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-│     ├─ '1.0.0'
-│     └─ '2.0.0'
+│     ├─ "1.0.0"
+│     └─ "2.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -517,10 +509,10 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+│  └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 ",
 }
 `;
@@ -532,10 +524,10 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+│  └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 ",
 }
 `;
@@ -547,13 +539,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (in
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -565,13 +557,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (in
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+│  └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+│  └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -583,13 +575,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (mi
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+│  └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -601,13 +593,13 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (mi
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ root-workspace-0b6124@workspace:.
-│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 │
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+│  └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -651,10 +643,10 @@ exports[`Commands constraints test (multiple workspaces / workspace_field w/ str
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Missing field _name; expected 'workspace-a'
+│  └─ ⚙ Missing field _name; expected "workspace-a"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Missing field _name; expected 'workspace-b'
+   └─ ⚙ Missing field _name; expected "workspace-b"
 ",
 }
 `;
@@ -666,10 +658,10 @@ exports[`Commands constraints test (multiple workspaces / workspace_field w/ str
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Missing field _name; expected 'workspace-a'
+│  └─ ⚙ Missing field _name; expected "workspace-a"
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Missing field _name; expected 'workspace-b'
+   └─ ⚙ Missing field _name; expected "workspace-b"
 ",
 }
 `;
@@ -696,8 +688,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -708,8 +700,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -721,7 +713,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -733,7 +725,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -742,10 +734,17 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
+    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
+    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
+    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
+    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
+    at Array.map (<anonymous>)
+    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
+    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
+    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
+    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
+    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
 ",
 }
 `;
@@ -765,7 +764,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -777,7 +776,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -789,7 +788,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -801,7 +800,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_depend
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -812,8 +811,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -824,8 +823,8 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -837,7 +836,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0"}
 ",
 }
 `;
@@ -849,7 +848,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0"}
 ",
 }
 `;
@@ -861,7 +860,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -873,7 +872,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -885,7 +884,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -897,7 +896,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -972,8 +971,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -984,8 +983,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1005,7 +1004,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -1014,10 +1013,17 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
+    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
+    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
+    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
+    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
+    at Array.map (<anonymous>)
+    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
+    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
+    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
+    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
+    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
 ",
 }
 `;
@@ -1037,7 +1043,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1049,7 +1055,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1061,7 +1067,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1073,7 +1079,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1084,8 +1090,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1096,8 +1102,8 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1125,7 +1131,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1137,7 +1143,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1149,7 +1155,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -1161,7 +1167,7 @@ exports[`Commands constraints test (two development dependencies / gen_enforced_
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1236,8 +1242,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1248,8 +1254,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1261,7 +1267,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -1273,7 +1279,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -1282,10 +1288,17 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
+    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
+    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
+    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
+    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
+    at Array.map (<anonymous>)
+    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
+    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
+    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
+    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
+    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
 ",
 }
 `;
@@ -1305,7 +1318,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1317,7 +1330,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1329,7 +1342,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1341,7 +1354,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_depe
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1352,8 +1365,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1364,8 +1377,8 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1377,7 +1390,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 ",
 }
 `;
@@ -1389,7 +1402,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 ",
 }
 `;
@@ -1401,7 +1414,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1413,7 +1426,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1425,7 +1438,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -1437,7 +1450,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1512,8 +1525,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1524,8 +1537,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1537,7 +1550,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
+   └─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -1549,8 +1562,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to '1.0.0'
-   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to '1.0.0'
+   ├─ ⚙ Extraneous field dependencies["no-deps"] currently set to "1.0.0"
+   └─ ⚙ Extraneous field devDependencies["no-deps"] currently set to "1.0.0"
 ",
 }
 `;
@@ -1559,13 +1572,17 @@ exports[`Commands constraints test (two regular dependencies, two development de
 {
   "code": 1,
   "stderr": "",
-  "stdout": "└─ root-workspace-0b6124@workspace:.
-   ├─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-   │  ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-   │  └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
-   └─ Conflict detected in constraint targeting devDependencies["no-deps"]; conflicting values are:
-      ├─ undefined at exports.constraints (/path/to/yarn.config.cjs:3:72)
-      └─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:82)
+  "stdout": "Internal Error: Assertion failed: The value doesn't seem to be a valid JSON object
+    at zk (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:59369)
+    at Object.pretty (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:63583)
+    at Object.Ut (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:140:60068)
+    at /Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22958
+    at Array.map (<anonymous>)
+    at cF (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:248:22935)
+    at ew.execute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:553:571)
+    at async ew.validateAndExecute (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:94:787)
+    at async t.run (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:98:3263)
+    at async fqt (/Users/mael.nison/berry/packages/yarnpkg-cli/bundles/yarn.js:758:7977)
 ",
 }
 `;
@@ -1585,7 +1602,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1597,7 +1614,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1609,7 +1626,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1621,7 +1638,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1632,8 +1649,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1644,8 +1661,8 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stderr": "",
   "stdout": "└─ root-workspace-0b6124@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1657,7 +1674,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 ",
 }
 `;
@@ -1669,7 +1686,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to { 'no-deps': '1.0.0', 'no-deps-bins': '1.0.0' }
+   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
 ",
 }
 `;
@@ -1681,7 +1698,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1693,7 +1710,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Invalid field dependencies["no-deps"]; expected '2.0.0', found '1.0.0'
+   └─ ⚙ Invalid field dependencies["no-deps"]; expected "2.0.0", found "1.0.0"
 ",
 }
 `;
@@ -1705,7 +1722,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -1717,7 +1734,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1792,8 +1809,8 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stderr": "",
   "stdout": "└─ foo@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1804,8 +1821,8 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stderr": "",
   "stdout": "└─ foo@workspace:.
    └─ Conflict detected in constraint targeting dependencies["no-deps"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1849,7 +1866,7 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1861,7 +1878,7 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1873,7 +1890,7 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1885,7 +1902,7 @@ exports[`Commands constraints test (various field types / gen_enforced_dependenc
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field peerDependencies["one-fixed-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1896,8 +1913,8 @@ exports[`Commands constraints test (various field types / gen_enforced_field (am
   "stderr": "",
   "stdout": "└─ foo@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0' at exports.constraints (/path/to/yarn.config.cjs:3:46)
-      └─ '2.0.0' at exports.constraints (/path/to/yarn.config.cjs:4:46)
+      ├─ "1.0.0" at exports.constraints (/path/to/yarn.config.cjs:3:46)
+      └─ "2.0.0" at exports.constraints (/path/to/yarn.config.cjs:4:46)
 ",
 }
 `;
@@ -1908,8 +1925,8 @@ exports[`Commands constraints test (various field types / gen_enforced_field (am
   "stderr": "",
   "stdout": "└─ foo@workspace:.
    └─ Conflict detected in constraint targeting dependencies["a-new-dep"]; conflicting values are:
-      ├─ '1.0.0'
-      └─ '2.0.0'
+      ├─ "1.0.0"
+      └─ "2.0.0"
 ",
 }
 `;
@@ -1937,7 +1954,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (in
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1949,7 +1966,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (in
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field dependencies["no-deps"]; expected '2.0.0'
+   └─ ⚙ Missing field dependencies["no-deps"]; expected "2.0.0"
 ",
 }
 `;
@@ -1961,7 +1978,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (mi
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-deps"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-deps"]; expected "1.0.0"
 ",
 }
 `;
@@ -1973,7 +1990,7 @@ exports[`Commands constraints test (various field types / gen_enforced_field (mi
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field dependencies["a-new-dep"]; expected '1.0.0'
+   └─ ⚙ Missing field dependencies["a-new-dep"]; expected "1.0.0"
 ",
 }
 `;
@@ -1985,7 +2002,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _files; expected [ '/a', '/b', '/c' ]
+   └─ ⚙ Missing field _files; expected ["/a", "/b", "/c"]
 ",
 }
 `;
@@ -1997,7 +2014,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _files; expected [ '/a', '/b', '/c' ]
+   └─ ⚙ Missing field _files; expected ["/a", "/b", "/c"]
 ",
 }
 `;
@@ -2009,7 +2026,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
+   └─ ⚙ Missing field _repository; expected {"type": "git", "url": "ssh://git@github.com/yarnpkg/berry.git", "directory": "."}
 ",
 }
 `;
@@ -2021,7 +2038,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _repository; expected { type: 'git', url: 'ssh://git@github.com/yarnpkg/berry.git', directory: '.' }
+   └─ ⚙ Missing field _repository; expected {"type": "git", "url": "ssh://git@github.com/yarnpkg/berry.git", "directory": "."}
 ",
 }
 `;
@@ -2033,7 +2050,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ str
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _name; expected 'foo'
+   └─ ⚙ Missing field _name; expected "foo"
 ",
 }
 `;
@@ -2045,7 +2062,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ str
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _name; expected 'foo'
+   └─ ⚙ Missing field _name; expected "foo"
 ",
 }
 `;
