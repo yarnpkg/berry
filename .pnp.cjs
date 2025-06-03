@@ -278,7 +278,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
@@ -8640,16 +8640,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@types/tunnel", [\
-      ["npm:0.0.0", {\
-        "packageLocation": "./.yarn/cache/@types-tunnel-npm-0.0.0-60b0691686-bd3a79bd7b.zip/node_modules/@types/tunnel/",\
-        "packageDependencies": [\
-          ["@types/node", "npm:18.19.17"],\
-          ["@types/tunnel", "npm:0.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@types/unist", [\
       ["npm:2.0.3", {\
         "packageLocation": "./.yarn/cache/@types-unist-npm-2.0.3-4b26dedfde-c13ec9068d.zip/node_modules/@types/unist/",\
@@ -9252,7 +9242,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/monorepo", "workspace:."],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
@@ -10230,7 +10220,6 @@ const RAW_RUNTIME_STATE =
           ["@types/semver", "npm:7.5.8"],\
           ["@types/tar", "npm:4.0.4"],\
           ["@types/treeify", "npm:1.0.0"],\
-          ["@types/tunnel", "npm:0.0.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -10241,7 +10230,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-pnp", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-pnp"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
           ["camelcase", "npm:5.3.1"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["ci-info", "npm:4.0.0"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["comment-json", "npm:2.2.0"],\
@@ -10254,6 +10243,7 @@ const RAW_RUNTIME_STATE =
           ]],\
           ["fast-glob", "npm:3.3.2"],\
           ["got", "npm:11.8.2"],\
+          ["hpagent", "npm:1.2.0"],\
           ["lodash", "npm:4.17.21"],\
           ["micromatch", "npm:4.0.5"],\
           ["p-limit", "npm:2.2.0"],\
@@ -10265,8 +10255,7 @@ const RAW_RUNTIME_STATE =
           ["tar", "npm:6.1.11"],\
           ["tinylogic", "npm:2.0.0"],\
           ["treeify", "npm:1.1.0"],\
-          ["tslib", "npm:2.6.2"],\
-          ["tunnel", "npm:0.0.6"]\
+          ["tslib", "npm:2.6.2"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -10545,7 +10534,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
           ["@yarnpkg/types", "workspace:packages/yarnpkg-types"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["esbuild", [\
             "esbuild-wasm",\
@@ -19980,7 +19969,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
           ["@yarnpkg/sdks", "workspace:packages/yarnpkg-sdks"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["comment-json", "npm:2.2.0"],\
           ["lodash", "npm:4.17.21"],\
@@ -19999,7 +19988,7 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/monorepo", "workspace:."],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
           ["@yarnpkg/shell", "workspace:packages/yarnpkg-shell"],\
-          ["chalk", "npm:3.0.0"],\
+          ["chalk", "npm:4.1.2"],\
           ["clipanion", "virtual:576bf3e379b293160348e4cadfbd6541796e6f78477b0875c4437065090cec6f78b6ec2281b8e15d1c870d61578dc7dee16a5ae49a65701fec83e592ce2ebdeb#npm:4.0.0-rc.2"],\
           ["cross-spawn", "npm:7.0.6"],\
           ["fast-glob", "npm:3.3.2"],\
@@ -21618,15 +21607,6 @@ const RAW_RUNTIME_STATE =
           ["chalk", "npm:2.4.2"],\
           ["escape-string-regexp", "npm:1.0.5"],\
           ["supports-color", "npm:5.5.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/chalk-npm-3.0.0-e813208025-37f90b31fd.zip/node_modules/chalk/",\
-        "packageDependencies": [\
-          ["ansi-styles", "npm:4.2.0"],\
-          ["chalk", "npm:3.0.0"],\
-          ["supports-color", "npm:7.1.0"]\
         ],\
         "linkType": "HARD"\
       }],\
@@ -26323,6 +26303,15 @@ const RAW_RUNTIME_STATE =
           ["obuf", "npm:1.1.2"],\
           ["readable-stream", "npm:2.3.6"],\
           ["wbuf", "npm:1.7.3"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["hpagent", [\
+      ["npm:1.2.0", {\
+        "packageLocation": "./.yarn/cache/hpagent-npm-1.2.0-0f725aa4fe-bad186449d.zip/node_modules/hpagent/",\
+        "packageDependencies": [\
+          ["hpagent", "npm:1.2.0"]\
         ],\
         "linkType": "HARD"\
       }]\
