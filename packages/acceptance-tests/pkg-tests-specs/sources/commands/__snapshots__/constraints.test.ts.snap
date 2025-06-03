@@ -517,10 +517,10 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+│  └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 ",
 }
 `;
@@ -532,10 +532,10 @@ exports[`Commands constraints test (multiple workspaces / gen_enforced_field (ex
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 ├─ workspace-a@workspace:packages/workspace-a
-│  └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+│  └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 │
 └─ workspace-b@workspace:packages/workspace-b
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 ",
 }
 `;
@@ -837,7 +837,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0" }
 ",
 }
 `;
@@ -849,7 +849,7 @@ exports[`Commands constraints test (one regular dependency / gen_enforced_field 
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0" }
 ",
 }
 `;
@@ -1377,7 +1377,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 ",
 }
 `;
@@ -1389,7 +1389,7 @@ exports[`Commands constraints test (two regular dependencies / gen_enforced_fiel
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 ",
 }
 `;
@@ -1657,7 +1657,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 ",
 }
 `;
@@ -1669,7 +1669,7 @@ exports[`Commands constraints test (two regular dependencies, two development de
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ root-workspace-0b6124@workspace:.
-   └─ ⚙ Extraneous field dependencies currently set to {"no-deps": "1.0.0", "no-deps-bins": "1.0.0"}
+   └─ ⚙ Extraneous field dependencies currently set to { "no-deps": "1.0.0", "no-deps-bins": "1.0.0" }
 ",
 }
 `;
@@ -1985,7 +1985,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _files; expected ["/a", "/b", "/c"]
+   └─ ⚙ Missing field _files; expected [ "/a", "/b", "/c" ]
 ",
 }
 `;
@@ -1997,7 +1997,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ arr
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _files; expected ["/a", "/b", "/c"]
+   └─ ⚙ Missing field _files; expected [ "/a", "/b", "/c" ]
 ",
 }
 `;
@@ -2009,7 +2009,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _repository; expected {"type": "git", "url": "ssh://git@github.com/yarnpkg/berry.git", "directory": "."}
+   └─ ⚙ Missing field _repository; expected { "type": "git", "url": "ssh://git@github.com/yarnpkg/berry.git", "directory": "." }
 ",
 }
 `;
@@ -2021,7 +2021,7 @@ exports[`Commands constraints test (various field types / workspace_field w/ obj
   "stdout": "➤ Those errors can all be fixed by running yarn constraints --fix
 
 └─ foo@workspace:.
-   └─ ⚙ Missing field _repository; expected {"type": "git", "url": "ssh://git@github.com/yarnpkg/berry.git", "directory": "."}
+   └─ ⚙ Missing field _repository; expected { "type": "git", "url": "ssh://git@github.com/yarnpkg/berry.git", "directory": "." }
 ",
 }
 `;

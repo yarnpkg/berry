@@ -126,8 +126,13 @@ function sizeToText(size: number) {
 }
 
 function prettyObject(configuration: Configuration, value: any): string {
-  if (Array.isArray(value))
-    return applyColor(configuration, `[`, Type.CODE) + value.map(item => prettyObject(configuration, item)).join(`, `) + applyColor(configuration, `]`, Type.CODE);
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return applyColor(configuration, `[]`, Type.CODE);
+    } else {
+      return applyColor(configuration, `[ `, Type.CODE) + value.map(item => prettyObject(configuration, item)).join(`, `) + applyColor(configuration, ` ]`, Type.CODE);
+    }
+  }
 
   if (typeof value === `string`)
     return applyColor(configuration, JSON.stringify(value), Type.STRING);
@@ -141,8 +146,14 @@ function prettyObject(configuration: Configuration, value: any): string {
   if (value === null)
     return applyColor(configuration, `null`, Type.NULL);
 
-  if (typeof value === `object` && Object.getPrototypeOf(value) === Object.prototype)
-    return applyColor(configuration, `{`, Type.CODE) + Object.entries(value).map(([key, value]) => `${prettyObject(configuration, key)}: ${prettyObject(configuration, value)}`).join(`, `) + applyColor(configuration, `}`, Type.CODE);
+  if (typeof value === `object` && Object.getPrototypeOf(value) === Object.prototype) {
+    const entries = Object.entries(value);
+    if (entries.length === 0) {
+      return applyColor(configuration, `{}`, Type.CODE);
+    } else {
+      return applyColor(configuration, `{ `, Type.CODE) + entries.map(([key, value]) => `${prettyObject(configuration, key)}: ${prettyObject(configuration, value)}`).join(`, `) + applyColor(configuration, ` }`, Type.CODE);
+    }
+  }
 
   if (typeof value === `undefined`)
     return applyColor(configuration, `undefined`, Type.NULL);
