@@ -5,6 +5,7 @@ import {environments} from './constraints/environments';
 
 const {
   fs: {writeFile},
+  tests: {testIf},
 } = require(`pkg-tests-core`);
 
 const scriptNames = {
@@ -160,7 +161,11 @@ describe(`Commands`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, scripts] of Object.entries(constraints)) {
         for (const [scriptType, script] of Object.entries(scripts)) {
-          test(`test (${environmentDescription} / ${scriptDescription} / ${scriptType})`,
+          const featureCheck = scriptType === `prolog`
+            ? `prologConstraints`
+            : true;
+
+          testIf(featureCheck, `test (${environmentDescription} / ${scriptDescription} / ${scriptType})`,
             makeTemporaryEnv({}, async ({path, run, source}) => {
               await environment(path);
               await run(`install`);
@@ -180,6 +185,7 @@ describe(`Commands`, () => {
               // TODO: Use .replaceAll when we drop support for Node.js v14
               stdout = stdout.split(npath.join(npath.fromPortablePath(path), `yarn.config.cjs`)).join(`/path/to/yarn.config.cjs`);
               stdout = stdout.replace(/(Module|Object)\.(exports\.)/g, `$2`);
+              stdout = stdout.replace(/root-workspace-[a-f0-9]{6}@/g, `root-workspace@`);
 
               expect({code, stdout, stderr}).toMatchSnapshot();
             }),

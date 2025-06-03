@@ -27,6 +27,18 @@ import * as fsUtils                                from './fs';
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
 
+const TEST_MAJOR = process.env.TEST_MAJOR
+  ? parseInt(process.env.TEST_MAJOR, 10)
+  : null;
+
+function isAtLeastMajor(major: number) {
+  return TEST_MAJOR !== null && TEST_MAJOR >= major;
+}
+
+export const FEATURE_CHECKS = {
+  prologConstraints: !isAtLeastMajor(5),
+} as const;
+
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
   ? 300000
@@ -1075,11 +1087,18 @@ export const generatePkgDriver = ({
   return withConfig({});
 };
 
-export const testIf = (condition: () => boolean, name: string,
-  execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
-  if (condition()) {
-    test(name, execute, timeout);
-  }
+export const testIf = (condition: (() => boolean) | keyof typeof FEATURE_CHECKS | boolean, name: string, execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
+  const isConditionMet = typeof condition === `function`
+    ? condition()
+    : typeof condition === `boolean`
+      ? condition
+      : FEATURE_CHECKS[condition];
+
+  const testFn = isConditionMet
+    ? test
+    : test.skip;
+
+  testFn(name, execute, timeout);
 };
 
 let httpsCertificates: {
