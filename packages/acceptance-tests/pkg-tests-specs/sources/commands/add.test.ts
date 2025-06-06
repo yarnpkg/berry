@@ -351,13 +351,25 @@ describe(`Commands`, () => {
         const content = await xfs.readFilePromise(`${path}/yarn.lock` as PortablePath, `utf8`);
         const lock = parseSyml(content);
 
-        expect(lock).toMatchObject({
+        const expectedLockfile = tests.FEATURE_CHECKS.jsonLockfile ? {
+          entries: {
+            [`inject-node-gyp@npm:^1.0.0`]: {
+              resolution: {
+                dependencies: {
+                  [`node-gyp`]: `*`,
+                },
+              },
+            },
+          },
+        } : {
           [`inject-node-gyp@npm:^1.0.0`]: {
             dependencies: {
               [`node-gyp`]: `npm:latest`,
             },
           },
-        });
+        };
+
+        expect(lock).toMatchObject(expectedLockfile);
       }),
     );
 
