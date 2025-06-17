@@ -56,6 +56,11 @@ const mte = generatePkgDriver({
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
         // Otherwise tests fail on systems where this is globally set to true
         [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
+        // To make sure we can call Git commands
+        [`GIT_AUTHOR_NAME`]: `John Doe`,
+        [`GIT_AUTHOR_EMAIL`]: `john.doe@example.org`,
+        [`GIT_COMMITTER_NAME`]: `John Doe`,
+        [`GIT_COMMITTER_EMAIL`]: `john.doe@example.org`,
         // Older versions of Windows need this set to not have node throw an error
         [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
         // We don't want the PnP runtime to be accidentally injected
