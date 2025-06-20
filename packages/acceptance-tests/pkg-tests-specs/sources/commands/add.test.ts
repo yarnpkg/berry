@@ -561,9 +561,8 @@ describe(`Commands`, () => {
         await run(`add`, `no-deps`);
 
         await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-          dependencies: {
-            [`no-deps`]: `^2.0.0`,
-          },
+          // Note that Manifest.exportTo disallows depending on self
+          dependencies: {},
         });
       }),
     );
