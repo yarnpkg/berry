@@ -77,6 +77,22 @@ export const generatePrettierWrapper: GenerateIntegrationWrapper = async (pnpApi
   });
 };
 
+export const generateBiomeWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`biome.lsp.bin`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        `bin/biome` as PortablePath,
+      ),
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `biomejs.biome`,
+    ],
+  });
+};
+
 export const generateRelayCompilerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`relay.pathToRelay`]: npath.fromPortablePath(
@@ -144,6 +160,7 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerWrapper],
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
+  [`@biomejs/biome`, generateBiomeWrapper],
   [`relay-compiler`, generateRelayCompilerWrapper],
   [`typescript-language-server`, null],
   [`typescript`, generateTypescriptWrapper],
