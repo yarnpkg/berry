@@ -26,9 +26,9 @@ export const openUrl = typeof openUrlBinary !== `undefined`
 const LDD_PATH = `/usr/bin/ldd` as PortablePath;
 
 function getLibc() {
-  // Darwin and Windows have their own standard libraries, and the getReport() call is costly.
-  // It also seems that Node randomly crashes with no output under some circumstances when running a getReport() on Windows.
-  if (process.platform === `darwin` || process.platform === `win32`)
+  // As of 2025, linux is the only possible process.platform value that does not imply the libc for Node's purposes
+  // (technically mingw32 exists, but no one seems to care about that, and there have been issues in the past running getReport() on Windows)
+  if (process.platform !== `linux`)
     return null;
 
   let header: Buffer | undefined;
