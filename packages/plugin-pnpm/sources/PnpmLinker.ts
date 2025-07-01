@@ -399,7 +399,7 @@ async function removeIfEmpty(dir: PortablePath) {
   try {
     await xfs.rmdirPromise(dir);
   } catch (error) {
-    if (error.code !== `ENOENT` && error.code !== `ENOTEMPTY`) {
+    if (error.code !== `ENOENT` && error.code !== `ENOTEMPTY` && error.code !== `EBUSY`) {
       throw error;
     }
   }
