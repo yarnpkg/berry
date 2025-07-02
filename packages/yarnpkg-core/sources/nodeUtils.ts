@@ -26,8 +26,9 @@ export const openUrl = typeof openUrlBinary !== `undefined`
 const LDD_PATH = `/usr/bin/ldd` as PortablePath;
 
 function getLibc() {
-  // As of 2025, linux is the only possible process.platform value that does not imply the libc for Node's purposes
-  // (technically mingw32 exists, but no one seems to care about that, and there have been issues in the past running getReport() on Windows)
+  // As of 2025, linux is the only possible process.platform value that does not imply the libc for Node's purposes.
+  // Technically mingw32 (a way to build and run software using glibc on Windows) exists and even has a node.js port, but no one in
+  // the broader node.js ecosystem seems to care about it. There have been issues in the past running getReport() on Windows.
   if (process.platform !== `linux`)
     return null;
 
