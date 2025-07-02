@@ -36,7 +36,7 @@ function getLibc() {
     header = xfs.readFileSync(LDD_PATH);
   } catch {}
 
-  // Since the getReport can be prohibitely expensive (it also queries DNS which, if misconfigured, can take a long time to timeout),
+  // Since the getReport can be prohibitively expensive (it also queries DNS which, if misconfigured, can take a long time to timeout),
   // we first check if the ldd binary is glibc or musl, and only then run the getReport() if we can't determine the libc variant.
   if (typeof header !== `undefined`) {
     if (header && (header.includes(`GLIBC`) || header.includes(`libc`)))
