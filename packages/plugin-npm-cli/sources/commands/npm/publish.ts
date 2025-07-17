@@ -85,51 +85,43 @@ export default class NpmPublishCommand extends BaseCommand {
 
     const registry = this.registry || npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
-    return await this.executeWithReportStream(workspace, registry, configuration, ident, version);
-  }
-
-  private async executeWithReportStream(workspace: any, registry: string, configuration: any, ident: any, version: string): Promise<number> {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
-      await this.executeCore(workspace, registry, configuration, ident, version, report);
+      // Check if we should skip republishing
+      const shouldSkip = await this.checkTolerateRepublish(ident, version, configuration, registry);
+      if (shouldSkip) {
+        report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+        return;
+      }
+
+      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
+
+      await packUtils.prepareForPack(workspace, {report}, async () => {
+        await this.performPackAndPublish(workspace, registry, configuration, ident, report);
+      });
+
+      const message = this.dryRun
+        ? `[DRY RUN] Package publication completed`
+        : `Package archive published`;
+
+      if (this.json) {
+        report.reportJson({
+          name: ident.name,
+          version,
+          registry,
+          dryRun: this.dryRun,
+          published: !this.dryRun,
+          message,
+        });
+      } else {
+        report.reportInfo(MessageName.UNNAMED, message);
+      }
     });
 
     return report.exitCode();
-  }
-
-  private async executeCore(workspace: any, registry: string, configuration: any, ident: any, version: string, report: any) {
-    // Check if we should skip republishing
-    const shouldSkip = await this.checkTolerateRepublish(ident, version, configuration, registry);
-    if (shouldSkip) {
-      report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
-      return;
-    }
-
-    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
-
-    await packUtils.prepareForPack(workspace, {report}, async () => {
-      await this.performPackAndPublish(workspace, registry, configuration, ident, report);
-    });
-
-    const message = this.dryRun
-      ? `[DRY RUN] Package publication completed`
-      : `Package archive published`;
-
-    if (this.json) {
-      report.reportJson({
-        name: ident.name,
-        version,
-        registry,
-        dryRun: this.dryRun,
-        published: !this.dryRun,
-        message,
-      });
-    } else {
-      report.reportInfo(MessageName.UNNAMED, message);
-    }
   }
 
 
