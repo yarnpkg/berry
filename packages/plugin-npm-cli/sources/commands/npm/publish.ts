@@ -1,5 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
+import {ppath}                                                                                  from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
@@ -64,7 +65,7 @@ export default class NpmPublishCommand extends BaseCommand {
   });
 
   async execute() {
-    const cwd = this.directory ? this.directory : this.context.cwd;
+    const cwd = this.directory ? ppath.resolve(this.context.cwd, this.directory) : this.context.cwd;
     const configuration = await Configuration.find(cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, cwd);
 
@@ -87,7 +88,7 @@ export default class NpmPublishCommand extends BaseCommand {
     // For JSON output, we need to collect data and output it differently
     if (this.json) {
       const result = await this.executeWithJsonOutput(workspace, registry, configuration, ident, version);
-      this.context.stdout.write(JSON.stringify(result, null, 2) + '\n');
+      this.context.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
       return 0;
     }
 
@@ -182,8 +183,8 @@ export default class NpmPublishCommand extends BaseCommand {
   private async executeWithJsonOutput(workspace: any, registry: string, configuration: any, ident: any, version: string) {
     const result: any = {
       name: ident.name,
-      version: version,
-      registry: registry,
+      version,
+      registry,
       dryRun: this.dryRun,
     };
 
@@ -226,13 +227,12 @@ export default class NpmPublishCommand extends BaseCommand {
         const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
 
         let provenance = false;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
-        } else if (this.provenance) {
+        else if (this.provenance)
           provenance = true;
-        } else if (configuration.get(`npmPublishProvenance`)) {
+        else if (configuration.get(`npmPublishProvenance`))
           provenance = true;
-        }
 
         result.provenance = provenance;
         result.gitHead = gitHead;
@@ -259,11 +259,10 @@ export default class NpmPublishCommand extends BaseCommand {
         }
       });
 
-      if (!this.dryRun) {
+      if (!this.dryRun)
         result.message = `Package archive published`;
-      } else {
+      else
         result.message = `Package publication completed (dry run)`;
-      }
 
       return result;
     } catch (error) {
