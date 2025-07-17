@@ -1,4 +1,4 @@
-import {npath, xfs} from '@yarnpkg/fslib';
+import {npath, ppath, xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {testIf},
@@ -129,8 +129,8 @@ describe(`publish`, () =>   {
   }, async ({path, run, source}) => {
     await run(`install`);
 
-    const {code} = await run(`npm`, `publish`, path, `--dry-run`, `--tolerate-republish`, {
-      cwd: npath.dirname(path),
+    const {code} = await run(`npm`, `publish`, `--directory`, npath.fromPortablePath(path), `--dry-run`, `--tolerate-republish`, {
+      cwd: ppath.dirname(path),
     });
     expect(code).toBe(0);
   }));

@@ -59,7 +59,7 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `The registry to publish to`,
   });
 
-  directory = Option.String({
+  directory = Option.String(`--directory`, {
     description: `The directory to publish (defaults to current directory)`,
     required: false,
   });
