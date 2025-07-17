@@ -46,12 +46,30 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
   });
 
+  dryRun = Option.Boolean(`--dry-run`, false, {
+    description: `Show what would be published without actually publishing`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Output the result in JSON format`,
+  });
+
+  registry = Option.String(`--registry`, {
+    description: `The registry to publish to`,
+  });
+
+  directory = Option.String({
+    description: `The directory to publish (defaults to current directory)`,
+    required: false,
+  });
+
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
+    const cwd = this.directory ? this.directory : this.context.cwd;
+    const configuration = await Configuration.find(cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+      throw new WorkspaceRequiredError(project.cwd, cwd);
 
     if (workspace.manifest.private)
       throw new UsageError(`Private workspaces cannot be published`);
@@ -64,7 +82,14 @@ export default class NpmPublishCommand extends BaseCommand {
     const ident = workspace.manifest.name;
     const version = workspace.manifest.version;
 
-    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+    const registry = this.registry || npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+
+    // For JSON output, we need to collect data and output it differently
+    if (this.json) {
+      const result = await this.executeWithJsonOutput(workspace, registry, configuration, ident, version);
+      this.context.stdout.write(JSON.stringify(result, null, 2) + '\n');
+      return 0;
+    }
 
     const report = await StreamReport.start({
       configuration,
@@ -131,18 +156,119 @@ export default class NpmPublishCommand extends BaseCommand {
           provenance,
         });
 
-        await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-          configuration,
-          registry,
-          ident,
-          otp: this.otp,
-          jsonResponse: true,
-        });
+        if (!this.dryRun) {
+          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+            configuration,
+            registry,
+            ident,
+            otp: this.otp,
+            jsonResponse: true,
+          });
+        } else {
+          report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package would be published to ${registry}`);
+        }
       });
 
-      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      if (!this.dryRun) {
+        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      } else {
+        report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package publication completed`);
+      }
     });
 
     return report.exitCode();
+  }
+
+  private async executeWithJsonOutput(workspace: any, registry: string, configuration: any, ident: any, version: string) {
+    const result: any = {
+      name: ident.name,
+      version: version,
+      registry: registry,
+      dryRun: this.dryRun,
+    };
+
+    try {
+      // Not an error if --tolerate-republish is set
+      if (this.tolerateRepublish) {
+        try {
+          const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
+            configuration,
+            registry,
+            ident,
+            jsonResponse: true,
+          });
+
+          if (!Object.hasOwn(registryData, `versions`))
+            throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+
+          if (Object.hasOwn(registryData.versions, version)) {
+            result.warning = `Registry already knows about version ${version}; skipping.`;
+            return result;
+          }
+        } catch (err) {
+          if (err.originalError?.response?.statusCode !== 404) {
+            throw err;
+          }
+        }
+      }
+
+      await packUtils.prepareForPack(workspace, {
+        reportInfo: () => {},
+        reportWarning: () => {},
+        reportError: () => {},
+      }, async () => {
+        const files = await packUtils.genPackList(workspace);
+        result.files = files;
+
+        const pack = await packUtils.genPackStream(workspace, files);
+        const buffer = await miscUtils.bufferStream(pack);
+
+        const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
+
+        let provenance = false;
+        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+          provenance = Boolean(workspace.manifest.publishConfig.provenance);
+        } else if (this.provenance) {
+          provenance = true;
+        } else if (configuration.get(`npmPublishProvenance`)) {
+          provenance = true;
+        }
+
+        result.provenance = provenance;
+        result.gitHead = gitHead;
+
+        const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
+          access: this.access,
+          tag: this.tag,
+          registry,
+          gitHead,
+          provenance,
+        });
+
+        if (!this.dryRun) {
+          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+            configuration,
+            registry,
+            ident,
+            otp: this.otp,
+            jsonResponse: true,
+          });
+          result.published = true;
+        } else {
+          result.published = false;
+        }
+      });
+
+      if (!this.dryRun) {
+        result.message = `Package archive published`;
+      } else {
+        result.message = `Package publication completed (dry run)`;
+      }
+
+      return result;
+    } catch (error) {
+      result.error = error.message;
+      return result;
+    }
   }
 }
