@@ -157,16 +157,8 @@ export default class NpmPublishCommand extends BaseCommand {
         else if (provenance)
           message = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
 
-        if (message) {
-          if (this.json) {
-            report.reportJson({
-              type: `info`,
-              message,
-            });
-          } else {
-            report.reportInfo(null, message);
-          }
-        }
+        if (message)
+          report.reportInfo(null, message);
 
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
@@ -186,14 +178,7 @@ export default class NpmPublishCommand extends BaseCommand {
           });
         } else {
           const dryRunMessage = `[DRY RUN] Package would be published to ${registry}`;
-          if (this.json) {
-            report.reportJson({
-              type: `info`,
-              message: dryRunMessage,
-            });
-          } else {
-            report.reportInfo(MessageName.UNNAMED, dryRunMessage);
-          }
+          report.reportInfo(MessageName.UNNAMED, dryRunMessage);
         }
       });
 
