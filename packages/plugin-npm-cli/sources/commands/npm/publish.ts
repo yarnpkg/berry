@@ -85,13 +85,6 @@ export default class NpmPublishCommand extends BaseCommand {
 
     const registry = this.registry || npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
-    // For JSON output, we collect data differently but use the same core logic
-    if (this.json) {
-      const result = await this.executeWithCollectedOutput(workspace, registry, configuration, ident, version);
-      this.context.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-      return 0;
-    }
-
     return await this.executeWithReportStream(workspace, registry, configuration, ident, version);
   }
 
@@ -99,6 +92,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      json: this.json,
     }, async report => {
       await this.executeCore(workspace, registry, configuration, ident, version, report);
     });
@@ -123,53 +117,21 @@ export default class NpmPublishCommand extends BaseCommand {
     const message = this.dryRun
       ? `[DRY RUN] Package publication completed`
       : `Package archive published`;
-    report.reportInfo(MessageName.UNNAMED, message);
-  }
 
-  private async executeWithCollectedOutput(workspace: any, registry: string, configuration: any, ident: any, version: string) {
-    const result: any = {
-      name: ident.name,
-      version,
-      registry,
-      dryRun: this.dryRun,
-    };
-
-    try {
-      // Check if we should skip republishing
-      const shouldSkip = await this.checkTolerateRepublish(ident, version, configuration, registry);
-      if (shouldSkip) {
-        result.warning = `Registry already knows about version ${version}; skipping.`;
-        return result;
-      }
-
-      // Create a mock report that collects data instead of logging
-      const dataCollector = {
-        files: [] as Array<string>,
-        reportInfo: (name: any, file: string) => {
-          if (file) {
-            result.files = result.files || [];
-            result.files.push(file);
-          }
-        },
-        reportWarning: () => {},
-        reportError: () => {},
-      };
-
-      await packUtils.prepareForPack(workspace, dataCollector, async () => {
-        const publishData = await this.performPackAndPublish(workspace, registry, configuration, ident, dataCollector);
-        Object.assign(result, publishData);
+    if (this.json) {
+      report.reportJson({
+        name: ident.name,
+        version,
+        registry,
+        dryRun: this.dryRun,
+        published: !this.dryRun,
+        message,
       });
-
-      result.message = this.dryRun
-        ? `Package publication completed (dry run)`
-        : `Package archive published`;
-
-      return result;
-    } catch (error) {
-      result.error = error.message;
-      return result;
+    } else {
+      report.reportInfo(MessageName.UNNAMED, message);
     }
   }
+
 
   private async checkTolerateRepublish(ident: any, version: string, configuration: any, registry: string): Promise<boolean> {
     if (!this.tolerateRepublish) return false;
@@ -193,9 +155,6 @@ export default class NpmPublishCommand extends BaseCommand {
     }
   }
 
-  private isStreamingReport(report: any): boolean {
-    return report.reportInfo && typeof report.reportInfo === `function`;
-  }
 
   private determineProvenance(workspace: any, configuration: any): boolean {
     if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
@@ -208,23 +167,41 @@ export default class NpmPublishCommand extends BaseCommand {
   }
 
   private reportProvenanceDecision(provenance: boolean, workspace: any, report: any) {
-    if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
-      const message = provenance
+    let message = ``;
+
+    if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
+      message = provenance
         ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
         : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
-      report.reportInfo(null, message);
-    } else if (this.provenance) {
-      report.reportInfo(null, `Generating provenance statement because \`--provenance\` flag is set.`);
-    } else if (provenance) {
-      report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
+    else if (this.provenance)
+      message = `Generating provenance statement because \`--provenance\` flag is set.`;
+    else if (provenance)
+      message = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+
+    if (message) {
+      if (this.json) {
+        report.reportJson({
+          type: `info`,
+          message,
+        });
+      } else {
+        report.reportInfo(null, message);
+      }
     }
   }
 
   private async performPackAndPublish(workspace: any, registry: string, configuration: any, ident: any, report: any) {
     const files = await packUtils.genPackList(workspace);
 
-    // Report files if this is a streaming report
-    if (this.isStreamingReport(report)) {
+    // Report files differently based on output mode
+    if (this.json) {
+      // For JSON output, we'll include files in the final JSON result
+      report.reportJson({
+        type: `files`,
+        files: files.map(f => f.toString()),
+      });
+    } else {
+      // For streaming output, report each file
       for (const file of files) {
         report.reportInfo(null, file);
       }
@@ -235,9 +212,8 @@ export default class NpmPublishCommand extends BaseCommand {
     const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
     const provenance = this.determineProvenance(workspace, configuration);
 
-    // Report provenance decision if this is a streaming report
-    if (this.isStreamingReport(report))
-      this.reportProvenanceDecision(provenance, workspace, report);
+    // Report provenance decision
+    this.reportProvenanceDecision(provenance, workspace, report);
 
     const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
       access: this.access,
@@ -255,8 +231,16 @@ export default class NpmPublishCommand extends BaseCommand {
         otp: this.otp,
         jsonResponse: true,
       });
-    } else if (this.isStreamingReport(report)) {
-      report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package would be published to ${registry}`);
+    } else {
+      const message = `[DRY RUN] Package would be published to ${registry}`;
+      if (this.json) {
+        report.reportJson({
+          type: `info`,
+          message,
+        });
+      } else {
+        report.reportInfo(MessageName.UNNAMED, message);
+      }
     }
 
     // Return data for JSON output
