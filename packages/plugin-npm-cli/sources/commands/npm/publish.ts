@@ -92,6 +92,10 @@ export default class NpmPublishCommand extends BaseCommand {
       return 0;
     }
 
+    return await this.executeWithReportStream(workspace, registry, configuration, ident, version);
+  }
+
+  private async executeWithReportStream(workspace: any, registry: string, configuration: any, ident: any, version: string): Promise<number> {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
