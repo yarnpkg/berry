@@ -85,9 +85,9 @@ export default class NpmPublishCommand extends BaseCommand {
 
     const registry = this.registry || npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
-    // For JSON output, we need to collect data and output it differently
+    // For JSON output, we collect data differently but use the same core logic
     if (this.json) {
-      const result = await this.executeWithJsonOutput(workspace, registry, configuration, ident, version);
+      const result = await this.executeWithCollectedOutput(workspace, registry, configuration, ident, version);
       this.context.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
       return 0;
     }
@@ -96,91 +96,33 @@ export default class NpmPublishCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      // Not an error if --tolerate-republish is set
-      if (this.tolerateRepublish) {
-        try {
-          const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
-            configuration,
-            registry,
-            ident,
-            jsonResponse: true,
-          });
-
-          if (!Object.hasOwn(registryData, `versions`))
-            throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
-
-          if (Object.hasOwn(registryData.versions, version)) {
-            report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
-            return;
-          }
-        } catch (err) {
-          if (err.originalError?.response?.statusCode !== 404) {
-            throw err;
-          }
-        }
-      }
-
-      await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
-
-      await packUtils.prepareForPack(workspace, {report}, async () => {
-        const files = await packUtils.genPackList(workspace);
-
-        for (const file of files)
-          report.reportInfo(null, file);
-
-        const pack = await packUtils.genPackStream(workspace, files);
-        const buffer = await miscUtils.bufferStream(pack);
-
-        const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
-
-        let provenance = false;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
-          provenance = Boolean(workspace.manifest.publishConfig.provenance);
-          if (provenance) {
-            report.reportInfo(null, `Generating provenance statement because \`publishConfig.provenance\` field is set.`);
-          } else {
-            report.reportInfo(null, `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`);
-          }
-        } else if (this.provenance) {
-          provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`--provenance\` flag is set.`);
-        } else if (configuration.get(`npmPublishProvenance`)) {
-          provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
-        }
-
-        const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
-          access: this.access,
-          tag: this.tag,
-          registry,
-          gitHead,
-          provenance,
-        });
-
-        if (!this.dryRun) {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            otp: this.otp,
-            jsonResponse: true,
-          });
-        } else {
-          report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package would be published to ${registry}`);
-        }
-      });
-
-      if (!this.dryRun) {
-        report.reportInfo(MessageName.UNNAMED, `Package archive published`);
-      } else {
-        report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package publication completed`);
-      }
+      await this.executeCore(workspace, registry, configuration, ident, version, report);
     });
 
     return report.exitCode();
   }
 
-  private async executeWithJsonOutput(workspace: any, registry: string, configuration: any, ident: any, version: string) {
+  private async executeCore(workspace: any, registry: string, configuration: any, ident: any, version: string, report: any) {
+    // Check if we should skip republishing
+    const shouldSkip = await this.checkTolerateRepublish(ident, version, configuration, registry);
+    if (shouldSkip) {
+      report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+      return;
+    }
+
+    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
+
+    await packUtils.prepareForPack(workspace, {report}, async () => {
+      await this.performPackAndPublish(workspace, registry, configuration, ident, report);
+    });
+
+    const message = this.dryRun
+      ? `[DRY RUN] Package publication completed`
+      : `Package archive published`;
+    report.reportInfo(MessageName.UNNAMED, message);
+  }
+
+  private async executeWithCollectedOutput(workspace: any, registry: string, configuration: any, ident: any, version: string) {
     const result: any = {
       name: ident.name,
       version,
@@ -189,85 +131,132 @@ export default class NpmPublishCommand extends BaseCommand {
     };
 
     try {
-      // Not an error if --tolerate-republish is set
-      if (this.tolerateRepublish) {
-        try {
-          const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
-            configuration,
-            registry,
-            ident,
-            jsonResponse: true,
-          });
-
-          if (!Object.hasOwn(registryData, `versions`))
-            throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
-
-          if (Object.hasOwn(registryData.versions, version)) {
-            result.warning = `Registry already knows about version ${version}; skipping.`;
-            return result;
-          }
-        } catch (err) {
-          if (err.originalError?.response?.statusCode !== 404) {
-            throw err;
-          }
-        }
+      // Check if we should skip republishing
+      const shouldSkip = await this.checkTolerateRepublish(ident, version, configuration, registry);
+      if (shouldSkip) {
+        result.warning = `Registry already knows about version ${version}; skipping.`;
+        return result;
       }
 
-      await packUtils.prepareForPack(workspace, {
-        reportInfo: () => {},
+      // Create a mock report that collects data instead of logging
+      const dataCollector = {
+        files: [] as Array<string>,
+        reportInfo: (name: any, file: string) => {
+          if (file) {
+            result.files = result.files || [];
+            result.files.push(file);
+          }
+        },
         reportWarning: () => {},
         reportError: () => {},
-      }, async () => {
-        const files = await packUtils.genPackList(workspace);
-        result.files = files;
+      };
 
-        const pack = await packUtils.genPackStream(workspace, files);
-        const buffer = await miscUtils.bufferStream(pack);
-
-        const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
-
-        let provenance = false;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
-          provenance = Boolean(workspace.manifest.publishConfig.provenance);
-        else if (this.provenance)
-          provenance = true;
-        else if (configuration.get(`npmPublishProvenance`))
-          provenance = true;
-
-        result.provenance = provenance;
-        result.gitHead = gitHead;
-
-        const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
-          access: this.access,
-          tag: this.tag,
-          registry,
-          gitHead,
-          provenance,
-        });
-
-        if (!this.dryRun) {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            otp: this.otp,
-            jsonResponse: true,
-          });
-          result.published = true;
-        } else {
-          result.published = false;
-        }
+      await packUtils.prepareForPack(workspace, dataCollector, async () => {
+        const publishData = await this.performPackAndPublish(workspace, registry, configuration, ident, dataCollector);
+        Object.assign(result, publishData);
       });
 
-      if (!this.dryRun)
-        result.message = `Package archive published`;
-      else
-        result.message = `Package publication completed (dry run)`;
+      result.message = this.dryRun
+        ? `Package publication completed (dry run)`
+        : `Package archive published`;
 
       return result;
     } catch (error) {
       result.error = error.message;
       return result;
     }
+  }
+
+  private async checkTolerateRepublish(ident: any, version: string, configuration: any, registry: string): Promise<boolean> {
+    if (!this.tolerateRepublish) return false;
+
+    try {
+      const registryData = await npmHttpUtils.get(npmHttpUtils.getIdentUrl(ident), {
+        configuration,
+        registry,
+        ident,
+        jsonResponse: true,
+      });
+
+      if (!Object.hasOwn(registryData, `versions`))
+        throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
+
+      return Object.hasOwn(registryData.versions, version);
+    } catch (err) {
+      if (err.originalError?.response?.statusCode !== 404)
+        throw err;
+      return false;
+    }
+  }
+
+  private determineProvenance(workspace: any, configuration: any): boolean {
+    if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
+      return Boolean(workspace.manifest.publishConfig.provenance);
+    if (this.provenance)
+      return true;
+    if (configuration.get(`npmPublishProvenance`))
+      return true;
+    return false;
+  }
+
+  private reportProvenanceDecision(provenance: boolean, workspace: any, report: any) {
+    if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+      const message = provenance
+        ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
+        : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
+      report.reportInfo(null, message);
+    } else if (this.provenance) {
+      report.reportInfo(null, `Generating provenance statement because \`--provenance\` flag is set.`);
+    } else if (provenance) {
+      report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
+    }
+  }
+
+  private async performPackAndPublish(workspace: any, registry: string, configuration: any, ident: any, report: any) {
+    const files = await packUtils.genPackList(workspace);
+
+    // Report files if this is a streaming report
+    if (report.reportInfo && typeof report.reportInfo === `function`) {
+      for (const file of files) {
+        report.reportInfo(null, file);
+      }
+    }
+
+    const pack = await packUtils.genPackStream(workspace, files);
+    const buffer = await miscUtils.bufferStream(pack);
+    const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
+    const provenance = this.determineProvenance(workspace, configuration);
+
+    // Report provenance decision if this is a streaming report
+    if (report.reportInfo && typeof report.reportInfo === `function`)
+      this.reportProvenanceDecision(provenance, workspace, report);
+
+    const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
+      access: this.access,
+      tag: this.tag,
+      registry,
+      gitHead,
+      provenance,
+    });
+
+    if (!this.dryRun) {
+      await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+        configuration,
+        registry,
+        ident,
+        otp: this.otp,
+        jsonResponse: true,
+      });
+    } else if (report.reportInfo && typeof report.reportInfo === `function`) {
+      report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package would be published to ${registry}`);
+    }
+
+    // Return data for JSON output
+    return {
+      files,
+      gitHead,
+      provenance,
+      published: !this.dryRun,
+    };
   }
 }
