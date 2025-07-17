@@ -193,6 +193,10 @@ export default class NpmPublishCommand extends BaseCommand {
     }
   }
 
+  private isStreamingReport(report: any): boolean {
+    return report.reportInfo && typeof report.reportInfo === `function`;
+  }
+
   private determineProvenance(workspace: any, configuration: any): boolean {
     if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
       return Boolean(workspace.manifest.publishConfig.provenance);
@@ -220,7 +224,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const files = await packUtils.genPackList(workspace);
 
     // Report files if this is a streaming report
-    if (report.reportInfo && typeof report.reportInfo === `function`) {
+    if (this.isStreamingReport(report)) {
       for (const file of files) {
         report.reportInfo(null, file);
       }
@@ -232,7 +236,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const provenance = this.determineProvenance(workspace, configuration);
 
     // Report provenance decision if this is a streaming report
-    if (report.reportInfo && typeof report.reportInfo === `function`)
+    if (this.isStreamingReport(report))
       this.reportProvenanceDecision(provenance, workspace, report);
 
     const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
@@ -251,7 +255,7 @@ export default class NpmPublishCommand extends BaseCommand {
         otp: this.otp,
         jsonResponse: true,
       });
-    } else if (report.reportInfo && typeof report.reportInfo === `function`) {
+    } else if (this.isStreamingReport(report)) {
       report.reportInfo(MessageName.UNNAMED, `[DRY RUN] Package would be published to ${registry}`);
     }
 
