@@ -27,7 +27,7 @@ function getPoint() {
   return {x, y, z};
 }
 
-function getRandomParticelPos(particleCount: number) {
+function getRandomParticlePos(particleCount: number) {
   const arr = new Float32Array(particleCount * 3);
 
   for (let i = 0; i < particleCount; i++) {
@@ -72,19 +72,19 @@ function installSky(canvas: HTMLCanvasElement) {
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
   // Geometry
-  const geometrys = [
+  const geometries = [
     new THREE.BufferGeometry(),
     new THREE.BufferGeometry(),
   ];
 
-  geometrys[0].setAttribute(
+  geometries[0].setAttribute(
     `position`,
-    new THREE.BufferAttribute(getRandomParticelPos(350 * FACTOR), 3),
+    new THREE.BufferAttribute(getRandomParticlePos(350 * FACTOR), 3),
   );
 
-  geometrys[1].setAttribute(
+  geometries[1].setAttribute(
     `position`,
-    new THREE.BufferAttribute(getRandomParticelPos(1500 * FACTOR), 3),
+    new THREE.BufferAttribute(getRandomParticlePos(1500 * FACTOR), 3),
   );
 
   const loader = new THREE.TextureLoader();
@@ -107,8 +107,8 @@ function installSky(canvas: HTMLCanvasElement) {
   const container = new THREE.Object3D();
   scene.add(container);
 
-  const starsT1 = new THREE.Points(geometrys[0], materials[0]);
-  const starsT2 = new THREE.Points(geometrys[1], materials[1]);
+  const starsT1 = new THREE.Points(geometries[0], materials[0]);
+  const starsT2 = new THREE.Points(geometries[1], materials[1]);
   container.add(starsT1);
   container.add(starsT2);
 
