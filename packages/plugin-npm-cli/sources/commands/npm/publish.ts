@@ -165,14 +165,11 @@ export default class NpmPublishCommand extends BaseCommand {
             otp: this.otp,
             jsonResponse: true,
           });
-        } else {
-          const dryRunMessage = `[DRY RUN] Package would be published to ${registry}`;
-          report.reportInfo(MessageName.UNNAMED, dryRunMessage);
         }
       });
 
       const finalMessage = this.dryRun
-        ? `[DRY RUN] Package publication completed`
+        ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
         : `Package archive published`;
 
       if (this.json) {
