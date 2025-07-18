@@ -55,22 +55,12 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `Output the result in JSON format`,
   });
 
-  registry = Option.String(`--registry`, {
-    description: `The registry to publish to`,
-  });
-
-  directory = Option.String(`--directory`, {
-    description: `The directory to publish (defaults to current directory)`,
-    required: false,
-  });
-
   async execute() {
-    const cwd = this.directory ? ppath.resolve(this.context.cwd, this.directory) : this.context.cwd;
-    const configuration = await Configuration.find(cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, cwd);
+    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project, workspace} = await Project.find(configuration, this.context.cwd);
 
     if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, cwd);
+      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
     if (workspace.manifest.private)
       throw new UsageError(`Private workspaces cannot be published`);
@@ -83,7 +73,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const ident = workspace.manifest.name;
     const version = workspace.manifest.version;
 
-    const registry = this.registry || npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
+    const registry = npmConfigUtils.getPublishRegistry(workspace.manifest, {configuration});
 
     const report = await StreamReport.start({
       configuration,
