@@ -46,6 +46,14 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
   });
 
+  dryRun = Option.Boolean(`--dry-run`, false, {
+    description: `Show what would be published without actually publishing`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Output the result in JSON format`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -69,6 +77,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      json: this.json,
     }, async report => {
       // Not an error if --tolerate-republish is set
       if (this.tolerateRepublish) {
@@ -99,29 +108,46 @@ export default class NpmPublishCommand extends BaseCommand {
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
 
-        for (const file of files)
-          report.reportInfo(null, file);
+        // Report files differently based on output mode
+        if (this.json) {
+          // For JSON output, we'll include files in the final JSON result
+          report.reportJson({
+            type: `files`,
+            files: files.map(f => f.toString()),
+          });
+        } else {
+          // For streaming output, report each file
+          for (const file of files) {
+            report.reportInfo(null, file);
+          }
+        }
 
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
-
         const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
 
+        // Determine provenance
         let provenance = false;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
-          if (provenance) {
-            report.reportInfo(null, `Generating provenance statement because \`publishConfig.provenance\` field is set.`);
-          } else {
-            report.reportInfo(null, `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`);
-          }
-        } else if (this.provenance) {
+        else if (this.provenance)
           provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`--provenance\` flag is set.`);
-        } else if (configuration.get(`npmPublishProvenance`)) {
+        else if (configuration.get(`npmPublishProvenance`))
           provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
-        }
+
+        // Report provenance decision
+        let message = ``;
+        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
+          message = provenance
+            ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
+            : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
+        else if (this.provenance)
+          message = `Generating provenance statement because \`--provenance\` flag is set.`;
+        else if (provenance)
+          message = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+
+        if (message)
+          report.reportInfo(null, message);
 
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
@@ -131,16 +157,33 @@ export default class NpmPublishCommand extends BaseCommand {
           provenance,
         });
 
-        await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-          configuration,
-          registry,
-          ident,
-          otp: this.otp,
-          jsonResponse: true,
-        });
+        if (!this.dryRun) {
+          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+            configuration,
+            registry,
+            ident,
+            otp: this.otp,
+            jsonResponse: true,
+          });
+        }
       });
 
-      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
+      const finalMessage = this.dryRun
+        ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
+        : `Package archive published`;
+
+      if (this.json) {
+        report.reportJson({
+          name: ident.name,
+          version,
+          registry,
+          dryRun: this.dryRun,
+          published: !this.dryRun,
+          message: finalMessage,
+        });
+      } else {
+        report.reportInfo(MessageName.UNNAMED, finalMessage);
+      }
     });
 
     return report.exitCode();
