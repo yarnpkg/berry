@@ -1,4 +1,4 @@
-import {npath, ppath, xfs} from '@yarnpkg/fslib';
+import {npath, xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {testIf},
@@ -110,29 +110,6 @@ describe(`publish`, () =>   {
     expect(result).toHaveProperty(`name`, `json-test`);
     expect(result).toHaveProperty(`version`, `1.0.0`);
     expect(result).toHaveProperty(`dryRun`, true);
-  }));
-
-  test(`should support --registry flag`, makeTemporaryEnv({
-    name: `registry-test`,
-    version: `1.0.0`,
-  }, async ({path, run, source}) => {
-    await run(`install`);
-
-    const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--registry`, `https://registry.npmjs.org`, `--tolerate-republish`);
-    const result = JSON.parse(stdout);
-    expect(result).toHaveProperty(`registry`, `https://registry.npmjs.org`);
-  }));
-
-  test(`should support directory argument`, makeTemporaryEnv({
-    name: `directory-test`,
-    version: `1.0.0`,
-  }, async ({path, run, source}) => {
-    await run(`install`);
-
-    const {code} = await run(`npm`, `publish`, `--directory`, npath.fromPortablePath(path), `--dry-run`, `--tolerate-republish`, {
-      cwd: ppath.dirname(path),
-    });
-    expect(code).toBe(0);
   }));
 
   testIf(

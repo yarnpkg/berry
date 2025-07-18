@@ -1,6 +1,5 @@
 import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
-import {ppath}                                                                                  from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
