@@ -21,7 +21,7 @@
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
-    "lodash": "^4.17.15",
+    "es-toolkit": "^1.39.7",
     "pkg-tests-core": "workspace:^",
     "tar": "^6.0.5",
     "tslib": "^2.4.0"

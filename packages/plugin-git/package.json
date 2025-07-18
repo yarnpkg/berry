@@ -11,8 +11,8 @@
     "@types/semver": "^7.1.0",
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
+    "es-toolkit": "^1.39.7",
     "git-url-parse": "^13.1.0",
-    "lodash": "^4.17.15",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
   },
@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "@types/git-url-parse": "^9.0.0",
-    "@types/lodash": "^4.14.136",
     "@yarnpkg/core": "workspace:^"
   },
   "repository": {
