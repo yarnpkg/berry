@@ -1,24 +1,51 @@
-import {hoist, HoisterTree, HoisterResult, HoisterDependencyKind} from '../sources/hoist';
+import {hoist, HoisterNode, HoisterResult, HoisterDependencyKind, HoisterTree} from '../sources/hoist';
 
-const toTree = (obj: any, key: string = `.`, nodes = new Map()): HoisterTree => {
-  let node = nodes.get(key);
-  const name = key.match(/@?[^@]+/)![0];
-  if (!node) {
-    node = {
-      name,
-      identName: (obj[key] || {}).identName || name,
-      reference: key.match(/@?[^@]+@?(.+)?/)![1] || ``,
-      dependencies: new Set<HoisterTree>(),
-      peerNames: new Set<string>((obj[key] || {}).peerNames || []),
-      dependencyKind: (obj[key] || {}).dependencyKind,
-    };
-    nodes.set(key, node);
+const toTree = (obj: Record<string, Partial<Pick<HoisterNode, `identName` | `dependencyKind`> & {dependencies?: Array<string>, peerNames?: Array<string>}>>, key: string = `.`, nodes = new Map()): HoisterTree => {
+  const treeNodes: Array<HoisterNode> = [];
+  const keyToId = new Map<string, number>();
 
-    for (const dep of ((obj[key] || {}).dependencies || [])) {
-      node.dependencies.add(toTree(obj, dep, nodes));
+  for (const value of Object.values(obj)) {
+    for (const dep of value.dependencies ?? []) {
+      if (!Object.hasOwn(obj, dep)) {
+        obj[dep] = {};
+      }
     }
   }
-  return node;
+
+  for (const [key, value] of Object.entries(obj)) {
+    const [name, reference = ``] = key.split(`@`);
+
+    const id = treeNodes.length;
+    keyToId.set(key, id);
+
+    treeNodes.push({
+      id,
+      name,
+      identName: value.identName ?? name,
+      reference,
+      dependencies: new Set(),
+      peerNames: new Set(value.peerNames ?? []),
+      dependencyKind: value.dependencyKind ?? HoisterDependencyKind.REGULAR,
+    });
+  }
+
+  for (const [key, value] of Object.entries(obj)) {
+    const id = keyToId.get(key)!;
+
+    for (const dep of value.dependencies ?? [])
+      treeNodes[id].dependencies.add(keyToId.get(dep)!);
+
+    for (const peer of value.peerNames ?? []) {
+      treeNodes[id].peerNames.add(peer);
+    }
+  }
+
+  treeNodes[0].dependencyKind = HoisterDependencyKind.WORKSPACE;
+
+  return {
+    nodes: treeNodes,
+    root: 0,
+  };
 };
 
 const getTreeHeight = (tree: HoisterResult): number => {
