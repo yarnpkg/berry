@@ -30,7 +30,7 @@ const mte = generatePkgDriver({
     const yarnBinary = process.env.TEST_BINARY
       ?? require.resolve(`${__dirname}/../../../../yarnpkg-cli/bundles/yarn.js`);
 
-    const yarnBinaryArgs = yarnBinary.match(/\.[cm]js$/)
+    const yarnBinaryArgs = yarnBinary.match(/\.[cm]?js$/)
       ? [process.execPath, yarnBinary]
       : [yarnBinary];
 
