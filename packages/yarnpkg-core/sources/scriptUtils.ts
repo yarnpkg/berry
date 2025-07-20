@@ -1,25 +1,24 @@
-import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
-import {xfs, npath, ppath}                         from '@yarnpkg/fslib';
-import {ZipOpenFS}                                 from '@yarnpkg/libzip';
-import {execute}                                   from '@yarnpkg/shell';
-import capitalize                                  from 'lodash/capitalize';
-import pLimit                                      from 'p-limit';
-import {PassThrough, Readable, Writable}           from 'stream';
+import {CwdFS, Filename, NativePath, npath, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
+import {ZipOpenFS}                                                    from '@yarnpkg/libzip';
+import {execute}                                                      from '@yarnpkg/shell';
+import capitalize                                                     from 'lodash/capitalize';
+import pLimit                                                         from 'p-limit';
+import {PassThrough, Readable, Writable}                              from 'stream';
 
-import {Configuration}                             from './Configuration';
-import {Manifest}                                  from './Manifest';
-import {MessageName}                               from './MessageName';
-import {Project}                                   from './Project';
-import {ReportError, Report}                       from './Report';
-import {StreamReport}                              from './StreamReport';
-import {Workspace}                                 from './Workspace';
-import {YarnVersion}                               from './YarnVersion';
-import * as execUtils                              from './execUtils';
-import * as formatUtils                            from './formatUtils';
-import * as miscUtils                              from './miscUtils';
-import * as semverUtils                            from './semverUtils';
-import * as structUtils                            from './structUtils';
-import {LocatorHash, Locator}                      from './types';
+import {Configuration}                                                from './Configuration';
+import {Manifest}                                                     from './Manifest';
+import {MessageName}                                                  from './MessageName';
+import {Project}                                                      from './Project';
+import {Report, ReportError}                                          from './Report';
+import {StreamReport}                                                 from './StreamReport';
+import {Workspace}                                                    from './Workspace';
+import {YarnVersion}                                                  from './YarnVersion';
+import * as execUtils                                                 from './execUtils';
+import * as formatUtils                                               from './formatUtils';
+import * as miscUtils                                                 from './miscUtils';
+import * as semverUtils                                               from './semverUtils';
+import * as structUtils                                               from './structUtils';
+import {Locator, LocatorHash, Package}                                from './types';
 
 /**
  * @internal
@@ -641,6 +640,8 @@ export function isNodeScript(p: PortablePath) {
 
 type GetPackageAccessibleBinariesOptions = {
   project: Project;
+  topLevel?: boolean;
+  currentWorkspaceOnly?: boolean;
 };
 
 type Binary = [Locator, NativePath, boolean];
@@ -652,7 +653,7 @@ type PackageAccessibleBinaries = Map<string, Binary>;
  * @param locator The queried package
  * @param project The project owning the package
  */
-export async function getPackageAccessibleBinaries(locator: Locator, {project}: GetPackageAccessibleBinariesOptions): Promise<PackageAccessibleBinaries> {
+export async function getPackageAccessibleBinaries(locator: Locator, {project, currentWorkspaceOnly, topLevel}: GetPackageAccessibleBinariesOptions): Promise<PackageAccessibleBinaries> {
   const configuration = project.configuration;
   const binaries: PackageAccessibleBinaries = new Map();
 
@@ -667,13 +668,16 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
 
   const visibleLocators: Set<LocatorHash> = new Set([locator.locatorHash]);
 
-  for (const descriptor of pkg.dependencies.values()) {
-    const resolution = project.storedResolutions.get(descriptor.descriptorHash);
-    if (!resolution)
-      throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(configuration, descriptor)}) should have been registered`);
-
-    visibleLocators.add(resolution);
+  if (!currentWorkspaceOnly) {
+    const rootLocator = project.topLevelWorkspace.anchoredLocator;
+    const rootPkg = project.storedPackages.get(rootLocator.locatorHash)!;
+    getPackageVisibleLocators(project, rootPkg, visibleLocators);
   }
+
+  // Running this after the root fallback makes current workspace version
+  // take priority over root version
+  if (!topLevel || currentWorkspaceOnly)
+    getPackageVisibleLocators(project, pkg, visibleLocators);
 
   const dependenciesWithBinaries = await Promise.all(Array.from(visibleLocators, async locatorHash => {
     const dependency = project.storedPackages.get(locatorHash);
@@ -717,6 +721,16 @@ export async function getPackageAccessibleBinaries(locator: Locator, {project}: 
   }
 
   return binaries;
+}
+
+function getPackageVisibleLocators(project: Project, pkg: Package, visibleLocators: Set<LocatorHash>) {
+  for (const descriptor of pkg.dependencies.values()) {
+    const resolution = project.storedResolutions.get(descriptor.descriptorHash);
+    if (!resolution)
+      throw new Error(`Assertion failed: The resolution (${structUtils.prettyDescriptor(project.configuration, descriptor)}) should have been registered`);
+
+    visibleLocators.add(resolution);
+  }
 }
 
 /**
