@@ -4826,7 +4826,6 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@types/react-dom",\
-          "@types/react",\
           "react-dom",\
           "react"\
         ],\
@@ -5209,7 +5208,6 @@ const RAW_RUNTIME_STATE =
           ["react", "npm:19.1.0"]\
         ],\
         "packagePeers": [\
-          "@types/react",\
           "react"\
         ],\
         "linkType": "HARD"\
@@ -5301,7 +5299,6 @@ const RAW_RUNTIME_STATE =
           "@docusaurus/plugin-content-docs",\
           "@types/docusaurus__plugin-content-docs",\
           "@types/react-dom",\
-          "@types/react",\
           "react-dom",\
           "react"\
         ],\
@@ -5427,7 +5424,6 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@types/react-dom",\
-          "@types/react",\
           "react-dom",\
           "react"\
         ],\
@@ -10464,7 +10460,6 @@ const RAW_RUNTIME_STATE =
         ],\
         "packagePeers": [\
           "@types/ink",\
-          "@types/react",\
           "ink",\
           "react"\
         ],\
