@@ -44,7 +44,7 @@ describe(`Protocols`, () => {
     );
 
     test(
-      `it should allow portals to access their peer dependencies (single occurence)`,
+      `it should allow portals to access their peer dependencies (single occurrence)`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
@@ -67,7 +67,7 @@ describe(`Protocols`, () => {
     );
 
     test(
-      `it should allow portals to access their peer dependencies (multiple occurences)`,
+      `it should allow portals to access their peer dependencies (multiple occurrences)`,
       makeTemporaryEnv({
         dependencies: {
           [`provides-peer-deps-1-0-0`]: `file:./provides-peer-deps-1-0-0`,
