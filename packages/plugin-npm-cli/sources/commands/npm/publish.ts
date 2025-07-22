@@ -99,7 +99,7 @@ export default class NpmPublishCommand extends BaseCommand {
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
 
-        for (const file of files)
+        for (const {file} of files)
           report.reportInfo(null, file);
 
         const pack = await packUtils.genPackStream(workspace, files);
