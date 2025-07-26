@@ -89,6 +89,29 @@ describe(`publish`, () =>   {
     });
   }));
 
+  test(`should support --dry-run flag`, makeTemporaryEnv({
+    name: `dry-run-test`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    const {stdout} = await run(`npm`, `publish`, `--dry-run`, `--tolerate-republish`);
+    expect(stdout).toContain(`[DRY RUN]`);
+  }));
+
+  test(`should support --json flag`, makeTemporaryEnv({
+    name: `json-test`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--tolerate-republish`);
+    const result = JSON.parse(stdout);
+    expect(result).toHaveProperty(`name`, `json-test`);
+    expect(result).toHaveProperty(`version`, `1.0.0`);
+    expect(result).toHaveProperty(`dryRun`, true);
+  }));
+
   testIf(
     () => !!process.env.ACTIONS_ID_TOKEN_REQUEST_URL,
     `should publish a package with a valid provenance statement`,
