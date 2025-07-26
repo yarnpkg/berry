@@ -1,0 +1,13 @@
+releases:
+  "@yarnpkg/plugin-npm-cli": minor
+
+undecided:
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-git"
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-pnpm"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/plugin-workspace-tools"
+  - "@yarnpkg/core"
+  - "@yarnpkg/sdks"
