@@ -4,7 +4,7 @@ import {parseSyml, stringifySyml}                                       from '@y
 import {UsageError}                                                     from 'clipanion';
 import {createHash}                                                     from 'crypto';
 import {structuredPatch}                                                from 'diff';
-import pick                                                             from 'lodash/pick';
+import {pick}                                                           from 'es-toolkit/compat';
 import pLimit                                                           from 'p-limit';
 import semver                                                           from 'semver';
 import internal                                                         from 'stream';
