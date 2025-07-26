@@ -58,11 +58,11 @@ export default class BuildBundleCommand extends Command {
     description: `An array of plugins that should be included besides the ones specified in the profile`,
   });
 
-  noGitHash = Option.Boolean(`--no-git-hash`, false, {
-    description: `Don't include the git hash of the current commit in bundle version`,
+  gitHash = Option.Boolean(`--git-hash`, true, {
+    description: `Include the git hash of the current commit in bundle version`,
   });
 
-  noMinify = Option.Boolean(`--no-minify`, false, {
+  minify = Option.Boolean(`--minify`, true, {
     description: `Build a bundle for development, without optimizations (minifying, mangling, treeshaking)`,
   });
 
@@ -87,7 +87,7 @@ export default class BuildBundleCommand extends Command {
 
     let version = pkgJsonVersion(basedir);
 
-    const hash = !this.noGitHash
+    const hash = this.gitHash
       ? await suggestHash(basedir)
       : null;
 
@@ -125,7 +125,7 @@ export default class BuildBundleCommand extends Command {
           bundle: true,
           define: {
             YARN_VERSION: JSON.stringify(version),
-            ...(this.noMinify ? {} : {
+            ...(this.minify ? {
               // For React
               'process.env.NODE_ENV': JSON.stringify(`production`),
               // For ink
@@ -134,7 +134,7 @@ export default class BuildBundleCommand extends Command {
               'process.env.__TESTING_MKDIRP_PLATFORM__': `false`,
               'process.env.__TESTING_MKDIRP_NODE_VERSION__': `false`,
               'process.env.__FAKE_PLATFORM__': `false`,
-            }),
+            } : {}),
           },
           outfile: npath.fromPortablePath(output),
           metafile: metafile !== false,
@@ -144,7 +144,7 @@ export default class BuildBundleCommand extends Command {
           format: `iife`,
           platform: `node`,
           plugins: [valLoader],
-          minify: !this.noMinify,
+          minify: this.minify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node${semver.minVersion(pkg.engines.node)!.version}`,
         });
