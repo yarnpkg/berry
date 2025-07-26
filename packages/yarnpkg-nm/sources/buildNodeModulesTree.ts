@@ -278,16 +278,7 @@ const buildPackageTree = (pnp: PnpApi, options: NodeModulesTreeOptions): {packag
 
   const topPkgPortableLocation = npath.toPortablePath(topPkg.packageLocation.slice(0, -1));
 
-  const treeNodes: Array<HoisterNode> = [{
-    id: 0,
-    name: topLocator.name,
-    identName: topLocator.name,
-    reference: topLocator.reference,
-    peerNames: topPkg.packagePeers,
-    dependencies: new Set(),
-    dependencyKind: HoisterDependencyKind.WORKSPACE,
-  }];
-
+  const treeNodes: Array<HoisterNode> = [];
   const nodes = new Map<string, number>();
 
   const getNodeKey = (name: string, locator: PhysicalPackageLocator) => {
