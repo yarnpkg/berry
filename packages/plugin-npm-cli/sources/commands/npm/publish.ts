@@ -189,7 +189,6 @@ export default class NpmPublishCommand extends BaseCommand {
           published: !this.dryRun,
           message: finalMessage,
           provenance: Boolean(provenance),
-          gitHead: gitHead || null,
         });
       });
     });

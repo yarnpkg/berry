@@ -120,10 +120,8 @@ describe(`publish`, () =>   {
 
     expect(result).toHaveProperty(`tag`);
     expect(result).toHaveProperty(`provenance`);
-    expect(result).toHaveProperty(`gitHead`);
 
-    expect(result).toHaveProperty(`gitHead`);
-
+    expect(result).toHaveProperty(`files`);
     expect(Array.isArray(result.files)).toBe(true);
   }));
 
