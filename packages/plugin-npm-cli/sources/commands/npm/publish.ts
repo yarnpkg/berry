@@ -47,7 +47,7 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
   });
 
-  dryRun = Option.Boolean(`--dry-run`, false, {
+  dryRun = Option.Boolean(`-n,--dry-run`, false, {
     description: `Show what would be published without actually publishing`,
   });
 
