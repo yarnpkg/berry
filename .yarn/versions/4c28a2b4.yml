@@ -9,5 +9,6 @@ undecided:
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-version"
   - "@yarnpkg/plugin-workspace-tools"
+  - "@yarnpkg/cli"
   - "@yarnpkg/core"
   - "@yarnpkg/sdks"
