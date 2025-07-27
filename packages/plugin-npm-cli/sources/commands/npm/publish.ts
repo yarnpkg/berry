@@ -1,5 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
+import {npath}                                                                                  from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
@@ -95,16 +96,13 @@ export default class NpmPublishCommand extends BaseCommand {
           if (Object.hasOwn(registryData.versions, version)) {
             const warning = `Registry already knows about version ${version}; skipping.`;
             report.reportWarning(MessageName.UNNAMED, warning);
-
-            if (this.json) {
-              report.reportJson({
-                name: ident.name,
-                version,
-                registry,
-                warning,
-                skipped: true,
-              });
-            }
+            report.reportJson({
+              name: ident.name,
+              version,
+              registry,
+              warning,
+              skipped: true,
+            });
             return;
           }
         } catch (err) {
@@ -119,18 +117,9 @@ export default class NpmPublishCommand extends BaseCommand {
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
 
-        // Report files differently based on output mode
-        if (this.json) {
-          // For JSON output, we'll include files in the final JSON result
-          report.reportJson({
-            type: `files`,
-            files: files.map(f => f.toString()),
-          });
-        } else {
-          // For streaming output, report each file
-          for (const file of files) {
-            report.reportInfo(null, file);
-          }
+        for (const file of files) {
+          report.reportInfo(null, npath.fromPortablePath(file));
+          report.reportJson({file: npath.fromPortablePath(file)});
         }
 
         const pack = await packUtils.genPackStream(workspace, files);
@@ -159,14 +148,11 @@ export default class NpmPublishCommand extends BaseCommand {
 
         if (message) {
           report.reportInfo(null, message);
-
-          if (this.json) {
-            report.reportJson({
-              type: `provenance`,
-              enabled: provenance,
-              message,
-            });
-          }
+          report.reportJson({
+            type: `provenance`,
+            enabled: provenance,
+            message,
+          });
         }
 
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
@@ -191,22 +177,20 @@ export default class NpmPublishCommand extends BaseCommand {
           ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
           : `Package archive published`;
 
-        if (this.json) {
-          report.reportJson({
-            name: ident.name,
-            version,
-            registry,
-            tag: this.tag || `latest`,
-            access: this.access || null,
-            dryRun: this.dryRun,
-            published: !this.dryRun,
-            message: finalMessage,
-            provenance: Boolean(provenance),
-            gitHead: gitHead || null,
-          });
-        } else {
-          report.reportInfo(MessageName.UNNAMED, finalMessage);
-        }
+        report.reportInfo(MessageName.UNNAMED, finalMessage);
+        report.reportJson({
+          name: ident.name,
+          version,
+          registry,
+          tag: this.tag || `latest`,
+          files: files.map(f => npath.fromPortablePath(f)),
+          access: this.access || null,
+          dryRun: this.dryRun,
+          published: !this.dryRun,
+          message: finalMessage,
+          provenance: Boolean(provenance),
+          gitHead: gitHead || null,
+        });
       });
     });
 

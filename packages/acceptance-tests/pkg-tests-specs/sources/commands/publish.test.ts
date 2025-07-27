@@ -122,11 +122,9 @@ describe(`publish`, () =>   {
     expect(result).toHaveProperty(`provenance`);
     expect(result).toHaveProperty(`gitHead`);
 
-    const filesObject = jsonObjects.find((obj: any) => obj.type === `files`);
+    expect(result).toHaveProperty(`gitHead`);
 
-    expect(filesObject).toBeDefined();
-    expect(filesObject).toHaveProperty(`files`);
-    expect(Array.isArray(filesObject.files)).toBe(true);
+    expect(Array.isArray(result.files)).toBe(true);
   }));
 
   testIf(
