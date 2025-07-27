@@ -2,6 +2,7 @@ import {npath, xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {testIf},
+  misc,
 } = require(`pkg-tests-core`);
 
 const {
@@ -106,10 +107,26 @@ describe(`publish`, () =>   {
     await run(`install`);
 
     const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--tolerate-republish`);
-    const result = JSON.parse(stdout);
+    const jsonObjects = misc.parseJsonStream(stdout);
+    const result = jsonObjects.find((obj: any) => obj.name && obj.version);
+
+    expect(result).toBeDefined();
     expect(result).toHaveProperty(`name`, `json-test`);
     expect(result).toHaveProperty(`version`, `1.0.0`);
     expect(result).toHaveProperty(`dryRun`, true);
+    expect(result).toHaveProperty(`registry`);
+    expect(result).toHaveProperty(`published`, false);
+    expect(result).toHaveProperty(`message`);
+
+    expect(result).toHaveProperty(`tag`);
+    expect(result).toHaveProperty(`provenance`);
+    expect(result).toHaveProperty(`gitHead`);
+
+    const filesObject = jsonObjects.find((obj: any) => obj.type === `files`);
+
+    expect(filesObject).toBeDefined();
+    expect(filesObject).toHaveProperty(`files`);
+    expect(Array.isArray(filesObject.files)).toBe(true);
   }));
 
   testIf(

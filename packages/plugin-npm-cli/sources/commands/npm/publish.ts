@@ -93,7 +93,18 @@ export default class NpmPublishCommand extends BaseCommand {
             throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
           if (Object.hasOwn(registryData.versions, version)) {
-            report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+            const warning = `Registry already knows about version ${version}; skipping.`;
+            report.reportWarning(MessageName.UNNAMED, warning);
+
+            if (this.json) {
+              report.reportJson({
+                name: ident.name,
+                version,
+                registry,
+                warning,
+                skipped: true,
+              });
+            }
             return;
           }
         } catch (err) {
@@ -146,8 +157,17 @@ export default class NpmPublishCommand extends BaseCommand {
         else if (provenance)
           message = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
 
-        if (message)
+        if (message) {
           report.reportInfo(null, message);
+
+          if (this.json) {
+            report.reportJson({
+              type: `provenance`,
+              enabled: provenance,
+              message,
+            });
+          }
+        }
 
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
           access: this.access,
@@ -166,24 +186,28 @@ export default class NpmPublishCommand extends BaseCommand {
             jsonResponse: true,
           });
         }
+
+        const finalMessage = this.dryRun
+          ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
+          : `Package archive published`;
+
+        if (this.json) {
+          report.reportJson({
+            name: ident.name,
+            version,
+            registry,
+            tag: this.tag || `latest`,
+            access: this.access || null,
+            dryRun: this.dryRun,
+            published: !this.dryRun,
+            message: finalMessage,
+            provenance: Boolean(provenance),
+            gitHead: gitHead || null,
+          });
+        } else {
+          report.reportInfo(MessageName.UNNAMED, finalMessage);
+        }
       });
-
-      const finalMessage = this.dryRun
-        ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
-        : `Package archive published`;
-
-      if (this.json) {
-        report.reportJson({
-          name: ident.name,
-          version,
-          registry,
-          dryRun: this.dryRun,
-          published: !this.dryRun,
-          message: finalMessage,
-        });
-      } else {
-        report.reportInfo(MessageName.UNNAMED, finalMessage);
-      }
     });
 
     return report.exitCode();
