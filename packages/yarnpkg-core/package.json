@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.4.1",
+  "version": "4.4.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -19,15 +19,16 @@
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/shell": "workspace:^",
     "camelcase": "^5.3.1",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
     "cross-spawn": "^7.0.3",
     "diff": "^5.1.0",
     "dotenv": "^16.3.1",
+    "es-toolkit": "^1.39.7",
     "fast-glob": "^3.2.2",
     "got": "^11.7.0",
-    "lodash": "^4.17.15",
+    "hpagent": "^1.2.0",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "semver": "^7.1.2",
@@ -35,8 +36,7 @@
     "tar": "^6.0.5",
     "tinylogic": "^2.0.0",
     "treeify": "^1.1.0",
-    "tslib": "^2.4.0",
-    "tunnel": "^0.0.6"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@octokit/webhooks-types": "^7.3.1",
@@ -46,11 +46,9 @@
     "@types/comment-json": "^1.1.1",
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^5.0.0",
-    "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^18.17.15",
     "@types/tar": "^4.0.4",
-    "@types/tunnel": "^0.0.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/plugin-link": "workspace:^",
     "@yarnpkg/plugin-npm": "workspace:^",
@@ -87,5 +85,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.4.1"
+  "stableVersion": "4.4.2"
 }

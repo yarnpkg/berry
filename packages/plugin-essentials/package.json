@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-essentials",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -13,7 +13,7 @@
     "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
     "enquirer": "^2.3.6",
-    "lodash": "^4.17.15",
+    "es-toolkit": "^1.39.7",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
     "tslib": "^2.4.0",
@@ -25,7 +25,6 @@
     "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@yarnpkg/cli": "workspace:^",
@@ -54,5 +53,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.4.0"
+  "stableVersion": "4.4.1"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-version",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -12,8 +12,8 @@
     "@yarnpkg/libui": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
+    "es-toolkit": "^1.39.7",
     "ink": "^3.2.0",
-    "lodash": "^4.17.15",
     "react": "^17.0.2",
     "semver": "^7.1.2",
     "tslib": "^2.4.0"
@@ -24,7 +24,6 @@
     "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.136",
     "@types/react": "^16.8.0",
     "@types/semver": "^7.1.0",
     "@yarnpkg/builder": "workspace:^",
@@ -54,5 +53,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.0"
+  "stableVersion": "4.1.1"
 }

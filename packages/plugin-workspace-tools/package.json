@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-workspace-tools",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -10,6 +10,7 @@
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
+    "es-toolkit": "^1.39.7",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "tslib": "^2.4.0",
@@ -21,7 +22,6 @@
     "@yarnpkg/plugin-git": "workspace:^"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.136",
     "@types/micromatch": "^4.0.1",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/cli": "workspace:^",
@@ -50,5 +50,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.4"
+  "stableVersion": "4.1.5"
 }

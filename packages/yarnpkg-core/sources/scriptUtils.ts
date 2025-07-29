@@ -2,7 +2,7 @@ import {CwdFS, Filename, NativePath, PortablePath} from '@yarnpkg/fslib';
 import {xfs, npath, ppath}                         from '@yarnpkg/fslib';
 import {ZipOpenFS}                                 from '@yarnpkg/libzip';
 import {execute}                                   from '@yarnpkg/shell';
-import capitalize                                  from 'lodash/capitalize';
+import {capitalize}                                from 'es-toolkit/compat';
 import pLimit                                      from 'p-limit';
 import {PassThrough, Readable, Writable}           from 'stream';
 

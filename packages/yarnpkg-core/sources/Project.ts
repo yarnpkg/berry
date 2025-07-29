@@ -4,7 +4,7 @@ import {parseSyml, stringifySyml}                                       from '@y
 import {UsageError}                                                     from 'clipanion';
 import {createHash}                                                     from 'crypto';
 import {structuredPatch}                                                from 'diff';
-import pick                                                             from 'lodash/pick';
+import {pick}                                                           from 'es-toolkit/compat';
 import pLimit                                                           from 'p-limit';
 import semver                                                           from 'semver';
 import internal                                                         from 'stream';
@@ -2375,7 +2375,7 @@ function applyVirtualResolutionMutations({
 
               requests: new Map(),
 
-              hash: `p${hashUtils.makeHash(parentLocator.locatorHash, peerDescriptor.identHash).slice(0, 5)}`,
+              hash: `p${hashUtils.makeHash(parentLocator.locatorHash, peerDescriptor.identHash).slice(0, 6)}`,
             };
           });
 
@@ -2565,7 +2565,7 @@ function applyVirtualResolutionMutations({
     // For backwards-compatibility
     // TODO: Remove for next major
     for (const peerRequest of requirement.requests.values()) {
-      const hash = `p${hashUtils.makeHash(requirement.subject.locatorHash, structUtils.stringifyIdent(requirement.ident), peerRequest.requester.locatorHash).slice(0, 5)}`;
+      const hash = `p${hashUtils.makeHash(requirement.subject.locatorHash, structUtils.stringifyIdent(requirement.ident), peerRequest.requester.locatorHash).slice(0, 6)}`;
 
       peerRequirements.set(hash, {
         subject: requirement.subject.locatorHash,
@@ -2608,7 +2608,7 @@ function applyVirtualResolutionMutations({
 
           // For backwards-compatibility
           // TODO: Remove for next major
-          const hash = `p${hashUtils.makeHash(requirement.subject.locatorHash, structUtils.stringifyIdent(requirement.ident), peerRequest.requester.locatorHash).slice(0, 5)}`;
+          const hash = `p${hashUtils.makeHash(requirement.subject.locatorHash, structUtils.stringifyIdent(requirement.ident), peerRequest.requester.locatorHash).slice(0, 6)}`;
 
           peerWarnings.push({
             type: PeerWarningType.NotCompatible,
@@ -2642,7 +2642,7 @@ function applyVirtualResolutionMutations({
 
           // For backwards-compatibility
           // TODO: Remove for next major
-          const hash = `p${hashUtils.makeHash(requirement.subject.locatorHash, structUtils.stringifyIdent(requirement.ident), peerRequest.requester.locatorHash).slice(0, 5)}`;
+          const hash = `p${hashUtils.makeHash(requirement.subject.locatorHash, structUtils.stringifyIdent(requirement.ident), peerRequest.requester.locatorHash).slice(0, 6)}`;
 
           peerWarnings.push({
             type: PeerWarningType.NotProvided,

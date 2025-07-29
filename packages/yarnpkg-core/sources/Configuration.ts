@@ -1971,7 +1971,7 @@ export class Configuration {
       const typesIdent = structUtils.makeIdent(`types`, typesName);
       const stringifiedTypesIdent = structUtils.stringifyIdent(typesIdent);
 
-      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(stringifiedTypesIdent))
+      if (pkg.peerDependencies.has(typesIdent.identHash) || pkg.peerDependenciesMeta.has(stringifiedTypesIdent) || pkg.dependencies.has(typesIdent.identHash))
         continue;
 
       pkg.peerDependencies.set(typesIdent.identHash, structUtils.makeDescriptor(typesIdent, `*`));

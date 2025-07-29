@@ -40,7 +40,7 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           const {stdout} = await run(`install`);
 
-          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{5}\), which doesn't satisfy what mismatched-peer-deps-lvl1 and other dependencies request \(1\.0\.0\)/);
+          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{6}\), which doesn't satisfy what mismatched-peer-deps-lvl1 and other dependencies request \(1\.0\.0\)/);
         },
       ),
     );
@@ -57,7 +57,7 @@ describe(`Features`, () => {
         async ({path, run, source}) => {
           const {stdout} = await run(`install`);
 
-          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{5}\), which doesn't satisfy what mismatched-peer-deps-lvl[12] \(via mismatched-peer-deps-lvl0\) and other dependencies request \(1\.0\.0\)/);
+          expect(stdout).toMatch(/no-deps is listed by your project with version 1\.1\.0 \(p[a-f0-9]{6}\), which doesn't satisfy what mismatched-peer-deps-lvl[12] \(via mismatched-peer-deps-lvl0\) and other dependencies request \(1\.0\.0\)/);
         },
       ),
     );
@@ -97,6 +97,29 @@ describe(`Features`, () => {
           await expect(
             source(`require(require.resolve('@types/no-deps', { paths: [require.resolve('optional-peer-deps-implicit/package.json')] })) === require('@types/no-deps')`),
           ).resolves.toEqual(true);
+        },
+      ),
+    );
+
+    test(
+      `it should correctly resolve nested dependencies with different versions of types packages`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            'peer-deps-implicit-types-conflict': `1.0.0`,
+            '@types/no-deps': `1.0.0`,
+          },
+        },
+        async ({path, run, source}) => {
+          await run(`install`);
+
+          await expect(
+            source(`require('@types/no-deps').version`),
+          ).resolves.toEqual(`1.0.0`);
+
+          await expect(
+            source(`require(require.resolve('@types/no-deps', { paths: [require.resolve('peer-deps-implicit-types-conflict/package.json')] })).version`),
+          ).resolves.toEqual(`2.0.0`);
         },
       ),
     );

@@ -1,10 +1,9 @@
 import {npath}                                                              from '@yarnpkg/fslib';
-import chalk                                                                from 'chalk';
+import chalk, {type Level}                                                  from 'chalk';
 import CI                                                                   from 'ci-info';
 import {ColorFormat, formatMarkdownish}                                     from 'clipanion';
 import micromatch                                                           from 'micromatch';
 import stripAnsi                                                            from 'strip-ansi';
-import {inspect}                                                            from 'util';
 
 import {Configuration, ConfigurationValueMap}                               from './Configuration';
 import {MessageName, stringifyMessageName}                                  from './MessageName';
@@ -34,6 +33,8 @@ export const Type = {
   REFERENCE: `REFERENCE`,
 
   NUMBER: `NUMBER`,
+  STRING: `STRING`,
+  BOOLEAN: `BOOLEAN`,
   PATH: `PATH`,
   URL: `URL`,
   ADDED: `ADDED`,
@@ -63,7 +64,7 @@ export enum Style {
   BOLD = 1 << 1,
 }
 
-const chalkOptions = CI.GITHUB_ACTIONS
+const chalkOptions: {level: Level} = CI.GITHUB_ACTIONS
   ? {level: 2}
   : chalk.supportsColor
     ? {level: chalk.supportsColor.level}
@@ -85,6 +86,8 @@ const colors = new Map<Type, [string, number] | null>([
   [Type.REFERENCE, [`#87afff`, 111]],
 
   [Type.NUMBER, [`#ffd700`, 220]],
+  [Type.STRING, [`#b4bd68`, 32]],
+  [Type.BOOLEAN, [`#faa023`, 209]],
   [Type.PATH, [`#d75fd7`, 170]],
   [Type.URL, [`#d75fd7`, 170]],
   [Type.ADDED, [`#5faf00`, 70]],
@@ -122,6 +125,42 @@ function sizeToText(size: number) {
   return `${value} ${thresholds[power - 1]}`;
 }
 
+function prettyObject(configuration: Configuration, value: any): string {
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return applyColor(configuration, `[]`, Type.CODE);
+    } else {
+      return applyColor(configuration, `[ `, Type.CODE) + value.map(item => prettyObject(configuration, item)).join(`, `) + applyColor(configuration, ` ]`, Type.CODE);
+    }
+  }
+
+  if (typeof value === `string`)
+    return applyColor(configuration, JSON.stringify(value), Type.STRING);
+
+  if (typeof value === `number`)
+    return applyColor(configuration, JSON.stringify(value), Type.NUMBER);
+
+  if (typeof value === `boolean`)
+    return applyColor(configuration, JSON.stringify(value), Type.BOOLEAN);
+
+  if (value === null)
+    return applyColor(configuration, `null`, Type.NULL);
+
+  if (typeof value === `object` && Object.getPrototypeOf(value) === Object.prototype) {
+    const entries = Object.entries(value);
+    if (entries.length === 0) {
+      return applyColor(configuration, `{}`, Type.CODE);
+    } else {
+      return applyColor(configuration, `{ `, Type.CODE) + entries.map(([key, value]) => `${prettyObject(configuration, key)}: ${prettyObject(configuration, value)}`).join(`, `) + applyColor(configuration, ` }`, Type.CODE);
+    }
+  }
+
+  if (typeof value === `undefined`)
+    return applyColor(configuration, `undefined`, Type.NULL);
+
+  throw new Error(`Assertion failed: The value doesn't seem to be a valid JSON object`);
+}
+
 const transforms = {
   [Type.ID]: validateTransform({
     pretty: (configuration: Configuration, value: number | string) => {
@@ -138,7 +177,7 @@ const transforms = {
 
   [Type.INSPECT]: validateTransform({
     pretty: (configuration: Configuration, value: any) => {
-      return inspect(value, {depth: Infinity, colors: configuration.get(`enableColors`), compact: true, breakLength: Infinity});
+      return prettyObject(configuration, value);
     },
     json: (value: any) => {
       return value;
