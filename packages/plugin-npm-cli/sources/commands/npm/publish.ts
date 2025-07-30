@@ -124,34 +124,30 @@ export default class NpmPublishCommand extends BaseCommand {
 
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
+
         const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
 
-        // Determine provenance
         let provenance = false;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
+        let provenanceMessage = ``;
+        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
-        else if (this.provenance)
-          provenance = true;
-        else if (configuration.get(`npmPublishProvenance`))
-          provenance = true;
-
-        // Report provenance decision
-        let message = ``;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig)
-          message = provenance
+          provenanceMessage = provenance
             ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
             : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
-        else if (this.provenance)
-          message = `Generating provenance statement because \`--provenance\` flag is set.`;
-        else if (provenance)
-          message = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+        } else if (this.provenance) {
+          provenance = true;
+          provenanceMessage = `Generating provenance statement because \`--provenance\` flag is set.`;
+        } else if (configuration.get(`npmPublishProvenance`)) {
+          provenance = true;
+          provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+        }
 
-        if (message) {
-          report.reportInfo(null, message);
+        if (provenanceMessage) {
+          report.reportInfo(null, provenanceMessage);
           report.reportJson({
             type: `provenance`,
             enabled: provenance,
-            message,
+            provenanceMessage,
           });
         }
 
