@@ -7,6 +7,8 @@ import {createGzip}                                                           fr
 
 import {Hooks}                                                                from './';
 
+const LICENSE_PATTERN = /licen[cs]e(\.[a-zA-Z0-9]+)?/i;
+
 const NEVER_IGNORE = [
   `/package.json`,
 
@@ -67,9 +69,10 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   }
 }
 
-export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>) {
-  if (typeof files === `undefined`)
-    files = await genPackList(workspace);
+export async function genPackStream(workspace: Workspace, files?: Array<PortablePath | {file: PortablePath, source: PortablePath}>) {
+  const normalizedFiles = files?.map(file => typeof file === `string`
+    ? {file, source: ppath.resolve(workspace.cwd, file)}
+    : file) ?? await genPackList(workspace);
 
   const executableFiles = new Set<PortablePath>();
   for (const value of workspace.manifest.publishConfig?.executableFiles ?? new Set())
@@ -80,10 +83,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   const pack = tar.pack();
 
   process.nextTick(async () => {
-    for (const fileRequest of files!) {
+    for (const {file: fileRequest, source} of normalizedFiles!) {
       const file = ppath.normalize(fileRequest);
 
-      const source = ppath.resolve(workspace.cwd, file);
       const dest = ppath.join(`package`, file);
 
       const stat = await xfs.lstatPromise(source);
@@ -239,11 +241,34 @@ export async function genPackList(workspace: Workspace) {
     }
   }
 
-  return await walk(workspace.cwd, {
+  const paths = await walk(workspace.cwd, {
     hasExplicitFileList,
     globalList,
     ignoreList,
   });
+
+  const files = paths.map(path => ({file: path, source: ppath.resolve(workspace.cwd, path)}));
+
+  if (workspace.cwd !== project.cwd) {
+    const workspaceHasLicense = paths.some(path => path.match(LICENSE_PATTERN));
+
+    if (!workspaceHasLicense) {
+      const projectDir = await xfs.readdirPromise(project.cwd);
+
+      const licenses = await Promise.all(projectDir
+        .filter(path => path.match(LICENSE_PATTERN))
+        .map(async path => [path, await xfs.lstatPromise(ppath.join(project.cwd, path))] as const))
+        .then(result => result
+          .filter(([_, stat]) => stat.isFile())
+          .map(([file]) => file));
+
+      for (const file of licenses) {
+        files.push({file, source: ppath.join(project.cwd, file)});
+      }
+    }
+  }
+
+  return files;
 }
 
 async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {

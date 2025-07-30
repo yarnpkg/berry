@@ -83,7 +83,7 @@ export default class PackCommand extends BaseCommand {
 
         const files = await packUtils.genPackList(workspace);
 
-        for (const file of files) {
+        for (const {file} of files) {
           report.reportInfo(null, npath.fromPortablePath(file));
           report.reportJson({location: npath.fromPortablePath(file)});
         }
