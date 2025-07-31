@@ -1,5 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
+import {npath}                                                                                  from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
@@ -46,6 +47,14 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
   });
 
+  dryRun = Option.Boolean(`-n,--dry-run`, false, {
+    description: `Show what would be published without actually publishing`,
+  });
+
+  json = Option.Boolean(`--json`, false, {
+    description: `Output the result in JSON format`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -69,6 +78,7 @@ export default class NpmPublishCommand extends BaseCommand {
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
+      json: this.json,
     }, async report => {
       // Not an error if --tolerate-republish is set
       if (this.tolerateRepublish) {
@@ -84,7 +94,15 @@ export default class NpmPublishCommand extends BaseCommand {
             throw new ReportError(MessageName.REMOTE_INVALID, `Registry returned invalid data for - missing "versions" field`);
 
           if (Object.hasOwn(registryData.versions, version)) {
-            report.reportWarning(MessageName.UNNAMED, `Registry already knows about version ${version}; skipping.`);
+            const warning = `Registry already knows about version ${version}; skipping.`;
+            report.reportWarning(MessageName.UNNAMED, warning);
+            report.reportJson({
+              name: ident.name,
+              version,
+              registry,
+              warning,
+              skipped: true,
+            });
             return;
           }
         } catch (err) {
@@ -99,8 +117,10 @@ export default class NpmPublishCommand extends BaseCommand {
       await packUtils.prepareForPack(workspace, {report}, async () => {
         const files = await packUtils.genPackList(workspace);
 
-        for (const file of files)
-          report.reportInfo(null, file);
+        for (const file of files) {
+          report.reportInfo(null, npath.fromPortablePath(file));
+          report.reportJson({file: npath.fromPortablePath(file)});
+        }
 
         const pack = await packUtils.genPackStream(workspace, files);
         const buffer = await miscUtils.bufferStream(pack);
@@ -108,19 +128,27 @@ export default class NpmPublishCommand extends BaseCommand {
         const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
 
         let provenance = false;
+        let provenanceMessage = ``;
         if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
-          if (provenance) {
-            report.reportInfo(null, `Generating provenance statement because \`publishConfig.provenance\` field is set.`);
-          } else {
-            report.reportInfo(null, `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`);
-          }
+          provenanceMessage = provenance
+            ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
+            : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
         } else if (this.provenance) {
           provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`--provenance\` flag is set.`);
+          provenanceMessage = `Generating provenance statement because \`--provenance\` flag is set.`;
         } else if (configuration.get(`npmPublishProvenance`)) {
           provenance = true;
-          report.reportInfo(null, `Generating provenance statement because \`npmPublishProvenance\` setting is set.`);
+          provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+        }
+
+        if (provenanceMessage) {
+          report.reportInfo(null, provenanceMessage);
+          report.reportJson({
+            type: `provenance`,
+            enabled: provenance,
+            provenanceMessage,
+          });
         }
 
         const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
@@ -131,16 +159,34 @@ export default class NpmPublishCommand extends BaseCommand {
           provenance,
         });
 
-        await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-          configuration,
+        if (!this.dryRun) {
+          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+            configuration,
+            registry,
+            ident,
+            otp: this.otp,
+            jsonResponse: true,
+          });
+        }
+
+        const finalMessage = this.dryRun
+          ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
+          : `Package archive published`;
+
+        report.reportInfo(MessageName.UNNAMED, finalMessage);
+        report.reportJson({
+          name: ident.name,
+          version,
           registry,
-          ident,
-          otp: this.otp,
-          jsonResponse: true,
+          tag: this.tag || `latest`,
+          files: files.map(f => npath.fromPortablePath(f)),
+          access: this.access || null,
+          dryRun: this.dryRun,
+          published: !this.dryRun,
+          message: finalMessage,
+          provenance: Boolean(provenance),
         });
       });
-
-      report.reportInfo(MessageName.UNNAMED, `Package archive published`);
     });
 
     return report.exitCode();
