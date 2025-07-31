@@ -326,12 +326,12 @@ function normalizePattern(pattern: string, {cwd}: {cwd: PortablePath}) {
 }
 
 function addIgnorePattern(target: Array<string>, pattern: string, {cwd}: {cwd: PortablePath}) {
-  const trimed = pattern.trim();
+  const trimmed = pattern.trim();
 
-  if (trimed === `` || trimed[0] === `#`)
+  if (trimmed === `` || trimmed[0] === `#`)
     return;
 
-  target.push(normalizePattern(trimed, {cwd}));
+  target.push(normalizePattern(trimmed, {cwd}));
 }
 
 enum MatchType {
