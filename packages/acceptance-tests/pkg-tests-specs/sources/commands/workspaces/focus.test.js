@@ -205,6 +205,84 @@ describe(`Commands`, () => {
         },
       ),
     );
+
+    test(
+      `should focus on workspaces changed since a git ref`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupProject(path);
+
+          await run(`exec`, `git`, `init`);
+          await run(`exec`, `git`, `config`, `user.email`, `test@example.com`);
+          await run(`exec`, `git`, `config`, `user.name`, `Test User`);
+          await run(`exec`, `git`, `add`, `.`);
+          await run(`exec`, `git`, `commit`, `-m`, `Initial commit`);
+
+          await xfs.writeFilePromise(ppath.join(path, `packages/foo/test.txt`), `modified`);
+          await run(`exec`, `git`, `add`, `.`);
+          await run(`exec`, `git`, `commit`, `-m`, `Modify foo`);
+
+          await run(`install`);
+
+          const cacheFolder = ppath.join(path, `.yarn/cache`);
+          await xfs.removePromise(cacheFolder);
+
+          await run(`workspaces`, `focus`, `--since`, `HEAD~1`);
+
+          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
+            `.gitignore`,
+            expect.stringContaining(`no-deps-npm-1.0.0-`),
+          ]);
+        },
+      ),
+    );
+
+    test(
+      `should handle --since with no changed workspaces`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupProject(path);
+
+          await run(`exec`, `git`, `init`);
+          await run(`exec`, `git`, `config`, `user.email`, `test@example.com`);
+          await run(`exec`, `git`, `config`, `user.name`, `Test User`);
+          await run(`exec`, `git`, `add`, `.`);
+          await run(`exec`, `git`, `commit`, `-m`, `Initial commit`);
+
+          await run(`install`);
+
+          const cacheFolder = ppath.join(path, `.yarn/cache`);
+          await xfs.removePromise(cacheFolder);
+
+          await run(`workspaces`, `focus`, `--since`, `HEAD`);
+
+          await expect(xfs.existsSync(cacheFolder)).toBeFalsy();
+        },
+      ),
+    );
+
+    test(
+      `should not allow --since with --all flag`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await setupProject(path);
+
+          await expect(run(`workspaces`, `focus`, `--since`, `HEAD~1`, `--all`)).rejects.toThrow();
+        },
+      ),
+    );
   });
 });
 
