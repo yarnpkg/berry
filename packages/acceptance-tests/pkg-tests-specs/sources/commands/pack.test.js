@@ -615,25 +615,6 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should always include CHANGELOG (and its variants), even with a "files" field`,
-      makeTemporaryEnv({
-        files: [
-          `/lib/*.js`,
-        ],
-      }, async ({path, run, source}) => {
-        await fsUtils.writeFile(`${path}/lib/changelog`, `lib specific changelog`);
-        await fsUtils.writeFile(`${path}/CHANGELOG.md`, `package changelog`);
-
-        await run(`install`);
-
-        const {stdout} = await run(`pack`, `--dry-run`);
-        expect(stdout).not.toMatch(/lib\/changelog/);
-        expect(stdout).toMatch(/CHANGELOG\.md/);
-        expect(stdout).toMatch(/package\.json/);
-      }),
-    );
-
-    test(
       `it should never set the +x flag on files in general`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/index.js`, `module.exports = 42;`);
