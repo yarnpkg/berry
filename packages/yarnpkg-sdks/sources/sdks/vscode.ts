@@ -93,6 +93,19 @@ export const generateRelayCompilerWrapper: GenerateIntegrationWrapper = async (p
   });
 };
 
+export const generateTypescriptLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`typescript.tsdk`]: npath.fromPortablePath(
+      ppath.dirname(
+        wrapper.getProjectPathTo(
+          `lib/tsserver.js` as PortablePath,
+        ),
+      ),
+    ),
+    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
+  });
+};
+
 export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`typescript.tsdk`]: npath.fromPortablePath(
@@ -145,7 +158,7 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`eslint`, generateEslintWrapper],
   [`prettier`, generatePrettierWrapper],
   [`relay-compiler`, generateRelayCompilerWrapper],
-  [`typescript-language-server`, null],
+  [`typescript-language-server`, generateTypescriptLanguageServerWrapper],
   [`typescript`, generateTypescriptWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerWrapper],
   [`flow-bin`, generateFlowBinWrapper],
