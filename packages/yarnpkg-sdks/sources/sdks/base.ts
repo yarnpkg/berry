@@ -27,6 +27,14 @@ export const generatePrettierBaseWrapper: GenerateBaseWrapper = async (pnpApi: P
   return wrapper;
 };
 
+export const generateBiomeBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`@biomejs/biome` as PortablePath, {pnpApi, target, manifestOverrides: {exports: undefined}});
+
+  await wrapper.writeDefaults();
+
+  return wrapper;
+};
+
 export const generateRelayCompilerBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`relay-compiler` as PortablePath, {pnpApi, target});
 
@@ -289,6 +297,7 @@ export const BASE_SDKS: BaseSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerBaseWrapper],
   [`eslint`, generateEslintBaseWrapper],
   [`prettier`, generatePrettierBaseWrapper],
+  [`@biomejs/biome`, generateBiomeBaseWrapper],
   [`relay-compiler`, generateRelayCompilerBaseWrapper],
   [`typescript-language-server`, generateTypescriptLanguageServerBaseWrapper],
   [`typescript`, generateTypescriptBaseWrapper],
