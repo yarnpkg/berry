@@ -46,7 +46,7 @@ All algorithms in this specification assume that paths have been normalized acco
 
 For improved compatibility with legacy codebases, Plug'n'Play supports a feature we call "fallback". The fallback triggers when a package makes a resolution request to a dependency it doesn't list in its dependencies. In normal circumstances the resolver would throw, but when the fallback is enabled the resolver should first try to find the dependency packages amongst the dependencies of a set of special packages. If it finds it, it then returns it transparently.
 
-In a sense, the fallback can be seen as a limited and safer form of hoisting. While hoisting allows unconstrainted access through multiple levels of dependencies, the fallback requires to explicitly define a fallback package - usually the top-level one.
+In a sense, the fallback can be seen as a limited and safer form of hoisting. While hoisting allows unconstrained access through multiple levels of dependencies, the fallback requires to explicitly define a fallback package - usually the top-level one.
 
 ## Package locations
 
