@@ -2,6 +2,7 @@ import {npath, xfs} from '@yarnpkg/fslib';
 
 const {
   tests: {testIf},
+  misc,
 } = require(`pkg-tests-core`);
 
 const {
@@ -87,6 +88,41 @@ describe(`publish`, () =>   {
         YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
       },
     });
+  }));
+
+  test(`should support --dry-run flag`, makeTemporaryEnv({
+    name: `dry-run-test`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    const {stdout} = await run(`npm`, `publish`, `--dry-run`, `--tolerate-republish`);
+    expect(stdout).toContain(`[DRY RUN]`);
+  }));
+
+  test(`should support --json flag`, makeTemporaryEnv({
+    name: `json-test`,
+    version: `1.0.0`,
+  }, async ({path, run, source}) => {
+    await run(`install`);
+
+    const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--tolerate-republish`);
+    const jsonObjects = misc.parseJsonStream(stdout);
+    const result = jsonObjects.find((obj: any) => obj.name && obj.version);
+
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty(`name`, `json-test`);
+    expect(result).toHaveProperty(`version`, `1.0.0`);
+    expect(result).toHaveProperty(`dryRun`, true);
+    expect(result).toHaveProperty(`registry`);
+    expect(result).toHaveProperty(`published`, false);
+    expect(result).toHaveProperty(`message`);
+
+    expect(result).toHaveProperty(`tag`);
+    expect(result).toHaveProperty(`provenance`);
+
+    expect(result).toHaveProperty(`files`);
+    expect(Array.isArray(result.files)).toBe(true);
   }));
 
   testIf(
