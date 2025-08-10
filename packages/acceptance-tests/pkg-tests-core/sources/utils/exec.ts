@@ -62,7 +62,7 @@ export const execFile = (
 export const execGitInit = async (
   options: Options,
 ) => {
-  await execFile(`git`, [`init`], options);
+  await execFile(`git`, [`init`, `--initial-branch=master`], options);
   await execFile(`git`, [`config`, `user.email`, `you@example.com`], options);
   await execFile(`git`, [`config`, `user.name`, `Your Name`], options);
   await execFile(`git`, [`config`, `commit.gpgSign`, `false`], options);
