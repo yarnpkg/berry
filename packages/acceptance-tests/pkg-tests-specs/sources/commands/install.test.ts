@@ -947,8 +947,8 @@ module.exports = {
         });
 
         await expect(run(`install`)).rejects.toMatchObject({
-          code: 42,
-          stdout: expect.stringContaining(`Yarn is terminating due to an unexpected empty event loop`),
+          code: 1,
+          stderr: expect.stringContaining(`Yarn is terminating due to an unexpected empty event loop`),
         });
       }),
     );
