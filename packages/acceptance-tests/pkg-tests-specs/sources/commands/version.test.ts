@@ -14,7 +14,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         version: `1.0.0`,
       }, async ({path, run, source}) => {
-        await run(`version`, `1.1.0`, `--deferred`);
+        await run(`version`, `minor`, `--deferred`);
         await expect(run(`version`, `1.0.1`)).rejects.toThrow();
       }),
     );
@@ -24,7 +24,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         version: `1.0.0`,
       }, async ({path, run, source}) => {
-        await run(`version`, `1.1.0`, `--deferred`);
+        await run(`version`, `minor`, `--deferred`);
         await expect(run(`version`, `patch`)).rejects.toThrow();
       }),
     );
@@ -34,7 +34,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         version: `1.0.0`,
       }, async ({path, run, source}) => {
-        await run(`version`, `1.1.0`, `--deferred`);
+        await run(`version`, `minor`, `--deferred`);
         await run(`version`, `2.0.0`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
@@ -48,7 +48,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         version: `1.0.0`,
       }, async ({path, run, source}) => {
-        await run(`version`, `1.1.0`, `--deferred`);
+        await run(`version`, `minor`, `--deferred`);
         await run(`version`, `major`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
@@ -62,7 +62,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         version: `1.0.0`,
       }, async ({path, run, source}) => {
-        await run(`version`, `1.1.0`, `--deferred`);
+        await run(`version`, `minor`, `--deferred`);
         await run(`version`, `1.1.0`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
@@ -76,7 +76,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv({
         version: `1.0.0`,
       }, async ({path, run, source}) => {
-        await run(`version`, `1.1.0`, `--deferred`);
+        await run(`version`, `minor`, `--deferred`);
         await run(`version`, `minor`);
 
         await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({

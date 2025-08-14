@@ -143,23 +143,14 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should successfully apply a version bump that can't be described by a strategy (deferred)`,
+      `it should not be possible to apply an exact semver as a strategy (deferred)`,
       makeTemporaryEnv(
         {
           version: `1.0.0`,
         },
         async ({path, run}) => {
-          await run(`version`, `3.4.5`, `--deferred`);
-
-          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-            version: `1.0.0`,
-          });
-
-          await run(`version`, `apply`);
-
-          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-            version: `3.4.5`,
-          });
+          await expect(run(`version`, `3.4.5`, `--deferred`),
+          ).rejects.toThrow(/Can't bump to a specific version when using deferred/);
         },
       ),
     );

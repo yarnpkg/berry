@@ -357,17 +357,6 @@ export function getUndecidedDependentWorkspaces(versionFile: Pick<VersionFile, `
   return undecided;
 }
 
-export function suggestStrategy(from: string, to: string) {
-  const cleaned = semver.clean(to);
-
-  for (const strategy of Object.values(Decision))
-    if (strategy !== Decision.UNDECIDED && strategy !== Decision.DECLINE)
-      if (semver.inc(from, strategy) === cleaned)
-        return strategy;
-
-  return null;
-}
-
 export function applyStrategy(version: string | null, strategy: string) {
   if (semver.valid(strategy))
     return strategy;
