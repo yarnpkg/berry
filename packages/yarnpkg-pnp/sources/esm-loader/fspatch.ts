@@ -54,7 +54,7 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
     };
     const originalfstat = binding.fstat;
 
-    // Those values must be synced with packages/yarnpkg-fslib/sources/ZipOpenFS.ts
+    // Those values must be synced with packages/yarnpkg-fslib/sources/ZipOpenFS.ts TODO????????
     const ZIP_MASK = 0xff000000;
     const ZIP_MAGIC = 0x2a000000;
 

@@ -28,7 +28,9 @@
   },
   "resolutions": {
     "ink@^3.2.0": "patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch",
-    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch"
+    "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
+    "make-fetch-happen@npm:^14.0.1": "portal:packages/make-fetch-smaller",
+    "make-fetch-happen@npm:^14.0.2": "portal:packages/make-fetch-smaller"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -55,6 +57,7 @@
     "build:plugin-workspace-tools": "yarn node -r ./scripts/setup-ts-execution ./scripts/create-mock-plugin.ts workspace-tools",
     "build:plugin-commands": "node ./scripts/gen-plugin-commands.js > packages/yarnpkg-cli/sources/pluginCommands.ts",
     "build:compile": "rm -rf \"$0\"/lib && mkdir -p \"$0\"/lib && rsync -a --include '*.d.ts' --exclude '*.ts' --exclude '*.tsx' \"$0\"/sources/ \"$0\"/lib/ && node scripts/compile \"$@\"",
+    "dump:extensions": "yarn node -r ./scripts/setup-ts-execution -p 'JSON.stringify(require(\"./packages/yarnpkg-extensions/sources/index.ts\").packageExtensions)'",
     "test:lint": "eslint --max-warnings 0 .",
     "test:unit": "jest",
     "typecheck:all": "tsc -p ."
@@ -75,7 +78,7 @@
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "@yarnpkg/types": "workspace:^",
-    "chalk": "^3.0.0",
+    "chalk": "^4.1.2",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2"
   },

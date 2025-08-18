@@ -1,0 +1,22 @@
+---
+category: protocols
+slug: /protocol/jsr
+title: "JSR Protocol"
+description: How JSR dependencies work in Yarn.
+---
+
+The `jsr:` protocol fetches packages from the [JSR registry](https://jsr.io/).
+
+```
+yarn add @luca/flag@jsr:2.0.0
+```
+
+Note that because the JSR registry is responsible for compiling packages from TypeScript to JavaScript they sometimes re-pack packages. As a result, the Yarn lockfile contains the full tarball URLs.
+
+Quoting the [JSR documentation](https://jsr.io/docs/npm-compatibility):
+
+> The specific tarballs advertised for a given version of a package may change over time, even if the version itself is not changed. This is because the JSR registry may re-generate npm compatible tarballs for a package version to fix compatibility issues with npm or improve the transpile output in the generated tarball. We refer to this as the “revision” of a tarball. The revision of a tarball is not advertised in the npm registry endpoint, but it is included in the URL of the tarball itself and is included in the `package.json` file in the tarball at the `_jsr_revision` field. The revision of a tarball is not considered part of the package version, and does not affect semver resolution.
+>
+> However, tarball URLs are immutable. Tools that have a reference to a specific tarball URL will always be able to download that exact tarball. When a new revision of a tarball is generated, the old tarball is not deleted and will continue to be available at the same URL. The new tarball will be available at a new URL that includes the new revision.
+>
+> Because the tarball URL is included in package manager lock files, running `npm i` / `yarn` / `pnpm i` will never accidentally download a new revision of the tarball.

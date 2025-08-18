@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "4.8.1",
+  "version": "4.9.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -24,6 +24,7 @@
     "@yarnpkg/plugin-http": "workspace:^",
     "@yarnpkg/plugin-init": "workspace:^",
     "@yarnpkg/plugin-interactive-tools": "workspace:^",
+    "@yarnpkg/plugin-jsr": "workspace:^",
     "@yarnpkg/plugin-link": "workspace:^",
     "@yarnpkg/plugin-nm": "workspace:^",
     "@yarnpkg/plugin-npm": "workspace:^",
@@ -87,6 +88,7 @@
         "@yarnpkg/plugin-http",
         "@yarnpkg/plugin-init",
         "@yarnpkg/plugin-interactive-tools",
+        "@yarnpkg/plugin-jsr",
         "@yarnpkg/plugin-link",
         "@yarnpkg/plugin-nm",
         "@yarnpkg/plugin-npm",
@@ -110,5 +112,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.8.1"
+  "stableVersion": "4.9.2"
 }

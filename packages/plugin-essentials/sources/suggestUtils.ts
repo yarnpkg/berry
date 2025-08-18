@@ -1,7 +1,7 @@
-import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration} from '@yarnpkg/core';
-import {formatUtils, structUtils, semverUtils}                                                                                                     from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                                                                                                                  from '@yarnpkg/fslib';
-import semver                                                                                                                                      from 'semver';
+import {Cache, DescriptorHash, Descriptor, Ident, Locator, Manifest, Project, ThrowReport, Workspace, FetchOptions, ResolveOptions, Configuration, TAG_REGEXP} from '@yarnpkg/core';
+import {formatUtils, structUtils, semverUtils}                                                                                                                 from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                                                                                              from '@yarnpkg/fslib';
+import semver                                                                                                                                                  from 'semver';
 
 const WORKSPACE_PROTOCOL = `workspace:`;
 
@@ -204,17 +204,56 @@ export async function extractDescriptorFromPath(path: PortablePath, {cwd, worksp
   });
 }
 
+type InferenceParameters = {
+  type: `fixed`;
+  range: string;
+} | {
+  type: `resolve`;
+  range: string;
+};
+
+
+function extractInferenceParametersFromRequest(request: Descriptor): InferenceParameters {
+  if (request.range === `unknown`)
+    return {type: `resolve`, range: `latest`};
+
+  if (semverUtils.validRange(request.range))
+    return {type: `fixed`, range: request.range};
+
+  if (TAG_REGEXP.test(request.range))
+    return {type: `resolve`, range: request.range};
+
+  const registryProtocol = request.range.match(/^(?:jsr:|npm:)(.*)/);
+  if (!registryProtocol)
+    return {type: `fixed`, range: request.range};
+
+  let [, range] = registryProtocol;
+
+  // Try to handle the case of "foo@jsr:foo@latest", because otherwise there
+  // would be no way to cleanly add a package from a 3rd-party registry using
+  // a tag (since foo@jsr:latest would refer to "the package named 'latest'").
+  const selfRegistryPrefix = `${structUtils.stringifyIdent(request)}@`;
+  if (range.startsWith(selfRegistryPrefix))
+    range = range.slice(selfRegistryPrefix.length);
+
+  if (semverUtils.validRange(range))
+    return {type: `fixed`, range: request.range};
+
+  if (TAG_REGEXP.test(range))
+    return {type: `resolve`, range: request.range};
+
+  return {type: `fixed`, range: request.range};
+}
+
 export async function getSuggestedDescriptors(request: Descriptor, {project, workspace, cache, target, fixed, modifier, strategies, maxResults = Infinity}: {project: Project, workspace: Workspace, cache: Cache, target: Target, fixed: boolean, modifier: Modifier, strategies: Array<Strategy>, maxResults?: number}): Promise<Results> {
   if (!(maxResults >= 0))
     throw new Error(`Invalid maxResults (${maxResults})`);
 
-  const [requestRange, requestTag] = request.range !== `unknown`
-    ? fixed || semverUtils.validRange(request.range) || !request.range.match(/^[a-z0-9._-]+$/i)
-      ? [request.range, `latest`]
-      : [`unknown`, request.range]
-    : [`unknown`, `latest`];
+  const inference = !fixed || request.range === `unknown`
+    ? extractInferenceParametersFromRequest(request)
+    : {type: `fixed`, range: request.range};
 
-  if (requestRange !== `unknown`) {
+  if (inference.type === `fixed`) {
     return {
       suggestions: [{
         descriptor: request,
@@ -332,7 +371,7 @@ export async function getSuggestedDescriptors(request: Descriptor, {project, wor
               reason: formatUtils.pretty(project.configuration, `(unavailable because enableNetwork is toggled off)`, `grey`),
             });
           } else {
-            const latest = await fetchDescriptorFrom(request, requestTag, {project, cache, workspace, modifier});
+            const latest = await fetchDescriptorFrom(request, inference.range, {project, cache, workspace, modifier});
             if (latest) {
               suggested.push({
                 descriptor: latest,

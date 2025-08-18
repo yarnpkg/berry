@@ -1,0 +1,4196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ZipParsers can read from a zip file: go/comment-truncated.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/crc32-not-streamed.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2117232040,
+      "dataHash": "b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c",
+      "externalAttributes": 2175008768,
+      "name": "foo.txt",
+      "os": 3,
+      "size": 4,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 77771753,
+      "dataHash": "7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730",
+      "externalAttributes": 2175008768,
+      "name": "bar.txt",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/dd.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2732840659,
+      "dataHash": "28265e328d3015e23a5612e1770551358d66f4768f5e5b6fc9bdae111a9f4b4a",
+      "externalAttributes": 0,
+      "name": "filename",
+      "os": 0,
+      "size": 25,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/dupdir.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "a/",
+      "os": 0,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "a/b",
+      "os": 0,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "a/b/",
+      "os": 0,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "a/b/c",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/go-with-datadesc-sig.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2117232040,
+      "dataHash": "b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c",
+      "externalAttributes": 0,
+      "name": "foo.txt",
+      "os": 0,
+      "size": 4,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 77771753,
+      "dataHash": "7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730",
+      "externalAttributes": 0,
+      "name": "bar.txt",
+      "os": 0,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/readme.not.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/readme.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2181565152,
+      "dataHash": "3301280c2047eb897340af3b8dbc75f105011a1d56f8b280ef38b6d3c3fcb9ae",
+      "externalAttributes": 2175008768,
+      "name": "README",
+      "os": 3,
+      "size": 1096,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/subdir.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1105723408,
+      "name": "a/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1105723408,
+      "name": "a/b/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2174746624,
+      "name": "a/b/c",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/symlink.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2392783569,
+      "dataHash": "b4d371f570d910a6d7956a5f8ddff022a601c2dd958fa285de41b8b8c7048219",
+      "externalAttributes": 2717843456,
+      "name": "symlink",
+      "os": 3,
+      "size": 9,
+    },
+  ],
+  "linksCount": 1,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3287144384,
+      "dataHash": "75b730588fcdcc6b8916f1eca200c97ae16325ba0e58674a77d8cc8c415fdccc",
+      "externalAttributes": 2175008768,
+      "name": "test.txt",
+      "os": 3,
+      "size": 26,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1423258110,
+      "dataHash": "f29bb9177d08fb50027e74a37eb00a69906a5994dc55a041670703efe4ecfdc9",
+      "externalAttributes": 2175008768,
+      "name": "gophercolor16x16.png",
+      "os": 3,
+      "size": 785,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test-badbase.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test-badbase.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test-baddirsz.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test-prefix.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test-prefix.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/test-trailing-junk.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3287144384,
+      "dataHash": "75b730588fcdcc6b8916f1eca200c97ae16325ba0e58674a77d8cc8c415fdccc",
+      "externalAttributes": 2175008768,
+      "name": "test.txt",
+      "os": 3,
+      "size": 26,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1423258110,
+      "dataHash": "f29bb9177d08fb50027e74a37eb00a69906a5994dc55a041670703efe4ecfdc9",
+      "externalAttributes": 2175008768,
+      "name": "gophercolor16x16.png",
+      "os": 3,
+      "size": 785,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-7zip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 128,
+      "name": "test.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-22738.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "file",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-go.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "test.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-infozip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2175008768,
+      "name": "test.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-osx.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2175025152,
+      "name": "test.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-win7.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "test.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-winrar.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 128,
+      "name": "test.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/time-winzip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "test.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/unix.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2098461837,
+      "dataHash": "6536d4feae10cf69a35efe7b0e4abedbc7c8c7bac12d89232b7dfcf5f387927c",
+      "externalAttributes": 2176188416,
+      "name": "hello",
+      "os": 3,
+      "size": 8,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2055117726,
+      "dataHash": "39dd73e4dae46b506e7f9b41066f7f21e5d61dadd4d2b5806d31e364886c2d08",
+      "externalAttributes": 2176188416,
+      "name": "dir/bar",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1107230736,
+      "name": "dir/empty/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3127775578,
+      "dataHash": "779ea758cdca523be3302725bd89ced1d0c3499db16fa80580bcf731a7de2099",
+      "externalAttributes": 2166620161,
+      "name": "readonly",
+      "os": 3,
+      "size": 12,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/utf8-7zip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 128,
+      "name": "世界",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/utf8-infozip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2175008768,
+      "name": "世界",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/utf8-osx.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2175025152,
+      "name": "世界",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/utf8-winrar.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 128,
+      "name": "世界",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/utf8-winzip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 0,
+      "name": "世界",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/winxp.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2098461837,
+      "dataHash": "6536d4feae10cf69a35efe7b0e4abedbc7c8c7bac12d89232b7dfcf5f387927c",
+      "externalAttributes": 32,
+      "name": "hello",
+      "os": 11,
+      "size": 8,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2055117726,
+      "dataHash": "39dd73e4dae46b506e7f9b41066f7f21e5d61dadd4d2b5806d31e364886c2d08",
+      "externalAttributes": 32,
+      "name": "dir/bar",
+      "os": 11,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 16,
+      "name": "dir/empty/",
+      "os": 11,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3127775578,
+      "dataHash": "779ea758cdca523be3302725bd89ced1d0c3499db16fa80580bcf731a7de2099",
+      "externalAttributes": 33,
+      "name": "readonly",
+      "os": 11,
+      "size": 12,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/zip64.zip: jszip 1`] = `
+{
+  "error": "Zip 64 is not supported",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/zip64.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 1778378622,
+      "dataHash": "281e862ebb425c62ebf9047e7f9f7909e096f48daccaa0d29523eb5c4f2dae56",
+      "externalAttributes": 2175008768,
+      "name": "README",
+      "os": 3,
+      "size": 36,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/zip64-2.zip: jszip 1`] = `
+{
+  "error": "Zip 64 is not supported",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: go/zip64-2.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 1778378622,
+      "dataHash": "281e862ebb425c62ebf9047e7f9f7909e096f48daccaa0d29523eb5c4f2dae56",
+      "externalAttributes": 2175008768,
+      "name": "README",
+      "os": 3,
+      "size": 36,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/bigzero-zip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2920644948,
+      "dataHash": "d2e15541835e62beaa245043dcc416304c7b50907a90e75979ffa2cde7f4f0c0",
+      "externalAttributes": 2176057344,
+      "name": "bigzero.zip",
+      "os": 3,
+      "size": 4168377,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/bogus.zip: jszip 1`] = `
+{
+  "error": "Invalid ZIP file: EOCD not found",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/bogus.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/broken.zip: jszip 1`] = `
+{
+  "error": "Encrypted zip files are not supported",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/broken.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3071961420,
+      "dataHash": "f51842a329e9a5d346096d124920f34806ddf1f98bd7bc01cf39e9143f7970e6",
+      "externalAttributes": 2175008768,
+      "name": "storedok",
+      "os": 3,
+      "size": 10240,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3071961421,
+      "dataHash": "f51842a329e9a5d346096d124920f34806ddf1f98bd7bc01cf39e9143f7970e6",
+      "externalAttributes": 2175008768,
+      "name": "storedcrcerror",
+      "os": 3,
+      "size": 10240,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 4256668105,
+      "dataHash": "f9047cdb95cbc0f2a2c10896fb7d33648b2369140e402685a37174db0f7d185c",
+      "externalAttributes": 2175008768,
+      "name": "deflateok",
+      "os": 3,
+      "size": 43133,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 4256668106,
+      "dataHash": "f9047cdb95cbc0f2a2c10896fb7d33648b2369140e402685a37174db0f7d185c",
+      "externalAttributes": 2175008768,
+      "name": "deflatecrcerror",
+      "os": 3,
+      "size": 43133,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 4256668105,
+      "dataHash": "e8c4be91376b93df6c5b8af266e4e9b7f4e5d11bb4edd7ab3568848e44a90c01",
+      "externalAttributes": 2175008768,
+      "name": "deflatezliberror",
+      "os": 3,
+      "size": 43133,
+    },
+    {
+      "errorEntry": "No password provided",
+      "name": "cryptok",
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/changing-size.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 176221383,
+      "dataHash": "c962fa1be311981f0f965857e89b000707f9cea07a069d073461308f3019200f",
+      "externalAttributes": 2176057344,
+      "name": "short",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 12600393,
+      "dataHash": "ff72d6bb7e367b34a42308733dfa1549ecc346d5b7fff18969ef639d349c10e3",
+      "externalAttributes": 2176057344,
+      "name": "muchlonger",
+      "os": 3,
+      "size": 11,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/changing-size-muchl.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 176221383,
+      "dataHash": "c962fa1be311981f0f965857e89b000707f9cea07a069d073461308f3019200f",
+      "externalAttributes": 2176057344,
+      "name": "short",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 12600393,
+      "dataHash": "ff72d6bb7e367b34a42308733dfa1549ecc346d5b7fff18969ef639d349c10e3",
+      "externalAttributes": 2176057344,
+      "name": "muchlonger",
+      "os": 3,
+      "size": 11,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1490071018,
+      "dataHash": "fd527ba7a804d2643f576b9b97cfba8a98f091fd87317cf41f44113511d82539",
+      "externalAttributes": 2175008768,
+      "name": "new",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/changing-size-muchlo.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 176221383,
+      "dataHash": "c962fa1be311981f0f965857e89b000707f9cea07a069d073461308f3019200f",
+      "externalAttributes": 2176057344,
+      "name": "short",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 12600393,
+      "dataHash": "ff72d6bb7e367b34a42308733dfa1549ecc346d5b7fff18969ef639d349c10e3",
+      "externalAttributes": 2176057344,
+      "name": "muchlonger",
+      "os": 3,
+      "size": 11,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1334331535,
+      "dataHash": "78830e62fae99f2dcfde97a552efc2b1bb0ae24ba339d1cd5ef86986a38102a1",
+      "externalAttributes": 2176057344,
+      "name": "new",
+      "os": 3,
+      "size": 6,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/changing-size-muchlonger.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 176221383,
+      "dataHash": "c962fa1be311981f0f965857e89b000707f9cea07a069d073461308f3019200f",
+      "externalAttributes": 2176057344,
+      "name": "short",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 12600393,
+      "dataHash": "ff72d6bb7e367b34a42308733dfa1549ecc346d5b7fff18969ef639d349c10e3",
+      "externalAttributes": 2176057344,
+      "name": "muchlonger",
+      "os": 3,
+      "size": 11,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 12600393,
+      "dataHash": "ff72d6bb7e367b34a42308733dfa1549ecc346d5b7fff18969ef639d349c10e3",
+      "externalAttributes": 2175008768,
+      "name": "new",
+      "os": 3,
+      "size": 11,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/cm-default.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2654656602,
+      "dataHash": "dabd119b738f71097c879e5d59e4b0b0dfda4a8ef2c9dc1592dca8b5dfba3760",
+      "externalAttributes": 2176188416,
+      "name": "compressible",
+      "os": 3,
+      "size": 14,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 4276806774,
+      "dataHash": "0584cc6c01d97cd9b60649827d9df34668af729ebb6152ee0c7dedcf2254c6d1",
+      "externalAttributes": 2176188416,
+      "name": "uncompressible",
+      "os": 3,
+      "size": 14,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 2201893146,
+      "dataHash": "56ae91a19335d5105838bcc4e69ea538d709321b880a6db4071717dff1c5c566",
+      "externalAttributes": 2176188416,
+      "name": "large-compressible",
+      "os": 3,
+      "size": 8200,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 2246426984,
+      "dataHash": "ead9a324b41c0f9f6ae3cfae695265c6a5716eefe8b48b47a57a9061dab15623",
+      "externalAttributes": 2175008768,
+      "name": "large-uncompressible",
+      "os": 3,
+      "size": 8200,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/encrypt-none.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 957741520,
+      "dataHash": "dacf36547c7774a0a170806363b5d412991fbc0d6260b2c00b1d3a80a816c23f",
+      "externalAttributes": 2176057344,
+      "name": "plain",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 4220280405,
+      "dataHash": "9eeeedf9bab84e8ff6d17d10734c4aea3529fb49971eeac8e28142537f713bdb",
+      "externalAttributes": 2176188416,
+      "name": "encrypted",
+      "os": 3,
+      "size": 10,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_1-0.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2615402659,
+      "dataHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "externalAttributes": 2176057344,
+      "name": "123",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_1-ef_00.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2212294583,
+      "dataHash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_1-ef_ff.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2212294583,
+      "dataHash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_1-ef_ff.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_1-ff.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2615402659,
+      "dataHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "externalAttributes": 2176057344,
+      "name": "123",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_1-ff.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_2-0.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2615402659,
+      "dataHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "externalAttributes": 2176057344,
+      "name": "12",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_2-ef_00.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2212294583,
+      "dataHash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_2-ef_ff.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2212294583,
+      "dataHash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_2-ef_ff.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_2-ff.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2615402659,
+      "dataHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "externalAttributes": 2176057344,
+      "name": "12",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_2-ff.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_3-0.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2615402659,
+      "dataHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_3-ef_00.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2212294583,
+      "dataHash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_3-ef_ff.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2212294583,
+      "dataHash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_3-ef_ff.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_3-ff.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2615402659,
+      "dataHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_3-ff.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/extra_field_align_4-ff.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3421846044,
+      "dataHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+      "externalAttributes": 2176057344,
+      "name": "1",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/filename_duplicate.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2086221595,
+      "dataHash": "634b027b1b69e1242d40d53e312b3b4ac7710f55be81f289b549446ef6778bee",
+      "externalAttributes": 2176057344,
+      "name": "test1",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1467245784,
+      "dataHash": "7d6fd7774f0d87624da6dcf16d0d3d104c3191e771fbe2f39c86aed4b2bf1a0f",
+      "externalAttributes": 2176057344,
+      "name": "test1",
+      "os": 3,
+      "size": 6,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/filename_duplicate_empty.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2086221595,
+      "dataHash": "634b027b1b69e1242d40d53e312b3b4ac7710f55be81f289b549446ef6778bee",
+      "externalAttributes": 2176057344,
+      "name": "",
+      "os": 3,
+      "size": 6,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1467245784,
+      "dataHash": "7d6fd7774f0d87624da6dcf16d0d3d104c3191e771fbe2f39c86aed4b2bf1a0f",
+      "externalAttributes": 2176057344,
+      "name": "",
+      "os": 3,
+      "size": 6,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/filename_empty.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/fileorder.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2665963749,
+      "dataHash": "c147efcfc2d7ea666a9e4f5187b115c90903f0fc896a56df9a6ef5d8f3fc9f31",
+      "externalAttributes": 2176057344,
+      "name": "file1",
+      "os": 3,
+      "size": 5,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 133050719,
+      "dataHash": "3377870dfeaaa7adf79a374d2702a3fdb13e5e5ea0dd8aa95a802ad39044a92f",
+      "externalAttributes": 2176057344,
+      "name": "file2",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/firstsecond.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 1476497840,
+      "dataHash": "eb5095db9eb6bd6a49b0bbf28759f498e4332aee13a71a31f0184c4b12a01651",
+      "externalAttributes": 2176057344,
+      "name": "firstsecond",
+      "os": 3,
+      "size": 19,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1476497840,
+      "dataHash": "de63444425a2ef5c20e7fe2dc9ebb4ab5d9199257b585b43593ffaabfafdcb26",
+      "externalAttributes": 2176057344,
+      "name": "firstsecondstored",
+      "os": 3,
+      "size": 19,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/firstsecond-split-deflated.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2492203176,
+      "dataHash": "ebc47f12adf5b0de726cb4134deb864f5de51697da620df31bef392826878d9e",
+      "externalAttributes": 0,
+      "name": "first",
+      "os": 0,
+      "size": 9,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 4254931247,
+      "dataHash": "a5cbda6468f424e7b1cddf25bd9439f53d47ee8d6f1d880d319b679954d3649a",
+      "externalAttributes": 0,
+      "name": "second",
+      "os": 0,
+      "size": 10,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/firstsecond-split-stored.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2492203176,
+      "dataHash": "12efb134828e3763908f639e6fb7c51de416cc16368f9aef2fa08253ac0d15a5",
+      "externalAttributes": 2176057344,
+      "name": "first",
+      "os": 3,
+      "size": 9,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 4254931247,
+      "dataHash": "08190eb81ffc6dea922649a96b3e3e11c2d1dfb254510196bc42b0d03536a3c1",
+      "externalAttributes": 2176057344,
+      "name": "second",
+      "os": 3,
+      "size": 10,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/foo-stored.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2356372769,
+      "dataHash": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+      "externalAttributes": 0,
+      "name": "foo",
+      "os": 0,
+      "size": 3,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/gap.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2530230327,
+      "dataHash": "266a21c9d275ade8343bb2449dd9bb993c9da65980da4ea62fde11184cde0564",
+      "externalAttributes": 2176188416,
+      "name": "gap",
+      "os": 3,
+      "size": 17,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 397779414,
+      "dataHash": "cd2127d868215504a41b74da194b882d27f09a65a73769781e406a5925b4c968",
+      "externalAttributes": 2176188416,
+      "name": "second",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 709795568,
+      "dataHash": "0b327ae5395f78294d258362066cf312ae21ca120e39a51772f8eb52c7ce866d",
+      "externalAttributes": 2176188416,
+      "name": "third",
+      "os": 3,
+      "size": 23,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/gap-add.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2530230327,
+      "dataHash": "266a21c9d275ade8343bb2449dd9bb993c9da65980da4ea62fde11184cde0564",
+      "externalAttributes": 2176188416,
+      "name": "gap",
+      "os": 3,
+      "size": 17,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 397779414,
+      "dataHash": "cd2127d868215504a41b74da194b882d27f09a65a73769781e406a5925b4c968",
+      "externalAttributes": 2176188416,
+      "name": "second",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 709795568,
+      "dataHash": "0b327ae5395f78294d258362066cf312ae21ca120e39a51772f8eb52c7ce866d",
+      "externalAttributes": 2176188416,
+      "name": "third",
+      "os": 3,
+      "size": 23,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3289968996,
+      "dataHash": "b012e083a558596a0d0fea7cc7ab1ce65c6dde8db7d756589c7b07d3e1b32a2b",
+      "externalAttributes": 2176188416,
+      "name": "new",
+      "os": 3,
+      "size": 11,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/gap-delete.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2530230327,
+      "dataHash": "266a21c9d275ade8343bb2449dd9bb993c9da65980da4ea62fde11184cde0564",
+      "externalAttributes": 2176188416,
+      "name": "gap",
+      "os": 3,
+      "size": 17,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 397779414,
+      "dataHash": "cd2127d868215504a41b74da194b882d27f09a65a73769781e406a5925b4c968",
+      "externalAttributes": 2176188416,
+      "name": "second",
+      "os": 3,
+      "size": 24,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/gap-replace.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2530230327,
+      "dataHash": "266a21c9d275ade8343bb2449dd9bb993c9da65980da4ea62fde11184cde0564",
+      "externalAttributes": 2176188416,
+      "name": "gap",
+      "os": 3,
+      "size": 17,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 397779414,
+      "dataHash": "cd2127d868215504a41b74da194b882d27f09a65a73769781e406a5925b4c968",
+      "externalAttributes": 2176188416,
+      "name": "second",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2805317512,
+      "dataHash": "80faf886b34a35e005ed0c685b3feda041ea4f9cbeed22d1159e175e735f4019",
+      "externalAttributes": 2176188416,
+      "name": "third",
+      "os": 3,
+      "size": 15,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-archive-comment-longer.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-archive-comment-shorter.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-cdoffset.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-cdsize-large.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-cdsize-small.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-compression-method.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-compsize-larger.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "dd1b77c659639846e9666171bf8d98c7fd8180c389a0457a2c179447772b7ee7",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-compsize-larger-toolarge.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "a0ff29efb4d64b4092d567ad7b85a2513a9ad5370bac5e80217d07b973d846c2",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-compsize-smaller.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3213131846,
+      "dataHash": "5d4505b0a94a8bba1ebc37f0bdef55dec72fde9fe93d3fab7aef52359d906dd0",
+      "externalAttributes": 2176057344,
+      "name": "aaaaaaaaa",
+      "os": 3,
+      "size": 8,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-crc.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 4172791363,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-date.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-file-comment-longer.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-file-comment-shorter.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-file-comment-utf8-ascii.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-magic-bad.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-magic-bad.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-magic-bad2.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-magic-bad2.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-central-size-larger.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 32,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-data.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-central-size-wrong.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3632233996,
+      "dataHash": "e36ebc930c9ec4573353af7fdbf6d1e9930247c648f23395ae4395bc360dbb7d",
+      "externalAttributes": 0,
+      "name": "testfile.txt",
+      "os": 0,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-central-size-wrong.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-dupe-utf8comment.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-dupe-utf8name.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-dupe-zip64-v1.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3723141383,
+      "dataHash": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-dupe-zip64-v2.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3723141383,
+      "dataHash": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-id.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-id-size.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-size.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-ef-local-utf8name-ascii.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-eocd-magic-bad.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-eocd64.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-eocd64.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3723141383,
+      "dataHash": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-file-count-high.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-file-count-low.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-file-count-overflow.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3723141383,
+      "dataHash": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-file-count-overflow.zip: libzip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-gap-before-cd.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2101323514,
+      "dataHash": "ce0f6c28b5869ff166714da5fe08554c70c731a335ff9702e38b00f81ad348c6",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 3,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-gap-before-eocd.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-gap-before-local.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2101323514,
+      "dataHash": "ce0f6c28b5869ff166714da5fe08554c70c731a335ff9702e38b00f81ad348c6",
+      "externalAttributes": 2176188416,
+      "name": "test1",
+      "os": 3,
+      "size": 3,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test2",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-compression-method.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-compsize-larger.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-compsize-smaller.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3213131846,
+      "dataHash": "03d160becd57986f32ab2c934e63d452afe2e8d0550385fcbbf2268740300128",
+      "externalAttributes": 2176057344,
+      "name": "aaaaaaaaa",
+      "os": 3,
+      "size": 8,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-crc.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-filename.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-filename-long.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "errorEntry": "Invalid ZIP file",
+      "name": "a",
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-filename-long.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "errorEntry": "Invalid argument",
+      "name": "a",
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-filename-missing.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-filename-nil-byte.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "te t",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-filename-short.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-magic-bad.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-local-size-larger.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "a",
+      "os": 3,
+      "size": 1,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-stored-size.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "test",
+      "os": 3,
+      "size": 3,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-streamed.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3723141383,
+      "dataHash": "15a0d99bbf3768a7f268dd073a750ffbbe5fbd802ed8eb5e75b50f53296c04e0",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-streamed-2.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3723141383,
+      "dataHash": "15a0d99bbf3768a7f268dd073a750ffbbe5fbd802ed8eb5e75b50f53296c04e0",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/incons-trailing-garbage.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 1001993670,
+      "dataHash": "cf81847c36b3f55c72c38310f6cddac89eea7594f4910e516ed904dda117712f",
+      "externalAttributes": 2176057344,
+      "name": "test",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/junk-at-end.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 1001993670,
+      "dataHash": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+      "externalAttributes": 2176057344,
+      "name": "test",
+      "os": 3,
+      "size": 5,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1106051088,
+      "name": "testdir/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1001993670,
+      "dataHash": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+      "externalAttributes": 2176057344,
+      "name": "testdir/test2",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/junk-at-start.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/junk-at-start.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/lzma-no-eos.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 14,
+      "crc": 519593633,
+      "dataHash": "8b7fa2b3177c1d8daeafee49583ea36e3f65fd2caf3a7fae3cb81ca2fb589f26",
+      "externalAttributes": 32,
+      "name": "testfile-with-eos.data",
+      "os": 0,
+      "size": 206,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/manyfiles-zip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2587423143,
+      "dataHash": "47861cb79ad6bfea31b667da7b1e67e541a54bb6a02473f5bb6716709ab397c4",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles.zip",
+      "os": 3,
+      "size": 6067810,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 2891865028,
+      "dataHash": "1d8735059786f8fc1a3b2b9a8a2a3e261c08291bbb1b5b8456c00297ab262b33",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles-133000.zip",
+      "os": 3,
+      "size": 11614812,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 2093353337,
+      "dataHash": "de1ae454a37c5d8209ee99016266abfe2ff75378fdcd6543f3759cfd37680ec5",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles-65536.zip",
+      "os": 3,
+      "size": 5744978,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 1387831060,
+      "dataHash": "ca593094bde1d2b4aa2ed6afcff0680e97305d5ec758f3e869739c2917031da3",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles-zip64-modulo.zip",
+      "os": 3,
+      "size": 6067886,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 1938219285,
+      "dataHash": "83da00f4fec10d4a4ac2d0f14df3978e283736db0aaef2faffe0a1128a245068",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles-zip64.zip",
+      "os": 3,
+      "size": 6067886,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 680712485,
+      "dataHash": "6a0b3fe7d4048a3e7a674ee5589b36aeffd026f95cf97a28e829d2bed7097079",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles-fewer.zip",
+      "os": 3,
+      "size": 6067810,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 2445739660,
+      "dataHash": "e6a93796b65709dbfc04dc69c3b36afe5ab57dafb6180a795c4ab14c8c02bf30",
+      "externalAttributes": 2176057344,
+      "name": "manyfiles-more.zip",
+      "os": 3,
+      "size": 6067810,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-default.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-dstpoint.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2956279880,
+      "dataHash": "3c41adb58084174470a635a491a3288fbf86e468907202b68b654683dafd5481",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-dstpoint-deflated.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-post-dstpoint.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2956279880,
+      "dataHash": "3c41adb58084174470a635a491a3288fbf86e468907202b68b654683dafd5481",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-post-dstpoint-deflated.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-pre-dstpoint.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2956279880,
+      "dataHash": "3c41adb58084174470a635a491a3288fbf86e468907202b68b654683dafd5481",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/mtime-pre-dstpoint-deflated.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/multidisk.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/multidisk.zip: libzip 1`] = `
+{
+  "error": "Multi-disk zip archives not supported",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/rename_ok.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2037438768,
+      "dataHash": "4b839321eccc2d8b1a54edf5cf71a184c3dd484061c0354a690f28da2f397314",
+      "externalAttributes": 2175008768,
+      "name": "file1",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2428817872,
+      "dataHash": "8e2b28d3ab37e2b1183043104fb38bea1b9a4ba1e90b97f07364191662ab00c4",
+      "externalAttributes": 2175008768,
+      "name": "notfile2",
+      "os": 3,
+      "size": 25,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3964873444,
+      "dataHash": "89880d874f8e4c11328e51e99877747caa81b3950f94c4a1887a1f6d47a5bc38",
+      "externalAttributes": 2175008768,
+      "name": "file3",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 696907016,
+      "dataHash": "68bb5350afcf72dd61f497b54148b3b53d1547932603d36e7875aaaf94694565",
+      "externalAttributes": 2175008768,
+      "name": "file4",
+      "os": 3,
+      "size": 25,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/stored-no-eos.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 519593633,
+      "dataHash": "ca6029e24ec784b73b262f7c5d786d660cbb3c05b26398b5c0264c7c1dd90ecc",
+      "externalAttributes": 32,
+      "name": "testfile-with-eos.data",
+      "os": 0,
+      "size": 206,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/streamed.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3723141383,
+      "dataHash": "15a0d99bbf3768a7f268dd073a750ffbbe5fbd802ed8eb5e75b50f53296c04e0",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/streamed-zip64.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 3723141383,
+      "dataHash": "15a0d99bbf3768a7f268dd073a750ffbbe5fbd802ed8eb5e75b50f53296c04e0",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 1001993670,
+      "dataHash": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+      "externalAttributes": 2176057344,
+      "name": "test",
+      "os": 3,
+      "size": 5,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1106051088,
+      "name": "testdir/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 1001993670,
+      "dataHash": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+      "externalAttributes": 2176057344,
+      "name": "testdir/test2",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test_open_multiple.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2934909520,
+      "dataHash": "9c56cc51b374c3ba189210d5b6d4bf57790d351c96c47c02190ecf1e430635ab",
+      "externalAttributes": 2175041568,
+      "name": "stuff",
+      "os": 3,
+      "size": 8,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-cp437.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "	
+
+",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": " ",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "!"#$%&'()*+,-./0",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "123456789:;<=>?@",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ABCDEFGHIJKLMNOP",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "QRSTUVWXYZ[\\]^_\`",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "abcdefghijklmnop",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "qrstuvwxyz{|}~�",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-cp437.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "◄↕‼¶§▬↨↑↓→←∟↔▲▼ ",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "!"#$%&'()*+,-./0",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "123456789:;<=>?@",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ABCDEFGHIJKLMNOP",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "QRSTUVWXYZ[\\]^_\`",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "abcdefghijklmnop",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "qrstuvwxyz{|}~⌂Ç",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "üéâäàåçêëèïîìÄÅÉ",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "æÆôöòûùÿÖÜ¢£¥₧ƒá",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "íóúñÑªº¿⌐¬½¼¡«»░",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "▒▓│┤╡╢╖╕╣║╗╝╜╛┐└",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "┴┬├─┼╞╟╚╔╩╦╠═╬╧╨",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "╤╥╙╘╒╓╫╪┘┌█▄▌▐▀α",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ßΓπΣσµτΦΘΩδ∞φε∩≡",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "±≥≤⌠⌡÷≈°∙·√ⁿ²■  ",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-cp437-comment-utf-8.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "	
+
+",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": " ",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "!"#$%&'()*+,-./0",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "123456789:;<=>?@",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ABCDEFGHIJKLMNOP",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "QRSTUVWXYZ[\\]^_\`",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "abcdefghijklmnop",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "qrstuvwxyz{|}~�",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-cp437-comment-utf-8.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "◄↕‼¶§▬↨↑↓→←∟↔▲▼ ",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "!"#$%&'()*+,-./0",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "123456789:;<=>?@",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ABCDEFGHIJKLMNOP",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "QRSTUVWXYZ[\\]^_\`",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "abcdefghijklmnop",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "qrstuvwxyz{|}~⌂Ç",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "üéâäàåçêëèïîìÄÅÉ",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "æÆôöòûùÿÖÜ¢£¥₧ƒá",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "íóúñÑªº¿⌐¬½¼¡«»░",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "▒▓│┤╡╢╖╕╣║╗╝╜╛┐└",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "┴┬├─┼╞╟╚╔╩╦╠═╬╧╨",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "╤╥╙╘╒╓╫╪┘┌█▄▌▐▀α",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ßΓπΣσµτΦΘΩδ∞φε∩≡",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "±≥≤⌠⌡÷≈°∙·√ⁿ²■  ",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-cp437-fc.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-cp437-fc-utf-8-filename.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "ÄÖÜßäöü",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-utf8.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ÄÖÜäöüßćçĉéèêëē",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test-utf8-unmarked.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2176057344,
+      "name": "ÄÖÜäöüßćçĉéèêëē",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/test2.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3632233996,
+      "dataHash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "externalAttributes": 2176188416,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 4,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testbuffer.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 584907523,
+      "dataHash": "308832fa6739320e9290b61a8e62171a6c81519e7781ac1b225657cbb64d7bf1",
+      "externalAttributes": 2176188416,
+      "name": "teststring.txt",
+      "os": 3,
+      "size": 54,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testbuffer_reopen.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2299494936,
+      "dataHash": "62b88709dcc1862a09a7ce79cf438feb55ff8b333eb722b6592410bc8f714179",
+      "externalAttributes": 2176057344,
+      "name": "teststring.txt",
+      "os": 3,
+      "size": 12,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 4162524597,
+      "dataHash": "99ef8951949dcfd3e94d094f238fb76c8c1cbd497cef1937d498ffa571e3d1e3",
+      "externalAttributes": 2176057344,
+      "name": "newfile.txt",
+      "os": 3,
+      "size": 11,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testbzip2.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 12,
+      "crc": 2956279880,
+      "dataHash": "7d242a3e166fc9cb48be2195fbf0a124fe42478f1f4315ef26e0d87b6ba1431c",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testchanged.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2037438768,
+      "dataHash": "4b839321eccc2d8b1a54edf5cf71a184c3dd484061c0354a690f28da2f397314",
+      "externalAttributes": 2175008768,
+      "name": "file1",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2428817872,
+      "dataHash": "8e2b28d3ab37e2b1183043104fb38bea1b9a4ba1e90b97f07364191662ab00c4",
+      "externalAttributes": 2175008768,
+      "name": "file2",
+      "os": 3,
+      "size": 25,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3964873444,
+      "dataHash": "89880d874f8e4c11328e51e99877747caa81b3950f94c4a1887a1f6d47a5bc38",
+      "externalAttributes": 2175008768,
+      "name": "file3",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 696907016,
+      "dataHash": "68bb5350afcf72dd61f497b54148b3b53d1547932603d36e7875aaaf94694565",
+      "externalAttributes": 2175008768,
+      "name": "file4",
+      "os": 3,
+      "size": 25,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testchangedlocal.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2037438768,
+      "dataHash": "4b839321eccc2d8b1a54edf5cf71a184c3dd484061c0354a690f28da2f397314",
+      "externalAttributes": 2175008768,
+      "name": "file1",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2428817872,
+      "dataHash": "8e2b28d3ab37e2b1183043104fb38bea1b9a4ba1e90b97f07364191662ab00c4",
+      "externalAttributes": 2175008768,
+      "name": "file2",
+      "os": 3,
+      "size": 25,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3964873444,
+      "dataHash": "89880d874f8e4c11328e51e99877747caa81b3950f94c4a1887a1f6d47a5bc38",
+      "externalAttributes": 2175008768,
+      "name": "file3",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 696907016,
+      "dataHash": "68bb5350afcf72dd61f497b54148b3b53d1547932603d36e7875aaaf94694565",
+      "externalAttributes": 2175008768,
+      "name": "file4",
+      "os": 3,
+      "size": 25,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testcomment.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2037438768,
+      "dataHash": "4b839321eccc2d8b1a54edf5cf71a184c3dd484061c0354a690f28da2f397314",
+      "externalAttributes": 2175008768,
+      "name": "file1",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2428817872,
+      "dataHash": "8e2b28d3ab37e2b1183043104fb38bea1b9a4ba1e90b97f07364191662ab00c4",
+      "externalAttributes": 2175008768,
+      "name": "file2",
+      "os": 3,
+      "size": 25,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3964873444,
+      "dataHash": "89880d874f8e4c11328e51e99877747caa81b3950f94c4a1887a1f6d47a5bc38",
+      "externalAttributes": 2175008768,
+      "name": "file3",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 696907016,
+      "dataHash": "68bb5350afcf72dd61f497b54148b3b53d1547932603d36e7875aaaf94694565",
+      "externalAttributes": 2175008768,
+      "name": "file4",
+      "os": 3,
+      "size": 25,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testcomment13.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2037438768,
+      "dataHash": "4b839321eccc2d8b1a54edf5cf71a184c3dd484061c0354a690f28da2f397314",
+      "externalAttributes": 2175008768,
+      "name": "file1",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3964873444,
+      "dataHash": "89880d874f8e4c11328e51e99877747caa81b3950f94c4a1887a1f6d47a5bc38",
+      "externalAttributes": 2175008768,
+      "name": "file3",
+      "os": 3,
+      "size": 24,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testcommentremoved.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2037438768,
+      "dataHash": "4b839321eccc2d8b1a54edf5cf71a184c3dd484061c0354a690f28da2f397314",
+      "externalAttributes": 2175008768,
+      "name": "file1",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 2428817872,
+      "dataHash": "8e2b28d3ab37e2b1183043104fb38bea1b9a4ba1e90b97f07364191662ab00c4",
+      "externalAttributes": 2175008768,
+      "name": "file2",
+      "os": 3,
+      "size": 25,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3964873444,
+      "dataHash": "89880d874f8e4c11328e51e99877747caa81b3950f94c4a1887a1f6d47a5bc38",
+      "externalAttributes": 2175008768,
+      "name": "file3",
+      "os": 3,
+      "size": 24,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 696907016,
+      "dataHash": "68bb5350afcf72dd61f497b54148b3b53d1547932603d36e7875aaaf94694565",
+      "externalAttributes": 2175008768,
+      "name": "file4",
+      "os": 3,
+      "size": 25,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testdeflated.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testdeflated2.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2179792896,
+      "name": "abac-repeat2.txt",
+      "os": 3,
+      "size": 60,
+    },
+    {
+      "compressionMethod": 8,
+      "crc": 2956279880,
+      "dataHash": "ec48329a97ea027f434aeb7e465e45fe5bdea43db81793390e81ffa0b7a011ee",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testdir.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1107099664,
+      "name": "testdir/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1107099664,
+      "name": "testdir-noslash/",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testempty.zip: libzip 1`] = `
+{
+  "entries": [],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testextrabytes.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2175008768,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-UTF8.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "ÄÖÜßäöü",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-cp437.zip: jszip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "����������������",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-cp437.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "üéâäàåçêëèïîìÄÅÉ",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-ef.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180907007,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-long-comment.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-lzma.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 14,
+      "crc": 2698961448,
+      "dataHash": "1246848452c2fb7813f0a45debfdd6163222e60e7c35f208178de17602432246",
+      "externalAttributes": 32,
+      "name": "abac-repeat.txt",
+      "os": 0,
+      "size": 64,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-plus-extra.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-stored-dos.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2698961448,
+      "dataHash": "ded4f5b00d0bc81b4b85b217bc137246f0ad422eebea9008b2f0f54d62963bca",
+      "externalAttributes": 32,
+      "name": "abac-repeat.txt",
+      "os": 0,
+      "size": 64,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-torrentzip.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 0,
+      "dataHash": "9b4fb24edd6d1d8830e272398263cdbf026b97392cc35387b991dc0248a628f9",
+      "externalAttributes": 0,
+      "name": "testfile.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-torrentzip-modified.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 8,
+      "crc": 0,
+      "dataHash": "9b4fb24edd6d1d8830e272398263cdbf026b97392cc35387b991dc0248a628f9",
+      "externalAttributes": 0,
+      "name": "testfile.txt",
+      "os": 0,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-truncated.zip: libzip 1`] = `
+{
+  "error": "Not a zip archive",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-xz.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 95,
+      "crc": 2698961448,
+      "dataHash": "010c87fdcf5b37972440c00be00d28e536547d28579d89a7e3776704f62afd27",
+      "externalAttributes": 32,
+      "name": "abac-repeat.txt",
+      "os": 0,
+      "size": 64,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile-zstd.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 93,
+      "crc": 2698961448,
+      "dataHash": "8d4f0dbc05e8f7be43f18858d0a3ec2107c88c312fce9bebd3cb90e2c9b0ecac",
+      "externalAttributes": 32,
+      "name": "abac-repeat.txt",
+      "os": 0,
+      "size": 64,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile0.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/testfile2014.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/teststdin.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 584907523,
+      "dataHash": "308832fa6739320e9290b61a8e62171a6c81519e7781ac1b225657cbb64d7bf1",
+      "externalAttributes": 2176188416,
+      "name": "teststring.txt",
+      "os": 3,
+      "size": 54,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/teststored.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2956279880,
+      "dataHash": "3c41adb58084174470a635a491a3288fbf86e468907202b68b654683dafd5481",
+      "externalAttributes": 2180841472,
+      "name": "abac-repeat.txt",
+      "os": 3,
+      "size": 60,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/utf-8-standardization-output.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 2323718681,
+      "dataHash": "888cb4b6f2223fe501782e434cb7e812c376403f6bbf376e097471174f23ef60",
+      "externalAttributes": 32,
+      "name": "ibm437-üéâäàåçêëè.txt",
+      "os": 0,
+      "size": 30,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip-in-archive-comment.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip-in-archive-comment.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 1001993670,
+      "dataHash": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+      "externalAttributes": 2176057344,
+      "name": "test",
+      "os": 3,
+      "size": 5,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip64.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3723141383,
+      "dataHash": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip64-3mf.zip: jszip 1`] = `
+{
+  "error": "Zip 64 is not supported",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip64-3mf.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 3723141383,
+      "dataHash": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+      "externalAttributes": 293601280,
+      "name": "-",
+      "os": 3,
+      "size": 2,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip64-in-archive-comment.zip: jszip 1`] = `
+{
+  "error": "Zip archive inconsistent",
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zip64-in-archive-comment.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 2180841472,
+      "name": "testfile.txt",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;
+
+exports[`ZipParsers can read from a zip file: libzip/zipcmp_zip_dir.zip: libzip 1`] = `
+{
+  "entries": [
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1107099664,
+      "name": "empty-dir/",
+      "os": 3,
+      "size": 0,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 3904355907,
+      "dataHash": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "externalAttributes": 2176057344,
+      "name": "dir-with-file/a",
+      "os": 3,
+      "size": 1,
+    },
+    {
+      "compressionMethod": 0,
+      "crc": 0,
+      "dataHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalAttributes": 1107099664,
+      "name": "00-empty-dir/",
+      "os": 3,
+      "size": 0,
+    },
+  ],
+  "linksCount": 0,
+}
+`;

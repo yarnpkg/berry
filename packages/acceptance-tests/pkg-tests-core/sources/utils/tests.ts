@@ -9,10 +9,12 @@ import {IncomingMessage, ServerResponse}           from 'http';
 import http                                        from 'http';
 import invariant                                   from 'invariant';
 import {AddressInfo}                               from 'net';
+import net                                         from 'net';
 import os                                          from 'os';
 import pem                                         from 'pem';
 import semver                                      from 'semver';
 import serveStatic                                 from 'serve-static';
+import * as sigstore                               from 'sigstore';
 import stream                                      from 'stream';
 import * as t                                      from 'typanion';
 import {promisify}                                 from 'util';
@@ -24,6 +26,19 @@ import * as fsUtils                                from './fs';
 
 const deepResolve = require(`super-resolve`);
 const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtures`)));
+
+const TEST_MAJOR = process.env.TEST_MAJOR
+  ? parseInt(process.env.TEST_MAJOR, 10)
+  : null;
+
+function isAtLeastMajor(major: number) {
+  return TEST_MAJOR !== null && TEST_MAJOR >= major;
+}
+
+export const FEATURE_CHECKS = {
+  jsonLockfile: isAtLeastMajor(5),
+  prologConstraints: !isAtLeastMajor(5),
+} as const;
 
 // Testing things inside a big-endian container takes forever
 export const TEST_TIMEOUT = os.endianness() === `BE`
@@ -423,6 +438,16 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       const {scope, localName, version} = parsedRequest;
       const name = scope ? `${scope}/${localName}` : localName;
 
+      if (parsedRequest.registry === `jsr` && scope !== `jsr`) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
+      if (parsedRequest.registry !== `jsr` && scope === `jsr`) {
+        processError(response, 404, `Package not found: ${name}`);
+        return;
+      }
+
       const packageEntry = await getPackageEntry(name);
       if (!packageEntry) {
         processError(response, 404, `Package not found: ${name}`);
@@ -558,6 +583,15 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
 
         if (typeof body.versions[version].gitHead !== `undefined` && name === `githead-forbidden`)
           return processError(response, 400, `Unexpected gitHead`);
+
+        if (name === `provenance-required`) {
+          try {
+            const bundle = JSON.parse(body._attachments[`${name}-${version}.sigstore`].data);
+            sigstore.verify(bundle);
+          } catch (error) {
+            return processError(response, 400, (error as Error).message);
+          }
+        }
 
         response.writeHead(200, {[`Content-Type`]: `application/json`});
         return response.end(rawData);
@@ -788,6 +822,110 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
   });
 };
 
+const proxyServerUrls: {
+  http: Promise<string> | null;
+  https: Promise<string> | null;
+} = {http: null, https: null};
+
+export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServerUrls} = {}): Promise<string> => {
+  const serverUrl = proxyServerUrls[type];
+  if (serverUrl !== null)
+    return serverUrl;
+
+  const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
+    res.writeHead(statusCode);
+    res.end(errorMessage);
+  };
+
+  return proxyServerUrls[type] = new Promise((resolve, reject) => {
+    const listener: http.RequestListener = (req, res) => {
+      void (async () => {
+        try {
+          if (!req.url) {
+            sendError(res, 400, `Missing URL in request`);
+            return;
+          }
+
+          const url = new URL(req.url);
+          const options = {
+            hostname: url.hostname,
+            port: url.port || (url.protocol === `https:` ? 443 : 80),
+            path: `${url.pathname}${url.search}`,
+            method: req.method,
+            headers: {...req.headers},
+          };
+
+          delete options.headers[`proxy-authorization`];
+          delete options.headers[`proxy-connection`];
+          options.headers.connection = `close`;
+
+          const proxyReq = (url.protocol === `https:` ? https : http).request(options, proxyRes => {
+            res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
+            proxyRes.pipe(res);
+          });
+
+          req.pipe(proxyReq);
+
+          proxyReq.on(`error`, err => {
+            sendError(res, 502, `Proxy error: ${err.message}`);
+          });
+        } catch (error) {
+          sendError(res, 500, `Proxy server error: ${error.message}`);
+        }
+      })();
+    };
+
+    (async () => {
+      let server: https.Server | http.Server;
+
+      if (type === `https`) {
+        const certs = await getHttpsCertificates();
+
+        server = https.createServer({
+          cert: certs.server.certificate,
+          key: certs.server.clientKey,
+          ca: certs.ca.certificate,
+        }, listener);
+      } else {
+        server = http.createServer(listener);
+      }
+
+      // Handle the CONNECT method using the 'connect' event
+      server.on(`connect`, (req, clientSocket, head) => {
+        // Parse the target and establish the connection
+        const [targetHost, targetPort] = (req.url || ``).split(`:`);
+        const port = parseInt(targetPort) || 443;
+
+        const serverSocket = net.connect(port, targetHost, () => {
+          clientSocket.write(
+            `HTTP/1.1 200 Connection Established\r\n` +
+            `\r\n`,
+          );
+
+          serverSocket.write(head);
+
+          serverSocket.pipe(clientSocket);
+          clientSocket.pipe(serverSocket);
+        });
+
+        serverSocket.on(`error`, () => {
+          clientSocket.end();
+        });
+        clientSocket.on(`error`, () => {
+          serverSocket.end();
+        });
+      });
+
+      // We don't want the server to prevent the process from exiting
+      server.unref();
+      server.listen(() => {
+        const {port} = server.address() as AddressInfo;
+        resolve(`${type}://localhost:${port}`);
+      });
+    })();
+  });
+};
+
 export interface PackageDriver {
   (packageJson: Record<string, any>, subDefinition: Record<string, any> | RunFunction, fn?: RunFunction): any;
   getPackageManagerName: () => string;
@@ -950,11 +1088,18 @@ export const generatePkgDriver = ({
   return withConfig({});
 };
 
-export const testIf = (condition: () => boolean, name: string,
-  execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
-  if (condition()) {
-    test(name, execute, timeout);
-  }
+export const testIf = (condition: (() => boolean) | keyof typeof FEATURE_CHECKS | boolean, name: string, execute?: jest.ProvidesCallback | undefined, timeout?: number | undefined) => {
+  const isConditionMet = typeof condition === `function`
+    ? condition()
+    : typeof condition === `boolean`
+      ? condition
+      : FEATURE_CHECKS[condition];
+
+  const testFn = isConditionMet
+    ? test
+    : test.skip;
+
+  testFn(name, execute, timeout);
 };
 
 let httpsCertificates: {

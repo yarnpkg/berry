@@ -28,13 +28,14 @@ export interface PeerDependencyMeta {
 
 export interface PublishConfig {
   access?: string;
+  bin?: Map<string, PortablePath>;
+  browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
+  executableFiles?: Set<PortablePath>;
   main?: PortablePath;
   module?: PortablePath;
-  type?: string;
-  browser?: PortablePath | Map<PortablePath, boolean | PortablePath>;
-  bin?: Map<string, PortablePath>;
+  provenance?: boolean;
   registry?: string;
-  executableFiles?: Set<PortablePath>;
+  type?: string;
 }
 
 export interface InstallConfig {
@@ -521,6 +522,9 @@ export class Manifest {
 
       if (typeof data.publishConfig.registry === `string`)
         this.publishConfig.registry = data.publishConfig.registry;
+
+      if (typeof data.publishConfig.provenance === `boolean`)
+        this.publishConfig.provenance = data.publishConfig.provenance;
 
       if (typeof data.publishConfig.bin === `string`) {
         if (this.name !== null) {

@@ -1,0 +1,14 @@
+{
+  "name": "make-fetch-smaller",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yarnpkg/berry.git",
+    "directory": "packages/make-fetch-smaller"
+  },
+  "license": "BSD-2-Clause",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.12.0"
+  }
+}

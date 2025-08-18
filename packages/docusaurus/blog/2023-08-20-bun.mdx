@@ -6,6 +6,8 @@ authors: [arcanis]
 
 I'm sure many of you are curious about our position regarding [Bun](https://bun.sh/), the product from Oven, the company behind Bun (we're going in cycles). It's so fast, is there any merits to using Yarn?
 
+{/* truncate */}
+
 First, we feel useful to point out that this sentence isn't particularly new. We heard the same (often from the same people) asking why use Yarn when npm/pnpm/whateverpm have all its features or outspeed it. Answering that is a little tough, because the premise is wrong: other package managers don't have its features[^1][^,2], and the speed differences are at best marginal. They are a good fight, but we believe Yarn ultimately has a unique position that no other package managers emulates today.
 
 Bun is an interesting case, though. It's definitely much faster[^3]. Can Yarn compete? We believe so.
@@ -24,7 +26,7 @@ Will Bun reach some of your hearts? More than likely. Will it be a replacement? 
 
 [^1]: For example the [portable shell](/features/scripting#portable-shell), the [constraints](/features/constraints), the [patching](/features/patching), ...
 
-[^,2]: Or delegate to Yarn; did you know pnpm's [hoisted linker](https://pnpm.io/npmrc#node-linker) is literally [using Yarn as a dependency](https://github.com/pnpm/pnpm/blob/ee6e0734e911d48f6ff786aa0f05b9b9926e4815/pkg-manager/real-hoist/src/index.ts#L7)?
+[^,2]: Or delegate to Yarn; did you know pnpm's [hoisted linker](https://pnpm.io/settings#nodelinker) is [uses Yarn as a dependency](https://github.com/pnpm/pnpm/blob/ee6e0734e911d48f6ff786aa0f05b9b9926e4815/pkg-manager/real-hoist/src/index.ts#L7)?
 
 [^3]: Although [not as much as they pretend](https://twitter.com/arcanis/status/1702297503465611278), which is a bit of a letdown. Marketing corrupts, eh?
 

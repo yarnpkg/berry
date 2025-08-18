@@ -64,6 +64,10 @@ export function getRegistryConfiguration(registry: string, {configuration}: {con
   return null;
 }
 
+const JSR_DEFAULT_SCOPE_CONFIGURATION = new Map([
+  [`npmRegistryServer`, `https://npm.jsr.io/`],
+]);
+
 export function getScopeConfiguration(scope: string | null, {configuration}: {configuration: Configuration}): MapLike | null {
   if (scope === null)
     return null;
@@ -71,10 +75,13 @@ export function getScopeConfiguration(scope: string | null, {configuration}: {co
   const scopeConfigurations = configuration.get(`npmScopes`);
 
   const scopeConfiguration = scopeConfigurations.get(scope);
-  if (!scopeConfiguration)
-    return null;
+  if (scopeConfiguration)
+    return scopeConfiguration;
 
-  return scopeConfiguration;
+  if (scope === `jsr`)
+    return JSR_DEFAULT_SCOPE_CONFIGURATION;
+
+  return null;
 }
 
 export function getAuthConfiguration(registry: string, {configuration, ident}: {configuration: Configuration, ident?: Ident}): MapLike {

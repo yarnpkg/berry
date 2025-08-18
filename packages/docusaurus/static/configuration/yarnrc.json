@@ -35,13 +35,6 @@
       "enum": ["required-only", "match-spec", "always"],
       "default": "always"
     },
-    "httpsCaFilePath": {
-      "_package": "@yarnpkg/core",
-      "title": "Path to a file containing one or multiple Certificate Authority signing certificates.",
-      "type": "string",
-      "format": "uri-reference",
-      "examples": ["./exampleCA.pem"]
-    },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
       "title": "List of git refs against which Yarn will compare your branch when it needs to detect changes.",
@@ -267,7 +260,6 @@
     "httpProxy": {
       "_package": "@yarnpkg/core",
       "title": "Proxy to use when making an HTTP request.",
-      "description": "Only HTTP proxies are supported at the moment.",
       "type": "string",
       "format": "uri",
       "examples": ["http://proxy:4040"]
@@ -283,6 +275,13 @@
       "title": "Amount of time to wait in milliseconds before cancelling pending HTTP requests.",
       "type": "number",
       "default": 60000
+    },
+    "httpsCaFilePath": {
+      "_package": "@yarnpkg/core",
+      "title": "Path to a file containing one or multiple Certificate Authority signing certificates.",
+      "type": "string",
+      "format": "uri-reference",
+      "examples": ["./exampleCA.pem"]
     },
     "httpsCertFilePath": {
       "_package": "@yarnpkg/core",
@@ -301,7 +300,6 @@
     "httpsProxy": {
       "_package": "@yarnpkg/core",
       "title": "Define a proxy to use when making an HTTPS request.",
-      "description": "Only HTTP proxies are supported at the moment.",
       "type": "string",
       "format": "uri",
       "examples": ["http://proxy:4040"]
@@ -424,14 +422,14 @@
         "^(.+)$": {
           "type": "object",
           "properties": {
-            "httpsCaFilePath": {
-              "$ref": "#/properties/httpsCaFilePath"
-            },
             "enableNetwork": {
               "$ref": "#/properties/enableNetwork"
             },
             "httpProxy": {
               "$ref": "#/properties/httpProxy"
+            },
+            "httpsCaFilePath": {
+              "$ref": "#/properties/httpsCaFilePath"
             },
             "httpsCertFilePath": {
               "$ref": "#/properties/httpsCertFilePath"
@@ -529,8 +527,15 @@
       "_package": "@yarnpkg/plugin-npm-cli",
       "type": "string",
       "title": "Define the default access to use when publishing packages to the npm registry.",
-      "description": "Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the `publishConfig.access` field.",
+      "description": "Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the [`publishConfig.access`](manifest#publishConfig.access) field.",
       "enum": ["public", "restricted"]
+    },
+    "npmPublishProvenance": {
+      "_package": "@yarnpkg/plugin-npm-cli",
+      "title": "Define whether to attach a provenance statement when publishing packages to the npm registry.",
+      "description": "If true, Yarn will generate and publish the provenance information when publishing packages. Can be overridden on a per-package basis using the [`publishConfig.provenance`](manifest#publishConfig.provenance) field.",
+      "type": "boolean",
+      "default": false
     },
     "npmAuditExcludePackages": {
       "_package": "@yarnpkg/plugin-npm-cli",

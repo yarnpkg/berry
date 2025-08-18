@@ -2,7 +2,7 @@ import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, s
 import {MessageName, ReportError}                                                                                                 from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                                                                                       from '@yarnpkg/fslib';
 import {prompt}                                                                                                                   from 'enquirer';
-import pick                                                                                                                       from 'lodash/pick';
+import {pick}                                                                                                                     from 'es-toolkit/compat';
 import semver                                                                                                                     from 'semver';
 
 import {Hooks}                                                                                                                    from './index';
@@ -164,6 +164,14 @@ async function loadPackageMetadataInfoFromNetwork(identPath: PortablePath, ident
   });
 }
 
+function generateMetadataFileName(ident: Ident) {
+  if (ident.scope !== null) {
+    return `@${ident.scope}-${ident.name}-${ident.scope.length}`;
+  } else {
+    return ident.name;
+  }
+}
+
 /**
  * Caches and returns the package metadata for the given ident.
  *
@@ -177,7 +185,7 @@ export async function getPackageMetadata(ident: Ident, {cache, project, registry
   registry = normalizeRegistry(configuration, {ident, registry});
 
   const registryFolder = getRegistryFolder(configuration, registry);
-  const identPath = ppath.join(registryFolder, `${structUtils.slugifyIdent(ident)}.json`);
+  const identPath = ppath.join(registryFolder, `${generateMetadataFileName(ident)}.json`);
 
   let cached: CachedMetadata | null = null;
 

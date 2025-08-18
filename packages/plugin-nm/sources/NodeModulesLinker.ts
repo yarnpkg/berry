@@ -1045,6 +1045,28 @@ export function getGlobalHardlinksStore(configuration: Configuration): PortableP
   return ppath.join(configuration.get(`globalFolder`), `store` as Filename);
 }
 
+/**
+ * Mutate binSymlinks by removing binaries related to the changedLocations.
+ */
+function invalidateBinSymlinks(binSymlinks: BinSymlinkMap, changedLocations: Set<PortablePath>): void {
+  const getLocationPackageRoot = (targetPath: PortablePath): PortablePath => {
+    const parts = targetPath.split(ppath.sep);
+    const nmIndex = parts.lastIndexOf(NODE_MODULES);
+    if (nmIndex < 0 || nmIndex == parts.length - 1)
+      throw new Error(`Assertion failed. Path is outside of any node_modules package ${targetPath}`);
+
+    return parts.slice(0, nmIndex + (parts[nmIndex + 1].startsWith(`@`) ? 3 : 2)).join(ppath.sep) as PortablePath;
+  };
+
+  for (const binSymlinkMap of binSymlinks.values()) {
+    for (const [binFile, binLocation] of binSymlinkMap) {
+      if (changedLocations.has(getLocationPackageRoot(binLocation))) {
+        binSymlinkMap.delete(binFile);
+      }
+    }
+  }
+}
+
 async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
@@ -1314,6 +1336,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
 
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
 
+    invalidateBinSymlinks(prevBinSymlinks, new Set(addList.map(l => l.dstDir)));
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, windowsLinkType);
 

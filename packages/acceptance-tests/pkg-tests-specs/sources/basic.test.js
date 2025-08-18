@@ -6,6 +6,9 @@ const {
 const configs = [{
   nodeLinker: `pnp`,
 }, {
+  nodeLinker: `pnp`,
+  pnpZipBackend: `js`,
+}, {
   nodeLinker: `pnpm`,
 }, {
   nodeLinker: `node-modules`,
@@ -13,7 +16,7 @@ const configs = [{
 
 describe(`Basic tests`, () => {
   for (const config of configs) {
-    describe(`w/ the ${config.nodeLinker} linker`, () => {
+    describe(`w/ the ${config.nodeLinker} linker${config.pnpZipBackend ? ` and ${config.pnpZipBackend} zip backend` : ``}`, () => {
       test(
         `it should correctly handle browser fields in package.json`,
         makeTemporaryEnv(

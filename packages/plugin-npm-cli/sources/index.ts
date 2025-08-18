@@ -27,6 +27,7 @@ export {NpmWhoamiCommand};
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     npmPublishAccess: string | null;
+    npmPublishProvenance: boolean;
     npmAuditExcludePackages: Array<string>;
     npmAuditIgnoreAdvisories: Array<string>;
   }
@@ -38,6 +39,11 @@ const plugin: Plugin = {
       description: `Default access of the published packages`,
       type: SettingsType.STRING,
       default: null,
+    },
+    npmPublishProvenance: {
+      description: `Whether to generate provenance for the published packages`,
+      type: SettingsType.BOOLEAN,
+      default: false,
     },
     npmAuditExcludePackages: {
       description: `Array of glob patterns of packages to exclude from npm audit`,
