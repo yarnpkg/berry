@@ -14,6 +14,7 @@ declined:
   - "@yarnpkg/plugin-http"
   - "@yarnpkg/plugin-init"
   - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-jsr"
   - "@yarnpkg/plugin-link"
   - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
