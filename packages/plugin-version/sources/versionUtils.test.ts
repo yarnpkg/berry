@@ -14,4 +14,10 @@ describe(`versionUtils`, () => {
       expect(versionUtils.applyPrerelease(`1.3.0`, {current: `1.2.3-rc.41`, prerelease: `rc.%n`})).toEqual(`1.3.0-rc.1`);
     });
   });
+
+  describe(`applyStrategy`, () => {
+    it(`should increase the prerelease number`, () => {
+      expect(versionUtils.applyStrategy(`1.2.3-0`, `prerelease`)).toEqual(`1.2.3-1`);
+    });
+  });
 });
