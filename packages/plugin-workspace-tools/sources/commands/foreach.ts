@@ -379,8 +379,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
           if (this.topological || this.topologicalDev) {
             const resolvedSet = this.topologicalDev
-              ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])
-              : workspace.manifest.dependencies;
+              ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.peerDependencies, ...workspace.manifest.devDependencies])
+              : new Map([...workspace.manifest.dependencies, ...workspace.manifest.peerDependencies]);
 
             for (const descriptor of resolvedSet.values()) {
               const workspace = project.tryWorkspaceByDescriptor(descriptor);
