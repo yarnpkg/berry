@@ -16,7 +16,7 @@ export default class NpmWhoamiCommand extends BaseCommand {
     details: `
       Print the username associated with the current authentication settings to the standard output.
 
-      When using \`-s,--scope\`, the username printed will be the one that matches the authentication settings of the registry associated with the given scope (those settings can be overriden using the \`npmRegistries\` map, and the registry associated with the scope is configured via the \`npmScopes\` map).
+      When using \`-s,--scope\`, the username printed will be the one that matches the authentication settings of the registry associated with the given scope (those settings can be overridden using the \`npmRegistries\` map, and the registry associated with the scope is configured via the \`npmScopes\` map).
 
       When using \`--publish\`, the registry we'll select will by default be the one used when publishing packages (\`publishConfig.registry\` or \`npmPublishRegistry\` if available, otherwise we'll fallback to the regular \`npmRegistryServer\`).
     `,

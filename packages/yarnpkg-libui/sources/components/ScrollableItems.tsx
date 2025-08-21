@@ -23,7 +23,7 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
 
   useEffect(() => {
     // If the active key is missing from the
-    // new keys, set it to the initalKey
+    // new keys, set it to the initialKey
     if (!keys.includes(activeKey)) {
       setActiveKey(initialKey);
     }

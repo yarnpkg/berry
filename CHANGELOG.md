@@ -95,7 +95,7 @@ The following changes only affect people writing Yarn plugins:
 
   - Similarly, the descriptors returned by `Resolve#getResolutionDependencies` are now expected to be the result of `Configuration#normalizeDependency` calls.
 
-  - Note that this only applies to the `dependencies` field; the `peerDependencies` field is unchanged, as it must only contains semver ranges without any protocol (with an exception for `workspace:`, but that's not relevant here).
+  - Note that this only applies to the `dependencies` field; the `peerDependencies` field is unchanged, as it must only contain semver ranges without any protocol (with an exception for `workspace:`, but that's not relevant here).
 
 - The `Resolve#getResolutionDependencies` function must now return an object of arbitrary string keys and descriptor values (instead of a map with `DescriptorHash` keys). Those descriptors will be resolved and assigned to the same keys as the initial object. This change allows resolvers to wrap resolution dependencies from other resolvers, which wasn't possible before since it'd have caused the key to change.
 
@@ -610,7 +610,7 @@ yarn set version 2.3.0
 The following changes only apply to the `pnp` linker (which is the default install strategy):
 
 - The `pnpapi` module now exposes a new function called `getAllLocators` allow you to access the list of all locators in the map without having to traverse the dependency tree. This method is considered a Yarn extension, so you should check for its existence if you plan to use it in your code.
-- When using a portal to a package that had peer dependencies, Yarn would loose the information required to resolve those peer dependencies. It will now properly resolve them the same way as all other packages in the dependency tree.
+- When using a portal to a package that had peer dependencies, Yarn would lose the information required to resolve those peer dependencies. It will now properly resolve them the same way as all other packages in the dependency tree.
 
 The following changes only apply to the `node-modules` linker:
 
@@ -706,7 +706,7 @@ yarn set version 2.1.0
 
 ### Ecosystem
 
-- Packages can now declare they they *need* to be unpacked in order to be functional using the new `"preferUnplugged": true` field in the manifest. This will hurt the experience of your users (your project will be the only one that will require hard installs), so please refrain using this field unless there's no other choice.
+- Packages can now declare that they *need* to be unpacked in order to be functional using the new `"preferUnplugged": true` field in the manifest. This will hurt the experience of your users (your project will be the only one that will require hard installs), so please refrain using this field unless there's no other choice.
 
 ### New commands
 
@@ -852,9 +852,9 @@ To see a comprehensive documentation about each possible field, please check our
 
   - The `dependenciesMeta[].comment` field is expected to be a string field. Even though it isn't actually used anywhere at the moment, we suggest you to write comments regarding the reason why some packages are used here rather than anywhere else. This might prove useful for plugin authors.
 
-  - The `dependenciesMeta[].built` field is a boolean flag; setting it to `false` will cause the package manager to ignore this package when considering the list of packages that need to be built. If the project uses `enable-scripts: false`, the warning that would have traditionally been emitted will be downgraded into a simple notice. This settings is project-wide.
+  - The `dependenciesMeta[].built` field is a boolean flag; setting it to `false` will cause the package manager to ignore this package when considering the list of packages that need to be built. If the project uses `enable-scripts: false`, the warning that would have traditionally been emitted will be downgraded into a simple notice. This setting is project-wide.
 
-  - The `peerDependenciesMeta[].optional` field is a boolean flag; setting it to `true` will stop the package manager from emitting a warning when the specified peer dependency is missing (you typically want to use it if you provide optional integrations with specific third-party packages and don't want to pollute your users' installs with a bunch of irrelevant warnings). This settings is package-specific.
+  - The `peerDependenciesMeta[].optional` field is a boolean flag; setting it to `true` will stop the package manager from emitting a warning when the specified peer dependency is missing (you typically want to use it if you provide optional integrations with specific third-party packages and don't want to pollute your users' installs with a bunch of irrelevant warnings). This setting is package-specific.
 
   - The `resolutions` field no longer support the glob syntax within its patterns, as it was redundant with its own glob-less syntax and caused unnecessary confusion.
 

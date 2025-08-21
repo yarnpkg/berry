@@ -80,7 +80,7 @@ describe(`Dragon tests`, () => {
         //
         // A problem is when B also has peer dependencies, like in the setup described
         // above. In this case, the Yarn implementation of PnP needs to generate a virtual
-        // package for B (in order to deambiguate the dependencies), and register it while
+        // package for B (in order to disambiguate the dependencies), and register it while
         // processing A. Then later, when iterating over B, it is possible that the
         // workspace registration overwrites the previously registered virtual dependency,
         // making it unavailable whilst still being referenced in the dependencies of A.
@@ -154,7 +154,7 @@ describe(`Dragon tests`, () => {
       async ({path, run, source}) => {
         // This test assume that we have a workspace that has a dependency listed in both its
         // peer dependencies and its dev dependencies, and that it itself has a peer
-        // depencency. In those circumstances, we've had issues where the peer dependency
+        // dependency. In those circumstances, we've had issues where the peer dependency
         // wasn't being properly resolved.
 
         await xfs.mkdirpPromise(`${path}/my-workspace`);
@@ -235,7 +235,7 @@ describe(`Dragon tests`, () => {
         // depends on X which has a peer dependency, so we virtualize X and
         // modify A to point to this new package instead of the original X.
         // Then once we traverse B we check the dependencies of A, but by
-        // this time they have already been modified, leading to a boggus
+        // this time they have already been modified, leading to a bogus
         // install.
 
         await xfs.mkdirpPromise(`${path}/packages/a`);
@@ -580,7 +580,7 @@ describe(`Dragon tests`, () => {
 
           // Make sure that both the root and dragon-test-11-b have access to the same instance.
           // This is only possible with the PnP and pnpm linkers.
-          // The node-modules linker can't fullfil these requirements for aliased packages,
+          // The node-modules linker can't fulfil these requirements for aliased packages,
           // without resorting to symlinks and a layout resembling pnpm for aliased dependencies,
           // which will be too different from the classic node_modules layout for all the other dependencies.
           await expect(source(`

@@ -783,7 +783,7 @@ async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, s
       if (execution === null)
         throw new Error(`Assertion failed: The execution pipeline should have been setup`);
 
-      // Otherwise, depending on the exaxct pipe type, we either pipe stdout
+      // Otherwise, depending on the exact pipe type, we either pipe stdout
       // only or stdout and stderr
       switch (pipeType) {
         case `|`: {

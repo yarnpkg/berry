@@ -14,7 +14,7 @@ We'll try to reference external plugins made by our community in our release not
 
 For now, let me present those two:
 
-- [yarn.build](https://yarn.build/) by [ojkelly](https://twitter.com/ojkelly) is a fast monorepo builder for Yarn. In a sense it's similar to [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) but more opinionated, and thus easier to adapt to existing workflows. It parallelises builds, shows what's being executed, and generates zipped archives suitable for AWS and similar platforms.
+- [yarn.build](https://yarn.build/) by [ojkelly](https://twitter.com/ojkelly) is a fast monorepo builder for Yarn. In a sense it's similar to [`yarn workspaces foreach`](https://yarnpkg.com/cli/workspaces/foreach) but more opinionated, and thus easier to adapt to existing workflows. It parallelizes builds, shows what's being executed, and generates zipped archives suitable for AWS and similar platforms.
 
 - [prod-install](https://gitlab.com/Larry1123/yarn-contrib/-/tree/master/packages/plugin-production-install) by [Larry1123](https://gitlab.com/Larry1123) and [NETSVS](https://www.mynetsvs.com/) is a much more powerful version of [`yarn workspaces focus`](https://yarnpkg.com/cli/workspaces/focus) that copies the selected workspaces into a target location before transforming it to become self-sufficient - the final directory thus being ready to be efficiently cached and deployed via Docker layers.
 

@@ -259,7 +259,7 @@ export class Cache {
       isColdHit: boolean;
 
       /**
-       * Path to a file who will also be checksumed and compared to the
+       * Path to a file who will also be checksummed and compared to the
        * expected checksum. We use this when pulling a value from the remote
        * registry and comparing that what we have (including the checksum)
        * matches what we just pulled.

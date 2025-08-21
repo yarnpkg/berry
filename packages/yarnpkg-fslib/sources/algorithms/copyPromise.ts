@@ -241,7 +241,7 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
         const content = await sourceFs.readFilePromise(source);
         await destinationFs.writeFilePromise(tempPath, content);
 
-        // We use `linkPromise` rather than `renamePromise` because the later
+        // We use `linkPromise` rather than `renamePromise` because the latter
         // overwrites the destination if it already exists; usually this
         // wouldn't be a problem, but since we care about preserving the
         // hardlink identity of the destination, we can't do that.

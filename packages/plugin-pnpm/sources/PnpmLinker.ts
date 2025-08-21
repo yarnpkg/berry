@@ -96,7 +96,7 @@ class PnpmInstaller implements Installer {
   };
 
   attachCustomData(customData: any) {
-    // We don't want to attach the data because it's only used in the Linker and we'll recompute it anyways in the Installer,
+    // We don't want to attach the data because it's only used in the Linker and we'll recompute it anyway in the Installer,
     // it needs to be invalidated because otherwise we'll never prune the store or we might run into various issues.
   }
 

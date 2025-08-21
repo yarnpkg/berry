@@ -110,7 +110,7 @@ export function convertPackageToLocator(pkg: Package): Locator {
  * Deep copies a package then change its locator to something else.
  *
  * @param pkg The source package
- * @param locator Its new new locator
+ * @param locator Its new locator
  */
 export function renamePackage(pkg: Package, locator: Locator): Package {
   return {

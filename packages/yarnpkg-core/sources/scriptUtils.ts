@@ -309,7 +309,7 @@ export async function prepareExternalProject(cwd: PortablePath, outputPath: Port
             // read a logfile telling them to open another logfile
             env.YARN_ENABLE_INLINE_BUILDS = `1`;
 
-            // If a lockfile doesn't exist we create a empty one to
+            // If a lockfile doesn't exist we create an empty one to
             // prevent the project root detection from thinking it's in an
             // undeclared workspace when the user has a lockfile in their home
             // directory on Windows

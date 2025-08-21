@@ -35,7 +35,7 @@ Stewards establish the project vision, have a full control over the code and its
 - Define project direction and planning
 - Ability to decide on moderation decisions
 
-In the event a steward becomes incapacitated, they are expected to leave keys to a trustee that will transmit the rights to an new steward appointed by the core contributors through a vote.
+In the event a steward becomes incapacitated, they are expected to leave keys to a trustee that will transmit the rights to a new steward appointed by the core contributors through a vote.
 
 #### Induction
 

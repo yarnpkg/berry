@@ -20,7 +20,7 @@ Corepack is marked experimental so we can iterate on its CLI faster, but it's al
 
 Corepack is included with all official Node.js releases starting from Node.js 14.19 / 16.9. It's however opt-in for the duration of the experimental stage, so you'll need to run `corepack enable` before it's active.
 
-You can quickly check whether Corepack is enabled by running `yarn exec env | grep COREPACK_ROOT`: if you get a path as output, Corepack is properly installed. If not, something may be messing with how the shims are installed. In that case check the [Troubleshooting](/corepack#troubleshooting) section for advices.
+You can quickly check whether Corepack is enabled by running `yarn exec env | grep COREPACK_ROOT`: if you get a path as output, Corepack is properly installed. If not, something may be messing with how the shims are installed. In that case check the [Troubleshooting](/corepack#troubleshooting) section for advice.
 
 :::danger
 Some third-party distributors may not include Corepack by default, in particular if you install Node.js from your system package manager. If that happens, running `npm install -g corepack` before `corepack enable` should do the trick.

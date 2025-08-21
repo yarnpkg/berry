@@ -5,7 +5,7 @@ import {PnpApi, PhysicalPackageLocator, PackageInformation, DependencyTarget} fr
 
 import {hoist, HoisterTree, HoisterResult, HoisterDependencyKind}             from './hoist';
 
-// Babel doesn't support const enums, thats why we use non-const enum for LinkType in @yarnpkg/pnp
+// Babel doesn't support const enums, that's why we use non-const enum for LinkType in @yarnpkg/pnp
 // But because of this TypeScript requires @yarnpkg/pnp during runtime
 // To prevent this we redeclare LinkType enum here, to not depend on @yarnpkg/pnp during runtime
 export enum LinkType {
@@ -61,7 +61,7 @@ export interface NodeModulesTreeOptions {
 const NODE_MODULES = `node_modules` as Filename;
 
 /**
- * The workspace name suffix used internally by this implementation and appeneded to the name of workspace package.
+ * The workspace name suffix used internally by this implementation and appended to the name of workspace package.
  * It is needed to create and distinguuish special nodes for workspaces
  */
 const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
@@ -76,7 +76,7 @@ type WorkspaceTree = {workspaceLocator?: PhysicalPackageLocator, children: Map<F
  *
  * @param packagePath package location
  *
- * @returns path to archive is location is insde the archive or null otherwise
+ * @returns path to archive is location is inside the archive or null otherwise
  */
 export const getArchivePath = (packagePath: PortablePath): PortablePath | null =>
   packagePath.indexOf(`.zip/${NODE_MODULES}/`) >= 0 ?
