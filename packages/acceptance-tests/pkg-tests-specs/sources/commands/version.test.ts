@@ -5,7 +5,7 @@ describe(`Commands`, () => {
     test(
       `it shouldn't work if the strategy isn't semver and there is no prior version`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await expect(run(`version`, `patch`)).rejects.toThrow();
+        await expect(run(`version`, `patch`)).rejects.toThrow(`Usage Error: Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
       }),
     );
 
@@ -15,7 +15,7 @@ describe(`Commands`, () => {
         version: `1.0.0`,
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
-        await expect(run(`version`, `1.0.1`)).rejects.toThrow();
+        await expect(run(`version`, `1.0.1`)).rejects.toThrow(`Usage Error: Can't bump the version to one that would be lower than the current deferred one (1.1.0)`);
       }),
     );
 
@@ -25,7 +25,7 @@ describe(`Commands`, () => {
         version: `1.0.0`,
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
-        await expect(run(`version`, `patch`)).rejects.toThrow();
+        await expect(run(`version`, `patch`)).rejects.toThrow(`Usage Error: Can't bump the version to one that would be lower than the current deferred one (1.1.0)`);
       }),
     );
 
@@ -99,7 +99,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it shouldn't immediatly increase the version number for a workspace when using --deferred`,
+      `it shouldn't immediately increase the version number for a workspace when using --deferred`,
       makeTemporaryEnv({
         version: `0.0.0`,
       }, async ({path, run, source}) => {
@@ -118,7 +118,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it shouldn't immediatly increase the version number for a workspace when using preferDeferredVersions`,
+      `it shouldn't immediately increase the version number for a workspace when using preferDeferredVersions`,
       makeTemporaryEnv({
         version: `0.0.0`,
       }, {
@@ -139,7 +139,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should immediatly increase the version number for a workspace when using --immediate, even if preferDeferredVersions is set`,
+      `it should immediately increase the version number for a workspace when using --immediate, even if preferDeferredVersions is set`,
       makeTemporaryEnv({
         version: `0.0.0`,
       }, {
