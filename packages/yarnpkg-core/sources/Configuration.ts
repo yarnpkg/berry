@@ -847,7 +847,7 @@ function parseShape(configuration: Configuration, path: string, valueBase: unkno
     const subDefinition = definition.properties[propKey];
 
     if (!subDefinition)
-      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
+      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config" to see the list of settings supported in Yarn`);
 
     result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
   }
@@ -1641,7 +1641,7 @@ export class Configuration {
           : false;
 
         if (strict && !isHomeRcFile) {
-          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config" to see the list of settings supported in Yarn`);
         } else {
           this.invalid.set(key, source);
           continue;
