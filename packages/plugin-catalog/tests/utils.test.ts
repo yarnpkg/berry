@@ -29,12 +29,20 @@ describe(`utils`, () => {
   });
 
   describe(`getCatalogName`, () => {
-    it(`should return undefined when no reference name is provided`, () => {
+    it(`should return null when no reference name is provided`, () => {
       const descriptor = structUtils.makeDescriptor(
         structUtils.makeIdent(null, `test-package`),
         `catalog:`,
       );
       expect(getCatalogName(descriptor)).toBe(null);
+    });
+
+    it(`should return catalog name when reference name is provided`, () => {
+      const descriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `test-package`),
+        `catalog:react18`,
+      );
+      expect(getCatalogName(descriptor)).toBe(`react18`);
     });
 
     it(`should handle reference names with special characters`, () => {
@@ -177,6 +185,167 @@ describe(`utils`, () => {
 
       expect(resolved.range).toBe(`npm:^20.0.0`);
       expect(structUtils.stringifyIdent(resolved)).toBe(`@types/node`);
+    });
+
+    describe(`named catalogs`, () => {
+      it(`should resolve descriptor from named catalog when entry exists`, () => {
+        // Set up named catalogs configuration
+        const catalogs = new Map([
+          [`react18`, new Map([
+            [`react`, `npm:^18.3.1`],
+            [`react-dom`, `npm:^18.3.1`],
+          ])],
+          [`react17`, new Map([
+            [`react`, `npm:^17.0.2`],
+            [`react-dom`, `npm:^17.0.2`],
+          ])],
+        ]);
+        configuration.values.set(`catalogs`, catalogs);
+
+        const dependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `react`),
+          `catalog:react18`,
+        );
+
+        const resolved = resolveDescriptorFromCatalog(project, dependency);
+
+        expect(resolved.range).toBe(`npm:^18.3.1`);
+        expect(structUtils.stringifyIdent(resolved)).toBe(`react`);
+      });
+
+      it(`should resolve descriptor from different named catalog`, () => {
+        const catalogs = new Map([
+          [`react18`, new Map([
+            [`react`, `npm:^18.3.1`],
+          ])],
+          [`react17`, new Map([
+            [`react`, `npm:^17.0.2`],
+          ])],
+        ]);
+        configuration.values.set(`catalogs`, catalogs);
+
+        const dependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `react`),
+          `catalog:react17`,
+        );
+
+        const resolved = resolveDescriptorFromCatalog(project, dependency);
+
+        expect(resolved.range).toBe(`npm:^17.0.2`);
+        expect(structUtils.stringifyIdent(resolved)).toBe(`react`);
+      });
+
+      it(`should throw ReportError when named catalog does not exist`, () => {
+        const catalogs = new Map([
+          [`react18`, new Map([
+            [`react`, `npm:^18.3.1`],
+          ])],
+        ]);
+        configuration.values.set(`catalogs`, catalogs);
+
+        const dependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `react`),
+          `catalog:nonexistent`,
+        );
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(ReportError);
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(`catalog "nonexistent" not found or empty`);
+      });
+
+      it(`should throw ReportError when entry is not found in named catalog`, () => {
+        const catalogs = new Map([
+          [`react18`, new Map([
+            [`react`, `npm:^18.3.1`],
+          ])],
+        ]);
+        configuration.values.set(`catalogs`, catalogs);
+
+        const dependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `vue`),
+          `catalog:react18`,
+        );
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(ReportError);
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(`entry not found in catalog "react18"`);
+      });
+
+      it(`should work with both default and named catalogs simultaneously`, () => {
+        // Set up both default and named catalogs
+        const defaultCatalog = new Map([
+          [`lodash`, `npm:^4.17.21`],
+        ]);
+        configuration.values.set(`catalog`, defaultCatalog);
+
+        const catalogs = new Map([
+          [`react18`, new Map([
+            [`react`, `npm:^18.3.1`],
+          ])],
+        ]);
+        configuration.values.set(`catalogs`, catalogs);
+
+        // Test default catalog
+        const defaultDependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `lodash`),
+          `catalog:`,
+        );
+        const defaultResolved = resolveDescriptorFromCatalog(project, defaultDependency);
+        expect(defaultResolved.range).toBe(`npm:^4.17.21`);
+
+        // Test named catalog
+        const namedDependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `react`),
+          `catalog:react18`,
+        );
+        const namedResolved = resolveDescriptorFromCatalog(project, namedDependency);
+        expect(namedResolved.range).toBe(`npm:^18.3.1`);
+      });
+
+      it(`should throw ReportError when catalogs configuration does not exist`, () => {
+        // Don't set any catalogs configuration
+
+        const dependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `react`),
+          `catalog:react18`,
+        );
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(ReportError);
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(`catalog "react18" not found or empty`);
+      });
+
+      it(`should throw ReportError when named catalog is empty`, () => {
+        const catalogs = new Map([
+          [`empty`, new Map()],
+        ]);
+        configuration.values.set(`catalogs`, catalogs);
+
+        const dependency = structUtils.makeDescriptor(
+          structUtils.makeIdent(null, `react`),
+          `catalog:empty`,
+        );
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(ReportError);
+
+        expect(() => {
+          resolveDescriptorFromCatalog(project, dependency);
+        }).toThrow(`catalog "empty" not found or empty`);
+      });
     });
   });
 });

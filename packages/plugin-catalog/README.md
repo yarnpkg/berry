@@ -1,12 +1,14 @@
 # `@yarnpkg/plugin-catalog`
 
-This plugin adds support for centralized dependency version management through catalogs.
+This plugin adds support for centralized dependency version management through catalogs, similar to pnpm's catalog feature.
 
 ## Install
 
 This plugin is included by default starting from Yarn 4.10.
 
 ## Usage
+
+### Default Catalog
 
 Define a catalog in your `.yarnrc.yml`:
 
@@ -26,6 +28,42 @@ Then reference catalog entries in your `package.json`:
   }
 }
 ```
+
+### Named Catalogs
+
+You can define multiple named catalogs for different purposes:
+
+```yaml
+# Default catalog
+catalog:
+  lodash: ^4.17.21
+  typescript: ~4.9.0
+
+# Named catalogs
+catalogs:
+  react18:
+    react: ^18.3.1
+    react-dom: ^18.3.1
+
+  react17:
+    react: ^17.0.2
+    react-dom: ^17.0.2
+
+  vue3:
+    vue: ^3.4.0
+    vuex: ^4.1.0
+```
+
+Then reference them in your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "lodash": "catalog:",
+    "react": "catalog:react18",
+    "vue": "catalog:vue3"
+  }
+}
 ```
 
 The comprehensive feature documentation should go in `packages/docusaurus/docs/features/catalog.mdx` following the same pattern as other feature docs in that directory.

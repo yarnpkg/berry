@@ -10,15 +10,38 @@ export const getCatalogName = (dependency: Descriptor) => {
   return dependency.range.slice(CATALOG_DESCRIPTOR_PREFIX.length) || null;
 };
 
-export const resolveDescriptorFromCatalog = (project: Project, dependency: Descriptor) => {
-  const catalog = project.configuration.get(`catalog`);
-  if (!catalog || catalog.size === 0)
-    throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: catalog not found or empty`);
+const getCatalogErrorDisplayName = (catalogName: string | null) => {
+  return catalogName === null ? `default catalog` : `catalog "${catalogName}"`;
+};
 
-  // const catalogReference = getCatalogName(dependency);
+export const resolveDescriptorFromCatalog = (project: Project, dependency: Descriptor) => {
+  const catalogName = getCatalogName(dependency);
+  let catalog: Map<string, string> | undefined;
+
+  if (catalogName === null) {
+    // Use default catalog when no name is specified (catalog:)
+    catalog = project.configuration.get(`catalog`);
+  } else {
+    // Use named catalog when a name is specified (catalog:name)
+    try {
+      const catalogs = project.configuration.get(`catalogs`);
+      if (catalogs) {
+        catalog = catalogs.get(catalogName);
+      }
+    } catch {
+      catalog = undefined;
+    }
+  }
+
+
+  if (!catalog || catalog.size === 0)
+    throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: ${getCatalogErrorDisplayName(catalogName)} not found or empty`);
+
+
   const resolvedRange = catalog.get(dependency.name);
   if (!resolvedRange)
-    throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: catalog entry not found`);
+    throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: entry not found in ${getCatalogErrorDisplayName(catalogName)}`);
+
 
   // The range resolved from the catalog may need to be normalized (.i.e. ^2.4.0 -> npm:^2.4.0)
   // This process typically happens before the reduceDependency hook, but we need to do it here since

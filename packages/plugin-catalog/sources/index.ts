@@ -5,17 +5,30 @@ import {isCatalogReference, resolveDescriptorFromCatalog}                       
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     catalog?: Map<string, string>;
+    catalogs?: Map<string, Map<string, string>>;
   }
 }
 
 const plugin: Plugin = {
   configuration: {
     catalog: {
-      description: `The catalog of packages`,
+      description: `The default catalog of packages`,
       type: SettingsType.MAP,
       valueDefinition: {
         description: `The catalog of packages`,
         type: SettingsType.STRING,
+      },
+    },
+    catalogs: {
+      description: `Named catalogs of packages`,
+      type: SettingsType.MAP,
+      valueDefinition: {
+        description: `A named catalog`,
+        type: SettingsType.MAP,
+        valueDefinition: {
+          description: `Package version in the catalog`,
+          type: SettingsType.STRING,
+        },
       },
     },
   },
