@@ -16,8 +16,14 @@ describe(`versionUtils`, () => {
   });
 
   describe(`applyStrategy`, () => {
-    it(`should increase the prerelease number`, () => {
+    it(`should increase the prerelease number with prerelease strategy`, () => {
       expect(versionUtils.applyStrategy(`1.2.3-0`, `prerelease`)).toEqual(`1.2.3-1`);
+    });
+
+    it(`should apply prepatch, preminor, premajor strategies`, () => {
+      expect(versionUtils.applyStrategy(`1.2.3`, `prepatch`)).toEqual(`1.2.4-0`);
+      expect(versionUtils.applyStrategy(`1.2.3`, `preminor`)).toEqual(`1.3.0-0`);
+      expect(versionUtils.applyStrategy(`1.2.3`, `premajor`)).toEqual(`2.0.0-0`);
     });
   });
 });
