@@ -99,6 +99,32 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should bump then append a prerelease version number to a release version`,
+      makeTemporaryEnv({
+        version: `1.2.3`,
+      }, async ({path, run, source}) => {
+        await run(`version`, `prerelease`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          version: `1.2.4-0`,
+        });
+      }),
+    );
+
+    test(
+      `it should bump the prerelease version number on a prerelease version`,
+      makeTemporaryEnv({
+        version: `11.22.33-9`,
+      }, async ({path, run, source}) => {
+        await run(`version`, `prerelease`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          version: `11.22.33-10`,
+        });
+      }),
+    );
+
+    test(
       `it shouldn't immediately increase the version number for a workspace when using --deferred`,
       makeTemporaryEnv({
         version: `0.0.0`,
