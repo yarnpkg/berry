@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@yarnpkg/fslib": "workspace:^",
-    "tslib": "^2.4.0"
+    "tslib": "catalog:"
   },
   "peerDependencies": {
     "@yarnpkg/core": "workspace:^",
