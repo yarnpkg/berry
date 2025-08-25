@@ -64,6 +64,26 @@ Reference named catalogs by specifying the name:
 }
 ```
 
+## Publishing
+
+When publishing packages, the `catalog:` protocol is automatically replaced with actual version ranges, ensuring compatibility with other package managers:
+
+```json
+// Source package.json
+{
+  "dependencies": {
+    "react": "catalog:react18"
+  }
+}
+
+// Published package.json
+{
+  "dependencies": {
+    "react": "^18.3.1"
+  }
+}
+```
+
 ## Supported fields
 
 The `catalog:` protocol works in `dependencies`, `devDependencies`, `peerDependencies`, and `optionalDependencies`.
