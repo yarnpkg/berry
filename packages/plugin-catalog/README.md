@@ -4,7 +4,7 @@ This plugin adds support for centralized dependency version management through c
 
 ## Install
 
-This plugin is included by default starting from Yarn 4.10.
+This plugin is included by default starting from Yarn 4.10.0.
 
 ## Usage
 
