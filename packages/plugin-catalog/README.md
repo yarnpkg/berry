@@ -1,11 +1,31 @@
-# `@yarnpkg/plugin-npm`
+# `@yarnpkg/plugin-catalog`
 
-This plugin adds support for downloading packages from the npm registry.
+This plugin adds support for centralized dependency version management through catalogs.
 
 ## Install
 
-This plugin is included by default in Yarn.
+This plugin is included by default starting from Yarn 4.10.
 
-## Attribution
+## Usage
 
-Provenance code adapted from [npm/cli](https://github.com/npm/cli/blob/04f53ce13201b460123067d7153f1681342548e1/workspaces/libnpmpublish/lib/provenance.js), under [ISC license](https://github.com/npm/cli/blob/04f53ce13201b460123067d7153f1681342548e1/workspaces/libnpmpublish/LICENSE).
+Define a catalog in your `.yarnrc.yml`:
+
+```yaml
+catalog:
+  react: ^18.0.0
+  lodash: ^4.17.21
+```
+
+Then reference catalog entries in your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "react": "catalog:",
+    "lodash": "catalog:"
+  }
+}
+```
+```
+
+The comprehensive feature documentation should go in `packages/docusaurus/docs/features/catalog.mdx` following the same pattern as other feature docs in that directory.

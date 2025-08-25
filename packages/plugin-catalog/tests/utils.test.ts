@@ -1,7 +1,7 @@
-import {Configuration, Project, structUtils, ReportError}                          from '@yarnpkg/core';
-import {PortablePath, xfs, ppath, Filename}                                        from '@yarnpkg/fslib';
+import {Configuration, Project, structUtils, ReportError}                 from '@yarnpkg/core';
+import {PortablePath, xfs, ppath, Filename}                               from '@yarnpkg/fslib';
 
-import {isCatalogReference, getCatalogReferenceName, resolveDescriptorFromCatalog} from '../sources/utils';
+import {isCatalogReference, getCatalogName, resolveDescriptorFromCatalog} from '../sources/utils';
 
 describe(`utils`, () => {
   describe(`isCatalogReference`, () => {
@@ -21,27 +21,20 @@ describe(`utils`, () => {
     });
 
     it(`should return false when range is not properly formatted`, () => {
+      expect(isCatalogReference(`catalogs:`)).toBe(false);
       expect(isCatalogReference(`catalog`)).toBe(false);
       expect(isCatalogReference(`CATALOG:`)).toBe(false);
       expect(isCatalogReference(` catalog:`)).toBe(false);
     });
   });
 
-  describe(`getCatalogReferenceName`, () => {
-    it(`should return the reference name when provided`, () => {
-      const descriptor = structUtils.makeDescriptor(
-        structUtils.makeIdent(null, `test-package`),
-        `catalog:my-reference`,
-      );
-      expect(getCatalogReferenceName(descriptor)).toBe(`my-reference`);
-    });
-
-    it(`should return package name when no reference name is provided`, () => {
+  describe(`getCatalogName`, () => {
+    it(`should return undefined when no reference name is provided`, () => {
       const descriptor = structUtils.makeDescriptor(
         structUtils.makeIdent(null, `test-package`),
         `catalog:`,
       );
-      expect(getCatalogReferenceName(descriptor)).toBe(`test-package`);
+      expect(getCatalogName(descriptor)).toBe(null);
     });
 
     it(`should handle reference names with special characters`, () => {
@@ -49,7 +42,7 @@ describe(`utils`, () => {
         structUtils.makeIdent(null, `test-package`),
         `catalog:my-ref_with.special-chars`,
       );
-      expect(getCatalogReferenceName(descriptor)).toBe(`my-ref_with.special-chars`);
+      expect(getCatalogName(descriptor)).toBe(`my-ref_with.special-chars`);
     });
   });
 
@@ -83,7 +76,7 @@ describe(`utils`, () => {
 
       const dependency = structUtils.makeDescriptor(
         structUtils.makeIdent(null, `react`),
-        `catalog:react`,
+        `catalog:`,
       );
 
       const resolved = resolveDescriptorFromCatalog(project, dependency);
@@ -122,7 +115,7 @@ describe(`utils`, () => {
 
       const dependency = structUtils.makeDescriptor(
         structUtils.makeIdent(null, `typescript`),
-        `catalog:typescript`,
+        `catalog:`,
       );
 
       const resolved = resolveDescriptorFromCatalog(project, dependency);
@@ -141,7 +134,7 @@ describe(`utils`, () => {
 
       const dependency = structUtils.makeDescriptor(
         structUtils.makeIdent(null, `react`),
-        `catalog:react`,
+        `catalog:`,
       );
 
       expect(() => {
@@ -161,7 +154,7 @@ describe(`utils`, () => {
 
       const dependency = structUtils.makeDescriptor(
         structUtils.makeIdent(null, `react`),
-        `catalog:react`,
+        `catalog:`,
       );
 
       expect(() => {
@@ -184,35 +177,6 @@ describe(`utils`, () => {
 
       expect(resolved.range).toBe(`npm:^20.0.0`);
       expect(structUtils.stringifyIdent(resolved)).toBe(`@types/node`);
-    });
-
-    it(`should handle different catalog reference names`, () => {
-      const catalog = new Map([
-        [`react`, `^19.0.0`],
-        [`react-version`, `^18.0.0`],
-        [`lodash`, `5.0.0`],
-        [`legacy-lodash`, `4.17.20`],
-      ]);
-      configuration.values.set(`catalog`, catalog);
-
-      const reactDependency = structUtils.makeDescriptor(
-        structUtils.makeIdent(null, `react`),
-        `catalog:react-version`,
-      );
-
-      const lodashDependency = structUtils.makeDescriptor(
-        structUtils.makeIdent(null, `lodash`),
-        `catalog:legacy-lodash`,
-      );
-
-      const resolvedReact = resolveDescriptorFromCatalog(project, reactDependency);
-      const resolvedLodash = resolveDescriptorFromCatalog(project, lodashDependency);
-
-      expect(resolvedReact.range).toBe(`npm:^18.0.0`);
-      expect(structUtils.stringifyIdent(resolvedReact)).toBe(`react`);
-
-      expect(resolvedLodash.range).toBe(`npm:4.17.20`);
-      expect(structUtils.stringifyIdent(resolvedLodash)).toBe(`lodash`);
     });
   });
 });
