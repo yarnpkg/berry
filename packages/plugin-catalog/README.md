@@ -2,6 +2,10 @@
 
 This plugin adds support for centralized dependency version management through catalogs, similar to pnpm's catalog feature.
 
+It hooks into:
+- `reduceDependency` and replaces catalog ranges with the ones defined in a catalog.
+- `beforeWorkspacePacking` replacing catalogs with actual ranges before packing
+
 ## Install
 
 This plugin is included by default starting from Yarn 4.10.0.
@@ -66,4 +70,4 @@ Then reference them in your `package.json`:
 }
 ```
 
-The comprehensive feature documentation should go in `packages/docusaurus/docs/features/catalog.mdx` following the same pattern as other feature docs in that directory.
+The comprehensive feature documentation can be found in `packages/docusaurus/docs/features/catalog.mdx`.
