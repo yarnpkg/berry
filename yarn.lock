@@ -6131,7 +6131,7 @@ __metadata:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
-    tslib: "catalog:"
+    tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
@@ -20835,17 +20835,10 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.3, tslib@npm:^2.6.0":
+"tslib@npm:^2.0.3, tslib@npm:^2.4.0, tslib@npm:^2.6.0":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 10/bd26c22d36736513980091a1e356378e8b662ded04204453d353a7f34a4c21ed0afc59b5f90719d4ba756e581a162ecbf93118dc9c6be5acf70aa309188166ca
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.4.0":
-  version: 2.8.1
-  resolution: "tslib@npm:2.8.1"
-  checksum: 10/3e2e043d5c2316461cb54e5c7fe02c30ef6dccb3384717ca22ae5c6b5bc95232a6241df19c622d9c73b809bea33b187f6dbc73030963e29950c2141bc32a79f7
   languageName: node
   linkType: hard
 

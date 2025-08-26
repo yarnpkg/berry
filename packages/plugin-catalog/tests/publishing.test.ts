@@ -105,7 +105,7 @@ describe(`Catalog publishing behavior`, () => {
       ...publishedDeps.peerDependencies,
     };
 
-    for (const [depName, depRange] of Object.entries(allDeps)) {
+    for (const [, depRange] of Object.entries(allDeps)) {
       expect(typeof depRange).toBe(`string`);
       expect((depRange as string).startsWith(`catalog:`)).toBe(false);
     }
