@@ -6,8 +6,8 @@ import {isCatalogReference, resolveDescriptorFromCatalog}                       
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
-    catalog?: Map<string, string>;
-    catalogs?: Map<string, Map<string, string>>;
+    catalog: Map<string, string>;
+    catalogs: Map<string, Map<string, string>>;
   }
 }
 
