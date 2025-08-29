@@ -1,7 +1,7 @@
-import {Configuration, Project, structUtils, ReportError}                 from '@yarnpkg/core';
-import {PortablePath, xfs, ppath, Filename}                               from '@yarnpkg/fslib';
+import {Configuration, Project, structUtils, ReportError, Resolver, ResolveOptions, StreamReport} from '@yarnpkg/core';
+import {PortablePath, xfs, ppath, Filename}                                                       from '@yarnpkg/fslib';
 
-import {isCatalogReference, getCatalogName, resolveDescriptorFromCatalog} from '../sources/utils';
+import {isCatalogReference, getCatalogName, getCatalogEntryName, resolveDescriptorFromCatalog}    from '../sources/utils';
 
 describe(`utils`, () => {
   describe(`isCatalogReference`, () => {
@@ -54,10 +54,30 @@ describe(`utils`, () => {
     });
   });
 
+  describe(`getCatalogEntryName`, () => {
+    it(`should return package name for non-scoped packages`, () => {
+      const descriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `react`),
+        `catalog:`,
+      );
+      expect(getCatalogEntryName(descriptor)).toBe(`react`);
+    });
+
+    it(`should return full scoped name for scoped packages`, () => {
+      const descriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(`types`, `node`),
+        `catalog:`,
+      );
+      expect(getCatalogEntryName(descriptor)).toBe(`@types/node`);
+    });
+  });
+
   describe(`resolveDescriptorFromCatalog`, () => {
     let tmpDir: PortablePath;
     let configuration: Configuration;
     let project: Project;
+    let mockResolver: jest.Mocked<Resolver>;
+    let resolveOptions: ResolveOptions;
 
     beforeEach(async () => {
       tmpDir = await xfs.mktempPromise();
@@ -72,6 +92,17 @@ describe(`utils`, () => {
 
       const {project: foundProject} = await Project.find(configuration, tmpDir);
       project = foundProject;
+
+      // Create mock resolver with bindDescriptor method
+      mockResolver = {
+        bindDescriptor: jest.fn(descriptor => descriptor),
+      } as any;
+
+      resolveOptions = {
+        project,
+        resolver: mockResolver,
+        report: new StreamReport({stdout: process.stdout, configuration}),
+      };
     });
 
     it(`should resolve descriptor from catalog when entry exists`, () => {
@@ -87,7 +118,7 @@ describe(`utils`, () => {
         `catalog:`,
       );
 
-      const resolved = resolveDescriptorFromCatalog(project, dependency);
+      const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
 
       expect(resolved.range).toBe(`npm:^18.0.0`);
       expect(structUtils.stringifyIdent(resolved)).toBe(`react`);
@@ -104,7 +135,7 @@ describe(`utils`, () => {
         `catalog:`,
       );
 
-      const resolved = resolveDescriptorFromCatalog(project, dependency);
+      const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
 
       expect(resolved.range).toBe(`npm:~4.17.21`);
       expect(structUtils.stringifyIdent(resolved)).toBe(`lodash`);
@@ -126,7 +157,7 @@ describe(`utils`, () => {
         `catalog:`,
       );
 
-      const resolved = resolveDescriptorFromCatalog(project, dependency);
+      const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
 
       expect(normalizeSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -146,11 +177,11 @@ describe(`utils`, () => {
       );
 
       expect(() => {
-        resolveDescriptorFromCatalog(project, dependency);
+        resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
       }).toThrow(ReportError);
 
       expect(() => {
-        resolveDescriptorFromCatalog(project, dependency);
+        resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
       }).toThrow(`catalog not found or empty`);
     });
 
@@ -166,13 +197,13 @@ describe(`utils`, () => {
       );
 
       expect(() => {
-        resolveDescriptorFromCatalog(project, dependency);
+        resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
       }).toThrow(ReportError);
     });
 
     it(`should handle scoped packages in catalog`, () => {
       const catalog = new Map([
-        [`node`, `^20.0.0`],
+        [`@types/node`, `^20.0.0`],
       ]);
       configuration.values.set(`catalog`, catalog);
 
@@ -181,7 +212,7 @@ describe(`utils`, () => {
         `catalog:`,
       );
 
-      const resolved = resolveDescriptorFromCatalog(project, dependency);
+      const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
 
       expect(resolved.range).toBe(`npm:^20.0.0`);
       expect(structUtils.stringifyIdent(resolved)).toBe(`@types/node`);
@@ -207,7 +238,7 @@ describe(`utils`, () => {
           `catalog:react18`,
         );
 
-        const resolved = resolveDescriptorFromCatalog(project, dependency);
+        const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
 
         expect(resolved.range).toBe(`npm:^18.3.1`);
         expect(structUtils.stringifyIdent(resolved)).toBe(`react`);
@@ -229,7 +260,7 @@ describe(`utils`, () => {
           `catalog:react17`,
         );
 
-        const resolved = resolveDescriptorFromCatalog(project, dependency);
+        const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
 
         expect(resolved.range).toBe(`npm:^17.0.2`);
         expect(structUtils.stringifyIdent(resolved)).toBe(`react`);
@@ -249,11 +280,11 @@ describe(`utils`, () => {
         );
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(ReportError);
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(`catalog "nonexistent" not found or empty`);
       });
 
@@ -271,11 +302,11 @@ describe(`utils`, () => {
         );
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(ReportError);
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(`entry not found in catalog "react18"`);
       });
 
@@ -298,7 +329,7 @@ describe(`utils`, () => {
           structUtils.makeIdent(null, `lodash`),
           `catalog:`,
         );
-        const defaultResolved = resolveDescriptorFromCatalog(project, defaultDependency);
+        const defaultResolved = resolveDescriptorFromCatalog(project, defaultDependency, mockResolver, resolveOptions);
         expect(defaultResolved.range).toBe(`npm:^4.17.21`);
 
         // Test named catalog
@@ -306,7 +337,7 @@ describe(`utils`, () => {
           structUtils.makeIdent(null, `react`),
           `catalog:react18`,
         );
-        const namedResolved = resolveDescriptorFromCatalog(project, namedDependency);
+        const namedResolved = resolveDescriptorFromCatalog(project, namedDependency, mockResolver, resolveOptions);
         expect(namedResolved.range).toBe(`npm:^18.3.1`);
       });
 
@@ -319,11 +350,11 @@ describe(`utils`, () => {
         );
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(ReportError);
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(`catalog "react18" not found or empty`);
       });
 
@@ -339,13 +370,72 @@ describe(`utils`, () => {
         );
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(ReportError);
 
         expect(() => {
-          resolveDescriptorFromCatalog(project, dependency);
+          resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
         }).toThrow(`catalog "empty" not found or empty`);
       });
+    });
+
+    it(`should call bindDescriptor with normalized descriptor and return its result`, () => {
+      const catalog = new Map([
+        [`lodash`, `file:../packages/lodash`],
+      ]);
+      configuration.values.set(`catalog`, catalog);
+
+      const dependency = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `lodash`),
+        `catalog:`,
+      );
+
+      // Mock bindDescriptor to return a modified descriptor
+      const boundDescriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `lodash`),
+        `file:/absolute/path/to/packages/lodash`,
+      );
+      mockResolver.bindDescriptor.mockReturnValue(boundDescriptor);
+
+      const result = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
+
+      // Verify bindDescriptor was called with correct parameters
+      expect(mockResolver.bindDescriptor).toHaveBeenCalledWith(
+        expect.objectContaining({
+          range: `file:../packages/lodash`,
+        }),
+        project.topLevelWorkspace.anchoredLocator,
+        resolveOptions,
+      );
+
+      // Verify the result from bindDescriptor is returned
+      expect(result).toBe(boundDescriptor);
+      expect(result.range).toBe(`file:/absolute/path/to/packages/lodash`);
+    });
+
+    it(`should preserve resolver behavior when bindDescriptor modifies the descriptor`, () => {
+      const catalog = new Map([
+        [`@types/react`, `npm:^18.0.0`],
+      ]);
+      configuration.values.set(`catalog`, catalog);
+
+      const dependency = structUtils.makeDescriptor(
+        structUtils.makeIdent(`types`, `react`),
+        `catalog:`,
+      );
+
+      // Mock bindDescriptor to simulate some transformation
+      const modifiedDescriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(`types`, `react`),
+        `npm:^18.0.0-modified`,
+      );
+      mockResolver.bindDescriptor.mockReturnValue(modifiedDescriptor);
+
+      const result = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
+
+      expect(mockResolver.bindDescriptor).toHaveBeenCalledTimes(1);
+      expect(result).toBe(modifiedDescriptor);
+      expect(result.range).toBe(`npm:^18.0.0-modified`);
     });
   });
 });
