@@ -1,6 +1,6 @@
-import {Descriptor, Project, structUtils, ReportError, MessageName} from '@yarnpkg/core';
+import {Descriptor, Project, structUtils, ReportError, MessageName, Resolver, ResolveOptions} from '@yarnpkg/core';
 
-import {CATALOG_DESCRIPTOR_PREFIX}                                  from './constants';
+import {CATALOG_DESCRIPTOR_PREFIX}                                                            from './constants';
 
 export const isCatalogReference = (range: string) => {
   return range.startsWith(CATALOG_DESCRIPTOR_PREFIX);
@@ -14,7 +14,11 @@ const getCatalogErrorDisplayName = (catalogName: string | null) => {
   return catalogName === null ? `default catalog` : `catalog "${catalogName}"`;
 };
 
-export const resolveDescriptorFromCatalog = (project: Project, dependency: Descriptor) => {
+export const getCatalogEntryName = (dependency: Descriptor) => {
+  return dependency.scope ? `@${dependency.scope}/${dependency.name}` : dependency.name;
+};
+
+export const resolveDescriptorFromCatalog = (project: Project, dependency: Descriptor, resolver: Resolver, resolveOptions: ResolveOptions) => {
   const catalogName = getCatalogName(dependency);
   let catalog: Map<string, string> | undefined;
 
@@ -37,8 +41,8 @@ export const resolveDescriptorFromCatalog = (project: Project, dependency: Descr
   if (!catalog || catalog.size === 0)
     throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: ${getCatalogErrorDisplayName(catalogName)} not found or empty`);
 
-
-  const resolvedRange = catalog.get(dependency.name);
+  const catalogEntryName = getCatalogEntryName(dependency);
+  const resolvedRange = catalog.get(catalogEntryName);
   if (!resolvedRange)
     throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: entry not found in ${getCatalogErrorDisplayName(catalogName)}`);
 
@@ -50,5 +54,9 @@ export const resolveDescriptorFromCatalog = (project: Project, dependency: Descr
     structUtils.makeDescriptor(dependency, resolvedRange),
   );
 
-  return normalizedDescriptor;
+  // Bind the descriptor to the project's top level workspace (which should match the project root),
+  // addressing issues with relative file paths when using `file:` protocol
+  const boundDescriptor = resolver.bindDescriptor(normalizedDescriptor, project.topLevelWorkspace.anchoredLocator, resolveOptions);
+
+  return boundDescriptor;
 };

@@ -1,8 +1,8 @@
-import {type Descriptor, type Locator, type Plugin, type Project, type Resolver, type ResolveOptions, type Workspace, SettingsType, structUtils} from '@yarnpkg/core';
-import {Hooks as CoreHooks}                                                                                                                      from '@yarnpkg/core';
-import {DEPENDENCY_TYPES, Hooks as PackHooks}                                                                                                    from '@yarnpkg/plugin-pack';
+import {type Descriptor, type Locator, type Plugin, type Project, type Resolver, type ResolveOptions, type Workspace, SettingsType, structUtils, Manifest, ThrowReport} from '@yarnpkg/core';
+import {Hooks as CoreHooks}                                                                                                                                             from '@yarnpkg/core';
+import {Hooks as PackHooks}                                                                                                                                             from '@yarnpkg/plugin-pack';
 
-import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                        from './utils';
+import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                                               from './utils';
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -63,28 +63,30 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
     beforeWorkspacePacking: (workspace: Workspace, rawManifest: any) => {
       const project = workspace.project;
 
-      for (const dependencyType of DEPENDENCY_TYPES) {
+      // Create resolver and resolveOptions from the project configuration
+      const resolver = project.configuration.makeResolver();
+      const resolveOptions: ResolveOptions = {
+        project,
+        resolver,
+        report: new ThrowReport(), // Simple report implementation for internal resolution
+      };
+
+      for (const dependencyType of Manifest.allDependencies) {
         const dependencies = rawManifest[dependencyType];
         if (!dependencies) continue;
 
         for (const [identStr, range] of Object.entries(dependencies)) {
           if (typeof range !== `string` || !isCatalogReference(range)) continue;
 
-          try {
-            // Create a descriptor to resolve from catalog
-            const ident = structUtils.parseIdent(identStr);
-            const descriptor = structUtils.makeDescriptor(ident, range);
+          // Create a descriptor to resolve from catalog
+          const ident = structUtils.parseIdent(identStr);
+          const descriptor = structUtils.makeDescriptor(ident, range);
 
-            // Resolve the catalog reference to get the actual version range
-            const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor);
+          // Resolve the catalog reference to get the actual version range
+          const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor, resolver, resolveOptions);
 
-            // Replace the catalog reference with the resolved range
-            dependencies[identStr] = resolvedDescriptor.range;
-          } catch {
-            // If resolution fails, leave the catalog reference as-is
-            // This will allow the error to be caught during normal resolution
-            continue;
-          }
+          // Replace the catalog reference with the resolved range
+          dependencies[identStr] = resolvedDescriptor.range;
         }
       }
     },
@@ -95,7 +97,7 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
      */
     reduceDependency: async (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       if (isCatalogReference(dependency.range)) {
-        const resolvedDescriptor = resolveDescriptorFromCatalog(project, dependency);
+        const resolvedDescriptor = resolveDescriptorFromCatalog(project, dependency, resolver, resolveOptions);
         return resolvedDescriptor;
       }
       return dependency;

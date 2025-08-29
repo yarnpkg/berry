@@ -19,7 +19,7 @@ export interface Hooks {
   ) => Promise<void> | void;
 }
 
-export const DEPENDENCY_TYPES = [`dependencies`, `devDependencies`, `peerDependencies`];
+const DEPENDENCY_TYPES = [`dependencies`, `devDependencies`, `peerDependencies`];
 const WORKSPACE_PROTOCOL = `workspace:`;
 
 const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
