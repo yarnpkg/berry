@@ -2,9 +2,11 @@ releases:
   "@yarnpkg/builder": patch
   "@yarnpkg/core": patch
   "@yarnpkg/doctor": patch
-  "@yarnpkg/eslint-config": patch
+  "@yarnpkg/eslint-config": minor
   "@yarnpkg/fslib": patch
   "@yarnpkg/libzip": patch
+  "@yarnpkg/plugin-nm": patch
+  "@yarnpkg/plugin-pnp": patch
   "@yarnpkg/pnp": patch
   "@yarnpkg/pnpify": patch
 
@@ -22,12 +24,10 @@ declined:
   - "@yarnpkg/plugin-interactive-tools"
   - "@yarnpkg/plugin-jsr"
   - "@yarnpkg/plugin-link"
-  - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
   - "@yarnpkg/plugin-patch"
-  - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
   - "@yarnpkg/plugin-typescript"
