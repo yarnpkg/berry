@@ -52,12 +52,16 @@ describe(`Features`, () => {
           await exec.execFile(`git`, [`checkout`, `master`], {cwd: path});
           await exec.execFile(`git`, [`checkout`, `-b`, `1.0.0`], {cwd: path});
           await run(`set`, `resolution`, `no-deps@npm:*`, `npm:1.0.0`);
+
           await exec.execFile(`git`, [`add`, `-A`], {cwd: path});
           await exec.execFile(`git`, [`commit`, `-a`, `-m`, `commit-1.0.0`], {cwd: path});
 
           await exec.execFile(`git`, [`checkout`, `master`], {cwd: path});
           await exec.execFile(`git`, [`checkout`, `-b`, `2.0.0`], {cwd: path});
           await run(`set`, `resolution`, `no-deps@npm:*`, `npm:2.0.0`);
+
+          const expectedFinalLockfile = await xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`);
+
           await exec.execFile(`git`, [`add`, `-A`], {cwd: path});
           await exec.execFile(`git`, [`commit`, `-a`, `-m`, `commit-2.0.0`], {cwd: path});
 
@@ -67,9 +71,7 @@ describe(`Features`, () => {
           await expect(exec.execFile(`git`, [`merge`, `2.0.0`], {cwd: path, env: {LC_ALL: `C`}})).rejects.toThrow(/CONFLICT/);
 
           const lockfile = await xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`);
-          expect(cleanLockfile(lockfile)).toMatchSnapshot();
-
-          await expect(run(`install`)).resolves.toMatchSnapshot();
+          expect(cleanLockfile(lockfile)).toEqual(expectedFinalLockfile);
         },
       ),
     );

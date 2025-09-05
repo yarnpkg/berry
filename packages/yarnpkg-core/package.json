@@ -47,7 +47,7 @@
     "@types/cross-spawn": "6.0.0",
     "@types/diff": "^5.0.0",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^18.17.15",
+    "@types/node": "^18.19.124",
     "@types/tar": "^4.0.4",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/plugin-link": "workspace:^",

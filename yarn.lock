@@ -5008,7 +5008,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.17.15, @types/node@npm:^18.19.15":
+"@types/node@npm:*":
   version: 18.19.17
   resolution: "@types/node@npm:18.19.17"
   dependencies:
@@ -5021,6 +5021,15 @@ __metadata:
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
   checksum: 10/b45fff7270b5e81be19ef91a66b764a8b21473a97a8d211218a52e3426b79ad48f371819ab9153370756b33ba284e5c875463de4d2cf48a472e9098d7f09e8a2
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.19.124":
+  version: 18.19.124
+  resolution: "@types/node@npm:18.19.124"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10/64641bb4bb4e18c75f40c63b41f9c3d4939b6f589999258f5ac3001040b201f399056f9c3cf3d6c5fa23e94f469c1e48ebbc0e31fe4d8eae8ef8bccf5e902942
   languageName: node
   linkType: hard
 
@@ -5776,7 +5785,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.23.0"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.5.2"
+    typescript: "npm:^5.9.2"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5842,7 +5851,7 @@ __metadata:
     "@types/cross-spawn": "npm:6.0.0"
     "@types/diff": "npm:^5.0.0"
     "@types/micromatch": "npm:^4.0.1"
-    "@types/node": "npm:^18.17.15"
+    "@types/node": "npm:^18.19.124"
     "@types/semver": "npm:^7.1.0"
     "@types/tar": "npm:^4.0.4"
     "@types/treeify": "npm:^1.0.0"
@@ -5895,7 +5904,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.5.2"
+    typescript: "npm:^5.9.2"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5924,7 +5933,7 @@ __metadata:
     "@types/markdown-it": "npm:^12.2.3"
     "@types/marked": "npm:^5.0.0"
     "@types/mdast": "npm:^4.0.3"
-    "@types/node": "npm:^18.19.15"
+    "@types/node": "npm:^18.19.124"
     "@types/react": "npm:^18.2.54"
     "@types/react-instantsearch-dom": "npm:^6"
     "@types/react-modal": "npm:^3"
@@ -5983,7 +5992,7 @@ __metadata:
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
     typedoc: "npm:^0.25.7"
-    typescript: "npm:^5.5.2"
+    typescript: "npm:^5.9.2"
     unified: "npm:^11.0.4"
     unist-util-visit-parents: "npm:^6.0.1"
     usehooks-ts: "npm:^3.1.1"
@@ -6004,7 +6013,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.4"
     globals: "npm:^15.15.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.5.2"
+    typescript: "npm:^5.9.2"
   peerDependencies:
     eslint: "*"
     typescript: "*"
@@ -6071,7 +6080,7 @@ __metadata:
     "@iarna/toml": "npm:^2.2.5"
     "@types/jest": "npm:^28.1.6"
     "@types/micromatch": "npm:^4.0.1"
-    "@types/node": "npm:^18.17.15"
+    "@types/node": "npm:^18.19.124"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6089,7 +6098,7 @@ __metadata:
     pirates: "npm:^4.0.5"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.5.2"
+    typescript: "npm:^5.9.2"
   dependenciesMeta:
     core-js:
       built: false
@@ -6573,7 +6582,7 @@ __metadata:
   dependencies:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
-    "@types/node": "npm:^18.17.15"
+    "@types/node": "npm:^18.19.124"
     "@types/semver": "npm:^7.1.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
@@ -21011,23 +21020,23 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.2":
-  version: 5.5.2
-  resolution: "typescript@npm:5.5.2"
+"typescript@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "typescript@npm:5.9.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/9118b20f248e76b0dbff8737fef65dfa89d02668d4e633d2c5ceac99033a0ca5e8a1c1a53bc94da68e8f67677a88f318663dde859c9e9a09c1e116415daec2ba
+  checksum: 10/cc2fe6c822819de5d453fa25aa9f32096bf70dde215d481faa1ad84a283dfb264e33988ed8f6d36bc803dd0b16dbe943efa311a798ef76d5b3892a05dfbfd628
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.5.2#optional!builtin<compat/typescript>":
-  version: 5.5.2
-  resolution: "typescript@patch:typescript@npm%3A5.5.2#optional!builtin<compat/typescript>::version=5.5.2&hash=379a07"
+"typescript@patch:typescript@npm%3A^5.9.2#optional!builtin<compat/typescript>":
+  version: 5.9.2
+  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/ac3145f65cf9e72ab29f2196e05d5816b355dc1a9195b9f010d285182a12457cfacd068be2dd22c877f88ebc966ac6e0e83f51c8586412b16499a27e3670ff4b
+  checksum: 10/bd810ab13e8e557225a8b5122370385440b933e4e077d5c7641a8afd207fdc8be9c346e3c678adba934b64e0e70b0acf5eef9493ea05170a48ce22bef845fdc7
   languageName: node
   linkType: hard
 
