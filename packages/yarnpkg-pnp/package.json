@@ -9,7 +9,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/node": "^18.17.15",
+    "@types/node": "^18.19.124",
     "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {

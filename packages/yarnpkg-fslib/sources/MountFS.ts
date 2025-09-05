@@ -800,9 +800,9 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<NonSharedBuffer>;
   readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return this.makeCallPromise(p, async () => {
       return await this.baseFs.readFilePromise(p, encoding);
@@ -811,9 +811,9 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): NonSharedBuffer;
   readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return this.makeCallSync(p, () => {
       return this.baseFs.readFileSync(p, encoding);
