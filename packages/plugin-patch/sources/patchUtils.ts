@@ -1,5 +1,6 @@
 import {Cache, structUtils, Locator, Descriptor, Ident, Project, ThrowReport, miscUtils, FetchOptions, Package, execUtils, FetchResult, semverUtils, hashUtils} from '@yarnpkg/core';
 import {npath, PortablePath, xfs, ppath, NativePath, CwdFS}                                                                                                     from '@yarnpkg/fslib';
+import * as querystring                                                                                                                                         from 'querystring';
 
 import {CACHE_VERSION}                                                                                                                                          from './constants';
 import {Hooks as PatchHooks}                                                                                                                                    from './index';
@@ -18,7 +19,7 @@ function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
     throw new Error(`Patch locators must explicitly define their source`);
 
   const patchPaths = selector
-    ? selector.split(/&/).map(path => npath.toPortablePath(path))
+    ? selector.split(/&/).map(npath.toPortablePath)
     : [];
 
   const parentLocator = params && typeof params.locator === `string`
@@ -29,7 +30,18 @@ function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
     ? params.version
     : null;
 
-  const sourceItem = sourceParser(source);
+  // Separate patch-specific from source-specific parameters
+  const patchParams = new Set([`locator`, `version`, `hash`]);
+  const sourceParams = params
+    ? Object.fromEntries(Object.entries(params).filter(([key]) => !patchParams.has(key)))
+    : {};
+
+  // Reconstruct source with its parameters
+  const sourceWithParams = Object.keys(sourceParams).length > 0
+    ? `${source}::${querystring.stringify(normalizeParams(sourceParams))}`
+    : source;
+
+  const sourceItem = sourceParser(sourceWithParams);
 
   return {parentLocator, sourceItem, patchPaths, sourceVersion};
 }
@@ -91,11 +103,15 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patc
     ? {hash: patchHash}
     : {} as {};
 
+  const sourceString = sourceStringifier(sourceItem);
+  const {params: sourceParams} = structUtils.parseRange(sourceString);
+
   return structUtils.makeRange({
     protocol: `patch:`,
-    source: sourceStringifier(sourceItem),
+    source: sourceString,
     selector: patchPaths.join(`&`),
     params: {
+      ...normalizeParams(sourceParams),
       ...sourceVersionSpread,
       ...patchHashSpread,
       ...parentLocatorSpread,
@@ -342,4 +358,26 @@ export function makePatchHash(
   }
 
   return hashUtils.makeHash(`${CACHE_VERSION}`, ...parts).slice(0, 6);
+}
+
+/**
+ * Normalizes ParsedUrlQuery to string-only parameters.
+ *
+ * Node.js querystring methods don't provide this conversion directly:
+ * - Filters out undefined values
+ * - Joins arrays with commas (not multiple key=value pairs)
+ * - Ensures all values are strings
+ */
+export function normalizeParams(params: ReturnType<typeof structUtils.parseRange>[`params`]): {[key: string]: string} {
+  if (!params) return {};
+
+  const result: {[key: string]: string} = {};
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) {
+      result[key] = Array.isArray(value) ? value.join(`,`) : String(value);
+    }
+  }
+
+  return result;
 }

@@ -1,6 +1,7 @@
 releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/plugin-npm": patch
+  "@yarnpkg/plugin-patch": minor
 
 declined:
   - "@yarnpkg/plugin-compat"
@@ -12,7 +13,6 @@ declined:
   - "@yarnpkg/plugin-nm"
   - "@yarnpkg/plugin-npm-cli"
   - "@yarnpkg/plugin-pack"
-  - "@yarnpkg/plugin-patch"
   - "@yarnpkg/plugin-pnp"
   - "@yarnpkg/plugin-pnpm"
   - "@yarnpkg/plugin-stage"
