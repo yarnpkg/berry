@@ -103,15 +103,24 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patc
     ? {hash: patchHash}
     : {} as {};
 
+  // Parse the source to separate base range from existing bindings
   const sourceString = sourceStringifier(sourceItem);
-  const {params: sourceParams} = structUtils.parseRange(sourceString);
+  const {protocol, source, selector, params: sourceParams} = structUtils.parseRange(sourceString);
+
+  // Reconstruct the source without existing bindings
+  const baseSource = structUtils.makeRange({
+    protocol,
+    source,
+    selector,
+    params: null,  // Remove existing bindings from source
+  });
 
   return structUtils.makeRange({
     protocol: `patch:`,
-    source: sourceString,
+    source: baseSource,
     selector: patchPaths.join(`&`),
     params: {
-      ...normalizeParams(sourceParams),
+      ...normalizeParams(sourceParams),  // Preserve original bindings (like __archiveUrl)
       ...sourceVersionSpread,
       ...patchHashSpread,
       ...parentLocatorSpread,
@@ -375,7 +384,11 @@ export function normalizeParams(params: ReturnType<typeof structUtils.parseRange
 
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined) {
-      result[key] = Array.isArray(value) ? value.join(`,`) : String(value);
+      if (Array.isArray(value) && value.length > 0) {
+        result[key] = value.join(`,`);
+      } else {
+        result[key] = String(value);
+      }
     }
   }
 

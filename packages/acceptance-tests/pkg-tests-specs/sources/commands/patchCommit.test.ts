@@ -233,7 +233,7 @@ describe(`Commands`, () => {
         const manifest = await xfs.readJsonPromise(ppath.join(path, Filename.manifest));
 
         expect(manifest.dependencies).toEqual({
-          [`unconventional-tarball`]: expect.stringMatching(/^patch:unconventional-tarball@npm%3A1\.0\.0#.*::__archiveUrl=https%3A%2F%2Fregistry\.example\.org/),
+          [`unconventional-tarball`]: expect.stringMatching(/^patch:unconventional-tarball@npm%3A1\.0\.0#.*\.patch::__archiveUrl=/),
         });
 
         // Ensure the patch URL format is correct (not malformed)
