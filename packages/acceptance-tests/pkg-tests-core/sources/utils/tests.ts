@@ -38,6 +38,7 @@ function isAtLeastMajor(major: number) {
 export const FEATURE_CHECKS = {
   jsonLockfile: isAtLeastMajor(5),
   prologConstraints: !isAtLeastMajor(5),
+  mergeConflictTheirs: isAtLeastMajor(5),
 } as const;
 
 // Testing things inside a big-endian container takes forever
