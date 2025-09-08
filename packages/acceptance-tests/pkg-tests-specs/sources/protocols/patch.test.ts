@@ -238,5 +238,24 @@ describe(`Protocols`, () => {
         },
       ),
     );
+    test(
+      `it should apply patches on packages with unconventional tarball urls (__archiveUrl)`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`unconventional-tarball`]: `patch:unconventional-tarball@npm:1.0.0#${PATCH_NAME}::__archiveUrl=https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz`},
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(ppath.join(path, PATCH_NAME), NO_DEPS_PATCH);
+
+          await run(`install`);
+
+          await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+            name: `unconventional-tarball`,
+            version: `1.0.0`,
+            hello: `world`,
+          });
+        },
+      ),
+    );
   });
 });
