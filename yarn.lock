@@ -6063,6 +6063,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/fslib@workspace:packages/yarnpkg-fslib"
   dependencies:
+    "@iarna/toml": "npm:^2.2.5"
     "@yarnpkg/libzip": "workspace:^"
     tslib: "npm:^2.4.0"
   languageName: unknown
