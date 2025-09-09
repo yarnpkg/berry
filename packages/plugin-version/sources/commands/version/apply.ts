@@ -39,6 +39,10 @@ export default class VersionApplyCommand extends BaseCommand {
     description: `Apply the deferred version changes on all workspaces`,
   });
 
+  update = Option.Boolean(`--update`, false, {
+    description: `Update the version file instead of removing it when used with --all`,
+  });
+
   dryRun = Option.Boolean(`--dry-run`, false, {
     description: `Print the versions without actually generating the package archive`,
   });
@@ -112,7 +116,7 @@ export default class VersionApplyCommand extends BaseCommand {
 
       if (!this.dryRun) {
         if (!prerelease) {
-          if (this.all) {
+          if (this.all && !this.update) {
             await versionUtils.clearVersionFiles(project);
           } else {
             await versionUtils.updateVersionFiles(project, [...filteredReleases.keys()]);
