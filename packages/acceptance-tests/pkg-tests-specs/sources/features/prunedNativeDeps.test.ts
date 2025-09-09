@@ -8,6 +8,41 @@ export {};
 
 describe(`Features`, () => {
   describe(`Pruned native deps`, () => {
+    for (const cpu of [`x64`, `x86`]) {
+      it(`should by default only download dependencies for the current system (foo-${cpu})`, makeTemporaryEnv({
+        dependencies: {
+          [`optional-native`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const recording = await startRegistryRecording(async () => {
+          await run(`install`, {
+            env: {
+              YARN_CPU_OVERRIDE: cpu,
+              YARN_OS_OVERRIDE: `foo`,
+            },
+          });
+        });
+
+        const tarballRequests = recording.filter(request => {
+          return request.type === RequestType.PackageTarball;
+        }).sort((a, b) => {
+          const aJson = JSON.stringify(a);
+          const bJson = JSON.stringify(b);
+          return aJson < bJson ? -1 : aJson > bJson ? 1 : 0;
+        });
+
+        expect(tarballRequests).toEqual([{
+          type: RequestType.PackageTarball,
+          localName: `native-foo-${cpu}`,
+          version: `1.0.0`,
+        }, {
+          type: RequestType.PackageTarball,
+          localName: `optional-native`,
+          version: `1.0.0`,
+        }]);
+      }));
+    }
+
     it(`should resolve all dependencies, regardless of the system`, makeTemporaryEnv({
       dependencies: {
         [`optional-native`]: `1.0.0`,
@@ -25,15 +60,20 @@ describe(`Features`, () => {
 
       const file = parseSyml(await xfs.readFilePromise(ppath.join(path, Filename.lockfile), `utf8`));
 
-      expect(Object.keys(file)).toEqual([
-        `__metadata`,
+      const dependencies = tests.FEATURE_CHECKS.jsonLockfile
+        ? file.entries
+        : file;
+
+      delete dependencies.__metadata;
+
+      expect(Object.keys(dependencies)).toEqual([
         `native-bar-x64@npm:1.0.0`,
         `native-foo-x64@npm:1.0.0`,
         `native-foo-x86@npm:1.0.0`,
         `native-libc-glibc@npm:1.0.0`,
         `native-libc-musl@npm:1.0.0`,
         `optional-native@npm:1.0.0`,
-        `root-workspace-0b6124@workspace:.`,
+        expect.stringMatching(/^root-workspace.*/),
       ]);
     }));
 
