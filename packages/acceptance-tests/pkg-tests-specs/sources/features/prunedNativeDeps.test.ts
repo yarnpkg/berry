@@ -19,6 +19,7 @@ describe(`Features`, () => {
             env: {
               YARN_CPU_OVERRIDE: cpu,
               YARN_OS_OVERRIDE: `foo`,
+              YARN_LIBC_OVERRIDE: `none`,
             },
           });
         });
