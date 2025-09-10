@@ -5,7 +5,7 @@ describe(`Commands`, () => {
     test(
       `it shouldn't work if the strategy isn't semver and there is no prior version`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
-        await expect(run(`version`, `patch`)).rejects.toThrow();
+        await expect(run(`version`, `patch`)).rejects.toThrow(`Usage Error: Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
       }),
     );
 
@@ -15,7 +15,7 @@ describe(`Commands`, () => {
         version: `1.0.0`,
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
-        await expect(run(`version`, `1.0.1`)).rejects.toThrow();
+        await expect(run(`version`, `1.0.1`)).rejects.toThrow(`Usage Error: Can't bump the version to one that would be lower than the current deferred one (1.1.0)`);
       }),
     );
 
@@ -25,7 +25,7 @@ describe(`Commands`, () => {
         version: `1.0.0`,
       }, async ({path, run, source}) => {
         await run(`version`, `1.1.0`, `--deferred`);
-        await expect(run(`version`, `patch`)).rejects.toThrow();
+        await expect(run(`version`, `patch`)).rejects.toThrow(`Usage Error: Can't bump the version to one that would be lower than the current deferred one (1.1.0)`);
       }),
     );
 
@@ -99,7 +99,33 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it shouldn't immediatly increase the version number for a workspace when using --deferred`,
+      `it should bump then append a prerelease version number to a release version`,
+      makeTemporaryEnv({
+        version: `1.2.3`,
+      }, async ({path, run, source}) => {
+        await run(`version`, `prerelease`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          version: `1.2.4-0`,
+        });
+      }),
+    );
+
+    test(
+      `it should bump the prerelease version number on a prerelease version`,
+      makeTemporaryEnv({
+        version: `11.22.33-9`,
+      }, async ({path, run, source}) => {
+        await run(`version`, `prerelease`);
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          version: `11.22.33-10`,
+        });
+      }),
+    );
+
+    test(
+      `it shouldn't immediately increase the version number for a workspace when using --deferred`,
       makeTemporaryEnv({
         version: `0.0.0`,
       }, async ({path, run, source}) => {
@@ -118,7 +144,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it shouldn't immediatly increase the version number for a workspace when using preferDeferredVersions`,
+      `it shouldn't immediately increase the version number for a workspace when using preferDeferredVersions`,
       makeTemporaryEnv({
         version: `0.0.0`,
       }, {
@@ -139,7 +165,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should immediatly increase the version number for a workspace when using --immediate, even if preferDeferredVersions is set`,
+      `it should immediately increase the version number for a workspace when using --immediate, even if preferDeferredVersions is set`,
       makeTemporaryEnv({
         version: `0.0.0`,
       }, {

@@ -20,7 +20,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
 
       When used without arguments, this command lists all peer requirements and the corresponding hash that can be used to get detailed information about a given requirement.
 
-      **Note:** A hash is a six-letter p-prefixed code that can be obtained from peer dependency warnings or from the list of all peer requirements (\`yarn explain peer-requirements\`).
+      **Note:** A hash is a seven-letter code consisting of the letter 'p' followed by six characters that can be obtained from peer dependency warnings or from the list of all peer requirements(\`yarn explain peer-requirements\`).
     `,
     examples: [[
       `Explain the corresponding peer requirement for a hash`,
@@ -34,7 +34,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
   hash = Option.String({
     required: false,
     validator: t.cascade(t.isString(), [
-      t.matchesRegExp(/^p[0-9a-f]{5}$/),
+      t.matchesRegExp(/^p[0-9a-f]{6}$/),
     ]),
   });
 

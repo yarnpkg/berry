@@ -17,7 +17,7 @@ export type ApplyPatchOptions = {
 declare global {
   module NodeJS {
     interface Process {
-      dlopen: (module: Object, filename: string, flags?: number) => void;
+      dlopen: (module: object, filename: string, flags?: number) => void;
     }
   }
 }

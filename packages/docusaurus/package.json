@@ -68,7 +68,7 @@
     "three": "^0.145.0",
     "tslib": "^2.4.0",
     "typedoc": "^0.25.7",
-    "typescript": "^5.5.2",
+    "typescript": "^5.9.2",
     "unist-util-visit-parents": "^6.0.1",
     "usehooks-ts": "^3.1.1",
     "webpack": "^5.88.2"
@@ -82,7 +82,7 @@
     "@types/markdown-it": "^12.2.3",
     "@types/marked": "^5.0.0",
     "@types/mdast": "^4.0.3",
-    "@types/node": "^18.19.15",
+    "@types/node": "^18.19.124",
     "@types/react": "^18.2.54",
     "@types/react-instantsearch-dom": "^6",
     "@types/react-modal": "^3",

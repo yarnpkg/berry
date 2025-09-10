@@ -2745,7 +2745,7 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       } (${
         formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
       }), requested by ${
-        structUtils.prettyIdent(project.configuration, warning.node.requests.values().next().value.requester)
+        structUtils.prettyIdent(project.configuration, warning.node.requests.values().next().value!.requester)
       }${otherPackages}.`);
     }
   }
