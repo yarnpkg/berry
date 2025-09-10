@@ -14,14 +14,6 @@ export type ApplyPatchOptions = {
   manager: Manager;
 };
 
-declare global {
-  module NodeJS {
-    interface Process {
-      dlopen: (module: object, filename: string, flags?: number) => void;
-    }
-  }
-}
-
 export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
   /**
    * Used to disable the resolution hooks (for when we want to fallback to the previous resolution - we then need

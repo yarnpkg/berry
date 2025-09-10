@@ -51,7 +51,8 @@ export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) =>
 }
 
 const mapAndFilterSkip = Symbol();
-mapAndFilter.skip = mapAndFilterSkip;
+// The `as` here is necessary to workaround a ts-go bug: https://github.com/microsoft/typescript-go/issues/1682
+mapAndFilter.skip = mapAndFilterSkip as typeof mapAndFilterSkip;
 
 export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
   for (const value of iterable) {
@@ -65,7 +66,8 @@ export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => O
 }
 
 const mapAndFindSkip = Symbol();
-mapAndFind.skip = mapAndFindSkip;
+// The `as` here is necessary to workaround a ts-go bug: https://github.com/microsoft/typescript-go/issues/1682
+mapAndFind.skip = mapAndFindSkip as typeof mapAndFindSkip;
 
 export function isIndexableObject(value: unknown): value is {[key: string]: unknown} {
   return typeof value === `object` && value !== null;

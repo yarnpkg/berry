@@ -74,6 +74,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   `cacheCheckpointOverride`,
   `cacheVersionOverride`,
   `lockfileVersionOverride`,
+  `osOverride`,
+  `cpuOverride`,
+  `libcOverride`,
 
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
