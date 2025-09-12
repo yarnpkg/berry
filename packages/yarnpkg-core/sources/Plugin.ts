@@ -182,6 +182,16 @@ export interface Hooks {
   cleanGlobalArtifacts?: (
     configuration: Configuration,
   ) => Promise<void>;
+
+  /**
+   * Called after the plugin has been imported.
+   */
+  pluginPostImport?: (project: Project) => Promise<void>;
+
+  /**
+   * Called before the plugin gets removed from the project.
+   */
+  pluginPreRemove?: (project: Project) => Promise<void>;
 }
 
 export type Plugin<PluginHooks = any> = {

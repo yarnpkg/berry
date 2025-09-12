@@ -47,6 +47,9 @@ describe(`Commands`, () => {
 
           await run(`plugin`, `import`, pluginUrl);
 
+          // Check for post import script output
+          await expect(xfs.existsPromise(ppath.join(path, `post_import.txt`))).resolves.toEqual(true);
+
           await expect(xfs.existsPromise(ppath.join(path, mockPluginPath))).resolves.toEqual(true);
           await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
             httpsCaFilePath,

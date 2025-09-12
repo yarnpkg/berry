@@ -1,7 +1,7 @@
-import {BaseCommand}                                                                 from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, StreamReport, formatUtils, structUtils} from '@yarnpkg/core';
-import {PortablePath, ppath, xfs}                                                    from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                          from 'clipanion';
+import {BaseCommand}                                                                        from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, formatUtils, structUtils, Hooks} from '@yarnpkg/core';
+import {PortablePath, ppath, xfs}                                                           from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                 from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginRemoveCommand extends BaseCommand {
@@ -31,6 +31,8 @@ export default class PluginRemoveCommand extends BaseCommand {
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
+
+    await configuration.triggerHook((hooks: Hooks) => hooks.pluginPreRemove, project);
 
     const report = await StreamReport.start({
       configuration,
