@@ -1,5 +1,5 @@
 import {BaseCommand}                                                            from '@yarnpkg/cli';
-import {PluginMeta}                                                             from '@yarnpkg/core/sources/Plugin';
+import {Hooks, PluginMeta}                                                      from '@yarnpkg/core/sources/Plugin';
 import {Configuration, MessageName, Project, ReportError, StreamReport, Report} from '@yarnpkg/core';
 import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}            from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                        from '@yarnpkg/fslib';
@@ -54,13 +54,12 @@ export default class PluginImportCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+    const {project} = await Project.find(configuration, this.context.cwd);
 
     const report = await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const {project} = await Project.find(configuration, this.context.cwd);
-
       let pluginSpec: string;
       let pluginBuffer: Buffer;
       if (this.name.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.name)) {
@@ -115,6 +114,8 @@ export default class PluginImportCommand extends BaseCommand {
 
       await savePlugin(pluginSpec, pluginBuffer, {checksum: this.checksum, project, report});
     });
+
+    await configuration.triggerHook((hooks: Hooks) => hooks.pluginPostImport, project);
 
     return report.exitCode();
   }

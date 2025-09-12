@@ -1,13 +1,13 @@
-import {BaseCommand}                                                    from '@yarnpkg/cli';
-import {structUtils, hashUtils, Report, CommandContext, YarnVersion}    from '@yarnpkg/core';
-import {Configuration, MessageName, Project, ReportError, StreamReport} from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs, Filename}                      from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                         from 'clipanion';
-import {tmpdir}                                                         from 'os';
+import {BaseCommand}                                                        from '@yarnpkg/cli';
+import {structUtils, hashUtils, Report, CommandContext, YarnVersion, Hooks} from '@yarnpkg/core';
+import {Configuration, MessageName, Project, ReportError, StreamReport}     from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs, Filename}                          from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                             from 'clipanion';
+import {tmpdir}                                                             from 'os';
 
-import {prepareRepo, runWorkflow}                                       from '../../set/version/sources';
-import {savePlugin}                                                     from '../import';
-import {getAvailablePlugins}                                            from '../list';
+import {prepareRepo, runWorkflow}                                           from '../../set/version/sources';
+import {savePlugin}                                                         from '../import';
+import {getAvailablePlugins}                                                from '../list';
 
 const buildWorkflow = ({pluginName, noMinify}: {noMinify: boolean, pluginName: string}, target: PortablePath) => [
   [`yarn`, `build:${pluginName}`, ...noMinify ? [`--no-minify`] : [], `|`],
@@ -60,7 +60,7 @@ export default class PluginImportSourcesCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-
+    const {project} = await Project.find(configuration, this.context.cwd);
     const target = typeof this.installPath !== `undefined`
       ? ppath.resolve(this.context.cwd, npath.toPortablePath(this.installPath))
       : ppath.resolve(npath.toPortablePath(tmpdir()), `yarnpkg-sources`, hashUtils.makeHash(this.repository).slice(0, 6) as Filename);
@@ -69,8 +69,6 @@ export default class PluginImportSourcesCommand extends BaseCommand {
       configuration,
       stdout: this.context.stdout,
     }, async report => {
-      const {project} = await Project.find(configuration, this.context.cwd);
-
       const ident = structUtils.parseIdent(this.name.replace(/^((@yarnpkg\/)?plugin-)?/, `@yarnpkg/plugin-`));
       const identStr = structUtils.stringifyIdent(ident);
       const data = await getAvailablePlugins(configuration, YarnVersion);
@@ -84,6 +82,8 @@ export default class PluginImportSourcesCommand extends BaseCommand {
 
       await buildAndSavePlugin(pluginSpec, this, {project, report, target});
     });
+
+    await configuration.triggerHook((hooks: Hooks) => hooks.pluginPostImport, project);
 
     return report.exitCode();
   }

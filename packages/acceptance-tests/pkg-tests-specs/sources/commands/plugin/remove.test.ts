@@ -33,6 +33,9 @@ describe(`Commands`, () => {
         await run(`plugin`, `remove`, `@yarnpkg/plugin-hello-world`);
 
         await expect(xfs.existsPromise(helloWorldPlugin)).resolves.toEqual(false);
+        // Check for pre remove script output
+        await expect(xfs.existsPromise(ppath.join(path, `pre_remove.txt`))).resolves.toEqual(true);
+
         await expect(fs.readSyml(ppath.join(path, Filename.rc))).resolves.toEqual({
           plugins: [{
             path: ppath.relative(path, helloUniversePlugin),

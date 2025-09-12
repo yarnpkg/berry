@@ -35,6 +35,18 @@ module.exports = {
       commands: [
         HelloWorldCommand,
       ],
+      hooks: {
+        pluginPostImport: project => {
+          const {xfs, ppath} = require(`@yarnpkg/fslib`);
+          const path = ppath.join(project.cwd, `post_import.txt`);
+          xfs.writeFileSync(path, `Hello, World!`);
+        },
+        pluginPreRemove: project => {
+          const {xfs, ppath} = require(`@yarnpkg/fslib`);
+          const path = ppath.join(project.cwd, `pre_remove.txt`);
+          xfs.writeFileSync(path, `Goodbye, World!`);
+        },
+      },
     };
   },
 };
