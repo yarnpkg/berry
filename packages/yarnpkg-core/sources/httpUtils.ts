@@ -203,44 +203,29 @@ export async function get(target: string, {configuration, jsonResponse, customEr
       })
   );
 
-  if (jsonResponse)
+  if (jsonResponse) {
     return JSON.parse(entry.toString());
-
-
-  return entry;
+  } else {
+    return entry;
+  }
 }
 
 export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<any> {
-  const entry = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), {customErrorMessage, configuration: options.configuration})
-    .then(response => response.body);
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), {customErrorMessage, configuration: options.configuration});
 
-  if (options.jsonResponse)
-    return JSON.parse(entry.toString());
-
-
-  return entry;
+  return response.body;
 }
 
 export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<any> {
-  const entry = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), {customErrorMessage, configuration: options.configuration})
-    .then(response => response.body);
+  const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), {customErrorMessage, configuration: options.configuration});
 
-  if (options.jsonResponse)
-    return JSON.parse(entry.toString());
-
-
-  return entry;
+  return response.body;
 }
 
 export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<any> {
-  const entry = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), {customErrorMessage, configuration: options.configuration})
-    .then(response => response.body);
+  const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), {customErrorMessage, configuration: options.configuration});
 
-  if (options.jsonResponse)
-    return JSON.parse(entry.toString());
-
-
-  return entry;
+  return response.body;
 }
 
 async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, `customErrorMessage`>): Promise<Response> {
