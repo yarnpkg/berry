@@ -466,17 +466,18 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
     return `Basic ${npmAuthIdent}`;
   }
 
-  if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
-    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);
-
-  } else if (allowOidc && ident) {
+  if (allowOidc && ident) {
     const oidcToken = await getOidcToken(registry, {configuration, ident});
     if (oidcToken) {
       return `Bearer ${oidcToken}`;
     }
   }
 
-  return null;
+  if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
+    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);
+  } else {
+    return null;
+  }
 }
 
 function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
