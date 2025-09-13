@@ -28,6 +28,7 @@ type RegistryOptions = {
 
 export type Options = httpUtils.Options & RegistryOptions & {
   authType?: AuthType;
+  allowOidc?: boolean;
   otp?: string;
 };
 
@@ -316,13 +317,13 @@ function getMetadataFolder(configuration: Configuration) {
   return ppath.join(configuration.get(`globalFolder`), `metadata/npm`);
 }
 
-export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
+export async function get(path: string, {configuration, headers, ident, authType, allowOidc, registry, ...rest}: Options) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
   if (ident && ident.scope && typeof authType === `undefined`)
     authType = AuthType.BEST_EFFORT;
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -335,10 +336,10 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
 }
 
-export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
@@ -367,10 +368,10 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
@@ -399,10 +400,10 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
@@ -441,7 +442,7 @@ function normalizeRegistry(configuration: Configuration, {ident, registry}: Part
   return npmConfigUtils.normalizeRegistry(registry);
 }
 
-async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions[`ident`]}) {
+async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, allowOidc = false, configuration, ident}: {authType?: AuthType, allowOidc?: boolean, configuration: Configuration, ident: RegistryOptions[`ident`]}) {
   const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
 
@@ -455,13 +456,6 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
   if (header)
     return header;
 
-  if (env.CI && ident) {
-    const oidcToken = await getOidcToken(registry, {configuration, ident});
-    if (oidcToken) {
-      return `Bearer ${oidcToken}`;
-    }
-  }
-
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
 
@@ -474,9 +468,15 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
     throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `No authentication configured for request`);
-  } else {
-    return null;
+
+  } else if (allowOidc && ident) {
+    const oidcToken = await getOidcToken(registry, {configuration, ident});
+    if (oidcToken) {
+      return `Bearer ${oidcToken}`;
+    }
   }
+
+  return null;
 }
 
 function shouldAuthenticate(authConfiguration: MapLike, authType: AuthType) {
