@@ -9,6 +9,8 @@ import {Hooks}                                                                  
 import * as npmConfigUtils                                                                                                        from './npmConfigUtils';
 import {MapLike}                                                                                                                  from './npmConfigUtils';
 
+const {env} = process;
+
 export enum AuthType {
   NO_AUTH,
   BEST_EFFORT,
@@ -453,6 +455,13 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
   if (header)
     return header;
 
+  if (env.CI && ident) {
+    const oidcToken = await getOidcToken(registry, {configuration, ident});
+    if (oidcToken) {
+      return `Bearer ${oidcToken}`;
+    }
+  }
+
   if (effectiveConfiguration.get(`npmAuthToken`))
     return `Bearer ${effectiveConfiguration.get(`npmAuthToken`)}`;
 
@@ -572,4 +581,51 @@ function getOtpHeaders(otp: string) {
   return {
     [`npm-otp`]: otp,
   };
+}
+
+/**
+ * This code is adapted from the npm project, under ISC License.
+ *
+ * Original source:
+ * https://github.com/npm/cli/blob/7d900c4656cfffc8cca93240c6cda4b441fbbfaa/lib/utils/oidc.js
+ */
+async function getOidcToken(registry: string, {configuration, ident}: {configuration: Configuration, ident: Ident}): Promise<string | null> {
+  let idToken: string | null = null;
+
+  if (env.GITLAB) {
+    idToken = env.NPM_ID_TOKEN || null;
+  } else if (env.GITHUB_ACTIONS) {
+    if (!(env.ACTIONS_ID_TOKEN_REQUEST_URL && env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))
+      return null;
+
+    const url = new URL(env.ACTIONS_ID_TOKEN_REQUEST_URL);
+    url.searchParams.append(`audience`, `npm:${new URL(registry).host}`);
+
+    const response = await httpUtils.get(url.href, {
+      configuration,
+      jsonResponse: true,
+      headers: {
+        Authorization: `Bearer ${env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`,
+      },
+    });
+
+    idToken = response.value;
+  }
+
+  if (!idToken)
+    return null;
+
+  const response = await httpUtils.post(
+    `${registry}/-/npm/v1/oidc/token/exchange/package/${ident.name.replace(/^@/, `%40`)}`,
+    null,
+    {
+      configuration,
+      jsonResponse: true,
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    },
+  );
+
+  return response.token || null;
 }
