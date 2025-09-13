@@ -616,17 +616,22 @@ async function getOidcToken(registry: string, {configuration, ident}: {configura
   if (!idToken)
     return null;
 
-  const response = await httpUtils.post(
-    `${registry}/-/npm/v1/oidc/token/exchange/package/${ident.name.replace(/^@/, `%40`)}`,
-    null,
-    {
-      configuration,
-      jsonResponse: true,
-      headers: {
-        Authorization: `Bearer ${idToken}`,
+  try {
+    const response = await httpUtils.post(
+      `${registry}/-/npm/v1/oidc/token/exchange/package/${ident.name.replace(/^@/, `%40`)}`,
+      null,
+      {
+        configuration,
+        jsonResponse: true,
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
       },
-    },
-  );
+    );
+    return response.token || null;
+  } catch {
+    // Best effort
+  }
 
-  return response.token || null;
+  return null;
 }
