@@ -1,4 +1,7 @@
-import {Configuration, Manifest, Ident} from '@yarnpkg/core';
+import {Configuration, Manifest, Ident, structUtils, Descriptor} from '@yarnpkg/core';
+import micromatch                                                from 'micromatch';
+
+import {PROTOCOL}                                                from './constants';
 
 export enum RegistryType {
   AUDIT_REGISTRY = `npmAuditRegistry`,
@@ -93,4 +96,34 @@ export function getAuthConfiguration(registry: string, {configuration, ident}: {
   const registryConfiguration = getRegistryConfiguration(registry, {configuration});
 
   return registryConfiguration || configuration;
+}
+
+export type ShouldExcludeCandidateOptions = {
+  configuration: Configuration;
+  descriptor: Descriptor;
+  version: string;
+  publishTimes: Record<string, string>;
+};
+
+export function shouldExcludeCandidate({configuration, descriptor, version, publishTimes}: ShouldExcludeCandidateOptions) {
+  const range = descriptor.range.slice(PROTOCOL.length);
+  const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
+  if (minimalAgeGate) {
+    const preapprovedPackages = configuration.get(`npmPreapprovedPackages`);
+    const shouldExclude = preapprovedPackages.some(exclude =>
+      structUtils.stringifyIdent(descriptor) === exclude
+      || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude
+      || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, `${PROTOCOL}:${version}`)) === exclude
+      || micromatch.isMatch(structUtils.stringifyDescriptor({...descriptor, range}), exclude)
+      || micromatch.isMatch(structUtils.stringifyDescriptor(descriptor), exclude),
+    );
+    if (!shouldExclude) {
+      const versionTime = new Date(publishTimes[version]);
+      const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
+      if (ageMinutes < minimalAgeGate) {
+        return true;
+      }
+    }
+  }
+  return false;
 }

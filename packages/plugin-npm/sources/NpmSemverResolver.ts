@@ -2,11 +2,11 @@ import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOption
 import {Descriptor, Locator, semverUtils}                                                                        from '@yarnpkg/core';
 import {LinkType}                                                                                                from '@yarnpkg/core';
 import {structUtils}                                                                                             from '@yarnpkg/core';
-import micromatch                                                                                                from 'micromatch';
 import semver                                                                                                    from 'semver';
 
 import {NpmSemverFetcher}                                                                                        from './NpmSemverFetcher';
 import {PROTOCOL}                                                                                                from './constants';
+import {shouldExcludeCandidate}                                                                                  from './npmConfigUtils';
 import * as npmHttpUtils                                                                                         from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
@@ -44,8 +44,7 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
-    const rawRange = descriptor.range.slice(PROTOCOL.length);
-    const range = semverUtils.validRange(rawRange);
+    const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
@@ -59,24 +58,9 @@ export class NpmSemverResolver implements Resolver {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
-          const minimalAgeGate = opts.project.configuration.get(`npmMinimalAgeGate`);
-          if (minimalAgeGate) {
-            const preapprovedPackages = opts.project.configuration.get(`npmPreapprovedPackages`);
-            const shouldExclude = preapprovedPackages.some(exclude =>
-              structUtils.stringifyIdent(descriptor) === exclude
-              || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude
-              || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, `${PROTOCOL}:${version}`)) === exclude
-              || micromatch.isMatch(structUtils.stringifyDescriptor({...descriptor, range: rawRange}), exclude)
-              || micromatch.isMatch(structUtils.stringifyDescriptor(descriptor), exclude),
-            );
-            if (!shouldExclude) {
-              const versionTime = new Date(registryData.time[version]);
-              const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
-              if (ageMinutes < minimalAgeGate) {
-                return miscUtils.mapAndFilter.skip;
-              }
-            }
-          }
+          if (shouldExcludeCandidate({configuration: opts.project.configuration, descriptor, version, publishTimes: registryData.time}))
+            return miscUtils.mapAndFilter.skip;
+
           return candidate;
         }
       } catch { }
