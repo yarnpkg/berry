@@ -5,6 +5,7 @@ import semver                                                                   
 
 import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
 import {PROTOCOL}                                                                              from './constants';
+import {shouldExcludeCandidate}                                                                from './npmConfigUtils';
 import * as npmHttpUtils                                                                       from './npmHttpUtils';
 
 export class NpmTagResolver implements Resolver {
@@ -52,7 +53,13 @@ export class NpmTagResolver implements Resolver {
     if (!Object.hasOwn(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
-    const version = distTags[tag];
+    const versions = Object.keys(registryData.versions);
+    const times = registryData.time;
+    const version = tag === `latest`
+      ? semver.rsort(versions).find(version =>
+        !shouldExcludeCandidate({configuration: opts.project.configuration, descriptor, version, publishTimes: times}),
+      ) ?? distTags[tag]
+      : distTags[tag];
     const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
 
     const archiveUrl = registryData.versions[version].dist.tarball;
