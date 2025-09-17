@@ -1,12 +1,12 @@
 const ONE_DAY_IN_MINUTES = 24 * 60;
 
 describe(`Features`, () => {
-  describe(`npmMinimumReleaseAge and npmMinimumReleaseAgeExclude`, () => {
+  describe(`npmMinimalAgeGate and npmPreapprovedPackages`, () => {
     describe(`add`, () => {
       test(
         `add should install the latest version allowed by the minimum release age`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run, source}) => {
           await run(`add`, `release-date`);
           await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
@@ -19,7 +19,7 @@ describe(`Features`, () => {
       test(
         `it should fail when trying to install exact version that is newer than the minimum release age`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run}) => {
           await expect(run(`add`, `release-date@1.1.1`)).rejects.toThrowError(`No candidates found`);
         }),
@@ -28,7 +28,7 @@ describe(`Features`, () => {
       test(
         `it should install older package versions when the minimum release age disallows the newest suitable version`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
@@ -42,8 +42,8 @@ describe(`Features`, () => {
       test(
         `it should install new version when excluded by exact locator; while transitive dependencies are not excluded`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@1.1.1`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@1.1.1`],
           // we are checking a transitive dependencies version, which the pnp will throw an error for
           // disabling these checks for the purpose of this test
           pnpFallbackMode: `all`,
@@ -66,8 +66,8 @@ describe(`Features`, () => {
       test(
         `it should install new version when excluded by npm protocol locator`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@npm:1.1.1`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@npm:1.1.1`],
         }, async ({run, source}) => {
           await run(`add`, `release-date@1.1.1`);
 
@@ -81,8 +81,8 @@ describe(`Features`, () => {
       test(
         `it should install new version when excluded by descriptor range`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@^1.0.0`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@^1.0.0`],
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
@@ -96,8 +96,8 @@ describe(`Features`, () => {
       test(
         `it should install new version when excluded by npm protocol descriptor range`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@npm:^1.0.0`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@npm:^1.0.0`],
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
@@ -111,8 +111,8 @@ describe(`Features`, () => {
       test(
         `it should install new version when excluded by package name glob pattern`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-*`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-*`],
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
@@ -126,8 +126,8 @@ describe(`Features`, () => {
       test(
         `it should install new version when excluded by package ident`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date`],
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
@@ -141,7 +141,7 @@ describe(`Features`, () => {
       test(
         `it should not impact semver prioritization of newer versions when multiple versions meet the age requirement`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: 0,
+          npmMinimalAgeGate: 0,
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
@@ -155,7 +155,7 @@ describe(`Features`, () => {
       test(
         `it should work with scoped packages`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run}) => {
           await expect(run(`add`, `@scoped/release-date@1.1.1`)).rejects.toThrowError(`No candidates found`);
         }),
@@ -164,8 +164,8 @@ describe(`Features`, () => {
       test(
         `it should install scoped package when excluded`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`@scoped/release-date`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`@scoped/release-date`],
         }, async ({run, source}) => {
           await run(`add`, `@scoped/release-date@^1.0.0`);
 
@@ -179,8 +179,8 @@ describe(`Features`, () => {
       test(
         `it should install scoped package when excluded by scoped glob pattern`,
         makeTemporaryEnv({}, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`@scoped/*`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`@scoped/*`],
         }, async ({run, source}) => {
           await run(`add`, `@scoped/release-date@^1.0.0`);
 
@@ -197,7 +197,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `1.1.1`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run}) => {
           await expect(run(`install`)).rejects.toThrowError(`No candidates found`);
         }),
@@ -208,7 +208,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -224,8 +224,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@1.1.1`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@1.1.1`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -241,8 +241,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `1.1.1`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@npm:1.1.1`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@npm:1.1.1`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -258,8 +258,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@^1.0.0`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@^1.0.0`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -275,8 +275,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date@npm:^1.0.0`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date@npm:^1.0.0`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -292,8 +292,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-*`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-*`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -309,8 +309,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`release-date`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`release-date`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -326,7 +326,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: 0,
+          npmMinimalAgeGate: 0,
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -342,7 +342,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`@scoped/release-date`]: `1.1.1`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run}) => {
           await expect(run(`install`)).rejects.toThrowError(`No candidates found`);
         }),
@@ -353,8 +353,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`@scoped/release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`@scoped/release-date`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`@scoped/release-date`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -370,8 +370,8 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`@scoped/release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
-          npmMinimumReleaseAgeExclude: [`@scoped/*`],
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+          npmPreapprovedPackages: [`@scoped/*`],
         }, async ({run, source}) => {
           await run(`install`);
 
@@ -388,7 +388,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run, source}) => {
           await run(`install`);
           await run(`set`, `resolution`, `release-date@npm:^1.0.0`, `npm:1.0.0`);
@@ -413,7 +413,7 @@ describe(`Features`, () => {
           // disabling these checks for the purpose of this test
           pnpFallbackMode: `all`,
           pnpMode: `loose`,
-          npmMinimumReleaseAge: ONE_DAY_IN_MINUTES,
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
         }, async ({run, source}) => {
           await run(`install`);
           await run(`set`, `resolution`, `release-date@npm:^1.0.0`, `npm:1.0.0`);

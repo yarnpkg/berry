@@ -59,10 +59,10 @@ export class NpmSemverResolver implements Resolver {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
-          const minimumReleaseAge = opts.project.configuration.get(`npmMinimumReleaseAge`);
-          if (minimumReleaseAge) {
-            const minimumReleaseAgeExclude = opts.project.configuration.get(`npmMinimumReleaseAgeExclude`);
-            const shouldExclude = minimumReleaseAgeExclude.some(exclude =>
+          const minimalAgeGate = opts.project.configuration.get(`npmMinimalAgeGate`);
+          if (minimalAgeGate) {
+            const preapprovedPackages = opts.project.configuration.get(`npmPreapprovedPackages`);
+            const shouldExclude = preapprovedPackages.some(exclude =>
               structUtils.stringifyIdent(descriptor) === exclude
               || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude
               || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, `${PROTOCOL}:${version}`)) === exclude
@@ -72,7 +72,7 @@ export class NpmSemverResolver implements Resolver {
             if (!shouldExclude) {
               const versionTime = new Date(registryData.time[version]);
               const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
-              if (ageMinutes < minimumReleaseAge) {
+              if (ageMinutes < minimalAgeGate) {
                 return miscUtils.mapAndFilter.skip;
               }
             }
