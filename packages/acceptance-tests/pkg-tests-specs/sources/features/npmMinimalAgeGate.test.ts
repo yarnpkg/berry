@@ -44,21 +44,18 @@ describe(`Features`, () => {
         makeTemporaryEnv({}, {
           npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
           npmPreapprovedPackages: [`release-date@^1.0.0`],
-          // we are checking a transitive dependencies version, which the pnp will throw an error for
-          // disabling these checks for the purpose of this test
-          pnpFallbackMode: `all`,
-          pnpMode: `loose`,
         }, async ({run, source}) => {
           await run(`add`, `release-date@^1.0.0`);
 
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+          await expect(source(`require('release-date')`)).resolves.toMatchObject({
             name: `release-date`,
             version: `1.1.1`,
-          });
-
-          await expect(source(`require('release-date-transitive/package.json')`)).resolves.toMatchObject({
-            name: `release-date-transitive`,
-            version: `1.1.0`,
+            dependencies: {
+              [`release-date-transitive`]: {
+                name: `release-date-transitive`,
+                version: `1.1.0`,
+              },
+            },
           });
         }),
       );

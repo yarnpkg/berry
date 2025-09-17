@@ -5,7 +5,7 @@ import semver                                                                   
 
 import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
 import {PROTOCOL}                                                                              from './constants';
-import {checkPackageGates}                                                                     from './npmConfigUtils';
+import {isPackageApproved}                                                                     from './npmConfigUtils';
 import * as npmHttpUtils                                                                       from './npmHttpUtils';
 
 export class NpmTagResolver implements Resolver {
@@ -55,11 +55,19 @@ export class NpmTagResolver implements Resolver {
 
     const versions = Object.keys(registryData.versions);
     const times = registryData.time;
+
     let version = distTags[tag];
-    if (tag === `latest` && !checkPackageGates({configuration: opts.project.configuration, descriptor, version, publishTimes: times}))
-      version = semver.rsort(versions)
-        .filter(nextVersion => semver.lt(nextVersion, version))
-        .find(nextVersion => checkPackageGates({configuration: opts.project.configuration, descriptor, version: nextVersion, publishTimes: times})) ?? distTags[tag];
+
+    if (tag === `latest` && !isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version, publishTimes: times})) {
+      const nextVersion = semver.rsort(versions).find(candidateVersion => {
+        return semver.lt(candidateVersion, version) && isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidateVersion, publishTimes: times});
+      });
+
+      if (!nextVersion)
+        throw new ReportError(MessageName.REMOTE_NOT_FOUND, `The version for tag "${tag}" is quarantined, and no lower version is available`);
+
+      version = nextVersion;
+    }
 
     const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
 

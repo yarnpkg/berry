@@ -6,7 +6,7 @@ import semver                                                                   
 
 import {NpmSemverFetcher}                                                                                        from './NpmSemverFetcher';
 import {PROTOCOL}                                                                                                from './constants';
-import {checkPackageGates}                                                                                       from './npmConfigUtils';
+import {isPackageApproved}                                                                                       from './npmConfigUtils';
 import * as npmHttpUtils                                                                                         from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
@@ -58,7 +58,7 @@ export class NpmSemverResolver implements Resolver {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
-          if (!checkPackageGates({configuration: opts.project.configuration, descriptor, version, publishTimes: registryData.time}))
+          if (!isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version, publishTimes: registryData.time}))
             return miscUtils.mapAndFilter.skip;
 
           return candidate;

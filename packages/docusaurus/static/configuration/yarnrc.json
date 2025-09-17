@@ -495,7 +495,7 @@
         "type": "string"
       },
       "default": [],
-      "examples": ["@scoped-package/*", "package", "package*", "package@^1.0.0", "package@1.0.0", "package@npm:1.0.0", "package@npm:^1.0.0"]
+      "examples": ["@scoped-package/*", "package", "package*", "package@^1.0.0", "package@1.0.0"]
     },
     "pnpmStoreFolder": {
       "_package": "@yarnpkg/plugin-pnpm",
