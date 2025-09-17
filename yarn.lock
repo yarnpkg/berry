@@ -5828,6 +5828,7 @@ __metadata:
     "@yarnpkg/libzip": "workspace:^"
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
+    "@yarnpkg/plugin-catalog": "workspace:^"
     "@yarnpkg/plugin-compat": "workspace:^"
     "@yarnpkg/plugin-constraints": "workspace:^"
     "@yarnpkg/plugin-dlx": "workspace:^"
@@ -6155,6 +6156,20 @@ __metadata:
     js-yaml: "npm:^3.10.0"
     pegjs: "npm:^0.10.0"
     tslib: "npm:^2.4.0"
+  languageName: unknown
+  linkType: soft
+
+"@yarnpkg/plugin-catalog@workspace:^, @yarnpkg/plugin-catalog@workspace:packages/plugin-catalog":
+  version: 0.0.0-use.local
+  resolution: "@yarnpkg/plugin-catalog@workspace:packages/plugin-catalog"
+  dependencies:
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/plugin-pack": "workspace:^"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/plugin-pack": "workspace:^"
   languageName: unknown
   linkType: soft
 
