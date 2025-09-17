@@ -599,7 +599,7 @@ async function getOidcToken(registry: string, {configuration, ident}: {configura
 
     // The specification for an audience is `npm:registry.npmjs.org`,
     // where "registry.npmjs.org" can be any supported registry.
-    const audience = `audience:${new URL(registry).host
+    const audience = `npm:${new URL(registry).host
       // Yarn registry is an alias domain to the NPM registry.
       .replace(`registry.yarnpkg.com`, `registry.npmjs.org`)
       .replace(`yarn.npmjs.org`, `registry.npmjs.org`)}`;
