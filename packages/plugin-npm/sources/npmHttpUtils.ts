@@ -597,8 +597,15 @@ async function getOidcToken(registry: string, {configuration, ident}: {configura
     if (!(process.env.ACTIONS_ID_TOKEN_REQUEST_URL && process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))
       return null;
 
+    // The specification for an audience is `npm:registry.npmjs.org`,
+    // where "registry.npmjs.org" can be any supported registry.
+    const audience = `audience:${new URL(registry).host
+      // Yarn registry is an alias domain to the NPM registry.
+      .replace(`registry.yarnpkg.com`, `registry.npmjs.org`)
+      .replace(`yarn.npmjs.org`, `registry.npmjs.org`)}`;
+
     const url = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
-    url.searchParams.append(`audience`, `npm:${new URL(registry).host}`);
+    url.searchParams.append(`audience`, audience);
 
     const response = await httpUtils.get(url.href, {
       configuration,
