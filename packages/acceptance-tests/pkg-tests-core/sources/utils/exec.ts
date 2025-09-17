@@ -7,7 +7,7 @@ export const execPromise = promisify(exec);
 
 interface Options {
   cwd: PortablePath;
-  env?: Record<string, string>;
+  env?: Record<string, string | undefined>;
   stdin?: string;
 }
 
