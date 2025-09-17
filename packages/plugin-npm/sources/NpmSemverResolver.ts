@@ -59,9 +59,9 @@ export class NpmSemverResolver implements Resolver {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
-          const minimumReleaseAge = opts.project.configuration.get(`minimumNpmReleaseAge`);
+          const minimumReleaseAge = opts.project.configuration.get(`npmMinimumReleaseAge`);
           if (minimumReleaseAge) {
-            const minimumReleaseAgeExclude = opts.project.configuration.get(`minimumNpmReleaseAgeExclude`);
+            const minimumReleaseAgeExclude = opts.project.configuration.get(`npmMinimumReleaseAgeExclude`);
             const shouldExclude = minimumReleaseAgeExclude.some(exclude =>
               structUtils.stringifyIdent(descriptor) === exclude
               || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude

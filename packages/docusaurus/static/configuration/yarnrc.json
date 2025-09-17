@@ -407,23 +407,6 @@
         }
       ]
     },
-    "minimumReleaseAge": {
-      "_package": "@yarnpkg/core",
-      "title": "Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation.",
-      "description": "If a package version is newer than the minimum release age, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
-      "type": "number",
-      "default": 0
-    },
-    "minimumReleaseAgeExcludes": {
-      "_package": "@yarnpkg/core",
-      "title": "Array of exact package descriptors, exact package locators, or package name glob patterns to exclude from the minimum release age check.",
-      "description": "If a package descriptor, locator, or name matches specified pattern, it will not be considered for the minimum release age check. That is, the newest matching package version will be selected for installation regardless of the minimum release age configuration.",
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": []
-    },
     "networkConcurrency": {
       "_package": "@yarnpkg/core",
       "title": "Amount of HTTP requests that are allowed to run at the same time.",
@@ -495,6 +478,24 @@
       ],
       "type": "string",
       "default": "pnp"
+    },
+    "npmMinimumReleaseAge": {
+      "_package": "@yarnpkg/core",
+      "title": "Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation.",
+      "description": "If a package version is newer than the minimum release age, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
+      "type": "number",
+      "default": 0
+    },
+    "npmMinimumReleaseAgeExclude": {
+      "_package": "@yarnpkg/core",
+      "title": "Array of exact package descriptors, exact package locators, or package name glob patterns to exclude from the minimum release age check.",
+      "description": "If a package descriptor, locator, or name matches specified pattern, it will not be considered for the minimum release age check. That is, the newest matching package version will be selected for installation regardless of the minimum release age configuration.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["@scoped-package/*", "package", "package*", "package@^1.0.0", "package@1.0.0", "package@npm:1.0.0", "package@npm:^1.0.0"]
     },
     "pnpmStoreFolder": {
       "_package": "@yarnpkg/plugin-pnpm",
