@@ -2,6 +2,7 @@ import {ReportError, MessageName, Resolver, ResolveOptions, MinimalResolveOption
 import {Descriptor, Locator, semverUtils}                                                                        from '@yarnpkg/core';
 import {LinkType}                                                                                                from '@yarnpkg/core';
 import {structUtils}                                                                                             from '@yarnpkg/core';
+import micromatch                                                                                                from 'micromatch';
 import semver                                                                                                    from 'semver';
 
 import {NpmSemverFetcher}                                                                                        from './NpmSemverFetcher';
@@ -43,7 +44,8 @@ export class NpmSemverResolver implements Resolver {
   }
 
   async getCandidates(descriptor: Descriptor, dependencies: Record<string, Package>, opts: ResolveOptions) {
-    const range = semverUtils.validRange(descriptor.range.slice(PROTOCOL.length));
+    const rawRange = descriptor.range.slice(PROTOCOL.length);
+    const range = semverUtils.validRange(rawRange);
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
@@ -57,6 +59,23 @@ export class NpmSemverResolver implements Resolver {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
+          const minimumReleaseAge = opts.project.configuration.get(`minimumNpmReleaseAge`);
+          if (minimumReleaseAge) {
+            const minimumReleaseAgeExclude = opts.project.configuration.get(`minimumNpmReleaseAgeExclude`);
+            const shouldExclude = minimumReleaseAgeExclude.some(exclude =>
+              structUtils.stringifyIdent(descriptor) === exclude
+              || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude
+              || micromatch.isMatch(structUtils.stringifyDescriptor({...descriptor, range: rawRange}), exclude)
+              || micromatch.isMatch(structUtils.stringifyDescriptor(descriptor), exclude),
+            );
+            if (!shouldExclude) {
+              const versionTime = new Date(registryData.time[version]);
+              const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
+              if (ageMinutes < minimumReleaseAge) {
+                return miscUtils.mapAndFilter.skip;
+              }
+            }
+          }
           return candidate;
         }
       } catch { }

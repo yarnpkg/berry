@@ -6425,6 +6425,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
+    "@types/micromatch": "npm:^4.0.1"
     "@types/semver": "npm:^7.1.0"
     "@types/ssri": "npm:^7.1.5"
     "@yarnpkg/core": "workspace:^"
@@ -6432,6 +6433,7 @@ __metadata:
     "@yarnpkg/plugin-pack": "workspace:^"
     enquirer: "npm:^2.3.6"
     es-toolkit: "npm:^1.39.7"
+    micromatch: "npm:^4.0.2"
     semver: "npm:^7.1.2"
     sigstore: "npm:^3.1.0"
     ssri: "npm:^12.0.0"

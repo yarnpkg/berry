@@ -1,0 +1,3 @@
+releases:
+  "@yarnpkg/core": minor
+  "@yarnpkg/plugin-npm": minor
