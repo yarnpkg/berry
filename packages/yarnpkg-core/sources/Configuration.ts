@@ -577,17 +577,6 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: `throw`,
   },
-  npmMinimalAgeGate: {
-    description: `Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation`,
-    type: SettingsType.NUMBER,
-    default: 0,
-  },
-  npmPreapprovedPackages: {
-    description: `Array of package name glob patterns to exclude from the minimum release age check`,
-    type: SettingsType.STRING,
-    isArray: true,
-    default: [],
-  },
 
   // Miscellaneous settings
   injectEnvironmentFiles: {
@@ -710,8 +699,6 @@ export interface ConfigurationValueMap {
   enableStrictSettings: boolean;
   enableImmutableCache: boolean;
   checksumBehavior: string;
-  npmMinimalAgeGate: number;
-  npmPreapprovedPackages: Array<string>;
 
   // Miscellaneous settings
   injectEnvironmentFiles: Array<PortablePath>;
