@@ -3,6 +3,7 @@ const ONE_DAY_IN_MINUTES = 24 * 60;
 describe(`Features`, () => {
   describe(`npmMinimalAgeGate and npmPreapprovedPackages`, () => {
     describe(`add`, () => {
+      // TODO failing
       test(
         `add should install the latest version allowed by the minimum release age`,
         makeTemporaryEnv({}, {
@@ -383,6 +384,7 @@ describe(`Features`, () => {
       );
     });
     describe(`up`, () => {
+      // TODO failing
       test(
         `it should update to the latest version allowed by the minimum release age`,
         makeTemporaryEnv({
@@ -404,6 +406,7 @@ describe(`Features`, () => {
           });
         }),
       );
+      // TODO failing
       test(
         `recursive should update to the latest version allowed by the minimum release age`,
         makeTemporaryEnv({
