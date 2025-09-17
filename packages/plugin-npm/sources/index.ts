@@ -74,7 +74,7 @@ const packageGateSettings = {
     default: 0,
   },
   npmPreapprovedPackages: {
-    description: `Array of package name glob patterns to exclude from the minimum release age check`,
+    description: `Array of package descriptors or package name glob patterns to exclude from the minimum release age check`,
     type: SettingsType.STRING as const,
     isArray: true as const,
     default: [],

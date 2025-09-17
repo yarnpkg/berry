@@ -108,14 +108,12 @@ export type CheckPackageGatesOptions = {
 export function checkPackageGates({configuration, descriptor, version, publishTimes}: CheckPackageGatesOptions) {
   const range = descriptor.range.slice(PROTOCOL.length);
   const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
+  const stringifiedIdent = structUtils.stringifyIdent(descriptor);
+  const stringifiedDescriptor = structUtils.stringifyDescriptor({...descriptor, range});
   if (minimalAgeGate) {
     const preapprovedPackages = configuration.get(`npmPreapprovedPackages`);
     const shouldExclude = preapprovedPackages.some(exclude =>
-      structUtils.stringifyIdent(descriptor) === exclude
-      || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude
-      || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, `${PROTOCOL}:${version}`)) === exclude
-      || micromatch.isMatch(structUtils.stringifyDescriptor({...descriptor, range}), exclude)
-      || micromatch.isMatch(structUtils.stringifyDescriptor(descriptor), exclude),
+      [stringifiedIdent, stringifiedDescriptor].includes(exclude) || micromatch.isMatch(stringifiedIdent, exclude),
     );
     if (!shouldExclude) {
       const versionTime = new Date(publishTimes[version]);

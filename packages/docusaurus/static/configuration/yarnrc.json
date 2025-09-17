@@ -488,8 +488,8 @@
     },
     "npmPreapprovedPackages": {
       "_package": "@yarnpkg/core",
-      "title": "Array of exact package descriptors, exact package locators, or package name glob patterns to exclude from the any package gates.",
-      "description": "If a package descriptor, locator, or name matches specified pattern, it will not be considered when evaluating any of the package gates.",
+      "title": "Array of package descriptors or package name glob patterns to exclude from all of the package gates.",
+      "description": "If a package descriptor or name matches the specified pattern, it will not be considered when evaluating any of the package gates.",
       "type": "array",
       "items": {
         "type": "string"

@@ -31,5 +31,6 @@ releases:
   "@yarnpkg/nm": minor
   "@yarnpkg/pnpify": minor
   "@yarnpkg/sdks": minor
+  "@yarnpkg/plugin-catalog": minor
 
 

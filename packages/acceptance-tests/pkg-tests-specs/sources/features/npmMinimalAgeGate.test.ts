@@ -40,10 +40,10 @@ describe(`Features`, () => {
       );
 
       test(
-        `it should install new version when excluded by exact locator; while transitive dependencies are not excluded`,
+        `it should install new version when excluded by a descriptor; while transitive dependencies are not excluded`,
         makeTemporaryEnv({}, {
           npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@1.1.1`],
+          npmPreapprovedPackages: [`release-date@^1.0.0`],
           // we are checking a transitive dependencies version, which the pnp will throw an error for
           // disabling these checks for the purpose of this test
           pnpFallbackMode: `all`,
@@ -59,66 +59,6 @@ describe(`Features`, () => {
           await expect(source(`require('release-date-transitive/package.json')`)).resolves.toMatchObject({
             name: `release-date-transitive`,
             version: `1.1.0`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by npm protocol locator`,
-        makeTemporaryEnv({}, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@npm:1.1.1`],
-        }, async ({run, source}) => {
-          await run(`add`, `release-date@1.1.1`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by descriptor range`,
-        makeTemporaryEnv({}, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@^1.0.0`],
-        }, async ({run, source}) => {
-          await run(`add`, `release-date@^1.0.0`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by npm protocol descriptor range`,
-        makeTemporaryEnv({}, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@npm:^1.0.0`],
-        }, async ({run, source}) => {
-          await run(`add`, `release-date@^1.0.0`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by package name glob pattern`,
-        makeTemporaryEnv({}, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-*`],
-        }, async ({run, source}) => {
-          await run(`add`, `release-date@^1.0.0`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
           });
         }),
       );
@@ -192,7 +132,7 @@ describe(`Features`, () => {
       );
 
       test(
-        `it should not install a version that is higher than the latest tag`,
+        `it should not install a version via add that is higher than the latest tag`,
         makeTemporaryEnv({
         }, {
           npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
@@ -235,63 +175,12 @@ describe(`Features`, () => {
       );
 
       test(
-        `it should install new version when excluded by exact locator`,
-        makeTemporaryEnv({
-          dependencies: {[`release-date`]: `^1.0.0`},
-        }, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@1.1.1`],
-        }, async ({run, source}) => {
-          await run(`install`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by npm protocol locator`,
-        makeTemporaryEnv({
-          dependencies: {[`release-date`]: `1.1.1`},
-        }, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@npm:1.1.1`],
-        }, async ({run, source}) => {
-          await run(`install`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by descriptor range`,
+        `it should install new version when excluded by a descriptor`,
         makeTemporaryEnv({
           dependencies: {[`release-date`]: `^1.0.0`},
         }, {
           npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
           npmPreapprovedPackages: [`release-date@^1.0.0`],
-        }, async ({run, source}) => {
-          await run(`install`);
-
-          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
-            name: `release-date`,
-            version: `1.1.1`,
-          });
-        }),
-      );
-
-      test(
-        `it should install new version when excluded by npm protocol descriptor range`,
-        makeTemporaryEnv({
-          dependencies: {[`release-date`]: `^1.0.0`},
-        }, {
-          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
-          npmPreapprovedPackages: [`release-date@npm:^1.0.0`],
         }, async ({run, source}) => {
           await run(`install`);
 
