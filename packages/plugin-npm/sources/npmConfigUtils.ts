@@ -98,14 +98,14 @@ export function getAuthConfiguration(registry: string, {configuration, ident}: {
   return registryConfiguration || configuration;
 }
 
-export type ShouldExcludeCandidateOptions = {
+export type CheckPackageGatesOptions = {
   configuration: Configuration;
   descriptor: Descriptor;
   version: string;
   publishTimes: Record<string, string>;
 };
 
-export function shouldExcludeCandidate({configuration, descriptor, version, publishTimes}: ShouldExcludeCandidateOptions) {
+export function checkPackageGates({configuration, descriptor, version, publishTimes}: CheckPackageGatesOptions) {
   const range = descriptor.range.slice(PROTOCOL.length);
   const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
   if (minimalAgeGate) {
@@ -121,9 +121,9 @@ export function shouldExcludeCandidate({configuration, descriptor, version, publ
       const versionTime = new Date(publishTimes[version]);
       const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
       if (ageMinutes < minimalAgeGate) {
-        return true;
+        return false;
       }
     }
   }
-  return false;
+  return true;
 }

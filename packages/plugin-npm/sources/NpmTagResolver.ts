@@ -5,7 +5,7 @@ import semver                                                                   
 
 import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
 import {PROTOCOL}                                                                              from './constants';
-import {shouldExcludeCandidate}                                                                from './npmConfigUtils';
+import {checkPackageGates}                                                                     from './npmConfigUtils';
 import * as npmHttpUtils                                                                       from './npmHttpUtils';
 
 export class NpmTagResolver implements Resolver {
@@ -57,7 +57,7 @@ export class NpmTagResolver implements Resolver {
     const times = registryData.time;
     const version = tag === `latest`
       ? semver.rsort(versions).find(version =>
-        !shouldExcludeCandidate({configuration: opts.project.configuration, descriptor, version, publishTimes: times}),
+        checkPackageGates({configuration: opts.project.configuration, descriptor, version, publishTimes: times}),
       ) ?? distTags[tag]
       : distTags[tag];
     const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
