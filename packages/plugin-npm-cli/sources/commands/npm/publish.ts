@@ -5,8 +5,6 @@ import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                          
 import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
 import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
 
-const {env} = process;
-
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
   static paths = [
@@ -168,7 +166,7 @@ export default class NpmPublishCommand extends BaseCommand {
             ident,
             otp: this.otp,
             jsonResponse: true,
-            allowOidc: Boolean(env.CI && (env.GITHUB_ACTIONS || env.GITLAB)),
+            allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB)),
           });
         }
 

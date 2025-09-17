@@ -9,8 +9,6 @@ import {Hooks}                                                                  
 import * as npmConfigUtils                                                                                                        from './npmConfigUtils';
 import {MapLike}                                                                                                                  from './npmConfigUtils';
 
-const {env} = process;
-
 export enum AuthType {
   NO_AUTH,
   BEST_EFFORT,
@@ -593,20 +591,20 @@ function getOtpHeaders(otp: string) {
 async function getOidcToken(registry: string, {configuration, ident}: {configuration: Configuration, ident: Ident}): Promise<string | null> {
   let idToken: string | null = null;
 
-  if (env.GITLAB) {
-    idToken = env.NPM_ID_TOKEN || null;
-  } else if (env.GITHUB_ACTIONS) {
-    if (!(env.ACTIONS_ID_TOKEN_REQUEST_URL && env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))
+  if (process.env.GITLAB) {
+    idToken = process.env.NPM_ID_TOKEN || null;
+  } else if (process.env.GITHUB_ACTIONS) {
+    if (!(process.env.ACTIONS_ID_TOKEN_REQUEST_URL && process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))
       return null;
 
-    const url = new URL(env.ACTIONS_ID_TOKEN_REQUEST_URL);
+    const url = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
     url.searchParams.append(`audience`, `npm:${new URL(registry).host}`);
 
     const response = await httpUtils.get(url.href, {
       configuration,
       jsonResponse: true,
       headers: {
-        Authorization: `Bearer ${env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`,
+        Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`,
       },
     });
 
