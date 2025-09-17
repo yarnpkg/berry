@@ -482,14 +482,14 @@
     "npmMinimalAgeGate": {
       "_package": "@yarnpkg/core",
       "title": "Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation.",
-      "description": "If a package version is newer than the minimum release age, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
+      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
       "type": "number",
       "default": 0
     },
     "npmPreapprovedPackages": {
       "_package": "@yarnpkg/core",
-      "title": "Array of exact package descriptors, exact package locators, or package name glob patterns to exclude from the minimum release age check.",
-      "description": "If a package descriptor, locator, or name matches specified pattern, it will not be considered for the minimum release age check. That is, the newest matching package version will be selected for installation regardless of the minimum release age configuration.",
+      "title": "Array of exact package descriptors, exact package locators, or package name glob patterns to exclude from the any package gates.",
+      "description": "If a package descriptor, locator, or name matches specified pattern, it will not be considered when evaluating any of the package gates.",
       "type": "array",
       "items": {
         "type": "string"
