@@ -65,6 +65,7 @@ export class NpmSemverResolver implements Resolver {
             const shouldExclude = minimumReleaseAgeExclude.some(exclude =>
               structUtils.stringifyIdent(descriptor) === exclude
               || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, version)) === exclude
+              || structUtils.stringifyLocator(structUtils.makeLocator(descriptor, `${PROTOCOL}:${version}`)) === exclude
               || micromatch.isMatch(structUtils.stringifyDescriptor({...descriptor, range: rawRange}), exclude)
               || micromatch.isMatch(structUtils.stringifyDescriptor(descriptor), exclude),
             );
