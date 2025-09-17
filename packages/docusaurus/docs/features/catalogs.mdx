@@ -1,0 +1,89 @@
+---
+category: features
+slug: /features/catalogs
+title: "Catalogs"
+description: Centralize dependency version management across your workspace with reusable version catalogs.
+---
+
+## Overview
+
+Catalogs provide centralized dependency version management for workspaces. Inspired by [pnpm's catalog functionality](https://pnpm.io/catalogs), they allow you to define version ranges in your `.yarnrc.yml` and reference them across multiple `package.json` files using the `catalog:` protocol.
+
+This eliminates version duplication, ensures consistency across packages, and makes dependency upgrades much simpler — update one place instead of many files.
+
+:::info
+The catalog plugin is included by default starting from Yarn 4.10.0.
+:::
+
+### Basic usage
+
+Define a catalog in your `.yarnrc.yml`:
+
+```yaml
+catalog:
+  react: ^18.3.1
+  lodash: ^4.17.21
+```
+
+Reference entries in your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "react": "catalog:",
+    "lodash": "catalog:"
+  }
+}
+```
+
+## Named catalogs
+
+You can define multiple named catalogs using the `catalogs` field for different purposes:
+
+```yaml
+catalog:
+  lodash: ^4.17.21
+
+catalogs:
+  react18:
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  react17:
+    react: ^17.0.2
+    react-dom: ^17.0.2
+```
+
+Reference named catalogs by specifying the name:
+
+```json
+{
+  "dependencies": {
+    "lodash": "catalog:",
+    "react": "catalog:react18"
+  }
+}
+```
+
+## Publishing
+
+When publishing packages, the `catalog:` protocol is automatically replaced with actual version ranges, ensuring compatibility with other package managers:
+
+```json
+// Source package.json
+{
+  "dependencies": {
+    "react": "catalog:react18"
+  }
+}
+
+// Published package.json
+{
+  "dependencies": {
+    "react": "^18.3.1"
+  }
+}
+```
+
+## Supported fields
+
+The `catalog:` protocol works in `dependencies`, `devDependencies`, `peerDependencies`.

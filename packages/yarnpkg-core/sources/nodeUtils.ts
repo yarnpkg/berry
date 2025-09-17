@@ -84,9 +84,9 @@ let architectureSet: ArchitectureSet | undefined;
 
 export function getArchitecture() {
   return architecture = architecture ?? {
-    os: process.platform,
-    cpu: process.arch,
-    libc: getLibc(),
+    os: (process.env.YARN_IS_TEST_ENV ? process.env.YARN_OS_OVERRIDE : undefined) ?? process.platform,
+    cpu: (process.env.YARN_IS_TEST_ENV ? process.env.YARN_CPU_OVERRIDE : undefined) ?? process.arch,
+    libc: (process.env.YARN_IS_TEST_ENV ? process.env.YARN_LIBC_OVERRIDE : undefined) ?? getLibc(),
   };
 }
 

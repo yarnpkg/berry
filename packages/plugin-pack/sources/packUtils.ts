@@ -79,61 +79,63 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
   const pack = tar.pack();
 
-  process.nextTick(async () => {
-    for (const fileRequest of files!) {
-      const file = ppath.normalize(fileRequest);
+  // I don't recall why this was necessary, but probably something to do
+  // with how Node.js streams process their events vs their drains.
+  await new Promise(process.nextTick);
 
-      const source = ppath.resolve(workspace.cwd, file);
-      const dest = ppath.join(`package`, file);
+  for (const fileRequest of files!) {
+    const file = ppath.normalize(fileRequest);
 
-      const stat = await xfs.lstatPromise(source);
+    const source = ppath.resolve(workspace.cwd, file);
+    const dest = ppath.join(`package`, file);
 
-      const opts = {
-        name: dest,
-        mtime: new Date(constants.SAFE_TIME * 1000),
-      };
+    const stat = await xfs.lstatPromise(source);
 
-      const mode = executableFiles.has(file)
-        ? 0o755
-        : 0o644;
+    const opts = {
+      name: dest,
+      mtime: new Date(constants.SAFE_TIME * 1000),
+    };
 
-      let resolveFn: Function;
-      let rejectFn: Function;
+    const mode = executableFiles.has(file)
+      ? 0o755
+      : 0o644;
 
-      const awaitTarget = new Promise((resolve, reject) => {
-        resolveFn = resolve;
-        rejectFn = reject;
-      });
+    let resolveFn: Function;
+    let rejectFn: Function;
 
-      const cb = (error: any) => {
-        if (error) {
-          rejectFn(error);
-        } else {
-          resolveFn();
-        }
-      };
+    const awaitTarget = new Promise((resolve, reject) => {
+      resolveFn = resolve;
+      rejectFn = reject;
+    });
 
-      if (stat.isFile()) {
-        let content: Buffer;
-
-        // The root package.json supports replacement fields in publishConfig
-        if (file === `package.json`)
-          content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
-        else
-          content = await xfs.readFilePromise(source);
-
-        pack.entry({...opts, mode, type: `file`}, content, cb);
-      } else if (stat.isSymbolicLink()) {
-        pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+    const cb = (error: any) => {
+      if (error) {
+        rejectFn(error);
       } else {
-        cb(new Error(`Unsupported file type ${stat.mode} for ${npath.fromPortablePath(file)}`));
+        resolveFn();
       }
+    };
 
-      await awaitTarget;
+    if (stat.isFile()) {
+      let content: Buffer;
+
+      // The root package.json supports replacement fields in publishConfig
+      if (file === `package.json`)
+        content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
+      else
+        content = await xfs.readFilePromise(source);
+
+      pack.entry({...opts, mode, type: `file`}, content, cb);
+    } else if (stat.isSymbolicLink()) {
+      pack.entry({...opts, mode, type: `symlink`, linkname: await xfs.readlinkPromise(source)}, cb);
+    } else {
+      cb(new Error(`Unsupported file type ${stat.mode} for ${npath.fromPortablePath(file)}`));
     }
 
-    pack.finalize();
-  });
+    await awaitTarget;
+  }
+
+  pack.finalize();
 
   const tgz = createGzip();
   pack.pipe(tgz);

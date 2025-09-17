@@ -13,6 +13,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
+    "@yarnpkg/plugin-catalog": "workspace:^",
     "@yarnpkg/plugin-compat": "workspace:^",
     "@yarnpkg/plugin-constraints": "workspace:^",
     "@yarnpkg/plugin-dlx": "workspace:^",
@@ -100,7 +101,8 @@
         "@yarnpkg/plugin-stage",
         "@yarnpkg/plugin-typescript",
         "@yarnpkg/plugin-version",
-        "@yarnpkg/plugin-workspace-tools"
+        "@yarnpkg/plugin-workspace-tools",
+        "@yarnpkg/plugin-catalog"
       ]
     }
   },
