@@ -215,7 +215,7 @@ type InferenceParameters = {
 
 function extractInferenceParametersFromRequest(request: Descriptor): InferenceParameters {
   if (request.range === `unknown`)
-    return {type: `resolve`, range: `latest`};
+    return {type: `resolve`, range: `*`};
 
   if (semverUtils.validRange(request.range))
     return {type: `fixed`, range: request.range};
