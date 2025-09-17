@@ -192,6 +192,7 @@ const RELEASE_DATE_PACKAGES: Record<string, Record<string, number | string>> = {
     "1.0.0": new Date(new Date().getTime() - /* 10 days */ 1000 * 60 * 60 * 24 * 10).toISOString(),
     "1.1.0": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
     "1.1.1": new Date().toISOString(),
+    "1.1.2": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
   },
 };
 

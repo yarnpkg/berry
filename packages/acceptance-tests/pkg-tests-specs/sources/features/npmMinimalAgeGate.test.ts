@@ -171,7 +171,7 @@ describe(`Features`, () => {
 
           await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
             name: `@scoped/release-date`,
-            version: `1.1.1`,
+            version: `1.1.2`,
           });
         }),
       );
@@ -186,7 +186,22 @@ describe(`Features`, () => {
 
           await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
             name: `@scoped/release-date`,
-            version: `1.1.1`,
+            version: `1.1.2`,
+          });
+        }),
+      );
+
+      test(
+        `it should not install a version that is higher than the latest tag`,
+        makeTemporaryEnv({
+        }, {
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+        }, async ({run, source}) => {
+          await run(`add`, `@scoped/release-date`);
+
+          await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
+            name: `@scoped/release-date`,
+            version: `1.1.0`,
           });
         }),
       );
@@ -360,7 +375,7 @@ describe(`Features`, () => {
 
           await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
             name: `@scoped/release-date`,
-            version: `1.1.1`,
+            version: `1.1.2`,
           });
         }),
       );
@@ -377,7 +392,23 @@ describe(`Features`, () => {
 
           await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
             name: `@scoped/release-date`,
-            version: `1.1.1`,
+            version: `1.1.2`,
+          });
+        }),
+      );
+
+      test(
+        `it should not install a version that is higher than the latest tag`,
+        makeTemporaryEnv({
+          dependencies: {[`@scoped/release-date`]: `latest`},
+        }, {
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+        }, async ({run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
+            name: `@scoped/release-date`,
+            version: `1.1.0`,
           });
         }),
       );
@@ -431,6 +462,24 @@ describe(`Features`, () => {
           });
           await expect(source(`require('release-date-transitive/package.json')`)).resolves.toMatchObject({
             name: `release-date-transitive`,
+            version: `1.1.0`,
+          });
+        }),
+      );
+
+      test(
+        `it should not update to a version that is higher than the latest tag`,
+        makeTemporaryEnv({
+          dependencies: {[`@scoped/release-date`]: `^1.0.0`},
+        }, {
+          npmMinimalAgeGate: ONE_DAY_IN_MINUTES,
+        }, async ({run, source}) => {
+          await run(`set`, `resolution`, `@scoped/release-date@npm:^1.0.0`, `npm:1.0.0`);
+
+          await run(`up`, `@scoped/release-date`);
+
+          await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
+            name: `@scoped/release-date`,
             version: `1.1.0`,
           });
         }),
