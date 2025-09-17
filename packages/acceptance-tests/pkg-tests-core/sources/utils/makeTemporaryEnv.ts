@@ -46,6 +46,7 @@ const mte = generatePkgDriver({
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
         [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
         [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
+        [`YARNSW_DEFAULT`]: process.env.YARNSW_DEFAULT,
         // Otherwise we'd send telemetry event when running tests
         [`YARN_ENABLE_TELEMETRY`]: `0`,
         // Otherwise snapshots relying on this would break each time it's bumped
