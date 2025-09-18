@@ -287,7 +287,7 @@ export type PackageMetadata = {
       tarball: string;
     };
   }>;
-  time: Record<string, string>;
+  time?: Record<string, string>;
 };
 
 function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
