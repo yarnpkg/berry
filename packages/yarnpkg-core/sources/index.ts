@@ -27,8 +27,8 @@ export {Manifest}                                                               
 export type {AllDependencies, HardDependencies, DependencyMeta, PeerDependencyMeta}                                 from './Manifest';
 export {MessageName, parseMessageName, stringifyMessageName}                                                        from './MessageName';
 export {MultiFetcher}                                                                                               from './MultiFetcher';
-export type {CommandContext, Hooks, Plugin, WrapNetworkRequestInfo}                                                 from './Plugin';
-export type {PeerRequirement, PeerWarning}                                                                          from './Project';
+export type {CommandContext, Hooks, Plugin, PluginMeta, WrapNetworkRequestInfo}                                     from './Plugin';
+export type {PeerRequirement, PeerWarning, PeerRequestNode}                                                         from './Project';
 export {LOCKFILE_VERSION, PeerWarningType, Project, InstallMode}                                                    from './Project';
 export {ReportError, Report}                                                                                        from './Report';
 export type {Resolver, ResolveOptions, MinimalResolveOptions}                                                       from './Resolver';

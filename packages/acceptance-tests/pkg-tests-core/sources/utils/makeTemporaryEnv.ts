@@ -18,7 +18,7 @@ const mte = generatePkgDriver({
   ) {
     const rcEnv: Record<string, any> = {};
     for (const [key, value] of Object.entries(config))
-      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`;`) : value;
+      rcEnv[`YARN_${key.replace(/([A-Z])/g, `_$1`).toUpperCase()}`] = Array.isArray(value) ? value.join(`,`) : value;
 
     const nativePath = npath.fromPortablePath(path);
     const nativeHomePath = npath.dirname(nativePath);
@@ -46,6 +46,7 @@ const mte = generatePkgDriver({
         [`YARN_GLOBAL_FOLDER`]: `${nativePath}/.yarn/global`,
         [`YARN_NPM_REGISTRY_SERVER`]: registryUrl,
         [`YARN_UNSAFE_HTTP_WHITELIST`]: new URL(registryUrl).hostname,
+        [`YARNSW_DEFAULT`]: process.env.YARNSW_DEFAULT,
         // Otherwise we'd send telemetry event when running tests
         [`YARN_ENABLE_TELEMETRY`]: `0`,
         // Otherwise snapshots relying on this would break each time it's bumped

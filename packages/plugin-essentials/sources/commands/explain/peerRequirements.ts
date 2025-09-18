@@ -1,9 +1,8 @@
-import {BaseCommand}                                                                                                                          from '@yarnpkg/cli';
-import type {PeerRequestNode}                                                                                                                 from '@yarnpkg/core/sources/Project';
-import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType, miscUtils, type LocatorHash} from '@yarnpkg/core';
-import {Command, Option}                                                                                                                      from 'clipanion';
-import {Writable}                                                                                                                             from 'stream';
-import * as t                                                                                                                                 from 'typanion';
+import {BaseCommand}                                                                                                                                                from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, StreamReport, structUtils, formatUtils, treeUtils, PeerWarningType, miscUtils, type LocatorHash, type PeerRequestNode} from '@yarnpkg/core';
+import {Command, Option}                                                                                                                                            from 'clipanion';
+import {Writable}                                                                                                                                                   from 'stream';
+import * as t                                                                                                                                                       from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class ExplainPeerRequirementsCommand extends BaseCommand {
