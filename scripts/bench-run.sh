@@ -60,6 +60,8 @@ setup-yarn2-pnpm() {
 setup-pnpm() {
   >> "$BENCH_DIR/.npmrc" echo \
     "strict-peer-dependencies=false"
+  >> "$BENCH_DIR/pnpm-workspace.yaml" echo \
+    "dangerouslyAllowAllBuilds: true"
 }
 
 case $PACKAGE_MANAGER in
