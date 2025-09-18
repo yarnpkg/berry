@@ -77,7 +77,6 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   for (const value of workspace.manifest.bin.values())
     executableFiles.add(ppath.normalize(value));
 
-  const packageManifest = await genPackageManifest(workspace);
   const pack = tar.pack();
 
   process.nextTick(async () => {
@@ -119,7 +118,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
         // The root package.json supports replacement fields in publishConfig
         if (file === `package.json`)
-          content = Buffer.from(JSON.stringify(packageManifest, null, 2));
+          content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
         else
           content = await xfs.readFilePromise(source);
 
