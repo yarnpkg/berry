@@ -100,8 +100,11 @@ function shouldBeQuarantined({configuration, version, publishTimes}: IsPackageAp
   const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
 
   if (minimalAgeGate) {
-    const versionTime = new Date(publishTimes[version]);
-    const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
+    const versionTime = publishTimes?.[version] ?? 0;
+    if (!versionTime)
+      return true;
+
+    const ageMinutes = (new Date().getTime() - new Date(versionTime).getTime()) / 60 / 1000;
     if (ageMinutes < minimalAgeGate) {
       return true;
     }
@@ -135,7 +138,7 @@ export type IsPackageApprovedOptions = {
   configuration: Configuration;
   ident: Ident;
   version: string;
-  publishTimes: Record<string, string>;
+  publishTimes?: Record<string, string>;
 };
 
 function isPreapproved({configuration, ident, version}: IsPackageApprovedOptions) {
