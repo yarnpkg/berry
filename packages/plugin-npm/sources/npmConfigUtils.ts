@@ -1,4 +1,5 @@
-import {Configuration, Manifest, Ident} from '@yarnpkg/core';
+import {Configuration, Manifest, Ident, structUtils, semverUtils} from '@yarnpkg/core';
+import micromatch                                                 from 'micromatch';
 
 export enum RegistryType {
   AUDIT_REGISTRY = `npmAuditRegistry`,
@@ -93,4 +94,56 @@ export function getAuthConfiguration(registry: string, {configuration, ident}: {
   const registryConfiguration = getRegistryConfiguration(registry, {configuration});
 
   return registryConfiguration || configuration;
+}
+
+function shouldBeQuarantined({configuration, version, publishTimes}: IsPackageApprovedOptions) {
+  const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
+
+  if (minimalAgeGate) {
+    const versionTime = new Date(publishTimes[version]);
+    const ageMinutes = (new Date().getTime() - versionTime.getTime()) / 60 / 1000;
+    if (ageMinutes < minimalAgeGate) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function checkIdent(ident: Ident, version: string, entry: string) {
+  const validator = structUtils.tryParseDescriptor(entry);
+  if (!validator)
+    return false;
+
+  if (validator.identHash !== ident.identHash && !micromatch.isMatch(structUtils.stringifyIdent(ident), structUtils.stringifyIdent(validator)))
+    return false;
+
+  if (validator.range === `unknown`)
+    return true;
+
+  const validatorRange = semverUtils.validRange(validator.range);
+  if (!validatorRange)
+    return false;
+
+  if (!validatorRange.test(version))
+    return false;
+
+  return true;
+}
+
+export type IsPackageApprovedOptions = {
+  configuration: Configuration;
+  ident: Ident;
+  version: string;
+  publishTimes: Record<string, string>;
+};
+
+function isPreapproved({configuration, ident, version}: IsPackageApprovedOptions) {
+  return configuration.get(`npmPreapprovedPackages`).some(entry => {
+    return checkIdent(ident, version, entry);
+  });
+}
+
+export function isPackageApproved(params: IsPackageApprovedOptions) {
+  return !shouldBeQuarantined(params) || isPreapproved(params);
 }

@@ -46,7 +46,7 @@ export const TEST_TIMEOUT = os.endianness() === `BE`
   ? 300000
   : 75000;
 
-export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>}>;
+export type PackageEntry = Map<string, {path: string, packageJson: Record<string, any>, releaseDate: string | undefined}>;
 export type PackageRegistry = Map<string, PackageEntry>;
 
 interface RunDriverOptions extends Record<string, any> {
@@ -177,6 +177,25 @@ export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
   }]],
 ]);
 
+const RELEASE_DATE_PACKAGES: Record<string, Record<string, number | string>> = {
+  "release-date": {
+    "1.0.0": new Date(new Date().getTime() - /* 10 days */ 1000 * 60 * 60 * 24 * 10).toISOString(),
+    "1.1.0": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
+    "1.1.1": new Date().toISOString(),
+  },
+  "release-date-transitive": {
+    "1.0.0": new Date(new Date().getTime() - /* 10 days */ 1000 * 60 * 60 * 24 * 10).toISOString(),
+    "1.1.0": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
+    "1.1.1": new Date().toISOString(),
+  },
+  "@scoped/release-date": {
+    "1.0.0": new Date(new Date().getTime() - /* 10 days */ 1000 * 60 * 60 * 24 * 10).toISOString(),
+    "1.1.0": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
+    "1.1.1": new Date().toISOString(),
+    "1.1.2": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
+  },
+};
+
 export const validLogins = {
   fooUser: new Login(`foo-user`),
   barUser: new Login(`bar-user`),
@@ -233,7 +252,7 @@ export const getPackageRegistry = (): Promise<PackageRegistry> => {
       const packageFile = ppath.join(packagesDir, packageName, Filename.manifest);
       const packageJson = await xfs.readJsonPromise(packageFile);
 
-      const {name, version} = packageJson;
+      const {name, version}: {name: string, version: string} = packageJson;
       if (name.startsWith(`git-`))
         continue;
 
@@ -422,6 +441,7 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
             }),
           )),
         ),
+        time: name in RELEASE_DATE_PACKAGES ? RELEASE_DATE_PACKAGES[name] : undefined,
         [`dist-tags`]: {
           latest: semver.maxSatisfying(versions, `*`),
           ...distTags,

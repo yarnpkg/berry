@@ -287,6 +287,7 @@ export type PackageMetadata = {
       tarball: string;
     };
   }>;
+  time: Record<string, string>;
 };
 
 function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
@@ -296,6 +297,7 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
       key,
       pick(value, CACHED_FIELDS) as any,
     ])),
+    time: metadata.time,
   };
 }
 
