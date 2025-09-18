@@ -100,8 +100,8 @@ function shouldBeQuarantined({configuration, version, publishTimes}: IsPackageAp
   const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
 
   if (minimalAgeGate) {
-    const versionTime = publishTimes?.[version] ?? 0;
-    if (!versionTime)
+    const versionTime = publishTimes?.[version];
+    if (typeof versionTime === `undefined`)
       return true;
 
     const ageMinutes = (new Date().getTime() - new Date(versionTime).getTime()) / 60 / 1000;
