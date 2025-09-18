@@ -131,9 +131,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
       await awaitTarget;
     }
-  });
 
-  pack.finalize();
+    pack.finalize();
+  });
 
   const tgz = createGzip();
   pack.pipe(tgz);
