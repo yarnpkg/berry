@@ -5,6 +5,7 @@ import semver                                                                   
 
 import {NpmSemverFetcher}                                                                      from './NpmSemverFetcher';
 import {PROTOCOL}                                                                              from './constants';
+import {isPackageApproved}                                                                     from './npmConfigUtils';
 import * as npmHttpUtils                                                                       from './npmHttpUtils';
 
 export class NpmTagResolver implements Resolver {
@@ -52,7 +53,22 @@ export class NpmTagResolver implements Resolver {
     if (!Object.hasOwn(distTags, tag))
       throw new ReportError(MessageName.REMOTE_NOT_FOUND, `Registry failed to return tag "${tag}"`);
 
-    const version = distTags[tag];
+    const versions = Object.keys(registryData.versions);
+    const times = registryData.time;
+
+    let version = distTags[tag];
+
+    if (tag === `latest` && !isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version, publishTimes: times})) {
+      const nextVersion = semver.rsort(versions).find(candidateVersion => {
+        return semver.lt(candidateVersion, version) && isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidateVersion, publishTimes: times});
+      });
+
+      if (!nextVersion)
+        throw new ReportError(MessageName.REMOTE_NOT_FOUND, `The version for tag "${tag}" is quarantined, and no lower version is available`);
+
+      version = nextVersion;
+    }
+
     const versionLocator = structUtils.makeLocator(descriptor, `${PROTOCOL}${version}`);
 
     const archiveUrl = registryData.versions[version].dist.tarball;

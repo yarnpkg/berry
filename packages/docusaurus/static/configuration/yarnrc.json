@@ -479,6 +479,24 @@
       "type": "string",
       "default": "pnp"
     },
+    "npmMinimalAgeGate": {
+      "_package": "@yarnpkg/core",
+      "title": "Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation.",
+      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
+      "type": "number",
+      "default": 0
+    },
+    "npmPreapprovedPackages": {
+      "_package": "@yarnpkg/core",
+      "title": "Array of package descriptors or package name glob patterns to exclude from all of the package gates.",
+      "description": "If a package descriptor or name matches the specified pattern, it will not be considered when evaluating any of the package gates.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["@scoped-package/*", "package", "package*", "package@^1.0.0", "package@1.0.0"]
+    },
     "pnpmStoreFolder": {
       "_package": "@yarnpkg/plugin-pnpm",
       "title": "Path where the pnpm store will be stored",
