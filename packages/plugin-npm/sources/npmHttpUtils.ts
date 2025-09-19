@@ -624,8 +624,9 @@ async function getOidcToken(registry: string, {configuration, ident}: {configura
     return null;
 
   try {
+    const escapedName = encodeURIComponent(structUtils.stringifyIdent(ident));
     const response = await httpUtils.post(
-      `${registry}/-/npm/v1/oidc/token/exchange/package/${ident.name.replace(/^@/, `%40`)}`,
+      `${registry}/-/npm/v1/oidc/token/exchange/package/${escapedName}`,
       null,
       {
         configuration,
