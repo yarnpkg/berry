@@ -5,6 +5,7 @@ releases:
   "@yarnpkg/doctor": major
   "@yarnpkg/extensions": major
   "@yarnpkg/nm": major
+  "@yarnpkg/plugin-catalog": major
   "@yarnpkg/plugin-compat": major
   "@yarnpkg/plugin-constraints": major
   "@yarnpkg/plugin-dlx": major
