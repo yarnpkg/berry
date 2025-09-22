@@ -59,8 +59,10 @@ export class NpmTagResolver implements Resolver {
     let version = distTags[tag];
 
     if (tag === `latest` && !isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version, publishTimes: times})) {
+      const toleratePrereleases = version.includes(`-`);
+
       const nextVersion = semver.rsort(versions).find(candidateVersion => {
-        return semver.lt(candidateVersion, version) && isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidateVersion, publishTimes: times});
+        return semver.lt(candidateVersion, version) && (toleratePrereleases || !candidateVersion.includes(`-`)) && isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidateVersion, publishTimes: times});
       });
 
       if (!nextVersion)
