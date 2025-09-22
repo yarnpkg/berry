@@ -625,7 +625,7 @@ async function getOidcToken(registry: string, {configuration, ident}: {configura
 
   try {
     const response = await httpUtils.post(
-      `${registry}/-/npm/v1/oidc/token/exchange/package/${ident.name.replace(/^@/, `%40`)}`,
+      `${registry}/-/npm/v1/oidc/token/exchange/package${getIdentUrl(ident)}`,
       null,
       {
         configuration,
