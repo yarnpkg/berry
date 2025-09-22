@@ -49,6 +49,7 @@ export {PosixFS}                                           from './PosixFS';
 export {ProxiedFS}                                         from './ProxiedFS';
 export {VirtualFS}                                         from './VirtualFS';
 
+export {type Handle, FileHandle} from './patchFs/FileHandle';
 export {patchFs, extendFs} from './patchFs/patchFs';
 
 export {xfs} from './xfs';

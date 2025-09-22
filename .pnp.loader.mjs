@@ -676,6 +676,9 @@ class ProxiedFS extends FakeFS {
   getRealPath() {
     return this.mapFromBase(this.baseFs.getRealPath());
   }
+  async openHandle(p, flags, mode) {
+    return this.baseFs.openHandle(this.mapToBase(p), flags, mode);
+  }
   async openPromise(p, flags, mode) {
     return this.baseFs.openPromise(this.mapToBase(p), flags, mode);
   }
@@ -940,6 +943,9 @@ class NodeFS extends BasePortableFakeFS {
   }
   resolve(p) {
     return ppath.resolve(p);
+  }
+  async openHandle(p, flags, mode) {
+    return await this.realFs.promises.open(npath.fromPortablePath(p), flags, mode);
   }
   async openPromise(p, flags, mode) {
     return await new Promise((resolve, reject) => {

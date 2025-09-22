@@ -328,8 +328,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
     setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
       // @ts-expect-error - reason TBS
-      const fd = await fakeFs.openPromise(...args);
-      return new FileHandle(fd, fakeFs);
+      return await fakeFs.openHandle(...args);
     });
 
     // `fs.promises.realpath` doesn't have a `native` property
