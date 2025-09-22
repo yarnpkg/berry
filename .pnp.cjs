@@ -42418,7 +42418,7 @@ function patchFs(patchedFs, fakeFs) {
       if (fnName === `open`)
         continue;
       setupFn(patchedFsPromises, origName, (pathLike, ...args) => {
-        if (pathLike instanceof FileHandle) {
+        if (typeof pathLike === `object` && pathLike !== null && `close` in pathLike) {
           return pathLike[origName].apply(pathLike, args);
         } else {
           return fakeImpl.call(fakeFs, pathLike, ...args);

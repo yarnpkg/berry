@@ -518,7 +518,7 @@ describe(`patchedFs`, () => {
       await expect(fd.stat()).rejects.toMatchObject({
         message: `file closed`,
         code: `EBADF`,
-        syscall: `stat`,
+        syscall: `fstat`,
       });
     });
   });

@@ -2,6 +2,7 @@ releases:
   "@yarnpkg/cli": patch
   "@yarnpkg/fslib": minor
   "@yarnpkg/libzip": minor
+  "@yarnpkg/pnp": patch
 
 declined:
   - "@yarnpkg/plugin-catalog"
@@ -33,7 +34,6 @@ declined:
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
   - "@yarnpkg/nm"
-  - "@yarnpkg/pnp"
   - "@yarnpkg/pnpify"
   - "@yarnpkg/sdks"
   - "@yarnpkg/shell"
