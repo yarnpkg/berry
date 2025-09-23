@@ -318,7 +318,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
         continue;
 
       setupFn(patchedFsPromises, origName, (pathLike: string | FileHandle<any>, ...args: Array<any>) => {
-        if (pathLike instanceof FileHandle) {
+        if (typeof pathLike === `object` && pathLike !== null && `close` in pathLike) {
           return ((pathLike as any)[origName] as Function).apply(pathLike, args);
         } else {
           return fakeImpl.call(fakeFs, pathLike, ...args);
@@ -328,8 +328,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
     setupFn(patchedFsPromises, `open`, async (...args: Array<any>) => {
       // @ts-expect-error - reason TBS
-      const fd = await fakeFs.openPromise(...args);
-      return new FileHandle(fd, fakeFs);
+      return await fakeFs.openHandle(...args);
     });
 
     // `fs.promises.realpath` doesn't have a `native` property
@@ -359,6 +358,7 @@ export function patchFs(patchedFs: typeof fs, fakeFs: FakeFS<NativePath>): void 
 
 export function extendFs(realFs: typeof fs, fakeFs: FakeFS<NativePath>): typeof fs {
   const patchedFs = Object.create(realFs);
+  Object.defineProperty(patchedFs, `promises`, {value: Object.create(realFs.promises)});
 
   patchFs(patchedFs, fakeFs);
 

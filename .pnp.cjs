@@ -39165,13 +39165,13 @@ const crypto = require('crypto');
 const os = require('os');
 const events = require('events');
 const nodeUtils = require('util');
+const readline = require('readline');
 const stream = require('stream');
 const zlib = require('zlib');
 const require$$0 = require('module');
 const StringDecoder = require('string_decoder');
 const url = require('url');
 const buffer = require('buffer');
-const readline = require('readline');
 const assert = require('assert');
 
 const _interopDefaultLegacy = e => e && typeof e === 'object' && 'default' in e ? e : { default: e };
@@ -40343,6 +40343,9 @@ class ProxiedFS extends FakeFS {
   getRealPath() {
     return this.mapFromBase(this.baseFs.getRealPath());
   }
+  async openHandle(p, flags, mode) {
+    return this.baseFs.openHandle(this.mapToBase(p), flags, mode);
+  }
   async openPromise(p, flags, mode) {
     return this.baseFs.openPromise(this.mapToBase(p), flags, mode);
   }
@@ -40607,6 +40610,9 @@ class NodeFS extends BasePortableFakeFS {
   }
   resolve(p) {
     return ppath.resolve(p);
+  }
+  async openHandle(p, flags, mode) {
+    return await this.realFs.promises.open(npath.fromPortablePath(p), flags, mode);
   }
   async openPromise(p, flags, mode) {
     return await new Promise((resolve, reject) => {
@@ -41017,6 +41023,227 @@ class NodeFS extends BasePortableFakeFS {
   }
 }
 
+const kBaseFs = Symbol(`kBaseFs`);
+const kFd = Symbol(`kFd`);
+const kClosePromise = Symbol(`kClosePromise`);
+const kCloseResolve = Symbol(`kCloseResolve`);
+const kCloseReject = Symbol(`kCloseReject`);
+const kRefs = Symbol(`kRefs`);
+const kRef = Symbol(`kRef`);
+const kUnref = Symbol(`kUnref`);
+class FileHandle {
+  [kBaseFs];
+  [kFd];
+  [kRefs] = 1;
+  [kClosePromise] = void 0;
+  [kCloseResolve] = void 0;
+  [kCloseReject] = void 0;
+  constructor(fd, baseFs) {
+    this[kBaseFs] = baseFs;
+    this[kFd] = fd;
+  }
+  get fd() {
+    return this[kFd];
+  }
+  async appendFile(data, options) {
+    try {
+      this[kRef](this.appendFile);
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
+      return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? { encoding } : void 0);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  async chown(uid, gid) {
+    try {
+      this[kRef](this.chown);
+      return await this[kBaseFs].fchownPromise(this.fd, uid, gid);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  async chmod(mode) {
+    try {
+      this[kRef](this.chmod);
+      return await this[kBaseFs].fchmodPromise(this.fd, mode);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  createReadStream(options) {
+    return this[kBaseFs].createReadStream(null, { ...options, fd: this.fd });
+  }
+  createWriteStream(options) {
+    return this[kBaseFs].createWriteStream(null, { ...options, fd: this.fd });
+  }
+  // FIXME: Missing FakeFS version
+  datasync() {
+    throw new Error(`Method not implemented.`);
+  }
+  // FIXME: Missing FakeFS version
+  sync() {
+    throw new Error(`Method not implemented.`);
+  }
+  async read(bufferOrOptions, offset, length, position) {
+    try {
+      this[kRef](this.read);
+      let buffer;
+      if (!Buffer.isBuffer(bufferOrOptions)) {
+        bufferOrOptions ??= {};
+        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
+        offset = bufferOrOptions.offset || 0;
+        length = bufferOrOptions.length ?? buffer.byteLength;
+        position = bufferOrOptions.position ?? null;
+      } else {
+        buffer = bufferOrOptions;
+      }
+      offset ??= 0;
+      length ??= 0;
+      if (length === 0) {
+        return {
+          bytesRead: length,
+          buffer
+        };
+      }
+      const bytesRead = await this[kBaseFs].readPromise(this.fd, buffer, offset, length, position);
+      return {
+        bytesRead,
+        buffer
+      };
+    } finally {
+      this[kUnref]();
+    }
+  }
+  async readFile(options) {
+    try {
+      this[kRef](this.readFile);
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
+      return await this[kBaseFs].readFilePromise(this.fd, encoding);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  readLines(options) {
+    return readline.createInterface({
+      input: this.createReadStream(options),
+      crlfDelay: Infinity
+    });
+  }
+  async stat(opts) {
+    try {
+      this[kRef](this.stat);
+      return await this[kBaseFs].fstatPromise(this.fd, opts);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  async truncate(len) {
+    try {
+      this[kRef](this.truncate);
+      return await this[kBaseFs].ftruncatePromise(this.fd, len);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  // FIXME: Missing FakeFS version
+  utimes(atime, mtime) {
+    throw new Error(`Method not implemented.`);
+  }
+  async writeFile(data, options) {
+    try {
+      this[kRef](this.writeFile);
+      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
+      await this[kBaseFs].writeFilePromise(this.fd, data, encoding);
+    } finally {
+      this[kUnref]();
+    }
+  }
+  async write(...args) {
+    try {
+      this[kRef](this.write);
+      if (ArrayBuffer.isView(args[0])) {
+        const [buffer, offset, length, position] = args;
+        const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer, offset ?? void 0, length ?? void 0, position ?? void 0);
+        return { bytesWritten, buffer };
+      } else {
+        const [data, position, encoding] = args;
+        const bytesWritten = await this[kBaseFs].writePromise(this.fd, data, position, encoding);
+        return { bytesWritten, buffer: data };
+      }
+    } finally {
+      this[kUnref]();
+    }
+  }
+  // TODO: Use writev from FakeFS when that is implemented
+  async writev(buffers, position) {
+    try {
+      this[kRef](this.writev);
+      let bytesWritten = 0;
+      if (typeof position !== `undefined`) {
+        for (const buffer of buffers) {
+          const writeResult = await this.write(buffer, void 0, void 0, position);
+          bytesWritten += writeResult.bytesWritten;
+          position += writeResult.bytesWritten;
+        }
+      } else {
+        for (const buffer of buffers) {
+          const writeResult = await this.write(buffer);
+          bytesWritten += writeResult.bytesWritten;
+        }
+      }
+      return {
+        buffers,
+        bytesWritten
+      };
+    } finally {
+      this[kUnref]();
+    }
+  }
+  // FIXME: Missing FakeFS version
+  readv(buffers, position) {
+    throw new Error(`Method not implemented.`);
+  }
+  close() {
+    if (this[kFd] === -1) return Promise.resolve();
+    if (this[kClosePromise]) return this[kClosePromise];
+    this[kRefs]--;
+    if (this[kRefs] === 0) {
+      const fd = this[kFd];
+      this[kFd] = -1;
+      this[kClosePromise] = this[kBaseFs].closePromise(fd).finally(() => {
+        this[kClosePromise] = void 0;
+      });
+    } else {
+      this[kClosePromise] = new Promise((resolve, reject) => {
+        this[kCloseResolve] = resolve;
+        this[kCloseReject] = reject;
+      }).finally(() => {
+        this[kClosePromise] = void 0;
+        this[kCloseReject] = void 0;
+        this[kCloseResolve] = void 0;
+      });
+    }
+    return this[kClosePromise];
+  }
+  [kRef](caller) {
+    if (this[kFd] === -1) {
+      const err = new Error(`file closed`);
+      err.code = `EBADF`;
+      err.syscall = caller.name;
+      throw err;
+    }
+    this[kRefs]++;
+  }
+  [kUnref]() {
+    this[kRefs]--;
+    if (this[kRefs] === 0) {
+      const fd = this[kFd];
+      this[kFd] = -1;
+      this[kBaseFs].closePromise(fd).then(this[kCloseResolve], this[kCloseReject]);
+    }
+  }
+}
+
 const MOUNT_MASK = 4278190080;
 class MountFS extends BasePortableFakeFS {
   baseFs;
@@ -41080,6 +41307,13 @@ class MountFS extends BasePortableFakeFS {
     const remappedFd = this.nextFd++ | this.magic;
     this.fdMap.set(remappedFd, [mountFs, fd]);
     return remappedFd;
+  }
+  async openHandle(p, flags, mode) {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.openHandle(p, flags, mode);
+    }, async (mountFs, { subPath }) => {
+      return new FileHandle(this.remapFd(mountFs, await mountFs.openPromise(subPath, flags, mode)), this);
+    });
   }
   async openPromise(p, flags, mode) {
     return await this.makeCallPromise(p, async () => {
@@ -41986,227 +42220,6 @@ function isUtf8(buf, str) {
   return Buffer.byteLength(str) === buf.byteLength;
 }
 
-const kBaseFs = Symbol(`kBaseFs`);
-const kFd = Symbol(`kFd`);
-const kClosePromise = Symbol(`kClosePromise`);
-const kCloseResolve = Symbol(`kCloseResolve`);
-const kCloseReject = Symbol(`kCloseReject`);
-const kRefs = Symbol(`kRefs`);
-const kRef = Symbol(`kRef`);
-const kUnref = Symbol(`kUnref`);
-class FileHandle {
-  [kBaseFs];
-  [kFd];
-  [kRefs] = 1;
-  [kClosePromise] = void 0;
-  [kCloseResolve] = void 0;
-  [kCloseReject] = void 0;
-  constructor(fd, baseFs) {
-    this[kBaseFs] = baseFs;
-    this[kFd] = fd;
-  }
-  get fd() {
-    return this[kFd];
-  }
-  async appendFile(data, options) {
-    try {
-      this[kRef](this.appendFile);
-      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
-      return await this[kBaseFs].appendFilePromise(this.fd, data, encoding ? { encoding } : void 0);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  async chown(uid, gid) {
-    try {
-      this[kRef](this.chown);
-      return await this[kBaseFs].fchownPromise(this.fd, uid, gid);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  async chmod(mode) {
-    try {
-      this[kRef](this.chmod);
-      return await this[kBaseFs].fchmodPromise(this.fd, mode);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  createReadStream(options) {
-    return this[kBaseFs].createReadStream(null, { ...options, fd: this.fd });
-  }
-  createWriteStream(options) {
-    return this[kBaseFs].createWriteStream(null, { ...options, fd: this.fd });
-  }
-  // FIXME: Missing FakeFS version
-  datasync() {
-    throw new Error(`Method not implemented.`);
-  }
-  // FIXME: Missing FakeFS version
-  sync() {
-    throw new Error(`Method not implemented.`);
-  }
-  async read(bufferOrOptions, offset, length, position) {
-    try {
-      this[kRef](this.read);
-      let buffer;
-      if (!Buffer.isBuffer(bufferOrOptions)) {
-        bufferOrOptions ??= {};
-        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
-        offset = bufferOrOptions.offset || 0;
-        length = bufferOrOptions.length ?? buffer.byteLength;
-        position = bufferOrOptions.position ?? null;
-      } else {
-        buffer = bufferOrOptions;
-      }
-      offset ??= 0;
-      length ??= 0;
-      if (length === 0) {
-        return {
-          bytesRead: length,
-          buffer
-        };
-      }
-      const bytesRead = await this[kBaseFs].readPromise(this.fd, buffer, offset, length, position);
-      return {
-        bytesRead,
-        buffer
-      };
-    } finally {
-      this[kUnref]();
-    }
-  }
-  async readFile(options) {
-    try {
-      this[kRef](this.readFile);
-      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
-      return await this[kBaseFs].readFilePromise(this.fd, encoding);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  readLines(options) {
-    return readline.createInterface({
-      input: this.createReadStream(options),
-      crlfDelay: Infinity
-    });
-  }
-  async stat(opts) {
-    try {
-      this[kRef](this.stat);
-      return await this[kBaseFs].fstatPromise(this.fd, opts);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  async truncate(len) {
-    try {
-      this[kRef](this.truncate);
-      return await this[kBaseFs].ftruncatePromise(this.fd, len);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  // FIXME: Missing FakeFS version
-  utimes(atime, mtime) {
-    throw new Error(`Method not implemented.`);
-  }
-  async writeFile(data, options) {
-    try {
-      this[kRef](this.writeFile);
-      const encoding = (typeof options === `string` ? options : options?.encoding) ?? void 0;
-      await this[kBaseFs].writeFilePromise(this.fd, data, encoding);
-    } finally {
-      this[kUnref]();
-    }
-  }
-  async write(...args) {
-    try {
-      this[kRef](this.write);
-      if (ArrayBuffer.isView(args[0])) {
-        const [buffer, offset, length, position] = args;
-        const bytesWritten = await this[kBaseFs].writePromise(this.fd, buffer, offset ?? void 0, length ?? void 0, position ?? void 0);
-        return { bytesWritten, buffer };
-      } else {
-        const [data, position, encoding] = args;
-        const bytesWritten = await this[kBaseFs].writePromise(this.fd, data, position, encoding);
-        return { bytesWritten, buffer: data };
-      }
-    } finally {
-      this[kUnref]();
-    }
-  }
-  // TODO: Use writev from FakeFS when that is implemented
-  async writev(buffers, position) {
-    try {
-      this[kRef](this.writev);
-      let bytesWritten = 0;
-      if (typeof position !== `undefined`) {
-        for (const buffer of buffers) {
-          const writeResult = await this.write(buffer, void 0, void 0, position);
-          bytesWritten += writeResult.bytesWritten;
-          position += writeResult.bytesWritten;
-        }
-      } else {
-        for (const buffer of buffers) {
-          const writeResult = await this.write(buffer);
-          bytesWritten += writeResult.bytesWritten;
-        }
-      }
-      return {
-        buffers,
-        bytesWritten
-      };
-    } finally {
-      this[kUnref]();
-    }
-  }
-  // FIXME: Missing FakeFS version
-  readv(buffers, position) {
-    throw new Error(`Method not implemented.`);
-  }
-  close() {
-    if (this[kFd] === -1) return Promise.resolve();
-    if (this[kClosePromise]) return this[kClosePromise];
-    this[kRefs]--;
-    if (this[kRefs] === 0) {
-      const fd = this[kFd];
-      this[kFd] = -1;
-      this[kClosePromise] = this[kBaseFs].closePromise(fd).finally(() => {
-        this[kClosePromise] = void 0;
-      });
-    } else {
-      this[kClosePromise] = new Promise((resolve, reject) => {
-        this[kCloseResolve] = resolve;
-        this[kCloseReject] = reject;
-      }).finally(() => {
-        this[kClosePromise] = void 0;
-        this[kCloseReject] = void 0;
-        this[kCloseResolve] = void 0;
-      });
-    }
-    return this[kClosePromise];
-  }
-  [kRef](caller) {
-    if (this[kFd] === -1) {
-      const err = new Error(`file closed`);
-      err.code = `EBADF`;
-      err.syscall = caller.name;
-      throw err;
-    }
-    this[kRefs]++;
-  }
-  [kUnref]() {
-    this[kRefs]--;
-    if (this[kRefs] === 0) {
-      const fd = this[kFd];
-      this[kFd] = -1;
-      this[kBaseFs].closePromise(fd).then(this[kCloseResolve], this[kCloseReject]);
-    }
-  }
-}
-
 const SYNC_IMPLEMENTATIONS = /* @__PURE__ */ new Set([
   `accessSync`,
   `appendFileSync`,
@@ -42405,7 +42418,7 @@ function patchFs(patchedFs, fakeFs) {
       if (fnName === `open`)
         continue;
       setupFn(patchedFsPromises, origName, (pathLike, ...args) => {
-        if (pathLike instanceof FileHandle) {
+        if (typeof pathLike === `object` && pathLike !== null && `close` in pathLike) {
           return pathLike[origName].apply(pathLike, args);
         } else {
           return fakeImpl.call(fakeFs, pathLike, ...args);
@@ -42413,8 +42426,7 @@ function patchFs(patchedFs, fakeFs) {
       });
     }
     setupFn(patchedFsPromises, `open`, async (...args) => {
-      const fd = await fakeFs.openPromise(...args);
-      return new FileHandle(fd, fakeFs);
+      return await fakeFs.openHandle(...args);
     });
   }
   {
@@ -43724,6 +43736,9 @@ class ZipFS extends BasePortableFakeFS {
   }
   resolve(p) {
     return ppath.resolve(PortablePath.root, p);
+  }
+  async openHandle(p, flags, mode) {
+    return new FileHandle(this.openSync(p, flags, mode), this);
   }
   async openPromise(p, flags, mode) {
     return this.openSync(p, flags, mode);
@@ -46792,7 +46807,7 @@ ${controlSegment}
   };
 }
 
-const localFs = { ...fs__default.default };
+const localFs = { ...fs__default.default, promises: { ...fs__default.default.promises } };
 const nodeFs = new NodeFS(localFs);
 const defaultRuntimeState = $$SETUP_STATE(hydrateRuntimeState);
 const defaultPnpapiResolution = __filename;

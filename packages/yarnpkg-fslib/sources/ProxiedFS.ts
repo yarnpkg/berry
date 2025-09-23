@@ -3,6 +3,7 @@ import {Stats, BigIntStats}                                                     
 import {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher, Dir, OpendirOptions, ReaddirOptions, DirentNoPath} from './FakeFS';
 import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                                                  from './FakeFS';
 import {MkdirOptions, RmdirOptions, RmOptions, WriteFileOptions, WatchCallback, WatchOptions, Watcher}                                                                                      from './FakeFS';
+import {Handle}                                                                                                                                                                             from './patchFs/FileHandle';
 import {FSPath, Filename, Path}                                                                                                                                                             from './path';
 
 export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<P> {
@@ -28,6 +29,10 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
 
   getRealPath() {
     return this.mapFromBase(this.baseFs.getRealPath());
+  }
+
+  async openHandle(p: P, flags: string, mode?: number): Promise<Handle> {
+    return this.baseFs.openHandle(this.mapToBase(p), flags, mode);
   }
 
   async openPromise(p: P, flags: string, mode?: number) {

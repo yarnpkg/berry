@@ -6,6 +6,7 @@ import {NoParamCallback, BigIntStats as NodeBigIntStats} from 'fs';
 import {EOL}                                             from 'os';
 
 import {copyPromise, LinkStrategy}                       from './algorithms/copyPromise';
+import {FileHandle, Handle}                              from './patchFs/FileHandle';
 import {FSPath, Path, PortablePath, PathUtils, Filename} from './path';
 import {convertPath, ppath}                              from './path';
 
@@ -160,6 +161,8 @@ export abstract class FakeFS<P extends Path> {
 
   abstract opendirPromise(p: P, opts?: OpendirOptions): Promise<Dir<P>>;
   abstract opendirSync(p: P, opts?: OpendirOptions): Dir<P>;
+
+  abstract openHandle(p: P, flags: string, mode?: number): Promise<Handle>;
 
   abstract openPromise(p: P, flags: string, mode?: number): Promise<number>;
   abstract openSync(p: P, flags: string, mode?: number): number;

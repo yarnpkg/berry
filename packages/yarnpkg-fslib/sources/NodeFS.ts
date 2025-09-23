@@ -4,6 +4,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, Dir, StatWatcher, Wat
 import {Dirent, SymlinkType, StatSyncOptions, StatOptions}                                                                                                      from './FakeFS';
 import {BasePortableFakeFS, WriteFileOptions}                                                                                                                   from './FakeFS';
 import {MkdirOptions, RmdirOptions, RmOptions, WatchOptions, WatchCallback, Watcher}                                                                            from './FakeFS';
+import {Handle}                                                                                                                                                 from './patchFs/FileHandle';
 import {FSPath, PortablePath, Filename, ppath, npath, NativePath}                                                                                               from './path';
 
 function direntToPortable(dirent: Dirent<NativePath>): Dirent<PortablePath> {
@@ -35,6 +36,10 @@ export class NodeFS extends BasePortableFakeFS {
 
   resolve(p: PortablePath) {
     return ppath.resolve(p);
+  }
+
+  async openHandle(p: PortablePath, flags: string, mode?: number): Promise<Handle> {
+    return await this.realFs.promises.open(npath.fromPortablePath(p), flags, mode);
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {

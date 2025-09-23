@@ -7,6 +7,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, E
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
+import {FileHandle, Handle}                                                                                                                          from './patchFs/FileHandle';
 import {Filename, FSPath, npath, PortablePath}                                                                                                       from './path';
 
 // Only file descriptors prefixed by those values will be forwarded to the MountFS
@@ -138,6 +139,14 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     const remappedFd = this.nextFd++ | this.magic;
     this.fdMap.set(remappedFd, [mountFs, fd]);
     return remappedFd;
+  }
+
+  async openHandle(p: PortablePath, flags: string, mode?: number): Promise<Handle> {
+    return await this.makeCallPromise(p, async () => {
+      return await this.baseFs.openHandle(p, flags, mode);
+    }, async (mountFs, {subPath}) => {
+      return new FileHandle(this.remapFd(mountFs, await mountFs.openPromise(subPath, flags, mode)), this);
+    });
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {
