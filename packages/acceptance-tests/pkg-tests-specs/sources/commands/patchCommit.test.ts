@@ -1,5 +1,10 @@
 import {Filename, npath, ppath, xfs} from '@yarnpkg/fslib';
 
+const {
+  tests: {startPackageServer},
+  fs: {writeFile},
+} = require(`pkg-tests-core`);
+
 describe(`Commands`, () => {
   describe(`patch-commit`, () => {
     test(
@@ -199,6 +204,101 @@ describe(`Commands`, () => {
           [`peer-deps-lvl1@npm:1.0.0`]: `patch:peer-deps-lvl1@npm%3A1.0.0#~/.yarn/patches/peer-deps-lvl1-npm-1.0.0-894d37389e.patch`,
         });
       }),
+    );
+
+    test(
+      `it should preserve __archiveUrl parameters in patch URLs`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`unconventional-tarball`]: `npm:1.0.0::__archiveUrl=https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz`,
+        },
+      }, async ({path, run}) => {
+        await run(`install`);
+
+        const {stdout} = await run(`patch`, `unconventional-tarball`, `--json`);
+        const {path: updateFolderN} = JSON.parse(stdout);
+
+        const updateFolder = npath.toPortablePath(updateFolderN);
+        const updateFile = ppath.join(updateFolder, `index.js`);
+
+        const fileSource = await xfs.readFilePromise(updateFile, `utf8`);
+        const fileUser = fileSource.replace(
+          `module.exports = require(\`./package.json\`);`,
+          `module.exports = require(\`./package.json\`);\n\nmodule.exports.hello = \`world\`;`,
+        );
+        await xfs.writeFilePromise(updateFile, fileUser);
+
+        await run(`patch-commit`, `-s`, npath.fromPortablePath(updateFolder));
+
+        const manifest = await xfs.readJsonPromise(ppath.join(path, Filename.manifest));
+
+        expect(manifest.dependencies).toEqual({
+          [`unconventional-tarball`]: expect.stringMatching(/^patch:unconventional-tarball@npm%3A1\.0\.0#.*\.patch::__archiveUrl=/),
+        });
+
+        // Ensure the patch URL format is correct (not malformed)
+        expect(manifest.dependencies[`unconventional-tarball`]).not.toMatch(/^patch:.*::.*#/);
+      }),
+    );
+
+    test(
+      `it should generate proper patch URLs for packages with unconventional tarball urls`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`unconventional-tarball`]: `npm:1.0.0::__archiveUrl=https://registry.example.org/unconventional-tarball/tralala/unconventional-tarball-1.0.0.tgz`,
+          },
+        },
+        async ({path, run, source}) => {
+          const url = await startPackageServer({type: `https`});
+
+          await writeFile(ppath.join(path, `.yarnrc.yml`), [
+            `npmScopes:`,
+            `  private:`,
+            `    npmRegistryServer: "${url}"`,
+          ].join(`\n`));
+
+          await run(`install`);
+
+          // Use yarn patch to get a temporary folder
+          const {stdout} = await run(`patch`, `unconventional-tarball`, `--json`);
+          const {path: updateFolderN} = JSON.parse(stdout);
+
+          const updateFolder = npath.toPortablePath(updateFolderN);
+          const updateFile = ppath.join(updateFolder, `index.js`);
+
+          // Make the same modification as our patch
+          const fileSource = await xfs.readFilePromise(updateFile, `utf8`);
+          const fileUser = fileSource.replace(
+            `module.exports = require(\`./package.json\`);`,
+            `module.exports = require(\`./package.json\`);\n\nmodule.exports.hello = \`world\`;`,
+          );
+          await xfs.writeFilePromise(updateFile, fileUser);
+
+          // Commit the patch
+          await run(`patch-commit`, `-s`, npath.fromPortablePath(updateFolder));
+
+          // Read the manifest to check the generated patch URL format
+          const manifest = await xfs.readJsonPromise(ppath.join(path, Filename.manifest));
+          const patchUrl = manifest.dependencies[`unconventional-tarball`];
+
+          // Verify the patch URL has the correct format: patch:source#selector::params
+          expect(patchUrl).toMatch(/^patch:unconventional-tarball@npm%3A1\.0\.0#.*::__archiveUrl=/);
+
+          // Verify it's NOT the malformed format: patch:source::params#selector
+          expect(patchUrl).not.toMatch(/^patch:unconventional-tarball@npm%3A1\.0\.0::.*#.*$/);
+
+          // Run install again to apply the patch
+          await run(`install`);
+
+          // Verify the patch was applied correctly
+          await expect(source(`require('unconventional-tarball')`)).resolves.toMatchObject({
+            name: `unconventional-tarball`,
+            version: `1.0.0`,
+            hello: `world`,
+          });
+        },
+      ),
     );
   });
 });
