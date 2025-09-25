@@ -223,6 +223,10 @@ Note that in some cases you may just have a folder to work with as `issuer` para
 
 This function will return `null` if the request is a builtin module, unless `considerBuiltins` is set to `false`.
 
+Options:
+
+- `considerBuiltins`: Whether to consider builtins during resolution, such as `node:fs` or `node:path`.
+
 ### `resolveUnqualified(...)`
 
 ```ts
@@ -245,10 +249,14 @@ Might very well be resolved into:
 /my/cache/lodash/1.0.0/node_modules/lodash/uniq/index.js
 ```
 
+Options:
+
+- `extensions`: A list of file extensions to try and resolve, such as [".js", ".ts"].
+
 ### `resolveRequest(...)`
 
 ```ts
-export function resolveRequest(request: string, issuer: string | null, opts?: {considerBuiltins?: boolean, extensions?: string[]]}): string | null;
+export function resolveRequest(request: string, issuer: string | null, opts?: {considerBuiltins?: boolean, extensions?: string[]], conditions: Set<string>}): string | null;
 ```
 
 The `resolveRequest` function is a wrapper around both `resolveToUnqualified` and `resolveUnqualified`. In essence, it's a bit like calling `resolveUnqualified(resolveToUnqualified(...))`, but shorter.
@@ -268,6 +276,12 @@ Might very well be resolved into:
 ```
 
 This function will return `null` if the request is a builtin module, unless `considerBuiltins` is set to `false`.
+
+Options:
+
+- `considerBuiltins`: Whether to consider builtins during resolution, such as `node:fs` or `node:path`.
+- `extensions`: A list of file extensions to try and resolve, such as [".js", ".ts"].
+- `conditions`: Export conditions to consider, when the `package.json` contains an `exports` field. Defaults to `["node", "require"]`.
 
 ### `resolveVirtual(...)`
 
