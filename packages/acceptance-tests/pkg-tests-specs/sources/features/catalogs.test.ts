@@ -181,8 +181,8 @@ describe(`Features`, () => {
 
           const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json` as PortablePath);
 
-          expect(packedManifest.dependencies[`no-deps`]).toBe(`npm:^2.0.0`);
-          expect(packedManifest.devDependencies[`one-fixed-dep`]).toBe(`npm:~1.0.0`);
+          expect(packedManifest.dependencies[`no-deps`]).toBe(`^2.0.0`);
+          expect(packedManifest.devDependencies[`one-fixed-dep`]).toBe(`~1.0.0`);
         },
       ),
     );
