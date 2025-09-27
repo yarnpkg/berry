@@ -125,6 +125,9 @@ describe(`Features`, () => {
           devDependencies: {
             [`no-deps`]: `catalog:`,
           },
+          peerDependencies: {
+            [`no-deps`]: `catalog:`,
+          },
         },
         async ({path, run}) => {
           await yarn.writeConfiguration(path, {
@@ -333,6 +336,29 @@ describe(`Features`, () => {
           // Verify that the workspace dependency was resolved from catalog
           const lockfile = await xfs.readFilePromise(`${path}/yarn.lock` as PortablePath, `utf8`);
           expect(lockfile).toMatch(/no-deps@npm:2\.0\.0/);
+        },
+      ),
+    );
+
+    test(
+      `it should work with catalog references in peer dependencies`,
+      makeTemporaryEnv(
+        {
+          peerDependencies: {
+            [`no-deps`]: `catalog:`,
+          },
+        },
+        async ({path, run}) => {
+          await yarn.writeConfiguration(path, {
+            catalog: {
+              [`no-deps`]: `2.0.0`,
+            },
+          });
+
+          await run(`install`);
+
+          const manifest = await xfs.readJsonPromise(`${path}/package.json` as PortablePath);
+          expect(manifest.peerDependencies[`no-deps`]).toBe(`catalog:`);
         },
       ),
     );
