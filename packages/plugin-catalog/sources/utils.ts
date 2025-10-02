@@ -53,6 +53,10 @@ export const resolveDescriptorFromCatalog = (project: Project, dependency: Descr
     structUtils.makeDescriptor(dependency, resolvedRange),
   );
 
+  // If the descriptor isn't supported by any available resolver, return it as is
+  if (!resolver.supportsDescriptor(normalizedDescriptor, resolveOptions))
+    return normalizedDescriptor;
+
   // Bind the descriptor to the project's top level workspace (which should match the project root),
   // addressing issues with relative file paths when using `file:` protocol
   const boundDescriptor = resolver.bindDescriptor(normalizedDescriptor, project.topLevelWorkspace.anchoredLocator, resolveOptions);
