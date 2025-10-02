@@ -272,6 +272,26 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should throw an error when protocol in catalog isn't supported by any resolver`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `catalog:`,
+          },
+        },
+        async ({path, run, source}) => {
+          await yarn.writeConfiguration(path, {
+            catalog: {
+              [`no-deps`]: `unknown-protocol:2.0.0`,
+            },
+          });
+
+          await expect(run(`install`)).rejects.toThrow();
+        },
+      ),
+    );
+
+    test(
       `it should work with file: protocol ranges in catalogs`,
       makeTemporaryEnv(
         {
