@@ -1,5 +1,14 @@
 import {ppath, xfs} from '@yarnpkg/fslib';
 
+async function getCacheContent(cacheFolder) {
+  const cacheContent = (await xfs.readdirPromise(cacheFolder))
+    .filter(file => !file.startsWith(`.`));
+
+  cacheContent.sort();
+
+  return cacheContent;
+}
+
 describe(`Commands`, () => {
   describe(`workspaces focus`, () => {
     test(
@@ -9,8 +18,8 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
-          await setupProject(path);
+        async ({path, run, source}) => {
+          await setupProject(path, source);
 
           await run(`install`);
 
@@ -21,10 +30,16 @@ describe(`Commands`, () => {
             cwd: ppath.join(path, `packages/foo`),
           });
 
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
+
+          await expect(source(`require('no-deps')`, {
+            cwd: ppath.join(path, `packages/foo`),
+          })).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+          });
         },
       ),
     );
@@ -36,7 +51,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({path, run, source}) => {
           await setupProject(path);
 
           await run(`install`);
@@ -48,11 +63,24 @@ describe(`Commands`, () => {
             cwd: ppath.join(path, `packages/foo`),
           });
 
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-npm-1.0.0-`),
             expect.stringContaining(`no-deps-npm-2.0.0-`),
           ]);
+
+          await expect(source(`require('no-deps')`, {
+            cwd: ppath.join(path, `packages/foo`),
+          })).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+          });
+
+          await expect(source(`require('no-deps')`, {
+            cwd: ppath.join(path, `packages/bar`),
+          })).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `2.0.0`,
+          });
         },
       ),
     );
@@ -64,7 +92,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({path, run, source}) => {
           await setupProject(path);
 
           await run(`install`);
@@ -76,10 +104,16 @@ describe(`Commands`, () => {
             cwd: ppath.join(path, `packages/baz`),
           });
 
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-npm-2.0.0-`),
           ]);
+
+          await expect(source(`require('no-deps')`, {
+            cwd: ppath.join(path, `packages/bar`),
+          })).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `2.0.0`,
+          });
         },
       ),
     );
@@ -91,7 +125,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({path, run, source}) => {
           await setupProject(path);
 
           await run(`workspaces`, `focus`, {
@@ -99,11 +133,17 @@ describe(`Commands`, () => {
           });
 
           const cacheFolder = ppath.join(path, `.yarn/cache`);
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-npm-1.0.0-`),
             expect.stringContaining(`no-deps-npm-2.0.0-`),
           ]);
+
+          await expect(source(`require('no-deps')`, {
+            cwd: ppath.join(path, `packages/quux`),
+          })).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `1.0.0`,
+          });
         },
       ),
     );
@@ -115,7 +155,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({path, run, source}) => {
           await setupProject(path);
 
           await run(`workspaces`, `focus`, `quux`, `--production`, {
@@ -123,8 +163,7 @@ describe(`Commands`, () => {
           });
 
           const cacheFolder = ppath.join(path, `.yarn/cache`);
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
         },
@@ -138,7 +177,7 @@ describe(`Commands`, () => {
           private: true,
           workspaces: [`packages/*`],
         },
-        async ({path, run}) => {
+        async ({path, run, source}) => {
           await setupProject(path);
 
           await run(`install`);
@@ -150,11 +189,17 @@ describe(`Commands`, () => {
             cwd: path,
           });
 
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-bins-npm-1.0.0-`),
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
+
+          await expect(source(`require('no-deps-bins')`, {
+            cwd: ppath.join(path, `packages/qux`),
+          })).resolves.toMatchObject({
+            name: `no-deps-bins`,
+            version: `1.0.0`,
+          });
         },
       ),
     );
@@ -178,8 +223,7 @@ describe(`Commands`, () => {
             cwd: path,
           });
 
-          await expect(xfs.readdirPromise(cacheFolder)).resolves.toEqual([
-            `.gitignore`,
+          await expect(getCacheContent(cacheFolder)).resolves.toEqual([
             expect.stringContaining(`no-deps-npm-1.0.0-`),
           ]);
         },
