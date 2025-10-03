@@ -17,11 +17,13 @@ const pathRegExp = /^(?![a-zA-Z]:[\\/]|\\\\|\.{0,2}(?:\/|$))((?:@[^/]+\/)?[^/]+)
 // their own (@arcanis/yarn-plugin-foo would override @yarnpkg/plugin-foo
 // as well as @mael/yarn-plugin-foo)
 const getNormalizedName = (name: string) => {
-  const parsing = name.match(/^(?:@yarnpkg\/|(?:@[^/]+\/)?yarn-)(plugin-[^/]+)/);
+  const parsing = name.match(/^(?:(@yarnpkg\/)|(@[^/]+\/)?yarn-)(plugin-[^/]+)$/);
   if (parsing === null)
     throw new UsageError(`Invalid plugin name "${name}" - it should be "yarn-plugin-<something>"`);
 
-  return `@yarnpkg/${parsing[1]}`;
+  const [officialScope, customScope, pluginName] = parsing;
+  const scopeName = officialScope || customScope || ``;
+  return `${scopeName}${pluginName}`;
 };
 
 // eslint-disable-next-line arca/no-default-export
