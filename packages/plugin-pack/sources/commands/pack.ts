@@ -34,6 +34,10 @@ export default class PackCommand extends BaseCommand {
     description: `Run a preliminary \`yarn install\` if the package contains build scripts`,
   });
 
+  preserveWorkspaces = Option.Boolean(`--preserve-workspaces`, false, {
+    description: `Preserve the workspaces in the package manifest`,
+  });
+
   dryRun = Option.Boolean(`-n,--dry-run`, false, {
     description: `Print the file paths without actually generating the package archive`,
   });
@@ -89,7 +93,9 @@ export default class PackCommand extends BaseCommand {
         }
 
         if (!this.dryRun) {
-          const pack = await packUtils.genPackStream(workspace, files);
+          const pack = await packUtils.genPackStream(workspace, files, {
+            preserveWorkspaces: this.preserveWorkspaces,
+          });
 
           await xfs.mkdirPromise(ppath.dirname(target), {recursive: true});
           const write = xfs.createWriteStream(target);
