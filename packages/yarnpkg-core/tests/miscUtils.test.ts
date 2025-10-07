@@ -26,6 +26,20 @@ describe(`miscUtils`, () => {
         ),
       ).toBe(`VAR_A: ValueA, VAR_B: ValueB`);
     });
+
+    it(`should not replace escaped environment variables`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \\\${VAR_A}, VAR_B: \\\${VAR_B}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: \${VAR_A}, VAR_B: \${VAR_B}`);
+    });
   });
 
   describe(`mapAndFind`, () => {
