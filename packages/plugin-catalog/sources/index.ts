@@ -85,8 +85,12 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
           // Resolve the catalog reference to get the actual version range
           const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor, resolver, resolveOptions);
 
+          let {protocol, source, params, selector} = structUtils.parseRange(structUtils.convertToManifestRange(resolvedDescriptor.range));
+          if (protocol === workspace.project.configuration.get(`defaultProtocol`))
+            protocol = null;
+
           // Replace the catalog reference with the resolved range
-          dependencies[identStr] = resolvedDescriptor.range;
+          dependencies[identStr] = structUtils.makeRange({protocol, source, params, selector});
         }
       }
     },
