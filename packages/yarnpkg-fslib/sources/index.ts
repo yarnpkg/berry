@@ -34,7 +34,7 @@ export type {Stats, BigIntStats}                     from './FakeFS';
 export {PortablePath, Filename}                            from './path';
 export type {FSPath, Path, NativePath}                     from './path';
 export type {ParsedPath, PathUtils, FormatInputPathObject} from './path';
-export {npath, ppath}                          from './path';
+export {npath, ppath}                                      from './path';
 
 export {AliasFS}                                           from './AliasFS';
 export {FakeFS, BasePortableFakeFS}                        from './FakeFS';
@@ -47,6 +47,7 @@ export {NoFS}                                              from './NoFS';
 export {NodeFS}                                            from './NodeFS';
 export {PosixFS}                                           from './PosixFS';
 export {ProxiedFS}                                         from './ProxiedFS';
+export {SubFS}                                             from './SubFS';
 export {VirtualFS}                                         from './VirtualFS';
 
 export {patchFs, extendFs} from './patchFs/patchFs';
