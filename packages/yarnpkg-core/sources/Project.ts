@@ -2033,6 +2033,9 @@ export class Project {
   }
 
   async persistInstallStateFile() {
+    if (!v8.serialize)
+      return;
+
     const fields = [];
     for (const category of Object.values(INSTALL_STATE_FIELDS))
       fields.push(...category);
