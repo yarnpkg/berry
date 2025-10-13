@@ -1,13 +1,14 @@
-import {Plugin, SettingsType, miscUtils, Configuration, Ident} from '@yarnpkg/core';
+import {Plugin, SettingsType, DurationUnit, miscUtils, Configuration, Ident} from '@yarnpkg/core';
+import type {SettingsDefinition}                                             from '@yarnpkg/core';
 
-import {NpmHttpFetcher}                                        from './NpmHttpFetcher';
-import {NpmRemapResolver}                                      from './NpmRemapResolver';
-import {NpmSemverFetcher}                                      from './NpmSemverFetcher';
-import {NpmSemverResolver}                                     from './NpmSemverResolver';
-import {NpmTagResolver}                                        from './NpmTagResolver';
-import * as npmConfigUtils                                     from './npmConfigUtils';
-import * as npmHttpUtils                                       from './npmHttpUtils';
-import * as npmPublishUtils                                    from './npmPublishUtils';
+import {NpmHttpFetcher}                                                      from './NpmHttpFetcher';
+import {NpmRemapResolver}                                                    from './NpmRemapResolver';
+import {NpmSemverFetcher}                                                    from './NpmSemverFetcher';
+import {NpmSemverResolver}                                                   from './NpmSemverResolver';
+import {NpmTagResolver}                                                      from './NpmTagResolver';
+import * as npmConfigUtils                                                   from './npmConfigUtils';
+import * as npmHttpUtils                                                     from './npmHttpUtils';
+import * as npmPublishUtils                                                  from './npmPublishUtils';
 
 export {npmConfigUtils};
 export {npmHttpUtils};
@@ -34,52 +35,53 @@ export interface Hooks {
 const authSettings = {
   npmAlwaysAuth: {
     description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
-    type: SettingsType.BOOLEAN as const,
+    type: SettingsType.BOOLEAN,
     default: false,
   },
   npmAuthIdent: {
     description: `Authentication identity for the npm registry (_auth in npm and yarn v1)`,
-    type: SettingsType.SECRET as const,
+    type: SettingsType.SECRET,
     default: null,
   },
   npmAuthToken: {
     description: `Authentication token for the npm registry (_authToken in npm and yarn v1)`,
-    type: SettingsType.SECRET as const,
+    type: SettingsType.SECRET,
     default: null,
   },
-};
+} satisfies Record<string, SettingsDefinition>;
 
 const registrySettings = {
   npmAuditRegistry: {
     description: `Registry to query for audit reports`,
-    type: SettingsType.STRING as const,
+    type: SettingsType.STRING,
     default: null,
   },
   npmPublishRegistry: {
     description: `Registry to push packages to`,
-    type: SettingsType.STRING as const,
+    type: SettingsType.STRING,
     default: null,
   },
   npmRegistryServer: {
     description: `URL of the selected npm registry (note: npm enterprise isn't supported)`,
-    type: SettingsType.STRING as const,
+    type: SettingsType.STRING,
     default: `https://registry.yarnpkg.com`,
   },
-};
+} satisfies Record<string, SettingsDefinition>;
 
 const packageGateSettings = {
   npmMinimalAgeGate: {
-    description: `Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation`,
-    type: SettingsType.NUMBER as const,
-    default: 0,
+    description: `Minimum age of a package version according to the publish date on the npm registry to be considered for installation`,
+    type: SettingsType.DURATION,
+    unit: DurationUnit.MINUTES,
+    default: `0m`,
   },
   npmPreapprovedPackages: {
     description: `Array of package descriptors or package name glob patterns to exclude from the minimum release age check`,
-    type: SettingsType.STRING as const,
-    isArray: true as const,
+    type: SettingsType.STRING,
+    isArray: true,
     default: [],
   },
-};
+} satisfies Record<string, SettingsDefinition>;
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {

@@ -430,9 +430,10 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     isArray: true,
   },
   httpTimeout: {
-    description: `Timeout of each http request in milliseconds`,
-    type: SettingsType.NUMBER,
-    default: 60000,
+    description: `Timeout of each http request`,
+    type: SettingsType.DURATION,
+    unit: DurationUnit.MILLISECONDS,
+    default: `1m`,
   },
   httpRetry: {
     description: `Retry times on http failure`,
@@ -554,9 +555,10 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
   telemetryInterval: {
-    description: `Minimal amount of time between two telemetry uploads, in days`,
-    type: SettingsType.NUMBER,
-    default: 7,
+    description: `Minimal amount of time between two telemetry uploads`,
+    type: SettingsType.DURATION,
+    unit: DurationUnit.DAYS,
+    default: `7d`,
   },
   telemetryUserId: {
     description: `If you desire to tell us which project you are, you can set this field. Completely optional and opt-in.`,
