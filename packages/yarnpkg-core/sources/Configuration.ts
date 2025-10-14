@@ -348,6 +348,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     type: SettingsType.STRING,
     default: `npm:`,
   },
+  enableWorkspacePatternAnalysis: {
+    description: `If true, optimizes workspace pattern matching by separating static and dynamic globs for better performance when using mostly static patterns.`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
   enableTransparentWorkspaces: {
     description: `If false, Yarn won't automatically resolve workspace dependencies unless they use the \`workspace:\` protocol`,
     type: SettingsType.BOOLEAN,

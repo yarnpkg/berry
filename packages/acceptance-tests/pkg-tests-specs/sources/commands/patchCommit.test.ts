@@ -114,7 +114,7 @@ describe(`Commands`, () => {
         });
 
         expect(manifest.resolutions).toEqual({
-        [`no-deps@npm:1.0.0`]: expect.stringMatching(/^patch:no-deps/),
+          [`no-deps@npm:1.0.0`]: expect.stringMatching(/^patch:no-deps/),
         });
       }),
     );
