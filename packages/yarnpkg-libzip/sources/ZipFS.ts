@@ -1,8 +1,9 @@
+import {Handle}                                                                                                                                      from '@yarnpkg/fslib/sources/patchFs/FileHandle';
 import {Dirent, DirentNoPath, ReaddirOptions}                                                                                                        from '@yarnpkg/fslib';
 import {WatchOptions, WatchCallback, Watcher, Dir, Stats, BigIntStats, StatSyncOptions, StatOptions}                                                 from '@yarnpkg/fslib';
 import {FakeFS, MkdirOptions, RmdirOptions, RmOptions, WriteFileOptions, OpendirOptions}                                                             from '@yarnpkg/fslib';
 import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, ExtractHintOptions, WatchFileCallback, WatchFileOptions, StatWatcher} from '@yarnpkg/fslib';
-import {NodeFS}                                                                                                                                      from '@yarnpkg/fslib';
+import {NodeFS, FileHandle}                                                                                                                          from '@yarnpkg/fslib';
 import {opendir}                                                                                                                                     from '@yarnpkg/fslib';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from '@yarnpkg/fslib';
 import {errors, statUtils}                                                                                                                           from '@yarnpkg/fslib';
@@ -281,6 +282,10 @@ export class ZipFS extends BasePortableFakeFS {
 
   resolve(p: PortablePath) {
     return ppath.resolve(PortablePath.root, p);
+  }
+
+  async openHandle(p: PortablePath, flags: string, mode?: number): Promise<Handle> {
+    return new FileHandle(this.openSync(p, flags, mode), this);
   }
 
   async openPromise(p: PortablePath, flags: string, mode?: number) {

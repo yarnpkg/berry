@@ -1,5 +1,5 @@
 import type {BigIntStats, ReadStream, StatOptions, Stats, WriteStream, WriteVResult} from 'fs';
-import {createInterface}                                                             from 'readline';
+import {createInterface, Interface}                                                  from 'readline';
 
 import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}              from '../FakeFS';
 import type {Path}                                                                   from '../path';
@@ -67,7 +67,20 @@ const kRefs = Symbol(`kRefs`);
 const kRef = Symbol(`kRef`);
 const kUnref = Symbol(`kUnref`);
 
-export class FileHandle<P extends Path> {
+export interface Handle {
+  appendFile(data: string | Uint8Array, options?: (ObjectEncodingOptions & FlagAndOpenMode) | BufferEncoding | null): Promise<void>;
+  chown(uid: number, gid: number): Promise<void>;
+  chmod(mode: number): Promise<void>;
+  createReadStream(options?: CreateReadStreamOptions): ReadStream;
+  createWriteStream(options?: CreateWriteStreamOptions): WriteStream;
+  datasync(): Promise<void>;
+  sync(): Promise<void>;
+  read(options?: FileReadOptions<Buffer>): Promise<FileReadResult<Buffer>>;
+  readFile(options?: {encoding?: null | undefined, flag?: OpenMode | undefined}): Promise<Buffer>;
+  readLines(options?: CreateReadStreamOptions): Interface;
+}
+
+export class FileHandle<P extends Path> implements Handle {
   [kBaseFs]: FakeFS<P>;
   [kFd]: number;
   [kRefs] = 1;
