@@ -181,6 +181,7 @@ const RELEASE_DATE_PACKAGES: Record<string, Record<string, number | string>> = {
   "release-date": {
     "1.0.0": new Date(new Date().getTime() - /* 10 days */ 1000 * 60 * 60 * 24 * 10).toISOString(),
     "1.1.0": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
+    "1.1.1-beta": new Date(new Date().getTime() - /* 3 days */ 1000 * 60 * 60 * 24 * 3).toISOString(),
     "1.1.1": new Date().toISOString(),
   },
   "release-date-transitive": {

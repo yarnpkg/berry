@@ -26,6 +26,7 @@ type RegistryOptions = {
 
 export type Options = httpUtils.Options & RegistryOptions & {
   authType?: AuthType;
+  allowOidc?: boolean;
   otp?: string;
 };
 
@@ -286,7 +287,7 @@ export type PackageMetadata = {
       tarball: string;
     };
   }>;
-  time: Record<string, string>;
+  time?: Record<string, string>;
 };
 
 function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
@@ -303,7 +304,7 @@ function pickPackageMetadata(metadata: PackageMetadata): PackageMetadata {
 /**
  * Used to invalidate the on-disk cache when the format changes.
  */
-const CACHE_KEY = hashUtils.makeHash(...CACHED_FIELDS).slice(0, 6);
+const CACHE_KEY = hashUtils.makeHash(`time`, ...CACHED_FIELDS).slice(0, 6);
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
@@ -316,13 +317,13 @@ function getMetadataFolder(configuration: Configuration) {
   return ppath.join(configuration.get(`globalFolder`), `metadata/npm`);
 }
 
-export async function get(path: string, {configuration, headers, ident, authType, registry, ...rest}: Options) {
+export async function get(path: string, {configuration, headers, ident, authType, allowOidc, registry, ...rest}: Options) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
   if (ident && ident.scope && typeof authType === `undefined`)
     authType = AuthType.BEST_EFFORT;
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
 
@@ -335,10 +336,10 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
 }
 
-export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
@@ -367,10 +368,10 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
@@ -399,10 +400,10 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
   registry = normalizeRegistry(configuration, {ident, registry});
 
-  const auth = await getAuthenticationHeader(registry, {authType, configuration, ident});
+  const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
     headers = {...headers, authorization: auth};
   if (otp)
@@ -441,7 +442,7 @@ function normalizeRegistry(configuration: Configuration, {ident, registry}: Part
   return npmConfigUtils.normalizeRegistry(registry);
 }
 
-async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, configuration, ident}: {authType?: AuthType, configuration: Configuration, ident: RegistryOptions[`ident`]}) {
+async function getAuthenticationHeader(registry: string, {authType = AuthType.CONFIGURATION, allowOidc = false, configuration, ident}: {authType?: AuthType, allowOidc?: boolean, configuration: Configuration, ident: RegistryOptions[`ident`]}) {
   const effectiveConfiguration = npmConfigUtils.getAuthConfiguration(registry, {configuration, ident});
   const mustAuthenticate = shouldAuthenticate(effectiveConfiguration, authType);
 
@@ -463,6 +464,13 @@ async function getAuthenticationHeader(registry: string, {authType = AuthType.CO
     if (npmAuthIdent.includes(`:`))
       return `Basic ${Buffer.from(npmAuthIdent).toString(`base64`)}`;
     return `Basic ${npmAuthIdent}`;
+  }
+
+  if (allowOidc && ident) {
+    const oidcToken = await getOidcToken(registry, {configuration, ident});
+    if (oidcToken) {
+      return `Bearer ${oidcToken}`;
+    }
   }
 
   if (mustAuthenticate && authType !== AuthType.BEST_EFFORT) {
@@ -574,4 +582,63 @@ function getOtpHeaders(otp: string) {
   return {
     [`npm-otp`]: otp,
   };
+}
+
+/**
+ * This code is adapted from the npm project, under ISC License.
+ *
+ * Original source:
+ * https://github.com/npm/cli/blob/7d900c4656cfffc8cca93240c6cda4b441fbbfaa/lib/utils/oidc.js
+ */
+async function getOidcToken(registry: string, {configuration, ident}: {configuration: Configuration, ident: Ident}): Promise<string | null> {
+  let idToken: string | null = null;
+
+  if (process.env.GITLAB) {
+    idToken = process.env.NPM_ID_TOKEN || null;
+  } else if (process.env.GITHUB_ACTIONS) {
+    if (!(process.env.ACTIONS_ID_TOKEN_REQUEST_URL && process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))
+      return null;
+
+    // The specification for an audience is `npm:registry.npmjs.org`,
+    // where "registry.npmjs.org" can be any supported registry.
+    const audience = `npm:${new URL(registry).host
+      // Yarn registry is an alias domain to the NPM registry.
+      .replace(`registry.yarnpkg.com`, `registry.npmjs.org`)
+      .replace(`yarn.npmjs.org`, `registry.npmjs.org`)}`;
+
+    const url = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
+    url.searchParams.append(`audience`, audience);
+
+    const response = await httpUtils.get(url.href, {
+      configuration,
+      jsonResponse: true,
+      headers: {
+        Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`,
+      },
+    });
+
+    idToken = response.value;
+  }
+
+  if (!idToken)
+    return null;
+
+  try {
+    const response = await httpUtils.post(
+      `${registry}/-/npm/v1/oidc/token/exchange/package${getIdentUrl(ident)}`,
+      null,
+      {
+        configuration,
+        jsonResponse: true,
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      },
+    );
+    return response.token || null;
+  } catch {
+    // Best effort
+  }
+
+  return null;
 }

@@ -46,7 +46,6 @@ export const resolveDescriptorFromCatalog = (project: Project, dependency: Descr
   if (!resolvedRange)
     throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: entry not found in ${getCatalogErrorDisplayName(catalogName)}`);
 
-
   // The range resolved from the catalog may need to be normalized (.i.e. ^2.4.0 -> npm:^2.4.0)
   // This process typically happens before the reduceDependency hook, but we need to do it here since
   // when it is first called the dependency range still refers to the catalog

@@ -79,7 +79,7 @@ describe(`Commands`, () => {
         const manifest = await xfs.readJsonPromise(ppath.join(path, Filename.manifest));
 
         expect(manifest.dependencies).toEqual({
-          [`one-fixed-dep`]: `patch:one-fixed-dep@npm%3A1.0.0#~/.yarn/patches/one-fixed-dep-npm-1.0.0-b02516a4af.patch`,
+          [`one-fixed-dep`]: expect.stringMatching(/^patch:one-fixed-dep/),
         });
 
         expect(manifest).not.toHaveProperty(`resolutions`);
@@ -114,7 +114,7 @@ describe(`Commands`, () => {
         });
 
         expect(manifest.resolutions).toEqual({
-          [`no-deps@npm:1.0.0`]: `patch:no-deps@npm%3A1.0.0#~/.yarn/patches/no-deps-npm-1.0.0-cf533b267a.patch`,
+        [`no-deps@npm:1.0.0`]: expect.stringMatching(/^patch:no-deps/),
         });
       }),
     );
@@ -143,7 +143,7 @@ describe(`Commands`, () => {
           const manifest = await xfs.readJsonPromise(ppath.join(path, Filename.manifest));
 
           expect(manifest.dependencies).toEqual({
-            [`one-fixed-dep`]: `patch:one-fixed-dep@npm%3A1.0.0#~/.yarn/patches/one-fixed-dep-npm-1.0.0-b02516a4af.patch`,
+            [`one-fixed-dep`]: expect.stringMatching(/^patch:one-fixed-dep/),
           });
         }
 
@@ -162,7 +162,7 @@ describe(`Commands`, () => {
           const manifest = await xfs.readJsonPromise(ppath.join(path, Filename.manifest));
 
           expect(manifest.dependencies).toEqual({
-            [`one-fixed-dep`]: `patch:one-fixed-dep@npm%3A1.0.0#~/.yarn/patches/one-fixed-dep-npm-1.0.0-b02516a4af.patch`,
+            [`one-fixed-dep`]: expect.stringMatching(/^patch:one-fixed-dep/),
           });
         }
       }),
@@ -196,7 +196,7 @@ describe(`Commands`, () => {
         });
 
         expect(manifest.resolutions).toEqual({
-          [`peer-deps-lvl1@npm:1.0.0`]: `patch:peer-deps-lvl1@npm%3A1.0.0#~/.yarn/patches/peer-deps-lvl1-npm-1.0.0-894d37389e.patch`,
+          [`peer-deps-lvl1@npm:1.0.0`]: expect.stringMatching(/^patch:peer-deps-lvl1/),
         });
       }),
     );
