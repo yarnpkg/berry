@@ -482,7 +482,7 @@
     "npmMinimalAgeGate": {
       "_package": "@yarnpkg/core",
       "title": "Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation.",
-      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
+      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages or not to install packages that are still unpublishable. (e.g. NPM allows to uninstall packages in the first 72h; use `4320` for 3 days)",
       "type": "number",
       "default": 0
     },
