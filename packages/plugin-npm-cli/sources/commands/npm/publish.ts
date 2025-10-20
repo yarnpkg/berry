@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
-import {npath}                                                                                  from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                 from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils, structUtils} from '@yarnpkg/core';
+import {npath}                                                                                               from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                                       from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                                           from '@yarnpkg/plugin-pack';
+import {Command, Option, Usage, UsageError}                                                                  from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -97,7 +97,7 @@ export default class NpmPublishCommand extends BaseCommand {
             const warning = `Registry already knows about version ${version}; skipping.`;
             report.reportWarning(MessageName.UNNAMED, warning);
             report.reportJson({
-              name: ident.name,
+              name: structUtils.stringifyIdent(ident),
               version,
               registry,
               warning,
@@ -176,7 +176,7 @@ export default class NpmPublishCommand extends BaseCommand {
 
         report.reportInfo(MessageName.UNNAMED, finalMessage);
         report.reportJson({
-          name: ident.name,
+          name: structUtils.stringifyIdent(ident),
           version,
           registry,
           tag: this.tag || `latest`,
