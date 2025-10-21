@@ -1,48 +1,23 @@
-import type {BigIntStats, ReadStream, StatOptions, Stats, WriteStream, WriteVResult} from 'fs';
-import {createInterface}                                                             from 'readline';
+import type {Abortable}                                                 from 'events';
+import type {FlagAndOpenMode, FileReadResult, FileReadOptions}          from 'fs/promises';
+import {createInterface}                                                from 'readline';
 
-import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}              from '../FakeFS';
-import type {Path}                                                                   from '../path';
+import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS} from '../FakeFS';
+import type {Path}                                                      from '../path';
 
-// Types copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/9e2e5af93f9cc2cf434a96e3249a573100e87351/types/node/v16
+import type {
+  BigIntStats,
+  ObjectEncodingOptions,
+  OpenMode,
+  ReadStream,
+  ReadVResult,
+  StatOptions,
+  Stats,
+  WriteStream,
+  WriteVResult,
+} from 'fs';
+
 // Implementation based on https://github.com/nodejs/node/blob/v18.12.0/lib/internal/fs/promises.js#L132-L351
-
-interface ObjectEncodingOptions {
-  encoding?: BufferEncoding | null | undefined;
-}
-
-interface FlagAndOpenMode {
-  mode?: Mode | undefined;
-  flag?: OpenMode | undefined;
-}
-
-type OpenMode = number | string;
-type Mode = number | string;
-
-interface FileReadResult<T extends ArrayBufferView> {
-  bytesRead: number;
-  buffer: T;
-}
-
-interface FileReadOptions<T extends ArrayBufferView = Buffer> {
-  buffer?: T;
-  offset?: number | null;
-  length?: number | null;
-  position?: number | null;
-}
-
-interface ReadVResult {
-  bytesRead: number;
-  buffers: Array<NodeJS.ArrayBufferView>;
-}
-
-interface AbortSignal {
-  readonly aborted: boolean;
-}
-
-interface Abortable {
-  signal?: AbortSignal | undefined;
-}
 
 type WriteArgsBuffer<TBuffer extends Uint8Array> = [
   buffer: TBuffer,
