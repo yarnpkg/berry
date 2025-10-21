@@ -42051,7 +42051,7 @@ class FileHandle {
     try {
       this[kRef](this.read);
       let buffer;
-      if (!Buffer.isBuffer(bufferOrOptions)) {
+      if (!ArrayBuffer.isView(bufferOrOptions)) {
         bufferOrOptions ??= {};
         buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
         offset = bufferOrOptions.offset || 0;
@@ -42068,7 +42068,13 @@ class FileHandle {
           buffer
         };
       }
-      const bytesRead = await this[kBaseFs].readPromise(this.fd, buffer, offset, length, position);
+      const bytesRead = await this[kBaseFs].readPromise(
+        this.fd,
+        Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength),
+        offset,
+        length,
+        position
+      );
       return {
         bytesRead,
         buffer

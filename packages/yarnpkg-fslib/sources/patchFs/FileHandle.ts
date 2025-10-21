@@ -133,27 +133,33 @@ export class FileHandle<P extends Path> {
     throw new Error(`Method not implemented.`);
   }
 
-  async read(options?: FileReadOptions<Buffer>): Promise<FileReadResult<Buffer>>;
+  async read<T extends NodeJS.ArrayBufferView = Buffer>(
+    options: FileReadOptions<T> & {buffer: T},
+  ): Promise<FileReadResult<T>>;
   async read(
-    buffer: Buffer,
-    offset?: number | null,
-    length?: number | null,
-    position?: number | null
+    options?: FileReadOptions<Buffer> & {buffer?: never},
   ): Promise<FileReadResult<Buffer>>;
-  async read(
-    bufferOrOptions?: Buffer | FileReadOptions<Buffer>,
+  async read<T extends NodeJS.ArrayBufferView>(
+    buffer: T,
     offset?: number | null,
     length?: number | null,
     position?: number | null,
-  ): Promise<FileReadResult<Buffer>> {
+  ): Promise<FileReadResult<T>>;
+  async read<T extends NodeJS.ArrayBufferView>(
+    bufferOrOptions?: T | FileReadOptions<T>,
+    offset?: number | null,
+    length?: number | null,
+    position?: number | null,
+  ): Promise<FileReadResult<T>> {
     try {
       this[kRef](this.read);
 
-      let buffer: Buffer;
+      let buffer: T;
 
-      if (!Buffer.isBuffer(bufferOrOptions)) {
+      if (!ArrayBuffer.isView(bufferOrOptions)) {
         bufferOrOptions ??= {};
-        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
+        // TypeScript isn't able to infer that the coalescing happens only in the no-generic case
+        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384) as unknown as T;
         offset = bufferOrOptions.offset || 0;
         length = bufferOrOptions.length ?? buffer.byteLength;
         position = bufferOrOptions.position ?? null;
@@ -171,7 +177,14 @@ export class FileHandle<P extends Path> {
         };
       }
 
-      const bytesRead = await this[kBaseFs].readPromise(this.fd, buffer, offset, length, position);
+      const bytesRead = await this[kBaseFs].readPromise(
+        this.fd,
+        // FIXME: FakeFS should support ArrayBufferViews directly
+        Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength),
+        offset,
+        length,
+        position,
+      );
 
       return {
         bytesRead,
