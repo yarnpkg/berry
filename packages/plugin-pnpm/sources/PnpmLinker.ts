@@ -28,9 +28,15 @@ export class PnpmLinker implements Linker {
       throw new Error(`Assertion failed: Expected the pnpm linker to be enabled`);
 
     const customDataKey = this.getCustomDataKey();
-    const customData = opts.project.linkersCustomData.get(customDataKey) as PnpmCustomData | undefined;
-    if (!customData)
-      throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+
+    let customData = opts.project.linkersCustomData.get(customDataKey) as PnpmCustomData | undefined;
+    if (!customData) {
+      await opts.project.restoreInstallState();
+      customData = opts.project.linkersCustomData.get(customDataKey) as PnpmCustomData | undefined;
+      if (!customData) {
+        throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+      }
+    }
 
     const packagePaths = customData.pathsByLocator.get(locator.locatorHash);
     if (typeof packagePaths === `undefined`)
@@ -44,15 +50,21 @@ export class PnpmLinker implements Linker {
       return null;
 
     const customDataKey = this.getCustomDataKey();
-    const customData = opts.project.linkersCustomData.get(customDataKey) as any;
-    if (!customData)
-      throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+
+    let customData = opts.project.linkersCustomData.get(customDataKey) as any;
+    if (!customData) {
+      await opts.project.restoreInstallState();
+      customData = opts.project.linkersCustomData.get(customDataKey) as any;
+      if (!customData) {
+        throw new UsageError(`The project in ${formatUtils.pretty(opts.project.configuration, `${opts.project.cwd}/package.json`, formatUtils.Type.PATH)} doesn't seem to have been installed - running an install there might help`);
+      }
+    }
 
     const nmRootLocation = location.match(/(^.*\/node_modules\/(@[^/]*\/)?[^/]+)(\/.*$)/);
     if (nmRootLocation) {
       const nmLocator = customData.locatorByPath.get(nmRootLocation[1]);
       if (nmLocator) {
-        return nmLocator;
+        return structUtils.parseLocator(nmLocator);
       }
     }
 
@@ -64,7 +76,7 @@ export class PnpmLinker implements Linker {
 
       const locator = customData.locatorByPath.get(currentPath);
       if (locator) {
-        return locator;
+        return structUtils.parseLocator(locator);
       }
     } while (nextPath !== currentPath);
 
