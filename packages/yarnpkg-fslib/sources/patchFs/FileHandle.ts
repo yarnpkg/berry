@@ -5,7 +5,7 @@ import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}         
 import type {Path}                                                                   from '../path';
 
 // Types copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/9e2e5af93f9cc2cf434a96e3249a573100e87351/types/node/v16
-// Implementation based on https://github.com/nodejs/node/blob/10493b48c7edb227c13a493d0a2c75efe878d7e9/lib/internal/fs/promises.js#L124-L336
+// Implementation based on https://github.com/nodejs/node/blob/v18.12.0/lib/internal/fs/promises.js#L132-L351
 
 interface ObjectEncodingOptions {
   encoding?: BufferEncoding | null | undefined;
@@ -43,7 +43,6 @@ interface AbortSignal {
 interface Abortable {
   signal?: AbortSignal | undefined;
 }
-
 
 type WriteArgsBuffer<TBuffer extends Uint8Array> = [
   buffer: TBuffer,
@@ -133,12 +132,7 @@ export class FileHandle<P extends Path> {
     throw new Error(`Method not implemented.`);
   }
 
-  async read<T extends NodeJS.ArrayBufferView = Buffer>(
-    options: FileReadOptions<T> & {buffer: T},
-  ): Promise<FileReadResult<T>>;
-  async read(
-    options?: FileReadOptions<Buffer> & {buffer?: never},
-  ): Promise<FileReadResult<Buffer>>;
+  // TODO: Once we drop Node 20 support, switch to ReadOptions and ReadOptionsWithoutBuffer from `@types/node`
   async read<T extends NodeJS.ArrayBufferView>(
     buffer: T,
     offset?: number | null,
@@ -146,8 +140,18 @@ export class FileHandle<P extends Path> {
     position?: number | null,
   ): Promise<FileReadResult<T>>;
   async read<T extends NodeJS.ArrayBufferView>(
+    buffer: T,
+    options?: Omit<FileReadOptions<T>, `buffer`>,
+  ): Promise<FileReadResult<T>>;
+  async read<T extends NodeJS.ArrayBufferView = NonSharedBuffer>(
+    options: FileReadOptions<T> & {buffer: T},
+  ): Promise<FileReadResult<T>>;
+  async read(
+    options?: FileReadOptions<NonSharedBuffer> & {buffer?: never},
+  ): Promise<FileReadResult<NonSharedBuffer>>;
+  async read<T extends NodeJS.ArrayBufferView>(
     bufferOrOptions?: T | FileReadOptions<T>,
-    offset?: number | null,
+    offsetOrOptions?: number | null | Omit<FileReadOptions<T>, `buffer`>,
     length?: number | null,
     position?: number | null,
   ): Promise<FileReadResult<T>> {
@@ -155,20 +159,27 @@ export class FileHandle<P extends Path> {
       this[kRef](this.read);
 
       let buffer: T;
+      let offset: number;
 
       if (!ArrayBuffer.isView(bufferOrOptions)) {
-        bufferOrOptions ??= {};
+        // read([options])
         // TypeScript isn't able to infer that the coalescing happens only in the no-generic case
-        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384) as unknown as T;
-        offset = bufferOrOptions.offset || 0;
-        length = bufferOrOptions.length ?? buffer.byteLength;
-        position = bufferOrOptions.position ?? null;
-      } else {
+        buffer = bufferOrOptions?.buffer ?? Buffer.alloc(16384) as unknown as T;
+        offset = bufferOrOptions?.offset ?? 0;
+        length = bufferOrOptions?.length ?? buffer.byteLength - offset;
+        position = bufferOrOptions?.position ?? null;
+      } else if (typeof offsetOrOptions === `object` && offsetOrOptions !== null) {
+        // read(buffer[, options])
         buffer = bufferOrOptions;
+        offset = offsetOrOptions?.offset ?? 0;
+        length = offsetOrOptions?.length ?? buffer.byteLength - offset;
+        position = offsetOrOptions?.position ?? null;
+      } else {
+        // read(buffer, offset[, length[, position]])
+        buffer = bufferOrOptions;
+        offset = offsetOrOptions ?? 0;
+        length ??= 0;
       }
-
-      offset ??= 0;
-      length ??= 0;
 
       if (length === 0) {
         return {
