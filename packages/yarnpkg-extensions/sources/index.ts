@@ -514,6 +514,17 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       twing: optionalPeerDep,
     },
   }],
+  // https://github.com/yarnpkg/berry/issues/6418#event-13666137894
+  // https://github.com/vuejs/vue-loader/commit/089473af97077b8e14b3feff48d32d2733ad792c
+  [`vue-loader@<16`, {
+    peerDependencies: {
+      "@vue/compiler-sfc": `^2.7.0 || ^3.0.8`,
+      webpack: `^4.1.0 || ^5.0.0-0`,
+    },
+    peerDependenciesMeta: {
+      "@vue/compiler-sfc": optionalPeerDep,
+    },
+  }],
   // https://github.com/vuejs/vue-loader/pull/1853
   // https://github.com/vuejs/vue-loader/commit/089473af97077b8e14b3feff48d32d2733ad792c
   [`vue-loader@<=16.3.3`, {
