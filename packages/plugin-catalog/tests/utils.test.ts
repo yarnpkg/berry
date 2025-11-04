@@ -438,7 +438,7 @@ describe(`utils`, () => {
       expect(result.range).toBe(`npm:^18.0.0-modified`);
     });
 
-    it(`should preserve patch: protocol when resolving catalog reference`, () => {
+    it(`should preserve patch: protocol when resolving catalog reference.`, () => {
       const catalog = new Map();
       catalog.set(`typescript`, `patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>`);
       configuration.values.set(`catalog`, catalog);
