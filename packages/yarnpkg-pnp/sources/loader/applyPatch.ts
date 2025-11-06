@@ -143,6 +143,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       const optionNames = new Set(Object.keys(options));
       optionNames.delete(`paths`);
       optionNames.delete(`plugnplay`);
+      optionNames.delete(`conditions`);
 
       if (optionNames.size > 0) {
         throw makeError(
@@ -193,7 +194,9 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
 
       try {
         if (issuerApi !== null) {
-          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null);
+          resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null, {
+            conditions: options.conditions,
+          });
         } else {
           if (path === null)
             throw new Error(`Assertion failed: Expected the path to be set`);
