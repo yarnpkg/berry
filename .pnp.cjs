@@ -45009,7 +45009,7 @@ function applyPatch(pnpapi, opts) {
           if (path === null)
             throw new Error(`Assertion failed: Expected the path to be set`);
           resolution = originalModuleResolveFilename.call(require$$0.Module, request, module || makeFakeParent(path), isMain, {
-            options: options?.conditions
+            conditions: options?.conditions
           });
         }
       } catch (error) {

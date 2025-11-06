@@ -202,7 +202,7 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
             throw new Error(`Assertion failed: Expected the path to be set`);
 
           resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain, {
-            options: options?.conditions,
+            conditions: options?.conditions,
           });
         }
       } catch (error) {
