@@ -195,13 +195,15 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
       try {
         if (issuerApi !== null) {
           resolution = issuerApi.resolveRequest(request, path !== null ? `${path}/` : null, {
-            conditions: options.conditions,
+            conditions: options?.conditions,
           });
         } else {
           if (path === null)
             throw new Error(`Assertion failed: Expected the path to be set`);
 
-          resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain);
+          resolution = originalModuleResolveFilename.call(Module, request, module || makeFakeParent(path), isMain, {
+            options: options?.conditions,
+          });
         }
       } catch (error) {
         firstError = firstError || error;
