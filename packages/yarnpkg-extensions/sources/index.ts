@@ -993,6 +993,25 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       resolve: `^1.22.8`,
     },
   }],
+  // https://github.com/mui/mui-x/issues/15267
+  ...[
+    `@mui/x-charts-pro@>=7.0.0-alpha.3`,
+    `@mui/x-charts@>=7.15.0`,
+    `@mui/x-data-grid-premium@>=7.15.0`,
+    `@mui/x-data-grid-pro@>=7.15.0`,
+    `@mui/x-data-grid@>=7.15.0`,
+    `@mui/x-date-pickers-pro@>=7.15.0`,
+    `@mui/x-date-pickers@>=7.15.0`,
+    `@mui/x-tree-view-pro@>=7.15.0`,
+    `@mui/x-tree-view@>=7.15.0`,
+  ].map<[string, PackageExtensionData]>(descriptorString => [
+    descriptorString,
+    {
+      dependencies: {
+        '@mui/system': `>=5.15.14`,
+      },
+    },
+  ]),
   // https://github.com/iamhosseindhv/notistack/issues/561
   // https://github.com/iamhosseindhv/notistack/pull/562
   [`notistack@^3.0.0`, {
