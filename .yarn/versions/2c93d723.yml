@@ -1,0 +1,4 @@
+declined:
+  - "@yarnpkg/eslint-config"
+  - "@yarnpkg/builder"
+  - "@yarnpkg/doctor"
