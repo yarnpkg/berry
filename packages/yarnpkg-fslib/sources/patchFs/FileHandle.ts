@@ -1,49 +1,23 @@
-import type {BigIntStats, ReadStream, StatOptions, Stats, WriteStream, WriteVResult} from 'fs';
-import {createInterface}                                                             from 'readline';
+import type {Abortable}                                                 from 'events';
+import type {FlagAndOpenMode, FileReadResult, FileReadOptions}          from 'fs/promises';
+import {createInterface}                                                from 'readline';
 
-import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS}              from '../FakeFS';
-import type {Path}                                                                   from '../path';
+import type {CreateReadStreamOptions, CreateWriteStreamOptions, FakeFS} from '../FakeFS';
+import type {Path}                                                      from '../path';
 
-// Types copied from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/9e2e5af93f9cc2cf434a96e3249a573100e87351/types/node/v16
-// Implementation based on https://github.com/nodejs/node/blob/10493b48c7edb227c13a493d0a2c75efe878d7e9/lib/internal/fs/promises.js#L124-L336
+import type {
+  BigIntStats,
+  ObjectEncodingOptions,
+  OpenMode,
+  ReadStream,
+  ReadVResult,
+  StatOptions,
+  Stats,
+  WriteStream,
+  WriteVResult,
+} from 'fs';
 
-interface ObjectEncodingOptions {
-  encoding?: BufferEncoding | null | undefined;
-}
-
-interface FlagAndOpenMode {
-  mode?: Mode | undefined;
-  flag?: OpenMode | undefined;
-}
-
-type OpenMode = number | string;
-type Mode = number | string;
-
-interface FileReadResult<T extends ArrayBufferView> {
-  bytesRead: number;
-  buffer: T;
-}
-
-interface FileReadOptions<T extends ArrayBufferView = Buffer> {
-  buffer?: T;
-  offset?: number | null;
-  length?: number | null;
-  position?: number | null;
-}
-
-interface ReadVResult {
-  bytesRead: number;
-  buffers: Array<NodeJS.ArrayBufferView>;
-}
-
-interface AbortSignal {
-  readonly aborted: boolean;
-}
-
-interface Abortable {
-  signal?: AbortSignal | undefined;
-}
-
+// Implementation based on https://github.com/nodejs/node/blob/v18.12.0/lib/internal/fs/promises.js#L132-L351
 
 type WriteArgsBuffer<TBuffer extends Uint8Array> = [
   buffer: TBuffer,
@@ -133,36 +107,54 @@ export class FileHandle<P extends Path> {
     throw new Error(`Method not implemented.`);
   }
 
-  async read(options?: FileReadOptions<Buffer>): Promise<FileReadResult<Buffer>>;
-  async read(
-    buffer: Buffer,
-    offset?: number | null,
-    length?: number | null,
-    position?: number | null
-  ): Promise<FileReadResult<Buffer>>;
-  async read(
-    bufferOrOptions?: Buffer | FileReadOptions<Buffer>,
+  // TODO: Once we drop Node 20 support, switch to ReadOptions and ReadOptionsWithoutBuffer from `@types/node`
+  async read<T extends NodeJS.ArrayBufferView>(
+    buffer: T,
     offset?: number | null,
     length?: number | null,
     position?: number | null,
-  ): Promise<FileReadResult<Buffer>> {
+  ): Promise<FileReadResult<T>>;
+  async read<T extends NodeJS.ArrayBufferView>(
+    buffer: T,
+    options?: Omit<FileReadOptions<T>, `buffer`>,
+  ): Promise<FileReadResult<T>>;
+  async read<T extends NodeJS.ArrayBufferView = NonSharedBuffer>(
+    options: FileReadOptions<T> & {buffer: T},
+  ): Promise<FileReadResult<T>>;
+  async read(
+    options?: FileReadOptions<NonSharedBuffer> & {buffer?: never},
+  ): Promise<FileReadResult<NonSharedBuffer>>;
+  async read<T extends NodeJS.ArrayBufferView>(
+    bufferOrOptions?: T | FileReadOptions<T>,
+    offsetOrOptions?: number | null | Omit<FileReadOptions<T>, `buffer`>,
+    length?: number | null,
+    position?: number | null,
+  ): Promise<FileReadResult<T>> {
     try {
       this[kRef](this.read);
 
-      let buffer: Buffer;
+      let buffer: T;
+      let offset: number;
 
-      if (!Buffer.isBuffer(bufferOrOptions)) {
-        bufferOrOptions ??= {};
-        buffer = bufferOrOptions.buffer ?? Buffer.alloc(16384);
-        offset = bufferOrOptions.offset || 0;
-        length = bufferOrOptions.length ?? buffer.byteLength;
-        position = bufferOrOptions.position ?? null;
-      } else {
+      if (!ArrayBuffer.isView(bufferOrOptions)) {
+        // read([options])
+        // TypeScript isn't able to infer that the coalescing happens only in the no-generic case
+        buffer = bufferOrOptions?.buffer ?? Buffer.alloc(16384) as unknown as T;
+        offset = bufferOrOptions?.offset ?? 0;
+        length = bufferOrOptions?.length ?? buffer.byteLength - offset;
+        position = bufferOrOptions?.position ?? null;
+      } else if (typeof offsetOrOptions === `object` && offsetOrOptions !== null) {
+        // read(buffer[, options])
         buffer = bufferOrOptions;
+        offset = offsetOrOptions?.offset ?? 0;
+        length = offsetOrOptions?.length ?? buffer.byteLength - offset;
+        position = offsetOrOptions?.position ?? null;
+      } else {
+        // read(buffer, offset[, length[, position]])
+        buffer = bufferOrOptions;
+        offset = offsetOrOptions ?? 0;
+        length ??= 0;
       }
-
-      offset ??= 0;
-      length ??= 0;
 
       if (length === 0) {
         return {
@@ -171,7 +163,14 @@ export class FileHandle<P extends Path> {
         };
       }
 
-      const bytesRead = await this[kBaseFs].readPromise(this.fd, buffer, offset, length, position);
+      const bytesRead = await this[kBaseFs].readPromise(
+        this.fd,
+        // FIXME: FakeFS should support ArrayBufferViews directly
+        Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength),
+        offset,
+        length,
+        position,
+      );
 
       return {
         bytesRead,
