@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "eslint": "^9.20.1",
-    "typescript": "^5.9.2"
+    "typescript": "catalog:"
   },
   "stableVersion": "3.1.0"
 }

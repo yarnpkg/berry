@@ -5811,7 +5811,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.23.0"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.9.2"
+    typescript: "catalog:"
   bin:
     builder: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -5931,7 +5931,7 @@ __metadata:
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.9.2"
+    typescript: "catalog:"
   bin:
     doctor: ./sources/boot-cli-dev.js
   languageName: unknown
@@ -6019,7 +6019,7 @@ __metadata:
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
     typedoc: "npm:^0.25.7"
-    typescript: "npm:^5.9.2"
+    typescript: "catalog:"
     unified: "npm:^11.0.4"
     unist-util-visit-parents: "npm:^6.0.1"
     usehooks-ts: "npm:^3.1.1"
@@ -6040,7 +6040,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.4"
     globals: "npm:^15.15.0"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.9.2"
+    typescript: "catalog:"
   peerDependencies:
     eslint: "*"
     typescript: "*"
@@ -6125,7 +6125,7 @@ __metadata:
     pirates: "npm:^4.0.5"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
-    typescript: "npm:^5.9.2"
+    typescript: "catalog:"
   dependenciesMeta:
     core-js:
       built: false
