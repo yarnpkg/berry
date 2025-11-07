@@ -6,6 +6,8 @@ import pLimit, {Limit}            from 'p-limit';
 import semver                     from 'semver';
 import {Readable, Transform}      from 'stream';
 
+import type {DurationUnit}        from './Configuration';
+
 /**
  * @internal
  */
@@ -469,11 +471,13 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
 }
 
 export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
-  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
+  const regex = /\\?\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
 
-  return value.replace(regex, (...args) => {
+  return value.replace(regex, (match, ...args) => {
+    if (match.startsWith(`\\`))
+      return match.slice(1);
+
     const {variableName, colon, fallback} = args[args.length - 1];
-
     const variableExist = Object.hasOwn(env, variableName);
     const variableValue = env[variableName];
 
@@ -598,4 +602,27 @@ export function groupBy<T extends Record<string, any>, K extends keyof T>(items:
 
 export function parseInt(val: string | number) {
   return typeof val === `string` ? Number.parseInt(val, 10) : val;
+}
+
+const DURATION_UNITS: Record<DurationUnit, number> = {
+  ms: 1,
+  s: 1000,
+  m: 60 * 1000,
+  h: 60 * 60 * 1000,
+  d: 24 * 60 * 60 * 1000,
+  w: 7 * 24 * 60 * 60 * 1000,
+};
+const DURATION_REGEXP = new RegExp(`^(?<num>\\d*\\.?\\d+)(?<unit>${Object.keys(DURATION_UNITS).join(`|`)})?$`);
+export function parseDuration(value: string, unit: DurationUnit) {
+  const match = DURATION_REGEXP.exec(value)?.groups;
+  if (!match) throw new Error(`Couldn't parse "${value}" as a duration`);
+
+  if (match.unit === undefined)
+    return parseFloat(match.num);
+
+  const multiplier = DURATION_UNITS[match.unit as DurationUnit];
+  if (!multiplier)
+    throw new Error(`Invalid duration unit "${match.unit}"`);
+
+  return parseFloat(match.num) * multiplier / DURATION_UNITS[unit];
 }

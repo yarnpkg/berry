@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "4.10.3",
+  "version": "4.11.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -79,6 +79,7 @@
     "bundles": {
       "standard": [
         "@yarnpkg/plugin-essentials",
+        "@yarnpkg/plugin-catalog",
         "@yarnpkg/plugin-compat",
         "@yarnpkg/plugin-constraints",
         "@yarnpkg/plugin-dlx",
@@ -101,8 +102,7 @@
         "@yarnpkg/plugin-stage",
         "@yarnpkg/plugin-typescript",
         "@yarnpkg/plugin-version",
-        "@yarnpkg/plugin-workspace-tools",
-        "@yarnpkg/plugin-catalog"
+        "@yarnpkg/plugin-workspace-tools"
       ]
     }
   },
@@ -114,5 +114,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.10.3"
+  "stableVersion": "4.11.0"
 }
