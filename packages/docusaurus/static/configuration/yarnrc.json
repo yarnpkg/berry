@@ -272,9 +272,13 @@
     },
     "httpTimeout": {
       "_package": "@yarnpkg/core",
-      "title": "Amount of time to wait in milliseconds before cancelling pending HTTP requests.",
-      "type": "number",
-      "default": 60000
+      "title": "Amount of time to wait before cancelling pending HTTP requests.",
+      "type": "mixed",
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
+      ],
+      "default": "1m"
     },
     "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
@@ -481,9 +485,13 @@
     },
     "npmMinimalAgeGate": {
       "_package": "@yarnpkg/core",
-      "title": "Minimum age of a package version according to the publish date on the npm registry in minutes to be considered for installation.",
+      "title": "Minimum age of a package version according to the publish date on the npm registry to be considered for installation.",
       "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages, or to avoid relying on packages that could still be unpublished (e.g. the npm registry has specific rules for packages less than 3 days old).",
-      "type": "number",
+      "type": "mixed",
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
+      ],
       "default": "3d"
     },
     "npmPreapprovedPackages": {
@@ -851,10 +859,14 @@
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
-      "title": "Define the minimal amount of time between two telemetry events, in days.",
+      "title": "Define the minimal amount of time between two telemetry events.",
       "description": "By default we only send one request per week, making it impossible for us to track your usage with a lower granularity.",
-      "type": "number",
-      "default": 7
+      "type": "mixed",
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
+      ],
+      "default": "7d"
     },
     "telemetryUserId": {
       "_package": "@yarnpkg/core",

@@ -593,7 +593,7 @@ function getOtpHeaders(otp: string) {
 async function getOidcToken(registry: string, {configuration, ident}: {configuration: Configuration, ident: Ident}): Promise<string | null> {
   let idToken: string | null = null;
 
-  if (process.env.GITLAB) {
+  if (process.env.GITLAB_CI) {
     idToken = process.env.NPM_ID_TOKEN || null;
   } else if (process.env.GITHUB_ACTIONS) {
     if (!(process.env.ACTIONS_ID_TOKEN_REQUEST_URL && process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))
