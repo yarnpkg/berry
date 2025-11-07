@@ -252,7 +252,7 @@
     "globalFolder": {
       "_package": "@yarnpkg/core",
       "title": "Path where all files global to the system will be stored.",
-      "description": "Various files we be stored there: global cache, metadata cache, ...",
+      "description": "By default, system-global files (such as cache and metadata) are stored in $HOME/.yarn/berry on Linux/macOS and %LOCALAPPDATA%\\Yarn\\Berry on Windows.",
       "type": "string",
       "format": "uri-reference",
       "examples": ["${HOME}/.yarn/berry"]
