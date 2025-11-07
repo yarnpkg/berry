@@ -45,7 +45,7 @@ touch nm-packages/myproj/yarn.lock
 yarn --cwd packages/myproj config set nodeLinker node-modules
 ```
 - Add a PnP ignore pattern for this path in your main `.yarnrc.yml` at the root of your monorepo:
-```yml
+```yaml
 pnpIgnorePatterns:
   - ./nm-packages/**
 ```
