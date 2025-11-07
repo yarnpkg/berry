@@ -79,6 +79,7 @@
     "bundles": {
       "standard": [
         "@yarnpkg/plugin-essentials",
+        "@yarnpkg/plugin-catalog",
         "@yarnpkg/plugin-compat",
         "@yarnpkg/plugin-constraints",
         "@yarnpkg/plugin-dlx",
@@ -101,8 +102,7 @@
         "@yarnpkg/plugin-stage",
         "@yarnpkg/plugin-typescript",
         "@yarnpkg/plugin-version",
-        "@yarnpkg/plugin-workspace-tools",
-        "@yarnpkg/plugin-catalog"
+        "@yarnpkg/plugin-workspace-tools"
       ]
     }
   },
