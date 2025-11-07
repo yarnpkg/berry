@@ -486,13 +486,13 @@
     "npmMinimalAgeGate": {
       "_package": "@yarnpkg/core",
       "title": "Minimum age of a package version according to the publish date on the npm registry to be considered for installation.",
-      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages.",
+      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages, or to avoid relying on packages that could still be unpublished (e.g. the npm registry has specific rules for packages less than 3 days old).",
       "type": "mixed",
       "oneOf": [
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
       ],
-      "default": "0m"
+      "default": "3d"
     },
     "npmPreapprovedPackages": {
       "_package": "@yarnpkg/core",
