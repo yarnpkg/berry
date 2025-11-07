@@ -1,6 +1,34 @@
 import {PortablePath, xfs}   from '@yarnpkg/fslib';
 import {yarn, fs as fsUtils} from 'pkg-tests-core';
 
+const CUSTOM_PROTOCOL_PLUGIN = `
+module.exports = {
+  name: 'plugin-custom-protocol',
+  factory: function(require) {
+    const {structUtils} = require('@yarnpkg/core');
+
+    return {
+      default: {
+        hooks: {
+          reduceDependency(dependency, project) {
+            if (!dependency.range.startsWith('custom-protocol:')) {
+              return dependency;
+            }
+
+            const version = dependency.range.slice('custom-protocol:'.length);
+
+            return structUtils.makeDescriptor(
+              structUtils.makeIdent(dependency.scope, dependency.name),
+              \`npm:\${version}\`
+            );
+          }
+        }
+      }
+    };
+  }
+};
+`;
+
 describe(`Features`, () => {
   describe(`Catalogs`, () => {
     test(
@@ -205,6 +233,34 @@ describe(`Features`, () => {
           await run(`install`);
 
           // Should resolve to the highest compatible version (2.0.0)
+          await expect(source(`require('no-deps')`)).resolves.toMatchObject({
+            name: `no-deps`,
+            version: `2.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should handle custom descriptor supported by a plugin without a resolver`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `catalog:`,
+          },
+        },
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(`${path}/plugin-custom-protocol.js` as PortablePath, CUSTOM_PROTOCOL_PLUGIN);
+
+          await yarn.writeConfiguration(path, {
+            plugins: [`./plugin-custom-protocol.js`],
+            catalog: {
+              [`no-deps`]: `custom-protocol:2.0.0`,
+            },
+          });
+
+          await run(`install`);
+
           await expect(source(`require('no-deps')`)).resolves.toMatchObject({
             name: `no-deps`,
             version: `2.0.0`,

@@ -96,7 +96,6 @@ describe(`utils`, () => {
       // Create mock resolver with bindDescriptor method
       mockResolver = {
         bindDescriptor: jest.fn(descriptor => descriptor),
-        supportsDescriptor: jest.fn(() => true),
       } as any;
 
       resolveOptions = {
@@ -140,25 +139,6 @@ describe(`utils`, () => {
 
       expect(resolved.range).toBe(`npm:~4.17.21`);
       expect(structUtils.stringifyIdent(resolved)).toBe(`lodash`);
-    });
-
-    it(`should not resolve descriptor if it isn't supported by any resolver`, () => {
-      const catalog = new Map([
-        [`react`, `custom:^18.0.0`],
-      ]);
-      configuration.values.set(`catalog`, catalog);
-
-      const dependency = structUtils.makeDescriptor(
-        structUtils.makeIdent(null, `react`),
-        `catalog:`,
-      );
-      mockResolver.supportsDescriptor.mockReturnValue(false);
-
-      const resolved = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
-
-      expect(mockResolver.bindDescriptor).toHaveBeenCalledTimes(0);
-      expect(resolved.range).toBe(`custom:^18.0.0`);
-      expect(structUtils.stringifyIdent(resolved)).toBe(`react`);
     });
 
     it(`should normalize the resolved descriptor`, () => {
