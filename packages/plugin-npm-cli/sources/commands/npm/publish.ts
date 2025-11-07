@@ -166,7 +166,7 @@ export default class NpmPublishCommand extends BaseCommand {
             ident,
             otp: this.otp,
             jsonResponse: true,
-            allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB)),
+            allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI)),
           });
         }
 
