@@ -96,6 +96,7 @@ describe(`utils`, () => {
       // Create mock resolver with bindDescriptor method
       mockResolver = {
         bindDescriptor: jest.fn(descriptor => descriptor),
+        supportsDescriptor: jest.fn(() => true),
       } as any;
 
       resolveOptions = {
