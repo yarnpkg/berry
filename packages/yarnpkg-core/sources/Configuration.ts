@@ -1458,7 +1458,7 @@ export class Configuration {
   }
 
   static async findFolderRcFile(cwd: PortablePath): Promise<RcFile | null> {
-    const path = ppath.join(cwd, Filename.rc);
+    const path = ppath.join(cwd, getRcFilename());
 
     let content: string;
     try {
