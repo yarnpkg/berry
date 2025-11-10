@@ -6153,7 +6153,7 @@ __metadata:
   resolution: "@yarnpkg/parsers@workspace:packages/yarnpkg-parsers"
   dependencies:
     "@types/js-yaml": "npm:^3.11.1"
-    js-yaml: "npm:^3.10.0"
+    js-yaml: "npm:^4.1.0"
     pegjs: "npm:^0.10.0"
     tslib: "npm:^2.4.0"
   languageName: unknown
@@ -14090,7 +14090,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:^3.10.0, js-yaml@npm:^3.13.1":
+"js-yaml@npm:^3.13.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:
