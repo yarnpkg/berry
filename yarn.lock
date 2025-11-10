@@ -5957,6 +5957,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.74.7"
     "@types/dompurify": "npm:^3"
     "@types/git-url-parse": "npm:^9.0.0"
+    "@types/jest": "npm:^28.1.6"
     "@types/markdown-it": "npm:^12.2.3"
     "@types/marked": "npm:^5.0.0"
     "@types/mdast": "npm:^4.0.3"
@@ -5982,6 +5983,7 @@ __metadata:
     "@yarnpkg/pnpify": "workspace:^"
     "@yarnpkg/sdks": "workspace:^"
     "@yarnpkg/shell": "workspace:^"
+    ajv: "npm:^8.17.1"
     algoliasearch: "npm:^4.14.2"
     ansi-to-html: "npm:^0.7.2"
     clipanion: "npm:^4.0.0-rc.2"
@@ -6848,7 +6850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.9.0":
+"ajv@npm:^8.0.0, ajv@npm:^8.17.1, ajv@npm:^8.9.0":
   version: 8.17.1
   resolution: "ajv@npm:8.17.1"
   dependencies:
