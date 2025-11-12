@@ -54,6 +54,24 @@ describe(`Manifest`, () => {
       const manifest = Manifest.fromText(`{ "name": "name", "bin": { "bin1": " ", "bin2": "./bin2.js" } }`);
       expect(manifest.exportTo({}).bin).toEqual({bin2: `./bin2.js`});
     });
+
+    it(`should remove dependency if referencing itself`, () => {
+      const deps = `{ "no-dep": "^1.0.0", "dep": "^1.2.0" }`;
+      const manifest = Manifest.fromText(`
+        { "name": "no-dep", "dependencies": ${deps}, "devDependencies": ${deps}, "peerDependencies": ${deps} }
+      `);
+      expect(manifest.exportTo({})).toMatchObject({
+        dependencies: {
+          dep: `^1.2.0`,
+        },
+        devDependencies: {
+          dep: `^1.2.0`,
+        },
+        peerDependencies: {
+          dep: `^1.2.0`,
+        },
+      });
+    });
   });
 
   describe(`publishConfig`, () => {
