@@ -32,6 +32,11 @@ jobs:
       with:
         node-version: ${{ env.node-version }}
 
+    - name: Enable Corepack
+      run: |
+        npm install -g corepack
+        corepack enable
+
     - name: 'Check that the Yarn files don''t change on new installs (fix w/ "yarn install")'
       run: |
         node ./scripts/run-yarn.js --immutable --immutable-cache
@@ -253,6 +258,11 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{matrix.node}}.x
+
+    - name: Enable Corepack
+      run: |
+        npm install -g corepack
+        corepack enable
 
     - uses: actions/download-artifact@v4
       with:
