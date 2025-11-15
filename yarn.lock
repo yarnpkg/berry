@@ -6179,8 +6179,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/plugin-compat@workspace:packages/plugin-compat"
   dependencies:
+    "@types/cross-spawn": "npm:6.0.0"
     "@types/lodash-es": "npm:4.17.4"
     "@types/resolve": "npm:^1.17.1"
+    "@types/semver": "npm:^7.1.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/extensions": "workspace:^"
@@ -6188,6 +6190,9 @@ __metadata:
     "@yarnpkg/monorepo": "workspace:^"
     "@yarnpkg/plugin-npm": "workspace:^"
     "@yarnpkg/plugin-patch": "workspace:^"
+    chalk: "npm:^4.1.2"
+    cross-spawn: "npm:^7.0.3"
+    p-limit: "npm:^2.2.0"
     resolve: "npm:^1.17.0"
     semver: "npm:^7.1.2"
   peerDependencies:

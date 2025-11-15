@@ -1,5 +1,5 @@
 diff --git a/lib/normalize-options.js b/lib/normalize-options.js
-index 4b56904..84a719c 100644
+index 4b56904..544e1cb 100644
 semver exclusivity >=1.9
 --- a/lib/normalize-options.js
 +++ b/lib/normalize-options.js
@@ -52,7 +52,7 @@ semver exclusivity >=1.9
 +    let manifestPath;
 +    try {
 +      manifestPath = api.resolveToUnqualified(`${parts[1]}/package.json`, basedir, {considerBuiltins: false});
-+    } catch (err) {
++    } catch {
 +      return null;
 +    }
 +
