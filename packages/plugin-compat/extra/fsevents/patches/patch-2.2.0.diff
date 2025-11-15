@@ -12,7 +12,7 @@ semver exclusivity ^2.2
 +  let instance = Native.start(Native.global, vfs.resolvedPath, since, vfs.wrap(handler));
    if (!instance) throw new Error(`could not watch: ${path}`);
    return () => {
-diff --git a/copy/vfs.js b/vfs.js
+diff --git a/vfs.js b/vfs.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..34199122de92d573bc1a99c8cd7345fd675b69c6
 semver exclusivity ^2.2
