@@ -1,0 +1,97 @@
+diff --git a/fsevents.js b/fsevents.js
+index f1b31c9530f460f95099159575f7d3732d4701f1..9f17e0994fae70b3dada7e29c661157e276425b1 100644
+semver exclusivity ^2.2
+--- a/fsevents.js
++++ b/fsevents.js
+@@ -29,5 +29,7 @@ function watch(path, since, handler) {
+   }
+ 
+-  let instance = Native.start(Native.global, path, since, handler);
++  let VFS = require('./vfs');
++  let vfs = new VFS(path);
++  let instance = Native.start(Native.global, vfs.resolvedPath, since, vfs.wrap(handler));
+   if (!instance) throw new Error(`could not watch: ${path}`);
+   return () => {
+diff --git a/copy/vfs.js b/vfs.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..34199122de92d573bc1a99c8cd7345fd675b69c6
+semver exclusivity ^2.2
+--- /dev/null
++++ b/vfs.js
+@@ -0,0 +1,76 @@
++const path = require(`path`);
++
++let pnpApi = null;
++try {
++  pnpApi = require(`pnpapi`);
++} catch {
++}
++
++function getVirtualLookupFn(pnpApi) {
++  const reverseMap = new Map();
++
++  for (const locator of pnpApi.getAllLocators()) {
++    const pkg = pnpApi.getPackageInformation(locator);
++    console.assert(pkg, `The package information should be available`);
++
++    const resolvedLocation = pnpApi.resolveVirtual(pkg.packageLocation);
++    if (resolvedLocation === null)
++      continue;
++
++    const aliases = reverseMap.get(resolvedLocation) || [resolvedLocation];
++    reverseMap.set(resolvedLocation, aliases);
++    aliases.push(pkg.packageLocation);
++  }
++
++  const keys = [...reverseMap.keys()].sort((a, b) => {
++    return b.length - a.length;
++  });
++
++  return p => {
++    const prefix = keys.find(candidate => p.startsWith(candidate));
++    if (typeof prefix === `undefined`)
++      return [p];
++
++    const sub = p.substr(prefix.length);
++    return reverseMap.get(prefix).map(alias => {
++      return alias + sub;
++    });
++  };
++}
++
++if (pnpApi != null) {
++  const resolveVirtualAliases = getVirtualLookupFn(pnpApi);
++
++  module.exports = class FsePnp {
++    constructor(p) {
++      this.normalizedPath = path.resolve(p);
++      this.resolvedPath = pnpApi.resolveVirtual(this.normalizedPath) || this.normalizedPath;
++    }
++
++    transpose(p) {
++      if (this.resolvedPath !== null) {
++        return this.normalizedPath + p.substr(this.resolvedPath.length);
++      } else {
++        return p;
++      }
++    }
++
++    wrap(fn) {
++      return (path, ...args) => {
++        for (const entry of resolveVirtualAliases(path)) {
++          fn(this.transpose(entry), ...args);
++        }
++      };
++    }
++  };
++} else {
++  module.exports = class FsePnp {
++    constructor(p) {
++      this.resolvedPath = p;
++    }
++
++    wrap(fn) {
++      return fn;
++    }
++  };
++}
