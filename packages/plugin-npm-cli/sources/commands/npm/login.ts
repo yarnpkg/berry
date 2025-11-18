@@ -46,6 +46,10 @@ export default class NpmLoginCommand extends BaseCommand {
     description: `Set the npmAlwaysAuth configuration`,
   });
 
+  webLogin = Option.Boolean(`--web-login`, {
+    description: `Enable web login`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
@@ -61,10 +65,11 @@ export default class NpmLoginCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeFooter: false,
     }, async report => {
-      const token = await registerOrLogin({
+      const token = await performAuthentication({
         registry,
         configuration,
         report,
+        webLogin: this.webLogin,
         stdin: this.context.stdin as NodeJS.ReadStream,
         stdout: this.context.stdout as NodeJS.WriteStream,
       });
@@ -135,27 +140,30 @@ async function webLoginCheck(doneUrl: string, configuration: Configuration): Pro
   return null;
 }
 
-async function loginViaWeb(registry: string, configuration: Configuration, report: Report): Promise<string | null> {
+async function loginViaWeb({registry, configuration, report}: CredentialOptions): Promise<string | null> {
   const loginResponse = await webLoginInit(registry, configuration);
   if (!loginResponse)
     return null;
 
   if (nodeUtils.openUrl) {
+    report.reportInfo(MessageName.UNNAMED, `Starting the web login process...`);
+    report.reportSeparator();
+
     const {openNow} = await prompt<{openNow: boolean}>({
       type: `confirm`,
       name: `openNow`,
-      message: `Do you want to try to open this url now?`,
+      message: `Do you want to try to open your browser now?`,
       required: true,
       initial: true,
       onCancel: () => process.exit(130),
     });
 
-    if (openNow) {
-      report.reportSeparator();
+    report.reportSeparator();
 
-      if (!await nodeUtils.openUrl(loginResponse.loginUrl)) {
-        report.reportWarning(MessageName.UNNAMED, `We failed to automatically open the url; you'll have to open it yourself in your browser of choice.`);
-      }
+    if (!openNow || !await nodeUtils.openUrl(loginResponse.loginUrl)) {
+      report.reportWarning(MessageName.UNNAMED, `We failed to automatically open the url; you'll have to open it yourself in your browser of choice:`);
+      report.reportWarning(MessageName.UNNAMED, formatUtils.pretty(configuration, loginResponse.loginUrl, formatUtils.Type.URL));
+      report.reportSeparator();
     }
   }
 
@@ -172,14 +180,26 @@ async function loginViaWeb(registry: string, configuration: Configuration, repor
   }
 }
 
+const WEB_LOGIN_REGISTRIES = [
+  `https://registry.yarnpkg.com`,
+  `https://registry.npmjs.org`,
+];
+
+async function performAuthentication(opts: CredentialOptions & {webLogin?: boolean}): Promise<string> {
+  if (opts.webLogin ?? WEB_LOGIN_REGISTRIES.includes(opts.registry)) {
+    const webToken = await loginViaWeb(opts);
+    if (webToken !== null) {
+      return webToken;
+    }
+  }
+
+  return await loginOrRegisterViaPassword(opts);
+}
+
 /**
  * Register a new user, or login if the user already exists
  */
-async function registerOrLogin({registry, configuration, report, stdin, stdout}: CredentialOptions): Promise<string> {
-  const webToken = await loginViaWeb(registry, configuration, report);
-  if (webToken !== null)
-    return webToken;
-
+async function loginOrRegisterViaPassword({registry, configuration, report, stdin, stdout}: CredentialOptions): Promise<string> {
   const credentials = await getCredentials({
     configuration,
     registry,
