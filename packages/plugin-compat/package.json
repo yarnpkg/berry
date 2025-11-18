@@ -40,7 +40,9 @@
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\"",
     "test:plugin-compat": "run test:unit --config \"$(pwd)/jest.config.js\"",
-    "debug:patch": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution extra/debugPatch \"$INIT_CWD\""
+    "build:patch:fsevents": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution ./extra/fsevents/gen-fsevents-patch.ts",
+    "build:patch:resolve": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution ./extra/resolve/gen-resolve-patch.ts",
+    "build:patch:typescript": "node -r @yarnpkg/monorepo/scripts/setup-ts-execution ./extra/typescript/gen-typescript-patch.ts"
   },
   "publishConfig": {
     "main": "./lib/index.js",
