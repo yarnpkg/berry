@@ -1,10 +1,10 @@
-import {BaseCommand, openWorkspace}                                 from '@yarnpkg/cli';
-import {Configuration, MessageName, Report, miscUtils, formatUtils} from '@yarnpkg/core';
-import {StreamReport}                                               from '@yarnpkg/core';
-import {PortablePath}                                               from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils}                               from '@yarnpkg/plugin-npm';
-import {Command, Option, Usage}                                     from 'clipanion';
-import {prompt}                                                     from 'enquirer';
+import {BaseCommand, openWorkspace}                                                       from '@yarnpkg/cli';
+import {Configuration, MessageName, Report, miscUtils, formatUtils, nodeUtils, httpUtils} from '@yarnpkg/core';
+import {StreamReport}                                                                     from '@yarnpkg/core';
+import {PortablePath}                                                                     from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils}                                                     from '@yarnpkg/plugin-npm';
+import {Command, Option, Usage}                                                           from 'clipanion';
+import {prompt}                                                                           from 'enquirer';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmLoginCommand extends BaseCommand {
@@ -61,15 +61,13 @@ export default class NpmLoginCommand extends BaseCommand {
       stdout: this.context.stdout,
       includeFooter: false,
     }, async report => {
-      const credentials = await getCredentials({
-        configuration,
+      const token = await registerOrLogin({
         registry,
+        configuration,
         report,
         stdin: this.context.stdin as NodeJS.ReadStream,
         stdout: this.context.stdout as NodeJS.WriteStream,
       });
-
-      const token = await registerOrLogin(registry, credentials, configuration);
 
       await setAuthToken(registry, token, {alwaysAuth: this.alwaysAuth, scope: this.scope});
       return report.reportInfo(MessageName.UNNAMED, `Successfully logged in`);
@@ -92,10 +90,104 @@ export async function getRegistry({scope, publish, configuration, cwd}: {scope?:
   return npmConfigUtils.getDefaultRegistry({configuration});
 }
 
+type NpmWebLoginInitResponse = {
+  loginUrl: string;
+  doneUrl: string;
+};
+
+async function webLoginInit(registry: string, configuration: Configuration): Promise<NpmWebLoginInitResponse | null> {
+  let response: any;
+  try {
+    response = await npmHttpUtils.post(`/-/v1/login`, null, {
+      configuration,
+      registry,
+      authType: npmHttpUtils.AuthType.NO_AUTH,
+      jsonResponse: true,
+      headers: {
+        [`npm-auth-type`]: `web`,
+      },
+    });
+  } catch {
+    return null;
+  }
+
+  return response;
+}
+
+type NpmWebLoginCheckResponse =
+  | {type: `success`, token: string}
+  | {type: `waiting`, sleep: number};
+
+async function webLoginCheck(doneUrl: string, configuration: Configuration): Promise<NpmWebLoginCheckResponse | null> {
+  const response = await httpUtils.request(doneUrl, null, {
+    configuration,
+    jsonResponse: true,
+  });
+
+  if (response.statusCode === 202) {
+    const retryAfter = response.headers[`retry-after`] ?? `1`;
+    return {type: `waiting`, sleep: parseInt(retryAfter, 10)};
+  }
+
+  if (response.statusCode === 200)
+    return {type: `success`, token: response.body.token};
+
+  return null;
+}
+
+async function loginViaWeb(registry: string, configuration: Configuration, report: Report): Promise<string | null> {
+  const loginResponse = await webLoginInit(registry, configuration);
+  if (!loginResponse)
+    return null;
+
+  if (nodeUtils.openUrl) {
+    const {openNow} = await prompt<{openNow: boolean}>({
+      type: `confirm`,
+      name: `openNow`,
+      message: `Do you want to try to open this url now?`,
+      required: true,
+      initial: true,
+      onCancel: () => process.exit(130),
+    });
+
+    if (openNow) {
+      report.reportSeparator();
+
+      if (!await nodeUtils.openUrl(loginResponse.loginUrl)) {
+        report.reportWarning(MessageName.UNNAMED, `We failed to automatically open the url; you'll have to open it yourself in your browser of choice.`);
+      }
+    }
+  }
+
+  while (true) {
+    const sleepDuration = await webLoginCheck(loginResponse.doneUrl, configuration);
+    if (sleepDuration === null)
+      return null;
+
+    if (sleepDuration.type === `waiting`) {
+      await new Promise(resolve => setTimeout(resolve, sleepDuration.sleep * 1000));
+    } else {
+      return sleepDuration.token;
+    }
+  }
+}
+
 /**
  * Register a new user, or login if the user already exists
  */
-async function registerOrLogin(registry: string, credentials: Credentials, configuration: Configuration): Promise<string> {
+async function registerOrLogin({registry, configuration, report, stdin, stdout}: CredentialOptions): Promise<string> {
+  const webToken = await loginViaWeb(registry, configuration, report);
+  if (webToken !== null)
+    return webToken;
+
+  const credentials = await getCredentials({
+    configuration,
+    registry,
+    report,
+    stdin,
+    stdout,
+  });
+
   // Registration and login are both handled as a `put` by npm. Npm uses a lax
   // endpoint as of 2023-11 where there are no conflicts if the user already
   // exists, but some registries such as Verdaccio are stricter and return a
@@ -193,7 +285,15 @@ interface Credentials {
   password: string;
 }
 
-async function getCredentials({configuration, registry, report, stdin, stdout}: {configuration: Configuration, registry: string, report: Report, stdin: NodeJS.ReadStream, stdout: NodeJS.WriteStream}): Promise<Credentials> {
+interface CredentialOptions {
+  configuration: Configuration;
+  registry: string;
+  report: Report;
+  stdin: NodeJS.ReadStream;
+  stdout: NodeJS.WriteStream;
+}
+
+async function getCredentials({configuration, registry, report, stdin, stdout}: CredentialOptions): Promise<Credentials> {
   report.reportInfo(MessageName.UNNAMED, `Logging in to ${formatUtils.pretty(configuration, registry, formatUtils.Type.URL)}`);
 
   let isToken = false;
