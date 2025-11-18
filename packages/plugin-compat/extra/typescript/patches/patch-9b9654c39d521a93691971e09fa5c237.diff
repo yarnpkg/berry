@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index d58b28264..bd70c0b3f 100644
+index d58b..bd70 100644
 semver exclusivity >=4.9.1-beta <4.9.2-rc
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -308,7 +308,7 @@ semver exclusivity >=4.9.1-beta <4.9.2-rc
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 5d1d55532..cca7af8e5 100644
+index 5d1d..cca7 100644
 semver exclusivity >=4.9.1-beta <4.9.2-rc
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -989,7 +989,7 @@ semver exclusivity >=4.9.1-beta <4.9.2-rc
                      this.installer.on("message", function (m) { return _this.handleMessage(m); });
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 00143e7ae..ca55c4366 100644
+index 0014..ca55 100644
 semver exclusivity >=4.9.1-beta <4.9.2-rc
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1644,7 +1644,7 @@ semver exclusivity >=4.9.1-beta <4.9.2-rc
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 947429a39..b09fa897b 100644
+index 9474..b09f 100644
 semver exclusivity >=4.9.1-beta <4.9.2-rc
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -2193,7 +2193,7 @@ semver exclusivity >=4.9.1-beta <4.9.2-rc
                  return statement;
              });
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 0b6841d28..c07e46d37 100644
+index 0b68..c07e 100644
 semver exclusivity >=4.9.1-beta <4.9.2-rc
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -2742,7 +2742,7 @@ semver exclusivity >=4.9.1-beta <4.9.2-rc
                  return statement;
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 284a066b2..77f900d44 100644
+index 284a..77f9 100644
 semver exclusivity >=4.9.1-beta <4.9.2-rc
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

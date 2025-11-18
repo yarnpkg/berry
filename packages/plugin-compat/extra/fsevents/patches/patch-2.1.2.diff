@@ -1,9 +1,10 @@
 diff --git a/fsevents.js b/fsevents.js
-index bf7334b283cf2be112ab3d02c9d2e1f9bfdf4c5f..2d1d76bed10a32d6b79b52a29fbcaef028f8693c 100644
+index bf73..2d1d 100644
 semver exclusivity >=2.1 <2.2
 --- a/fsevents.js
 +++ b/fsevents.js
-@@ -22,5 +22,7 @@ function watch(path, handler) {
+@@ -21,7 +21,9 @@ function watch(path, handler) {
+     throw new TypeError(`fsevents argument 2 must be a function and not a ${typeof handler}`);
    }
  
 -  let instance = Native.start(path, handler);
@@ -12,9 +13,10 @@ semver exclusivity >=2.1 <2.2
 +  let instance = Native.start(vfs.resolvedPath, vfs.wrap(handler));
    if (!instance) throw new Error(`could not watch: ${path}`);
    return () => {
+     const result = instance
 diff --git a/vfs.js b/vfs.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..34199122de92d573bc1a99c8cd7345fd675b69c6
+index 0000..3419
 semver exclusivity >=2.1 <2.2
 --- /dev/null
 +++ b/vfs.js

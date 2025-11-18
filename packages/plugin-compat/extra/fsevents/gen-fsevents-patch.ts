@@ -24,7 +24,6 @@ type Slice = typeof SLICES[0];
 class ResolvePatchGenerator extends PatchGenerator<Slice> {
   public constructor() {
     super(`fsevents`, SLICES);
-    this.diffOpts = [`-U2`, `--full-index`];
   }
   protected async build(slice: Slice, path: PortablePath): Promise<void> {
     await logger.section(`Build`, async () => {

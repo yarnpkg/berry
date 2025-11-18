@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index d7f749f63..c4a080b2c 100644
+index d7f7..c4a0 100644
 semver exclusivity >=3.2 <3.5
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -128,7 +128,7 @@ semver exclusivity >=3.2 <3.5
  var ts;
  (function (ts) {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 4ea67ecd8..057ea079a 100644
+index 4ea6..057e 100644
 semver exclusivity >=3.2 <3.5
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -274,7 +274,7 @@ semver exclusivity >=3.2 <3.5
  /* @internal */
  var ts;
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 2897a2262..cf3e05432 100644
+index 2897..cf3e 100644
 semver exclusivity >=3.2 <3.5
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -420,7 +420,7 @@ semver exclusivity >=3.2 <3.5
  /* @internal */
  var ts;
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 548ceea96..92c195a61 100644
+index 548c..92c1 100644
 semver exclusivity >=3.2 <3.5
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -566,7 +566,7 @@ semver exclusivity >=3.2 <3.5
  /* @internal */
  var ts;
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 9046c6f90..0f0db98cb 100644
+index 9046..0f0d 100644
 semver exclusivity >=3.2 <3.5
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -712,7 +712,7 @@ semver exclusivity >=3.2 <3.5
  /* @internal */
  var ts;
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 776a2e0a9..cfa1e8449 100644
+index 776a..cfa1 100644
 semver exclusivity >=3.2 <3.5
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

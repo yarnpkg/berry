@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index e90fc7ec5..1ff8d986d 100644
+index e90f..1ff8 100644
 semver exclusivity >=5.2.0-beta <5.2.1-rc
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -344,7 +344,7 @@ semver exclusivity >=5.2.0-beta <5.2.1-rc
    }
    function reloadFileNamesFromConfigFile() {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index c162605c3..3fbcd612c 100644
+index c162..3fbc 100644
 semver exclusivity >=5.2.0-beta <5.2.1-rc
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -997,7 +997,7 @@ semver exclusivity >=5.2.0-beta <5.2.1-rc
        this.installer = childProcess.fork(typingsInstaller, args, { execArgv });
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index cb12b5c07..356ed604e 100644
+index cb12..356e 100644
 semver exclusivity >=5.2.0-beta <5.2.1-rc
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1696,7 +1696,7 @@ semver exclusivity >=5.2.0-beta <5.2.1-rc
            const watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = /* @__PURE__ */ new Map());
            if (!watchers.has(path)) {
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 5ca6f8d6a..157995abd 100644
+index 5ca6..1579 100644
 semver exclusivity >=5.2.0-beta <5.2.1-rc
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -2293,7 +2293,7 @@ semver exclusivity >=5.2.0-beta <5.2.1-rc
        init_ts_Completions();
        kindPrecedence = {
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index e7eab78c8..7bedeaf89 100644
+index e7ea..7bed 100644
 semver exclusivity >=5.2.0-beta <5.2.1-rc
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

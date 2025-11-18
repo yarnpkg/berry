@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index ddac1f06e..3e8ea9ec0 100644
+index ddac..3e8e 100644
 semver exclusivity >=4.8.0-beta <4.8.1-rc
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -303,7 +303,7 @@ semver exclusivity >=4.8.0-beta <4.8.1-rc
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 3ab7d98ba..4b6dbe734 100644
+index 3ab7..4b6d 100644
 semver exclusivity >=4.8.0-beta <4.8.1-rc
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -1011,7 +1011,7 @@ semver exclusivity >=4.8.0-beta <4.8.1-rc
                      this.installer.on("message", function (m) { return _this.handleMessage(m); });
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 5ba14d9ce..bd17c80a6 100644
+index 5ba1..bd17 100644
 semver exclusivity >=4.8.0-beta <4.8.1-rc
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1695,7 +1695,7 @@ semver exclusivity >=4.8.0-beta <4.8.1-rc
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 3881df0d0..59b050376 100644
+index 3881..59b0 100644
 semver exclusivity >=4.8.0-beta <4.8.1-rc
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -2275,7 +2275,7 @@ semver exclusivity >=4.8.0-beta <4.8.1-rc
                  return statement;
              });
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index a856d881b..3a60baf6f 100644
+index a856..3a60 100644
 semver exclusivity >=4.8.0-beta <4.8.1-rc
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -2855,7 +2855,7 @@ semver exclusivity >=4.8.0-beta <4.8.1-rc
                  return statement;
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index c8b3e29f4..8176d8d64 100644
+index c8b3..8176 100644
 semver exclusivity >=4.8.0-beta <4.8.1-rc
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

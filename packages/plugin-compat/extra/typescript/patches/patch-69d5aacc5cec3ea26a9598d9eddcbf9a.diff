@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index e829bf376..516592f8d 100644
+index e829..5165 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -267,7 +267,7 @@ semver exclusivity >=4.0 <4.1
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 662e63336..bc00714a7 100644
+index 662e..bc00 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -689,7 +689,7 @@ semver exclusivity >=4.0 <4.1
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/tsserverlibrary.d.ts b/lib/tsserverlibrary.d.ts
-index 8442b93e4..6824bc122 100644
+index 8442..6824 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/tsserverlibrary.d.ts
 +++ b/lib/tsserverlibrary.d.ts
@@ -702,7 +702,7 @@ semver exclusivity >=4.0 <4.1
          toPath(fileName: string): Path;
          private loadTypesMap;
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 0efd5eb90..a925edb60 100644
+index 0efd..a925 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1124,7 +1124,7 @@ semver exclusivity >=4.0 <4.1
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.js b/lib/typescript.js
-index be3e6d1a7..bbf1cf202 100644
+index be3e..bbf1 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -1485,7 +1485,7 @@ semver exclusivity >=4.0 <4.1
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index a76ef9d16..544bc88ff 100644
+index a76e..544b 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -1846,7 +1846,7 @@ semver exclusivity >=4.0 <4.1
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 171ceed3c..c4b755557 100644
+index 171c..c4b7 100644
 semver exclusivity >=4.0 <4.1
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

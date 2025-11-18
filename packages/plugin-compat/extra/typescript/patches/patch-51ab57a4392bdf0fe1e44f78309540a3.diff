@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index 06f7f5ec9..4a7e28076 100644
+index 06f7..4a7e 100644
 semver exclusivity >=5.5.0-beta <5.5.2
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -346,7 +346,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
    }
    function reloadFileNamesFromConfigFile() {
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 50cc6659c..9cefc330a 100644
+index 50cc..9cef 100644
 semver exclusivity >=5.5.0-beta <5.5.2
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -399,7 +399,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
        this.installer = childProcess.fork(typingsInstaller, args, { execArgv });
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
-index f4c59a844..631850d94 100644
+index f4c5..6318 100644
 semver exclusivity >=5.5.0-beta <5.5.2
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
@@ -413,7 +413,7 @@ semver exclusivity >=5.5.0-beta <5.5.2
      function findConfigFile(searchPath: string, fileExists: (fileName: string) => boolean, configName?: string): string | undefined;
      function resolveTripleslashReference(moduleName: string, containingFile: string): string;
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 6b52dd675..22cf43d26 100644
+index 6b52..22cf 100644
 semver exclusivity >=5.5.0-beta <5.5.2
 --- a/lib/typescript.js
 +++ b/lib/typescript.js

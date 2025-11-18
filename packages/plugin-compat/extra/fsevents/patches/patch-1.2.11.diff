@@ -1,9 +1,10 @@
 diff --git a/fsevents.js b/fsevents.js
-index 939cc7e3d177dd2d4f889f8e97a5b7d3c59fc68f..b6a5c43d53d3a966768c8d3ab58ace22481538a7 100644
+index 939c..b6a5 100644
 semver exclusivity ^1
 --- a/fsevents.js
 +++ b/fsevents.js
-@@ -37,5 +37,7 @@ var defer = global.setImmediate || process.nextTick;
+@@ -36,7 +36,9 @@ module.exports.Constants = Native.Constants;
+ var defer = global.setImmediate || process.nextTick;
  
  function watch(path) {
 -  var fse = new FSEvents(String(path || ''), handler);
@@ -12,9 +13,10 @@ semver exclusivity ^1
 +  var fse = new FSEvents(vfs.resolvedPath, vfs.wrap(handler));
    EventEmitter.call(fse);
    return fse;
+ 
 diff --git a/vfs.js b/vfs.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..34199122de92d573bc1a99c8cd7345fd675b69c6
+index 0000..3419
 semver exclusivity ^1
 --- /dev/null
 +++ b/vfs.js
