@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index 361e447f8..f07d1f913 100644
+index 361e..f07d 100644
 semver exclusivity >=3.9 <4.0
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -206,7 +206,7 @@ semver exclusivity >=3.9 <4.0
                  var packageRootPath = moduleFileName.substring(0, packageRootIndex);
                  var packageJsonPath = ts.combinePaths(packageRootPath, "package.json");
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 2b6f035cc..21f9ad412 100644
+index 2b6f..21f9 100644
 semver exclusivity >=3.9 <4.0
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -504,7 +504,7 @@ semver exclusivity >=3.9 <4.0
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 60e8447a1..3a7bcfa00 100644
+index 60e8..3a7b 100644
 semver exclusivity >=3.9 <4.0
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -802,7 +802,7 @@ semver exclusivity >=3.9 <4.0
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 90202c1c5..081b7b5cc 100644
+index 9020..081b 100644
 semver exclusivity >=3.9 <4.0
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -1100,7 +1100,7 @@ semver exclusivity >=3.9 <4.0
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index d78fb9eda..124497dd8 100644
+index d78f..1244 100644
 semver exclusivity >=3.9 <4.0
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -1398,7 +1398,7 @@ semver exclusivity >=3.9 <4.0
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 967aad4ef..9c4eca225 100644
+index 967a..9c4e 100644
 semver exclusivity >=3.9 <4.0
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

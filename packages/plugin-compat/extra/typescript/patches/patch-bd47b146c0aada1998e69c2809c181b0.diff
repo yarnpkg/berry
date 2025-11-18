@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index 80afaea53..202bd4ec7 100644
+index 80af..202b 100644
 semver exclusivity >=4.9.4 <5.0.0-beta
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -326,7 +326,7 @@ semver exclusivity >=4.9.4 <5.0.0-beta
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index a2960e9f6..68378ab1e 100644
+index a296..6837 100644
 semver exclusivity >=4.9.4 <5.0.0-beta
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -1025,7 +1025,7 @@ semver exclusivity >=4.9.4 <5.0.0-beta
                      this.installer.on("message", function (m) { return _this.handleMessage(m); });
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 1b41c9347..ecd9a1116 100644
+index 1b41..ecd9 100644
 semver exclusivity >=4.9.4 <5.0.0-beta
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1698,7 +1698,7 @@ semver exclusivity >=4.9.4 <5.0.0-beta
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.js b/lib/typescript.js
-index c2688dd27..04943bd83 100644
+index c268..0494 100644
 semver exclusivity >=4.9.4 <5.0.0-beta
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -2265,7 +2265,7 @@ semver exclusivity >=4.9.4 <5.0.0-beta
                  return statement;
              });
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 98086d72a..653507c8c 100644
+index 9808..6535 100644
 semver exclusivity >=4.9.4 <5.0.0-beta
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -2832,7 +2832,7 @@ semver exclusivity >=4.9.4 <5.0.0-beta
                  return statement;
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index a4a6c6314..051c4d5f2 100644
+index a4a6..051c 100644
 semver exclusivity >=4.9.4 <5.0.0-beta
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

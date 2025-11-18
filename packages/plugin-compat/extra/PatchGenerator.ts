@@ -13,9 +13,6 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
   protected readonly tmp: PortablePath;
   protected readonly patches: PortablePath;
 
-  // Only used to minimize patch changes when migrating to new system
-  protected diffOpts: Array<string> = [];
-
   public constructor(
     public readonly name: string,
     protected readonly slices: Array<S>,
@@ -59,10 +56,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     const patch = await spawn(`git`, [
       `diff`,
       `--no-index`,
-      `--diff-algorithm=default`,
+      `--abbrev=4`,
+      `--diff-algorithm=minimal`,
       `--src-prefix=a/`,
       `--dst-prefix=b/`,
-      ...this.diffOpts,
       `base`,
       `patched`,
     ], {

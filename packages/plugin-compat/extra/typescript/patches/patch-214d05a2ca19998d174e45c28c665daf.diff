@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index 7f46cc9d8..fd2e81687 100644
+index 7f46..fd2e 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -300,7 +300,7 @@ semver exclusivity >=4.2 <4.3
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index a1d0a7a17..a85af606d 100644
+index a1d0..a85a 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -922,7 +922,7 @@ semver exclusivity >=4.2 <4.3
                      this.installer.on("message", function (m) { return _this.handleMessage(m); });
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.d.ts b/lib/tsserverlibrary.d.ts
-index 70e326c4c..1fd3a2193 100644
+index 70e3..1fd3 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/tsserverlibrary.d.ts
 +++ b/lib/tsserverlibrary.d.ts
@@ -935,7 +935,7 @@ semver exclusivity >=4.2 <4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index e8537e466..499df472c 100644
+index e853..499d 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1535,7 +1535,7 @@ semver exclusivity >=4.2 <4.3
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
-index 5c9fcf765..e0cca011b 100644
+index 5c9f..e0cc 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
@@ -1548,7 +1548,7 @@ semver exclusivity >=4.2 <4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 8539f89fd..ae4dbaa64 100644
+index 8539..ae4d 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -2045,7 +2045,7 @@ semver exclusivity >=4.2 <4.3
                  return statement;
              });
 diff --git a/lib/typescriptServices.d.ts b/lib/typescriptServices.d.ts
-index 3a51aada6..62093708e 100644
+index 3a51..6209 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/typescriptServices.d.ts
 +++ b/lib/typescriptServices.d.ts
@@ -2058,7 +2058,7 @@ semver exclusivity >=4.2 <4.3
       * @param {string | undefined} containingFile - file that contains type reference directive, can be undefined if containing file is unknown.
       * This is possible in case if resolution is performed for directives specified via 'types' parameter. In this case initial path for secondary lookups
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 6b08bfe23..5019e423b 100644
+index 6b08..5019 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -2555,7 +2555,7 @@ semver exclusivity >=4.2 <4.3
                  return statement;
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 9fa096358..0c97fc3ff 100644
+index 9fa0..0c97 100644
 semver exclusivity >=4.2 <4.3
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

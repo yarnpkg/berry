@@ -454,8 +454,6 @@ class TypeScriptPatchGenerator extends PatchGenerator<Slice & {id: string}> {
       id: createHash(`md5`).update(JSON.stringify({from: slice.from, to: slice.to, onto: slice.onto})).digest(`hex`),
     })));
     this.$versions = this.fetchVersions();
-
-    this.diffOpts = [`--abbrev=9`];
   }
 
   protected override async build(slice: Slice, path: PortablePath): Promise<void> {

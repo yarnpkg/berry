@@ -1,5 +1,5 @@
 diff --git a/lib/_tsc.js b/lib/_tsc.js
-index d06c7ff6c..97860c4cc 100644
+index d06c..9786 100644
 semver exclusivity >=5.7.1-rc
 --- a/lib/_tsc.js
 +++ b/lib/_tsc.js
@@ -332,7 +332,7 @@ semver exclusivity >=5.7.1-rc
          synchronizeProgram();
          break;
 diff --git a/lib/_tsserver.js b/lib/_tsserver.js
-index 473b8d224..ee2581d3d 100644
+index 473b..ee25 100644
 semver exclusivity >=5.7.1-rc
 --- a/lib/_tsserver.js
 +++ b/lib/_tsserver.js
@@ -385,7 +385,7 @@ semver exclusivity >=5.7.1-rc
        this.installer = import_child_process.default.fork(typingsInstaller, args, { execArgv });
        this.installer.on("message", (m) => this.handleMessage(m));
 diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
-index 0ed1d1e83..0e64ca342 100644
+index 0ed1..0e64 100644
 semver exclusivity >=5.7.1-rc
 --- a/lib/typescript.d.ts
 +++ b/lib/typescript.d.ts
@@ -415,7 +415,7 @@ semver exclusivity >=5.7.1-rc
      function findConfigFile(searchPath: string, fileExists: (fileName: string) => boolean, configName?: string): string | undefined;
      function resolveTripleslashReference(moduleName: string, containingFile: string): string;
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 366e30eeb..542b87e90 100644
+index 366e..542b 100644
 semver exclusivity >=5.7.1-rc
 --- a/lib/typescript.js
 +++ b/lib/typescript.js

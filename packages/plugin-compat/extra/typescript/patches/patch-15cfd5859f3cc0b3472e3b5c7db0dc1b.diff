@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index d7f749f63..f16090669 100644
+index d7f7..f160 100644
 semver exclusivity >=3.7 <3.9
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -161,7 +161,7 @@ semver exclusivity >=3.7 <3.9
              }
              var nodeModulesDirectoryName = moduleSpecifier.substring(parts.topLevelPackageNameIndex + 1);
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index 4ea67ecd8..bbc4ed349 100644
+index 4ea6..bbc4 100644
 semver exclusivity >=3.7 <3.9
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -402,7 +402,7 @@ semver exclusivity >=3.7 <3.9
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index 2897a2262..0c938ab5d 100644
+index 2897..0c93 100644
 semver exclusivity >=3.7 <3.9
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -643,7 +643,7 @@ semver exclusivity >=3.7 <3.9
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 548ceea96..216c753ca 100644
+index 548c..216c 100644
 semver exclusivity >=3.7 <3.9
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -884,7 +884,7 @@ semver exclusivity >=3.7 <3.9
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 9046c6f90..dadd33c2f 100644
+index 9046..dadd 100644
 semver exclusivity >=3.7 <3.9
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -1125,7 +1125,7 @@ semver exclusivity >=3.7 <3.9
              return moduleSpecifierToValidIdentifier(ts.removeFileExtension(ts.stripQuotes(moduleSymbol.name)), target);
          }
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 776a2e0a9..af61fe7f6 100644
+index 776a..af61 100644
 semver exclusivity >=3.7 <3.9
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js

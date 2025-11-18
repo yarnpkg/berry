@@ -1,5 +1,5 @@
 diff --git a/lib/tsc.js b/lib/tsc.js
-index c4e8dd5cc..a284f6e7d 100644
+index c4e8..a284 100644
 semver exclusivity >=4.6.1-rc <4.7
 --- a/lib/tsc.js
 +++ b/lib/tsc.js
@@ -303,7 +303,7 @@ semver exclusivity >=4.6.1-rc <4.7
                      ts.perfLogger.logStartUpdateProgram("SynchronizeProgram");
                      synchronizeProgram();
 diff --git a/lib/tsserver.js b/lib/tsserver.js
-index a37b5abbc..284b2bf2a 100644
+index a37b..284b 100644
 semver exclusivity >=4.6.1-rc <4.7
 --- a/lib/tsserver.js
 +++ b/lib/tsserver.js
@@ -924,7 +924,7 @@ semver exclusivity >=4.6.1-rc <4.7
                      this.installer.on("message", function (m) { return _this.handleMessage(m); });
                      // We have to schedule this event to the next tick
 diff --git a/lib/tsserverlibrary.js b/lib/tsserverlibrary.js
-index ffd199fcd..2b432957f 100644
+index ffd1..2b43 100644
 semver exclusivity >=4.6.1-rc <4.7
 --- a/lib/tsserverlibrary.js
 +++ b/lib/tsserverlibrary.js
@@ -1521,7 +1521,7 @@ semver exclusivity >=4.6.1-rc <4.7
                  var _this = this;
                  var watchers = this.packageJsonFilesMap || (this.packageJsonFilesMap = new ts.Map());
 diff --git a/lib/typescript.js b/lib/typescript.js
-index 078ad70d5..b2f4aca83 100644
+index 078a..b2f4 100644
 semver exclusivity >=4.6.1-rc <4.7
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
@@ -2014,7 +2014,7 @@ semver exclusivity >=4.6.1-rc <4.7
                  return statement;
              });
 diff --git a/lib/typescriptServices.js b/lib/typescriptServices.js
-index 06d19d6fd..c391e2e70 100644
+index 06d1..c391 100644
 semver exclusivity >=4.6.1-rc <4.7
 --- a/lib/typescriptServices.js
 +++ b/lib/typescriptServices.js
@@ -2507,7 +2507,7 @@ semver exclusivity >=4.6.1-rc <4.7
                  return statement;
              });
 diff --git a/lib/typingsInstaller.js b/lib/typingsInstaller.js
-index 31f3c7a89..5fc4faa0c 100644
+index 31f3..5fc4 100644
 semver exclusivity >=4.6.1-rc <4.7
 --- a/lib/typingsInstaller.js
 +++ b/lib/typingsInstaller.js
