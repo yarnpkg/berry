@@ -1,4 +1,5 @@
 import {npath, xfs} from '@yarnpkg/fslib';
+import {tests}      from 'pkg-tests-core';
 
 const {
   tests: {testIf},
@@ -96,8 +97,16 @@ describe(`publish`, () =>   {
   }, async ({path, run, source}) => {
     await run(`install`);
 
-    const {stdout} = await run(`npm`, `publish`, `--dry-run`, `--tolerate-republish`);
-    expect(stdout).toContain(`[DRY RUN]`);
+    const requests = await tests.startRegistryRecording(async () => {
+      await run(`npm`, `publish`, `--dry-run`, `--tolerate-republish`);
+    });
+
+    expect(requests).toEqual([{
+      type: tests.RequestType.PackageVersion,
+      scope: undefined,
+      localName: `dry-run-test`,
+      version: `1.0.0`,
+    }]);
   }));
 
   test(`should support --json flag`, makeTemporaryEnv({
@@ -107,22 +116,20 @@ describe(`publish`, () =>   {
     await run(`install`);
 
     const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--tolerate-republish`);
-    const jsonObjects = misc.parseJsonStream(stdout);
-    const result = jsonObjects.find((obj: any) => obj.name && obj.version);
+    const lines = misc.parseJsonStream(stdout);
 
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty(`name`, `json-test`);
-    expect(result).toHaveProperty(`version`, `1.0.0`);
-    expect(result).toHaveProperty(`dryRun`, true);
-    expect(result).toHaveProperty(`registry`);
-    expect(result).toHaveProperty(`published`, false);
-    expect(result).toHaveProperty(`message`);
-
-    expect(result).toHaveProperty(`tag`);
-    expect(result).toHaveProperty(`provenance`);
-
-    expect(result).toHaveProperty(`files`);
-    expect(Array.isArray(result.files)).toBe(true);
+    expect(lines[lines.length - 1]).toEqual({
+      name: `json-test`,
+      version: `1.0.0`,
+      registry: `http://registry.example.org`,
+      tag: `latest`,
+      files: [`package.json`],
+      access: null,
+      dryRun: true,
+      published: false,
+      message: expect.any(String),
+      provenance: false,
+    });
   }));
 
   test(`should correctly log name of scoped workspace`, makeTemporaryEnv({

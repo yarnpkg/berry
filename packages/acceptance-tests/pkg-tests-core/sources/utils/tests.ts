@@ -21,7 +21,7 @@ import {promisify}                                 from 'util';
 import {v5 as uuidv5}                              from 'uuid';
 import {Gzip}                                      from 'zlib';
 
-import {ExecResult}                                from './exec';
+import {execFile, ExecResult}                      from './exec';
 import * as fsUtils                                from './fs';
 
 const deepResolve = require(`super-resolve`);
@@ -39,6 +39,7 @@ export const FEATURE_CHECKS = {
   jsonLockfile: isAtLeastMajor(5),
   prologConstraints: !isAtLeastMajor(5),
   mergeConflictTheirs: isAtLeastMajor(5),
+  migrationMode: isAtLeastMajor(5),
 } as const;
 
 // Testing things inside a big-endian container takes forever
@@ -956,6 +957,7 @@ export interface PackageDriver {
 
 export type Run = (...args: Array<string> | [...Array<string>, Partial<RunDriverOptions>]) => Promise<ExecResult>;
 export type Source = (script: string, callDefinition?: Record<string, any>) => Promise<Record<string, any>>;
+export type Git = (...args: Array<string>) => Promise<ExecResult>;
 
 export type RunFunction = (
   {path, run, source}:
@@ -963,6 +965,7 @@ export type RunFunction = (
     path: PortablePath;
     run: Run;
     source: Source;
+    git: Git;
   }
 ) => Promise<void>;
 
@@ -1032,6 +1035,12 @@ export const generatePkgDriver = ({
           };
         };
 
+        const git = async (...args: Array<any>) => {
+          return execFile(`git`, args, {
+            cwd: path,
+          });
+        };
+
         const source = async (script: string, callDefinition: Record<string, any> = {}): Promise<Record<string, any>> => {
           const scriptWrapper = `
             Promise.resolve().then(async () => ${script}).then(result => {
@@ -1080,7 +1089,7 @@ export const generatePkgDriver = ({
                 // Resolve 1s ahead of the jest timeout
                 timer = setTimeout(resolve, TEST_TIMEOUT - 1000);
               }),
-              fn!({path, run, source}),
+              fn!({path, run, source, git}),
             ]).finally(() => {
               if (timer) {
                 clearTimeout(timer);
@@ -1088,7 +1097,7 @@ export const generatePkgDriver = ({
             });
             return;
           }
-          await fn!({path, run, source});
+          await fn!({path, run, source, git});
         } catch (error) {
           error.message = `Temporary fixture folder: ${npath.fromPortablePath(path)}\n\n${error.message}`;
           throw error;

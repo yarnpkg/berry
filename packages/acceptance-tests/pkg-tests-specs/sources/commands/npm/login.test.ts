@@ -1,16 +1,10 @@
 import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {parseSyml}                          from '@yarnpkg/parsers';
 
 const {
   tests: {startPackageServer, validLogins},
 } = require(`pkg-tests-core`);
 
 const SPEC_RC_FILENAME = `.spec-yarnrc` as Filename;
-const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
-
-function cleanupFileContent(fileContent: string) {
-  return JSON.stringify(parseSyml(fileContent.replace(/http:\/\/localhost:\d+/g, FAKE_REGISTRY_URL)), null, 2);
-}
 
 describe(`Commands`, () => {
   describe(`npm login`, () => {
@@ -20,21 +14,17 @@ describe(`Commands`, () => {
         const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
         await xfs.writeFilePromise(rcPath, ``);
 
-        let code;
-        let stdout;
-        let stderr;
+        const {code, stdout, stderr} = await run(`npm`, `login`, {
+          env: {
+            YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+            YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        try {
-          ({code, stdout, stderr} = await run(`npm`, `login`, {
-            env: {
-              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
-              YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
+        expect(code).toEqual(0);
+        expect(stdout).toContain(`Successfully logged in`);
+        expect(stderr).toEqual(``);
 
         const url = await startPackageServer();
 
@@ -45,10 +35,6 @@ describe(`Commands`, () => {
         });
 
         expect(token).toEqual(`${validLogins.fooUser.npmAuthToken}\n`);
-
-        expect(code).toEqual(0);
-        expect(stdout).toContain(`Successfully logged in`);
-        expect(stderr).toEqual(``);
       }),
     );
 
@@ -58,22 +44,18 @@ describe(`Commands`, () => {
         const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
         await xfs.writeFilePromise(rcPath, ``);
 
-        let code;
-        let stdout;
-        let stderr;
+        const {code, stdout, stderr} = await run(`npm`, `login`, {
+          env: {
+            YARN_INJECT_NPM_USER: validLogins.otpUser.username,
+            YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
+            YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        try {
-          ({code, stdout, stderr} = await run(`npm`, `login`, {
-            env: {
-              YARN_INJECT_NPM_USER: validLogins.otpUser.username,
-              YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
-              YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
+        expect(code).toEqual(0);
+        expect(stdout).toContain(`Successfully logged in`);
+        expect(stderr).toEqual(``);
 
         const url = await startPackageServer();
 
@@ -84,10 +66,6 @@ describe(`Commands`, () => {
         });
 
         expect(token).toEqual(`${validLogins.otpUser.npmAuthToken}\n`);
-
-        expect(code).toEqual(0);
-        expect(stdout).toContain(`Successfully logged in`);
-        expect(stderr).toEqual(``);
       }),
     );
 
@@ -97,22 +75,19 @@ describe(`Commands`, () => {
         const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
         await xfs.writeFilePromise(rcPath, ``);
 
-        let code;
-        let stdout;
-        let stderr;
+        const {code, stdout, stderr} = await run(`npm`, `login`, {
+          env: {
+            YARN_INJECT_NPM_USER: validLogins.otpUserWithNotice.username,
+            YARN_INJECT_NPM_PASSWORD: validLogins.otpUserWithNotice.password,
+            YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUserWithNotice.npmOtpToken,
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        try {
-          ({code, stdout, stderr} = await run(`npm`, `login`, {
-            env: {
-              YARN_INJECT_NPM_USER: validLogins.otpUserWithNotice.username,
-              YARN_INJECT_NPM_PASSWORD: validLogins.otpUserWithNotice.password,
-              YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUserWithNotice.npmOtpToken,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
+        expect(code).toEqual(0);
+        expect(stdout).toContain(`You're looking handsome today`);
+        expect(stdout).toContain(`Successfully logged in`);
+        expect(stderr).toEqual(``);
 
         const url = await startPackageServer();
 
@@ -123,11 +98,6 @@ describe(`Commands`, () => {
         });
 
         expect(token).toEqual(`${validLogins.otpUserWithNotice.npmAuthToken}\n`);
-
-        expect(code).toEqual(0);
-        expect(stdout).toContain(`You're looking handsome today`);
-        expect(stdout).toContain(`Successfully logged in`);
-        expect(stderr).toEqual(``);
       }),
     );
 
@@ -174,21 +144,17 @@ describe(`Commands`, () => {
           },
         });
 
-        let code;
-        let stdout;
-        let stderr;
+        const {code, stdout, stderr} = await run(`npm`, `login`, `--scope`, `testScope`, {
+          env: {
+            YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+            YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        try {
-          ({code, stdout, stderr} = await run(`npm`, `login`, `--scope`, `testScope`, {
-            env: {
-              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
-              YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
+        expect(code).toEqual(0);
+        expect(stdout).toContain(`Successfully logged in`);
+        expect(stderr).toEqual(``);
 
         const {stdout: token} = await run(`config`, `get`, `npmScopes["testScope"].npmAuthToken`, `--no-redacted`, {
           env: {
@@ -197,10 +163,6 @@ describe(`Commands`, () => {
         });
 
         expect(token).toEqual(`${validLogins.fooUser.npmAuthToken}\n`);
-
-        expect(code).toEqual(0);
-        expect(stdout).toContain(`Successfully logged in`);
-        expect(stderr).toEqual(``);
       }),
     );
 
@@ -218,22 +180,18 @@ describe(`Commands`, () => {
           },
         });
 
-        let code;
-        let stdout;
-        let stderr;
+        const {code, stdout, stderr} = await run(`npm`, `login`, `--scope`, `testScope`, {
+          env: {
+            YARN_INJECT_NPM_USER: validLogins.otpUser.username,
+            YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
+            YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        try {
-          ({code, stdout, stderr} = await run(`npm`, `login`, `--scope`, `testScope`, {
-            env: {
-              YARN_INJECT_NPM_USER: validLogins.otpUser.username,
-              YARN_INJECT_NPM_PASSWORD: validLogins.otpUser.password,
-              YARN_INJECT_NPM_2FA_TOKEN: validLogins.otpUser.npmOtpToken,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
+        expect(code).toEqual(0);
+        expect(stdout).toContain(`Successfully logged in`);
+        expect(stderr).toEqual(``);
 
         const {stdout: token} = await run(`config`, `get`, `npmScopes["testScope"].npmAuthToken`, `--no-redacted`, {
           env: {
@@ -242,10 +200,6 @@ describe(`Commands`, () => {
         });
 
         expect(token).toEqual(`${validLogins.otpUser.npmAuthToken}\n`);
-
-        expect(code).toEqual(0);
-        expect(stdout).toContain(`Successfully logged in`);
-        expect(stderr).toEqual(``);
       }),
     );
 
@@ -255,21 +209,17 @@ describe(`Commands`, () => {
         const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
         await xfs.writeFilePromise(rcPath, ``);
 
-        let code;
-        let stdout;
-        let stderr;
+        const {code, stdout, stderr} = await run(`npm`, `login`, `--always-auth`, {
+          env: {
+            YARN_INJECT_NPM_USER: validLogins.fooUser.username,
+            YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        try {
-          ({code, stdout, stderr} = await run(`npm`, `login`, `--always-auth`, {
-            env: {
-              YARN_INJECT_NPM_USER: validLogins.fooUser.username,
-              YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
-              YARN_RC_FILENAME: SPEC_RC_FILENAME,
-            },
-          }));
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
+        expect(code).toEqual(0);
+        expect(stdout).toContain(`Successfully logged in`);
+        expect(stderr).toEqual(``);
 
         const {stdout: npmRegistriesConfig} = await run(`config`, `get`, `npmRegistries`, `--json`, `--no-redacted`, {
           env: {
@@ -283,10 +233,6 @@ describe(`Commands`, () => {
             npmAuthToken: validLogins.fooUser.npmAuthToken,
           },
         });
-
-        expect(code).toEqual(0);
-        expect(stdout).toContain(`Successfully logged in`);
-        expect(stderr).toEqual(``);
       }),
     );
   });
