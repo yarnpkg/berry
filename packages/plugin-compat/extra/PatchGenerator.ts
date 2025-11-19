@@ -25,7 +25,19 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     this.patches = ppath.join(npath.toPortablePath(__dirname), this.name as Filename, `patches`);
   }
 
+  /**
+   * Given the path to the build cache directory, populate it by saving the
+   * "before" state of the slice into `<path>/base` and the "after" state into
+   * `<path>/patched`.
+   *
+   * The build cache directory is guaranteed to exist, but the `base` and
+   * `patched` sub-directories are not.
+   */
   protected abstract build(slice: S, path: PortablePath): Promise<void>;
+  /**
+   * Given a slice, return the list of package versions the generated patch
+   * should be validated against.
+   */
   protected abstract getValidateVersions(slice: S): Promise<Array<string>>;
 
   private async fetchTarball(version: string): Promise<Buffer> {
@@ -38,6 +50,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
 
     return Buffer.from(await response.arrayBuffer());
   }
+  /**
+   * Return the tarball for the given version of the package with caching. If
+   * not already cached, it will be fetched from the npm registry.
+   */
   protected async getTarball(version: string): Promise<Buffer> {
     const path = ppath.join(this.tmp, `tarballs`, `${version}.tgz` as Filename);
     if (await xfs.existsPromise(path))
@@ -52,6 +68,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     return tarball;
   }
 
+  /**
+   * Generate a unified diff between the `base` and `patched` sub-directories of
+   * the given directory, with the custom semver exclusivity header.
+   */
   protected async diff(range: string, dir: PortablePath): Promise<string> {
     const patch = await spawn(`git`, [
       `diff`,
@@ -89,6 +109,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
       });
   }
 
+  /**
+   * Create the patch for the given slice, reusing any existing cached patch or
+   * build if available, and write it to disk if not already cached.
+   */
   protected createPatch(slice: S): Promise<{path: PortablePath, content: string}> {
     return logger.section(`Create patch`, async () => {
       const path = ppath.join(this.patches, `patch-${slice.id}.diff` as Filename);
@@ -128,8 +152,8 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     });
   }
 
-  protected readonly envs = new Map<string, Promise<PortablePath>>();
-  protected async prepareValidationEnv(version: string): Promise<PortablePath> {
+  private readonly envs = new Map<string, Promise<PortablePath>>();
+  private async prepareValidationEnv(version: string): Promise<PortablePath> {
     const path = ppath.join(this.tmp, `validate`, version as Filename);
     const [tarball] = await Promise.all([
       this.getTarball(version),
@@ -138,6 +162,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     await tgzUtils.extractArchiveTo(tarball, new CwdFS(path), {stripComponents: 1});
     return path;
   }
+  /**
+   * Prepare the validation environment for the specified version by extracting
+   * the package tarball into a temporary directory.
+   */
   protected async getValidationEnv(version: string): Promise<PortablePath> {
     return miscUtils.getFactoryWithDefault(this.envs, version, () =>  this.prepareValidationEnv(version));
   }
@@ -158,6 +186,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
         .catch(() => {}); // Prevent unhandled rejection - errors will be handled during validation
     }
   }
+  /**
+   * Validate that the given patch can be cleanly applied to the versions of the
+   * package as selected by {@link getValidateVersions}.
+   */
   protected validatePatch(slice: S, patch: string): Promise<void> {
     return logger.section(`Validate patch`, async () => {
       const versions = await this.getValidateVersions(slice);
@@ -175,6 +207,9 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     });
   }
 
+  /**
+   * Create, write to disk, and validate the patch for the given slice.
+   */
   protected async generatePatch(slice: S): Promise<string> {
     const clearBuildCache = () => xfs.removeSync(ppath.join(this.tmp, `builds`, slice.id as Filename));
 
@@ -198,6 +233,11 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     });
   }
 
+  /**
+   * Generate all patches and write the compressed TS bundle to the specified
+   * path. If one or more ranges are specified, caches are not used for slices
+   * whose range overlaps with any of the specified ranges.
+   */
   public async generateBundle(ranges: Array<string>, path: PortablePath): Promise<void> {
     // Start preparing validation environments immediately
     const controller = new AbortController();
