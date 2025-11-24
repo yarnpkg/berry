@@ -49,10 +49,16 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
 
         for (const segment of segments) {
           if (node.type === `object`) {
-            if (!Object.hasOwn(node.properties, segment))
+            const bareSegment = segment.replace(`[]`, ``);
+            if (node.properties == null || !Object.hasOwn(node.properties, bareSegment))
               return false;
 
-            node = node.properties[segment];
+            node = node.properties[bareSegment];
+
+            if (segment.endsWith(`[]`) && node.patternProperties != null) {
+              const key = Object.keys(node.patternProperties)[0];
+              node = node.patternProperties[key];
+            }
           }
         }
 
@@ -60,7 +66,7 @@ export const plugin = (userSpecs: Array<AutoLinkSpec>) => () => {
           return false;
 
         const url = !ancestors.find(ancestor => ancestor.type === `link`)
-          ? spec.urlGenerator(segments.join(`.`))
+          ? spec.urlGenerator(segments.map(i => i.replace(`[]`, ``)).join(`.`))
           : null;
 
         result = {
