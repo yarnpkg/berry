@@ -191,7 +191,7 @@ export function convertToBigIntStats(stats: Stats): BigIntStats {
       const element = stats[key as keyof typeof stats];
       if (typeof element === `number`) {
         // @ts-expect-error Typescript isn't able to tell this is valid
-        bigintStats[key as keyof typeof bigintStats] = BigInt(element);
+        bigintStats[key as keyof typeof bigintStats] = BigInt(Math.floor(element));
       } else if (nodeUtils.types.isDate(element)) {
         // @ts-expect-error Typescript isn't able to tell this is valid
         bigintStats[key as keyof typeof bigintStats] = new Date(element);
