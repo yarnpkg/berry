@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                          from '@yarnpkg/cli';
 import {Configuration, LocatorHash, Package, formatUtils, Descriptor} from '@yarnpkg/core';
-import {IdentHash, Project}                                           from '@yarnpkg/core';
+import {Ident, Project}                                               from '@yarnpkg/core';
 import {miscUtils, structUtils, treeUtils}                            from '@yarnpkg/core';
 import {Command, Option, Usage}                                       from 'clipanion';
 
@@ -13,13 +13,19 @@ export default class WhyCommand extends BaseCommand {
   static usage: Usage = Command.Usage({
     description: `display the reason why a package is needed`,
     details: `
-      This command prints the exact reasons why a package appears in the dependency tree.
+      This command prints the exact reasons why a package appears in the dependency tree. Specify a version or range to determine why the dependency tree contains a specific version of a package. This is particularly useful when trying to find out why your project depends on lower versions.
 
       If \`-R,--recursive\` is set, the listing will go in depth and will list, for each workspaces, what are all the paths that lead to the dependency. Note that the display is somewhat optimized in that it will not print the package listing twice for a single package, so if you see a leaf named "Foo" when looking for "Bar", it means that "Foo" already got printed higher in the tree.
     `,
     examples: [[
       `Explain why lodash is used in your project`,
       `$0 why lodash`,
+    ], [
+      `Explain why version 3.3.1 of lodash is in your project`,
+      `$0 why lodash@3.3.1`,
+    ], [
+      `or why version 3.X of lodash is in your project`,
+      `$0 why lodash@^3`,
     ]],
   });
 
@@ -46,11 +52,11 @@ export default class WhyCommand extends BaseCommand {
 
     await project.restoreInstallState();
 
-    const identHash = structUtils.parseIdent(this.package).identHash;
+    const descriptor = structUtils.parseDescriptor(this.package, false);
 
     const whyTree = this.recursive
-      ? whyRecursive(project, identHash, {configuration, peers: this.peers})
-      : whySimple(project, identHash, {configuration, peers: this.peers});
+      ? whyRecursive(project, descriptor, {configuration, peers: this.peers})
+      : whySimple(project, descriptor, {configuration, peers: this.peers});
 
     treeUtils.emitTree(whyTree, {
       configuration,
@@ -61,7 +67,11 @@ export default class WhyCommand extends BaseCommand {
   }
 }
 
-function whySimple(project: Project, identHash: IdentHash, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
+function isSameIdent(pkg: Ident, targetPkg: Ident) {
+  return pkg.identHash === targetPkg.identHash;
+}
+
+function whySimple(project: Project, targetPkg: Descriptor, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
   const sortedPackages = miscUtils.sortMap(project.storedPackages.values(), pkg => {
     return structUtils.stringifyLocator(pkg);
   });
@@ -85,7 +95,11 @@ function whySimple(project: Project, identHash: IdentHash, {configuration, peers
       if (!nextPkg)
         throw new Error(`Assertion failed: The package should have been registered`);
 
-      if (nextPkg.identHash !== identHash)
+
+      if (!isSameIdent(nextPkg, targetPkg))
+        continue;
+
+      if (!structUtils.isPackageInRange(nextPkg, targetPkg.range))
         continue;
 
       if (node === null) {
@@ -104,7 +118,7 @@ function whySimple(project: Project, identHash: IdentHash, {configuration, peers
   return root;
 }
 
-function whyRecursive(project: Project, identHash: IdentHash, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
+function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
   const sortedWorkspaces = miscUtils.sortMap(project.workspaces, workspace => {
     return structUtils.stringifyLocator(workspace.anchoredLocator);
   });
@@ -118,15 +132,12 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
 
     seen.add(pkg.locatorHash);
 
-    if (pkg.identHash === identHash) {
+    if (isSameIdent(pkg, targetPkg)) {
       dependents.add(pkg.locatorHash);
       return true;
     }
 
     let depends = false;
-
-    if (pkg.identHash === identHash)
-      depends = true;
 
     for (const dependency of pkg.dependencies.values()) {
       if (!peers && pkg.peerDependencies.has(dependency.identHash))
@@ -139,6 +150,10 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
       const nextPkg = project.storedPackages.get(resolution);
       if (!nextPkg)
         throw new Error(`Assertion failed: The package should have been registered`);
+
+      if (isSameIdent(nextPkg, targetPkg) && !structUtils.isPackageInRange(nextPkg, targetPkg.range))
+        continue;
+
 
       if (markAllDependents(nextPkg)) {
         depends = true;
@@ -179,6 +194,10 @@ function whyRecursive(project: Project, identHash: IdentHash, {configuration, pe
     // We don't want to print the children of our transitive workspace
     // dependencies, as they will be printed in their own top-level branch
     if (dependency !== null && project.tryWorkspaceByLocator(pkg))
+      return;
+
+    // We don't want to print the full path if it doesn't transitively depend on targetPkg.range
+    if (isSameIdent(pkg, targetPkg) && !structUtils.isPackageInRange(pkg, targetPkg.range))
       return;
 
     // We don't want to reprint the children for a package that already got
