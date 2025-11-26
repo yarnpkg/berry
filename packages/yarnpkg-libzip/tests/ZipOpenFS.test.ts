@@ -95,6 +95,7 @@ describe(`ZipOpenFS`, () => {
     const fs = new ZipOpenFS();
 
     expect(fs.statSync(ppath.join(ZIP_DIR5, `node_modules`)).isDirectory()).toBe(true);
+    expect(fs.statSync(ppath.join(ZIP_DIR5, `node_modules`), {bigint: true}).isDirectory()).toBe(true);
 
     fs.discardAndClose();
   });
