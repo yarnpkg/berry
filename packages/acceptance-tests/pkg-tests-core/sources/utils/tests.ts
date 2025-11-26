@@ -479,16 +479,14 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       const packageVersionEntry = packageEntry.get(version);
       invariant(packageVersionEntry, `This can only exist`);
 
-      const data = JSON.stringify({
-        [version as string]: Object.assign({}, packageVersionEntry!.packageJson, {
-          dist: {
-            shasum: await getPackageArchiveHash(name, version),
-            tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
-              ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
-              : await getPackageHttpArchivePath(name, version),
-          },
-        }),
-      });
+      const data = JSON.stringify(Object.assign({}, packageVersionEntry!.packageJson, {
+        dist: {
+          shasum: await getPackageArchiveHash(name, version),
+          tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
+            ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
+            : await getPackageHttpArchivePath(name, version),
+        },
+      }));
 
       response.writeHead(200, {[`Content-Type`]: `application/json`});
       response.end(data);
