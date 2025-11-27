@@ -194,16 +194,31 @@ export default class AddCommand extends BaseCommand {
       });
 
       const results = await Promise.all(targetList.map(async target => {
+        const current = workspace.manifest[target].get(request.identHash);
+        const isReplacement = typeof current !== `undefined`;
+
         for (const plugin of configuration.plugins.values()) {
           const hooks = plugin.hooks as Hooks;
-          if (!hooks?.beforeWorkspaceDependencyAddition)
-            continue;
 
-          await hooks.beforeWorkspaceDependencyAddition(
-            workspace,
-            target,
-            request,
-          );
+          if (isReplacement) {
+            if (!hooks?.beforeWorkspaceDependencyReplacement)
+              continue;
+
+            await hooks.beforeWorkspaceDependencyReplacement(
+              workspace,
+              target,
+              request,
+            );
+          } else {
+            if (!hooks?.beforeWorkspaceDependencyAddition)
+              continue;
+
+            await hooks.beforeWorkspaceDependencyAddition(
+              workspace,
+              target,
+              request,
+            );
+          }
         }
 
         const suggestedDescriptors = await suggestUtils.getSuggestedDescriptors(request, {project, workspace, cache, fixed, target, modifier, strategies, maxResults});
