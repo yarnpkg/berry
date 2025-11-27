@@ -1,5 +1,5 @@
-import {PortablePath, npath, xfs}           from '@yarnpkg/fslib';
-import {stringifySyml}                      from '@yarnpkg/parsers';
+import {PortablePath, npath, xfs} from '@yarnpkg/fslib';
+import {stringifySyml}            from '@yarnpkg/parsers';
 
 describe(`Features`, () => {
   describe(`Before Hooks`, () => {
@@ -61,7 +61,7 @@ describe(`Features`, () => {
 
           await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
             dependencies: {
-              [`one-fixed-dep`]: `^2.0.0`, 
+              [`one-fixed-dep`]: `^2.0.0`,
             },
           });
         }),
