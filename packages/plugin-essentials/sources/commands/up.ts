@@ -219,6 +219,7 @@ export default class UpCommand extends BaseCommand {
                 await hooks.beforeWorkspaceDependencyReplacement(
                   workspace,
                   target,
+                  existingDescriptor,
                   request,
                 );
               }

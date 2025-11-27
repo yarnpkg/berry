@@ -207,6 +207,7 @@ export default class AddCommand extends BaseCommand {
             await hooks.beforeWorkspaceDependencyReplacement(
               workspace,
               target,
+              current,
               request,
             );
           } else {

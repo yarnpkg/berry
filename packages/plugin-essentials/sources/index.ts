@@ -140,7 +140,7 @@ export interface Hooks {
   /**
    * Called before a dependency range is replaced inside a workspace. This hook
    * is invoked after the new descriptor is parsed but before it is processed
-   * by the suggestion engine. Plugins can mutate the descriptor (e.g., modify
+   * by the suggestion engine. Plugins can mutate the new descriptor (e.g., modify
    * the range) to influence what gets added to the manifest.
    *
    * Note that this hook is only called by the CLI commands like `yarn add` or
@@ -150,7 +150,8 @@ export interface Hooks {
   beforeWorkspaceDependencyReplacement?: (
     workspace: Workspace,
     target: suggestUtils.Target,
-    descriptor: Descriptor,
+    fromDescriptor: Descriptor,
+    toDescriptor: Descriptor,
   ) => Promise<void>;
 
   /**
