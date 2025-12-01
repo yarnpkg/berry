@@ -554,7 +554,7 @@ describe(`Commands`, () => {
           // in parallel, then the file will be removed before queued jobs start. The sleep
           // ensures we give a bit of time for all jobs to start.
 
-          await run(`workspaces`, `foreach`, `--all`, `--parallel`, `--jobs`, `unlimited`, `-vv`, `exec`, `ls ${nFlagPath} && sleep 1 && rm -f ${nFlagPath}`);
+          await run(`workspaces`, `foreach`, `--all`, `--parallel`, `--jobs`, `unlimited`, `-vv`, `node`, `-e`, `fs.readFileSync(${JSON.stringify(nFlagPath)}); setTimeout(() => {try {fs.unlinkSync(${JSON.stringify(nFlagPath)})} catch {}}, 1000)`);
         },
       ),
     );
