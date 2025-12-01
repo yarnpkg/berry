@@ -272,6 +272,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       workspaces.push(workspace);
     }
 
+    workspaces.sort((a, b) => {
+      return structUtils.stringifyIdent(a.anchoredLocator).localeCompare(structUtils.stringifyIdent(b.anchoredLocator));
+    });
+
     if (this.dryRun)
       return 0;
 
