@@ -17,7 +17,7 @@ export class LibzipError extends Error {
 }
 
 
-type LibzipInstance = {instance: Libzip, reserved: number, highWaterMark: number};
+type LibzipInstance = {instance: Libzip | null, active: boolean, reserved: number, highWaterMark: number};
 type LibzipReservation = {byteLength: number, instanceIndex: number};
 /**
  * Tracks the estimate of WASM memory usage by libzip to reduce the risk
@@ -29,8 +29,6 @@ type LibzipReservation = {byteLength: number, instanceIndex: number};
 class ElasticLibzipFactory {
   private static readonly LIBZIP_METADATA = 512 * 1024; // 500KB
   private static readonly WASM_MEM_MAX = 2 * 1024 * 1024 * 1024 - (100 * 1024 * 1024); // 1.9GB
-  private static readonly WASM_HIGHWATER_CLEANUP = 1 * 1024 * 1024 * 1024; // 1GB
-  private static readonly WASM_CLEANUP_DELTA = 200 * 1024 * 1024; // 200MB
   private static KEY = 1;
 
   /**
@@ -50,44 +48,33 @@ class ElasticLibzipFactory {
    * @returns [unique ID, Libzip instance]
    */
   getInstance(byteLength: number): [number, Libzip] {
-    let index = this.instances.findIndex(i => (i.reserved + byteLength + ElasticLibzipFactory.LIBZIP_METADATA) < ElasticLibzipFactory.WASM_MEM_MAX);
+    const size = byteLength + ElasticLibzipFactory.LIBZIP_METADATA;
+    let index = this.instances.findIndex(i => i.active && (i.reserved + size) < ElasticLibzipFactory.WASM_MEM_MAX);
     let instance;
+
     if (index >= 0) {
       instance = this.instances[index];
-      instance.reserved += byteLength + ElasticLibzipFactory.LIBZIP_METADATA;
+      instance.reserved += size;
       instance.highWaterMark = Math.max(instance.highWaterMark, instance.reserved);
     } else {
-      index += 1;
-      instance = {instance: newInstance(), reserved: byteLength + ElasticLibzipFactory.LIBZIP_METADATA, highWaterMark: byteLength};
+      index = this.instances.length;
+      instance = {instance: newInstance(), reserved: size, highWaterMark: size, active: true};
       this.instances.push(instance);
     }
     ElasticLibzipFactory.KEY += 1;
-    this.reservations.set(ElasticLibzipFactory.KEY, {byteLength: byteLength + ElasticLibzipFactory.LIBZIP_METADATA, instanceIndex: index});
-    return [ElasticLibzipFactory.KEY, instance.instance];
-  }
-
-  /**
-   * Update the size without worrying about if there's enough space.
-   */
-  update(key: number, delta: number) {
-    const reservation = this.reservations.get(key);
-    if (!reservation)
-      throw new Error(`Key ${key} not present in ${ElasticLibzipFactory.name}`);
-
-    const instance = this.instances[reservation.instanceIndex];
-    instance.reserved = instance.reserved + delta;
-    instance.highWaterMark = Math.max(instance.reserved, instance.highWaterMark);
+    this.reservations.set(ElasticLibzipFactory.KEY, {byteLength: size, instanceIndex: index});
+    return [ElasticLibzipFactory.KEY, instance.instance!];
   }
 
   remove(key: number) {
     const reservation = this.reservations.get(key);
     if (!reservation)
       return;
+
     this.reservations.delete(key);
 
     const instance = this.instances[reservation.instanceIndex];
     instance.reserved -= reservation.byteLength;
-
     this.cleanup(reservation);
   }
 
@@ -98,15 +85,11 @@ class ElasticLibzipFactory {
    * @param reservation
    */
   private cleanup(reservation: LibzipReservation) {
-    // Delete the instance if the preceding one has some space to fill (to avoid creating and closing WASMS unnecessarily)
     const instance = this.instances[reservation.instanceIndex];
-    if (instance.reserved <= 0 && reservation.instanceIndex > 0) {
-      const precedingInstance = this.instances[reservation.instanceIndex - 1];
-      const precedingWasmRemaining = ElasticLibzipFactory.WASM_MEM_MAX - precedingInstance.reserved;
-      if (precedingWasmRemaining >= ElasticLibzipFactory.WASM_CLEANUP_DELTA ||
-          instance.highWaterMark >= ElasticLibzipFactory.WASM_HIGHWATER_CLEANUP) {
-        this.instances.pop();
-      }
+
+    if (instance.reserved <= 0) {
+      instance.active = false;
+      this.instances[reservation.instanceIndex].instance = null;
     }
   }
 }
@@ -206,7 +189,6 @@ export class LibZipImpl implements ZipImpl {
   }
 
   setFileSource(target: PortablePath, compression: CompressionData, buffer: Buffer) {
-    libzipFactory.update(this.key, buffer.byteLength);
     const lzSource = this.allocateSource(buffer);
 
     try {
@@ -224,7 +206,6 @@ export class LibZipImpl implements ZipImpl {
       return newIndex;
     } catch (error) {
       this.libzip.source.free(lzSource);
-      libzipFactory.update(this.key, -buffer.byteLength);
       throw error;
     }
   }
