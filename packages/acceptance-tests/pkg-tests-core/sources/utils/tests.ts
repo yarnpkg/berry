@@ -29,16 +29,18 @@ const staticServer = serveStatic(npath.fromPortablePath(require(`pkg-tests-fixtu
 
 const TEST_MAJOR = process.env.TEST_MAJOR
   ? parseInt(process.env.TEST_MAJOR, 10)
-  : null;
+  : 4;
 
-function isAtLeastMajor(major: number) {
-  return TEST_MAJOR !== null && TEST_MAJOR >= major;
+function majorCheck(test: (major: number) => boolean) {
+  return TEST_MAJOR === null || test(TEST_MAJOR);
 }
 
 export const FEATURE_CHECKS = {
-  jsonLockfile: isAtLeastMajor(5),
-  prologConstraints: !isAtLeastMajor(5),
-  mergeConflictTheirs: isAtLeastMajor(5),
+  forEachWorktree: majorCheck(major => major <= 4),
+  forEachVerboseDone: majorCheck(major => major >= 5),
+  jsonLockfile: majorCheck(major => major >= 5),
+  prologConstraints: majorCheck(major => major <= 4),
+  mergeConflictTheirs: majorCheck(major => major >= 5),
 } as const;
 
 // Testing things inside a big-endian container takes forever
