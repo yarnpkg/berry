@@ -21089,11 +21089,11 @@ pem@dexus/pem:
 
 "typescript@patch:typescript@npm%3A^5.9.2#optional!builtin<compat/typescript>":
   version: 5.9.2
-  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"
+  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=0d3329"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/bd810ab13e8e557225a8b5122370385440b933e4e077d5c7641a8afd207fdc8be9c346e3c678adba934b64e0e70b0acf5eef9493ea05170a48ce22bef845fdc7
+  checksum: 10/60ae962e20cc11ef39e8440dc69a0877e84dfe7a1a759976e6e78b029a34b88e0ea6517170db763f609b09d8e68f4c6cbab9d0c6ce0ddb964a809fe1f04e50b7
   languageName: node
   linkType: hard
 

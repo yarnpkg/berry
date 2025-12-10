@@ -253,59 +253,59 @@ const SLICES: Array<Slice> = [
     onto: `88f80c75e1a4ab6aaec605aa4ec6281b87871ff0`,
     range: `>=5.3.1-rc <5.4.0-beta`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.4-beta
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.4-beta
   {
     from: `9420c380b6f1f072ff66372cbf776fafd6eeed1c`,
-    to: `9420c380b6f1f072ff66372cbf776fafd6eeed1c`,
+    to: `b4d7b4134e05a26b93458b9e88c8b5de08c1ee3e`,
     onto: `e80675868dff622d0870939e7c9930c68904e7e7`,
     range: `>=5.4.0-beta <5.4.1-rc`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.4-rc
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.4-rc
   {
     from: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
-    to: `786e26825dad9dcc0eff79610bffd8bb121e7e8a`,
+    to: `7e564312cd2cf1eea8b76d23db4bd2226202ccc3`,
     onto: `db6b2a980280a9c87799b9c1edd6d71e92bb255b`,
     range: `>=5.4.1-rc <5.5.0-beta`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.5-beta
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.5-beta
   {
     from: `f90eb7508e66a3d5066b1d8a06606c6c23f3df43`,
-    to: `43d2cbd6ac423e35a5a095a509fc90c03f0c22ba`,
+    to: `9b604c537901d9b3c0966fce3f5ae44aa3dc253d`,
     onto: `b574864abc989d0f8b15367baea1058819e126ba`,
     range: `>=5.5.0-beta <5.5.2`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.5
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.5
   {
     from: `5b321aa5835f9f4dba6d55553fd559985d44b1a9`,
-    to: `c41328460d8dba2fac56c220803c68ca961d7cd5`,
+    to: `ccf33180f4ad53ad0795970b7bc48a5cb35a3e05`,
     onto: `ce2e60e4ea15a65992e54a9e8877d16be9d42abb`,
     range: `>=5.5.2 <5.6.0-beta`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.6-beta
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.6-beta
   {
     from: `b774b54693034b8aeae7f9a7b24d25fcacdbc8a5`,
-    to: `b774b54693034b8aeae7f9a7b24d25fcacdbc8a5`,
+    to: `0e49bcb78f0d42f246d24aaac5dd96f185872ba8`,
     onto: `b4732bdd6199ec353ec0873f334515f391d80d3b`,
     range: `>=5.6.0-beta <5.6.1-rc`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.6-rc
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.6-rc
   {
     from: `0102e47303cb33503219740015f711e2fe7d89ab`,
-    to: `0102e47303cb33503219740015f711e2fe7d89ab`,
+    to: `fc2bd28bea622896d0298c69d89216021fab87d6`,
     onto: `6212132b835145b1a8fd49982680ac668caf3ddc`,
     range: `>=5.6.1-rc <5.7.0-beta`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.7-beta
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.7-beta
   {
     from: `18776a771f795ecc2535ee56705ea9fdb786a569`,
-    to: `519971751e31f38542a608abf21ba3d61c5c3f93`,
+    to: `59f55233fd1b47b451682c8266f0812b666b2fe2`,
     onto: `69fb689edbbce517a4615be9d356c6c812639849`,
     range: `>=5.7.0-beta <5.7.1-rc`,
   },
-  // https://github.com/yarnpkg/TypeScript/tree/merceyz/pnp-5.7-rc
+  // https://github.com/yarnpkg/TypeScript/tree/clemyan/pnp-5.7-rc
   {
     from: `99f3e130bbe02473680bfa040d131c1f7f08fcc0`,
-    to: `99f3e130bbe02473680bfa040d131c1f7f08fcc0`,
+    to: `08188704458c0994831c5537fcd5c09290966124`,
     onto: `c1216dea1a504da7b89b5221b925abcd1702d7e4`,
     range: `>=5.7.1-rc`,
   },
