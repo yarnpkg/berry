@@ -169,22 +169,16 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
   protected async getValidationEnv(version: string): Promise<PortablePath> {
     return miscUtils.getFactoryWithDefault(this.envs, version, () =>  this.prepareValidationEnv(version));
   }
-  private prepareAllValidationEnvs(slices: Array<S>, {signal}: {signal?: AbortSignal} = {}): void {
+  private async prepareAllValidationEnvs({signal}: {signal?: AbortSignal} = {}): Promise<void> {
     const limit = pLimit(5);
-    for (const slice of slices) {
-      this.getValidateVersions(slice)
-        .then(versions => {
-          for (const version of versions) {
-            limit(async () => {
-              if (signal?.aborted)
-                return null;
 
-              return this.getValidationEnv(version);
-            });
-          }
-        })
-        .catch(() => {}); // Prevent unhandled rejection - errors will be handled during validation
-    }
+    const versions = await Promise.all(this.slices.map(slice => this.getValidateVersions(slice)));
+    await Promise.all(versions.flat().map(version => limit(async () => {
+      if (signal?.aborted)
+        return null;
+
+      return this.getValidationEnv(version);
+    })));
   }
   /**
    * Validate that the given patch can be cleanly applied to the versions of the
@@ -242,7 +236,10 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     // Start preparing validation environments immediately
     const controller = new AbortController();
     const signal = controller.signal;
-    this.prepareAllValidationEnvs(this.slices, {signal});
+    // No await here to run preparation in parallel to builds, and prevent
+    // unhandled rejections. The promises will be grabbed from the map and
+    // awaited during validation, and errors will be handled then.
+    void this.prepareAllValidationEnvs({signal}).catch(() => {});
 
     try {
       const patches = new Map<string, string>();
