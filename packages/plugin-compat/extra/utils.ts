@@ -40,7 +40,7 @@ export function spawn(binary: string, args: Array<string>, opts: SpawnOptions = 
     err.message += `\n\n${Buffer.concat(allChunks).toString()}\n`;
     throw err;
   });
-  close.catch(() => { }); // Prevent unhandled rejection - the caller should handle i
+  close.catch(() => {}); // Prevent unhandled rejection - the caller should handle it
 
   return {
     process: child,

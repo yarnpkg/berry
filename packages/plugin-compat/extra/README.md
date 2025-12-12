@@ -24,7 +24,7 @@ After all slices are generated, they are aggregated, compressed, and encoded int
 
 There are two layers of caching applied. First, if a patch already exists in the `patches` directory, then the diff is used instead of building and calculating a fresh diff. Second, the "before" and "after" states created during builds are saved and reused to skip future builds.
 
-The cache and other temporary files used by the generator are store in `<tmp>/yarn-compat-gen-patches/`, where `<tmp>` is the system temporary directory. This directory can be changed by setting `GEN_PATCHES_BASE_DIR` environment variable to an absolute path. The caches for each package are isolated under sub-directories.
+The cache and other temporary files used by the generator are stored in `<tmp>/yarn-compat-gen-patches/`, where `<tmp>` is the system temporary directory. This directory can be changed by setting the `GEN_PATCHES_BASE_DIR` environment variable to an absolute path. The caches for each package are isolated under sub-directories.
 
 When running the generator scripts, one or more semver ranges can be given as additional arguments. In that case, when generating any slice whose range overlaps with the given ranges, the cached patches and builds are not reused and a fresh patch is generated.
 
@@ -46,4 +46,4 @@ For `typescript`, the build process is much heavier. We clone `yarnpkg/TypeScrip
 
 As the TypeScript repo uses Volta to pin the node and npm versions used to build it, installing Volta is recommended to ensure consistent builds. If Volta is not installed, the generator script only switches the npm version by running npm via Corepack. A warning is printed in this case.
 
-If you already have a local clone of `yarnpkg/TypeScript`, you can use git's alternates mechanism to allow git to find objects in the local clone, via the `GIT_ALTERNATE_OBJECT_DIRECTORIES` environment variable. This way, you can generate patches using commits in the local clone. The local clone is also used to speed up the script's cloning and fetching operations. However, do note that PRs that update the patch should only reference public commits in `yarnpkg/Typescript` or our CI checks will fail on the PR.
+If you already have a local clone of `yarnpkg/TypeScript`, you can use git's alternates mechanism to allow git to find objects in the local clone, via the `GIT_ALTERNATE_OBJECT_DIRECTORIES` environment variable. This way, you can generate patches using commits in the local clone. The local clone is also used to speed up the script's cloning and fetching operations. However, do note that PRs that update the patches should only reference public commits in `yarnpkg/Typescript` or our CI checks will fail on the PR.

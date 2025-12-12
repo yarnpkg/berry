@@ -30,8 +30,8 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
    * "before" state of the slice into `<path>/base` and the "after" state into
    * `<path>/patched`.
    *
-   * The build cache directory is guaranteed to exists, but the `base` and
-   * `patched` subdirectories are not.
+   * The build cache directory is guaranteed to exist, but the `base` and
+   * `patched` sub-directories are not.
    */
   protected abstract build(slice: S, path: PortablePath): Promise<void>;
   /**
@@ -77,6 +77,7 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
       `diff`,
       `--no-index`,
       `--abbrev=4`,
+      `-U3`,
       `--diff-algorithm=minimal`,
       `--src-prefix=a/`,
       `--dst-prefix=b/`,
@@ -85,7 +86,6 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
     ], {
       cwd: npath.fromPortablePath(dir),
       env: {
-        ...process.env,
         GIT_CONFIG_NOSYSTEM: `1`,
         HOME: ``,
         XDG_CONFIG_HOME: ``,
@@ -95,7 +95,7 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
 
     return patch.toString()
       .replace(/^diff --git (?<src>.+) (?<dst>.+)\n(?<fields>(?:\w.+\n)+)--- (\1|\/dev\/null)\n\+\+\+ \2\n/gm, (_, src, dst, fields, src2) => {
-      // It is possible to get "a/patched", specifically when the diff is creating a file
+        // It is possible to get "a/patched", specifically when the diff is creating a file
         const base = src.replace(/^("?a\/)(base|patched)\//, `$1`);
         const patched = dst.replace(/^("?b\/)patched\//, `$1`);
         return [
