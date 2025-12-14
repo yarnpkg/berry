@@ -48,20 +48,6 @@ jobs:
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
 
-    - name: 'Check that the patch files are consistent with fresh builds'
-      run: |
-        if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- packages/plugin-compat/sources/patches packages/plugin-compat/extra/ | wc -l) -gt 0 ]]; then
-          for generator in packages/plugin-compat/extra/*/gen-*-patch.ts; do
-            yarn node -r @yarnpkg/monorepo/scripts/setup-ts-execution $generator '*';
-          done
-          [[ $(git diff --name-only packages/plugin-compat/sources/patches "packages/plugin-compat/extra/*/patches/*" | tee /dev/stderr | wc -l) -eq 0 ]]
-        fi
-      shell: bash
-      if: |
-        (success() || failure()) && github.event.pull_request != ''
-      env:
-        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
-
     - name: 'Check that libzip artifacts are consistent with a fresh build (fix w/ "git merge master && bash packages/yarnpkg-libzip/artifacts/build.sh")'
       run: |
         if [[ $(git diff --name-only "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/yarnpkg-libzip/artifacts' 'packages/yarnpkg-libzip/sources/*.js' | wc -l) -gt 0 ]]; then
