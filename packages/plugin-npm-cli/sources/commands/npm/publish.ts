@@ -140,6 +140,9 @@ export default class NpmPublishCommand extends BaseCommand {
         } else if (configuration.get(`npmPublishProvenance`)) {
           provenance = true;
           provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+        } else if (process.env.CI && (process.env.GITHUB_ACTIONS && process.env.ACTIONS_ID_TOKEN_REQUEST_URL || process.env.GITLAB && process.env.SIGSTORE_ID_TOKEN)) {
+          provenance = true;
+          provenanceMessage = `Generating provenance statement because running in a trusted CI environment. Set \`npmPublishProvenance\` to false to disable provenance.`;
         }
 
         if (provenanceMessage) {
