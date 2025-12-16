@@ -12,6 +12,7 @@ import {logger, spawn}                                         from './utils';
 export abstract class PatchGenerator<S extends {id: string, range: string}> {
   protected readonly tmp: PortablePath;
   protected readonly patches: PortablePath;
+  protected noCache = process.env.GEN_PATCHES_NO_CACHE !== undefined;
 
   public constructor(
     public readonly name: string,
@@ -223,6 +224,18 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
       }
 
       process.off(`exit`, clearBuildCache);
+
+      if (this.noCache) {
+        await logger.section(`Clean cache`, async () => {
+          const versions = await this.getValidateVersions(slice);
+          await Promise.all([
+            xfs.removePromise(ppath.join(this.tmp, `builds`, slice.id as Filename)),
+            ...versions.map(version => xfs.removePromise(ppath.join(this.tmp, `validate`, version as Filename))),
+            ...versions.map(version => xfs.removePromise(ppath.join(this.tmp, `tarballs`, `${version}.tgz`))),
+          ]);
+        });
+      }
+
       return content;
     });
   }
@@ -284,6 +297,11 @@ export abstract class PatchGenerator<S extends {id: string, range: string}> {
       });
 
       await logger.section(`Prune caches`, async () => {
+        if (this.noCache) {
+          await xfs.removePromise(this.tmp);
+          return;
+        }
+
         const buildNames = new Set(this.slices.map(slice => slice.id as Filename));
         const patchNames = new Set(this.slices.map(slice => `patch-${slice.id}.diff` as Filename));
 
