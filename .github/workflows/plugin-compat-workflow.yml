@@ -66,3 +66,4 @@ jobs:
       if: github.event.pull_request != ''
       env:
         TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+        GEN_PATCHES_NO_CACHE: '1'
