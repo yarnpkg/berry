@@ -80,6 +80,8 @@ export default class NpmPublishCommand extends BaseCommand {
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
+      report.reportInfo(MessageName.UNNAMED, `Publishing to ${registry}`);
+
       // Not an error if --tolerate-republish is set
       if (this.tolerateRepublish) {
         try {

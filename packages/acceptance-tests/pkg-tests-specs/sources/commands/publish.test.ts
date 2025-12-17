@@ -97,6 +97,7 @@ describe(`publish`, () =>   {
     await run(`install`);
 
     const {stdout} = await run(`npm`, `publish`, `--dry-run`, `--tolerate-republish`);
+    expect(stdout).toContain(`Publishing to`);
     expect(stdout).toContain(`[DRY RUN]`);
   }));
 
