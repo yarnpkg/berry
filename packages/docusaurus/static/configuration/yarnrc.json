@@ -335,15 +335,8 @@
     "initFields": {
       "_package": "@yarnpkg/plugin-init",
       "title": "Additional fields to set when creating packages via the `init` command.",
-      "type": "object",
-      "patternProperties": {
-        "^(.+)$": {
-          "type": ["string", "number", "boolean", "object", "array"],
-          "description": "All properties will be added verbatim to the generated package.json.",
-          "examples": ["https://yarnpkg.com"]
-        }
-      },
-      "_exampleKeys": ["homepage"]
+      "description": "All properties will be added verbatim to the generated package.json.",
+      "$ref": "./manifest.json"
     },
     "injectEnvironmentFiles": {
       "_package": "@yarnpkg/core",
