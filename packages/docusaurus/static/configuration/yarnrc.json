@@ -338,7 +338,7 @@
       "type": "object",
       "patternProperties": {
         "^(.+)$": {
-          "type": ["string", "number", "boolean"],
+          "type": ["string", "number", "boolean", "object", "array"],
           "description": "All properties will be added verbatim to the generated package.json.",
           "examples": ["https://yarnpkg.com"]
         }
