@@ -98,7 +98,7 @@ describe(`publish`, () =>   {
 
     const {stdout} = await run(`npm`, `publish`, `--dry-run`, `--tolerate-republish`);
     expect(stdout).toContain(`Publishing to`);
-    expect(stdout).toContain(`[DRY RUN]`);
+    expect(stdout).toContain(`dry run`);
   }));
 
   test(`should support --json flag`, makeTemporaryEnv({
