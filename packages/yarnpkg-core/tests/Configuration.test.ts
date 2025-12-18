@@ -114,6 +114,15 @@ describe(`Configuration`, () => {
           emptyEnvWithEmptyFallback: {
             npmAuthToken: `\${EMPTY_VARIABLE:-}`,
           },
+          emptyEnvWithNestedEnv: {
+            npmAuthToken: `prefix-\${EMPTY_VARIABLE:-\${ENV_AUTH_TOKEN-fallback-value}-after-env}-suffix`,
+          },
+          emptyEnvWithNestedEnvWithStrictFallback: {
+            npmAuthToken: `prefix-\${EMPTY_VARIABLE:-\${EMPTY_VARIABLE-fallback-value}-after-env}-suffix`,
+          },
+          emptyEnvWithNestedEnvWithFallback: {
+            npmAuthToken: `prefix-\${EMPTY_VARIABLE:-\${EMPTY_VARIABLE:-fallback-value}-after-env}-suffix`,
+          },
         },
       }, async dir => {
         const configuration = await Configuration.find(dir, {
@@ -132,6 +141,9 @@ describe(`Configuration`, () => {
         const emptyEnvWithStrictFallback = getToken(`emptyEnvWithStrictFallback`);
         const emptyEnvWithFallback = getToken(`emptyEnvWithFallback`);
         const emptyEnvWithEmptyFallback = getToken(`emptyEnvWithEmptyFallback`);
+        const emptyEnvWithNestedEnv = getToken(`emptyEnvWithNestedEnv`);
+        const emptyEnvWithNestedEnvWithStrictFallback = getToken(`emptyEnvWithNestedEnvWithStrictFallback`);
+        const emptyEnvWithNestedEnvWithFallback = getToken(`emptyEnvWithNestedEnvWithFallback`);
 
         expect(onlyEnv).toEqual(`AAA-BBB-CCC`);
         expect(multipleEnvs).toEqual(`AAA-BBB-CCC-separator-AAA-BBB-CCC`);
@@ -142,6 +154,9 @@ describe(`Configuration`, () => {
         expect(emptyEnvWithStrictFallback).toEqual(``);
         expect(emptyEnvWithFallback).toEqual(`fallback-for-empty-value`);
         expect(emptyEnvWithEmptyFallback).toEqual(``);
+        expect(emptyEnvWithNestedEnv).toEqual(`prefix-AAA-BBB-CCC-after-env-suffix`);
+        expect(emptyEnvWithNestedEnvWithStrictFallback).toEqual(`prefix--after-env-suffix`);
+        expect(emptyEnvWithNestedEnvWithFallback).toEqual(`prefix-fallback-value-after-env-suffix`);
       });
     });
 

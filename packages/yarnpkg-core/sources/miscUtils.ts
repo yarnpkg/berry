@@ -470,26 +470,58 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   }).join(`|`);
 }
 
+/**
+ * Replaces environment variable references in a string with their values.
+ *
+ * Supported syntax:
+ * - `${VAR}` - replaced with value, throws if unset
+ * - `${VAR-fallback}` - uses fallback only if unset
+ * - `${VAR:-fallback}` - uses fallback if unset or empty
+ * - `${A:-${B:-fallback}}` - nested variables
+ * - `\${VAR}` - escaped, not replaced
+ *
+ * Algorithm:
+ * 1. Protect escaped `\${...}` blocks with placeholders (tracking balanced braces)
+ * 2. Resolve variables from innermost to outermost (regex excludes nested braces)
+ * 3. Restore placeholders to their original `${...}` form
+ */
 export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
-  const regex = /\\?\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
+  const regex = /\$\{(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^{}]*))?\}/;
 
-  return value.replace(regex, (match, ...args) => {
-    if (match.startsWith(`\\`))
-      return match.slice(1);
+  // Protect escaped \${...} blocks (with balanced braces)
+  const escaped: Array<string> = [];
+  let result = value;
+  for (let start; (start = result.indexOf(`\\$\{`)) !== -1;) {
+    let depth = 1, end = start + 3;
+    while (end < result.length && depth > 0) {
+      if (result[end] === `{`) depth++;
+      else if (result[end] === `}`) depth--;
+      end++;
+    }
+    escaped.push(result.slice(start + 1, end));
+    result = `${result.slice(0, start)}\0${escaped.length - 1}\0${result.slice(end)}`;
+  }
 
-    const {variableName, colon, fallback} = args[args.length - 1];
+  // Replace innermost variables first (regex excludes nested braces)
+  for (let match; (match = regex.exec(result));) {
+    const {variableName, colon, fallback} = match.groups!;
     const variableExist = Object.hasOwn(env, variableName);
     const variableValue = env[variableName];
 
+    let replacement: string;
     if (variableValue)
-      return variableValue;
-    if (variableExist && !colon)
-      return variableValue;
-    if (fallback != null)
-      return fallback;
+      replacement = variableValue;
+    else if (variableExist && !colon)
+      replacement = variableValue ?? ``;
+    else if (fallback != null)
+      replacement = fallback;
+    else
+      throw new UsageError(`Environment variable not found (${variableName})`);
 
-    throw new UsageError(`Environment variable not found (${variableName})`);
-  });
+    result = result.slice(0, match.index) + replacement + result.slice(match.index + match[0].length);
+  }
+
+  return result.replace(/\0(\d+)\0/g, (_, i) => escaped[Number(i)]);
 }
 
 export function parseBoolean(value: unknown): boolean {

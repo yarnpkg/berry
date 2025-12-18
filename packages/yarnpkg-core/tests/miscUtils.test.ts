@@ -18,13 +18,41 @@ describe(`miscUtils`, () => {
       ).toBe(`VAR_A: ValueA, VAR_B: ValueB`);
     });
 
+    it(`should use empty strings when environment variables are empty strings`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A-FallbackA}, VAR_B: \${VAR_B-FallbackB}`,
+          {
+            env: {
+              VAR_A: ``,
+              VAR_B: ``,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: , VAR_B: `);
+    });
+
     it(`should use fallback values when environment variables are not set`, () => {
       expect(
         miscUtils.replaceEnvVariables(
-          `VAR_A: \${VAR_A:-ValueA}, VAR_B: \${VAR_B:-ValueB}`,
+          `VAR_A: \${VAR_A:-FallbackA}, VAR_B: \${VAR_B:-FallbackB}`,
           {env: {}},
         ),
-      ).toBe(`VAR_A: ValueA, VAR_B: ValueB`);
+      ).toBe(`VAR_A: FallbackA, VAR_B: FallbackB`);
+    });
+
+    it(`should use fallback values when environment variables are empty strings`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-FallbackA}, VAR_B: \${VAR_B:-FallbackB}`,
+          {
+            env: {
+              VAR_A: ``,
+              VAR_B: ``,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: FallbackA, VAR_B: FallbackB`);
     });
 
     it(`should not replace escaped environment variables`, () => {
@@ -39,6 +67,122 @@ describe(`miscUtils`, () => {
           },
         ),
       ).toBe(`VAR_A: \${VAR_A}, VAR_B: \${VAR_B}`);
+    });
+
+    it(`should replace primary environment variables with their values when there is 1 step of nesting`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A-\${VAR_A2-FallbackA}}, VAR_B: \${VAR_B-\${VAR_B2-FallbackB}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: ValueA, VAR_B: ValueB`);
+    });
+
+    it(`should use empty strings when primary environment variables are empty strings when there is 1 step of nesting`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A-\${VAR_A2-FallbackA}}, VAR_B: \${VAR_B-\${VAR_B2-FallbackB}}`,
+          {
+            env: {
+              VAR_A: ``,
+              VAR_B: ``,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: , VAR_B: `);
+    });
+
+    it(`should replace primary environment variables with their values when there is 1 step of nesting`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\${VAR_A2:-FallbackA}}, VAR_B: \${VAR_B:-\${VAR_B2:-FallbackB}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: ValueA, VAR_B: ValueB`);
+    });
+
+    it(`should replace secondary environment variables with their values when primary variables are not set`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\${VAR_A2:-FallbackA}}, VAR_B: \${VAR_B:-\${VAR_B2:-FallbackB}}`,
+          {
+            env: {
+              VAR_A2: `ValueA2`,
+              VAR_B2: `ValueB2`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: ValueA2, VAR_B: ValueB2`);
+    });
+
+    it(`should use fallback values when primary and secondary variables are not set`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\${VAR_A2:-FallbackA}}, VAR_B: \${VAR_B:-\${VAR_B2:-FallbackB}}`,
+          {env: {}},
+        ),
+      ).toBe(`VAR_A: FallbackA, VAR_B: FallbackB`);
+    });
+
+    it(`should not replace escaped primary environment variables`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \\\${VAR_A:-\${VAR_A2:-FallbackA}}, VAR_B: \\\${VAR_B:-\${VAR_B2:-FallbackB}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: \${VAR_A:-\${VAR_A2:-FallbackA}}, VAR_B: \${VAR_B:-\${VAR_B2:-FallbackB}}`);
+    });
+
+    it(`should not replace escaped secondary environment variables`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\\\${VAR_A2:-FallbackA}}, VAR_B: \${VAR_B:-\\\${VAR_B2:-FallbackB}}`,
+          {
+            env: {
+              VAR_A2: `ValueA2`,
+              VAR_B2: `ValueB2`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: \${VAR_A2:-FallbackA}, VAR_B: \${VAR_B2:-FallbackB}`);
+    });
+
+    it(`should replace tertiary environment variables with their values when primary and secondary variables are not set`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\${VAR_A2:-\${VAR_A3:-FallbackA}}}, VAR_B: \${VAR_B:-\${VAR_B2:-\${VAR_B3:-FallbackB}}}`,
+          {
+            env: {
+              VAR_A3: `ValueA3`,
+              VAR_B3: `ValueB3`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: ValueA3, VAR_B: ValueB3`);
+    });
+
+    it(`should use fallback values when primary, secondary and tertiary variables are not set`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\${VAR_A2:-\${VAR_A3:-FallbackA}}}, VAR_B: \${VAR_B:-\${VAR_B2:-\${VAR_B3:-FallbackB}}}`,
+          {env: {}},
+        ),
+      ).toBe(`VAR_A: FallbackA, VAR_B: FallbackB`);
     });
   });
 
