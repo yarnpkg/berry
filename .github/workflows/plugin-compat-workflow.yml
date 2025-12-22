@@ -35,6 +35,9 @@ jobs:
         git fetch --no-tags --unshallow origin HEAD master
 
     - uses: ./.github/actions/prepare
+    - uses: jdx/mise-action@v3
+      with:
+        install: false
 
     - name: 'Regenerate affected patches'
       run: |
