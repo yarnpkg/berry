@@ -25,7 +25,7 @@ type Slice = {
   to: string;
   onto: string;
   range: string;
-  volta?: {
+  versions?: {
     node?: string;
     npm?: string;
   };
@@ -36,7 +36,7 @@ const SLICES: Array<Slice> = [
     to: `426f5a7`,
     onto: `e39bdc3`,
     range: `>=3.2 <3.5`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -46,7 +46,7 @@ const SLICES: Array<Slice> = [
     to: `426f5a7`,
     onto: `cf7b2d4`,
     range: `>=3.5 <=3.6`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -56,7 +56,7 @@ const SLICES: Array<Slice> = [
     to: `2f85932`,
     onto: `e39bdc3`,
     range: `>=3.7 <3.9`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -66,7 +66,7 @@ const SLICES: Array<Slice> = [
     to: `3af06df`,
     onto: `551f0dd`,
     range: `>=3.9 <4.0`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -76,7 +76,7 @@ const SLICES: Array<Slice> = [
     to: `6dbdd2f`,
     onto: `56865f7`,
     range: `>=4.0 <4.1`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -86,7 +86,7 @@ const SLICES: Array<Slice> = [
     to: `746d79b`,
     onto: `69972a3`,
     range: `>=4.1 <4.2`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -97,7 +97,7 @@ const SLICES: Array<Slice> = [
     to: `178a67b4663d80b0fcbea542e7255b4499b51708`,
     onto: `bfc55b5762443c37ecdef08a3b5a4e057b4d1e85`,
     range: `>=4.2 <4.3`,
-    volta: {
+    versions: {
       node: `14.15.5`,
       npm: `6.14.11`,
     },
@@ -108,7 +108,7 @@ const SLICES: Array<Slice> = [
     to: `ffa54c5a104e7940b5c23666ddffbf44878f9d9f`,
     onto: `28e3e6ff2f49f1dbf06d31809ec73dbe42f1aa63`,
     range: `>=4.3 <4.4`,
-    volta: {
+    versions: {
       npm: `6.14.11`,
     },
   },
@@ -118,7 +118,7 @@ const SLICES: Array<Slice> = [
     to: `20ffca2f3c48591c971e6606a55b7b1820d8a64f`,
     onto: `a10409ccaa3604790dc45f52ef0402eb49015dcf`,
     range: `>=4.4 <4.5`,
-    volta: {
+    versions: {
       npm: `6.14.11`,
     },
   },
@@ -128,7 +128,7 @@ const SLICES: Array<Slice> = [
     to: `3a2388d39d41d000b5c5f9bcd48096b39fcedf8f`,
     onto: `55e13e9115b3cc5458d76c39da1211dc28d7b51f`,
     range: `>=4.5.2 <4.6`,
-    volta: {
+    versions: {
       npm: `6.14.11`,
     },
   },
@@ -138,7 +138,7 @@ const SLICES: Array<Slice> = [
     to: `fbec717ef33fc2db5791f2a1d5f9a315e293a50a`,
     onto: `83efc9f0d646bf86a3469e00c5ef5e4f7ab7cb95`,
     range: `>=4.6.1-rc <4.7`,
-    volta: {
+    versions: {
       npm: `6.14.11`,
     },
   },
@@ -148,7 +148,7 @@ const SLICES: Array<Slice> = [
     to: `cd8d000510ed2d2910e0ebaa903a51adda546a0a`,
     onto: `6e62273fa1e7469b89b589667c2c233789c62176`,
     range: `>=4.7.0-beta <4.8`,
-    volta: {
+    versions: {
       npm: `6.14.11`,
     },
   },
@@ -158,7 +158,7 @@ const SLICES: Array<Slice> = [
     to: `3287098f4785fd652112beadf3b33a960fcd19aa`,
     onto: `9a09c37878a45b06994485fdb510eb4d24587dcb`,
     range: `>=4.8.0-beta <4.8.1-rc`,
-    volta: {
+    versions: {
       npm: `6.14.11`,
     },
   },
@@ -318,7 +318,58 @@ function logSpawn(binary: string, args: Array<string>, opts?: SpawnOptions) {
 }
 
 type NpmRunner = (binary: `npm` | `npx`, args: Array<string>) => ReturnType<typeof spawn>;
-type NpmRunnerInitializer = (cwd: PortablePath, versions: {node?: string, npm?: string}, opts: SpawnOptions) => Promise<NpmRunner>;
+type NpmRunnerInitializer = (versions: {node?: string, npm?: string}, opts: SpawnOptions) => Promise<NpmRunner>;
+type NodeVersioningTool = {
+  name: string;
+  detect: () => Promise<boolean>;
+  init: NpmRunnerInitializer;
+};
+const tools: Array<NodeVersioningTool> = [
+  {
+    name: `Volta`,
+    detect: async () => {
+      try {
+        return await logSpawn(`volta`, [`--version`]).exit === 0;
+      } catch {
+        return false;
+      }
+    },
+    init: async ({node, npm}, opts) => {
+      await logSpawn(`volta`, [`pin`, `node@${node}`, `npm@${npm}`], opts).success;
+      return (binary, args) => logSpawn(`volta`, [`run`, binary, ...args], opts);
+    },
+  },
+  {
+    name: `mise-en-place`,
+    detect: async () => {
+      try {
+        return await logSpawn(`mise`, [`version`]).exit === 0;
+      } catch {
+        return false;
+      }
+    },
+    init: async ({node, npm}, opts) => {
+      return (binary, args) => (
+        logSpawn(`mise`, [`exec`, `node@${node}`, `npm@${npm}`, `--`, binary, ...args], opts)
+      );
+    },
+  },
+  {
+    name: `Corepack`,
+    detect: async () => {
+      logger.warn(`⚠ Warning: No node versioning tool detected`);
+      logger.warn(`⚠ Using current node version (${process.version}) for builds`);
+      logger.warn(`⚠ This may lead to incorrect patches`);
+
+      return true;
+    },
+    init: async ({npm}, opts) => {
+      return (binary, args) => (
+        logSpawn(`corepack`, [`${binary}@${npm}`, ...args], opts)
+      );
+    },
+  },
+];
 
 class Repo {
   private spawnOpts: SpawnOptions;
@@ -330,50 +381,37 @@ class Repo {
     return logSpawn(`git`, args, this.spawnOpts);
   }
 
+  private async resolveVersions(sliceVersions: {node?: string, npm?: string} = {}): Promise<{node: string, npm: string}> {
+    const path = ppath.join(this.dir, Filename.manifest);
+    const {volta: manifestVersions = {}} = JSON.parse(await xfs.readFilePromise(path, `utf8`));
+
+    assert(!(manifestVersions.node && sliceVersions.node), `node version is already set by repo`);
+    assert(!(manifestVersions.npm && sliceVersions.npm), `npm version is already set by repo`);
+
+    const versions = {
+      ...manifestVersions,
+      ...sliceVersions,
+    };
+    assert(versions.node, `node versions set by neither repo nor slice`);
+    assert(versions.npm, `npm versions set by neither repo nor slice`);
+
+    return versions;
+  }
   private getRunner: NpmRunnerInitializer = async (...args) => {
     this.getRunner = await this.chooseRunner();
     return this.getRunner(...args);
   };
   private async chooseRunner(): Promise<NpmRunnerInitializer> {
-    // Volta Runner
-    try {
-      if (await spawn(`volta`, [`--version`]).exit === 0) {
-        return async (cwd, {node, npm}, opts) => {
-          const path = ppath.join(cwd, Filename.manifest);
-          const manifest = JSON.parse(await xfs.readFilePromise(path, `utf8`));
-
-          assert(!(manifest.volta?.node && node), `node version is already set for ${manifest.version}`);
-          assert(!(manifest.volta?.npm && npm), `npm version is already set for ${manifest.version}`);
-
-          const volta = {
-            node: node ?? manifest.volta?.node,
-            npm: npm ?? manifest.volta?.npm,
-          };
-          assert(volta.node, `Missing node version for building with Volta`);
-          assert(volta.npm, `Missing npm version for building with Volta`);
-
-          if (JSON.stringify(manifest.volta) !== JSON.stringify(volta)) {
-            manifest.volta = volta;
-            await xfs.writeFilePromise(path, JSON.stringify(manifest, null, 4));
-          }
-
-          return (binary, args) => logSpawn(`volta`, [`run`, binary, ...args], opts);
-        };
+    return await logger.section(`Choose node versioning tool`, async () => {
+      for (const tool of tools) {
+        if (await tool.detect()) {
+          logger.log(`> Using ${tool.name} to run npm`);
+          return tool.init;
+        }
       }
-    } catch {}
 
-    // Corepack Runner
-    logger.warn(`⚠ Warning: Volta is not installed; using current node version and Corepack for builds`);
-    logger.warn(`⚠ This may lead to incorrect patches`);
-    return async (cwd, {npm}, opts) => {
-      if (npm === undefined) {
-        const path = ppath.join(cwd, Filename.manifest);
-        const manifest = JSON.parse(await xfs.readFilePromise(path, `utf8`));
-        assert(manifest.volta?.npm, `Missing npm version for building with Corepack`);
-        npm = manifest.volta.npm;
-      }
-      return (binary, args) => logSpawn(`corepack`, [`${binary}@${npm}`, ...args], opts);
-    };
+      throw new Error(`No node versioning tool found`);
+    });
   }
 
   private ready = false;
@@ -399,14 +437,14 @@ class Repo {
         await this.git(`config`, `user.email`, `you@example.com`).success;
         await this.git(`config`, `user.name`, `Your Name`).success;
       }
-
-      this.getRunner = await this.chooseRunner();
     });
+
+    this.getRunner = await this.chooseRunner();
 
     this.ready = true;
   }
 
-  public async build({from, to, onto, volta}: Slice, patch: boolean) {
+  public async build({from, to, onto, versions}: Slice, patch: boolean) {
     await this.git(`switch`, `-df`, onto).success;
     await this.git(`reset`, `--hard`).success;
     await this.git(`clean`, `-dfx`).success;
@@ -419,7 +457,7 @@ class Repo {
       }
     }
 
-    const run = await this.getRunner(this.dir, volta ?? {}, this.spawnOpts);
+    const run = await this.getRunner(await this.resolveVersions(versions), this.spawnOpts);
 
     if (await xfs.existsPromise(ppath.join(this.dir, `package-lock.json`))) {
       await run(`npm`, [`ci`, `--ignore-scripts`]).success;
