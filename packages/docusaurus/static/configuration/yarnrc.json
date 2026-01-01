@@ -273,7 +273,7 @@
     "httpTimeout": {
       "_package": "@yarnpkg/core",
       "title": "Amount of time to wait before cancelling pending HTTP requests.",
-      "type": "mixed",
+      "type": ["number", "string"],
       "oneOf": [
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
@@ -487,7 +487,7 @@
       "_package": "@yarnpkg/core",
       "title": "Minimum age of a package version according to the publish date on the npm registry to be considered for installation.",
       "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages, or to avoid relying on packages that could still be unpublished (e.g. the npm registry has specific rules for packages less than 3 days old).",
-      "type": "mixed",
+      "type": ["number", "string"],
       "oneOf": [
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
@@ -861,7 +861,7 @@
       "_package": "@yarnpkg/core",
       "title": "Define the minimal amount of time between two telemetry events.",
       "description": "By default we only send one request per week, making it impossible for us to track your usage with a lower granularity.",
-      "type": "mixed",
+      "type": ["number", "string"],
       "oneOf": [
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
