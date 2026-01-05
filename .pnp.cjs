@@ -295,7 +295,7 @@ const RAW_RUNTIME_STATE =
           ["pirates", "npm:4.0.5"],\
           ["semver", "npm:7.6.0"],\
           ["tslib", "npm:2.6.2"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -927,7 +927,7 @@ const RAW_RUNTIME_STATE =
           ["@types/babel__core", null],\
           ["debug", "virtual:b86a9fb34323a98c6519528ed55faa0d9b44ca8879307c0b29aa384bde47ff59a7d0c9051b31246f14521dfb71ba3c5d6d0b35c29fffc17bf875aa6ad977d9e8#npm:4.4.0"],\
           ["lodash.debounce", "npm:4.0.8"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"]\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"]\
         ],\
         "packagePeers": [\
           "@babel/core",\
@@ -6881,7 +6881,7 @@ const RAW_RUNTIME_STATE =
           ["glob", "npm:7.2.3"],\
           ["is-reference", "npm:1.2.1"],\
           ["magic-string", "npm:0.25.7"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["rollup", "npm:2.59.0"]\
         ],\
         "packagePeers": [\
@@ -6932,7 +6932,7 @@ const RAW_RUNTIME_STATE =
           ["builtin-modules", "npm:3.2.0"],\
           ["deepmerge", "npm:4.3.1"],\
           ["is-module", "npm:1.0.0"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["rollup", "npm:2.59.0"]\
         ],\
         "packagePeers": [\
@@ -8765,7 +8765,7 @@ const RAW_RUNTIME_STATE =
           ["ignore", "npm:7.0.5"],\
           ["natural-compare", "npm:1.4.0"],\
           ["ts-api-utils", "virtual:2057356716278406d05e3471fced5b501c2916d38d8d0130527b1ff2527ecd390e0be0f7e14e30a154ce4e03c72f6f4f7aef5607f1f5eaff584c4ce57b3d1034#npm:2.1.0"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/eslint",\
@@ -8798,7 +8798,7 @@ const RAW_RUNTIME_STATE =
           ["@typescript-eslint/visitor-keys", "npm:8.42.0"],\
           ["debug", "virtual:b86a9fb34323a98c6519528ed55faa0d9b44ca8879307c0b29aa384bde47ff59a7d0c9051b31246f14521dfb71ba3c5d6d0b35c29fffc17bf875aa6ad977d9e8#npm:4.4.0"],\
           ["eslint", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:9.20.1"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/eslint",\
@@ -8825,7 +8825,7 @@ const RAW_RUNTIME_STATE =
           ["@typescript-eslint/tsconfig-utils", "virtual:85cb63ce21784cbcce4b8d4c8b51bb8e115e745b000931d9762c0268af46b55a769b20e278f355997a5d92819e0f0ca9b2fe0cd15af65061c4b435e728c5cbdd#npm:8.42.0"],\
           ["@typescript-eslint/types", "npm:8.42.0"],\
           ["debug", "virtual:b86a9fb34323a98c6519528ed55faa0d9b44ca8879307c0b29aa384bde47ff59a7d0c9051b31246f14521dfb71ba3c5d6d0b35c29fffc17bf875aa6ad977d9e8#npm:4.4.0"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/typescript",\
@@ -8858,7 +8858,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/typescript", null],\
           ["@typescript-eslint/tsconfig-utils", "virtual:85cb63ce21784cbcce4b8d4c8b51bb8e115e745b000931d9762c0268af46b55a769b20e278f355997a5d92819e0f0ca9b2fe0cd15af65061c4b435e728c5cbdd#npm:8.42.0"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/typescript",\
@@ -8887,7 +8887,7 @@ const RAW_RUNTIME_STATE =
           ["debug", "virtual:b86a9fb34323a98c6519528ed55faa0d9b44ca8879307c0b29aa384bde47ff59a7d0c9051b31246f14521dfb71ba3c5d6d0b35c29fffc17bf875aa6ad977d9e8#npm:4.4.0"],\
           ["eslint", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:9.20.1"],\
           ["ts-api-utils", "virtual:2057356716278406d05e3471fced5b501c2916d38d8d0130527b1ff2527ecd390e0be0f7e14e30a154ce4e03c72f6f4f7aef5607f1f5eaff584c4ce57b3d1034#npm:2.1.0"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/eslint",\
@@ -8930,7 +8930,7 @@ const RAW_RUNTIME_STATE =
           ["minimatch", "npm:9.0.5"],\
           ["semver", "npm:7.6.0"],\
           ["ts-api-utils", "virtual:2057356716278406d05e3471fced5b501c2916d38d8d0130527b1ff2527ecd390e0be0f7e14e30a154ce4e03c72f6f4f7aef5607f1f5eaff584c4ce57b3d1034#npm:2.1.0"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/typescript",\
@@ -8958,7 +8958,7 @@ const RAW_RUNTIME_STATE =
           ["@typescript-eslint/typescript-estree", "virtual:dabe9f10a58ec3c16b53c2f100ba5eb059af9171d2dcf3d1d9cd79d9f65e6ff837f41da6c1a97d4710b7714d56303ad5b625482f1273b9fcb67b103c080b4ebd#npm:8.42.0"],\
           ["@typescript-eslint/utils", "virtual:2057356716278406d05e3471fced5b501c2916d38d8d0130527b1ff2527ecd390e0be0f7e14e30a154ce4e03c72f6f4f7aef5607f1f5eaff584c4ce57b3d1034#npm:8.42.0"],\
           ["eslint", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#npm:9.20.1"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/eslint",\
@@ -9268,7 +9268,7 @@ const RAW_RUNTIME_STATE =
           ]],\
           ["semver", "npm:7.6.0"],\
           ["tslib", "npm:2.6.2"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -10311,7 +10311,7 @@ const RAW_RUNTIME_STATE =
           ["micromatch", "npm:4.0.5"],\
           ["p-limit", "npm:2.2.0"],\
           ["tslib", "npm:2.6.2"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -10395,13 +10395,13 @@ const RAW_RUNTIME_STATE =
           ["react-tooltip", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:5.18.1"],\
           ["react-virtualized", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:9.22.6"],\
           ["react-window", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:1.8.11"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["resolve.exports", "npm:2.0.2"],\
           ["semver", "npm:7.6.0"],\
           ["three", "npm:0.145.0"],\
           ["tslib", "npm:2.6.2"],\
           ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.8"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"],\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"],\
           ["unified", "npm:11.0.4"],\
           ["unist-util-visit-parents", "npm:6.0.1"],\
           ["usehooks-ts", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:3.1.1"],\
@@ -10426,7 +10426,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:7.37.4"],\
           ["globals", "npm:15.15.0"],\
           ["tslib", "npm:2.6.2"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/eslint",\
@@ -10449,7 +10449,7 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react", "virtual:4b728ee22ccd3ae66b83e3be6d39acfb5b7a775112cc78b6b4322feb849fcfe6e39510452356cb4477dc6089bee57db31d02bbfb03b9fc8e914effa16a4145be#npm:7.37.4"],\
           ["globals", "npm:15.15.0"],\
           ["tslib", "npm:2.6.2"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -10582,7 +10582,7 @@ const RAW_RUNTIME_STATE =
           ["pirates", "npm:4.0.5"],\
           ["semver", "npm:7.6.0"],\
           ["tslib", "npm:2.6.2"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "linkType": "SOFT"\
       }]\
@@ -10990,8 +10990,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-cf41aa914b/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-cli"],\
@@ -11002,7 +11004,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:10635d85d43c1773f587c2d6565f7a30c3bff1c16e39550dcdd44b3745dd69317ced5e20de16484758df2d6dc9314da646bf356d1ef8485a0dcd939b71a3327c#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11016,8 +11021,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-4a5b883314/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],\
@@ -11028,7 +11035,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:16f564b30745199d7e07a913c371ce0c078051290c6e08b972f07b3f1bf057a6993fe67b7c6ee24931d0b1dd67e1274151612081733a79b961dd8336318fdfb9#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11042,8 +11052,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-b605a03544/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:14a22fb3831dfc762a1bb8a042d17886271c56698e1a83233f09eaacff5a5b83fe6f87adb9255774eab3586392c18ff98cf87aa6b374d572d9b72f88829f6d9e#workspace:packages/yarnpkg-cli"],\
@@ -11054,7 +11066,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:1c3d72c6b31a8950672985f8306a860ecc80c9a006aac95cf4a7ba13a6e7cc4e095e37186a53c9909e9efe97bc0f7f570a74b3879778e2a2356cdcf407120006#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11068,8 +11083,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-b70719e1cf/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/yarnpkg-cli"],\
@@ -11080,7 +11097,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:2351fd5ac4f83ad35b714d8af9fdeea561ada341d529d0dba50742dd5735dc3750df6c56bd680e14833d5b987026a1eab6618211ea0ef1b34b727372b3c77bc9#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11094,8 +11114,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-6f8b2cc32d/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli"],\
@@ -11106,7 +11128,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:45a6746f11cef24d8db9429cc5650999571e6bb77a8cfb3904a0e832f542be35246ec490516049308ca15b8678eb03bcf394199e514a8145ec32731af7235c91#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11120,8 +11145,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-5fe64685a8/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli"],\
@@ -11132,7 +11159,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:4864d30fc563f2fd1b72a5e3869493c5f50bf38f98ed3886173d80c044d981c3f68220dbf17f2b5fc5b4c5fba7d0af2e003926efe3487086484049f41c449852#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11146,8 +11176,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-48e1c4b1e3/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#workspace:packages/yarnpkg-cli"],\
@@ -11158,7 +11190,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:4ff153bc11101851444cc464184bde5e42ffd55b3939421c30a4c2b69483c3267c1680de4a4c00a49c98cbbe35e70111bb3c26f5ce8836b703c15cd5b753451a#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11172,8 +11207,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-278bc71407/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -11184,7 +11221,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:54c8b951e743ea46368d98ac86d4c1ac7d1aa57c9d31cbf6424fa2d918257654f26f71d51dbfe63844c533e97635ff97de50fd37e6e4bf74f2603a98754d6d22#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11198,8 +11238,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-b0f3d3ddf7/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/yarnpkg-cli"],\
@@ -11210,7 +11252,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:6fc63e4d1a1b8c6564cfaaeabf378b05cdf49336a90189d76df005175060690d597b069801c0c39b9c60573a6fba29e7646274224b3007bd7f72c95871114cf2#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11224,8 +11269,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:7b82ac5a3734606065dc76f117982c681b5b5076260acfcac869c687f06db0b8c08eae0998f419d64b9e59f6c816bcc70e067c87fa32ffe9cb979faf85cd80b4#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-b23bfac6d6/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli"],\
@@ -11236,7 +11283,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:7b82ac5a3734606065dc76f117982c681b5b5076260acfcac869c687f06db0b8c08eae0998f419d64b9e59f6c816bcc70e067c87fa32ffe9cb979faf85cd80b4#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:7b82ac5a3734606065dc76f117982c681b5b5076260acfcac869c687f06db0b8c08eae0998f419d64b9e59f6c816bcc70e067c87fa32ffe9cb979faf85cd80b4#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11250,8 +11300,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-c16f5d91fd/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/yarnpkg-cli"],\
@@ -11262,7 +11314,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:a4e201fc3c2d8b3ec5632082d407d554bbf8ea8b84182577dde1ce419148ae0981b382a0805280637d50e1132628fef8f78ee6a015164963130b1310a4cca910#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11276,8 +11331,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-08fe6ad7a7/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:a027ddc7edcbf74025e90effce333897039d2c6f8e1ebe319fb72c52c5be1b885da91acc56476d19bb6ce2e31cbc2d5b11241940b82f833a2cac262496c0088f#workspace:packages/yarnpkg-cli"],\
@@ -11288,7 +11345,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:08fe6ad7a76ed00f8dc32e3b968ce66fd4db8ac47424db78612ce3633e63ecb46d41984611094facf53bbef7eae7fbf98bbfd729fb77f5ccde564684f4e3a829#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:a7c38e9a420fd3b408ea245831c2c9f0e880eac64b268fab3219f5f0b1d6015f44b1f92d23aabfc6e980bbbbda00a23e9faa983fb98544fab94119ccd31f2440#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11302,8 +11362,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-4e0e483559/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli"],\
@@ -11314,7 +11376,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:adaf1cec8728346f1bf6a263f1954625a52d60518b8d2084da8a926203282105d2b95fb9da84922062af8d4fc84b8a1c39f220238424024e56f55577bdbc7208#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11328,8 +11393,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-bc7b846a45/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli"],\
@@ -11340,7 +11407,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:b4c0e602e8ac4e01a7b08db41bb5808da767dd1f6802758faa5125fb2423614bb0a8806ee1b30c3a0769f86da15ad37377f5118d93cd93fa48df0008a448fb35#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11354,8 +11424,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-60b85f82ba/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/yarnpkg-cli"],\
@@ -11366,7 +11438,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:b63ad861025672af62aed0e7c80dca4cfce3194ca046161e54fc14c498c39e3b82004ea844489c7a58d2f1a31867f388bf25b8128f5ccce46f35305e1f91e9ab#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11380,8 +11455,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-f1ba55b2e5/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:e3ce0ce4b7f0796ca44011528cb9cdc133fc62a76363fea6de68497bae04bdbe5a6dd47e6b9f23c282eb8e4533d75e96cf378c943d07a4e78aae0b715f06a450#workspace:packages/yarnpkg-cli"],\
@@ -11392,7 +11469,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:c4bd2716e35986fb2e70f5fba6e9570c69eceabc69282df5bcff5d22c6b7d0e696d0cfb4bcbd9a20675fe3e2eb6192b59d41b97baa8b27e1d474b94eeda3f778#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11406,8 +11486,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-c1671af1b3/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:86c95fabbcd56c56f5f2d2e080e64a1095e3fe233877aa9f7958f317f88a95627e0be2765e89c0cff02c9f08f27b64b7cbc9d5c3960c1df509d5e6ea98cca4f4#workspace:packages/yarnpkg-cli"],\
@@ -11418,7 +11500,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:ce4dc3135569e847b88addae1199f9468fb0b37867e1a86ba6725f71b9df587a8ae43356ae86c3bfe3b0cbbf07dcf8c1a4a95199810d9f20df387eec0a1e1965#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11432,8 +11517,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-9d09146e76/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:743b60015fc887fe314a7ee01ea4843b516ac512d77939f47dc39d50bc7db742dc8994fe9bb2245ada0b3ce6f8aa58329d603fbc24093050cd499cb16a1a995f#workspace:packages/yarnpkg-cli"],\
@@ -11444,7 +11531,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:d1d72d9e3903ca8b8d9c23a360395cc764db2689e5992ef9af91c79f03a839db10ec675af9e4c1c8f4842aff1a614eb5b115fcc0afe8256630151ef1252de94b#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11458,8 +11548,10 @@ const RAW_RUNTIME_STATE =
       ["virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-compat", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-compat-virtual-10001d27b8/1/packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-patch", null],\
           ["@yarnpkg/cli", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli"],\
@@ -11470,7 +11562,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:f8376ca2bc11738adced76b97627e7eff07ec08f93f5b76caf8d6bd4f78f5ae9c1911cb9d1a0bd256ef3e0601dedeba933acf0d2381588b6513ee81e25626459#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "packagePeers": [\
@@ -11484,8 +11579,10 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/plugin-compat", {\
         "packageLocation": "./packages/plugin-compat/",\
         "packageDependencies": [\
+          ["@types/cross-spawn", "npm:6.0.0"],\
           ["@types/lodash-es", "npm:4.17.4"],\
           ["@types/resolve", "npm:1.20.2"],\
+          ["@types/semver", "npm:7.5.8"],\
           ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/extensions", "virtual:278bc71407223dd2bc9ed6dcaec459b0cf9f599d3a54c3151d28f79fb3a427390fad08553f7c1ad9311ccd3a081e35dfd4095a517d349ec05b8b41552b547315#workspace:packages/yarnpkg-extensions"],\
@@ -11494,7 +11591,10 @@ const RAW_RUNTIME_STATE =
           ["@yarnpkg/plugin-compat", "workspace:packages/plugin-compat"],\
           ["@yarnpkg/plugin-npm", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/plugin-npm"],\
           ["@yarnpkg/plugin-patch", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/plugin-patch"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["chalk", "npm:4.1.2"],\
+          ["cross-spawn", "npm:7.0.6"],\
+          ["p-limit", "npm:2.2.0"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["semver", "npm:7.6.0"]\
         ],\
         "linkType": "SOFT"\
@@ -21214,7 +21314,7 @@ const RAW_RUNTIME_STATE =
           ["@babel/runtime", "npm:7.27.0"],\
           ["babel-plugin-macros", "npm:3.1.0"],\
           ["cosmiconfig", "npm:7.0.1"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"]\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -22114,7 +22214,7 @@ const RAW_RUNTIME_STATE =
           ["anymatch", "npm:3.1.2"],\
           ["braces", "npm:3.0.2"],\
           ["chokidar", "npm:3.6.0"],\
-          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=37dad8"],\
           ["glob-parent", "npm:5.1.2"],\
           ["is-binary-path", "npm:2.1.0"],\
           ["is-glob", "npm:4.0.3"],\
@@ -23867,7 +23967,7 @@ const RAW_RUNTIME_STATE =
           ["react", "npm:19.1.0"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:19.1.0"],\
           ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.8"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@docusaurus/core",\
@@ -24856,7 +24956,7 @@ const RAW_RUNTIME_STATE =
           ["object.fromentries", "npm:2.0.8"],\
           ["object.values", "npm:1.2.1"],\
           ["prop-types", "npm:15.8.1"],\
-          ["resolve", "patch:resolve@npm%3A2.0.0-next.5#optional!builtin<compat/resolve>::version=2.0.0-next.5&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A2.0.0-next.5#optional!builtin<compat/resolve>::version=2.0.0-next.5&hash=e6f707"],\
           ["semver", "npm:6.3.1"],\
           ["string.prototype.matchall", "npm:4.0.12"],\
           ["string.prototype.repeat", "npm:1.0.0"]\
@@ -25812,10 +25912,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["fsevents", [\
-      ["patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1", {\
-        "packageLocation": "./.yarn/unplugged/fsevents-patch-19706e7e35/node_modules/fsevents/",\
+      ["patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=37dad8", {\
+        "packageLocation": "./.yarn/unplugged/fsevents-patch-3d8bd78db1/node_modules/fsevents/",\
         "packageDependencies": [\
-          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=37dad8"],\
           ["node-gyp", "npm:9.1.0"]\
         ],\
         "linkType": "HARD"\
@@ -28534,7 +28634,7 @@ const RAW_RUNTIME_STATE =
           ["@types/node", "npm:24.3.1"],\
           ["anymatch", "npm:3.1.2"],\
           ["fb-watchman", "npm:2.0.0"],\
-          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=37dad8"],\
           ["graceful-fs", "npm:4.2.11"],\
           ["jest-haste-map", "npm:29.2.1"],\
           ["jest-regex-util", "npm:29.2.0"],\
@@ -28708,7 +28808,7 @@ const RAW_RUNTIME_STATE =
           ["jest-resolve", "npm:29.2.1"],\
           ["jest-util", "npm:29.7.0"],\
           ["jest-validate", "npm:29.2.1"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["resolve.exports", "npm:1.1.0"],\
           ["slash", "npm:3.0.0"]\
         ],\
@@ -34153,7 +34253,7 @@ const RAW_RUNTIME_STATE =
           ["minimatch", "npm:3.0.4"],\
           ["node-watch", "npm:0.6.0"],\
           ["qunit", "npm:2.9.2"],\
-          ["resolve", "patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=c3c19d"]\
+          ["resolve", "patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=e6f707"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -34924,7 +35024,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/rechoir-npm-0.6.2-0df5f171ec-fe76bf9c21.zip/node_modules/rechoir/",\
         "packageDependencies": [\
           ["rechoir", "npm:0.6.2"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"]\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -35340,30 +35440,30 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["resolve", [\
-      ["patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d", {\
-        "packageLocation": "./.yarn/cache/resolve-patch-07d439312e-14594f99db.zip/node_modules/resolve/",\
+      ["patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707", {\
+        "packageLocation": "./.yarn/cache/resolve-patch-0fdd5447f7-8b645560f6.zip/node_modules/resolve/",\
         "packageDependencies": [\
           ["is-core-module", "npm:2.13.1"],\
           ["path-parse", "npm:1.0.7"],\
-          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A1.22.2#optional!builtin<compat/resolve>::version=1.22.2&hash=e6f707"],\
           ["supports-preserve-symlinks-flag", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
       }],\
-      ["patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=c3c19d", {\
-        "packageLocation": "./.yarn/cache/resolve-patch-7857a05d65-2f534b82eb.zip/node_modules/resolve/",\
+      ["patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=e6f707", {\
+        "packageLocation": "./.yarn/cache/resolve-patch-a9031ed256-a14dd5def5.zip/node_modules/resolve/",\
         "packageDependencies": [\
           ["path-parse", "npm:1.0.7"],\
-          ["resolve", "patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=c3c19d"]\
+          ["resolve", "patch:resolve@npm%3A1.9.0#optional!builtin<compat/resolve>::version=1.9.0&hash=e6f707"]\
         ],\
         "linkType": "HARD"\
       }],\
-      ["patch:resolve@npm%3A2.0.0-next.5#optional!builtin<compat/resolve>::version=2.0.0-next.5&hash=c3c19d", {\
-        "packageLocation": "./.yarn/cache/resolve-patch-95f8f5d302-05fa778de9.zip/node_modules/resolve/",\
+      ["patch:resolve@npm%3A2.0.0-next.5#optional!builtin<compat/resolve>::version=2.0.0-next.5&hash=e6f707", {\
+        "packageLocation": "./.yarn/cache/resolve-patch-fed9e40118-76c221deb1.zip/node_modules/resolve/",\
         "packageDependencies": [\
           ["is-core-module", "npm:2.13.1"],\
           ["path-parse", "npm:1.0.7"],\
-          ["resolve", "patch:resolve@npm%3A2.0.0-next.5#optional!builtin<compat/resolve>::version=2.0.0-next.5&hash=c3c19d"],\
+          ["resolve", "patch:resolve@npm%3A2.0.0-next.5#optional!builtin<compat/resolve>::version=2.0.0-next.5&hash=e6f707"],\
           ["supports-preserve-symlinks-flag", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
@@ -35523,7 +35623,7 @@ const RAW_RUNTIME_STATE =
       ["npm:2.59.0", {\
         "packageLocation": "./.yarn/cache/rollup-npm-2.59.0-72e7408354-c4dd25acc1.zip/node_modules/rollup/",\
         "packageDependencies": [\
-          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=37dad8"],\
           ["rollup", "npm:2.59.0"]\
         ],\
         "linkType": "HARD"\
@@ -37377,7 +37477,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/typescript", null],\
           ["ts-api-utils", "virtual:2057356716278406d05e3471fced5b501c2916d38d8d0130527b1ff2527ecd390e0be0f7e14e30a154ce4e03c72f6f4f7aef5607f1f5eaff584c4ce57b3d1034#npm:2.1.0"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/typescript",\
@@ -37605,7 +37705,7 @@ const RAW_RUNTIME_STATE =
           ["minimatch", "npm:9.0.5"],\
           ["shiki", "npm:0.14.7"],\
           ["typedoc", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.25.8"],\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "packagePeers": [\
           "@types/typescript",\
@@ -37615,10 +37715,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["typescript", [\
-      ["patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5", {\
-        "packageLocation": "./.yarn/cache/typescript-patch-bcfe2ebaf8-bd810ab13e.zip/node_modules/typescript/",\
+      ["patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027", {\
+        "packageLocation": "./.yarn/cache/typescript-patch-663f538a14-bd810ab13e.zip/node_modules/typescript/",\
         "packageDependencies": [\
-          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"]\
+          ["typescript", "patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=913027"]\
         ],\
         "linkType": "HARD"\
       }]\
