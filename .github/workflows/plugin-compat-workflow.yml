@@ -24,3 +24,46 @@ jobs:
     - name: 'Run the plugin-compat tests'
       run: |
         node ./scripts/run-yarn.js test:plugin-compat
+
+  check-patches:
+    name: 'Check that the patch files are consistent with fresh builds'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        git fetch --no-tags --unshallow origin HEAD master
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Regenerate affected patches'
+      run: |
+        PKGS=$(basename -a packages/plugin-compat/extra/*/)
+        if ! git diff --quiet "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- 'packages/plugin-compat/extra' ':!packages/plugin-compat/extra/*/*'; then
+          # If a file outside of the package-specific folders changed, rebuild all patches
+          for pkg in $PKGS; do
+            echo "::group::Regenerating $pkg patch"
+            yarn "build:patch:$pkg" '*'
+            echo "::endgroup::"
+          done
+        else
+          # Otherwise, only rebuild the patches that have changed
+          for pkg in $PKGS; do
+            if ! git diff --quiet "$(git merge-base origin/"$TARGET_BRANCH" HEAD)" HEAD -- "packages/plugin-compat/sources/patches/$pkg.patch.ts" "packages/plugin-compat/extra/$pkg/"; then
+              echo "::group::Regenerating $pkg patch"
+              yarn "build:patch:$pkg" '*'
+              echo "::endgroup::"
+            fi
+          done
+        fi
+        if ! git diff --quiet -- 'packages/plugin-compat/extra/*/patches/*' 'packages/plugin-compat/sources/patches/'; then
+          echo ''
+          echo "Files would be changed by fresh builds:"
+          git diff --name-only -- 'packages/plugin-compat/extra/*/patches/*' 'packages/plugin-compat/sources/patches/' | sed 's/^/- /'
+          exit 1
+        fi
+      shell: bash
+      if: github.event.pull_request != ''
+      env:
+        TARGET_BRANCH: ${{github.event.pull_request.base.ref}}
+        GEN_PATCHES_NO_CACHE: '1'
