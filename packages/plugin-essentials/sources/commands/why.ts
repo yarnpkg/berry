@@ -128,7 +128,7 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
 
     seen.add(pkg.locatorHash);
 
-    if (structUtils.areIdentsEqual(pkg, targetPkg)) {
+    if (structUtils.areIdentsEqual(pkg, targetPkg) && structUtils.isPackageInRange(pkg, targetPkg.range)) {
       dependents.add(pkg.locatorHash);
       return true;
     }
@@ -146,10 +146,6 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
       const nextPkg = project.storedPackages.get(resolution);
       if (!nextPkg)
         throw new Error(`Assertion failed: The package should have been registered`);
-
-      if (structUtils.areIdentsEqual(nextPkg, targetPkg) && !structUtils.isPackageInRange(nextPkg, targetPkg.range))
-        continue;
-
 
       if (markAllDependents(nextPkg)) {
         depends = true;
