@@ -1,8 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}                          from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Package, formatUtils, Descriptor} from '@yarnpkg/core';
-import {Ident, Project}                                               from '@yarnpkg/core';
-import {miscUtils, structUtils, treeUtils}                            from '@yarnpkg/core';
-import {Command, Option, Usage}                                       from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
+import {Configuration, Descriptor, LocatorHash, Package, Project} from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils, treeUtils}           from '@yarnpkg/core';
+import {Command, Option, Usage}                                   from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WhyCommand extends BaseCommand {
