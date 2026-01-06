@@ -24,7 +24,7 @@ export default class WhyCommand extends BaseCommand {
       `Explain why version 3.3.1 of lodash is in your project`,
       `$0 why lodash@3.3.1`,
     ], [
-      `or why version 3.X of lodash is in your project`,
+      `Explain why version 3.X of lodash is in your project`,
       `$0 why lodash@^3`,
     ]],
   });
@@ -67,10 +67,6 @@ export default class WhyCommand extends BaseCommand {
   }
 }
 
-function isSameIdent(pkg: Ident, targetPkg: Ident) {
-  return pkg.identHash === targetPkg.identHash;
-}
-
 function whySimple(project: Project, targetPkg: Descriptor, {configuration, peers}: {configuration: Configuration, peers: boolean}) {
   const sortedPackages = miscUtils.sortMap(project.storedPackages.values(), pkg => {
     return structUtils.stringifyLocator(pkg);
@@ -96,7 +92,7 @@ function whySimple(project: Project, targetPkg: Descriptor, {configuration, peer
         throw new Error(`Assertion failed: The package should have been registered`);
 
 
-      if (!isSameIdent(nextPkg, targetPkg))
+      if (!structUtils.areIdentsEqual(nextPkg, targetPkg))
         continue;
 
       if (!structUtils.isPackageInRange(nextPkg, targetPkg.range))
@@ -132,7 +128,7 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
 
     seen.add(pkg.locatorHash);
 
-    if (isSameIdent(pkg, targetPkg)) {
+    if (structUtils.areIdentsEqual(pkg, targetPkg)) {
       dependents.add(pkg.locatorHash);
       return true;
     }
@@ -151,7 +147,7 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
       if (!nextPkg)
         throw new Error(`Assertion failed: The package should have been registered`);
 
-      if (isSameIdent(nextPkg, targetPkg) && !structUtils.isPackageInRange(nextPkg, targetPkg.range))
+      if (structUtils.areIdentsEqual(nextPkg, targetPkg) && !structUtils.isPackageInRange(nextPkg, targetPkg.range))
         continue;
 
 
@@ -197,7 +193,7 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
       return;
 
     // We don't want to print the full path if it doesn't transitively depend on targetPkg.range
-    if (isSameIdent(pkg, targetPkg) && !structUtils.isPackageInRange(pkg, targetPkg.range))
+    if (structUtils.areIdentsEqual(pkg, targetPkg) && !structUtils.isPackageInRange(pkg, targetPkg.range))
       return;
 
     // We don't want to reprint the children for a package that already got
