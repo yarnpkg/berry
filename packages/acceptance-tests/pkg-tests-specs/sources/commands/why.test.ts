@@ -371,6 +371,18 @@ describe(`Commands`, () => {
             },
           }]);
         }));
+
+      test(`it should fail with non-semver range specified`, makeTemporaryEnv({
+        workspaces: [`packages/*`],
+      }, async ({path, run, source}) => {
+        /*
+        Since we're testing if the given range is invalid (non-semver), it fails
+        even before traversing the dependency-tree. We don't have to create a
+        whole environment here bit rather just run an invalid command in the
+        current workspace.
+        */
+        expect(async () => await run(`why`, `irrelevant-dependency@invalid.range`)).rejects.toThrow();
+      }));
     });
   });
 });
