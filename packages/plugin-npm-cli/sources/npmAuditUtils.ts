@@ -1,7 +1,7 @@
-import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator, LocatorHash, MinimalResolveOptions, Package} from '@yarnpkg/core';
-import semver                                                                                                                                 from  'semver';
+import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator, LocatorHash, MinimalResolveOptions} from '@yarnpkg/core';
+import semver                                                                                                                        from  'semver';
 
-import * as npmAuditTypes                                                                                                                     from './npmAuditTypes';
+import * as npmAuditTypes                                                                                                            from './npmAuditTypes';
 
 export const allSeverities = [
   npmAuditTypes.Severity.Info,
@@ -127,38 +127,23 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     if (typeof pkg === `undefined`)
       throw new Error(`Assertion failed: The package should have been registered`);
 
-    let packageToAudit: Package | null = null;
-
     const devirtualizedDescriptor = structUtils.ensureDevirtualizedDescriptor(descriptor);
     if (resolver.supportsDescriptor(devirtualizedDescriptor, resolveOptions)) {
       const resolutionDependencies = resolver.getResolutionDependencies(devirtualizedDescriptor, resolveOptions);
 
       if (Object.keys(resolutionDependencies).length > 0) {
-        // Using the first resolution dependency (typically the source descriptor for patches)
-        const resolutionDependency = Object.values(resolutionDependencies)[0] as Descriptor;
-        const dependencyResolution = project.storedResolutions.get(resolutionDependency.descriptorHash);
-
-        if (typeof dependencyResolution !== `undefined`) {
-          const dependencyPkg = project.storedPackages.get(dependencyResolution);
-          if (typeof dependencyPkg !== `undefined`) {
-            packageToAudit = dependencyPkg;
-          }
+        for (const resolutionDependencyDescriptor of Object.values(resolutionDependencies)) {
+          processDescriptor(parent, resolutionDependencyDescriptor);
         }
       }
     }
+    const devirtualizedLocator = structUtils.ensureDevirtualizedLocator(pkg);
 
-    // Fall back to the original package if no resolution dependencies were found
-    if (packageToAudit === null)
-      packageToAudit = pkg;
-
-
-    const devirtualizedLocator = structUtils.ensureDevirtualizedLocator(packageToAudit);
-
-    if (devirtualizedLocator.reference.startsWith(`npm:`) && packageToAudit.version !== null) {
-      const packageName = structUtils.stringifyIdent(packageToAudit);
+    if (devirtualizedLocator.reference.startsWith(`npm:`) && pkg.version !== null) {
+      const packageName = structUtils.stringifyIdent(pkg);
 
       const versions = miscUtils.getMapWithDefault(packages, packageName);
-      miscUtils.getArrayWithDefault(versions, packageToAudit.version).push(parent);
+      miscUtils.getArrayWithDefault(versions, pkg.version).push(parent);
     }
 
     if (recursive) {
