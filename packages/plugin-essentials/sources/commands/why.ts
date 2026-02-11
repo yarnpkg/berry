@@ -187,10 +187,6 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
     if (dependency !== null && project.tryWorkspaceByLocator(pkg))
       return;
 
-    // We don't want to print the full path if it doesn't transitively depend on targetPkg.range
-    if (structUtils.areIdentsEqual(pkg, targetPkg) && !structUtils.isPackageInRange(pkg, targetPkg.range))
-      return;
-
     // We don't want to reprint the children for a package that already got
     // printed as part of another branch
     if (printed.has(pkg.locatorHash))
