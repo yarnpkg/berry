@@ -219,35 +219,35 @@ describe(`Commands`, () => {
             dependencies: {
               [`b`]: `workspace:^`,
               [`c`]: `workspace:^`,
-              [`why-no-deps`]: `1.0.0`,
+              [`no-deps`]: `1.0.0`,
             },
           });
 
           await fs.writeJson(ppath.join(path, `packages/b/package.json`), {
             name: `b`,
             dependencies: {
-              [`why-no-deps`]: `1.1.0`,
+              [`no-deps`]: `1.1.0`,
             },
           });
 
           await fs.writeJson(ppath.join(path, `packages/c/package.json`), {
             name: `c`,
             dependencies: {
-              [`why-no-deps`]: `2.0.0`,
+              [`no-deps`]: `2.0.0`,
             },
           });
 
           await run(`install`);
 
-          const {stdout} = await run(`why`, `why-no-deps@^1.1.0`, `--json`);
+          const {stdout} = await run(`why`, `no-deps@^1.1.0`, `--json`);
 
           // Don't list v1.0.0 (package A) nor v2.0.0 (package C)
           expect(misc.parseJsonStream(stdout)).toEqual([{
             value: `b@workspace:packages/b`,
             children: {
-              [`why-no-deps@npm:1.1.0`]: {
-                descriptor: `why-no-deps@npm:1.1.0`,
-                locator: `why-no-deps@npm:1.1.0`,
+              [`no-deps@npm:1.1.0`]: {
+                descriptor: `no-deps@npm:1.1.0`,
+                locator: `no-deps@npm:1.1.0`,
               },
             },
           }]);
@@ -262,7 +262,7 @@ describe(`Commands`, () => {
             name: `a`,
             dependencies: {
               [`b`]: `workspace:^`,
-              [`why-range-dep`]: `1.0.0`,
+              [`one-fixed-dep`]: `1.0.0`,
             },
           });
 
@@ -270,7 +270,7 @@ describe(`Commands`, () => {
             name: `b`,
             dependencies: {
               [`c`]: `workspace:^`,
-              [`why-range-dep`]: `1.1.0`,
+              [`one-fixed-dep`]: `1.1.0`,
             },
           });
 
@@ -278,25 +278,25 @@ describe(`Commands`, () => {
             name: `c`,
             dependencies: {
               [`d`]: `workspace:^`,
-              [`why-range-dep`]: `1.1.1`,
+              [`one-fixed-dep`]: `1.1.1`,
             },
           });
 
           await fs.writeJson(ppath.join(path, `packages/d/package.json`), {
             name: `d`,
             dependencies: {
-              [`why-range-dep`]: `2.0.0`,
+              [`one-fixed-dep`]: `2.0.0`,
             },
           });
 
           await run(`install`);
 
-          const {stdout} = await run(`why`, `-R`, `why-no-deps@^1.1.0`, `--json`);
+          const {stdout} = await run(`why`, `-R`, `no-deps@^1.1.0`, `--json`);
 
           // Don't list v1.0.0 (package A) nor v2.0.0 (package D)
-          expect(stdout).not.toContain(`why-no-deps@npm:1.0.0`);
-          expect(stdout).not.toContain(`why-no-deps@npm:1.0.1`);
-          expect(stdout).not.toContain(`why-no-deps@npm:2.0.0`);
+          expect(stdout).not.toContain(`no-deps@npm:1.0.0`);
+          expect(stdout).not.toContain(`no-deps@npm:1.0.1`);
+          expect(stdout).not.toContain(`no-deps@npm:2.0.0`);
 
           expect(misc.parseJsonStream(stdout)).toEqual([{
             value: `a@workspace:packages/a`,
@@ -306,21 +306,6 @@ describe(`Commands`, () => {
                 value: {
                   descriptor: `b@workspace:^`,
                   locator: `b@workspace:packages/b`,
-                },
-              },
-              [`why-range-dep@npm:1.0.0`]: {
-                value: {
-                  descriptor: `why-range-dep@npm:1.0.0`,
-                  locator: `why-range-dep@npm:1.0.0`,
-                },
-                children: {
-                  [`why-no-deps@npm:1.1.1`]: {
-                    children: {},
-                    value: {
-                      descriptor: `why-no-deps@npm:^1.0.0`,
-                      locator: `why-no-deps@npm:1.1.1`,
-                    },
-                  },
                 },
               },
             },
@@ -334,36 +319,36 @@ describe(`Commands`, () => {
                   locator: `c@workspace:packages/c`,
                 },
               },
-              "why-range-dep@npm:1.1.0": {
+              "one-fixed-dep@npm:1.1.0": {
                 children: {
-                  "why-no-deps@npm:1.1.1": {
+                  "no-deps@npm:1.1.0": {
                     children: {},
                     value: {
-                      descriptor: `why-no-deps@npm:^1.1.0`,
-                      locator: `why-no-deps@npm:1.1.1`,
+                      descriptor: `no-deps@npm:1.1.0`,
+                      locator: `no-deps@npm:1.1.0`,
                     },
                   },
                 },
                 value: {
-                  descriptor: `why-range-dep@npm:1.1.0`,
-                  locator: `why-range-dep@npm:1.1.0`,
+                  descriptor: `one-fixed-dep@npm:1.1.0`,
+                  locator: `one-fixed-dep@npm:1.1.0`,
                 },
               },
             },
           }, {
             value: `c@workspace:packages/c`,
             children: {
-              [`why-range-dep@npm:1.1.1`]: {
+              [`one-fixed-dep@npm:1.1.1`]: {
                 value: {
-                  descriptor: `why-range-dep@npm:1.1.1`,
-                  locator: `why-range-dep@npm:1.1.1`,
+                  descriptor: `one-fixed-dep@npm:1.1.1`,
+                  locator: `one-fixed-dep@npm:1.1.1`,
                 },
                 children: {
-                  [`why-no-deps@npm:1.1.1`]: {
+                  [`no-deps@npm:1.1.1`]: {
                     children: {},
                     value: {
-                      descriptor: `why-no-deps@npm:^1.1.1`,
-                      locator: `why-no-deps@npm:1.1.1`,
+                      descriptor: `no-deps@npm:1.1.1`,
+                      locator: `no-deps@npm:1.1.1`,
                     },
                   },
                 },

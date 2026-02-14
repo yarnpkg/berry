@@ -1,7 +1,0 @@
-{
-    "name": "why-range-dep",
-    "version": "1.0.1",
-    "dependencies": {
-        "why-no-deps": "^1.0.1"
-    }
-}
