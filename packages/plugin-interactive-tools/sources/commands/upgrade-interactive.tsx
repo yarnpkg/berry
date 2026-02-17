@@ -43,10 +43,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const {ItemOptions} = await import(`@yarnpkg/libui/sources/components/ItemOptions`);
     const {Pad} = await import(`@yarnpkg/libui/sources/components/Pad`);
     const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
-    const {useMinistore} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {useMinistore, useMinistoreSetAll} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {useKeypress} = await import(`@yarnpkg/libui/sources/hooks/useKeypress`);
     const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
     const {Box, Text} = await import(`ink`);
-    const {default: React, useEffect, useRef, useState} = await import(`react`);
+    const {default: React, useCallback, useEffect, useRef, useState} = await import(`react`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -59,14 +60,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
-    // 7 = 1-line command written by the user
-    //   + 2-line prompt
+    // 8 = 1-line command written by the user
+    //   + 3-line prompt
     //   + 1 newline
     //   + 1-line header
     //   + 1 newline
     //     [...package list]
     //   + 1 empty line
-    const VIEWPORT_SIZE = (this.context.stdout as WriteStream).rows - 7;
+    const VIEWPORT_SIZE = (this.context.stdout as WriteStream).rows - 8;
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
@@ -181,6 +182,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
                 Press <Text bold color={`cyanBright`}>{`<left>`}</Text>/<Text bold color={`cyanBright`}>{`<right>`}</Text> to select versions.
               </Text>
             </Box>
+            <Box marginLeft={1}>
+              <Text>
+                Press <Text bold color={`cyanBright`}>c</Text>/<Text bold color={`cyanBright`}>r</Text>/<Text bold color={`cyanBright`}>l</Text> to select all <Text bold color={`cyanBright`}>current</Text>/<Text bold color={`cyanBright`}>range</Text>/<Text bold color={`cyanBright`}>latest</Text>.
+              </Text>
+            </Box>
           </Box>
           <Box flexDirection={`column`}>
             <Box marginLeft={1}>
@@ -232,6 +238,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const UpgradeEntries = ({dependencies}: {dependencies: Array<Descriptor>}) => {
+      const setAll = useMinistoreSetAll();
       const [suggestions, setSuggestions] = useState<Array<{descriptor: Descriptor, suggestions: UpgradeSuggestions} | null>>(dependencies.map(() => null));
       const mountedRef = useRef<boolean>(true);
 
@@ -305,6 +312,31 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           }
         });
       }, []);
+
+      const handleBulkSelect = useCallback((ch: string) => {
+        if (ch !== `c` && ch !== `r` && ch !== `l`)
+          return;
+
+        const entries: Array<[string, string | null]> = [];
+        for (const suggestion of suggestions) {
+          if (suggestion === null)
+            continue;
+
+          let value: string | null;
+          if (ch === `c`)
+            value = null;
+          else if (ch === `r`)
+            value = suggestion.suggestions[1].value;
+          else
+            value = suggestion.suggestions[2].value ?? suggestion.suggestions[1].value;
+
+          entries.push([suggestion.descriptor.descriptorHash, value]);
+        }
+
+        setAll(entries);
+      }, [suggestions, setAll]);
+
+      useKeypress({active: true}, handleBulkSelect, [handleBulkSelect]);
 
       if (!suggestions.length)
         return <Text>No upgrades found</Text>;
