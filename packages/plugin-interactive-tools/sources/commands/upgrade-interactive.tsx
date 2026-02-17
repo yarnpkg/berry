@@ -1,9 +1,10 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                              from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash} from '@yarnpkg/core';
+import {Cache, Configuration, Project, HardDependencies, InstallMode, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash} from '@yarnpkg/core';
 import * as libuiUtils                                                                                                    from '@yarnpkg/libui/sources/libuiUtils';
 import type {SubmitInjectedComponent}                                                                                     from '@yarnpkg/libui/sources/misc/renderForm';
 import {suggestUtils}                                                                                                     from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                   from 'clipanion';
+import {Command, Option, Usage}                                                                                           from 'clipanion';
+import * as t                                                                                                             from 'typanion';
 import {diffWords}                                                                                                        from 'diff';
 import semver                                                                                                             from 'semver';
 import {WriteStream}                                                                                                      from 'tty';
@@ -35,6 +36,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       `Open the upgrade window`,
       `yarn upgrade-interactive`,
     ]],
+  });
+
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   async execute() {
@@ -373,6 +379,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, {
       cache,
+      mode: this.mode,
     });
   }
 }
