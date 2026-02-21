@@ -114,6 +114,27 @@ describe(`Configuration`, () => {
           emptyEnvWithEmptyFallback: {
             npmAuthToken: `\${EMPTY_VARIABLE:-}`,
           },
+          emptyEnvWithNestedEnv: {
+            npmAuthToken: `prefix1-\${EMPTY_VARIABLE:-prefix2-\${ENV_AUTH_TOKEN-fallback-value}-suffix1}-suffix2`,
+          },
+          emptyEnvWithNestedEnvWithStrictFallback: {
+            npmAuthToken: `prefix1-\${EMPTY_VARIABLE:-prefix2-\${EMPTY_VARIABLE-fallback-value}-suffix1}-suffix2`,
+          },
+          emptyEnvWithNestedEnvWithFallback: {
+            npmAuthToken: `prefix1-\${EMPTY_VARIABLE:-prefix2-\${EMPTY_VARIABLE:-fallback-value}-suffix1}-suffix2`,
+          },
+          escapedEnv: {
+            npmAuthToken: `\\\${ENV_AUTH_TOKEN}`,
+          },
+          escapedBackslash: {
+            npmAuthToken: `\\\\\${ENV_AUTH_TOKEN}`,
+          },
+          escapedBrace: {
+            npmAuthToken: `\${EMPTY_VARIABLE:-\\}}`,
+          },
+          literalBrace: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN}}`,
+          },
         },
       }, async dir => {
         const configuration = await Configuration.find(dir, {
@@ -132,6 +153,13 @@ describe(`Configuration`, () => {
         const emptyEnvWithStrictFallback = getToken(`emptyEnvWithStrictFallback`);
         const emptyEnvWithFallback = getToken(`emptyEnvWithFallback`);
         const emptyEnvWithEmptyFallback = getToken(`emptyEnvWithEmptyFallback`);
+        const emptyEnvWithNestedEnv = getToken(`emptyEnvWithNestedEnv`);
+        const emptyEnvWithNestedEnvWithStrictFallback = getToken(`emptyEnvWithNestedEnvWithStrictFallback`);
+        const emptyEnvWithNestedEnvWithFallback = getToken(`emptyEnvWithNestedEnvWithFallback`);
+        const escapedEnv = getToken(`escapedEnv`);
+        const escapedBackslash = getToken(`escapedBackslash`);
+        const escapedBrace = getToken(`escapedBrace`);
+        const literalBrace = getToken(`literalBrace`);
 
         expect(onlyEnv).toEqual(`AAA-BBB-CCC`);
         expect(multipleEnvs).toEqual(`AAA-BBB-CCC-separator-AAA-BBB-CCC`);
@@ -142,6 +170,13 @@ describe(`Configuration`, () => {
         expect(emptyEnvWithStrictFallback).toEqual(``);
         expect(emptyEnvWithFallback).toEqual(`fallback-for-empty-value`);
         expect(emptyEnvWithEmptyFallback).toEqual(``);
+        expect(emptyEnvWithNestedEnv).toEqual(`prefix1-prefix2-AAA-BBB-CCC-suffix1-suffix2`);
+        expect(emptyEnvWithNestedEnvWithStrictFallback).toEqual(`prefix1-prefix2--suffix1-suffix2`);
+        expect(emptyEnvWithNestedEnvWithFallback).toEqual(`prefix1-prefix2-fallback-value-suffix1-suffix2`);
+        expect(escapedEnv).toEqual(`\${ENV_AUTH_TOKEN}`);
+        expect(escapedBackslash).toEqual(`\\AAA-BBB-CCC`);
+        expect(escapedBrace).toEqual(`}`);
+        expect(literalBrace).toEqual(`AAA-BBB-CCC}`);
       });
     });
 
@@ -150,6 +185,83 @@ describe(`Configuration`, () => {
         npmScopes: {
           onlyEnv: {
             npmAuthToken: `\${A_VARIABLE_THAT_DEFINITELY_DOESNT_EXIST}`,
+          },
+        },
+      }, async dir => {
+        await expect(Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        })).rejects.toThrow();
+      });
+    });
+
+    it(`should allow unset variables in unused fallbacks`, async () => {
+      process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
+
+      await initializeConfiguration({
+        npmScopes: {
+          onlyEnv: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN:-\${A_VARIABLE_THAT_DEFINITELY_DOESNT_EXIST}}`,
+          },
+        },
+      }, async dir => {
+        await expect(Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        })).resolves.toBeDefined();
+      });
+    });
+
+    it(`should forbid unclosed variable substitution`, async () => {
+      process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
+
+      await initializeConfiguration({
+        npmScopes: {
+          noFallback: {
+            npmAuthToken: `\${A_VARIABLE_THAT_DEFINITELY_DOESNT_EXIST`,
+          },
+        },
+      }, async dir => {
+        await expect(Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        })).rejects.toThrow();
+      });
+
+      await initializeConfiguration({
+        npmScopes: {
+          withFallback: {
+            npmAuthToken: `\${A_VARIABLE_THAT_DEFINITELY_DOESNT_EXIST:-`,
+          },
+        },
+      }, async dir => {
+        await expect(Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        })).rejects.toThrow();
+      });
+
+      await initializeConfiguration({
+        npmScopes: {
+          withNestedFallback: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN:-\${A_VARIABLE_THAT_DEFINITELY_DOESNT_EXIST:-`,
+          },
+        },
+      }, async dir => {
+        await expect(Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        })).rejects.toThrow();
+      });
+    });
+
+    it(`should forbid unknown operators`, async () => {
+      process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;
+
+      await initializeConfiguration({
+        npmScopes: {
+          onlyEnv: {
+            npmAuthToken: `\${ENV_AUTH_TOKEN:+}`,
           },
         },
       }, async dir => {
