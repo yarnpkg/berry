@@ -44,7 +44,7 @@ export default class WorkspacesForeachCommand extends BaseCommand {
 
       The \`-v,--verbose\` flag can be passed up to twice: once to prefix output lines with the originating workspace's name, and again to include start/finish/timing log lines. Maximum verbosity is enabled by default in terminal environments.
 
-      If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.
+      If the command is \`run\` and the script being run does not exist the child workspace will be skipped without error.  Note that [global scripts](https://yarnpkg.com/features/workspaces#global-scripts) are considered to exist on all workspaces.
     `,
     examples: [[
       `Publish all packages`,
