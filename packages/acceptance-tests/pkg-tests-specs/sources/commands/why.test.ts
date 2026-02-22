@@ -372,34 +372,29 @@ describe(`Commands`, () => {
           }]);
         }));
 
-      test(`it should not list the packages with a non-semver range specified`, makeTemporaryEnv({
+      test(
+        `it should not list the packages with an out-of-range range specified`,
+        makeTemporaryEnv({
+          workspaces: [`packages/*`],
+        }, async ({path, run, source}) => {
+          await fs.writeJson(ppath.join(path, `package.json`), {
+            name: `a`,
+            dependencies: {
+              [`why-no-deps`]: `1.0.0`,
+            },
+          });
+          await run(`install`);
+
+          const {stdout} = await run(`why`, `why-no-deps@2.0.0`, `--json`);
+          return expect(stdout).toEqual(``);
+        }));
+
+      test(`it should fail with non-semver range specified`, makeTemporaryEnv({
         workspaces: [`packages/*`],
       }, async ({path, run, source}) => {
-        await fs.writeJson(ppath.join(path, `package.json`), {
-          name: `a`,
-          dependencies: {
-            [`why-no-deps`]: `1.0.0`,
-          },
-        });
         await run(`install`);
-
-        const {stdout} = await run(`why`, `why-no-deps@invalid.range`, `--json`);
-        return expect(stdout).toEqual(``);
-      }));
-
-      test(`it should not list the packages with an out-of-range range specified`, makeTemporaryEnv({
-        workspaces: [`packages/*`],
-      }, async ({path, run, source}) => {
-        await fs.writeJson(ppath.join(path, `package.json`), {
-          name: `a`,
-          dependencies: {
-            [`why-no-deps`]: `1.0.0`,
-          },
-        });
-        await run(`install`);
-
-        const {stdout} = await run(`why`, `why-no-deps@2.0.0`, `--json`);
-        return expect(stdout).toEqual(``);
+        await expect(run(`why`, `why-no-deps@1.0.0`)).resolves.not.toThrow();
+        await expect(run(`why`, `irrelevant-dependency@invalid.range`)).rejects.toThrow();
       }));
     });
   });

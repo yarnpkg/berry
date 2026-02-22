@@ -1,7 +1,7 @@
-import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
-import {Configuration, Descriptor, LocatorHash, Package, Project} from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils, treeUtils}           from '@yarnpkg/core';
-import {Command, Option, Usage}                                   from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
+import {Configuration, Descriptor, LocatorHash, Package, Project, semverUtils} from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils, treeUtils}                        from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                                    from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WhyCommand extends BaseCommand {
@@ -52,6 +52,8 @@ export default class WhyCommand extends BaseCommand {
     await project.restoreInstallState();
 
     const descriptor = structUtils.parseDescriptor(this.package, false);
+    if (descriptor.range !== `unknown` && semverUtils.validRange(descriptor.range) === null)
+      throw new UsageError(`Expected a valid semver range, got ${descriptor.range}`);
 
     const whyTree = this.recursive
       ? whyRecursive(project, descriptor, {configuration, peers: this.peers})
