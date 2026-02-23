@@ -8,6 +8,8 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+- Yarn can now install git repositories that use pnpm (workspaces are supported too if pnpm@>=6.x is installed on the system).
+
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
 - `node-modules` linker now honors user-defined symlinks for `<workspace>/node_modules` directories
 - `node-modules` linker supports hoisting into inner workspaces that are parents of other workspaces
