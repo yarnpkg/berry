@@ -16,7 +16,8 @@
     "ink-text-input": "^4.0.3",
     "react": "^17.0.2",
     "semver": "^7.1.2",
-    "tslib": "^2.4.0"
+    "tslib": "^2.4.0",
+    "typanion": "^3.14.0"
   },
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
