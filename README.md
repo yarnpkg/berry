@@ -25,7 +25,7 @@ Yarn is a modern package manager split into various packages. Its novel architec
 - Yarn is first and foremost a [Node API](https://yarnpkg.com/api/) that can be used programmatically (via [@yarnpkg/core](packages/yarnpkg-core))
 - Yarn is written in [TypeScript](https://www.typescriptlang.org/) and is fully type-checked
 
-## Our supports
+## Our sponsors
 
 ### [Gold sponsors](https://opencollective.com/yarnpkg)
 
