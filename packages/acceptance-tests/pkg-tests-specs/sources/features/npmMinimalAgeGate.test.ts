@@ -19,7 +19,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({}, {
           npmMinimalAgeGate: `1d`,
         }, async ({run}) => {
-          await expect(run(`add`, `release-date@1.1.1`)).rejects.toThrowError(`No candidates found`);
+          await expect(run(`add`, `release-date@1.1.1`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
         }),
       );
 
@@ -92,7 +92,7 @@ describe(`Features`, () => {
         makeTemporaryEnv({}, {
           npmMinimalAgeGate: `1d`,
         }, async ({run}) => {
-          await expect(run(`add`, `@scoped/release-date@1.1.1`)).rejects.toThrowError(`No candidates found`);
+          await expect(run(`add`, `@scoped/release-date@1.1.1`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
         }),
       );
 
@@ -149,7 +149,7 @@ describe(`Features`, () => {
         }, {
           npmMinimalAgeGate: `1d`,
         }, async ({run}) => {
-          await expect(run(`install`)).rejects.toThrowError(`No candidates found`);
+          await expect(run(`install`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
         }),
       );
 
@@ -243,7 +243,7 @@ describe(`Features`, () => {
         }, {
           npmMinimalAgeGate: `1d`,
         }, async ({run}) => {
-          await expect(run(`install`)).rejects.toThrowError(`No candidates found`);
+          await expect(run(`install`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
         }),
       );
 

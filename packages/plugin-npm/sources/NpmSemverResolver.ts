@@ -54,19 +54,23 @@ export class NpmSemverResolver implements Resolver {
       version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
-    const candidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
+    const semverCandidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
-          if (!isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version, publishTimes: registryData.time}))
-            return miscUtils.mapAndFilter.skip;
-
           return candidate;
         }
       } catch { }
 
       return miscUtils.mapAndFilter.skip;
     });
+
+    const candidates = semverCandidates.filter(candidate => {
+      return isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidate.raw, publishTimes: registryData.time});
+    });
+
+    if (semverCandidates.length > 0 && candidates.length === 0)
+      throw new ReportError(MessageName.REMOTE_NOT_FOUND, `All versions satisfying "${descriptor.range.slice(PROTOCOL.length)}" are quarantined`);
 
     const noDeprecatedCandidates = candidates.filter(version => {
       return !registryData.versions[version.raw].deprecated;
