@@ -259,7 +259,7 @@ export async function clone(url: string, configuration: Configuration) {
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment()};
 
-    await git(`cloning the repository`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
+    await git(`cloning the repository`, [`clone`, `-c`, `core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
     await git(`switching branch`, [`checkout`, `${request}`], execOpts, {configuration, normalizedRepoUrl});
 
     return directory;

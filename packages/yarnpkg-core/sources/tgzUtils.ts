@@ -2,7 +2,7 @@ import {Configuration, nodeUtils}                                              f
 import {FakeFS, PortablePath, NodeFS, ppath, xfs, npath, constants, statUtils} from '@yarnpkg/fslib';
 import {ZipCompression, ZipFS}                                                 from '@yarnpkg/libzip';
 import {PassThrough, Readable}                                                 from 'stream';
-import tar                                                                     from 'tar';
+import * as tar                                                                from 'tar';
 
 import {AsyncPool, TaskPool, WorkerPool}                                       from './TaskPool';
 import * as miscUtils                                                          from './miscUtils';
@@ -133,8 +133,7 @@ export async function convertToZip(tgz: Buffer, opts: ConvertToZipOptions = {}) 
 }
 
 async function * parseTar(tgz: Buffer) {
-  // @ts-expect-error - Types are wrong about what this function returns
-  const parser: tar.ParseStream = new tar.Parse();
+  const parser = new tar.Parser();
 
   const passthrough = new PassThrough({objectMode: true, autoDestroy: true, emitClose: true});
 

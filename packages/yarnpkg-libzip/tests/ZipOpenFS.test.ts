@@ -17,11 +17,16 @@ export const ZIP_DIR4 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/symlink.zip` as Filename,
 );
+export const ZIP_DIR5 = ppath.join(
+  npath.toPortablePath(__dirname),
+  `fixtures/implicit-folders.zip` as Filename,
+);
 
 export const ZIP_FILE1 = ppath.join(ZIP_DIR1, `foo.txt`);
 export const ZIP_FILE2 = ppath.join(ZIP_DIR2, `foo.txt`);
 export const ZIP_FILE3 = ppath.join(ZIP_DIR3, `foo.txt`);
 export const ZIP_FILE4 = ppath.join(ZIP_DIR4, `foo.txt`);
+export const ZIP_FILE5 = ppath.join(ZIP_DIR5, `foo.txt`);
 
 afterEach(() => {
   jest.useRealTimers();
@@ -82,6 +87,15 @@ describe(`ZipOpenFS`, () => {
     expect(() => {
       fs.readFileSync(ZIP_FILE3, `utf8`);
     }).toThrowError();
+
+    fs.discardAndClose();
+  });
+
+  it(`can read stats from a zip file with implicit folders`, () => {
+    const fs = new ZipOpenFS();
+
+    expect(fs.statSync(ppath.join(ZIP_DIR5, `node_modules`)).isDirectory()).toBe(true);
+    expect(fs.statSync(ppath.join(ZIP_DIR5, `node_modules`), {bigint: true}).isDirectory()).toBe(true);
 
     fs.discardAndClose();
   });

@@ -470,26 +470,65 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   }).join(`|`);
 }
 
-export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
-  const regex = /\\?\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
+export function replaceEnvVariables(input: string, {env}: {env: {[key: string]: string | undefined}}) {
+  let output = ``;
+  let current = 0;
+  let depth = 0;
 
-  return value.replace(regex, (match, ...args) => {
-    if (match.startsWith(`\\`))
-      return match.slice(1);
+  const iterator = input.matchAll(/\\(?<escaped>[\\$}])|\$\{(?<variable>[a-zA-Z]\w*)(?<operator>:-|-|(?=\}))|(?<unknown>\$\{)|\}/g);
+  const skip = () => {
+    const limit = depth;
+    for (const {0: match, index, groups: {variable}  = {}} of iterator) {
+      if (variable) {
+        depth++;
+      } else if (match === `}`) {
+        if (--depth < limit) {
+          return index + match.length;
+        }
+      }
+    }
+    return input.length;
+  };
 
-    const {variableName, colon, fallback} = args[args.length - 1];
-    const variableExist = Object.hasOwn(env, variableName);
-    const variableValue = env[variableName];
+  for (const {0: match, index, groups: {escaped, variable, operator, unknown} = {}} of iterator) {
+    output += input.slice(current, index);
+    current = index + match.length;
 
-    if (variableValue)
-      return variableValue;
-    if (variableExist && !colon)
-      return variableValue;
-    if (fallback != null)
-      return fallback;
+    if (escaped) {
+      output += escaped;
+    } else if (variable) {
+      const value = env[variable];
+      depth++;
 
-    throw new UsageError(`Environment variable not found (${variableName})`);
-  });
+      if (
+        // ${VAR}
+        (operator === `` && value !== undefined) ||
+        // ${VAR:-
+        (operator === `:-` && value !== undefined && value !== ``) ||
+        // ${VAR-
+        (operator === `-` && value !== undefined)
+      ) {
+        output += value;
+        current = skip();
+      } else if (operator === ``) {
+        // ${NON_EXISTENT}
+        throw new UsageError(`Environment variable not found (${variable})`);
+      }
+    } else if (match === `}`) {
+      if (depth === 0) {
+        output += match;
+      } else {
+        depth--;
+      }
+    } else if (unknown) {
+      throw new UsageError(`Invalid environment variable substitution syntax: ${input}`);
+    }
+  }
+
+  if (depth > 0)
+    throw new UsageError(`Incomplete variable substitution in input: ${input}`);
+
+  return output + input.slice(current);
 }
 
 export function parseBoolean(value: unknown): boolean {

@@ -6,6 +6,7 @@ export const MinistoreContext = React.createContext<{
   getAll: () => Map<string, any>;
   get: (key: string) => any;
   set: (key: string, value: any) => void;
+  setAll: (entries: Iterable<[string, any]>) => void;
 } | null>(null);
 
 export const Application = ({children}: {children: React.ReactElement}) => {
@@ -21,7 +22,8 @@ export const Application = ({children}: {children: React.ReactElement}) => {
   const ministore = useMemo(() => ({
     getAll: () => data,
     get: (key: string) => data.get(key),
-    set: (key: string, value: any) => setData(new Map([...data, [key, value]])),
+    set: (key: string, value: any) => setData(prev => new Map([...prev, [key, value]])),
+    setAll: (entries: Iterable<[string, any]>) => setData(prev => new Map([...prev, ...entries])),
   }), [data, setData]);
 
   return <MinistoreContext.Provider value={ministore} children={children} />;
