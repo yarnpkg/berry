@@ -23,3 +23,11 @@ export function useMinistore<T>(key?: string, initialValue?: T) {
 
   return [value, setValue];
 }
+
+export function useMinistoreSetAll() {
+  const ministore = useContext(MinistoreContext);
+  if (ministore === null)
+    throw new Error(`Expected this hook to run with a ministore context attached`);
+
+  return ministore.setAll;
+}

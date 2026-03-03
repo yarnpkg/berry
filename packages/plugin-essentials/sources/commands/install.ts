@@ -245,7 +245,7 @@ export default class YarnCommand extends BaseCommand {
           report.reportSeparator();
         } else if (Configuration.telemetry?.shouldShowTips) {
           const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
-            latest: {stable: string, canary: string};
+            latest: {stable: string | null, canary: string | null};
             tips: Array<{message: string, url?: string}>;
           } | null;
 
@@ -256,7 +256,7 @@ export default class YarnCommand extends BaseCommand {
               const releaseType = isRcBinary ? `canary` : `stable`;
               const candidate = data.latest[releaseType];
 
-              if (semver.gt(candidate, YarnVersion)) {
+              if (candidate !== null && semver.gt(candidate, YarnVersion)) {
                 newVersion = [releaseType, candidate];
               }
             }

@@ -80,6 +80,8 @@ export default class NpmPublishCommand extends BaseCommand {
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
+      report.reportInfo(MessageName.UNNAMED, `Publishing to ${registry} with tag ${this.tag}`);
+
       // Not an error if --tolerate-republish is set
       if (this.tolerateRepublish) {
         try {
@@ -171,7 +173,7 @@ export default class NpmPublishCommand extends BaseCommand {
         }
 
         const finalMessage = this.dryRun
-          ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
+          ? `Package archive not published (dry run)`
           : `Package archive published`;
 
         report.reportInfo(MessageName.UNNAMED, finalMessage);
