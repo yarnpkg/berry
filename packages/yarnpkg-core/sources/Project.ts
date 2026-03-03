@@ -767,6 +767,20 @@ export class Project {
       pkg.dependencies.set(identHash, bound);
     }
 
+    for (const [identHash, descriptor] of pkg.peerDependencies) {
+      const peerDependency = await this.configuration.reduceHook(hooks => {
+        return hooks.reducePeerDependency;
+      }, descriptor, this, pkg, descriptor, {
+        resolver,
+        resolveOptions,
+      });
+
+      if (!structUtils.areIdentsEqual(descriptor, peerDependency))
+        throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+      pkg.peerDependencies.set(identHash, peerDependency);
+    }
+
     return pkg;
   }
 

@@ -122,6 +122,25 @@ export interface Hooks {
   ) => Promise<Descriptor>;
 
   /**
+   * Called during the resolution, once for each resolved package and each of
+   * their peer dependencies. By returning a new dependency descriptor you can
+   * replace the original one by a different range.
+   *
+   * Note that when multiple plugins are registered on `reducePeerDependency` they
+   * will be executed in definition order. In that case, `dependency` will
+   * always refer to the dependency as it currently is, whereas
+   * `initialDependency` will be the descriptor before any plugin attempted to
+   * change it.
+   */
+  reducePeerDependency?: (
+    dependency: Descriptor,
+    project: Project,
+    locator: Locator,
+    initialDependency: Descriptor,
+    extra: {resolver: Resolver, resolveOptions: ResolveOptions},
+  ) => Promise<Descriptor>;
+
+  /**
    * Called after the `install` method from the `Project` class successfully
    * completed.
    */
