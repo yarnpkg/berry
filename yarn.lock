@@ -6353,6 +6353,7 @@ __metadata:
     react: "npm:^17.0.2"
     semver: "npm:^7.1.2"
     tslib: "npm:^2.4.0"
+    typanion: "npm:^3.14.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
