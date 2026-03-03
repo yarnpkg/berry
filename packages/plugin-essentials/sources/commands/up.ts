@@ -211,6 +211,19 @@ export default class UpCommand extends BaseCommand {
             const request = structUtils.makeDescriptor(ident, pseudoDescriptor.range);
 
             allSuggestionsPromises.push(Promise.resolve().then(async () => {
+              for (const plugin of configuration.plugins.values()) {
+                const hooks = plugin.hooks as Hooks;
+                if (!hooks?.beforeWorkspaceDependencyReplacement)
+                  continue;
+
+                await hooks.beforeWorkspaceDependencyReplacement(
+                  workspace,
+                  target,
+                  existingDescriptor,
+                  request,
+                );
+              }
+
               return [
                 workspace,
                 target,
