@@ -132,6 +132,12 @@ export default class NpmPublishCommand extends BaseCommand {
 
         report.reportInfo(MessageName.UNNAMED, `Using tarball: ${this.tarball}`);
         buffer = await xfs.readFilePromise(tarballPath);
+        files = await packUtils.genTarballFiles(buffer);
+
+        for (const file of files) {
+          report.reportInfo(null, file);
+          report.reportJson({file});
+        }
       } else {
         await packUtils.prepareForPack(workspace, {report}, async () => {
           const packFiles = await packUtils.genPackList(workspace);
@@ -203,7 +209,6 @@ export default class NpmPublishCommand extends BaseCommand {
         registry,
         tag: this.tag || `latest`,
         files,
-        tarball: this.tarball || null,
         access: this.access || null,
         dryRun: this.dryRun,
         published: !this.dryRun,

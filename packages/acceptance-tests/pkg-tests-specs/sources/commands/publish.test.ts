@@ -194,7 +194,7 @@ describe(`publish`, () =>   {
     })).rejects.toThrow(/Tarball not found/);
   }));
 
-  test(`should include tarball field in --json output when using --tarball`, makeTemporaryEnv({
+  test(`should list files in --json output when using --tarball`, makeTemporaryEnv({
     name: `tarball-json-test`,
     version: `1.0.0`,
   }, async ({path, run}) => {
@@ -213,22 +213,8 @@ describe(`publish`, () =>   {
     expect(result).toHaveProperty(`dryRun`, true);
     expect(result).toHaveProperty(`published`, false);
     expect(result).toHaveProperty(`files`);
-    expect(result.files).toEqual([]);
-    expect(result).toHaveProperty(`tarball`, tarballPath);
-  }));
-
-  test(`should have null tarball field in --json output when not using --tarball`, makeTemporaryEnv({
-    name: `tarball-null-json-test`,
-    version: `1.0.0`,
-  }, async ({run}) => {
-    await run(`install`);
-
-    const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--tolerate-republish`);
-    const jsonObjects = misc.parseJsonStream(stdout);
-    const result = jsonObjects.find((obj: any) => obj.name && obj.version);
-
-    expect(result).toBeDefined();
-    expect(result).toHaveProperty(`tarball`, null);
+    expect(Array.isArray(result.files)).toBe(true);
+    expect(result.files).toContain(`package.json`);
   }));
 
   testIf(
