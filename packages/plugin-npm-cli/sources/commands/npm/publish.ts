@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                                                 from '@yarnpkg/cli';
 import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils, structUtils} from '@yarnpkg/core';
-import {npath}                                                                                               from '@yarnpkg/fslib';
+import {npath, xfs}                                                                                          from '@yarnpkg/fslib';
 import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                                       from '@yarnpkg/plugin-npm';
 import {packUtils}                                                                                           from '@yarnpkg/plugin-pack';
 import {Command, Option, Usage, UsageError}                                                                  from 'clipanion';
@@ -53,6 +53,10 @@ export default class NpmPublishCommand extends BaseCommand {
 
   json = Option.Boolean(`--json`, false, {
     description: `Output the result in JSON format`,
+  });
+
+  tarball = Option.String(`--tarball`, {
+    description: `Publish a tarball instead of packing the workspace`,
   });
 
   async execute() {
@@ -116,79 +120,95 @@ export default class NpmPublishCommand extends BaseCommand {
 
       await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepublish`, {report});
 
-      await packUtils.prepareForPack(workspace, {report}, async () => {
-        const files = await packUtils.genPackList(workspace);
+      let buffer!: Buffer;
+      let files: Array<string> = [];
 
-        for (const file of files) {
-          report.reportInfo(null, npath.fromPortablePath(file));
-          report.reportJson({file: npath.fromPortablePath(file)});
-        }
+      if (this.tarball) {
+        const tarballPath = npath.toPortablePath(
+          npath.resolve(npath.fromPortablePath(this.context.cwd), this.tarball),
+        );
+        if (!await xfs.existsPromise(tarballPath))
+          throw new UsageError(`Tarball not found: ${this.tarball}`);
 
-        const pack = await packUtils.genPackStream(workspace, files);
-        const buffer = await miscUtils.bufferStream(pack);
+        report.reportInfo(MessageName.UNNAMED, `Using tarball: ${this.tarball}`);
+        buffer = await xfs.readFilePromise(tarballPath);
+      } else {
+        await packUtils.prepareForPack(workspace, {report}, async () => {
+          const packFiles = await packUtils.genPackList(workspace);
 
-        const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
+          for (const file of packFiles) {
+            report.reportInfo(null, npath.fromPortablePath(file));
+            report.reportJson({file: npath.fromPortablePath(file)});
+          }
 
-        let provenance = false;
-        let provenanceMessage = ``;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
-          provenance = Boolean(workspace.manifest.publishConfig.provenance);
-          provenanceMessage = provenance
-            ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
-            : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
-        } else if (this.provenance) {
-          provenance = true;
-          provenanceMessage = `Generating provenance statement because \`--provenance\` flag is set.`;
-        } else if (configuration.get(`npmPublishProvenance`)) {
-          provenance = true;
-          provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
-        }
-
-        if (provenanceMessage) {
-          report.reportInfo(null, provenanceMessage);
-          report.reportJson({
-            type: `provenance`,
-            enabled: provenance,
-            provenanceMessage,
-          });
-        }
-
-        const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
-          access: this.access,
-          tag: this.tag,
-          registry,
-          gitHead,
-          provenance,
+          const pack = await packUtils.genPackStream(workspace, packFiles);
+          buffer = await miscUtils.bufferStream(pack);
+          files = packFiles.map(f => npath.fromPortablePath(f));
         });
+      }
 
-        if (!this.dryRun) {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            otp: this.otp,
-            jsonResponse: true,
-            allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI)),
-          });
-        }
+      const gitHead = await npmPublishUtils.getGitHead(workspace.cwd);
 
-        const finalMessage = this.dryRun
-          ? `Package archive not published (dry run)`
-          : `Package archive published`;
+      let provenance = false;
+      let provenanceMessage = ``;
+      if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+        provenance = Boolean(workspace.manifest.publishConfig.provenance);
+        provenanceMessage = provenance
+          ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
+          : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
+      } else if (this.provenance) {
+        provenance = true;
+        provenanceMessage = `Generating provenance statement because \`--provenance\` flag is set.`;
+      } else if (configuration.get(`npmPublishProvenance`)) {
+        provenance = true;
+        provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+      }
 
-        report.reportInfo(MessageName.UNNAMED, finalMessage);
+      if (provenanceMessage) {
+        report.reportInfo(null, provenanceMessage);
         report.reportJson({
-          name: structUtils.stringifyIdent(ident),
-          version,
-          registry,
-          tag: this.tag || `latest`,
-          files: files.map(f => npath.fromPortablePath(f)),
-          access: this.access || null,
-          dryRun: this.dryRun,
-          published: !this.dryRun,
-          message: finalMessage,
-          provenance: Boolean(provenance),
+          type: `provenance`,
+          enabled: provenance,
+          provenanceMessage,
         });
+      }
+
+      const body = await npmPublishUtils.makePublishBody(workspace, buffer, {
+        access: this.access,
+        tag: this.tag,
+        registry,
+        gitHead,
+        provenance,
+      });
+
+      if (!this.dryRun) {
+        await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+          configuration,
+          registry,
+          ident,
+          otp: this.otp,
+          jsonResponse: true,
+          allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI)),
+        });
+      }
+
+      const finalMessage = this.dryRun
+        ? `Package archive not published (dry run)`
+        : `Package archive published`;
+
+      report.reportInfo(MessageName.UNNAMED, finalMessage);
+      report.reportJson({
+        name: structUtils.stringifyIdent(ident),
+        version,
+        registry,
+        tag: this.tag || `latest`,
+        files,
+        tarball: this.tarball || null,
+        access: this.access || null,
+        dryRun: this.dryRun,
+        published: !this.dryRun,
+        message: finalMessage,
+        provenance: Boolean(provenance),
       });
     });
 

@@ -151,6 +151,86 @@ describe(`publish`, () =>   {
     expect(Array.isArray(result.files)).toBe(true);
   }));
 
+  test(`should publish a tarball with --tarball flag`, makeTemporaryEnv({
+    name: `tarball-test`,
+    version: `1.0.0`,
+  }, async ({path, run}) => {
+    await run(`install`);
+
+    const tarballPath = `${path}/package.tgz`;
+    await run(`pack`, `--out`, tarballPath);
+
+    await run(`npm`, `publish`, `--tarball`, tarballPath, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
+      },
+    });
+  }));
+
+  test(`should support --dry-run with --tarball flag`, makeTemporaryEnv({
+    name: `tarball-dry-run-test`,
+    version: `1.0.0`,
+  }, async ({path, run}) => {
+    await run(`install`);
+
+    const tarballPath = `${path}/package.tgz`;
+    await run(`pack`, `--out`, tarballPath);
+
+    const {stdout} = await run(`npm`, `publish`, `--tarball`, tarballPath, `--dry-run`, `--tolerate-republish`);
+    expect(stdout).toContain(`Using tarball`);
+    expect(stdout).toContain(`dry run`);
+  }));
+
+  test(`should fail with --tarball when the tarball does not exist`, makeTemporaryEnv({
+    name: `tarball-missing-test`,
+    version: `1.0.0`,
+  }, async ({path, run}) => {
+    await run(`install`);
+
+    await expect(run(`npm`, `publish`, `--tarball`, `${path}/nonexistent.tgz`, {
+      env: {
+        YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
+      },
+    })).rejects.toThrow(/Tarball not found/);
+  }));
+
+  test(`should include tarball field in --json output when using --tarball`, makeTemporaryEnv({
+    name: `tarball-json-test`,
+    version: `1.0.0`,
+  }, async ({path, run}) => {
+    await run(`install`);
+
+    const tarballPath = `${path}/package.tgz`;
+    await run(`pack`, `--out`, tarballPath);
+
+    const {stdout} = await run(`npm`, `publish`, `--tarball`, tarballPath, `--json`, `--dry-run`, `--tolerate-republish`);
+    const jsonObjects = misc.parseJsonStream(stdout);
+    const result = jsonObjects.find((obj: any) => obj.name && obj.version);
+
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty(`name`, `tarball-json-test`);
+    expect(result).toHaveProperty(`version`, `1.0.0`);
+    expect(result).toHaveProperty(`dryRun`, true);
+    expect(result).toHaveProperty(`published`, false);
+    expect(result).toHaveProperty(`files`);
+    expect(result.files).toEqual([]);
+    expect(result).toHaveProperty(`tarball`, tarballPath);
+  }));
+
+  test(`should have null tarball field in --json output when not using --tarball`, makeTemporaryEnv({
+    name: `tarball-null-json-test`,
+    version: `1.0.0`,
+  }, async ({run}) => {
+    await run(`install`);
+
+    const {stdout} = await run(`npm`, `publish`, `--json`, `--dry-run`, `--tolerate-republish`);
+    const jsonObjects = misc.parseJsonStream(stdout);
+    const result = jsonObjects.find((obj: any) => obj.name && obj.version);
+
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty(`tarball`, null);
+  }));
+
   testIf(
     () => !!process.env.ACTIONS_ID_TOKEN_REQUEST_URL,
     `should publish a package with a valid provenance statement`,
