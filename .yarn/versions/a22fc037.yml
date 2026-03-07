@@ -1,0 +1,3 @@
+releases:
+  "@yarnpkg/plugin-npm-cli": minor
+  "@yarnpkg/plugin-pack": patch
