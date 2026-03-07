@@ -2,8 +2,9 @@ import {Manifest, Report, Workspace, scriptUtils}                             fr
 import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath, constants} from '@yarnpkg/fslib';
 import {Hooks as StageHooks}                                                  from '@yarnpkg/plugin-stage';
 import mm                                                                     from 'micromatch';
+import {Readable}                                                             from 'stream';
 import tar                                                                    from 'tar-stream';
-import {createGzip}                                                           from 'zlib';
+import {createGunzip, createGzip}                                             from 'zlib';
 
 import {Hooks}                                                                from './';
 
@@ -42,6 +43,26 @@ type IgnoreList = {
   accept: Array<string>;
   reject: Array<string>;
 };
+
+export function genTarballFiles(buffer: Buffer): Promise<Array<string>> {
+  return new Promise((resolve, reject) => {
+    const files: Array<string> = [];
+    const extract = tar.extract();
+
+    extract.on(`entry`, (header, stream, next) => {
+      // npm tarballs prefix all paths with "package/"
+      if (header.type === `file`)
+        files.push(header.name.replace(/^package\//u, ``));
+      stream.resume();
+      stream.on(`end`, next);
+    });
+
+    extract.on(`finish`, () => resolve(files));
+    extract.on(`error`, reject);
+
+    Readable.from(buffer).pipe(createGunzip()).pipe(extract);
+  });
+}
 
 export async function hasPackScripts(workspace: Workspace) {
   if (scriptUtils.hasWorkspaceScript(workspace, `prepack`))
