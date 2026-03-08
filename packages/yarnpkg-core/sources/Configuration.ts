@@ -1176,6 +1176,8 @@ export class Configuration {
     delete environmentSettings.rcFilename;
 
     const configuration = new Configuration(startingCwd);
+    configuration.projectCwd = await Configuration.findProjectCwd(startingCwd);
+
     const rcFiles = await Configuration.findRcFiles(startingCwd);
 
     const homeRcFile = await Configuration.findFolderRcFile(folderUtils.getHomeFolder());
@@ -1239,16 +1241,8 @@ export class Configuration {
       }
     }
 
-    // We need to know the project root before being able to truly instantiate
-    // our configuration.
-
-    const projectCwd = await Configuration.findProjectCwd(startingCwd);
-
     // Great! We now have enough information to really start to setup the
     // core configuration object.
-
-    configuration.startingCwd = startingCwd;
-    configuration.projectCwd = projectCwd;
 
     const env = Object.assign(Object.create(null), process.env);
     configuration.env = env;
