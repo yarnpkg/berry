@@ -131,6 +131,12 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       react: `*`,
     },
   }],
+  // https://github.com/react-csv/react-csv/pull/387
+  [`react-csv@*`, {
+    peerDependencies: {
+      'prop-types': '*'
+    },
+  }],
   // https://github.com/angeloocana/gatsby-plugin-i18n/pull/145
   [`gatsby-plugin-i18n@*`, {
     dependencies: {
