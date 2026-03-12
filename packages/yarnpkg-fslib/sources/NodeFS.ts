@@ -463,9 +463,9 @@ export class NodeFS extends BasePortableFakeFS {
     return this.realFs.symlinkSync(npath.fromPortablePath(target.replace(/\/+$/, ``) as PortablePath), npath.fromPortablePath(p), type);
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<NonSharedBuffer>;
   readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return await new Promise<any>((resolve, reject) => {
       const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
@@ -473,9 +473,9 @@ export class NodeFS extends BasePortableFakeFS {
     });
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): NonSharedBuffer;
   readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     const fsNativePath = typeof p === `string` ? npath.fromPortablePath(p) : p;
     return this.realFs.readFileSync(fsNativePath, encoding);

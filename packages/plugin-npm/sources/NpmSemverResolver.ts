@@ -6,6 +6,7 @@ import semver                                                                   
 
 import {NpmSemverFetcher}                                                                                        from './NpmSemverFetcher';
 import {PROTOCOL}                                                                                                from './constants';
+import {isPackageApproved}                                                                                       from './npmConfigUtils';
 import * as npmHttpUtils                                                                                         from './npmHttpUtils';
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
@@ -53,7 +54,7 @@ export class NpmSemverResolver implements Resolver {
       version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
-    const candidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
+    const semverCandidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
       try {
         const candidate = new semverUtils.SemVer(version);
         if (range.test(candidate)) {
@@ -63,6 +64,13 @@ export class NpmSemverResolver implements Resolver {
 
       return miscUtils.mapAndFilter.skip;
     });
+
+    const candidates = semverCandidates.filter(candidate => {
+      return isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidate.raw, publishTimes: registryData.time});
+    });
+
+    if (semverCandidates.length > 0 && candidates.length === 0)
+      throw new ReportError(MessageName.REMOTE_NOT_FOUND, `All versions satisfying "${descriptor.range.slice(PROTOCOL.length)}" are quarantined`);
 
     const noDeprecatedCandidates = candidates.filter(version => {
       return !registryData.versions[version.raw].deprecated;

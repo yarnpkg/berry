@@ -1,13 +1,12 @@
-import {BaseCommand}                                                            from '@yarnpkg/cli';
-import {PluginMeta}                                                             from '@yarnpkg/core/sources/Plugin';
-import {Configuration, MessageName, Project, ReportError, StreamReport, Report} from '@yarnpkg/core';
-import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}            from '@yarnpkg/core';
-import {PortablePath, npath, ppath, xfs}                                        from '@yarnpkg/fslib';
-import {Command, Option, Usage}                                                 from 'clipanion';
-import semver                                                                   from 'semver';
-import {runInNewContext}                                                        from 'vm';
+import {BaseCommand}                                                                        from '@yarnpkg/cli';
+import {Configuration, MessageName, PluginMeta, Project, ReportError, StreamReport, Report} from '@yarnpkg/core';
+import {YarnVersion, formatUtils, httpUtils, structUtils, hashUtils}                        from '@yarnpkg/core';
+import {PortablePath, npath, ppath, xfs}                                                    from '@yarnpkg/fslib';
+import {Command, Option, Usage}                                                             from 'clipanion';
+import semver                                                                               from 'semver';
+import {runInNewContext}                                                                    from 'vm';
 
-import {getAvailablePlugins}                                                    from './list';
+import {getAvailablePlugins}                                                                from './list';
 
 // eslint-disable-next-line arca/no-default-export
 export default class PluginImportCommand extends BaseCommand {

@@ -36,6 +36,7 @@
     "packages/gatsby",
     "packages/docusaurus",
     "packages/docusaurus/build",
-    "packages/yarnpkg-libzip/artifacts"
+    "packages/yarnpkg-libzip/artifacts",
+    "packages/yarnpkg-pnp/sources/hook.raw.js"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "title": "JSON Schema for Yarnrc files",
   "$schema": "https://json-schema.org/draft/2019-09/schema#",
-  "description": "Yarnrc files (named this way because they must be called `.yarnrc.yml`) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). **Starting from the v2, they must be written in valid Yaml and have the right extension** (simply calling your file `.yarnrc` won't do).\n\nEnvironment variables can be accessed from setting definitions by using the `${NAME}` syntax when defining the values. By default Yarn will require the variables to be present, but this can be turned off by using either `${NAME-fallback}` (which will return `fallback` if `NAME` isn't set) or `${NAME:-fallback}` (which will return `fallback` if `NAME` isn't set, or is an empty string).\n\nFinally, note that most settings can also be defined through environment variables (at least for the simpler ones; arrays and objects aren't supported yet). To do this, just prefix the names and write them in snake case: `YARN_CACHE_FOLDER` will set the cache folder (such values will overwrite any that might have been defined in the RC files - use them sparingly).",
+  "description": "Yarnrc files (named this way because they must be called `.yarnrc.yml`) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). **Starting from the v2, they must be written in valid Yaml and have the right extension** (simply calling your file `.yarnrc` won't do).\n\nEnvironment variable expansion is available in the following forms:\n- `${NAME}` expands to the value of the variable `NAME` and throws if it is not set\n- `${NAME:-fallback}` expands to the value of `NAME` if it is set and not empty, or the expansion of `fallback` otherwise\n- `${NAME-fallback}` expands to the value of `NAME` if it is set, or the expansion of `fallback` otherwise\n\n`$`, `\\`, and `}` can be escaped by preceding them with a `\\`. All other `\\`s and unmatched `}` are treated literally. Unclosed expansions and unescaped `${` sequences that are not recognized as an expansion throw errors.\n\nFinally, note that most settings can also be defined through environment variables (at least for the simpler ones; arrays and objects aren't supported yet). To do this, just prefix the names and write them in snake case: `YARN_CACHE_FOLDER` will set the cache folder (such values will overwrite any that might have been defined in the RC files - use them sparingly).",
   "__info": [
     "This file contains the JSON Schema for Yarnrc files and is:",
     "1) Hosted on the Yarn Website at http://yarnpkg.com/configuration/yarnrc.json",
@@ -216,7 +216,7 @@
     },
     "enableScripts": {
       "_package": "@yarnpkg/core",
-      "titke": "Define whether to run postinstall scripts or not.",
+      "title": "Define whether to run postinstall scripts or not.",
       "description": "If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).\n\nNote that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.",
       "type": "boolean",
       "default": true
@@ -272,9 +272,13 @@
     },
     "httpTimeout": {
       "_package": "@yarnpkg/core",
-      "title": "Amount of time to wait in milliseconds before cancelling pending HTTP requests.",
-      "type": "number",
-      "default": 60000
+      "title": "Amount of time to wait before cancelling pending HTTP requests.",
+      "type": ["number", "string"],
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
+      ],
+      "default": "1m"
     },
     "httpsCaFilePath": {
       "_package": "@yarnpkg/core",
@@ -478,6 +482,28 @@
       ],
       "type": "string",
       "default": "pnp"
+    },
+    "npmMinimalAgeGate": {
+      "_package": "@yarnpkg/core",
+      "title": "Minimum age of a package version according to the publish date on the npm registry to be considered for installation.",
+      "description": "If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages, or to avoid relying on packages that could still be unpublished (e.g. the npm registry has specific rules for packages less than 3 days old).",
+      "type": ["number", "string"],
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
+      ],
+      "default": "3d"
+    },
+    "npmPreapprovedPackages": {
+      "_package": "@yarnpkg/core",
+      "title": "Array of package descriptors or package name glob patterns to exclude from all of the package gates.",
+      "description": "If a package descriptor or name matches the specified pattern, it will not be considered when evaluating any of the package gates.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "examples": ["@scoped-package/*", "package", "package*", "package@^1.0.0", "package@1.0.0"]
     },
     "pnpmStoreFolder": {
       "_package": "@yarnpkg/plugin-pnpm",
@@ -833,10 +859,14 @@
     },
     "telemetryInterval": {
       "_package": "@yarnpkg/core",
-      "title": "Define the minimal amount of time between two telemetry events, in days.",
+      "title": "Define the minimal amount of time between two telemetry events.",
       "description": "By default we only send one request per week, making it impossible for us to track your usage with a lower granularity.",
-      "type": "number",
-      "default": 7
+      "type": ["number", "string"],
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
+      ],
+      "default": "7d"
     },
     "telemetryUserId": {
       "_package": "@yarnpkg/core",

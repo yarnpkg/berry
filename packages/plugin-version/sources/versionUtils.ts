@@ -15,6 +15,9 @@ export enum Decision {
   MAJOR = `major`,
   MINOR = `minor`,
   PATCH = `patch`,
+  PREMAJOR = `premajor`,
+  PREMINOR = `preminor`,
+  PREPATCH = `prepatch`,
   PRERELEASE = `prerelease`,
 }
 
@@ -88,7 +91,11 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
       const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
 
       const candidateRelease = candidateReleases.get(workspace);
-      const suggestedRelease = applyStrategy(baseVersion, validateReleaseDecision(decision));
+      // In case of prerelease decision with a prerelease version, the trailing number should be bumped
+      const suggestedRelease = Decision.PRERELEASE === decision ?
+        applyStrategy(workspace.manifest.version, validateReleaseDecision(decision)) :
+        applyStrategy(baseVersion, validateReleaseDecision(decision));
+
 
       if (suggestedRelease === null)
         throw new Error(`Assertion failed: Expected ${baseVersion} to support being bumped via strategy ${decision}`);

@@ -6,6 +6,8 @@ import pLimit, {Limit}            from 'p-limit';
 import semver                     from 'semver';
 import {Readable, Transform}      from 'stream';
 
+import type {DurationUnit}        from './Configuration';
+
 /**
  * @internal
  */
@@ -51,7 +53,8 @@ export function mapAndFilter<In, Out>(iterable: Iterable<In>, cb: (value: In) =>
 }
 
 const mapAndFilterSkip = Symbol();
-mapAndFilter.skip = mapAndFilterSkip;
+// The `as` here is necessary to workaround a ts-go bug: https://github.com/microsoft/typescript-go/issues/1682
+mapAndFilter.skip = mapAndFilterSkip as typeof mapAndFilterSkip;
 
 export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => Out | typeof mapAndFindSkip): Out | undefined {
   for (const value of iterable) {
@@ -65,7 +68,8 @@ export function mapAndFind<In, Out>(iterable: Iterable<In>, cb: (value: In) => O
 }
 
 const mapAndFindSkip = Symbol();
-mapAndFind.skip = mapAndFindSkip;
+// The `as` here is necessary to workaround a ts-go bug: https://github.com/microsoft/typescript-go/issues/1682
+mapAndFind.skip = mapAndFindSkip as typeof mapAndFindSkip;
 
 export function isIndexableObject(value: unknown): value is {[key: string]: unknown} {
   return typeof value === `object` && value !== null;
@@ -466,24 +470,65 @@ export function buildIgnorePattern(ignorePatterns: Array<string>) {
   }).join(`|`);
 }
 
-export function replaceEnvVariables(value: string, {env}: {env: {[key: string]: string | undefined}}) {
-  const regex = /\${(?<variableName>[\d\w_]+)(?<colon>:)?(?:-(?<fallback>[^}]*))?}/g;
+export function replaceEnvVariables(input: string, {env}: {env: {[key: string]: string | undefined}}) {
+  let output = ``;
+  let current = 0;
+  let depth = 0;
 
-  return value.replace(regex, (...args) => {
-    const {variableName, colon, fallback} = args[args.length - 1];
+  const iterator = input.matchAll(/\\(?<escaped>[\\$}])|\$\{(?<variable>[a-zA-Z]\w*)(?<operator>:-|-|(?=\}))|(?<unknown>\$\{)|\}/g);
+  const skip = () => {
+    const limit = depth;
+    for (const {0: match, index, groups: {variable}  = {}} of iterator) {
+      if (variable) {
+        depth++;
+      } else if (match === `}`) {
+        if (--depth < limit) {
+          return index + match.length;
+        }
+      }
+    }
+    return input.length;
+  };
 
-    const variableExist = Object.hasOwn(env, variableName);
-    const variableValue = env[variableName];
+  for (const {0: match, index, groups: {escaped, variable, operator, unknown} = {}} of iterator) {
+    output += input.slice(current, index);
+    current = index + match.length;
 
-    if (variableValue)
-      return variableValue;
-    if (variableExist && !colon)
-      return variableValue;
-    if (fallback != null)
-      return fallback;
+    if (escaped) {
+      output += escaped;
+    } else if (variable) {
+      const value = env[variable];
+      depth++;
 
-    throw new UsageError(`Environment variable not found (${variableName})`);
-  });
+      if (
+        // ${VAR}
+        (operator === `` && value !== undefined) ||
+        // ${VAR:-
+        (operator === `:-` && value !== undefined && value !== ``) ||
+        // ${VAR-
+        (operator === `-` && value !== undefined)
+      ) {
+        output += value;
+        current = skip();
+      } else if (operator === ``) {
+        // ${NON_EXISTENT}
+        throw new UsageError(`Environment variable not found (${variable})`);
+      }
+    } else if (match === `}`) {
+      if (depth === 0) {
+        output += match;
+      } else {
+        depth--;
+      }
+    } else if (unknown) {
+      throw new UsageError(`Invalid environment variable substitution syntax: ${input}`);
+    }
+  }
+
+  if (depth > 0)
+    throw new UsageError(`Incomplete variable substitution in input: ${input}`);
+
+  return output + input.slice(current);
 }
 
 export function parseBoolean(value: unknown): boolean {
@@ -596,4 +641,27 @@ export function groupBy<T extends Record<string, any>, K extends keyof T>(items:
 
 export function parseInt(val: string | number) {
   return typeof val === `string` ? Number.parseInt(val, 10) : val;
+}
+
+const DURATION_UNITS: Record<DurationUnit, number> = {
+  ms: 1,
+  s: 1000,
+  m: 60 * 1000,
+  h: 60 * 60 * 1000,
+  d: 24 * 60 * 60 * 1000,
+  w: 7 * 24 * 60 * 60 * 1000,
+};
+const DURATION_REGEXP = new RegExp(`^(?<num>\\d*\\.?\\d+)(?<unit>${Object.keys(DURATION_UNITS).join(`|`)})?$`);
+export function parseDuration(value: string, unit: DurationUnit) {
+  const match = DURATION_REGEXP.exec(value)?.groups;
+  if (!match) throw new Error(`Couldn't parse "${value}" as a duration`);
+
+  if (match.unit === undefined)
+    return parseFloat(match.num);
+
+  const multiplier = DURATION_UNITS[match.unit as DurationUnit];
+  if (!multiplier)
+    throw new Error(`Invalid duration unit "${match.unit}"`);
+
+  return parseFloat(match.num) * multiplier / DURATION_UNITS[unit];
 }

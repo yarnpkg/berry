@@ -28,7 +28,7 @@ export default [
 
       '@stylistic/comma-spacing': 2,
 
-      '@stylistic/func-call-spacing': 2,
+      '@stylistic/function-call-spacing': 2,
 
       '@stylistic/indent': [`error`, 2, {
         SwitchCase: 1,

@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "4.1.1",
+  "version": "4.1.3",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -9,7 +9,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/node": "^18.17.15",
+    "@types/node": "^18.19.124",
     "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {
@@ -51,5 +51,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.1"
+  "stableVersion": "4.1.3"
 }

@@ -1976,7 +1976,7 @@ function packageImportsResolve({ name, base, conditions, readFileSyncFn }) {
 let findPnpApi = esmModule.findPnpApi;
 if (!findPnpApi) {
   const require = createRequire(import.meta.url);
-  const pnpApi = require(`./.pnp.cjs`);
+  const pnpApi = require(structuredClone(`./.pnp.cjs`));
   pnpApi.setup();
   findPnpApi = esmModule.findPnpApi;
 }

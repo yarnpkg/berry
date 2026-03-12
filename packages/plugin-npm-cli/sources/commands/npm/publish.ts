@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils} from '@yarnpkg/core';
-import {npath}                                                                                  from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                          from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                              from '@yarnpkg/plugin-pack';
-import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                 from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils, structUtils} from '@yarnpkg/core';
+import {npath}                                                                                               from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                                       from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                                           from '@yarnpkg/plugin-pack';
+import {Command, Option, Usage, UsageError}                                                                  from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -80,6 +80,8 @@ export default class NpmPublishCommand extends BaseCommand {
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
+      report.reportInfo(MessageName.UNNAMED, `Publishing to ${registry} with tag ${this.tag}`);
+
       // Not an error if --tolerate-republish is set
       if (this.tolerateRepublish) {
         try {
@@ -97,7 +99,7 @@ export default class NpmPublishCommand extends BaseCommand {
             const warning = `Registry already knows about version ${version}; skipping.`;
             report.reportWarning(MessageName.UNNAMED, warning);
             report.reportJson({
-              name: ident.name,
+              name: structUtils.stringifyIdent(ident),
               version,
               registry,
               warning,
@@ -166,16 +168,17 @@ export default class NpmPublishCommand extends BaseCommand {
             ident,
             otp: this.otp,
             jsonResponse: true,
+            allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI)),
           });
         }
 
         const finalMessage = this.dryRun
-          ? `[DRY RUN] Package would be published to ${registry} with tag ${this.tag}`
+          ? `Package archive not published (dry run)`
           : `Package archive published`;
 
         report.reportInfo(MessageName.UNNAMED, finalMessage);
         report.reportJson({
-          name: ident.name,
+          name: structUtils.stringifyIdent(ident),
           version,
           registry,
           tag: this.tag || `latest`,

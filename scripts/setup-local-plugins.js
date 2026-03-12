@@ -21,6 +21,8 @@ const DYNAMIC_LIBS_MODULE = require.resolve(`${PACKAGES}/yarnpkg-cli/sources/too
 require.cache[PLUGIN_CONFIGURATION_MODULE] = {exports: {getPluginConfiguration}};
 
 function getPluginConfiguration() {
+  const pluginOrder = require(`@yarnpkg/cli/package.json`)[`@yarnpkg/builder`].bundles.standard;
+
   const folders = fs.readdirSync(PACKAGES);
 
   const pluginFolders = folders.filter(folder => {
@@ -40,7 +42,23 @@ function getPluginConfiguration() {
       console.warn(`Disabled non-requirable plugin ${folder}: ${e.message}`);
       isRequirable = false;
     }
+
     return isRequirable;
+  });
+
+  pluginFolders.sort((a, b) => {
+    const indexA = pluginOrder.indexOf(`@yarnpkg/${a}`);
+    const indexB = pluginOrder.indexOf(`@yarnpkg/${b}`);
+
+    if (indexA === -1 && indexB === -1)
+      return a.localeCompare(b);
+
+    if (indexA === -1)
+      return 1;
+    if (indexB === -1)
+      return -1;
+
+    return indexA - indexB;
   });
 
   // Note that we don't need to populate the `modules` field, because the

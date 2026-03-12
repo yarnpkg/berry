@@ -210,19 +210,19 @@ export async function get(target: string, {configuration, jsonResponse, customEr
   }
 }
 
-export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+export async function put(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<any> {
   const response = await prettyNetworkError(request(target, body, {...options, method: Method.PUT}), {customErrorMessage, configuration: options.configuration});
 
   return response.body;
 }
 
-export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+export async function post(target: string, body: Body, {customErrorMessage, ...options}: Options): Promise<any> {
   const response = await prettyNetworkError(request(target, body, {...options, method: Method.POST}), {customErrorMessage, configuration: options.configuration});
 
   return response.body;
 }
 
-export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<Buffer> {
+export async function del(target: string, {customErrorMessage, ...options}: Options): Promise<any> {
   const response = await prettyNetworkError(request(target, null, {...options, method: Method.DELETE}), {customErrorMessage, configuration: options.configuration});
 
   return response.body;

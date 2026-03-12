@@ -74,6 +74,9 @@ const IGNORED_ENV_VARIABLES = new Set([
   `cacheCheckpointOverride`,
   `cacheVersionOverride`,
   `lockfileVersionOverride`,
+  `osOverride`,
+  `cpuOverride`,
+  `libcOverride`,
 
   // "binFolder" is the magic location where the parent process stored the
   // current binaries; not an actual configuration settings
@@ -126,6 +129,7 @@ export enum SettingsType {
   LOCATOR_LOOSE = `LOCATOR_LOOSE`,
   NUMBER = `NUMBER`,
   STRING = `STRING`,
+  DURATION = `DURATION`,
   SECRET = `SECRET`,
   SHAPE = `SHAPE`,
   MAP = `MAP`,
@@ -151,6 +155,20 @@ export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   type: T;
 } & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
+export enum DurationUnit {
+  MILLISECONDS = `ms`,
+  SECONDS = `s`,
+  MINUTES = `m`,
+  HOURS = `h`,
+  DAYS = `d`,
+  WEEKS = `w`,
+}
+export type DurationSettingsDefinition = BaseSettingsDefinition<SettingsType.DURATION> & {
+  default: string;
+  unit: DurationUnit;
+  isNullable?: boolean;
+};
+
 export type ShapeSettingsDefinition = BaseSettingsDefinition<SettingsType.SHAPE> & {
   properties: {[propertyName: string]: SettingsDefinition};
 };
@@ -160,7 +178,7 @@ export type MapSettingsDefinition = BaseSettingsDefinition<SettingsType.MAP> & {
   normalizeKeys?: (key: string) => string;
 };
 
-export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP>> & {
+export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsType, SettingsType.SHAPE | SettingsType.MAP | SettingsType.DURATION>> & {
   default: any;
   defaultText?: any;
   isNullable?: boolean;
@@ -170,11 +188,12 @@ export type SimpleSettingsDefinition = BaseSettingsDefinition<Exclude<SettingsTy
 export type SettingsDefinitionNoDefault =
   | MapSettingsDefinition
   | ShapeSettingsDefinition
-  | Omit<SimpleSettingsDefinition, `default`>;
+  | Omit<SimpleSettingsDefinition | DurationSettingsDefinition, `default`>;
 
 export type SettingsDefinition =
   | MapSettingsDefinition
   | ShapeSettingsDefinition
+  | DurationSettingsDefinition
   | SimpleSettingsDefinition;
 
 export type PluginConfiguration = {
@@ -411,9 +430,10 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     isArray: true,
   },
   httpTimeout: {
-    description: `Timeout of each http request in milliseconds`,
-    type: SettingsType.NUMBER,
-    default: 60000,
+    description: `Timeout of each http request`,
+    type: SettingsType.DURATION,
+    unit: DurationUnit.MILLISECONDS,
+    default: `1m`,
   },
   httpRetry: {
     description: `Retry times on http failure`,
@@ -535,9 +555,10 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
   telemetryInterval: {
-    description: `Minimal amount of time between two telemetry uploads, in days`,
-    type: SettingsType.NUMBER,
-    default: 7,
+    description: `Minimal amount of time between two telemetry uploads`,
+    type: SettingsType.DURATION,
+    unit: DurationUnit.DAYS,
+    default: `7d`,
   },
   telemetryUserId: {
     description: `If you desire to tell us which project you are, you can set this field. Completely optional and opt-in.`,
@@ -729,7 +750,9 @@ type DefinitionForTypeHelper<T> = T extends Map<string, infer U>
   ? (MapSettingsDefinition & {valueDefinition: Omit<DefinitionForType<U>, `default`>})
   : T extends miscUtils.ToMapValue<infer U>
     ? (ShapeSettingsDefinition & {properties: ConfigurationDefinitionMap<U>})
-    : SimpleDefinitionForType<T>;
+    : T extends number
+      ? SimpleDefinitionForType<T> | DurationSettingsDefinition
+      : SimpleDefinitionForType<T>;
 
 type DefinitionForType<T> = T extends Array<infer U>
   ? (DefinitionForTypeHelper<U> & {isArray: true})
@@ -783,7 +806,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
   if (value === null && !definition.isNullable && definition.default !== null)
     throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
 
-  if (definition.values?.includes(value))
+  if (`values` in definition && definition.values?.includes(value))
     return value;
 
   const interpretValue = () => {
@@ -816,6 +839,8 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
         return structUtils.parseLocator(valueWithReplacedVariables);
       case SettingsType.BOOLEAN:
         return miscUtils.parseBoolean(valueWithReplacedVariables);
+      case SettingsType.DURATION:
+        return miscUtils.parseDuration(valueWithReplacedVariables, definition.unit);
       default:
         return valueWithReplacedVariables;
     }
@@ -823,7 +848,7 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
 
   const interpreted = interpretValue();
 
-  if (definition.values && !definition.values.includes(interpreted))
+  if (`values` in definition && definition.values && !definition.values.includes(interpreted))
     throw new Error(`Invalid value, expected one of ${definition.values.join(`, `)}`);
 
   return interpreted;
@@ -847,7 +872,7 @@ function parseShape(configuration: Configuration, path: string, valueBase: unkno
     const subDefinition = definition.properties[propKey];
 
     if (!subDefinition)
-      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config -v" to see the list of settings supported in Yarn`);
+      throw new UsageError(`Unrecognized configuration settings found: ${path}.${propKey} - run "yarn config" to see the list of settings supported in Yarn`);
 
     result.set(propKey, parseValue(configuration, subPath, propValue, definition.properties[propKey], folder));
   }
@@ -922,6 +947,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
           return ppath.resolve(configuration.projectCwd, definition.default);
         }
       }
+    }
+    case SettingsType.DURATION: {
+      return miscUtils.parseDuration(definition.default, definition.unit);
     }
     default: {
       return definition.default;
@@ -1641,7 +1669,7 @@ export class Configuration {
           : false;
 
         if (strict && !isHomeRcFile) {
-          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config -v" to see the list of settings supported in Yarn`);
+          throw new UsageError(`Unrecognized or legacy configuration settings found: ${key} - run "yarn config" to see the list of settings supported in Yarn`);
         } else {
           this.invalid.set(key, source);
           continue;

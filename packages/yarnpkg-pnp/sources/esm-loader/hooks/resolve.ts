@@ -11,7 +11,8 @@ if (!findPnpApi) {
   // @ts-expect-error - reason TBS
   const require = createRequire(import.meta.url);
 
-  const pnpApi = require(`./.pnp.cjs`);
+  // We call structuredClone to prevent TS from digging into the PnP file
+  const pnpApi = require(structuredClone(`./.pnp.cjs`));
   pnpApi.setup();
 
   findPnpApi = (esmModule as any).findPnpApi;

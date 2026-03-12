@@ -1,5 +1,6 @@
 const {
   fs: {writeFile},
+  tests: {testIf},
 } = require(`pkg-tests-core`);
 
 const {environments} = require(`./environments`);
@@ -24,7 +25,8 @@ custom_predicate(DependencyType):-
 
 describe(`Commands`, () => {
   describe(`constraints query`, () => {
-    test(
+    testIf(
+      `prologConstraints`,
       `test without trailing .`,
       makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
@@ -43,7 +45,8 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    testIf(
+      `prologConstraints`,
       `test with a syntax error`,
       makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
@@ -62,7 +65,8 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    testIf(
+      `prologConstraints`,
       `test with an unknown predicate`,
       makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
@@ -81,7 +85,8 @@ describe(`Commands`, () => {
       }),
     );
 
-    test(
+    testIf(
+      `prologConstraints`,
       `test with an empty predicate`,
       makeTemporaryEnv({}, async({path, run, source}) => {
         await environments[`one regular dependency`](path);
@@ -102,7 +107,8 @@ describe(`Commands`, () => {
 
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [queryDescription, query] of Object.entries(queries)) {
-        test(
+        testIf(
+          `prologConstraints`,
           `test (${environmentDescription} / ${queryDescription})`,
           makeTemporaryEnv({}, async ({path, run, source}) => {
             await environment(path);
