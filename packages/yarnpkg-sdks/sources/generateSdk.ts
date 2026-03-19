@@ -203,7 +203,8 @@ export type SupportedSdk =
   | `svelte-language-server`
   | `flow-bin`
   | `oxfmt`
-  | `oxlint`;
+  | `oxlint`
+  | `oxlint-tsgolint`;
 
 export type BaseSdks = Array<[
   SupportedSdk,
@@ -343,6 +344,21 @@ export class Wrapper {
     this.paths.set(relPackagePath, relProjectPath);
 
     return absWrapperPath;
+  }
+
+  async writeRaw(relPackagePath: PortablePath, content: string, options: {mode?: number} = {}) {
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const absPath = ppath.join(this.target, this.name, relPackagePath);
+    const relProjectPath = ppath.relative(projectRoot, absPath);
+
+    await xfs.mkdirPromise(ppath.dirname(absPath), {recursive: true});
+    await xfs.writeFilePromise(absPath, content, {mode: options.mode});
+
+    this.paths.set(relPackagePath, relProjectPath);
+
+    return absPath;
   }
 
   getProjectPathTo(relPackagePath: PortablePath) {

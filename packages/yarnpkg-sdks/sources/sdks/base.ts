@@ -312,6 +312,7 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   const oxlintMonkeyPatch = `
     module => module;
 
+    process.env.PATH += \`;\${resolve(__dirname, '../../oxlint-tsgolint/bin')}\`;
     import(\`${ppath.join(npath.toPortablePath(relPath), `dist/cli.js`)}\`);
   `;
 
@@ -321,6 +322,25 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
     requirePath: `` as PortablePath,
     wrapModule: oxlintMonkeyPatch,
   });
+
+  return wrapper;
+};
+
+export const generateOxlintTsgolintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`oxlint-tsgolint` as PortablePath, {pnpApi, target});
+
+  // we are making use of oxc_linter tsgolint resolution mechanism with PATH:
+  // https://github.com/oxc-project/oxc/blob/d3dcf5bc9718ebb4839be27062b5d82da2118e2e/crates/oxc_linter/src/tsgolint.rs#L1164-L1225
+  // the entrypoint with PATH is added via oxlint wrapper above
+  // with this approach, it requires us to add a windows executable shim for tsgolint.js
+  const tsgolintCmd = `
+    @echo off
+    node "%~dp0tsgolint.js" %*
+  `.trim().replace(/^ {4}/gm, ``);
+
+  await wrapper.writeDefaults();
+  await wrapper.writeFile(`bin/tsgolint` as PortablePath);
+  await wrapper.writeRaw(`bin/tsgolint.cmd` as PortablePath, tsgolintCmd);
 
   return wrapper;
 };
@@ -336,4 +356,5 @@ export const BASE_SDKS: BaseSdks = [
   [`flow-bin`, generateFlowBinBaseWrapper],
   [`oxfmt`, generateOxfmtBaseWrapper],
   [`oxlint`, generateOxlintBaseWrapper],
+  [`oxlint-tsgolint`, generateOxlintTsgolintBaseWrapper],
 ];

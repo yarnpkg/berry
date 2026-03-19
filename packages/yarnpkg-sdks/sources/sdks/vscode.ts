@@ -171,6 +171,9 @@ export const generateOxlintWrapper: GenerateIntegrationWrapper = async (pnpApi: 
   });
 };
 
+export const generateOxlintTsgolintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+};
+
 export const VSCODE_SDKS: IntegrationSdks = [
   [null, generateDefaultWrapper],
   [`@astrojs/language-server`, generateAstroLanguageServerWrapper],
@@ -183,4 +186,5 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`flow-bin`, generateFlowBinWrapper],
   [`oxfmt`, generateOxfmtWrapper],
   [`oxlint`, generateOxlintWrapper],
+  [`oxlint-tsgolint`, generateOxlintTsgolintWrapper],
 ];
