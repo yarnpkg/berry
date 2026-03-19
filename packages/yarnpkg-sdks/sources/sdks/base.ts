@@ -309,6 +309,9 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   ));
   const relPath = npath.relative(npath.dirname(binPath), absPath);
 
+  // We are using pass-through here since we don't really need to change the default behavior of the wrapper.
+  // Since the oxlint wrapper is the one that spawns the actual oxlint binary, we extend the PATH here
+  // to enable the tsgolint PATH resolution strategy in the next tsgolint wrapper.
   const oxlintMonkeyPatch = `
     module => module;
 
@@ -329,10 +332,10 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
 export const generateOxlintTsgolintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`oxlint-tsgolint` as PortablePath, {pnpApi, target});
 
-  // we are making use of oxc_linter tsgolint resolution mechanism with PATH:
-  // https://github.com/oxc-project/oxc/blob/d3dcf5bc9718ebb4839be27062b5d82da2118e2e/crates/oxc_linter/src/tsgolint.rs#L1164-L1225
-  // the entrypoint with PATH is added via oxlint wrapper above
-  // with this approach, it requires us to add a windows executable shim for tsgolint.js
+  // We are using the oxc_linter tsgolint resolution mechanism via the PATH environment variable
+  // since it's the only realistic approach to correctly resolve the tsgolint binary when using Yarn PnP.
+  // Ref: https://github.com/oxc-project/oxc/blob/d3dcf5bc9718ebb4839be27062b5d82da2118e2e/crates/oxc_linter/src/tsgolint.rs#L1164-L1225
+  // With this approach, we need to add a Windows executable shim for tsgolint.js.
   const tsgolintCmd = `
     @echo off
     node "%~dp0tsgolint.js" %*
