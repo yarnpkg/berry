@@ -297,26 +297,14 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
   const wrapper = new Wrapper(`oxlint` as PortablePath, {pnpApi, target});
   await wrapper.writeDefaults();
 
-  // The following workaround is necessary because:
-  // 1. oxlint uses top-level await, which prevents the use of `require`.
-  // 2. Neither dist/cli.js nor bin/oxlint are exposed as exports in the package.json.
-  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
-  const dependencyReference = topLevelInformation.packageDependencies.get(`oxlint`)!;
-  const pkgInformation = pnpApi.getPackageInformation(pnpApi.getLocator(`oxlint`, dependencyReference))!;
-  const absPath = pkgInformation.packageLocation;
-  const binPath = npath.join(npath.fromPortablePath(
-    wrapper.getProjectPathTo(`bin/oxlint` as PortablePath),
-  ));
-  const relPath = npath.relative(npath.dirname(binPath), absPath);
-
-  // We are using pass-through here since we don't really need to change the default behavior of the wrapper.
-  // Since the oxlint wrapper is the one that spawns the actual oxlint binary, we extend the PATH here
-  // to enable the tsgolint PATH resolution strategy in the next tsgolint wrapper.
+  // There are two workarounds here:
+  // 1. Injecting into PATH to enable tsgolint's PATH resolution strategy in the following tsgolint wrapper.
+  // 2. Direct file import to work around the top-level await and exports restrictions in oxlint.
   const oxlintMonkeyPatch = `
     module => module;
 
-    process.env.PATH += \`;\${resolve(__dirname, '../../oxlint-tsgolint/bin')}\`;
-    import(\`${ppath.join(npath.toPortablePath(relPath), `dist/cli.js`)}\`);
+    process.env.PATH += \`;\${resolve(__dirname, \`../../oxlint-tsgolint/bin\`)}\`;
+    import(pathToFileURL(resolve(require(\`pnpapi\`).resolveToUnqualified(\`oxlint\`, absPnpApiPath), \`dist/cli.js\`)));
   `;
 
   // This intentionally produces a dummy export; the main logic is in the import above.
