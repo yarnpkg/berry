@@ -315,6 +315,8 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
     import(\`${ppath.join(npath.toPortablePath(relPath), `dist/cli.js`)}\`);
   `;
 
+  // This intentionally produces a dummy export; the main logic is in the import above.
+  // Originally, the binary does not export anything.
   await wrapper.writeFile(`bin/oxlint` as PortablePath, {
     requirePath: `` as PortablePath,
     wrapModule: oxlintMonkeyPatch,
