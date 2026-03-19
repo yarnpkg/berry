@@ -38,7 +38,7 @@ jobs:
 
     - name: 'Build a binary for convenience'
       run: |
-        yarn build:cli
+        yarn build:cli --no-git-hash
 
         TMPBIN=$(mktemp -d)
         cp ./packages/yarnpkg-cli/bundles/yarn.js $TMPBIN/yarn.js
