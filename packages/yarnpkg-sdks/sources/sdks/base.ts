@@ -1,4 +1,4 @@
-import {PortablePath}                           from '@yarnpkg/fslib';
+import {npath, PortablePath, ppath}             from '@yarnpkg/fslib';
 import {PnpApi}                                 from '@yarnpkg/pnp';
 
 import {Wrapper, GenerateBaseWrapper, BaseSdks} from '../generateSdk';
@@ -285,6 +285,44 @@ export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pn
   return wrapper;
 };
 
+export const generateOxfmtBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`oxfmt` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeDefaults();
+
+  return wrapper;
+};
+
+export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`oxlint` as PortablePath, {pnpApi, target});
+  await wrapper.writeDefaults();
+
+  // The following workaround is necessary because:
+  // 1. oxlint uses top-level await, which prevents the use of `require`.
+  // 2. Neither dist/cli.js nor bin/oxlint are exposed as exports in the package.json.
+  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
+  const dependencyReference = topLevelInformation.packageDependencies.get(`oxlint`)!;
+  const pkgInformation = pnpApi.getPackageInformation(pnpApi.getLocator(`oxlint`, dependencyReference))!;
+  const absPath = pkgInformation.packageLocation;
+  const binPath = npath.join(npath.fromPortablePath(
+    wrapper.getProjectPathTo(`bin/oxlint` as PortablePath),
+  ));
+  const relPath = npath.relative(npath.dirname(binPath), absPath);
+
+  const oxlintMonkeyPatch = `
+    module => module;
+
+    import(\`${ppath.join(npath.toPortablePath(relPath), `dist/cli.js`)}\`);
+  `;
+
+  await wrapper.writeFile(`bin/oxlint` as PortablePath, {
+    requirePath: `` as PortablePath,
+    wrapModule: oxlintMonkeyPatch,
+  });
+
+  return wrapper;
+};
+
 export const BASE_SDKS: BaseSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerBaseWrapper],
   [`eslint`, generateEslintBaseWrapper],
@@ -294,4 +332,6 @@ export const BASE_SDKS: BaseSdks = [
   [`typescript`, generateTypescriptBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
   [`flow-bin`, generateFlowBinBaseWrapper],
+  [`oxfmt`, generateOxfmtBaseWrapper],
+  [`oxlint`, generateOxlintBaseWrapper],
 ];

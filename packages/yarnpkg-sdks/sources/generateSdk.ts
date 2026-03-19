@@ -201,7 +201,9 @@ export type SupportedSdk =
   | `typescript-language-server`
   | `typescript`
   | `svelte-language-server`
-  | `flow-bin`;
+  | `flow-bin`
+  | `oxfmt`
+  | `oxlint`;
 
 export type BaseSdks = Array<[
   SupportedSdk,

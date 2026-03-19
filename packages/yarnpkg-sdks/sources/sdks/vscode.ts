@@ -139,6 +139,38 @@ export const generateFlowBinWrapper: GenerateIntegrationWrapper = async (pnpApi:
   });
 };
 
+export const generateOxfmtWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`oxc.path.oxfmt`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        ppath.normalize(wrapper.manifest.bin.oxfmt),
+      ),
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `oxc.oxc-vscode`,
+    ],
+  });
+};
+
+export const generateOxlintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
+    [`oxc.path.oxlint`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        ppath.normalize(wrapper.manifest.bin.oxlint),
+      ),
+    ),
+  });
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.extensions, {
+    [`recommendations`]: [
+      `oxc.oxc-vscode`,
+    ],
+  });
+};
+
 export const VSCODE_SDKS: IntegrationSdks = [
   [null, generateDefaultWrapper],
   [`@astrojs/language-server`, generateAstroLanguageServerWrapper],
@@ -149,4 +181,6 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`typescript`, generateTypescriptWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerWrapper],
   [`flow-bin`, generateFlowBinWrapper],
+  [`oxfmt`, generateOxfmtWrapper],
+  [`oxlint`, generateOxlintWrapper],
 ];
