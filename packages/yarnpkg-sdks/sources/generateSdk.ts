@@ -145,6 +145,9 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
     `\n`,
     `    process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
     `    process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+    `    if (isPnpLoaderEnabled && register) {\n`,
+    `      process.env.NODE_OPTIONS += \` --experimental-loader \${pathToFileURL(absPnpLoaderPath)}\`;\n`,
+    `    }\n`,
     `  }\n`,
   ] : []),
   ...(usePnpify ? [

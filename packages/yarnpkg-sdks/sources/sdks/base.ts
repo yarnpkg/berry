@@ -289,6 +289,9 @@ export const generateOxfmtBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpA
   const wrapper = new Wrapper(`oxfmt` as PortablePath, {pnpApi, target});
 
   await wrapper.writeDefaults();
+  await wrapper.writeFile(`bin/oxfmt` as PortablePath, {
+    setupEnv: true,
+  });
 
   return wrapper;
 };
