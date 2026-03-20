@@ -328,8 +328,7 @@ export const generateOxlintTsgolintBaseWrapper: GenerateBaseWrapper = async (pnp
   // Ref: https://github.com/oxc-project/oxc/blob/d3dcf5bc9718ebb4839be27062b5d82da2118e2e/crates/oxc_linter/src/tsgolint.rs#L1164-L1225
   // With this approach, we need to add a Windows executable shim for tsgolint.js.
   const tsgolintCmd = `
-    @echo off
-    node "%~dp0tsgolint.js" %*
+    @goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"node" "%~dp0tsgolint.js" %*
   `.trim().replace(/^ {4}/gm, ``);
 
   await wrapper.writeDefaults();
