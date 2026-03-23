@@ -18,14 +18,16 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
   const keys = React.Children.map(children, child => getKey(child));
   const initialKey = keys[0];
 
+
   const [activeKey, setActiveKey] = useState(initialKey);
   const activeIndex = keys.indexOf(activeKey);
 
   useEffect(() => {
-    // If the active key is missing from the
-    // new keys, set it to the initalKey
-    if (!keys.includes(activeKey)) {
-      setActiveKey(initialKey);
+    // If the active key is missing from the keys
+    // the index is after the last key
+    // set it to the the last key
+    if (activeIndex === -1) {
+      setActiveKey(keys[keys.length - 1]);
     }
   }, [children]);
 
@@ -44,8 +46,11 @@ export const ScrollableItems = ({active = true, children = [], radius = 10, size
   ]);
 
   useListInput(activeKey, keys, {
+    radius,
     active,
     minus: `up`,
+    pageminus: `pageup`,
+    pageplus: `pagedown`,
     plus: `down`,
     set: setActiveKey,
     loop,
