@@ -28,3 +28,6 @@ file:./relative/path/to/package.tgz
 ## Tarball-based links
 
 When `file:` points to a `.tgz` file, Yarn will transparently let you require files from within the archive. For the `node_modules` linker, it means that the archive will be unpacked into the generated `node_modules` folder.
+
+The `.tgz` file should have all the project files under a single top-level folder, and that folder should have a `package.json` file describing the package and its version.  For example, a package called `foo` might be
+in a file named `foo-1.0.tgz`, the `tgz` could have files in it at `foo/package.json` and `foo/main.js`.  You would add it to your project with a command like `yarn add foo@file:./path/to/foo-1.0.tgz`.
