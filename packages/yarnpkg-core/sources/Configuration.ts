@@ -606,6 +606,11 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: [`.env.yarn?`],
     isArray: true,
   },
+  enableMergeConflictPrompt: {
+    description: `If true, prompt the user about what to do when Yarn detects merge conflicts in the lockfile`,
+    type: SettingsType.BOOLEAN,
+    default: false,
+  },
 
   // Package patching - to fix incorrect definitions
   packageExtensions: {
@@ -723,6 +728,7 @@ export interface ConfigurationValueMap {
 
   // Miscellaneous settings
   injectEnvironmentFiles: Array<PortablePath>;
+  enableMergeConflictPrompt: boolean;
 
   // Package patching - to fix incorrect definitions
   packageExtensions: Map<string, miscUtils.ToMapValue<{
