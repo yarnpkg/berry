@@ -289,9 +289,7 @@ export const generateOxfmtBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpA
   const wrapper = new Wrapper(`oxfmt` as PortablePath, {pnpApi, target});
 
   await wrapper.writeDefaults();
-  await wrapper.writeFile(`bin/oxfmt` as PortablePath, {
-    setupEnv: true,
-  });
+  await wrapper.writeBinary(`bin/oxfmt` as PortablePath, {setupEnv: true});
 
   return wrapper;
 };
@@ -312,7 +310,7 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
 
   // This intentionally produces a dummy export; the main logic is in the import above.
   // Originally, the binary does not export anything.
-  await wrapper.writeFile(`bin/oxlint` as PortablePath, {
+  await wrapper.writeBinary(`bin/oxlint` as PortablePath, {
     requirePath: `` as PortablePath,
     wrapModule: oxlintMonkeyPatch,
   });
@@ -332,8 +330,8 @@ export const generateOxlintTsgolintBaseWrapper: GenerateBaseWrapper = async (pnp
   `.trim().replace(/^ {4}/gm, ``);
 
   await wrapper.writeDefaults();
-  await wrapper.writeFile(`bin/tsgolint` as PortablePath);
-  await wrapper.writeRaw(`bin/tsgolint.cmd` as PortablePath, tsgolintCmd);
+  await wrapper.writeBinary(`bin/tsgolint` as PortablePath);
+  await wrapper.writeRaw(`bin/tsgolint.cmd` as PortablePath, tsgolintCmd, {mode: 0o755});
 
   return wrapper;
 };
