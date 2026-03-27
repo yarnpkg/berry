@@ -324,7 +324,7 @@ export const generateOxlintTsgolintBaseWrapper: GenerateBaseWrapper = async (pnp
   // We are using the oxc_linter tsgolint resolution mechanism via the PATH environment variable
   // since it's the only realistic approach to correctly resolve the tsgolint binary when using Yarn PnP.
   // Ref: https://github.com/oxc-project/oxc/blob/d3dcf5bc9718ebb4839be27062b5d82da2118e2e/crates/oxc_linter/src/tsgolint.rs#L1164-L1225
-  // With this approach, we need to add a Windows executable shim for tsgolint.js.
+  // With this approach, we need to manually create both Unix and Windows executable shim for tsgolint.js.
   const tsgolintCmd = `
     @goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"node" "%~dp0tsgolint.js" %*
   `.trim().replace(/^ {4}/gm, ``);
