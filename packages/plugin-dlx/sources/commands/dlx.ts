@@ -17,14 +17,27 @@ export default class DlxCommand extends BaseCommand {
 
       By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
 
+      Version ranges can be appended to the package name using the \`@\` suffix (e.g. \`pkg@1.0.0\` or \`pkg@^2\`). When no range is specified, Yarn will use the \`latest\` dist-tag.
+
+      When a package ships multiple binaries, use \`-p,--package\` to specify the package (with an optional version) and pass the desired binary name as the command. If the binary name matches one of the package's binaries it will be invoked directly; otherwise Yarn will report a \`Binary not found\` error.
+
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,
     examples: [[
       `Use create-vite to scaffold a new Vite project`,
       `yarn dlx create-vite`,
     ], [
+      `Run a specific version of a package`,
+      `yarn dlx create-vite@5.0.0`,
+    ], [
       `Install multiple packages for a single command`,
       `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
+    ], [
+      `Run the \`tsc\` binary from a specific version of typescript`,
+      `yarn dlx -p typescript@5.0.2 tsc --version`,
+    ], [
+      `Run an alternate binary (\`tsserver\`) from the same package`,
+      `yarn dlx -p typescript@5.0.2 tsserver`,
     ]],
   });
 
