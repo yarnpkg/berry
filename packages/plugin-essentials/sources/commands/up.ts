@@ -276,6 +276,10 @@ export default class UpCommand extends BaseCommand {
       Descriptor,
     ]> = [];
 
+    // Catalog entries that need to be updated in .yarnrc.yml, keyed by
+    // `${catalogName ?? ''}\0${entryName}` to deduplicate across workspaces.
+    const catalogUpdates = new Map<string, {catalogName: string | null, entryName: string, newRange: string}>();
+
     for (const [workspace, target, /*existing*/, {suggestions}] of allSuggestions) {
       let selected: Descriptor;
 
@@ -319,17 +323,25 @@ export default class UpCommand extends BaseCommand {
         throw new Error(`Assertion failed: This descriptor should have a matching entry`);
 
       if (current.descriptorHash !== selected.descriptorHash) {
-        workspace.manifest[target].set(
-          selected.identHash,
-          selected,
-        );
+        if (current.range.startsWith(`catalog:`)) {
+          // When the dependency uses the catalog: protocol, update the catalog entry
+          // in .yarnrc.yml rather than rewriting package.json with the resolved version.
+          const catalogName = current.range.slice(`catalog:`.length) || null;
+          const entryName = structUtils.stringifyIdent(current);
+          catalogUpdates.set(`${catalogName ?? ``}\0${entryName}`, {catalogName, entryName, newRange: selected.range});
+        } else {
+          workspace.manifest[target].set(
+            selected.identHash,
+            selected,
+          );
 
-        afterWorkspaceDependencyReplacementList.push([
-          workspace,
-          target,
-          current,
-          selected,
-        ]);
+          afterWorkspaceDependencyReplacementList.push([
+            workspace,
+            target,
+            current,
+            selected,
+          ]);
+        }
       } else {
         const resolver = configuration.makeResolver();
         const resolveOptions: MinimalResolveOptions = {project, resolver};
@@ -338,6 +350,64 @@ export default class UpCommand extends BaseCommand {
         const bound = resolver.bindDescriptor(normalizedDependency, workspace.anchoredLocator, resolveOptions);
 
         project.forgetResolution(bound);
+      }
+    }
+
+    // If there are any catalog entries to update, do them all at once in a single rc update to avoid
+    // multiple filesystem writes, and to ensure that the in-memory configuration is updated only once
+    if (catalogUpdates.size > 0) {
+      type RcContent = {
+        [key: string]: unknown;
+        catalog?: Record<string, string>;
+        catalogs?: Record<string, Record<string, string>>;
+      };
+      // `Configuration.updateConfiguration()` round-trips `.yarnrc.yml` through Yarn's own
+      // `parseSyml` / `stringifySyml` serializer, which has two trade-offs:
+      // - Comments are stripped: any `#` comments in `.yarnrc.yml` are lost on the first
+      //   `yarn up` that touches a catalog entry.
+      // - Keys are reordered: `stringifySyml` sorts keys according to a fixed priority
+      //   list, so the order of entries in `catalog:` and `catalogs:` may change.
+      await Configuration.updateConfiguration(project.cwd, (rcContent: RcContent) => {
+        return Array.from(catalogUpdates.values()).reduce((updated, {catalogName, entryName, newRange}) => {
+          // If catalogName is null, it means that the catalog entry is under the
+          // top-level default catalog entry, so we should update the `catalog` field
+          if (catalogName === null) {
+            const existingCatalog = updated.catalog ?? {};
+            return {
+              ...updated,
+              catalog: {
+                ...existingCatalog,
+                [entryName]: newRange,
+              },
+            };
+          }
+
+          // Otherwise, the catalog entry is under a named catalog, so we should update
+          // that specific entry under the `catalogs` object
+          const existingCatalogs = updated.catalogs  ?? {};
+          return {
+            ...updated,
+            catalogs: {
+              ...existingCatalogs,
+              [catalogName]: {
+                ...(existingCatalogs[catalogName] ?? {}),
+                [entryName]: newRange,
+              },
+            },
+          };
+        }, rcContent);
+      });
+
+
+      // Update in-memory configuration so the subsequent install resolves the new ranges
+      for (const {catalogName, entryName, newRange} of catalogUpdates.values()) {
+        if (catalogName === null) {
+          const catalog = configuration.values.get(`catalog`);
+          catalog?.set(entryName, newRange);
+        } else {
+          const catalogs = configuration.values.get(`catalogs`);
+          catalogs?.get(catalogName)?.set(entryName, newRange);
+        }
       }
     }
 
