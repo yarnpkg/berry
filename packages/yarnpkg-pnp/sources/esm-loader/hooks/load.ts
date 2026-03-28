@@ -63,7 +63,7 @@ export async function load(
 
   return {
     format,
-    source: format === `commonjs` ? undefined : await fs.promises.readFile(filePath, `utf8`),
+    source: format === `commonjs` && !filePath.includes(`.zip/`) ? undefined : await fs.promises.readFile(filePath, `utf8`),
     shortCircuit: true,
   };
 }
