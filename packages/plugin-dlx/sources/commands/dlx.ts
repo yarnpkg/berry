@@ -15,11 +15,9 @@ export default class DlxCommand extends BaseCommand {
     details: `
       This command will install a package within a temporary environment, and run its binary script if it contains any. The binary will run within the current cwd.
 
-      By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
+      By default, Yarn will download the package named \`command\` and run the binary with the same name. The \`-p,--package\` flag is only needed when the binary you want to run has a different name than the package, or when you need to install multiple packages for a single command.
 
-      Version ranges can be appended to the package name using the \`@\` suffix (e.g. \`pkg@1.0.0\` or \`pkg@^2\`). When no range is specified, Yarn will use the \`latest\` dist-tag.
-
-      When a package ships multiple binaries, use \`-p,--package\` to specify the package (with an optional version) and pass the desired binary name as the command. If the binary name matches one of the package's binaries it will be invoked directly; otherwise Yarn will report a \`Binary not found\` error.
+      Version ranges can be appended to the package name using the \`@\` suffix (e.g. \`pkg@1.0.0\` or \`pkg@^2\`). When no range is specified, Yarn will use the \`latest\` dist-tag. This works both with and without the \`-p,--package\` flag.
 
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,
