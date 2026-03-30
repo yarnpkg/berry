@@ -256,6 +256,10 @@ html.search-page-wrapper .row {
   color: rgb(156, 220, 254);
 }
 
+.rjd-annotation a code {
+  cursor: pointer;
+}
+
 .terminal-code pre {
   --prism-background-color: #393A34 !important;
   --prism-color: #f6f8fa !important;

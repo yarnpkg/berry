@@ -219,7 +219,7 @@
           "properties": {
             "built": {
               "title": "Define whether to run the postinstall script or not.",
-              "description": "If false, the package will never be built (deny-list). This behavior is reversed when the `enableScripts` yarnrc setting is toggled off - when that happens, only packages with `built` explicitly set to `true` will be built (allow-list); as for those with `built` explicitly set to `false`, they will simply see their build script warnings downgraded into simple notices.",
+              "description": "If false, the package will never be built (deny-list). This behavior is reversed when the [`enableScripts` yarnrc setting](yarnrc#enableScripts) is toggled off - when that happens, only packages with `built` explicitly set to `true` will be built (allow-list); as for those with `built` explicitly set to `false`, they will simply see their build script warnings downgraded into simple notices.",
               "type": "boolean",
               "examples": [false]
             },
