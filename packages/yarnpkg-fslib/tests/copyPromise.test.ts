@@ -1,6 +1,6 @@
-import {NodeFS}                                    from '../sources/NodeFS';
+import {NodeFS}               from '../sources/NodeFS';
 import {xfs, ppath, Filename} from '../sources';
-import {setupCopyIndex}                            from '../sources';
+import {setupCopyIndex}       from '../sources';
 
 const nodeFs = new NodeFS();
 
