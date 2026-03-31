@@ -25,6 +25,10 @@ const LOCKFILE_MIGRATION_RULES: Array<{
   value: `mixed`,
 }, {
   selector: v => v < 9,
+  name: `approvedGitRepositories` as keyof ConfigurationValueMap,
+  value: [`**`],
+}, {
+  selector: v => v < 9,
   name: `enableScripts`,
   value: true,
 }];

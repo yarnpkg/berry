@@ -71,6 +71,17 @@
       "type": "number",
       "default": 2
     },
+    "approvedGitRepositories": {
+      "_package": "@yarnpkg/plugin-git",
+      "title": "Array of git repository URL glob patterns that are allowed to be fetched.",
+      "description": "When set, Yarn will block any git dependency whose normalized repository URL doesn't match one of these patterns. GitHub repositories must be explicitly approved.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "_exampleItems": ["https://github.com/yarnpkg/*", "ssh://git@github.com/yarnpkg/*"]
+    },
     "compressionLevel": {
       "_package": "@yarnpkg/core",
       "type": ["number", "string"],
