@@ -1,6 +1,7 @@
 import {execUtils, scriptUtils, structUtils, tgzUtils} from '@yarnpkg/core';
 import {Locator, formatUtils}                          from '@yarnpkg/core';
 import {Fetcher, FetchOptions, MinimalFetchOptions}    from '@yarnpkg/core';
+import {MessageName, ReportError}                      from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs, NativePath}   from '@yarnpkg/fslib';
 
 import {PROTOCOL}                                      from './constants';
@@ -64,6 +65,11 @@ export class ExecFetcher implements Fetcher {
   }
 
   private async fetchFromDisk(locator: Locator, opts: FetchOptions) {
+    const dependencyMeta = opts.project.getDependencyMeta(locator, null);
+
+    if (!opts.project.configuration.get(`enableScripts`) && !dependencyMeta.built)
+      throw new ReportError(MessageName.DISABLED_BUILD_SCRIPTS, `${structUtils.prettyLocator(opts.project.configuration, locator)} can't be built with the exec: protocol because all scripts have been disabled.`);
+
     const generatorFile = await loadGeneratorFile(locator.reference, PROTOCOL, opts);
 
     return xfs.mktempPromise(async generatorDir => {
