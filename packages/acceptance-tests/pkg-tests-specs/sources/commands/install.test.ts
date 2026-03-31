@@ -61,7 +61,7 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should migrate old lockfiles by setting enableScripts to true when unset`,
+      `it should migrate old lockfiles by setting enableScripts and approvedGitRepositories when unset`,
       makeTemporaryEnv({
         dependencies: {
           [`no-deps`]: `1.0.0`,
@@ -92,6 +92,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await expect(xfs.readFilePromise(rcPath, `utf8`)).resolves.toContain(`enableScripts: true`);
+        await expect(xfs.readFilePromise(rcPath, `utf8`)).resolves.toMatch(/approvedGitRepositories:\r?\n\s*-\s*['"]?\*\*['"]?/);
       }),
     );
 
