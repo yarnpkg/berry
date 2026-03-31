@@ -751,7 +751,6 @@ export class Project {
     const packageExtensions = await this.configuration.getPackageExtensions();
 
     const pkg = this.configuration.normalizePackage(originalPkg, {packageExtensions});
-    const isWorkspacePackage = this.tryWorkspaceByLocator(pkg) !== null;
 
     for (const [identHash, descriptor] of pkg.dependencies) {
       const dependency = await this.configuration.reduceHook(hooks => {
@@ -763,9 +762,6 @@ export class Project {
 
       if (!structUtils.areIdentsEqual(descriptor, dependency))
         throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
-
-      if (!isWorkspacePackage && dependency.range.startsWith(`exec:`))
-        throw new ReportError(MessageName.INVALID_MANIFEST, `${structUtils.prettyLocator(this.configuration, pkg)} lists ${structUtils.prettyDescriptor(this.configuration, dependency)} as dependency, but only workspaces can depend on exec: packages.`);
 
       const bound = resolver.bindDescriptor(dependency, pkg, resolveOptions);
       pkg.dependencies.set(identHash, bound);
