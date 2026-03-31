@@ -24381,7 +24381,7 @@ const RAW_RUNTIME_STATE =
     ]],\
     ["esbuild", [\
       ["npm:0.15.11", {\
-        "packageLocation": "./.yarn/unplugged/esbuild-npm-0.15.11-352cc4ec35/node_modules/esbuild/",\
+        "packageLocation": "./.yarn/cache/esbuild-npm-0.15.11-352cc4ec35-08aa871366.zip/node_modules/esbuild/",\
         "packageDependencies": [\
           ["@esbuild/android-arm", "npm:0.15.11"],\
           ["@esbuild/linux-loong64", "npm:0.15.11"],\
@@ -24410,7 +24410,7 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }],\
       ["npm:0.21.5", {\
-        "packageLocation": "./.yarn/unplugged/esbuild-npm-0.21.5-d85dfbc965/node_modules/esbuild/",\
+        "packageLocation": "./.yarn/cache/esbuild-npm-0.21.5-d85dfbc965-d2ff2ca84d.zip/node_modules/esbuild/",\
         "packageDependencies": [\
           ["@esbuild/aix-ppc64", "npm:0.21.5"],\
           ["@esbuild/android-arm", "npm:0.21.5"],\
