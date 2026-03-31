@@ -17,6 +17,14 @@ Our implementation has a couple of differences with the npm one. Like most other
 You can exclude your `devDependencies` (and their transitive dependencies) from the report by running the command with `--environment production`.
 :::
 
+## Postinstalls
+
+Yarn doesn't run postinstalls by default ever since 4.14. You must either enable them globally by adding `enableScripts: true` to your `.yarnrc.yml`, or on a by-package basis using `dependenciesMeta` in your top-level `package.json`.
+
+## Age gate
+
+Yarn 4.12 introduced `npmMinimalAgeGate` to restrict packages installed on your machine to only packages that got published at least N days prior. The `npmPreapprovedPackages` setting also lets you bypass this check for specific packages.
+
 ## Hardened mode
 
 The hardened mode can be set (or disabled) using either the `enableHardenedMode` setting or by defining `YARN_ENABLE_HARDENED_MODE=1|0` in your environment variables, but in most cases you won't even have to think about it - the hardened mode is enabled by default when Yarn detects it runs in a pull request from a public GitHub repository.
