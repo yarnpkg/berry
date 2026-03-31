@@ -105,6 +105,7 @@ describe(`Node_Modules`, () => {
         },
       },
       {
+        enableScripts: true,
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
@@ -1760,6 +1761,7 @@ describe(`Node_Modules`, () => {
         },
       },
       {
+        enableScripts: true,
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {

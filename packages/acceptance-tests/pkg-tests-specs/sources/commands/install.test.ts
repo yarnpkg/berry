@@ -66,6 +66,8 @@ describe(`Commands`, () => {
         dependencies: {
           [`no-deps-scripted`]: `1.0.0`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         const {stdout} = await run(`install`, `--inline-builds`);
 
@@ -80,6 +82,8 @@ describe(`Commands`, () => {
         dependencies: {
           [`no-deps-scripted`]: `1.0.0`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         const {stdout} = await run(`install`, `--inline-builds`, `--mode=skip-build`);
 
@@ -94,6 +98,8 @@ describe(`Commands`, () => {
         dependencies: {
           [`no-deps-scripted`]: `1.0.0`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         const pnpPath = ppath.join(path, Filename.pnpCjs);
 
