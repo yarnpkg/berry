@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -33,7 +33,7 @@
     "p-limit": "^2.2.0",
     "semver": "^7.1.2",
     "strip-ansi": "^6.0.0",
-    "tar": "^6.0.5",
+    "tar": "^7.5.3",
     "tinylogic": "^2.0.0",
     "treeify": "^1.1.0",
     "tslib": "^2.4.0"
@@ -48,7 +48,6 @@
     "@types/diff": "^5.0.0",
     "@types/micromatch": "^4.0.1",
     "@types/node": "^18.19.124",
-    "@types/tar": "^4.0.4",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/plugin-link": "workspace:^",
     "@yarnpkg/plugin-npm": "workspace:^",
@@ -84,6 +83,5 @@
   },
   "engines": {
     "node": ">=18.12.0"
-  },
-  "stableVersion": "4.5.0"
+  }
 }
