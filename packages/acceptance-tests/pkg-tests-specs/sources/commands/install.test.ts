@@ -73,14 +73,14 @@ describe(`Commands`, () => {
         await run(`install`);
 
         const lockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
-        const match = lockfile.match(/^__metadata:\r?\n  version: (\d+)$/m);
+        const match = lockfile.match(/^__metadata:\r?\n {2}version: (\d+)$/m);
 
         expect(match).not.toBeNull();
         const currentVersion = Number(match![1]);
         const previousVersion = Math.max(0, currentVersion - 1);
 
         const downgraded = lockfile.replace(
-          /^(__metadata:\r?\n  version: )\d+$/m,
+          /^(__metadata:\r?\n {2}version: )\d+$/m,
           `$1${previousVersion}`,
         );
 
