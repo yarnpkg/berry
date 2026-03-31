@@ -61,6 +61,41 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should migrate old lockfiles by setting enableScripts to true when unset`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run}) => {
+        const lockfilePath = ppath.join(path, Filename.lockfile);
+        const rcPath = ppath.join(path, Filename.rc);
+
+        await run(`install`);
+
+        const lockfile = await xfs.readFilePromise(lockfilePath, `utf8`);
+        const match = lockfile.match(/^__metadata:\n  version: (\d+)$/m);
+
+        expect(match).not.toBeNull();
+        const currentVersion = Number(match![1]);
+        const previousVersion = Math.max(0, currentVersion - 1);
+
+        const downgraded = lockfile.replace(
+          /^(__metadata:\n  version: )\d+$/m,
+          `$1${previousVersion}`,
+        );
+
+        expect(downgraded).not.toEqual(lockfile);
+        await xfs.writeFilePromise(lockfilePath, downgraded);
+
+        await expect(xfs.existsPromise(rcPath)).resolves.toBeFalsy();
+
+        await run(`install`);
+
+        await expect(xfs.readFilePromise(rcPath, `utf8`)).resolves.toContain(`enableScripts: true`);
+      }),
+    );
+
+    test(
       `it should print the logs to the standard output when using --inline-builds`,
       makeTemporaryEnv({
         dependencies: {

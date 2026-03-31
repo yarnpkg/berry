@@ -46,7 +46,7 @@ import {IdentHash, DescriptorHash, LocatorHash, PackageExtensionStatus} from './
 // the Package type; no more no less.
 export const LOCKFILE_VERSION = miscUtils.parseInt(
   process.env.YARN_LOCKFILE_VERSION_OVERRIDE ??
-  8,
+  9,
 );
 
 // Same thing but must be bumped when the members of the Project class changes (we
