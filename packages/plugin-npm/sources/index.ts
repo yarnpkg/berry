@@ -73,7 +73,7 @@ const packageGateSettings = {
     description: `Minimum age of a package version according to the publish date on the npm registry to be considered for installation`,
     type: SettingsType.DURATION,
     unit: DurationUnit.MINUTES,
-    default: `0m`,
+    default: `4320m`,
   },
   npmPreapprovedPackages: {
     description: `Array of package descriptors or package name glob patterns to exclude from the minimum release age check`,

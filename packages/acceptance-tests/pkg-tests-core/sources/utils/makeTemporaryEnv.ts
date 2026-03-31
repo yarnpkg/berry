@@ -59,6 +59,8 @@ const mte = generatePkgDriver({
         [`YARN_ENABLE_INLINE_BUILDS`]: `false`,
         // Otherwise we would more often test the fallback rather than the real logic
         [`YARN_PNP_FALLBACK_MODE`]: `none`,
+        // Disable the age gate by default; tests that specifically test it override this via subDefinition
+        [`YARN_NPM_MINIMAL_AGE_GATE`]: `0`,
         // Otherwise tests fail on systems where this is globally set to true
         [`YARN_ENABLE_GLOBAL_CACHE`]: `false`,
         // To make sure we can call Git commands
