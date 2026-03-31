@@ -8,6 +8,8 @@ describe(`Protocols`, () => {
         dependencies: {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
@@ -27,14 +29,14 @@ describe(`Protocols`, () => {
         dependencies: {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
+      }, {
+        enableScripts: false,
       }, async ({path, run}) => {
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
           fs.writeFileSync(path.join(buildDir, 'index.js'), 'module.exports = 42;');
           fs.writeFileSync(path.join(buildDir, 'package.json'), '{}');
         `);
-
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, `enableScripts: false\n`);
 
         await expect(run(`install`)).rejects.toThrow(/all scripts have been disabled/);
       }),
@@ -51,14 +53,14 @@ describe(`Protocols`, () => {
             built: true,
           },
         },
+      }, {
+        enableScripts: false,
       }, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
           fs.writeFileSync(path.join(buildDir, 'index.js'), 'module.exports = 42;');
           fs.writeFileSync(path.join(buildDir, 'package.json'), '{}');
         `);
-
-        await xfs.writeFilePromise(`${path}/.yarnrc.yml`, `enableScripts: false\n`);
 
         await run(`install`);
 
@@ -72,6 +74,8 @@ describe(`Protocols`, () => {
         dependencies: {
           [`wrapper`]: `file:./wrapper`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run}) => {
         await xfs.mkdirPromise(`${path}/wrapper`);
 
@@ -99,6 +103,8 @@ describe(`Protocols`, () => {
         dependencies: {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
@@ -122,6 +128,8 @@ describe(`Protocols`, () => {
         dependencies: {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
@@ -145,6 +153,8 @@ describe(`Protocols`, () => {
         dependencies: {
           [`dynamic-pkg`]: `exec:./genpkg.js`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         await xfs.writeFilePromise(`${path}/genpkg.js`, `
           const {buildDir} = execEnv;
