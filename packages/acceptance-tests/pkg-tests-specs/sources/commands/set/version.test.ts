@@ -31,6 +31,8 @@ describe(`Commands`, () => {
           COREPACK_ROOT: `/path/to/corepack`,
           YARN_IS_TEST_ENV: undefined,
           YARN_CACHE_VERSION_OVERRIDE: undefined,
+          // Old yarn versions don't support this setting; unset to avoid "Unrecognized configuration" errors
+          YARN_NPM_MINIMAL_AGE_GATE: undefined,
         },
       }, async ({path, run, source}) => {
         // To force yarnPath to be set; followed by a sanity check
