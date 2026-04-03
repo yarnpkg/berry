@@ -44,7 +44,21 @@ export default class NpmPublishCommand extends BaseCommand {
   });
 
   provenance = Option.Boolean(`--provenance`, false, {
-    description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
+    description: `
+      Generate provenance for the package. Only available in GitHub Actions and GitLab CI.
+
+      Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.
+
+      Defaults to \`true\` in trusted CI environments (GitHub Actions and GitLab CI) with properly setup credentials, unless explicitly disabled with \`--no-provenance\`.
+    `,
+  });
+
+  noProvenance = Option.Boolean(`--no-provenance`, false, {
+    description: `
+      Do not generate provenance for the package. This overrides any other provenance settings.
+
+      Set \`--no-provenance\` to enable OIDC without provenance (e.g. for private repositories).
+    `,
   });
 
   dryRun = Option.Boolean(`-n,--dry-run`, false, {
@@ -131,7 +145,10 @@ export default class NpmPublishCommand extends BaseCommand {
 
         let provenance = false;
         let provenanceMessage = ``;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+        if (this.noProvenance) {
+          provenance = false;
+          provenanceMessage = `Skipping provenance statement because \`--no-provenance\` flag is set.`;
+        } else if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
           provenanceMessage = provenance
             ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
@@ -142,6 +159,9 @@ export default class NpmPublishCommand extends BaseCommand {
         } else if (configuration.get(`npmPublishProvenance`)) {
           provenance = true;
           provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+        } else if (process.env.CI && (process.env.GITHUB_ACTIONS && process.env.ACTIONS_ID_TOKEN_REQUEST_URL || process.env.GITLAB_CI && process.env.SIGSTORE_ID_TOKEN)) {
+          provenance = true;
+          provenanceMessage = `Generating provenance statement because running in a trusted CI environment. Set \`npmPublishProvenance\` to false to disable provenance.`;
         }
 
         if (provenanceMessage) {
