@@ -71,6 +71,17 @@
       "type": "number",
       "default": 2
     },
+    "approvedGitRepositories": {
+      "_package": "@yarnpkg/plugin-git",
+      "title": "Array of git repository URL glob patterns that are allowed to be fetched.",
+      "description": "When set, Yarn will block any git dependency whose normalized repository URL doesn't match one of these patterns. GitHub repositories must be explicitly approved.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "_exampleItems": ["https://github.com/yarnpkg/*", "ssh://git@github.com/yarnpkg/*"]
+    },
     "compressionLevel": {
       "_package": "@yarnpkg/core",
       "type": ["number", "string"],
@@ -217,9 +228,9 @@
     "enableScripts": {
       "_package": "@yarnpkg/core",
       "title": "Define whether to run postinstall scripts or not.",
-      "description": "If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).\n\nNote that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.",
+      "description": "If false (the default), Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).\n\nNote that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.",
       "type": "boolean",
-      "default": true
+      "default": false
     },
     "enableStrictSsl": {
       "_package": "@yarnpkg/core",

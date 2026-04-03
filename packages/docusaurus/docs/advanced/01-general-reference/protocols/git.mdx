@@ -11,6 +11,16 @@ The `git:` protocol fetches packages directly from a git repository. This is use
 yarn add typanion@git@github.com/arcanis/typanion.git
 ```
 
+## Repository approval
+
+Git dependencies are restricted through the `approvedGitRepositories` setting. GitHub repositories must match at least one of its glob patterns, otherwise Yarn will refuse to fetch them.
+
+```yaml
+approvedGitRepositories:
+  - https://github.com/yarnpkg/*
+  - ssh://git@github.com/yarnpkg/*
+```
+
 ## Packing
 
 The target repository won't be used as-is - it will first be packed using [`pack`](/cli/pack).
