@@ -285,6 +285,57 @@ export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pn
   return wrapper;
 };
 
+export const generateOxfmtBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`oxfmt` as PortablePath, {pnpApi, target});
+
+  await wrapper.writeDefaults();
+  await wrapper.writeBinary(`bin/oxfmt` as PortablePath, {setupEnv: true});
+
+  return wrapper;
+};
+
+export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`oxlint` as PortablePath, {pnpApi, target});
+  await wrapper.writeDefaults();
+
+  // There are two workarounds here:
+  // 1. Injecting into PATH to enable tsgolint's PATH resolution strategy in the following tsgolint wrapper.
+  // 2. Direct file import to work around the top-level await and exports restrictions in oxlint.
+  const oxlintMonkeyPatch = `
+    module => module;
+
+    process.env.PATH += \`;\${resolve(__dirname, \`../../oxlint-tsgolint/bin\`)}\`;
+    import(pathToFileURL(resolve(require(\`pnpapi\`).resolveToUnqualified(\`oxlint\`, absPnpApiPath), \`dist/cli.js\`)));
+  `;
+
+  // This intentionally produces a dummy export; the main logic is in the import above.
+  // Originally, the binary does not export anything.
+  await wrapper.writeBinary(`bin/oxlint` as PortablePath, {
+    requirePath: `` as PortablePath,
+    wrapModule: oxlintMonkeyPatch,
+  });
+
+  return wrapper;
+};
+
+export const generateOxlintTsgolintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
+  const wrapper = new Wrapper(`oxlint-tsgolint` as PortablePath, {pnpApi, target});
+
+  // We are using the oxc_linter tsgolint resolution mechanism via the PATH environment variable
+  // since it's the only realistic approach to correctly resolve the tsgolint binary when using Yarn PnP.
+  // Ref: https://github.com/oxc-project/oxc/blob/d3dcf5bc9718ebb4839be27062b5d82da2118e2e/crates/oxc_linter/src/tsgolint.rs#L1164-L1225
+  // With this approach, we need to manually create both Unix and Windows executable shim for tsgolint.js.
+  const tsgolintCmd = `
+    @goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"node" "%~dp0tsgolint.js" %*
+  `.trim().replace(/^ {4}/gm, ``);
+
+  await wrapper.writeDefaults();
+  await wrapper.writeBinary(`bin/tsgolint` as PortablePath);
+  await wrapper.writeRaw(`bin/tsgolint.cmd` as PortablePath, tsgolintCmd, {mode: 0o755});
+
+  return wrapper;
+};
+
 export const BASE_SDKS: BaseSdks = [
   [`@astrojs/language-server`, generateAstroLanguageServerBaseWrapper],
   [`eslint`, generateEslintBaseWrapper],
@@ -294,4 +345,7 @@ export const BASE_SDKS: BaseSdks = [
   [`typescript`, generateTypescriptBaseWrapper],
   [`svelte-language-server`, generateSvelteLanguageServerBaseWrapper],
   [`flow-bin`, generateFlowBinBaseWrapper],
+  [`oxfmt`, generateOxfmtBaseWrapper],
+  [`oxlint`, generateOxlintBaseWrapper],
+  [`oxlint-tsgolint`, generateOxlintTsgolintBaseWrapper],
 ];
