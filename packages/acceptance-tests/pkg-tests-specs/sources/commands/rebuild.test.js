@@ -7,6 +7,8 @@ describe(`Commands`, () => {
           [`no-deps-scripted`]: `1.0.0`,
           [`no-deps-scripted-bis`]: `1.0.0`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         await run(`install`);
 
@@ -45,6 +47,8 @@ describe(`Commands`, () => {
           [`no-deps-scripted`]: `1.0.0`,
           [`no-deps-scripted-bis`]: `1.0.0`,
         },
+      }, {
+        enableScripts: true,
       }, async ({path, run, source}) => {
         await run(`install`);
 

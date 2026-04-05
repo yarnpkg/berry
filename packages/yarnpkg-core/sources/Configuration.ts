@@ -576,7 +576,7 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
   enableScripts: {
     description: `If true, packages are allowed to have install scripts by default`,
     type: SettingsType.BOOLEAN,
-    default: true,
+    default: false,
   },
   enableStrictSettings: {
     description: `If true, unknown settings will cause Yarn to abort`,
