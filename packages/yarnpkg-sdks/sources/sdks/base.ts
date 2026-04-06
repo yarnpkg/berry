@@ -288,15 +288,25 @@ export const generateFlowBinBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pn
 export const generateOxfmtBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`oxfmt` as PortablePath, {pnpApi, target});
 
+  const oxfmtMonkeyPatch = `
+    module => module;
+
+    const binPath = resolve(absRequire.resolve(\`oxfmt/package.json\`), \`..\`, \`${wrapper.manifest.bin.oxfmt}\`);
+    absRequire(binPath);
+  `;
+
   await wrapper.writeDefaults();
-  await wrapper.writeBinary(`bin/oxfmt` as PortablePath, {setupEnv: true});
+  await wrapper.writeBinary(`bin/oxfmt` as PortablePath, {
+    setupEnv: true,
+    requirePath: `` as PortablePath,
+    wrapModule: oxfmtMonkeyPatch,
+  });
 
   return wrapper;
 };
 
 export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpApi, target: PortablePath) => {
   const wrapper = new Wrapper(`oxlint` as PortablePath, {pnpApi, target});
-  await wrapper.writeDefaults();
 
   // There are two workarounds here:
   // 1. Injecting into PATH to enable tsgolint's PATH resolution strategy in the following tsgolint wrapper.
@@ -305,15 +315,15 @@ export const generateOxlintBaseWrapper: GenerateBaseWrapper = async (pnpApi: Pnp
     module => module;
 
     process.env.PATH += \`;\${resolve(__dirname, \`../../oxlint-tsgolint/bin\`)}\`;
-    import(pathToFileURL(resolve(require(\`pnpapi\`).resolveToUnqualified(\`oxlint\`, absPnpApiPath), \`dist/cli.js\`)));
+
+    const binPath = resolve(absRequire.resolve(\`oxlint/package.json\`), \`..\`, \`${wrapper.manifest.bin.oxlint}\`);
+    import(pathToFileURL(binPath));
   `;
 
+  await wrapper.writeDefaults();
   // This intentionally produces a dummy export; the main logic is in the import above.
   // Originally, the binary does not export anything.
-  await wrapper.writeBinary(`bin/oxlint` as PortablePath, {
-    requirePath: `` as PortablePath,
-    wrapModule: oxlintMonkeyPatch,
-  });
+  await wrapper.writeBinary(`bin/oxlint` as PortablePath, {requirePath: `` as PortablePath, wrapModule: oxlintMonkeyPatch});
 
   return wrapper;
 };
