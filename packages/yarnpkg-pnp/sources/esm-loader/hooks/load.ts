@@ -1,9 +1,9 @@
-import {VirtualFS, npath}                                                                            from '@yarnpkg/fslib';
-import fs                                                                                            from 'fs';
-import {fileURLToPath, pathToFileURL}                                                                from 'url';
+import {VirtualFS, npath}                                                                                                          from '@yarnpkg/fslib';
+import fs                                                                                                                          from 'fs';
+import {fileURLToPath, pathToFileURL}                                                                                              from 'url';
 
-import {SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
-import * as loaderUtils                                                                              from '../loaderUtils';
+import {HAS_BROKEN_FSTAT_FOR_ZIP_FDS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
+import * as loaderUtils                                                                                                            from '../loaderUtils';
 
 // The default `load` doesn't support reading from zip files
 export async function load(
@@ -61,9 +61,14 @@ export async function load(
     });
   }
 
+  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
+  const source = format !== `commonjs` || shouldReadSource
+    ? await fs.promises.readFile(filePath, `utf8`)
+    : undefined;
+
   return {
     format,
-    source: format === `commonjs` ? undefined : await fs.promises.readFile(filePath, `utf8`),
+    source,
     shortCircuit: true,
   };
 }
