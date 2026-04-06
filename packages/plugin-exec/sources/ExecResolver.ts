@@ -1,6 +1,7 @@
 import {Resolver, ResolveOptions, MinimalResolveOptions} from '@yarnpkg/core';
 import {Descriptor, Locator, Manifest, Package}          from '@yarnpkg/core';
 import {LinkType}                                        from '@yarnpkg/core';
+import {MessageName, ReportError}                        from '@yarnpkg/core';
 import {miscUtils, structUtils, hashUtils}               from '@yarnpkg/core';
 
 import {PROTOCOL}                                        from './constants';
@@ -29,6 +30,9 @@ export class ExecResolver implements Resolver {
   }
 
   bindDescriptor(descriptor: Descriptor, fromLocator: Locator, opts: MinimalResolveOptions) {
+    if (opts.project.tryWorkspaceByLocator(fromLocator) === null)
+      throw new ReportError(MessageName.INVALID_MANIFEST, `${structUtils.prettyLocator(opts.project.configuration, fromLocator)} lists ${structUtils.prettyDescriptor(opts.project.configuration, descriptor)} as dependency, but only workspaces can depend on exec: packages.`);
+
     return structUtils.bindDescriptor(descriptor, {
       locator: structUtils.stringifyLocator(fromLocator),
     });
