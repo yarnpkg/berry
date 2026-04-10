@@ -357,11 +357,15 @@ const tools: Array<NodeVersioningTool> = [
   {
     name: `Corepack`,
     detect: async () => {
-      logger.warn(`⚠ Warning: No node versioning tool detected`);
-      logger.warn(`⚠ Using current node version (${process.version}) for builds`);
-      logger.warn(`⚠ This may lead to incorrect patches`);
+      const available = await logSpawn(`corepack`, [`--version`]).exit === 0;
 
-      return true;
+      if (available) {
+        logger.warn(`⚠ Warning: No node versioning tool detected`);
+        logger.warn(`⚠ Using Corepack and current node version (${process.version}) for builds`);
+        logger.warn(`⚠ This may lead to incorrect patches`);
+      }
+
+      return available;
     },
     init: async ({npm}, opts) => {
       return (binary, args) => (
