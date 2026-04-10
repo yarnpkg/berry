@@ -44,6 +44,10 @@ The build process for `resolve` is similar to that for `fsevents` -- downloading
 
 For `typescript`, the build process is much heavier. We clone `yarnpkg/TypeScript` (our own fork of the TypeScript repo) from GitHub, cherry-pick commits that implement PnP, and build the TypeScript distributables.
 
-As the TypeScript repo uses Volta to pin the node and npm versions used to build it, installing Volta is recommended to ensure consistent builds. If Volta is not installed, the generator script only switches the npm version by running npm via Corepack. A warning is printed in this case.
+The TypeScript repo uses Volta to pin the node and npm versions used while building it. To ensure your builds are consistent with the unpatched TypeScript, you should install a tool that manages your node and npm versions. The generator can detect and use these tools (in decreasing order of preference) if they are in your `PATH`:
+
+- [Volta](https://volta.sh/)
+- [mise-en-place](https://mise.jdx.dev/)
+- [Corepack](https://github.com/nodejs/corepack) (*Note: Corepack can only switch npm versions, not node versions. This may lead to inconsistent builds. A warning is printed if Corepack is the chosen tool.*)
 
 If you already have a local clone of `yarnpkg/TypeScript`, you can use git's alternates mechanism to allow git to find objects in the local clone, via the `GIT_ALTERNATE_OBJECT_DIRECTORIES` environment variable. This way, you can generate patches using commits in the local clone. The local clone is also used to speed up the script's cloning and fetching operations. However, do note that PRs that update the patches should only reference public commits in `yarnpkg/Typescript` or our CI checks will fail on the PR.
