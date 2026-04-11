@@ -71,11 +71,11 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
-  const executableFiles = new Set<PortablePath>();
+  const executablePatterns: Array<PortablePath> = [];
   for (const value of workspace.manifest.publishConfig?.executableFiles ?? new Set())
-    executableFiles.add(ppath.normalize(value));
+    executablePatterns.push(ppath.normalize(value));
   for (const value of workspace.manifest.bin.values())
-    executableFiles.add(ppath.normalize(value));
+    executablePatterns.push(ppath.normalize(value));
 
   const pack = tar.pack();
 
@@ -93,7 +93,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
         mtime: new Date(constants.SAFE_TIME * 1000),
       };
 
-      const mode = executableFiles.has(file)
+      const mode = executablePatterns.length > 0 && mm.isMatch(file, executablePatterns, {dot: true})
         ? 0o755
         : 0o644;
 
