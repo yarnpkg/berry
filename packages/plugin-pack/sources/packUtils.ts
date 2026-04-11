@@ -79,7 +79,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
   const executableFiles = new Set<PortablePath>(
     executablePatterns.length > 0
-      ? mm.match(files.map(f => ppath.normalize(f)), executablePatterns, {dot: true}) as Array<PortablePath>
+      ? mm(files.map(f => ppath.normalize(f)), executablePatterns, {dot: true}) as Array<PortablePath>
       : [],
   );
 

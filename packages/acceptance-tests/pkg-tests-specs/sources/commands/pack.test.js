@@ -719,9 +719,11 @@ describe(`Commands`, () => {
 
         const modes = {};
         await new Promise(resolve => {
-          const stream = tar.t({
+          tar.t({
             file: npath.fromPortablePath(`${path}/package.tgz`),
-            onentry: entry => { modes[entry.path] = entry.mode; },
+            onentry: entry => {
+              modes[entry.path] = entry.mode;
+            },
           }, [`package/scripts/build.sh`, `package/scripts/deploy.sh`, `package/index.js`], resolve);
         });
 
