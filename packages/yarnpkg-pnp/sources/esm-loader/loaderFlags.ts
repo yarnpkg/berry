@@ -21,4 +21,5 @@ export const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || (major === 20 && minor 
 // https://github.com/nodejs/node/pull/52104
 export const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
 
-export const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major > 25 || (major === 25 && minor >= 7);
+// https://github.com/nodejs/node/pull/61769 — backported to v24.15.0
+export const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major > 25 || (major === 25 && minor >= 7) || (major === 24 && minor >= 15);
