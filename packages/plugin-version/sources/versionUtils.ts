@@ -369,8 +369,12 @@ export function suggestStrategy(from: string, to: string) {
 
   for (const strategy of Object.values(Decision))
     if (strategy !== Decision.UNDECIDED && strategy !== Decision.DECLINE)
-      if (semver.inc(from, strategy) === cleaned)
+      if (semver.inc(from, strategy) === cleaned) {
+        // Prerelease-to-release (e.g. 1.0.0-rc.1 -> 1.0.0): use target version directly, not "patch"
+        if (strategy === Decision.PATCH && semver.prerelease(from))
+          return null;
         return strategy;
+      }
 
   return null;
 }
