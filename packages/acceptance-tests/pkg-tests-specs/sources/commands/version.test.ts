@@ -294,5 +294,21 @@ describe(`Commands`, () => {
         });
       }),
     );
+
+    test(
+      `it should apply a literal semver bump against the stableVersion base when version is a prerelease (#7025)`,
+      makeTemporaryEnv({
+        version: `1.3.1-alpha`,
+        stableVersion: `1.2.1`,
+      }, async ({path, run, source}) => {
+        await expect(run(`version`, `1.3.1`)).resolves.toMatchObject({
+          code: 0,
+        });
+
+        await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+          version: `1.3.1`,
+        });
+      }),
+    );
   });
 });
