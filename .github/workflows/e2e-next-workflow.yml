@@ -23,7 +23,7 @@ jobs:
 
     - name: 'Running the integration test, without TypeScript'
       run: |
-        source scripts/e2e-setup-ci.sh
+        source scripts/e2e-setup-ci.sh nm
         yarn init
 
         # Required
@@ -36,14 +36,11 @@ jobs:
         echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
         echo 'hello world!' | tee pages/text.txt
 
-        # Configure Next.js for isolated environment
-        echo 'module.exports = { turbopack: { root: "." } }' > next.config.js
-
         yarn next build
 
     - name: 'Running the integration test, with TypeScript'
       run: |
-        source scripts/e2e-setup-ci.sh
+        source scripts/e2e-setup-ci.sh nm
         yarn init
 
         # Required
@@ -55,9 +52,6 @@ jobs:
         mkdir pages
         echo 'const text = require("raw-loader!./text.txt").default; export default () => <div>{text}</div>;' | tee pages/home.tsx
         echo 'hello world!' | tee pages/text.txt
-
-        # Configure Next.js for isolated environment
-        echo 'export default { turbopack: { root: "." } }' > next.config.ts
 
         yarn next build
       if: |
