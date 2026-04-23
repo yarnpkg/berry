@@ -111,7 +111,7 @@ export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpA
       [`typescript.tsdk`]: tsdkPath,
       [`typescript.enablePromptUseWorkspaceTsdk`]: true,
     };
-  } else if (major === 1 && minor < 110) {
+  } else if (major === 0 || (major === 1 && minor < 110)) {
     // use separate ts settings (old format)
     patch = {
       [`typescript.tsdk`]: tsdkPath,
@@ -183,7 +183,6 @@ async function getVSCodeVersion() {
     const command = `code${process.platform === `win32` && `.cmd`} --version`;
     const {stdout} = await sdkUtils.execPromise(`${command} --version`, {encoding: `utf8`, shell: `cmd.exe`});
     const version = stdout.split(`\n`)[0].trim();
-    console.log(`VSCode version: v${version}`);
     return version.split(`.`).map(value => parseInt(value, 10));
   } catch {
     // VS Code CLI might not be in the PATH
