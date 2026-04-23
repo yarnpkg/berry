@@ -36,7 +36,7 @@ jobs:
         echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
         echo 'hello world!' | tee pages/text.txt
 
-        yarn next build
+        yarn next build --webpack
 
     - name: 'Running the integration test, with TypeScript'
       run: |
@@ -53,6 +53,6 @@ jobs:
         echo 'const text = require("raw-loader!./text.txt").default; export default () => <div>{text}</div>;' | tee pages/home.tsx
         echo 'hello world!' | tee pages/text.txt
 
-        yarn next build
+        yarn next build --webpack
       if: |
         success() || failure()
