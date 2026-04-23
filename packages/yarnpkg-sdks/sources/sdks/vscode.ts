@@ -180,8 +180,8 @@ export const VSCODE_SDKS: IntegrationSdks = [
 
 async function getVSCodeVersion() {
   try {
-    const command = `code${process.platform === `win32` && `.cmd`} --version`;
-    const {stdout} = await sdkUtils.execPromise(`${command} --version`, {encoding: `utf8`, shell: `cmd.exe`});
+    const command = `code${process.platform === `win32` ? `.cmd` : ``} --version`;
+    const {stdout} = await sdkUtils.execPromise(command, {encoding: `utf8`});
     const version = stdout.split(`\n`)[0].trim();
     return version.split(`.`).map(value => parseInt(value, 10));
   } catch {
