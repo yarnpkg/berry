@@ -23,7 +23,7 @@ jobs:
 
     - name: 'Running the integration test, without TypeScript'
       run: |
-        source scripts/e2e-setup-ci.sh nm
+        source scripts/e2e-setup-ci.sh
         yarn init
 
         # Required
@@ -40,7 +40,7 @@ jobs:
 
     - name: 'Running the integration test, with TypeScript'
       run: |
-        source scripts/e2e-setup-ci.sh nm
+        source scripts/e2e-setup-ci.sh
         yarn init
 
         # Required
