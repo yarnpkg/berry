@@ -327,10 +327,6 @@ export class Manifest {
     this.dependencies = new Map();
     if (typeof data.dependencies === `object` && data.dependencies !== null) {
       for (const [name, range] of Object.entries(data.dependencies)) {
-        if (name.trim() !== name) {
-          errors.push(new Error(`EINVALIDPACKAGENAME Invalid package name "${name}"`));
-          continue;
-        }
         if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
@@ -352,10 +348,6 @@ export class Manifest {
     this.devDependencies = new Map();
     if (typeof data.devDependencies === `object` && data.devDependencies !== null) {
       for (const [name, range] of Object.entries(data.devDependencies)) {
-        if (name.trim() !== name) {
-          errors.push(new Error(`EINVALIDPACKAGENAME Invalid package name "${name}"`));
-          continue;
-        }
         if (typeof range !== `string`) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           continue;
@@ -377,11 +369,6 @@ export class Manifest {
     this.peerDependencies = new Map();
     if (typeof data.peerDependencies === `object` && data.peerDependencies !== null) {
       for (let [name, range] of Object.entries(data.peerDependencies)) {
-        if (name.trim() !== name) {
-          errors.push(new Error(`EINVALIDPACKAGENAME Invalid package name "${name}"`));
-          continue;
-        }
-
         let ident;
         try {
           ident = structUtils.parseIdent(name);
