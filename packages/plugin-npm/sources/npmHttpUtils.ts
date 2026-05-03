@@ -61,7 +61,7 @@ export function customPackageError(error: httpUtils.RequestError, configuration:
 
 export function getIdentUrl(ident: Ident) {
   if (ident.scope) {
-    return `/@${ident.scope}%2f${encodeURIComponent(ident.name)}`;
+    return `/@${encodeURIComponent(ident.scope)}%2f${encodeURIComponent(ident.name)}`;
   } else {
     return `/${encodeURIComponent(ident.name)}`;
   }
