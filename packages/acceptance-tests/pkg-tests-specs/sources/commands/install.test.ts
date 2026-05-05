@@ -994,5 +994,18 @@ module.exports = {
         });
       }),
     );
+
+    test(
+      `it should throw when package name cannot be resolved`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps `]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await expect(run(`install`)).rejects.toMatchObject({
+          stdout: expect.stringMatching(/Package not found/),
+        });
+      }),
+    );
   });
 });
