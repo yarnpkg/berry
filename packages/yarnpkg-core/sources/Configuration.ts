@@ -110,6 +110,10 @@ const IGNORED_ENV_VARIABLES = new Set([
   // "YARN_REGISTRY", read by yarn 1.x, prevents yarn 2+ installations if set
   `registry`,
 
+  // "YARN_IGNORE_SCRIPTS", read by yarn 1.x, should not shadow Yarn Modern's
+  // "enableScripts" setting when inherited from shared CI environments.
+  `ignoreScripts`,
+
   // "ignoreCwd" was previously used to skip extra chdir calls in Yarn Modern when `--cwd` was used.
   // It needs to be ignored because it's set by the parent process which could be anything.
   `ignoreCwd`,
