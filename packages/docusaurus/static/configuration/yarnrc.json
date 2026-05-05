@@ -503,7 +503,7 @@
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
       ],
-      "default": "3d"
+      "default": "0m"
     },
     "npmPreapprovedPackages": {
       "_package": "@yarnpkg/core",
