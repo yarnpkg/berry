@@ -23,8 +23,20 @@ const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
 const MTIME_ACCURANCY = 1000;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
+type InstallStateCacheEntry = {statKey: string | null, promise: Promise<InstallState | null>};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, `bin`>>;
+
+const installStateCache: Map<string, InstallStateCacheEntry> = new Map();
+
+function getInstallStateCacheKey(project: Project, {unrollAliases}: {unrollAliases: boolean}) {
+  return `${project.cwd}\0${unrollAliases ? `unroll` : `plain`}`;
+}
+
+function clearInstallStateCache(project: Project) {
+  installStateCache.delete(getInstallStateCacheKey(project, {unrollAliases: true}));
+  installStateCache.delete(getInstallStateCacheKey(project, {unrollAliases: false}));
+}
 
 export enum NodeModulesMode {
   CLASSIC = `classic`,
@@ -33,8 +45,6 @@ export enum NodeModulesMode {
 }
 
 export class NodeModulesLinker implements Linker {
-  private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
-
   getCustomDataKey() {
     return JSON.stringify({
       name: `NodeModulesLinker`,
@@ -54,9 +64,7 @@ export class NodeModulesLinker implements Linker {
     if (workspace)
       return workspace.cwd;
 
-    const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
-      return await findInstallState(opts.project, {unrollAliases: true});
-    });
+    const installState = await this.findInstallState(opts.project, {unrollAliases: true});
 
     if (installState === null)
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
@@ -79,9 +87,7 @@ export class NodeModulesLinker implements Linker {
     if (!this.isEnabled(opts))
       return null;
 
-    const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
-      return await findInstallState(opts.project, {unrollAliases: true});
-    });
+    const installState = await this.findInstallState(opts.project, {unrollAliases: true});
 
     if (installState === null)
       return null;
@@ -105,6 +111,19 @@ export class NodeModulesLinker implements Linker {
 
   makeInstaller(opts: LinkOptions) {
     return new NodeModulesInstaller(opts);
+  }
+
+  private async findInstallState(project: Project, {unrollAliases}: {unrollAliases: boolean}) {
+    const cacheKey = getInstallStateCacheKey(project, {unrollAliases});
+    const statKey = await getInstallStateStatKey(project);
+    const cached = installStateCache.get(cacheKey);
+
+    if (cached?.statKey === statKey)
+      return await cached.promise;
+
+    const promise = findInstallState(project, {unrollAliases});
+    installStateCache.set(cacheKey, {statKey, promise});
+    return await promise;
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
@@ -447,13 +466,29 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   const rootPath = project.cwd;
   const installStatePath = ppath.join(rootPath, NODE_MODULES, INSTALL_STATE_FILE);
 
-  // Force install state file rewrite, so that it has mtime bigger than all node_modules subfolders
-  if (installChangedByUser)
-    await xfs.removePromise(installStatePath);
+  try {
+    // Force install state file rewrite, so that it has mtime bigger than all node_modules subfolders
+    if (installChangedByUser)
+      await xfs.removePromise(installStatePath);
 
-  await xfs.changeFilePromise(installStatePath, locatorState, {
-    automaticNewlines: true,
-  });
+    await xfs.changeFilePromise(installStatePath, locatorState, {
+      automaticNewlines: true,
+    });
+  } finally {
+    clearInstallStateCache(project);
+  }
+}
+
+async function getInstallStateStatKey(project: Project) {
+  const rootPath = project.cwd;
+  const installStatePath = ppath.join(rootPath, NODE_MODULES, INSTALL_STATE_FILE);
+
+  try {
+    const stats = await xfs.statPromise(installStatePath);
+    return `${stats.mtimeMs}:${stats.size}`;
+  } catch {
+    return null;
+  }
 }
 
 async function findInstallState(project: Project, {unrollAliases = false}: {unrollAliases?: boolean} = {}): Promise<InstallState | null> {
