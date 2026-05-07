@@ -123,10 +123,20 @@ export function normalizeLocator(locator: Locator) {
 }
 
 export function validateRepoUrl(url: string, {configuration}: {configuration: Configuration}) {
-  const normalizedRepoUrl = normalizeRepoUrl(url, {git: true});
+  const {repo} = splitRepoUrl(url);
+  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+
   const networkSettings = httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration});
   if (!networkSettings.enableNetwork)
     throw new ReportError(MessageName.NETWORK_DISABLED, `Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+
+  const approvedGitRepositoriesPattern = miscUtils.buildIgnorePattern(configuration.get(`approvedGitRepositories`));
+  if (approvedGitRepositoriesPattern === null || !normalizedRepoUrl.match(approvedGitRepositoriesPattern)) {
+    throw new ReportError(
+      MessageName.NETWORK_DISABLED,
+      `Request to '${normalizedRepoUrl}' has been blocked because it doesn't match any of the patterns in 'approvedGitRepositories'`,
+    );
+  }
 
   return normalizedRepoUrl;
 }

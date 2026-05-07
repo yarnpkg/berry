@@ -61,9 +61,9 @@ export function customPackageError(error: httpUtils.RequestError, configuration:
 
 export function getIdentUrl(ident: Ident) {
   if (ident.scope) {
-    return `/@${ident.scope}%2f${ident.name}`;
+    return `/@${encodeURIComponent(ident.scope)}%2f${encodeURIComponent(ident.name)}`;
   } else {
-    return `/${ident.name}`;
+    return `/${encodeURIComponent(ident.name)}`;
   }
 }
 
@@ -594,6 +594,8 @@ async function getOidcToken(registry: string, {configuration, ident}: {configura
   let idToken: string | null = null;
 
   if (process.env.GITLAB_CI) {
+    idToken = process.env.NPM_ID_TOKEN || null;
+  } else if (process.env.CIRCLECI) {
     idToken = process.env.NPM_ID_TOKEN || null;
   } else if (process.env.GITHUB_ACTIONS) {
     if (!(process.env.ACTIONS_ID_TOKEN_REQUEST_URL && process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN))

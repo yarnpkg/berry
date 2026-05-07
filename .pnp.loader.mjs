@@ -1433,6 +1433,7 @@ const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 
 const HAS_LAZY_LOADED_TRANSLATORS = major === 20 && minor < 6 || major === 19 && minor >= 3;
 const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || major === 20 && minor >= 10 || major === 18 && minor >= 20;
 const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
+const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major > 25 || major === 25 && minor >= 7 || major === 24 && minor >= 15;
 
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
@@ -1549,9 +1550,11 @@ async function load$1(urlString, context, nextLoad) {
       "watch:import": WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend
     });
   }
+  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
+  const source = format !== `commonjs` || shouldReadSource ? await fs.promises.readFile(filePath, `utf8`) : void 0;
   return {
     format,
-    source: format === `commonjs` ? void 0 : await fs.promises.readFile(filePath, `utf8`),
+    source,
     shortCircuit: true
   };
 }

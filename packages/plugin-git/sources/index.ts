@@ -24,6 +24,7 @@ export interface Hooks {
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
+    approvedGitRepositories: Array<string>;
     changesetBaseRefs: Array<string>;
     changesetIgnorePatterns: Array<string>;
     cloneConcurrency: number;
@@ -32,6 +33,12 @@ declare module '@yarnpkg/core' {
 
 const plugin: Plugin = {
   configuration: {
+    approvedGitRepositories: {
+      description: `Array of git repository URL glob patterns that are allowed to be fetched`,
+      type: SettingsType.STRING,
+      default: [],
+      isArray: true,
+    },
     changesetBaseRefs: {
       description: `The base git refs that the current HEAD is compared against when detecting changes. Supports git branches, tags, and commits.`,
       type: SettingsType.STRING,

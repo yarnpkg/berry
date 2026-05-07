@@ -81,10 +81,11 @@ export class PnpmLinker implements Linker {
 }
 
 class PnpmInstaller implements Installer {
-  private readonly asyncActions = new miscUtils.AsyncActions(10);
+  private readonly asyncActions: miscUtils.AsyncActions;
   private readonly indexFolderPromise: Promise<PortablePath>;
 
   constructor(private opts: LinkOptions) {
+    this.asyncActions = new miscUtils.AsyncActions(opts.project.configuration.get(`pnpmInstallConcurrency`));
     this.indexFolderPromise = setupCopyIndex(xfs, {
       indexPath: ppath.join(opts.project.configuration.get(`globalFolder`), `index`),
     });

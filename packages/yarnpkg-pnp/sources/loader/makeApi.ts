@@ -829,9 +829,10 @@ export function makeApi(runtimeState: RuntimeState, opts: MakeApiOptions): PnpAp
     const qualifiedPath = applyNodeExtensionResolution(unqualifiedPath, candidates, {extensions});
 
     if (qualifiedPath) {
+      nodeUtils.reportRequiredFilesToWatchMode([qualifiedPath]);
       return ppath.normalize(qualifiedPath);
     } else {
-      nodeUtils.reportRequiredFilesToWatchMode(candidates.map(candidate => npath.fromPortablePath(candidate)));
+      nodeUtils.reportRequiredFilesToWatchMode(candidates);
 
       const unqualifiedPathForDisplay = getPathForDisplay(unqualifiedPath);
 
