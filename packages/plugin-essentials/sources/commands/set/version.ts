@@ -2,7 +2,7 @@ import {BaseCommand}                                                            
 import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
 import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils, structUtils, tgzUtils}     from '@yarnpkg/core';
 import {CwdFS, PortablePath, ppath, xfs, npath}                                               from '@yarnpkg/fslib';
-import {npmHttpUtils}                                                                         from '@yarnpkg/plugin-npm';
+import {npmHttpUtils, NpmSemverFetcher}                                                       from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 import semver                                                                                 from 'semver';
 
@@ -123,10 +123,9 @@ export default class SetVersionCommand extends BaseCommand {
     const registryConfig = configuration.get(`versionNpmRegistryServer`);
     const effectiveRegistry = registryFlag ?? registryConfig;
 
-    const isRegistryCompatible = (
-      semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`)
-      || (semverUtils.validRange(this.version) !== null && semver.intersects(this.version, `>=2.0.0`))
-    );
+    const isExactBerryVersion = semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`);
+    const isBerryRange = !isExactBerryVersion && semverUtils.validRange(this.version) !== null && semver.intersects(this.version, `>=2.0.0`);
+    const isRegistryCompatible = isExactBerryVersion || isBerryRange;
 
     if (typeof registryFlag !== `undefined` && !isRegistryCompatible)
       throw new UsageError(`The --from-registry flag can only be used with Yarn 2+ semver versions or ranges`);
@@ -138,7 +137,7 @@ export default class SetVersionCommand extends BaseCommand {
     if (useRegistry) {
       const registry = effectiveRegistry!;
 
-      if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`)) {
+      if (isExactBerryVersion) {
         registryFetchInfo = {registry, version: this.version};
       } else {
         const resolved = await resolveVersionFromRegistry(configuration, registry, this.version);
@@ -241,8 +240,8 @@ async function resolveVersionFromRegistry(configuration: Configuration, registry
 
 async function fetchBundleFromRegistry(configuration: Configuration, registry: string, version: string): Promise<Buffer> {
   const ident = structUtils.makeIdent(`yarnpkg`, `cli-dist`);
-  const identUrl = npmHttpUtils.getIdentUrl(ident);
-  const tarballPath = `${identUrl}/-/cli-dist-${version}.tgz`;
+  const locator = structUtils.makeLocator(ident, `npm:${version}`);
+  const tarballPath = NpmSemverFetcher.getLocatorUrl(locator);
 
   let tgzBuffer: Buffer;
   try {
