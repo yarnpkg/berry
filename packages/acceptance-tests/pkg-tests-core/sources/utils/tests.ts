@@ -179,6 +179,11 @@ export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
   }]],
 ]);
 
+// Packages without an explicit publish date pretend to have been released long
+// ago, so that the `npmMinimalAgeGate` setting (defaulting to `1d`) doesn't
+// quarantine them when running tests.
+const OLD_RELEASE_DATE = new Date(0).toISOString();
+
 const RELEASE_DATE_PACKAGES: Record<string, Record<string, number | string>> = {
   "release-date": {
     "1.0.0": new Date(new Date().getTime() - /* 10 days */ 1000 * 60 * 60 * 24 * 10).toISOString(),
@@ -444,7 +449,9 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
             }),
           )),
         ),
-        time: name in RELEASE_DATE_PACKAGES ? RELEASE_DATE_PACKAGES[name] : undefined,
+        time: name in RELEASE_DATE_PACKAGES
+          ? RELEASE_DATE_PACKAGES[name]
+          : Object.fromEntries(versions.map(version => [version, OLD_RELEASE_DATE])),
         [`dist-tags`]: {
           latest: semver.maxSatisfying(versions, `*`),
           ...distTags,
