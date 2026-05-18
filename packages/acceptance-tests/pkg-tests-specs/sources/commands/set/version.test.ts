@@ -1,4 +1,5 @@
 import {xfs, ppath, PortablePath, Filename} from '@yarnpkg/fslib';
+import {tests}                              from 'pkg-tests-core';
 
 const yarnrcRegexp = /^yarnPath:/;
 
@@ -139,6 +140,189 @@ describe(`Commands`, () => {
         await check(projectDir, {corepackVersion: /[0-9]+\./, usePath: true});
       }),
     );
+
+    describe(`--from-registry`, () => {
+      test(
+        `it should fetch an exact version from a custom registry via --from-registry`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          const {stdout} = await run(`set`, `version`, `4.0.0`, `--from-registry`, registryUrl);
+          expect(stdout).toContain(`Downloading @yarnpkg/cli-dist@4.0.0 from`);
+          expect(stdout).toContain(`registry.example.org`);
+          expect(stdout).not.toContain(`repo.yarnpkg.com`);
+          await check(path, {corepackVersion: `4.0.0`, usePath: true});
+        }),
+      );
+
+      test(
+        `it should fetch an exact version from a custom registry via config`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          const {stdout} = await run(`set`, `version`, `4.0.0`, {
+            env: {YARN_VERSION_NPM_REGISTRY_SERVER: registryUrl},
+          });
+          expect(stdout).toContain(`Downloading @yarnpkg/cli-dist@4.0.0 from`);
+          expect(stdout).toContain(`registry.example.org`);
+          expect(stdout).not.toContain(`repo.yarnpkg.com`);
+          await check(path, {corepackVersion: `4.0.0`, usePath: true});
+        }),
+      );
+
+      test(
+        `it should resolve a semver range from the custom registry`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          const {stdout} = await run(`set`, `version`, `4.x`, `--from-registry`, registryUrl);
+          expect(stdout).toContain(`Downloading @yarnpkg/cli-dist@4.1.0 from`);
+          expect(stdout).toContain(`registry.example.org`);
+          expect(stdout).not.toContain(`repo.yarnpkg.com`);
+          await check(path, {corepackVersion: `4.1.0`, usePath: true});
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with tag specifiers`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `stable`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with classic`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `classic`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with Yarn 1.x versions`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `1.22.1`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with URL specifiers`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `https://example.com/yarn.js`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with file path specifiers`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `./yarn.cjs`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with self`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `self`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should silently ignore versionNpmRegistryServer for incompatible specifiers`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          await run(`set`, `version`, `self`, {
+            env: {YARN_VERSION_NPM_REGISTRY_SERVER: `https://bogus.invalid`},
+          });
+          await check(path, {corepackVersion: /[0-9]+\./, usePath: true});
+        }),
+      );
+
+      test(
+        `it should use --from-registry flag over versionNpmRegistryServer config`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          const {stdout} = await run(`set`, `version`, `4.0.0`, `--from-registry`, registryUrl, {
+            env: {YARN_VERSION_NPM_REGISTRY_SERVER: `https://bogus.invalid`},
+          });
+          expect(stdout).toContain(`registry.example.org`);
+          expect(stdout).not.toContain(`bogus.invalid`);
+          await check(path, {corepackVersion: `4.0.0`, usePath: true});
+        }),
+      );
+
+      test(
+        `it should error when using --from-registry with a 1.x range`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `1.x`, `--from-registry`, registryUrl)).rejects.toThrow(/--from-registry flag can only be used with Yarn 2\+ semver versions or ranges/);
+        }),
+      );
+
+      test(
+        `it should error when no versions match the range on the registry`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `99.x`, `--from-registry`, registryUrl)).rejects.toThrow(/No matching version of @yarnpkg\/cli-dist found for range/);
+        }),
+      );
+
+      test(
+        `it should error when the exact version does not exist on the registry`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `4.99.0`, `--from-registry`, registryUrl)).rejects.toThrow();
+        }),
+      );
+
+      test(
+        `it should error when the tarball has no bin.yarn entry in package.json`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `2.0.0-malformed`, `--from-registry`, registryUrl)).rejects.toThrow(/Could not find a 'bin\.yarn' entry in the @yarnpkg\/cli-dist package\.json/);
+        }),
+      );
+
+      test(
+        `it should error when bin.yarn points to a missing file in the tarball`,
+        makeTemporaryEnv({}, {
+          env: {COREPACK_ROOT: undefined},
+        }, async ({path, run, source}) => {
+          const registryUrl = await tests.startPackageServer();
+          await expect(run(`set`, `version`, `2.0.0-bad-bin`, `--from-registry`, registryUrl)).rejects.toThrow(/The 'bin\.yarn' entry in @yarnpkg\/cli-dist points to '.*', but this file does not exist in the tarball/);
+        }),
+      );
+    });
   });
 });
 

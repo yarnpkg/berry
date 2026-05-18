@@ -1,0 +1,7 @@
+{
+  "name": "@yarnpkg/cli-dist",
+  "version": "3.0.0",
+  "bin": {
+    "yarn": "bin/yarn.js"
+  }
+}
