@@ -70,6 +70,8 @@ const mte = generatePkgDriver({
         [`NODE_SKIP_PLATFORM_CHECK`]: `1`,
         // We don't want the PnP runtime to be accidentally injected
         [`NODE_OPTIONS`]: ``,
+        // Pass through TLS certificates for local testing
+        [`NODE_EXTRA_CA_CERTS`]: process.env.NODE_EXTRA_CA_CERTS,
         ...rcEnv,
         ...env,
       },
