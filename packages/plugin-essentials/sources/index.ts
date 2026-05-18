@@ -145,6 +145,7 @@ declare module '@yarnpkg/core' {
     // Defining this property with two different enum instances leads to a compiler error.
     defaultSemverRangePrefix: `^` | `~` | ``;
     preferReuse: boolean;
+    versionNpmRegistryServer: string | null;
   }
 }
 
@@ -167,6 +168,12 @@ const plugin: Plugin = {
       description: `If true, \`yarn add\` will attempt to reuse the most common dependency range in other workspaces.`,
       type: SettingsType.BOOLEAN,
       default: false,
+    },
+
+    versionNpmRegistryServer: {
+      description: `Registry to use when fetching Yarn releases via \`yarn set version\`. When set, the release will be downloaded from the \`@yarnpkg/cli-dist\` package on this registry instead of from the default Yarn repository`,
+      type: SettingsType.STRING,
+      default: null,
     },
   },
   commands: [
