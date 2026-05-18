@@ -6234,6 +6234,7 @@ __metadata:
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
+    "@yarnpkg/plugin-npm": "workspace:^"
     ci-info: "npm:^4.0.0"
     clipanion: "npm:^4.0.0-rc.2"
     enquirer: "npm:^2.3.6"
@@ -6246,6 +6247,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/plugin-git": "workspace:^"
+    "@yarnpkg/plugin-npm": "workspace:^"
   languageName: unknown
   linkType: soft
 

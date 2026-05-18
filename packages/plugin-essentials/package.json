@@ -22,14 +22,16 @@
   "peerDependencies": {
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/plugin-git": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^",
+    "@yarnpkg/plugin-npm": "workspace:^"
   },
   "devDependencies": {
     "@types/micromatch": "^4.0.1",
     "@types/semver": "^7.1.0",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
-    "@yarnpkg/plugin-git": "workspace:^"
+    "@yarnpkg/plugin-git": "workspace:^",
+    "@yarnpkg/plugin-npm": "workspace:^"
   },
   "repository": {
     "type": "git",
