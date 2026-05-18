@@ -1,7 +1,8 @@
 import {BaseCommand}                                                                          from '@yarnpkg/cli';
 import {Configuration, StreamReport, MessageName, Report, Manifest, YarnVersion, ReportError} from '@yarnpkg/core';
-import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils}                            from '@yarnpkg/core';
-import {PortablePath, ppath, xfs, npath}                                                      from '@yarnpkg/fslib';
+import {execUtils, formatUtils, httpUtils, miscUtils, semverUtils, structUtils, tgzUtils}     from '@yarnpkg/core';
+import {CwdFS, PortablePath, ppath, xfs, npath}                                               from '@yarnpkg/fslib';
+import {npmHttpUtils}                                                                         from '@yarnpkg/plugin-npm';
 import {Command, Option, Usage, UsageError}                                                   from 'clipanion';
 import semver                                                                                 from 'semver';
 
@@ -39,6 +40,8 @@ export default class SetVersionCommand extends BaseCommand {
       - a local file referenced through either a relative or absolute path
 
       - \`self\` -> the version used to invoke the command
+
+      When the \`--from-registry\` flag is set, or when \`versionNpmRegistryServer\` is configured in your \`.yarnrc.yml\`, the release will be downloaded from the \`@yarnpkg/cli-dist\` package on the specified npm registry instead of from the default Yarn repository. Note that this only works with semver versions and ranges (Yarn 2+), not with tags like \`stable\` or \`canary\`.
     `,
     examples: [[
       `Download the latest release from the Yarn repository`,
@@ -67,6 +70,9 @@ export default class SetVersionCommand extends BaseCommand {
     ], [
       `Download the version used to invoke the command`,
       `$0 set version self`,
+    ], [
+      `Download a specific version from a specified npm registry`,
+      `$0 set version 4.0.0 --from-registry https://registry.internal.com`,
     ]],
   });
 
@@ -76,6 +82,10 @@ export default class SetVersionCommand extends BaseCommand {
 
   onlyIfNeeded = Option.Boolean(`--only-if-needed`, false, {
     description: `Only lock the Yarn version if it isn't already locked`,
+  });
+
+  fromRegistry = Option.String(`--from-registry`, {
+    description: `Fetch the Yarn release from the specified npm registry instead of the default Yarn repository`,
   });
 
   version = Option.String();
@@ -109,26 +119,54 @@ export default class SetVersionCommand extends BaseCommand {
       return {version, url: url.replace(/\{\}/g, version)};
     };
 
-    if (this.version === `self`)
+    const registryFlag = this.fromRegistry;
+    const registryConfig = configuration.get(`versionNpmRegistryServer`);
+    const effectiveRegistry = registryFlag ?? registryConfig;
+
+    const isRegistryCompatible = (
+      semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`)
+      || (semverUtils.validRange(this.version) !== null && semver.intersects(this.version, `>=2.0.0`))
+    );
+
+    if (typeof registryFlag !== `undefined` && !isRegistryCompatible)
+      throw new UsageError(`The --from-registry flag can only be used with Yarn 2+ semver versions or ranges`);
+
+    const useRegistry = typeof effectiveRegistry === `string` && isRegistryCompatible;
+
+    let registryFetchInfo: {registry: string, version: string} | null = null;
+
+    if (useRegistry) {
+      const registry = effectiveRegistry!;
+
+      if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`)) {
+        registryFetchInfo = {registry, version: this.version};
+      } else {
+        const resolved = await resolveVersionFromRegistry(configuration, registry, this.version);
+        registryFetchInfo = {registry, version: resolved};
+      }
+
+      bundleRef = {version: registryFetchInfo.version, url: `${registry}/@yarnpkg/cli-dist/-/cli-dist-${registryFetchInfo.version}.tgz`};
+    } else if (this.version === `self`) {
       bundleRef = {url: getBundlePath(), version: YarnVersion ?? `self`};
-    else if (this.version === `latest` || this.version === `berry` || this.version === `stable`)
+    } else if (this.version === `latest` || this.version === `berry` || this.version === `stable`) {
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `stable`));
-    else if (this.version === `canary`)
+    } else if (this.version === `canary`) {
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveTag(configuration, `canary`));
-    else if (this.version === `classic`)
+    } else if (this.version === `classic`) {
       bundleRef = {url: `https://classic.yarnpkg.com/latest.js`, version: `classic`};
-    else if (this.version.match(/^https?:/))
+    } else if (this.version.match(/^https?:/)) {
       bundleRef = {url: this.version, version: `remote`};
-    else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version))
+    } else if (this.version.match(/^\.{0,2}[\\/]/) || npath.isAbsolute(this.version)) {
       bundleRef = {url: `file://${ppath.resolve(npath.toPortablePath(this.version))}`, version: `file`};
-    else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`))
+    } else if (semverUtils.satisfiesWithPrereleases(this.version, `>=2.0.0`)) {
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, this.version);
-    else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`))
+    } else if (semverUtils.satisfiesWithPrereleases(this.version, `^0.x || ^1.x`)) {
       bundleRef = getRef(`https://github.com/yarnpkg/yarn/releases/download/v{}/yarn-{}.js`, this.version);
-    else if (semverUtils.validRange(this.version))
+    } else if (semverUtils.validRange(this.version)) {
       bundleRef = getRef(`https://repo.yarnpkg.com/{}/packages/yarnpkg-cli/bin/yarn.js`, await resolveRange(configuration, this.version));
-    else
+    } else {
       throw new UsageError(`Invalid version descriptor "${this.version}"`);
+    }
 
     const report = await StreamReport.start({
       configuration,
@@ -136,6 +174,12 @@ export default class SetVersionCommand extends BaseCommand {
       includeLogs: !this.context.quiet,
     }, async (report: StreamReport) => {
       const fetchBuffer = async () => {
+        if (registryFetchInfo) {
+          const {registry, version} = registryFetchInfo;
+          report.reportInfo(MessageName.UNNAMED, `Downloading @yarnpkg/cli-dist@${version} from ${formatUtils.pretty(configuration, registry, formatUtils.Type.URL)}`);
+          return await fetchBundleFromRegistry(configuration, registry, version);
+        }
+
         const filePrefix = `file://`;
 
         if (bundleRef.url.startsWith(filePrefix)) {
@@ -171,6 +215,77 @@ export async function resolveTag(configuration: Configuration, request: `stable`
     throw new UsageError(`Tag ${formatUtils.pretty(configuration, request, formatUtils.Type.RANGE)} not found`);
 
   return data.latest[request];
+}
+
+async function resolveVersionFromRegistry(configuration: Configuration, registry: string, range: string): Promise<string> {
+  const ident = structUtils.makeIdent(`yarnpkg`, `cli-dist`);
+  const identUrl = npmHttpUtils.getIdentUrl(ident);
+
+  const metadata: any = await npmHttpUtils.get(identUrl, {
+    configuration,
+    registry,
+    ident,
+    jsonResponse: true,
+    authType: npmHttpUtils.AuthType.BEST_EFFORT,
+  });
+
+  const versions = Object.keys(metadata.versions ?? {});
+  const candidates = versions.filter(v => semverUtils.satisfiesWithPrereleases(v, range));
+
+  if (candidates.length === 0)
+    throw new UsageError(`No matching version of @yarnpkg/cli-dist found for range ${formatUtils.pretty(configuration, range, formatUtils.Type.RANGE)} on the configured registry`);
+
+  candidates.sort(semver.rcompare);
+  return candidates[0];
+}
+
+async function fetchBundleFromRegistry(configuration: Configuration, registry: string, version: string): Promise<Buffer> {
+  const ident = structUtils.makeIdent(`yarnpkg`, `cli-dist`);
+  const identUrl = npmHttpUtils.getIdentUrl(ident);
+  const tarballPath = `${identUrl}/-/cli-dist-${version}.tgz`;
+
+  let tgzBuffer: Buffer;
+  try {
+    tgzBuffer = await npmHttpUtils.get(tarballPath, {
+      configuration,
+      registry,
+      ident,
+      authType: npmHttpUtils.AuthType.BEST_EFFORT,
+    });
+  } catch {
+    // Fallback for registries that don't support %2f encoding
+    tgzBuffer = await npmHttpUtils.get(tarballPath.replace(/%2f/g, `/`), {
+      configuration,
+      registry,
+      ident,
+      authType: npmHttpUtils.AuthType.BEST_EFFORT,
+    });
+  }
+
+  return await extractBundleFromTarball(tgzBuffer);
+}
+
+async function extractBundleFromTarball(tgzBuffer: Buffer): Promise<Buffer> {
+  return await xfs.mktempPromise(async tmpDir => {
+    const extractTarget = new CwdFS(tmpDir);
+
+    await tgzUtils.extractArchiveTo(tgzBuffer, extractTarget, {
+      stripComponents: 1,
+    });
+
+    const manifestPath = ppath.join(tmpDir, `package.json` as PortablePath);
+    const manifest = await xfs.readJsonPromise(manifestPath);
+
+    const binPath = manifest?.bin?.yarn;
+    if (typeof binPath !== `string`)
+      throw new Error(`Could not find a 'bin.yarn' entry in the @yarnpkg/cli-dist package.json`);
+
+    const bundlePath = ppath.join(tmpDir, binPath as PortablePath);
+    if (!await xfs.existsPromise(bundlePath))
+      throw new Error(`The 'bin.yarn' entry in @yarnpkg/cli-dist points to '${binPath}', but this file does not exist in the tarball`);
+
+    return await xfs.readFilePromise(bundlePath);
+  });
 }
 
 export async function setVersion(configuration: Configuration, bundleVersion: string | null, fetchBuffer: () => Promise<Buffer>, {report, useYarnPath}: {report: Report, useYarnPath?: boolean}) {
