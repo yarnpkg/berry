@@ -104,6 +104,7 @@ export enum MessageName {
   OFFLINE_MODE_ENABLED = 90,
   INVALID_PROVENANCE_ENVIRONMENT = 91,
   EXPERIMENTAL = 92,
+  PEER_DEPENDENCY_PROVIDED_BY_DEV_DEPENDENCY = 93,
 }
 
 export function stringifyMessageName(name: MessageName | number): string {

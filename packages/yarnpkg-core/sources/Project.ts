@@ -197,6 +197,7 @@ export enum PeerWarningType {
   NotCompatible,
   NodeNotProvided,
   NodeNotCompatible,
+  NodeProvidedByDevDependency,
 }
 
 export type PeerWarning = {
@@ -221,6 +222,10 @@ export type PeerWarning = {
   type: PeerWarningType.NodeNotCompatible;
   node: PeerRequirementNode;
   range: string | null;
+  hash: string;
+} | {
+  type: PeerWarningType.NodeProvidedByDevDependency;
+  node: PeerRequirementNode;
   hash: string;
 };
 
@@ -2198,6 +2203,7 @@ function applyVirtualResolutionMutations({
   const allVirtualResolutions = new Map<LocatorHash, Set<DescriptorHash>>();
 
   const allPeerRequests = new Map<LocatorHash, Map<IdentHash, PeerRequestNode>>();
+  const devDependencyPeerRequirementNodes = new Set<string>();
 
   // We must keep a copy of the workspaces original dependencies, because they
   // may be overridden during the virtual package resolution - cf Dragon Test #5
@@ -2238,6 +2244,15 @@ function applyVirtualResolutionMutations({
       throw new Error(`Assertion failed: The package could not be found`);
 
     return pkg;
+  };
+
+  const isWorkspaceDevDependencyOnly = (locator: Locator, identHash: IdentHash) => {
+    const workspace = project.tryWorkspaceByLocator(locator);
+
+    return workspace !== null
+      && workspace !== project.topLevelWorkspace
+      && workspace.manifest.devDependencies.has(identHash)
+      && !workspace.manifest.dependencies.has(identHash);
   };
 
   const resolvePeerDependencies = (parentDescriptor: Descriptor, parentLocator: Locator, parentPeerRequests: Map<IdentHash, PeerRequestNode>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
@@ -2383,6 +2398,17 @@ function applyVirtualResolutionMutations({
           // 3. Try package's own dependencies (peer-with-default)
           // This is done outside of the factory above because this resolution is not sharable between sibling virtuals
           if (peerProvision.range === `missing:` && virtualizedPackage.dependencies.has(peerDescriptor.identHash)) {
+            if (isWorkspaceDevDependencyOnly(virtualizedPackage, peerDescriptor.identHash)) {
+              peerRequests.set(peerDescriptor.identHash, {
+                requester: virtualizedPackage,
+                descriptor: peerDescriptor,
+                meta: virtualizedPackage.peerDependenciesMeta.get(structUtils.stringifyIdent(peerDescriptor)),
+
+                children: new Map(),
+              });
+              devDependencyPeerRequirementNodes.add(peerRequirement.hash);
+            }
+
             virtualizedPackage.peerDependencies.delete(peerDescriptor.identHash);
             continue;
           }
@@ -2633,8 +2659,23 @@ function applyVirtualResolutionMutations({
             : semverUtils.simplifyRanges(allRanges as Array<string>),
           hash: requirement.hash,
         });
+      } else if (isWorkspaceDevDependencyOnly(requirement.subject, requirement.ident.identHash) && allRequests.some(peerRequest => !peerRequest.meta?.optional)) {
+        peerWarnings.push({
+          type: PeerWarningType.NodeProvidedByDevDependency,
+          node: requirement,
+          hash: requirement.hash,
+        });
       }
     } else {
+      if (devDependencyPeerRequirementNodes.has(requirement.hash) && allRequests.some(peerRequest => !peerRequest.meta?.optional)) {
+        peerWarnings.push({
+          type: PeerWarningType.NodeProvidedByDevDependency,
+          node: requirement,
+          hash: requirement.hash,
+        });
+        continue;
+      }
+
       let satisfiesAll = true;
       for (const peerRequest of allRequests) {
         if (!peerRequest.meta?.optional) {
@@ -2688,6 +2729,7 @@ function * allPeerRequestsWithRoot(root: PeerRequestNode | PeerRequirementNode) 
 function emitPeerDependencyWarnings(project: Project, report: Report) {
   const incompatibleWarnings: Array<string> = [];
   const missingWarnings: Array<string> = [];
+  const devDependencyWarnings: Array<string> = [];
   let hasTransitiveWarnings = false;
 
   for (const warning of project.peerWarnings) {
@@ -2748,6 +2790,35 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
         structUtils.prettyIdent(project.configuration, warning.node.requests.values().next().value!.requester)
       }${otherPackages}.`);
     }
+
+    if (warning.type === PeerWarningType.NodeProvidedByDevDependency) {
+      const otherPackages = warning.node.requests.size > 1
+        ? ` and other dependencies`
+        : ``;
+      const requester = structUtils.prettyIdent(project.configuration, warning.node.requests.values().next().value!.requester);
+
+      if (warning.node.provided.range === `missing:`) {
+        devDependencyWarnings.push(`${
+          structUtils.prettyLocator(project.configuration, warning.node.subject)
+        } doesn't provide ${
+          structUtils.prettyIdent(project.configuration, warning.node.ident)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }); ${
+          requester
+        } uses a devDependency fallback that won't be available after publishing${otherPackages}.`);
+      } else {
+        devDependencyWarnings.push(`${
+          structUtils.prettyLocator(project.configuration, warning.node.subject)
+        } provides ${
+          structUtils.prettyIdent(project.configuration, warning.node.ident)
+        } (${
+          formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
+        }) through devDependencies, requested by ${
+          requester
+        }${otherPackages}; devDependencies won't satisfy peers after publishing.`);
+      }
+    }
   }
 
   report.startSectionSync({
@@ -2761,6 +2832,10 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
 
     for (const warning of miscUtils.sortMap(missingWarnings, line => formatUtils.stripAnsi(line))) {
       report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, warning);
+    }
+
+    for (const warning of miscUtils.sortMap(devDependencyWarnings, line => formatUtils.stripAnsi(line))) {
+      report.reportWarning(MessageName.PEER_DEPENDENCY_PROVIDED_BY_DEV_DEPENDENCY, warning);
     }
   });
 
