@@ -2830,9 +2830,8 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
     for (const warning of miscUtils.sortMap(incompatibleWarnings, line => formatUtils.stripAnsi(line)))
       report.reportWarning(MessageName.INCOMPATIBLE_PEER_DEPENDENCY, warning);
 
-    for (const warning of miscUtils.sortMap(missingWarnings, line => formatUtils.stripAnsi(line))) {
+    for (const warning of miscUtils.sortMap(missingWarnings, line => formatUtils.stripAnsi(line)))
       report.reportWarning(MessageName.MISSING_PEER_DEPENDENCY, warning);
-    }
 
     for (const warning of miscUtils.sortMap(devDependencyWarnings, line => formatUtils.stripAnsi(line))) {
       report.reportWarning(MessageName.PEER_DEPENDENCY_PROVIDED_BY_DEV_DEPENDENCY, warning);
