@@ -39,7 +39,7 @@ export default class NpmStageListCommand extends BaseCommand {
 
     const items = await fetchAllStagedPackages(configuration, registry, this.package ?? undefined);
 
-    const report = await StreamReport.start({
+    await StreamReport.start({
       configuration,
       stdout: this.context.stdout,
       json: this.json,
@@ -59,7 +59,7 @@ export default class NpmStageListCommand extends BaseCommand {
     });
 
     if (items.length === 0)
-      return report.exitCode();
+      return;
 
     const tree: treeUtils.TreeNode = {
       children: items.map(item => {

@@ -1,19 +1,19 @@
 import {Plugin, SettingsType} from '@yarnpkg/core';
 
-import NpmAuditCommand          from './commands/npm/audit';
-import NpmInfoCommand           from './commands/npm/info';
-import NpmLoginCommand          from './commands/npm/login';
-import NpmLogoutCommand         from './commands/npm/logout';
-import NpmPublishCommand        from './commands/npm/publish';
-import NpmStageApproveCommand   from './commands/npm/stage/approve';
-import NpmStageListCommand      from './commands/npm/stage/list';
-import NpmStageRejectCommand    from './commands/npm/stage/reject';
-import NpmTagAddCommand         from './commands/npm/tag/add';
-import NpmTagListCommand        from './commands/npm/tag/list';
-import NpmTagRemoveCommand      from './commands/npm/tag/remove';
-import NpmWhoamiCommand         from './commands/npm/whoami';
-import * as npmAuditTypes       from './npmAuditTypes';
-import * as npmAuditUtils       from './npmAuditUtils';
+import NpmAuditCommand        from './commands/npm/audit';
+import NpmInfoCommand         from './commands/npm/info';
+import NpmLoginCommand        from './commands/npm/login';
+import NpmLogoutCommand       from './commands/npm/logout';
+import NpmPublishCommand      from './commands/npm/publish';
+import NpmStageApproveCommand from './commands/npm/stage/approve';
+import NpmStageListCommand    from './commands/npm/stage/list';
+import NpmStageRejectCommand  from './commands/npm/stage/reject';
+import NpmTagAddCommand       from './commands/npm/tag/add';
+import NpmTagListCommand      from './commands/npm/tag/list';
+import NpmTagRemoveCommand    from './commands/npm/tag/remove';
+import NpmWhoamiCommand       from './commands/npm/whoami';
+import * as npmAuditTypes     from './npmAuditTypes';
+import * as npmAuditUtils     from './npmAuditUtils';
 
 export {npmAuditTypes};
 export {npmAuditUtils};
