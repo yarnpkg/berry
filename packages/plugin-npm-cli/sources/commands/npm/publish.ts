@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                 from '@yarnpkg/cli';
-import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils, structUtils} from '@yarnpkg/core';
-import {npath}                                                                                               from '@yarnpkg/fslib';
-import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                                       from '@yarnpkg/plugin-npm';
-import {packUtils}                                                                                           from '@yarnpkg/plugin-pack';
-import {Command, Option, Usage, UsageError}                                                                  from 'clipanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                              from '@yarnpkg/cli';
+import {Configuration, MessageName, Project, ReportError, StreamReport, scriptUtils, miscUtils, structUtils, formatUtils} from '@yarnpkg/core';
+import {npath}                                                                                                            from '@yarnpkg/fslib';
+import {npmConfigUtils, npmHttpUtils, npmPublishUtils}                                                                    from '@yarnpkg/plugin-npm';
+import {packUtils}                                                                                                        from '@yarnpkg/plugin-pack';
+import {Command, Option, Usage, UsageError}                                                                               from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class NpmPublishCommand extends BaseCommand {
@@ -20,10 +20,15 @@ export default class NpmPublishCommand extends BaseCommand {
       The package will by default be attached to the \`latest\` tag on the registry, but this behavior can be overridden by using the \`--tag\` option.
 
       Note that for legacy reasons scoped packages are by default published with an access set to \`restricted\` (aka "private packages"). This requires you to register for a paid npm plan. In case you simply wish to publish a public scoped package to the registry (for free), just add the \`--access public\` flag. This behavior can be enabled by default through the \`npmPublishAccess\` settings.
+
+      If the \`--staged\` flag is set, the package will be staged for later approval instead of being published immediately. Staged publishing does not require 2FA, allowing automated workflows to stage packages while deferring proof-of-presence to the approval step. Use \`yarn npm stage list\`, \`yarn npm stage approve\`, and \`yarn npm stage reject\` to manage staged packages.
     `,
     examples: [[
       `Publish the active workspace`,
       `yarn npm publish`,
+    ], [
+      `Stage the active workspace for later approval`,
+      `yarn npm publish --staged`,
     ]],
   });
 
@@ -43,7 +48,7 @@ export default class NpmPublishCommand extends BaseCommand {
     description: `The OTP token to use with the command`,
   });
 
-  provenance = Option.Boolean(`--provenance`, false, {
+  provenance = Option.Boolean(`--provenance`, {
     description: `Generate provenance for the package. Only available in GitHub Actions and GitLab CI. Can be set globally through the \`npmPublishProvenance\` setting or the \`YARN_NPM_CONFIG_PROVENANCE\` environment variable, or per-package through the \`publishConfig.provenance\` field in package.json.`,
   });
 
@@ -53,6 +58,10 @@ export default class NpmPublishCommand extends BaseCommand {
 
   json = Option.Boolean(`--json`, false, {
     description: `Output the result in JSON format`,
+  });
+
+  staged = Option.Boolean(`--staged`, false, {
+    description: `Stage the package for later approval instead of publishing it immediately`,
   });
 
   async execute() {
@@ -80,7 +89,9 @@ export default class NpmPublishCommand extends BaseCommand {
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
-      report.reportInfo(MessageName.UNNAMED, `Publishing to ${registry} with tag ${this.tag}`);
+      const verb = this.staged ? `Staging` : `Publishing`;
+      const prettyRegistry = formatUtils.pretty(configuration, registry, formatUtils.Type.URL);
+      report.reportInfo(MessageName.UNNAMED, `${verb} to ${prettyRegistry} with tag ${this.tag}`);
 
       // Not an error if --tolerate-republish is set
       if (this.tolerateRepublish) {
@@ -131,17 +142,20 @@ export default class NpmPublishCommand extends BaseCommand {
 
         let provenance = false;
         let provenanceMessage = ``;
-        if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
+        if (this.provenance) {
+          provenance = true;
+          provenanceMessage = `Generating provenance statement because the ${formatUtils.pretty(configuration, `--provenance`, formatUtils.Type.CODE)} flag is set.`;
+        } else if (this.provenance === false) {
+          provenance = false;
+          provenanceMessage = `Skipping provenance statement because the ${formatUtils.pretty(configuration, `--no-provenance`, formatUtils.Type.CODE)} flag is set.`;
+        } else if (workspace.manifest.publishConfig && `provenance` in workspace.manifest.publishConfig) {
           provenance = Boolean(workspace.manifest.publishConfig.provenance);
           provenanceMessage = provenance
-            ? `Generating provenance statement because \`publishConfig.provenance\` field is set.`
-            : `Skipping provenance statement because \`publishConfig.provenance\` field is set to false.`;
-        } else if (this.provenance) {
-          provenance = true;
-          provenanceMessage = `Generating provenance statement because \`--provenance\` flag is set.`;
+            ? `Generating provenance statement because the ${formatUtils.pretty(configuration, `publishConfig.provenance`, formatUtils.Type.CODE)} field is set.`
+            : `Skipping provenance statement because the ${formatUtils.pretty(configuration, `publishConfig.provenance`, formatUtils.Type.CODE)} field is set to false.`;
         } else if (configuration.get(`npmPublishProvenance`)) {
           provenance = true;
-          provenanceMessage = `Generating provenance statement because \`npmPublishProvenance\` setting is set.`;
+          provenanceMessage = `Generating provenance statement because the ${formatUtils.pretty(configuration, `npmPublishProvenance`, formatUtils.Type.CODE)} setting is set.`;
         }
 
         if (provenanceMessage) {
@@ -161,20 +175,38 @@ export default class NpmPublishCommand extends BaseCommand {
           provenance,
         });
 
+        let stageId: string | undefined;
+
         if (!this.dryRun) {
-          await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
-            configuration,
-            registry,
-            ident,
-            otp: this.otp,
-            jsonResponse: true,
-            allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI || process.env.CIRCLECI)),
-          });
+          if (this.staged) {
+            const stageUrl = `/-/stage/package${npmHttpUtils.getIdentUrl(ident)}`;
+            const response: any = await npmHttpUtils.post(stageUrl, body, {
+              configuration,
+              registry,
+              ident,
+              jsonResponse: true,
+              allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI || process.env.CIRCLECI)),
+            });
+            stageId = response.stageId;
+          } else {
+            await npmHttpUtils.put(npmHttpUtils.getIdentUrl(ident), body, {
+              configuration,
+              registry,
+              ident,
+              otp: this.otp,
+              jsonResponse: true,
+              allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI || process.env.CIRCLECI)),
+            });
+          }
         }
 
         const finalMessage = this.dryRun
-          ? `Package archive not published (dry run)`
-          : `Package archive published`;
+          ? this.staged
+            ? `Package archive not staged (dry run)`
+            : `Package archive not published (dry run)`
+          : this.staged
+            ? `Package archive staged for approval${stageId ? ` (run ${formatUtils.pretty(configuration, `yarn npm stage approve ${stageId}`, formatUtils.Type.CODE)} to approve)` : ``}`
+            : `Package archive published`;
 
         report.reportInfo(MessageName.UNNAMED, finalMessage);
         report.reportJson({
@@ -185,7 +217,9 @@ export default class NpmPublishCommand extends BaseCommand {
           files: files.map(f => npath.fromPortablePath(f)),
           access: this.access || null,
           dryRun: this.dryRun,
-          published: !this.dryRun,
+          staged: this.staged,
+          published: !this.dryRun && !this.staged,
+          ...stageId && {stageId},
           message: finalMessage,
           provenance: Boolean(provenance),
         });
