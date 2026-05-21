@@ -3,6 +3,15 @@ const {
   tests: {validLogins},
 } = require(`pkg-tests-core`);
 
+function extractStageId(jsonStdout: string): string {
+  const jsonObjects = misc.parseJsonStream(jsonStdout);
+  const result = jsonObjects.find((obj: any) => obj?.stageId);
+  if (!result)
+    throw new Error(`Could not find stageId in JSON output:\n${jsonStdout}`);
+
+  return result.stageId;
+}
+
 describe(`Commands`, () => {
   describe(`npm stage`, () => {
     describe(`publish --staged`, () => {
@@ -22,7 +31,6 @@ describe(`Commands`, () => {
 
           expect(stdout).toContain(`Staging to`);
           expect(stdout).toContain(`staged for approval`);
-          expect(stdout).toContain(`stageId:`);
         }),
       );
 
@@ -181,15 +189,13 @@ describe(`Commands`, () => {
         }, async ({path, run}) => {
           await run(`install`);
 
-          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, {
+          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, `--json`, {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
           });
 
-          const stageIdMatch = publishOut.match(/stageId: ([0-9a-f-]+)/);
-          expect(stageIdMatch).not.toBeNull();
-          const stageId = stageIdMatch![1];
+          const stageId = extractStageId(publishOut);
 
           const {stdout} = await run(`npm`, `stage`, `approve`, stageId, {
             env: {
@@ -209,15 +215,13 @@ describe(`Commands`, () => {
         }, async ({path, run}) => {
           await run(`install`);
 
-          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, {
+          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, `--json`, {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
           });
 
-          const stageIdMatch = publishOut.match(/stageId: ([0-9a-f-]+)/);
-          expect(stageIdMatch).not.toBeNull();
-          const stageId = stageIdMatch![1];
+          const stageId = extractStageId(publishOut);
 
           const {stdout} = await run(`npm`, `stage`, `approve`, stageId, `--otp`, validLogins.otpUser.npmOtpToken, {
             env: {
@@ -238,7 +242,7 @@ describe(`Commands`, () => {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
-          })).rejects.toThrow(/must be a valid UUID/);
+          })).rejects.toThrow(/expected to match the pattern/);
         }),
       );
 
@@ -274,15 +278,13 @@ describe(`Commands`, () => {
         }, async ({path, run}) => {
           await run(`install`);
 
-          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, {
+          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, `--json`, {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
           });
 
-          const stageIdMatch = publishOut.match(/stageId: ([0-9a-f-]+)/);
-          expect(stageIdMatch).not.toBeNull();
-          const stageId = stageIdMatch![1];
+          const stageId = extractStageId(publishOut);
 
           const {stdout} = await run(`npm`, `stage`, `reject`, stageId, {
             env: {
@@ -303,7 +305,7 @@ describe(`Commands`, () => {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
-          })).rejects.toThrow(/must be a valid UUID/);
+          })).rejects.toThrow(/expected to match the pattern/);
         }),
       );
 
@@ -330,16 +332,13 @@ describe(`Commands`, () => {
         }, async ({path, run}) => {
           await run(`install`);
 
-          // Stage the package
-          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, {
+          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, `--json`, {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
           });
 
-          const stageIdMatch = publishOut.match(/stageId: ([0-9a-f-]+)/);
-          expect(stageIdMatch).not.toBeNull();
-          const stageId = stageIdMatch![1];
+          const stageId = extractStageId(publishOut);
 
           // List and verify it appears
           const {stdout: listOut} = await run(`npm`, `stage`, `list`, {
@@ -375,16 +374,13 @@ describe(`Commands`, () => {
         }, async ({path, run}) => {
           await run(`install`);
 
-          // Stage the package
-          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, {
+          const {stdout: publishOut} = await run(`npm`, `publish`, `--staged`, `--json`, {
             env: {
               YARN_NPM_AUTH_TOKEN: validLogins.fooUser.npmAuthToken,
             },
           });
 
-          const stageIdMatch = publishOut.match(/stageId: ([0-9a-f-]+)/);
-          expect(stageIdMatch).not.toBeNull();
-          const stageId = stageIdMatch![1];
+          const stageId = extractStageId(publishOut);
 
           // List and verify it appears
           const {stdout: listOut} = await run(`npm`, `stage`, `list`, {
