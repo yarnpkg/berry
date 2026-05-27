@@ -232,7 +232,7 @@ export async function del(target: string, {customErrorMessage, ...options}: Opti
 async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, `customErrorMessage`>): Promise<Response> {
   const url = typeof target === `string` ? new URL(target) : target;
   const yarnVersion = YarnVersion ?? `unknown`;
-  const user_agent = `yarn/${yarnVersion} node/${process.version}`;
+  const userAgent = `yarn/${yarnVersion} node/${process.version}`;
 
   const networkConfig = getNetworkSettings(url, {configuration});
   if (networkConfig.enableNetwork === false)
@@ -242,7 +242,7 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     throw new ReportError(MessageName.NETWORK_UNSAFE_HTTP, `Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
   const gotOptions: ExtendOptions = {headers: {
-    'user-agent': user_agent,
+    'user-agent': userAgent,
     ...headers,
   }, method};
   gotOptions.responseType = jsonResponse
