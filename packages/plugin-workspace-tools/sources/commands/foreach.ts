@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils, nodeUtils}              from '@yarnpkg/core';
-import {gitUtils}                                                    from '@yarnpkg/plugin-git';
-import {Command, Option, Usage, UsageError}                          from 'clipanion';
-import micromatch                                                    from 'micromatch';
-import pLimit                                                        from 'p-limit';
-import {Writable}                                                    from 'stream';
-import {WriteStream}                                                 from 'tty';
-import * as t                                                        from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Manifest, Project, scriptUtils, ThrowReport, Workspace} from '@yarnpkg/core';
+import {Descriptor, DescriptorHash, HardDependencies, MessageName, Report, StreamReport}    from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils, nodeUtils}                                     from '@yarnpkg/core';
+import {gitUtils}                                                                           from '@yarnpkg/plugin-git';
+import {Command, Option, Usage, UsageError}                                                 from 'clipanion';
+import micromatch                                                                           from 'micromatch';
+import pLimit                                                                               from 'p-limit';
+import {Writable}                                                                           from 'stream';
+import {WriteStream}                                                                        from 'tty';
+import * as t                                                                               from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
@@ -149,6 +149,90 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (command.path.length === 0)
       throw new UsageError(`Invalid subcommand name for iteration - use the 'run' keyword if you wish to execute a script`);
 
+    const resolver = configuration.makeResolver();
+    const resolveOptions = {
+      project,
+      resolver,
+      report: new ThrowReport(),
+    };
+
+    const resolvedWorkspaceDependencies = new Map<string, Promise<Workspace | null>>();
+    const tryWorkspaceByDescriptor = async (workspace: Workspace, descriptor: Descriptor) => {
+      const cacheKey = `${workspace.anchoredLocator.locatorHash}:${descriptor.descriptorHash}`;
+      let promise = resolvedWorkspaceDependencies.get(cacheKey);
+      if (typeof promise === `undefined`) {
+        promise = (async () => {
+          const dependency = await configuration.reduceHook(hooks => {
+            return hooks.reduceDependency;
+          }, descriptor, project, workspace.anchoredLocator, descriptor, {
+            resolver,
+            resolveOptions,
+          });
+
+          if (!structUtils.areIdentsEqual(descriptor, dependency))
+            throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+          return project.tryWorkspaceByDescriptor(dependency);
+        })();
+
+        resolvedWorkspaceDependencies.set(cacheKey, promise);
+      }
+
+      return await promise;
+    };
+
+    const getRecursiveWorkspaceDependencies = async (workspace: Workspace, {dependencies = Manifest.hardDependencies}: {dependencies?: Array<HardDependencies>} = {}) => {
+      const workspaceList = new Set<Workspace>();
+
+      const visitWorkspace = async (workspace: Workspace) => {
+        for (const dependencyType of dependencies) {
+          for (const descriptor of workspace.manifest[dependencyType].values()) {
+            const foundWorkspace = await tryWorkspaceByDescriptor(workspace, descriptor);
+            if (foundWorkspace === null || workspaceList.has(foundWorkspace))
+              continue;
+
+            workspaceList.add(foundWorkspace);
+            await visitWorkspace(foundWorkspace);
+          }
+        }
+      };
+
+      await visitWorkspace(workspace);
+      return workspaceList;
+    };
+
+    const getRecursiveWorkspaceDependents = async (workspace: Workspace, {dependencies = Manifest.hardDependencies}: {dependencies?: Array<HardDependencies>} = {}) => {
+      const workspaceList = new Set<Workspace>();
+
+      const visitWorkspace = async (workspace: Workspace) => {
+        for (const projectWorkspace of project.workspaces) {
+          let isDependent = false;
+
+          for (const dependencyType of dependencies) {
+            for (const descriptor of projectWorkspace.manifest[dependencyType].values()) {
+              const foundWorkspace = await tryWorkspaceByDescriptor(projectWorkspace, descriptor);
+              if (foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator)) {
+                isDependent = true;
+                break;
+              }
+            }
+
+            if (isDependent) {
+              break;
+            }
+          }
+
+          if (isDependent && !workspaceList.has(projectWorkspace)) {
+            workspaceList.add(projectWorkspace);
+            await visitWorkspace(projectWorkspace);
+          }
+        }
+      };
+
+      await visitWorkspace(workspace);
+      return workspaceList;
+    };
+
     const log = (msg: string) => {
       if (!this.dryRun)
         return;
@@ -200,10 +284,14 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (this.recursive) {
       if (this.since) {
         log(`Option --recursive --since is set; recursively selecting all dependent workspaces`);
-        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependents()]).flat());
+        extra = new Set((await Promise.all(selection.map(async workspace => {
+          return [...await getRecursiveWorkspaceDependents(workspace)];
+        }))).flat());
       } else {
         log(`Option --recursive is set; recursively selecting all transitive dependencies`);
-        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependencies()]).flat());
+        extra = new Set((await Promise.all(selection.map(async workspace => {
+          return [...await getRecursiveWorkspaceDependencies(workspace)];
+        }))).flat());
       }
     } else if (this.worktree) {
       log(`Option --worktree is set; recursively selecting all nested workspaces`);
@@ -387,8 +475,8 @@ export default class WorkspacesForeachCommand extends BaseCommand {
               : workspace.manifest.dependencies;
 
             for (const descriptor of resolvedSet.values()) {
-              const workspace = project.tryWorkspaceByDescriptor(descriptor);
-              isRunnable = workspace === null || !needsProcessing.has(workspace.anchoredLocator.locatorHash);
+              const dependencyWorkspace = await tryWorkspaceByDescriptor(workspace, descriptor);
+              isRunnable = dependencyWorkspace === null || !needsProcessing.has(dependencyWorkspace.anchoredLocator.locatorHash);
 
               if (!isRunnable) {
                 break;
