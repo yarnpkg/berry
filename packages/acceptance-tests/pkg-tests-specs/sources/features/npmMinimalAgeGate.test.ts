@@ -369,5 +369,83 @@ describe(`Features`, () => {
         }),
       );
     });
+    describe(`--no-time-gate`, () => {
+      test(
+        `yarn add should ignore the minimum release age when --no-time-gate is set`,
+        makeTemporaryEnv({}, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`add`, `--no-time-gate`, `release-date@^1.0.0`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+
+      test(
+        `yarn add should ignore the minimum release age for exact versions when --no-time-gate is set`,
+        makeTemporaryEnv({}, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`add`, `--no-time-gate`, `release-date@1.1.1`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+
+      test(
+        `yarn up should ignore the minimum release age when --no-time-gate is set`,
+        makeTemporaryEnv({
+          dependencies: {[`release-date`]: `^1.0.0`},
+        }, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`install`);
+          await run(`set`, `resolution`, `release-date@npm:^1.0.0`, `npm:1.0.0`);
+
+          const preUpVersion = (await source(`require('release-date/package.json')`)).version;
+          if (preUpVersion !== `1.0.0`)
+            throw new Error(`Pre-up version is not 1.0.0`);
+
+          await run(`up`, `--no-time-gate`, `release-date`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+
+      test(
+        `yarn up -R should ignore the minimum release age when --no-time-gate is set`,
+        makeTemporaryEnv({
+          dependencies: {[`release-date`]: `^1.0.0`},
+        }, {
+          npmMinimalAgeGate: `1d`,
+          pnpFallbackMode: `all`,
+          pnpMode: `loose`,
+        }, async ({run, source}) => {
+          await run(`install`);
+          await run(`set`, `resolution`, `release-date@npm:^1.0.0`, `npm:1.0.0`);
+          await run(`set`, `resolution`, `release-date-transitive@npm:^1.0.0`, `npm:1.0.0`);
+
+          await run(`up`, `--no-time-gate`, `-R`, `*`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+          await expect(source(`require('release-date-transitive/package.json')`)).resolves.toMatchObject({
+            name: `release-date-transitive`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+    });
   });
 });

@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 9
+  version: 10
   cacheKey: 10
 
 "@aashutoshrathi/word-wrap@npm:^1.2.3":
@@ -6031,7 +6031,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.42.0"
     "@typescript-eslint/parser": "npm:^8.42.0"
     eslint: "npm:^9.20.1"
-    eslint-plugin-arca: "npm:^0.16.0"
+    eslint-plugin-arca: "npm:^0.17.0"
     eslint-plugin-react: "npm:^7.37.4"
     globals: "npm:^15.15.0"
     tslib: "npm:^2.4.0"
@@ -10328,10 +10328,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-arca@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "eslint-plugin-arca@npm:0.16.0"
-  checksum: 10/00e200edd06a71867887bfd111c70fd0a65212701d7066b05216b7730955e6e9358f69c3108a688274f36e95e6ff05f015833a3af38b7b1bbf34ba752276ac95
+"eslint-plugin-arca@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "eslint-plugin-arca@npm:0.17.0"
+  peerDependencies:
+    eslint: ">=10.0.0"
+  checksum: 10/11971c7589f2bf106c5fb15deb6e6b13cb844076d12b6399a0321235dc3fcfff15c4f6eec994822ec0f614d95a952bf14a3f3bd7497491d09a1f7721b0c20d4a
   languageName: node
   linkType: hard
 

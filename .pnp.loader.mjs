@@ -1428,12 +1428,12 @@ class VirtualFS extends ProxiedFS {
 
 const URL = Number(process.versions.node.split('.', 1)[0]) < 20 ? URL$1 : globalThis.URL;
 
-const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
+const [major, minor, patch] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 const HAS_LAZY_LOADED_TRANSLATORS = major === 20 && minor < 6 || major === 19 && minor >= 3;
 const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || major === 20 && minor >= 10 || major === 18 && minor >= 20;
 const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
-const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major > 25 || major === 25 && minor >= 7 || major === 24 && minor >= 15;
+const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major === 26 && minor < 1 || major === 25 && minor >= 7 || major === 24 && minor === 15 || major === 22 && (minor > 22 || minor === 22 && patch >= 3);
 
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);

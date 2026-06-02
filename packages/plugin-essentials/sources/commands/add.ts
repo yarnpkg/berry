@@ -113,6 +113,10 @@ export default class AddCommand extends BaseCommand {
     description: `Reuse the highest version already used somewhere within the project`,
   });
 
+  noTimeGate = Option.Boolean(`--no-time-gate`, false, {
+    description: `Disable the minimum release age check for this command`,
+  });
+
   mode = Option.String(`--mode`, {
     description: `Change what artifacts installs generate`,
     validator: t.isEnum(InstallMode),
@@ -124,6 +128,10 @@ export default class AddCommand extends BaseCommand {
 
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+    if (this.noTimeGate)
+      configuration.useWithSource(`<cli>`, {npmMinimalAgeGate: `0`}, configuration.startingCwd, {overwrite: true});
+
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 

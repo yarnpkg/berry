@@ -1,4 +1,4 @@
-const [major, minor] = process.versions.node.split(`.`).map(value => parseInt(value, 10));
+const [major, minor, patch] = process.versions.node.split(`.`).map(value => parseInt(value, 10));
 
 // The message switched to using an array in https://github.com/nodejs/node/pull/45348
 export const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || (major === 19 && minor >= 2) || (major === 18 && minor >= 13);
@@ -21,5 +21,10 @@ export const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || (major === 20 && minor 
 // https://github.com/nodejs/node/pull/52104
 export const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
 
-// https://github.com/nodejs/node/pull/61769 — backported to v24.15.0
-export const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major > 25 || (major === 25 && minor >= 7) || (major === 24 && minor >= 15);
+// https://github.com/nodejs/node/pull/61769 — backported to v24.15.0 and v22.22.3
+// https://github.com/nodejs/node/pull/62835 fixed the broken stat (v26.1.0, backported to v24.16.0)
+export const HAS_BROKEN_FSTAT_FOR_ZIP_FDS =
+  (major === 26 && minor < 1) ||
+  (major === 25 && minor >= 7) ||
+  (major === 24 && minor === 15) ||
+  (major === 22 && (minor > 22 || (minor === 22 && patch >= 3)));
