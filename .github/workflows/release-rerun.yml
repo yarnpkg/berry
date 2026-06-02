@@ -58,6 +58,9 @@ jobs:
         git fetch origin ${{github.event.inputs.release_script_ref}} --depth=1
         git checkout ${{github.event.inputs.release_script_ref}} -- scripts/release
 
+        git add .
+        git commit -m 'Temporary commit for a pristine repository'
+
     - name: 'Upload the releases'
       run: |
         yarn config set -H 'npmAuthToken' "${{secrets.YARNBOT_NPM_TOKEN}}"
