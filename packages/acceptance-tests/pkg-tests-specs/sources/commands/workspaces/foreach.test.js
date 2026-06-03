@@ -4,6 +4,7 @@ const {
   exec: {execFile},
   fs: {writeJson, writeFile},
   tests: {testIf, FEATURE_CHECKS},
+  yarn,
 } = require(`pkg-tests-core`);
 
 const forEachVerboseDone = FEATURE_CHECKS.forEachVerboseDone
@@ -246,6 +247,55 @@ describe(`Commands`, () => {
           ]);
 
           expect({code, stderr}).toEqual({code: 0, stderr: ``});
+        },
+      ),
+    );
+
+    test(
+      `should follow workspace dependencies resolved through catalogs when using --recursive --topological-dev`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await writeJson(`${path}/packages/workspace-a/package.json`, {
+            name: `workspace-a`,
+            version: `1.0.0`,
+            scripts: {
+              build: `echo build a`,
+            },
+          });
+
+          await writeJson(`${path}/packages/workspace-b/package.json`, {
+            name: `workspace-b`,
+            version: `1.0.0`,
+            scripts: {
+              build: `echo build b`,
+            },
+            dependencies: {
+              [`workspace-a`]: `catalog:local`,
+            },
+          });
+
+          await yarn.writeConfiguration(path, {
+            catalogs: {
+              local: {
+                [`workspace-a`]: `workspace:*`,
+              },
+            },
+          });
+
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological-dev`, `--from`, `workspace-b`, `--exclude`, `workspace-b`, `run`, `build`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `build a\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
