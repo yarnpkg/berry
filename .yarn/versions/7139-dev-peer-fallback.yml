@@ -1,10 +1,10 @@
 releases:
+  "@yarnpkg/cli": patch
   "@yarnpkg/core": patch
   "@yarnpkg/plugin-essentials": patch
 
 declined:
   - "@yarnpkg/builder"
-  - "@yarnpkg/cli"
   - "@yarnpkg/doctor"
   - "@yarnpkg/extensions"
   - "@yarnpkg/nm"

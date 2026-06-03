@@ -52,7 +52,33 @@ describe(`Features`, () => {
         const {stdout} = await run(`install`);
 
         expect(stdout).toContain(`YN0093`);
-        expect(stdout).toContain(`devDependency fallback`);
+        expect(stdout).toContain(`a uses a devDependency fallback that won't be available in production contexts`);
+      }),
+    );
+
+    test(
+      `it should report a warning when a workspace peer dependency is satisfied by the root workspace's dev dependency`,
+      makeTemporaryMonorepoEnv({
+        name: `root`,
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`a`]: `workspace:^`,
+        },
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, {
+        [`packages/a`]: {
+          name: `a`,
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        },
+      }, async ({run}) => {
+        const {stdout} = await run(`install`);
+
+        expect(stdout).toContain(`YN0093`);
+        expect(stdout).toContain(`only as a dev-dependency to a`);
       }),
     );
 
@@ -80,7 +106,8 @@ describe(`Features`, () => {
         const {stdout} = await run(`install`);
 
         expect(stdout).toContain(`YN0093`);
-        expect(stdout).toContain(`through devDependencies`);
+        expect(stdout).toContain(`b provides no-deps`);
+        expect(stdout).toContain(`only as a dev-dependency to a`);
       }),
     );
 

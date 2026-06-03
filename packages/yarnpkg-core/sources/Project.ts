@@ -232,6 +232,14 @@ export type PeerWarning = {
 const makeLockfileChecksum = (normalizedContent: string) =>
   hashUtils.makeHash(`${INSTALL_STATE_VERSION}`, normalizedContent);
 
+function isWorkspaceDevDependencyOnly(project: Project, locator: Locator, identHash: IdentHash) {
+  const workspace = project.tryWorkspaceByLocator(locator);
+
+  return workspace !== null
+    && workspace.manifest.devDependencies.has(identHash)
+    && !workspace.manifest.dependencies.has(identHash);
+}
+
 export class Project {
   public readonly configuration: Configuration;
   public readonly cwd: PortablePath;
@@ -2246,15 +2254,6 @@ function applyVirtualResolutionMutations({
     return pkg;
   };
 
-  const isWorkspaceDevDependencyOnly = (locator: Locator, identHash: IdentHash) => {
-    const workspace = project.tryWorkspaceByLocator(locator);
-
-    return workspace !== null
-      && workspace !== project.topLevelWorkspace
-      && workspace.manifest.devDependencies.has(identHash)
-      && !workspace.manifest.dependencies.has(identHash);
-  };
-
   const resolvePeerDependencies = (parentDescriptor: Descriptor, parentLocator: Locator, parentPeerRequests: Map<IdentHash, PeerRequestNode>, {top, optional}: {top: LocatorHash, optional: boolean}) => {
     if (resolutionStack.length > 1000)
       reportStackOverflow();
@@ -2398,7 +2397,7 @@ function applyVirtualResolutionMutations({
           // 3. Try package's own dependencies (peer-with-default)
           // This is done outside of the factory above because this resolution is not sharable between sibling virtuals
           if (peerProvision.range === `missing:` && virtualizedPackage.dependencies.has(peerDescriptor.identHash)) {
-            if (isWorkspaceDevDependencyOnly(virtualizedPackage, peerDescriptor.identHash)) {
+            if (isWorkspaceDevDependencyOnly(project, virtualizedPackage, peerDescriptor.identHash)) {
               peerRequests.set(peerDescriptor.identHash, {
                 requester: virtualizedPackage,
                 descriptor: peerDescriptor,
@@ -2659,7 +2658,7 @@ function applyVirtualResolutionMutations({
             : semverUtils.simplifyRanges(allRanges as Array<string>),
           hash: requirement.hash,
         });
-      } else if (isWorkspaceDevDependencyOnly(requirement.subject, requirement.ident.identHash) && allRequests.some(peerRequest => !peerRequest.meta?.optional)) {
+      } else if (isWorkspaceDevDependencyOnly(project, requirement.subject, requirement.ident.identHash) && allRequests.some(peerRequest => !peerRequest.meta?.optional)) {
         peerWarnings.push({
           type: PeerWarningType.NodeProvidedByDevDependency,
           node: requirement,
@@ -2795,7 +2794,24 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
       const otherPackages = warning.node.requests.size > 1
         ? ` and other dependencies`
         : ``;
-      const requester = structUtils.prettyIdent(project.configuration, warning.node.requests.values().next().value!.requester);
+      const allRequestsWithRoot = [...allPeerRequestsWithRoot(warning.node)];
+      const formatRequester = (request: PeerRequestNode, root: PeerRequestNode) => {
+        return request === root
+          ? structUtils.prettyIdent(project.configuration, request.requester)
+          : `${structUtils.prettyIdent(project.configuration, request.requester)} (via ${structUtils.prettyIdent(project.configuration, root.requester)})`;
+      };
+      const requester = miscUtils.mapAndFind(allRequestsWithRoot, ({request, root}) => {
+        if (request.meta?.optional)
+          return miscUtils.mapAndFind.skip;
+
+        return formatRequester(request, root);
+      }) ?? formatRequester(allRequestsWithRoot[0].request, allRequestsWithRoot[0].root);
+      const fallbackRequester = miscUtils.mapAndFind(allRequestsWithRoot, ({request, root}) => {
+        if (!isWorkspaceDevDependencyOnly(project, request.requester, warning.node.ident.identHash))
+          return miscUtils.mapAndFind.skip;
+
+        return formatRequester(request, root);
+      }) ?? requester;
 
       if (warning.node.provided.range === `missing:`) {
         devDependencyWarnings.push(`${
@@ -2805,8 +2821,8 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
         } (${
           formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
         }); ${
-          requester
-        } uses a devDependency fallback that won't be available after publishing${otherPackages}.`);
+          fallbackRequester
+        } uses a devDependency fallback that won't be available in production contexts${otherPackages}.`);
       } else {
         devDependencyWarnings.push(`${
           structUtils.prettyLocator(project.configuration, warning.node.subject)
@@ -2814,9 +2830,9 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
           structUtils.prettyIdent(project.configuration, warning.node.ident)
         } (${
           formatUtils.pretty(project.configuration, warning.hash, formatUtils.Type.CODE)
-        }) through devDependencies, requested by ${
+        }) only as a dev-dependency to ${
           requester
-        }${otherPackages}; devDependencies won't satisfy peers after publishing.`);
+        }${otherPackages}; devDependencies won't satisfy peers in production contexts.`);
       }
     }
   }

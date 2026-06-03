@@ -491,3 +491,9 @@ publish:
 A feature you're using depends on an experimental or unstable API provided by the underlying runtime (e.g. Node.js). While the feature works today, the API it relies on may change or be removed without notice in future runtime versions, which could lead to breakage.
 
 This is informational — everything should work correctly for now, but be aware that updates to your runtime may require corresponding updates to Yarn before the feature can continue to work as expected.
+
+## YN0093 - `PEER_DEPENDENCY_PROVIDED_BY_DEV_DEPENDENCY`
+
+A workspace provides a peer dependency only through `devDependencies`, or a workspace peer request is satisfied by the requester's own `devDependencies`.
+
+This may work during local installs because Yarn can see the workspace dev dependency, but the dependency won't be available once the workspace is packed, published, or installed in production. Move the dependency to regular `dependencies`, or make the peer optional if it isn't required in production contexts.

@@ -138,7 +138,7 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
       }${problem}.`);
 
       if (warning?.type === PeerWarningType.NodeProvidedByDevDependency) {
-        report.reportInfo(MessageName.UNNAMED, `  The peer request is currently satisfied by a workspace devDependency fallback, which won't be available after publishing.`);
+        report.reportInfo(MessageName.UNNAMED, `  The peer request is currently satisfied by a workspace devDependency fallback, which won't be available in production contexts.`);
       }
     } else {
       const providedLocatorHash = project.storedResolutions.get(root.provided.descriptorHash);
@@ -164,7 +164,7 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
           report.reportInfo(MessageName.UNNAMED, `  Unfortunately, the requested ranges have no overlap`);
         }
       } else if (warning?.type === PeerWarningType.NodeProvidedByDevDependency) {
-        report.reportInfo(MessageName.UNNAMED, `  Dev dependencies won't be available to satisfy peer requests after publishing.`);
+        report.reportInfo(MessageName.UNNAMED, `  Dev dependencies won't be available to satisfy peer requests in production contexts.`);
       }
     }
   });
