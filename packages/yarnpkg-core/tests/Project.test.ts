@@ -1,10 +1,10 @@
-import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Package} from '@yarnpkg/core';
-import {Filename, PortablePath, ppath, xfs}                                            from '@yarnpkg/fslib';
-import LinkPlugin                                                                      from '@yarnpkg/plugin-link';
-import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
-import v8                                                                              from 'v8';
+import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Package, InstallMode} from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs}                                                         from '@yarnpkg/fslib';
+import LinkPlugin                                                                                   from '@yarnpkg/plugin-link';
+import PnpPlugin                                                                                    from '@yarnpkg/plugin-pnp';
+import v8                                                                                           from 'v8';
 
-import {TestPlugin}                                                                    from './TestPlugin';
+import {TestPlugin}                                                                                 from './TestPlugin';
 
 const getConfiguration = (p: PortablePath) => {
   return Configuration.create(p, p, new Map([
@@ -299,6 +299,27 @@ describe(`Project`, () => {
       await xfs.writeFilePromise(statePath, `invalid state`);
 
       await expect(project.restoreInstallState()).resolves.toBeUndefined();
+    });
+  });
+
+  it(`should ignore cache misses recorded before the fetch step`, async() => {
+    await xfs.mktempPromise(async dir => {
+      await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {name: `foo`});
+      await xfs.writeFilePromise(ppath.join(dir, Filename.lockfile), ``);
+
+      const configuration = getConfiguration(dir);
+      const {project} = await Project.find(configuration, dir);
+      const cache = await Cache.find(configuration);
+      const report = new ThrowReport();
+
+      report.cacheMisses.add(`preexisting-cache-miss` as LocatorHash);
+
+      await expect(project.fetchEverything({
+        cache,
+        report,
+        mode: InstallMode.UpdateLockfile,
+        persistProject: false,
+      })).resolves.toBeUndefined();
     });
   });
 });
