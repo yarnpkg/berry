@@ -33,6 +33,15 @@ describe(`NpmSemverFetcher`, () => {
       expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(true);
     });
 
+    it(`it should detect a conventional Artifactory-style path (@scope/foo)`, async () => {
+      const configuration = await makeConfiguration();
+
+      const locator = structUtils.makeLocator(structUtils.makeIdent(`scope`, `foo`), `npm:1.0.0`);
+      const url = `${configuration.get(`npmRegistryServer`)}/@scope/foo/-/@scope/foo-1.0.0.tgz`;
+
+      expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(true);
+    });
+
     it(`it should detect non-conventional path (different registry)`, async () => {
       const configuration = await makeConfiguration();
 
@@ -47,6 +56,15 @@ describe(`NpmSemverFetcher`, () => {
 
       const locator = structUtils.makeLocator(structUtils.makeIdent(null, `foo`), `npm:1.0.0`);
       const url = `${configuration.get(`npmRegistryServer`)}/archives/foo/foo-1.0.0.tgz`;
+
+      expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(false);
+    });
+
+    it(`it should detect non-conventional Artifactory-style path with a different package name`, async () => {
+      const configuration = await makeConfiguration();
+
+      const locator = structUtils.makeLocator(structUtils.makeIdent(`scope`, `foo`), `npm:1.0.0`);
+      const url = `${configuration.get(`npmRegistryServer`)}/@scope/foo/-/@scope/bar-1.0.0.tgz`;
 
       expect(NpmSemverFetcher.isConventionalTarballUrl(locator, url, {configuration})).toEqual(false);
     });

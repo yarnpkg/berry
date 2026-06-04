@@ -72,7 +72,10 @@ export class NpmSemverFetcher implements Fetcher {
 
   static isConventionalTarballUrl(locator: Locator, url: string, {configuration}: {configuration: Configuration}) {
     let registry = npmConfigUtils.getScopeRegistry(locator.scope, {configuration});
-    const path = NpmSemverFetcher.getLocatorUrl(locator);
+    const version = NpmSemverFetcher.getLocatorVersion(locator);
+    const encodedIdentUrl = npmHttpUtils.getIdentUrl(locator);
+    const decodedIdentUrl = encodedIdentUrl.replace(/%2f/gi, `/`);
+    const filename = `${encodeURIComponent(locator.name)}-${encodeURIComponent(version)}.tgz`;
 
     // From time to time the npm registry returns http urls instead of https 🤡
     url = url.replace(/^https?:(\/\/(?:[^/]+\.)?npmjs.org(?:$|\/))/, `https:$1`);
@@ -81,22 +84,34 @@ export class NpmSemverFetcher implements Fetcher {
     registry = registry.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
     url = url.replace(/^https:\/\/registry\.npmjs\.org($|\/)/, `https://registry.yarnpkg.com$1`);
 
-    if (url === registry + path)
+    if (url === `${registry}${encodedIdentUrl}/-/${filename}`)
       return true;
-    if (url === registry + path.replace(/%2f/g, `/`))
+    if (url === `${registry}${decodedIdentUrl}/-/${filename}`)
       return true;
+
+    if (locator.scope) {
+      const encodedScope = encodeURIComponent(locator.scope);
+
+      if (url === `${registry}${encodedIdentUrl}/-/@${encodedScope}/${filename}` || url === `${registry}${decodedIdentUrl}/-/@${encodedScope}/${filename}`) {
+        return true;
+      }
+    }
 
     return false;
   }
 
   static getLocatorUrl(locator: Locator) {
-    const version = semverUtils.clean(locator.reference.slice(PROTOCOL.length));
-    if (version === null)
-      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
-
+    const version = NpmSemverFetcher.getLocatorVersion(locator);
     const encodedName = encodeURIComponent(locator.name);
     const encodedVersion = encodeURIComponent(version);
 
     return `${npmHttpUtils.getIdentUrl(locator)}/-/${encodedName}-${encodedVersion}.tgz`;
+  }
+  private static getLocatorVersion(locator: Locator) {
+    const version = semverUtils.clean(locator.reference.slice(PROTOCOL.length));
+    if (version === null)
+      throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
+
+    return version;
   }
 }
