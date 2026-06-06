@@ -184,7 +184,7 @@ function applyDefaultHeaders(headers: Options[`headers`]) {
   const normalizedHeaders = {...headers};
 
   const hasUserAgent = Object.entries(normalizedHeaders).some(([headerName, headerValue]) =>
-    headerName.toLowerCase() === `user-agent` && typeof headerValue !== `undefined`
+    headerName.toLowerCase() === `user-agent` && typeof headerValue !== `undefined`,
   );
 
   if (!hasUserAgent)
