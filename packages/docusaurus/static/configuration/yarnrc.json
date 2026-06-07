@@ -503,7 +503,7 @@
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
       ],
-      "default": "0m",
+      "default": "1d",
       "examples": ["1w", "1d", "3h", "30m"]
     },
     "npmPreapprovedPackages": {
