@@ -6,7 +6,7 @@ import {MessageName, Project, FetchResult, Installer}                       from
 import {PortablePath, npath, ppath, Filename}                               from '@yarnpkg/fslib';
 import {VirtualFS, xfs, FakeFS, NativePath}                                 from '@yarnpkg/fslib';
 import {ZipOpenFS}                                                          from '@yarnpkg/libzip';
-import {buildNodeModulesTree}                                               from '@yarnpkg/nm';
+import {buildNodeModulesTree, buildPackageMap}                              from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from '@yarnpkg/nm';
 import {parseSyml}                                                          from '@yarnpkg/parsers';
 import {jsInstallUtils}                                                     from '@yarnpkg/plugin-pnp';
@@ -20,6 +20,7 @@ const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
+const PACKAGE_MAP_FILE = `.package-map.json` as Filename;
 const MTIME_ACCURANCY = 1000;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
@@ -338,7 +339,12 @@ class NodeModulesInstaller implements Installer {
     }
     const locatorMap = buildLocatorMap(tree);
 
-    await persistNodeModules(preinstallState, locatorMap, {
+    const packageMap = buildPackageMap(tree, {
+      basePath: ppath.join(this.opts.project.cwd, NODE_MODULES),
+      pnp: pnpApi,
+    });
+
+    await persistNodeModules(preinstallState, locatorMap, packageMap, {
       baseFs: defaultFsLayer,
       project: this.opts.project,
       report: this.opts.report,
@@ -1102,7 +1108,7 @@ function invalidateBinSymlinks(binSymlinks: BinSymlinkMap, changedLocations: Set
   }
 }
 
-async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
+async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, packageMap: ReturnType<typeof buildPackageMap>, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
   const {
@@ -1370,6 +1376,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     await Promise.all(addQueue);
 
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
+    await xfs.changeFilePromise(ppath.join(rootNmDirPath, PACKAGE_MAP_FILE), JSON.stringify(packageMap, null, 2), {
+      automaticNewlines: true,
+    });
 
     invalidateBinSymlinks(prevBinSymlinks, new Set(addList.map(l => l.dstDir)));
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
