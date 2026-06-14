@@ -5,6 +5,7 @@ import {PnpApi}                                                                 
 import {LinkType, NodeModulesBaseNode, NodeModulesPackageNode, NodeModulesTree} from './buildNodeModulesTree';
 
 const NODE_MODULES = `node_modules` as Filename;
+const WORKSPACE_NAME_SUFFIX = `$wsroot$`;
 
 export type PackageMap = {
   packages: Record<string, PackageMapPackage>;
@@ -88,8 +89,11 @@ const compareStrings = (a: string, b: string) => {
 };
 
 const getPackageDependencyNames = (pnp: PnpApi, node: NodeModulesPackageNode) => {
-  const locator = structUtils.parseLocator(node.locator);
-  const packageInformation = pnp.getPackageInformation(locator);
+  const locator = structUtils.parseLocator(node.locator.replace(WORKSPACE_NAME_SUFFIX, ``));
+  const packageInformation = pnp.getPackageInformation({
+    name: structUtils.stringifyIdent(locator),
+    reference: locator.reference,
+  });
 
   if (packageInformation === null)
     throw new Error(`Assertion failed: Expected ${node.locator} to have been registered`);

@@ -30,7 +30,7 @@ describePackageMaps(`Package maps`, () => {
         nodeLinker: `node-modules`,
         nodeExperimentalPackageMap: true,
       },
-      async ({path, run, source}) => {
+      async ({run, source}) => {
         await run(`install`);
 
         await expect(source(requireFromPackage(`one-fixed-dep`, `.`))).resolves.toMatchObject({
@@ -58,7 +58,7 @@ describePackageMaps(`Package maps`, () => {
       {
         nodeLinker: `node-modules`,
       },
-      async ({path, run, source}) => {
+      async ({run, source}) => {
         await run(`install`);
 
         // This should work because the package map isn't here to reject undeclared dependencies
@@ -91,13 +91,63 @@ describePackageMaps(`Package maps`, () => {
         nodeExperimentalPackageMap: true,
         nodePackageMapType: `loose`,
       },
-      async ({path, run, source}) => {
+      async ({run, source}) => {
         await run(`install`);
 
         await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
         });
+      },
+    ),
+  );
+
+  it(`should allow scoped packages to be required in node-modules installs`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@scoped/release-date`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
+      },
+      async ({run, source}) => {
+        await run(`install`);
+
+        await expect(source(requireFromPackage(`@scoped/release-date`, `./package.json`))).resolves.toMatchObject({
+          name: `@scoped/release-date`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  it(`should install scoped workspaces in node-modules installs`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`workspace`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.join(path, `workspace/package.json` as PortablePath), {
+          name: `@scope/workspace`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+        await writeFile(ppath.join(path, `workspace/index.js` as PortablePath), ``);
+
+        await run(`install`);
+
+        await expect(xfs.existsPromise(getPackageMapPath(path))).resolves.toEqual(true);
+        await expect(xfs.existsPromise(ppath.join(path, `node_modules/@scope/workspace` as PortablePath))).resolves.toEqual(true);
       },
     ),
   );
