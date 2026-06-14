@@ -121,12 +121,12 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       default: `pnp`,
     },
     nodeExperimentalPackageMap: {
-      description: `If true, Yarn will inject the experimental package map into Node.js processes.`,
+      description: `If true, Yarn will inject the experimental package map into Node.js processes when using the node-modules or pnpm linkers.`,
       type: SettingsType.BOOLEAN,
       default: false,
     },
     nodePackageMapType: {
-      description: `If 'standard', generates package maps from the dependency graph. If 'loose', generates them from the hoisted node_modules layout.`,
+      description: `If 'standard', package maps will reflect the dependency graph. If 'loose', they will reflect the hoisted node_modules layout.`,
       type: SettingsType.STRING,
       values: [
         NodePackageMapType.STANDARD,
