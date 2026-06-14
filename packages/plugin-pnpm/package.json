@@ -21,7 +21,8 @@
   },
   "devDependencies": {
     "@yarnpkg/cli": "workspace:^",
-    "@yarnpkg/core": "workspace:^"
+    "@yarnpkg/core": "workspace:^",
+    "@yarnpkg/nm": "workspace:^"
   },
   "repository": {
     "type": "git",

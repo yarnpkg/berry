@@ -13,6 +13,11 @@ export {UnplugCommand};
 export {jsInstallUtils};
 export {pnpUtils};
 
+export enum NodePackageMapType {
+  STANDARD = `standard`,
+  LOOSE = `loose`,
+}
+
 export const getPnpPath = (project: Project) => {
   return {
     cjs: ppath.join(project.cwd, Filename.pnpCjs),
@@ -69,6 +74,7 @@ async function populateYarnPaths(project: Project, definePath: (path: PortablePa
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
     nodeLinker: string;
+    nodePackageMapType: string;
     winLinkType: string;
     pnpMode: string;
     minizip: boolean;
@@ -92,6 +98,15 @@ const plugin: Plugin<CoreHooks & StageHooks> = {
       description: `The linker used for installing Node packages, one of: "pnp", "pnpm", or "node-modules"`,
       type: SettingsType.STRING,
       default: `pnp`,
+    },
+    nodePackageMapType: {
+      description: `If 'standard', generates package maps from the dependency graph. If 'loose', generates them from the hoisted node_modules layout.`,
+      type: SettingsType.STRING,
+      values: [
+        NodePackageMapType.STANDARD,
+        NodePackageMapType.LOOSE,
+      ],
+      default: NodePackageMapType.STANDARD,
     },
     minizip: {
       description: `Whether Yarn should use minizip to extract archives`,

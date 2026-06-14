@@ -9,7 +9,7 @@ import {ZipOpenFS}                                                          from
 import {buildNodeModulesTree, buildPackageMap}                              from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from '@yarnpkg/nm';
 import {parseSyml}                                                          from '@yarnpkg/parsers';
-import {jsInstallUtils}                                                     from '@yarnpkg/plugin-pnp';
+import {NodePackageMapType, jsInstallUtils}                                 from '@yarnpkg/plugin-pnp';
 import {PnpApi, PackageInformation}                                         from '@yarnpkg/pnp';
 import cmdShim                                                              from '@zkochan/cmd-shim';
 import {UsageError}                                                         from 'clipanion';
@@ -341,7 +341,9 @@ class NodeModulesInstaller implements Installer {
 
     const packageMap = buildPackageMap(tree, {
       basePath: ppath.join(this.opts.project.cwd, NODE_MODULES),
-      pnp: pnpApi,
+      pnp: this.opts.project.configuration.get(`nodePackageMapType`) === NodePackageMapType.STANDARD
+        ? pnpApi
+        : null,
     });
 
     await persistNodeModules(preinstallState, locatorMap, packageMap, {

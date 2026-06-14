@@ -82,6 +82,88 @@ describe(`Package maps`, () => {
     ),
   );
 
+  it(`should allow node-modules installs to use a loose package map`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+          [`various-requires`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nodePackageMapType: `loose`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
+  it(`should enforce declared dependencies for pnpm standard package maps`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+          [`one-fixed-dep`]: `1.0.0`,
+          [`various-requires`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `pnpm`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(xfs.existsPromise(getPackageMapPath(path))).resolves.toEqual(true);
+        await expect(sourceWithPackageMap(path, source, requireFromPackage(`one-fixed-dep`, `.`))).resolves.toMatchObject({
+          name: `one-fixed-dep`,
+          version: `1.0.0`,
+          dependencies: {
+            [`no-deps`]: {
+              name: `no-deps`,
+              version: `1.0.0`,
+            },
+          },
+        });
+        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
+          externalException: {
+            code: `MODULE_NOT_FOUND`,
+          },
+        });
+      },
+    ),
+  );
+
+  it(`should allow pnpm installs to use a loose package map`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+          [`various-requires`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `pnpm`,
+        nodePackageMapType: `loose`,
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(xfs.existsPromise(getPackageMapPath(path))).resolves.toEqual(true);
+        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
+          name: `no-deps`,
+          version: `1.0.0`,
+        });
+      },
+    ),
+  );
+
   it(`should allow package extensions to declare additional dependencies`,
     makeTemporaryEnv(
       {

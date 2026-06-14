@@ -6517,6 +6517,7 @@ __metadata:
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
+    "@yarnpkg/nm": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
     "@yarnpkg/plugin-stage": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
