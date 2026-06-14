@@ -11,21 +11,14 @@ const getPackageMapPath = (path: PortablePath) => {
   return ppath.join(path, Filename.nodeModules, PACKAGE_MAP);
 };
 
-type Source = (script: string, callDefinition?: {env?: Record<string, string>}) => Promise<unknown>;
-
-const sourceWithPackageMap = async (path: PortablePath, source: Source, script: string) => {
-  return await source(script, {
-    env: {
-      NODE_OPTIONS: `--experimental-package-map=${npath.fromPortablePath(getPackageMapPath(path))}`,
-    },
-  });
-};
-
 const requireFromPackage = (packageName: string, request: string) => {
   return `require('module').createRequire(process.cwd() + '/node_modules/${packageName}/index.js')(${JSON.stringify(request)})`;
 };
 
-describe(`Package maps`, () => {
+const supportsPackageMaps = Number(process.versions.node.split(`.`)[0]) >= 27;
+const describePackageMaps = supportsPackageMaps ? describe : describe.skip;
+
+describePackageMaps(`Package maps`, () => {
   it(`should allow packages to require their declared dependencies`,
     makeTemporaryEnv(
       {
@@ -35,11 +28,12 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`one-fixed-dep`, `.`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`one-fixed-dep`, `.`))).resolves.toMatchObject({
           name: `one-fixed-dep`,
           version: `1.0.0`,
           dependencies: {
@@ -73,7 +67,9 @@ describe(`Package maps`, () => {
           version: `1.0.0`,
         });
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
+        await run(`config`, `set`, `nodeExperimentalPackageMap`, `true`);
+
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
           externalException: {
             code: `MODULE_NOT_FOUND`,
           },
@@ -92,12 +88,13 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
         nodePackageMapType: `loose`,
       },
       async ({path, run, source}) => {
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
         });
@@ -116,12 +113,13 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `pnpm`,
+        nodeExperimentalPackageMap: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
 
         await expect(xfs.existsPromise(getPackageMapPath(path))).resolves.toEqual(true);
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`one-fixed-dep`, `.`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`one-fixed-dep`, `.`))).resolves.toMatchObject({
           name: `one-fixed-dep`,
           version: `1.0.0`,
           dependencies: {
@@ -131,7 +129,7 @@ describe(`Package maps`, () => {
             },
           },
         });
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
           externalException: {
             code: `MODULE_NOT_FOUND`,
           },
@@ -150,13 +148,14 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `pnpm`,
+        nodeExperimentalPackageMap: true,
         nodePackageMapType: `loose`,
       },
       async ({path, run, source}) => {
         await run(`install`);
 
         await expect(xfs.existsPromise(getPackageMapPath(path))).resolves.toEqual(true);
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
         });
@@ -173,6 +172,7 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
       },
       async ({path, run, source}) => {
         await yarn.writeConfiguration(path, {
@@ -187,7 +187,7 @@ describe(`Package maps`, () => {
 
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
         });
@@ -204,6 +204,7 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
       },
       async ({path, run, source}) => {
         await writeJson(ppath.join(path, `requester/package.json` as PortablePath), {
@@ -217,12 +218,12 @@ describe(`Package maps`, () => {
 
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`requester`, `no-deps2`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`requester`, `no-deps2`))).resolves.toMatchObject({
           name: `no-deps`,
           version: `2.0.0`,
         });
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`requester`, `no-deps`))).rejects.toMatchObject({
+        await expect(source(requireFromPackage(`requester`, `no-deps`))).rejects.toMatchObject({
           externalException: {
             code: `MODULE_NOT_FOUND`,
           },
@@ -242,6 +243,7 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
         nmHoistingLimits: `workspaces`,
       },
       async ({path, run, source}) => {
@@ -256,7 +258,7 @@ describe(`Package maps`, () => {
 
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, `{
+        await expect(source(`{
           const path = require('path');
           const rootOneFixedDepRequire = require('module').createRequire(path.join(process.cwd(), 'node_modules/one-fixed-dep/index.js'));
           const workspaceOneFixedDepPath = path.join(process.cwd(), 'workspace/node_modules/one-fixed-dep');
@@ -301,6 +303,7 @@ describe(`Package maps`, () => {
       },
       {
         nodeLinker: `node-modules`,
+        nodeExperimentalPackageMap: true,
       },
       async ({path, run, source}) => {
         await yarn.writeConfiguration(path, {
@@ -315,7 +318,7 @@ describe(`Package maps`, () => {
 
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).resolves.toMatchObject({
           name: `no-deps`,
           version: `1.0.0`,
         });
@@ -323,7 +326,7 @@ describe(`Package maps`, () => {
         await xfs.removePromise(ppath.join(path, `.yarnrc.yml` as Filename));
         await run(`install`);
 
-        await expect(sourceWithPackageMap(path, source, requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
+        await expect(source(requireFromPackage(`various-requires`, `./invalid-require`))).rejects.toMatchObject({
           externalException: {
             code: `MODULE_NOT_FOUND`,
           },
