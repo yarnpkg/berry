@@ -12,7 +12,7 @@ const getPackageMapPath = (path: PortablePath) => {
 };
 
 const requireFromPackage = (packageName: string, request: string) => {
-  return `require('module').createRequire(process.cwd() + '/node_modules/${packageName}/index.js')(${JSON.stringify(request)})`;
+  return `require('module').createRequire(require('path').join(process.cwd(), 'node_modules', ${JSON.stringify(packageName)}, 'index.js'))(${JSON.stringify(request)})`;
 };
 
 const supportsPackageMaps = Number(process.versions.node.split(`.`)[0]) >= 27;
