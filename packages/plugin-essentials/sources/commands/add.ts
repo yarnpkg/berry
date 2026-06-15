@@ -130,7 +130,7 @@ export default class AddCommand extends BaseCommand {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
 
     if (this.noTimeGate)
-      configuration.useWithSource(`<cli>`, {npmMinimalAgeGate: `0`}, configuration.startingCwd, {overwrite: true});
+      suggestUtils.disableTimeGate(configuration);
 
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
