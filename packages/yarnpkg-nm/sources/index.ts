@@ -1,5 +1,6 @@
 import {NodeModulesLocatorMap, getArchivePath} from './buildNodeModulesTree';
 import {buildNodeModulesTree, buildLocatorMap} from './buildNodeModulesTree';
+import {buildPackageMap}                       from './buildPackageMap';
 
 export type {
   NodeModulesBaseNode,
@@ -7,6 +8,13 @@ export type {
   NodeModulesTreeOptions,
   NodeModulesTree,
 } from './buildNodeModulesTree';
+
+export type {
+  PackageMap,
+  PackageMapPackage,
+  PackageMapOptions,
+  LoosePackageMapOptions,
+} from './buildPackageMap';
 
 export {
   NodeModulesHoistingLimits,
@@ -16,6 +24,7 @@ export {
   buildNodeModulesTree,
   buildLocatorMap,
   getArchivePath,
+  buildPackageMap,
 };
 
 export type {NodeModulesLocatorMap};
