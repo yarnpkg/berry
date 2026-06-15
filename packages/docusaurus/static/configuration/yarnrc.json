@@ -35,6 +35,27 @@
       "enum": ["required-only", "match-spec", "always"],
       "default": "always"
     },
+    "catalog": {
+      "_package": "@yarnpkg/plugin-catalog",
+      "title": "The default catalog of packages.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "_exampleKeys": ["react"]
+    },
+    "catalogs": {
+      "_package": "@yarnpkg/plugin-catalog",
+      "title": "Named catalogs of packages.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "_exampleKeys": ["react18"]
+    },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
       "title": "List of git refs against which Yarn will compare your branch when it needs to detect changes.",
