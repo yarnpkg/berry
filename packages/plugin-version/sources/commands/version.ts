@@ -66,7 +66,13 @@ export default class VersionCommand extends BaseCommand {
     let releaseStrategy: string | null;
     if (isSemver) {
       if (workspace.manifest.version !== null) {
-        const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
+        // `resolveVersionFiles` (used during `version apply`) bases the bump on
+        // `stableVersion ?? version` when `stableVersion` is set. The strategy
+        // suggested here must be expressed against the same base, otherwise a
+        // strategy like `patch` that fits `version` (`1.3.1-alpha` → `1.3.1`)
+        // would later be applied to `stableVersion` (`1.2.1` → `1.2.2`).
+        const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
+        const suggestedStrategy = versionUtils.suggestStrategy(baseVersion, this.strategy);
 
         if (suggestedStrategy !== null) {
           releaseStrategy = suggestedStrategy;
