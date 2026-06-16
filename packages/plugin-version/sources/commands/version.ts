@@ -1,9 +1,9 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Configuration, Project}              from '@yarnpkg/core';
-import {Command, Option, Usage, UsageError}  from 'clipanion';
-import semver                                from 'semver';
+import {BaseCommand, WorkspaceRequiredError}                      from '@yarnpkg/cli';
+import {Cache, Configuration, MessageName, Project, StreamReport} from '@yarnpkg/core';
+import {Command, Option, Usage, UsageError}                       from 'clipanion';
+import semver                                                     from 'semver';
 
-import * as versionUtils                     from '../versionUtils';
+import * as versionUtils                                          from '../versionUtils';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionCommand extends BaseCommand {
@@ -65,7 +65,7 @@ export default class VersionCommand extends BaseCommand {
 
     let releaseStrategy: string | null;
     if (isSemver) {
-      if (workspace.manifest.version !== null) {
+      if (workspace.manifest.version !== null && deferred) {
         const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
 
         if (suggestedStrategy !== null) {
@@ -91,25 +91,52 @@ export default class VersionCommand extends BaseCommand {
       releaseStrategy = versionUtils.validateReleaseDecision(this.strategy);
     }
 
-    if (!deferred) {
-      const releases = await versionUtils.resolveVersionFiles(project);
-      const storedVersion = releases.get(workspace);
+    if (deferred) {
+      const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
+      versionFile.releases.set(workspace, releaseStrategy);
+      await versionFile.saveAll();
 
-      if (typeof storedVersion !== `undefined` && releaseStrategy !== versionUtils.Decision.DECLINE) {
-        const thisVersion = versionUtils.applyStrategy(workspace.manifest.version, releaseStrategy);
-        if (semver.lt(thisVersion, storedVersion)) {
-          throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
-        }
-      }
+      return 0;
     }
 
-    const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
-    versionFile.releases.set(workspace, releaseStrategy as any);
-    await versionFile.saveAll();
+    await project.restoreInstallState({
+      restoreResolutions: false,
+    });
 
-    if (!deferred)
-      return await this.cli.run([`version`, `apply`]);
+    const releases = await versionUtils.resolveVersionFiles(project);
+    const storedVersion = releases.get(workspace);
 
-    return 0;
+    if (releaseStrategy !== versionUtils.Decision.DECLINE) {
+      const thisVersion = versionUtils.applyStrategy(workspace.manifest.version, releaseStrategy);
+      if (typeof storedVersion !== `undefined` && semver.lt(thisVersion, storedVersion))
+        throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
+
+      releases.set(workspace, thisVersion);
+    }
+
+    const report = await StreamReport.start({
+      configuration,
+      stdout: this.context.stdout,
+    }, async report => {
+      const thisRelease = releases.get(workspace);
+      if (typeof thisRelease === `undefined`) {
+        report.reportWarning(MessageName.UNNAMED, `The current workspace doesn't seem to require a version bump.`);
+        return;
+      }
+
+      versionUtils.applyReleases(project, new Map([[workspace, thisRelease]]), {report});
+      await versionUtils.updateVersionFiles(project, [workspace]);
+
+      report.reportSeparator();
+    });
+
+    if (report.hasErrors())
+      return report.exitCode();
+
+    return await project.installWithNewReport({
+      stdout: this.context.stdout,
+    }, {
+      cache: await Cache.find(configuration),
+    });
   }
 }
