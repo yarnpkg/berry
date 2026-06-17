@@ -91,6 +91,27 @@
       "format": "uri-reference",
       "examples": ["./sources/index.js"]
     },
+    "exports": {
+      "title": "Define the entry points of the package.",
+      "description": "The `exports` field is the modern way to define a package's public API and entry points. It allows you to specify multiple entry points, conditional exports (e.g., different code for `import` vs `require`), and restrict which subpaths can be accessed by consumers.\n\nWhen the `exports` field is defined, it takes precedence over `main`, `module`, and other legacy entry point fields. If you want to maintain backward compatibility, include a `.` export that maps to the main entry point.\n\nThe `exports` field supports:\n- **Subpath exports**: Map specific subpaths like `\"./utils\"` to different files\n- **Conditional exports**: Use conditions like `\"import\"`, `\"require\"`, `\"node\"`, `\"default\"` to provide different implementations\n- **Pattern exports**: Use `*` wildcards to match multiple subpaths",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        {
+          "type": "object"
+        }
+      ],
+      "examples": ["./dist/index.js"],
+      "_exampleObject": {
+        ".": {
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.cjs"
+        },
+        "./utils": "./dist/utils.js"
+      }
+    },
     "module": {
       "title": "Path of the file that should be resolved when requiring the package via a bare identifier in an ES6-compatible bundler environment.",
       "description": "This field should be considered deprecated, with `exports` being its official replacement.",
@@ -354,6 +375,19 @@
           "title": "Replacement of the package's `main` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
+          "examples": ["./build/index.js"]
+        },
+        "exports": {
+          "title": "Replacement of the package's `exports` field, used in the published tarball over the main one.",
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            {
+              "type": "object"
+            }
+          ],
           "examples": ["./build/index.js"]
         },
         "module": {
