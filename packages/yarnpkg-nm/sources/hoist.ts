@@ -802,7 +802,6 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
     const isSeen = !!workNode;
     if (!workNode) {
       const {name, identName, reference, peerNames, hoistPriority, dependencyKind} = node;
-      const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
         references: new Set([reference]),
@@ -814,7 +813,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         peerNames: new Set(peerNames),
         reasons: new Map(),
         decoupled: true,
-        isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
+        isHoistBorder: false,
         hoistPriority: hoistPriority || 0,
         dependencyKind: dependencyKind || HoisterDependencyKind.REGULAR,
         hoistedFrom: new Map(),
@@ -822,6 +821,9 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
       };
       seenNodes.set(node, workNode);
     }
+
+    if (!workNode.isHoistBorder && options.hoistingLimits.get(parentNode.locator)?.has(node.name))
+      workNode.isHoistBorder = true;
 
     parentNode.dependencies.set(node.name, workNode);
     parentNode.originalDependencies.set(node.name, workNode);
