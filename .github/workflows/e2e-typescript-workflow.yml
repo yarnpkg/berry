@@ -22,9 +22,8 @@ jobs:
 
     - uses: ./.github/actions/prepare
 
-    - name: 'Checking some behaviors against the latest TypeScript'
+    - name: 'Checking some behaviors against the patched TypeScript'
       run: |
-        yarn up typescript
         yarn node ./scripts/test-typescript-patch.js
 
     - name: 'Installing all versions of TS'
