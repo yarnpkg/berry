@@ -419,7 +419,7 @@ describe(`hoist`, () => {
     };
     const hoistedTree = hoist(toTree(tree), {check: true});
     const [A] = Array.from(hoistedTree.dependencies).filter(x => x.name === `A`);
-    expect(Array.from(A.dependencies).filter(x => x.name === `B`)).toBeDefined();
+    expect(Array.from(A.dependencies).filter(x => x.name === `B`)).not.toEqual([]);
   });
 
   it(`should hoist cyclic peer dependencies`, () => {
@@ -667,7 +667,7 @@ describe(`hoist`, () => {
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
 
-  it(`should hoistingLimits when top level dependency matches a transitive dependency`, () => {
+  it(`should respect hoistingLimits when top level dependency matches a transitive dependency`, () => {
     // . -> A -> B -> C
     //   -> B -> C
     // with hoistingLimits: dependencies, C should not be hoisted to the top
@@ -679,5 +679,48 @@ describe(`hoist`, () => {
     const hoistedTree = hoist(toTree(tree), {check: true, hoistingLimits: new Map([[`.@`, new Set([`A`, `B`])]])});
     const C = Array.from(hoistedTree.dependencies).filter(x => x.name === `C`);
     expect(C).toEqual([]);
+  });
+
+  it(`should optimize transitive dependency when it matches top level dependency with hoistingLimits`, () => {
+    // . -> [A] -> B -> C
+    // . -> [D] -> [B] -> C
+    // [x] marks hoisting border
+
+    // this test covers an implementation detail of hoisting algorithm when B node would be reused in the tree
+    // and marked as hoist border everywhere. It marks D->B as hoisting limit instead of putting B on root because
+    // of the possible optimization (see `should reuse existing dependency on parent even across hoist border` test).
+    const tree = {
+      '.': {dependencies: [`A`, `D`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`C`]},
+      D: {dependencies: [`B`]},
+    };
+
+    // expected:
+    // . -> A -> B
+    //        -> C
+    // . -> D -> B -> C
+
+    const hoistedTree = hoist(toTree(tree), {check: true, hoistingLimits: new Map([[`.@`, new Set([`A`, `D`])], [`D@`, new Set([`B`])]])});
+    const [A] = Array.from(hoistedTree.dependencies).filter(x => x.name === `A`);
+    expect(Array.from(A.dependencies).map(x => x.name)).toEqual([`B`, `C`]);
+    expect(getTreeHeight(A)).toEqual(2);
+    expect(getTreeHeight(hoistedTree)).toEqual(4);
+  });
+
+  it.skip(`should reuse existing dependency on parent even across hoist border`, () => {
+    // Test is disabled as the functionality is not yet implemented.
+
+    // . -> A -> B
+    // . -> B
+    // with hoistingLimits: dependencies, B can be deduplicated. Even though A is hoist border, this isn't hoisting B,
+    // but using the already existing B from the root.
+    const tree = {
+      '.': {dependencies: [`A`, `B`]},
+      A: {dependencies: [`B`]},
+    };
+
+    const hoistedTree = hoist(toTree(tree), {check: true, hoistingLimits: new Map([[`.@`, new Set([`A`, `B`])]])});
+    expect(getTreeHeight(hoistedTree)).toEqual(2);
   });
 });
