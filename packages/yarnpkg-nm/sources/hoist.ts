@@ -797,12 +797,14 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
 
   const seenNodes = new Map<HoisterTree, HoisterWorkTree>([[tree, treeCopy]]);
 
-  const addNode = (node: HoisterTree, parentNode: HoisterWorkTree) => {
-    let workNode = seenNodes.get(node);
+  const addNode = (node: HoisterTree, parent: HoisterTree, parentNode: HoisterWorkTree) => {
+    const isHoistBorder = options.hoistingLimits.get(parentNode.locator)?.has(node.name) || false;
+
+    // for self-references, always use the parentNode reference, irrelevant of isHoistBorder value.
+    let workNode = parent === node ? parentNode : isHoistBorder ? undefined : seenNodes.get(node);
     const isSeen = !!workNode;
     if (!workNode) {
       const {name, identName, reference, peerNames, hoistPriority, dependencyKind} = node;
-      const dependenciesNmHoistingLimits = options.hoistingLimits.get(parentNode.locator);
       workNode = {
         name,
         references: new Set([reference]),
@@ -814,13 +816,16 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
         peerNames: new Set(peerNames),
         reasons: new Map(),
         decoupled: true,
-        isHoistBorder: dependenciesNmHoistingLimits ? dependenciesNmHoistingLimits.has(name) : false,
+        isHoistBorder,
         hoistPriority: hoistPriority || 0,
         dependencyKind: dependencyKind || HoisterDependencyKind.REGULAR,
         hoistedFrom: new Map(),
         hoistedTo: new Map(),
       };
-      seenNodes.set(node, workNode);
+
+      if (!isHoistBorder) {
+        seenNodes.set(node, workNode);
+      }
     }
 
     parentNode.dependencies.set(node.name, workNode);
@@ -828,7 +833,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
 
     if (!isSeen) {
       for (const dep of node.dependencies) {
-        addNode(dep, workNode);
+        addNode(dep, node, workNode);
       }
     } else {
       const seenCoupledNodes = new Set();
@@ -851,7 +856,7 @@ const cloneTree = (tree: HoisterTree, options: InternalHoistOptions): HoisterWor
   };
 
   for (const dep of tree.dependencies)
-    addNode(dep, treeCopy);
+    addNode(dep, tree, treeCopy);
 
   return treeCopy;
 };
