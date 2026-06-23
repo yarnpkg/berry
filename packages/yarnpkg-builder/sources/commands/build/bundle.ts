@@ -3,7 +3,7 @@ import {StreamReport, MessageName, Configuration, formatUtils, structUtils} from
 import {npath, ppath, xfs}                                                  from '@yarnpkg/fslib';
 import chalk                                                                from 'chalk';
 import cp                                                                   from 'child_process';
-import {Command, Option, Usage}                                             from 'clipanion';
+import {Command, Option, Usage, UsageError}                                 from 'clipanion';
 import {build, Plugin}                                                      from 'esbuild';
 import {createRequire}                                                      from 'module';
 import path                                                                 from 'path';
@@ -14,6 +14,12 @@ import pkg                                                                  from
 import {findPlugins}                                                        from '../../tools/findPlugins';
 
 const execFile = promisify(cp.execFile);
+
+const BUNDLE_FORMATS = new Set([`iife`, `esm`]);
+
+type BundleFormat = `iife` | `esm`;
+
+const defaultBundleTarget = `node${semver.minVersion(pkg.engines.node)!.version}`;
 
 const pkgJsonVersion = (basedir: string): string => {
   return require(`${basedir}/package.json`).version;
@@ -26,6 +32,40 @@ const suggestHash = async (basedir: string) => {
   } catch {
     return null;
   }
+};
+
+const getBundleFormat = (format: string): BundleFormat => {
+  if (!BUNDLE_FORMATS.has(format))
+    throw new UsageError(`Invalid bundle format "${format}", expected one of ${[...BUNDLE_FORMATS].join(`, `)}`);
+
+  return format as BundleFormat;
+};
+
+const getBundleBanner = (format: BundleFormat) => {
+  const esmRequireShim = `
+await (async () => {
+  const {dirname} = await import("path");
+  const {fileURLToPath} = await import("url");
+
+  if (typeof globalThis.__filename === "undefined") {
+    globalThis.__filename = fileURLToPath(import.meta.url);
+  }
+  if (typeof globalThis.__dirname === "undefined") {
+    globalThis.__dirname = dirname(globalThis.__filename);
+  }
+  if (typeof globalThis.require === "undefined") {
+    const {default: module} = await import("module");
+    globalThis.require = module.createRequire(import.meta.url);
+  }
+})();
+`;
+
+  return [
+    `#!/usr/bin/env node`,
+    `/* eslint-disable */`,
+    `//prettier-ignore`,
+    format === `esm` ? esmRequireShim : null,
+  ].filter((line): line is string => line !== null).join(`\n`);
 };
 
 // eslint-disable-next-line arca/no-default-export
@@ -74,6 +114,18 @@ export default class BuildBundleCommand extends Command {
     description: `Emit a metafile next to the bundle`,
   });
 
+  format = Option.String(`--format`, `iife`, {
+    description: `Bundle output format`,
+  });
+
+  target = Option.String(`--target`, defaultBundleTarget, {
+    description: `Bundle compilation target`,
+  });
+
+  external = Option.Array(`--external`, [], {
+    description: `Dependencies that should remain external in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
@@ -84,6 +136,7 @@ export default class BuildBundleCommand extends Command {
     const modules = [...getDynamicLibs().keys()].concat(plugins);
     const output = ppath.join(portableBaseDir, `bundles/yarn.js`);
     const metafile = this.metafile ? ppath.join(portableBaseDir, `bundles/yarn.meta.json`) : false;
+    const format = getBundleFormat(this.format);
 
     let version = pkgJsonVersion(basedir);
 
@@ -119,7 +172,7 @@ export default class BuildBundleCommand extends Command {
 
         const res = await build({
           banner: {
-            js: `#!/usr/bin/env node\n/* eslint-disable */\n//prettier-ignore`,
+            js: getBundleBanner(format),
           },
           entryPoints: [path.join(basedir, `sources/cli.ts`)],
           bundle: true,
@@ -141,12 +194,13 @@ export default class BuildBundleCommand extends Command {
           // Default extensions + .mjs
           resolveExtensions: [`.tsx`, `.ts`, `.jsx`, `.mjs`, `.js`, `.css`, `.json`],
           logLevel: `silent`,
-          format: `iife`,
+          format,
           platform: `node`,
           plugins: [valLoader],
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
-          target: `node${semver.minVersion(pkg.engines.node)!.version}`,
+          target: this.target,
+          external: this.external,
         });
 
         for (const warning of res.warnings) {
