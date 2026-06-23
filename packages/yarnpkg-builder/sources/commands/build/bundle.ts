@@ -12,6 +12,7 @@ import {promisify}                                                          from
 
 import pkg                                                                  from '../../../package.json';
 import {findPlugins}                                                        from '../../tools/findPlugins';
+import {getExternalDependencies}                                            from '../../tools/getExternalDependencies';
 
 const execFile = promisify(cp.execFile);
 
@@ -126,6 +127,10 @@ export default class BuildBundleCommand extends Command {
     description: `Dependencies that should remain external in the bundle`,
   });
 
+  externalFile = Option.String(`--external-file`, {
+    description: `Path to a JSON file listing dependencies that should remain external in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
@@ -200,7 +205,11 @@ export default class BuildBundleCommand extends Command {
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: this.target,
-          external: this.external,
+          external: getExternalDependencies({
+            cwd: basedir,
+            external: this.external,
+            externalFile: this.externalFile,
+          }),
         });
 
         for (const warning of res.warnings) {
