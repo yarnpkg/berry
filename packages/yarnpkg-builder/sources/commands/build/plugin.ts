@@ -58,6 +58,10 @@ export default class BuildPluginCommand extends Command {
     description: `Emit a metafile next to the bundle`,
   });
 
+  external = Option.Array(`--external`, [], {
+    description: `Dependencies that should remain external in the bundle`,
+  });
+
   async execute() {
     const basedir = process.cwd();
     const portableBaseDir = npath.toPortablePath(basedir);
@@ -128,6 +132,7 @@ export default class BuildPluginCommand extends Command {
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node${semver.minVersion(pkg.engines.node)!.version}`,
+          external: this.external,
           supported: {
             /*
             Yarn plugin-runtime did not support builtin modules prefixed with "node:".
