@@ -1,6 +1,6 @@
-import {UsageError} from 'clipanion';
+import {UsageError}   from 'clipanion';
 import {readFileSync} from 'fs';
-import path from 'path';
+import path           from 'path';
 
 export const getExternalDependencies = ({cwd, external, externalFile}: {
   cwd: string;
