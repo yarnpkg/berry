@@ -157,6 +157,7 @@ export const FormatType = formatUtils.Type;
 export type BaseSettingsDefinition<T extends SettingsType = SettingsType> = {
   description: string;
   type: T;
+  fallback?: string;
 } & ({isArray?: false} | {isArray: true, concatenateValues?: boolean});
 
 export enum DurationUnit {
@@ -168,7 +169,7 @@ export enum DurationUnit {
   WEEKS = `w`,
 }
 export type DurationSettingsDefinition = BaseSettingsDefinition<SettingsType.DURATION> & {
-  default: string;
+  default: string | undefined;
   unit: DurationUnit;
   isNullable?: boolean;
 };
@@ -953,6 +954,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       }
     }
     case SettingsType.DURATION: {
+      if (typeof definition.default === `undefined`)
+        return undefined;
+
       return miscUtils.parseDuration(definition.default, definition.unit);
     }
     default: {
@@ -966,7 +970,10 @@ type SettingTransforms = {
   getNativePaths: boolean;
 };
 
-function transformConfiguration(rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
+function transformConfiguration(configuration: Configuration, rawValue: unknown, definition: SettingsDefinitionNoDefault, transforms: SettingTransforms) {
+  if (typeof rawValue === `undefined` && typeof definition.fallback !== `undefined`)
+    return configuration.get(definition.fallback);
+
   if (definition.type === SettingsType.SECRET && typeof rawValue === `string` && transforms.hideSecrets)
     return SECRET;
   if (definition.type === SettingsType.ABSOLUTE_PATH && typeof rawValue === `string` && transforms.getNativePaths)
@@ -976,7 +983,7 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
     const newValue: Array<unknown> = [];
 
     for (const value of rawValue)
-      newValue.push(transformConfiguration(value, definition, transforms));
+      newValue.push(transformConfiguration(configuration, value, definition, transforms));
 
     return newValue;
   }
@@ -988,7 +995,7 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
     const newValue: Map<string, unknown> = new Map();
 
     for (const [key, value] of rawValue.entries()) {
-      const transformedValue = transformConfiguration(value, definition.valueDefinition, transforms);
+      const transformedValue = transformConfiguration(configuration, value, definition.valueDefinition, transforms);
       if (typeof transformedValue !== `undefined`) {
         newValue.set(key, transformedValue);
       }
@@ -1006,7 +1013,7 @@ function transformConfiguration(rawValue: unknown, definition: SettingsDefinitio
     for (const [key, value] of rawValue.entries()) {
       const propertyDefinition = definition.properties[key];
 
-      const transformedValue = transformConfiguration(value, propertyDefinition, transforms);
+      const transformedValue = transformConfiguration(configuration, value, propertyDefinition, transforms);
       if (typeof transformedValue !== `undefined`) {
         newValue.set(key, transformedValue);
       }
@@ -1733,7 +1740,7 @@ export class Configuration {
     if (typeof definition === `undefined`)
       throw new UsageError(`Couldn't find a configuration settings named "${key}"`);
 
-    return transformConfiguration(rawValue, definition, {
+    return transformConfiguration(this, rawValue, definition, {
       hideSecrets,
       getNativePaths,
     }) as T;
