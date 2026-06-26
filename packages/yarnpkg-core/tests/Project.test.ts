@@ -1,10 +1,10 @@
-import { Cache, Configuration, LocatorHash, Package, Project, ThrowReport, structUtils } from '@yarnpkg/core';
-import { Filename, PortablePath, ppath, xfs } from '@yarnpkg/fslib';
-import LinkPlugin from '@yarnpkg/plugin-link';
-import PnpPlugin from '@yarnpkg/plugin-pnp';
-import v8 from 'v8';
+import {Cache, Configuration, LocatorHash, Package, Project, ThrowReport, structUtils} from '@yarnpkg/core';
+import {Filename, PortablePath, ppath, xfs}                                            from '@yarnpkg/fslib';
+import LinkPlugin                                                                      from '@yarnpkg/plugin-link';
+import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
+import v8                                                                              from 'v8';
 
-import { TestPlugin } from './TestPlugin';
+import {TestPlugin}                                                                    from './TestPlugin';
 
 const getConfiguration = (p: PortablePath) => {
   return Configuration.create(p, p, new Map([
