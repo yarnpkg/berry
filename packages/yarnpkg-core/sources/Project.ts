@@ -484,8 +484,9 @@ export class Project {
     if (!ppath.isAbsolute(workspaceCwd))
       workspaceCwd = ppath.resolve(this.cwd, workspaceCwd);
 
-    workspaceCwd = ppath.normalize(workspaceCwd)
-      .replace(/\/+$/, ``) as PortablePath;
+    // Stripping trailing slashes from the filesystem root ('/') produces an
+    // empty string, so we fall back to PortablePath.root to preserve it.
+    workspaceCwd = (ppath.normalize(workspaceCwd).replace(/\/+$/, ``) || PortablePath.root) as PortablePath;
 
     const workspace = this.workspacesByCwd.get(workspaceCwd);
     if (!workspace)
