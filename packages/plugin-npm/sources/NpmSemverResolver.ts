@@ -12,6 +12,37 @@ import * as npmHttpUtils                                                        
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
 
+/**
+ * Returns the versions from `versions` that satisfy the given range.
+ *
+ * The `rangeString` is the raw selector the user requested (for example `*`
+ * or `^1.0.0`). When it's exactly `*` and nothing matched, every published
+ * version is a prerelease (a stable `*` range never matches a prerelease by
+ * default). In that specific case we retry while tolerating prereleases, so
+ * the package can still be resolved until a stable release exists. This stays
+ * deliberately scoped to `*` to avoid changing the semantics of other ranges.
+ * See https://github.com/yarnpkg/berry/issues/6469.
+ */
+export function selectMatchingVersions(rangeString: string, range: semver.Range, versions: Array<string>) {
+  const match = (matchRange: semver.Range) => miscUtils.mapAndFilter(versions, version => {
+    try {
+      const candidate = new semverUtils.SemVer(version);
+      if (matchRange.test(candidate)) {
+        return candidate;
+      }
+    } catch { }
+
+    return miscUtils.mapAndFilter.skip;
+  });
+
+  const matched = match(range);
+  if (matched.length > 0 || rangeString !== `*`)
+    return matched;
+
+  // eslint-disable-next-line no-restricted-properties
+  return match(new semver.Range(`*`, {includePrerelease: true}));
+}
+
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(PROTOCOL))
@@ -54,16 +85,7 @@ export class NpmSemverResolver implements Resolver {
       version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
-    const semverCandidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
-      try {
-        const candidate = new semverUtils.SemVer(version);
-        if (range.test(candidate)) {
-          return candidate;
-        }
-      } catch { }
-
-      return miscUtils.mapAndFilter.skip;
-    });
+    const semverCandidates = selectMatchingVersions(descriptor.range.slice(PROTOCOL.length), range, Object.keys(registryData.versions));
 
     const candidates = semverCandidates.filter(candidate => {
       return isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidate.raw, publishTimes: registryData.time});
