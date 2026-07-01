@@ -16,7 +16,6 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
     super(ppath);
 
     this.target = this.pathUtils.normalize(target);
-
     this.baseFs = baseFs;
   }
 
@@ -24,23 +23,11 @@ export class CwdFS extends ProxiedFS<PortablePath, PortablePath> {
     return this.pathUtils.resolve(this.baseFs.getRealPath(), this.target);
   }
 
-  resolve(p: PortablePath) {
-    if (this.pathUtils.isAbsolute(p)) {
-      return ppath.normalize(p);
-    } else {
-      return this.baseFs.resolve(ppath.join(this.target, p));
-    }
-  }
-
   mapFromBase(path: PortablePath) {
     return path;
   }
 
   mapToBase(path: PortablePath) {
-    if (this.pathUtils.isAbsolute(path)) {
-      return path;
-    } else {
-      return this.pathUtils.join(this.target, path);
-    }
+    return ppath.resolve(this.target, path);
   }
 }
