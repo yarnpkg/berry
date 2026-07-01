@@ -377,7 +377,7 @@ export class Manifest {
           continue;
         }
 
-        if (typeof range !== `string` || (!range.startsWith(WorkspaceResolver.protocol) && !semverUtils.validRange(range))) {
+        if (typeof range !== `string` || (!range.startsWith(WorkspaceResolver.protocol) && !semverUtils.validRange(range)) && !range.startsWith(`catalog:`)) {
           errors.push(new Error(`Invalid dependency range for '${name}'`));
           range = `*`;
         }

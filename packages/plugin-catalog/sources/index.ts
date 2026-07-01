@@ -2,7 +2,7 @@ import {type Descriptor, type Locator, type Plugin, type Project, type Resolver,
 import {Hooks as CoreHooks}                                                                                                                                             from '@yarnpkg/core';
 import {Hooks as PackHooks}                                                                                                                                             from '@yarnpkg/plugin-pack';
 
-import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                                               from './utils';
+import {isCatalogReference, resolveDescriptorFromCatalog, resolvePeerDescriptorFromCatalog}                                                                             from './utils';
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -102,6 +102,20 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
     reduceDependency: async (dependency: Descriptor, project: Project, locator: Locator, initialDependency: Descriptor, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) => {
       if (isCatalogReference(dependency.range)) {
         const resolvedDescriptor = resolveDescriptorFromCatalog(project, dependency, resolver, resolveOptions);
+        return resolvedDescriptor;
+      }
+      return dependency;
+    },
+
+    /**
+     * On this hook, we will check if the peer dependency is a catalog reference, and if so,
+     * we will replace the range with the actual range defined in the catalog.
+     * Uses resolvePeerDescriptorFromCatalog which returns raw semver ranges (without npm: prefix)
+     * because peer dependency satisfaction checking requires raw semver ranges.
+     */
+    reducePeerDependency: async (dependency: Descriptor, project: Project) => {
+      if (isCatalogReference(dependency.range)) {
+        const resolvedDescriptor = resolvePeerDescriptorFromCatalog(project, dependency);
         return resolvedDescriptor;
       }
       return dependency;
