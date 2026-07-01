@@ -13,7 +13,7 @@
     "es-toolkit": "^1.39.7",
     "micromatch": "^4.0.2",
     "semver": "^7.1.2",
-    "sigstore": "^3.1.0",
+    "sigstore": "^4.1.1",
     "ssri": "^12.0.0",
     "tslib": "^2.4.0"
   },
