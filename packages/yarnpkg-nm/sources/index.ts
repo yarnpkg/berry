@@ -29,5 +29,5 @@ export {
 
 export type {NodeModulesLocatorMap};
 
-export type {HoisterTree, HoisterResult} from './hoist';
+export type {HoisterNode as HoisterTree, HoisterResult} from './hoist';
 export {hoist, HoisterDependencyKind} from './hoist';
