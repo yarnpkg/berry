@@ -68,6 +68,20 @@ yarn workspaces foreach \
   --verbose --all --topological --no-private "${UPDATE_ARGUMENTS[@]}" \
   run update-local
 
+# Generate the signature
+openssl dgst -sha256 -sign /tmp/yarn.key \
+  -out "$REPO_DIR"/packages/berry-cli/bin/berry.js.sign \
+  "$REPO_DIR"/packages/berry-cli/bin/berry.js
+
+# Let's be sure the public & private keys are correctly setup
+openssl dgst -sha256 -verify /tmp/yarn.pem \
+  -signature "$REPO_DIR"/packages/berry-cli/bin/berry.js.sign \
+  "$REPO_DIR"/packages/berry-cli/bin/berry.js
+
+# We can copy the public key into the release folder
+cp /tmp/yarn.pem \
+  "$REPO_DIR"/packages/berry-cli/bin/berry.pem
+
 # The v1 still uses the "berry.js" file path when using "policies set-version"
 cp "$REPO_DIR"/packages/yarnpkg-cli/bin/yarn.js \
    "$REPO_DIR"/packages/berry-cli/bin/berry.js
