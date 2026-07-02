@@ -200,6 +200,7 @@ export type SupportedSdk =
   | `@astrojs/language-server`
   | `eslint`
   | `prettier`
+  | `@biomejs/biome`
   | `relay-compiler`
   | `typescript-language-server`
   | `typescript`
