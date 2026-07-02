@@ -323,6 +323,24 @@ describe(`Configuration`, () => {
   });
 
   describe(`Configuration merging`, () => {
+    it(`should resolve scoped npmMinimalAgeGate from the global value when unset`, async () => {
+      await initializeConfiguration({
+        npmMinimalAgeGate: 0,
+        npmScopes: {
+          scopeName: {
+            npmRegistryServer: `https://example.com/npm/registry`,
+          },
+        },
+      }, async dir => {
+        const configuration = await Configuration.find(dir, {
+          modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+          plugins: new Set([`@yarnpkg/plugin-npm`]),
+        });
+
+        expect(configuration.getSpecial(`npmScopes`, {hideSecrets: false}).get(`scopeName`).get(`npmMinimalAgeGate`)).toBe(0);
+      });
+    });
+
     it(`should merge map properties`, async () => {
       await initializeConfiguration({
         npmRegistryServer: `https://foo.server`,
