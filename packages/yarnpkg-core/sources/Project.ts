@@ -2765,6 +2765,6 @@ function emitPeerDependencyWarnings(project: Project, report: Report) {
   });
 
   if (hasTransitiveWarnings) {
-    report.reportWarning(MessageName.EXPLAIN_PEER_DEPENDENCIES_CTA, `Some peer dependencies are incorrectly met by dependencies; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements`, formatUtils.Type.CODE)} for details.`);
+    report.reportWarning(MessageName.EXPLAIN_PEER_DEPENDENCIES_CTA, `Some peer dependencies are incorrectly met by dependencies; run ${formatUtils.pretty(project.configuration, `yarn explain peer-requirements --warnings`, formatUtils.Type.CODE)} for details.`);
   }
 }
