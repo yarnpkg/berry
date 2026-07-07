@@ -80,11 +80,15 @@ export default class VersionCommand extends BaseCommand {
     if (!currentWorkspace)
       throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
 
-    let workspaces: Iterable<Workspace> = [currentWorkspace];
-    if (this.all)
+    let workspaces: Array<Workspace> = [currentWorkspace];
+    if (this.all) {
       workspaces = project.workspaces;
-    else if (this.recursive)
-      workspaces = currentWorkspace.getRecursiveWorkspaceDependents();
+    } else if (this.recursive) {
+      workspaces = [
+        currentWorkspace,
+        ...currentWorkspace.getRecursiveWorkspaceDependencies(),
+      ];
+    }
 
     let deferred = configuration.get(`preferDeferredVersions`);
     if (this.deferred)
@@ -177,7 +181,7 @@ export default class VersionCommand extends BaseCommand {
         if (this.all) {
           await versionUtils.clearVersionFiles(project);
         } else {
-          await versionUtils.updateVersionFiles(project, [...workspaces]);
+          await versionUtils.updateVersionFiles(project, workspaces);
         }
       }
 
