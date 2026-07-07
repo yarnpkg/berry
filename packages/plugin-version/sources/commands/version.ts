@@ -149,7 +149,7 @@ export default class VersionCommand extends BaseCommand {
     for (const [workspace, strategy] of releases) {
       const storedVersion = storedVersions.get(workspace);
       if (strategy !== versionUtils.Decision.DECLINE) {
-        const newVersion = versionUtils.applyStrategy(workspace.manifest.version, strategy);
+        const newVersion = versionUtils.applyStrategy(workspace.manifest.version, strategy, prerelease);
         if (typeof storedVersion !== `undefined` && semver.lt(newVersion, storedVersion))
           throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
 

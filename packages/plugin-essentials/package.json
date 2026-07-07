@@ -15,7 +15,7 @@
     "enquirer": "^2.3.6",
     "es-toolkit": "^1.39.7",
     "micromatch": "^4.0.2",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "tslib": "^2.4.0",
     "typanion": "^3.14.0"
   },

@@ -102,12 +102,8 @@ export default class VersionCheckCommand extends BaseCommand {
     };
 
     const Undecided = ({workspace, active, decision, setDecision}: {workspace: Workspace, active?: boolean, decision: string, setDecision: (decision: versionUtils.Decision) => void}) => {
-      const currentVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
-      if (currentVersion === null)
+      if (workspace.manifest.version === null)
         throw new Error(`Assertion failed: The version should have been set (${structUtils.prettyLocator(configuration, workspace.anchoredLocator)})`);
-
-      if (semver.prerelease(currentVersion) !== null)
-        throw new Error(`Assertion failed: Prerelease identifiers shouldn't be found (${currentVersion})`);
 
       const strategies: Array<versionUtils.Decision> = [
         versionUtils.Decision.UNDECIDED,
@@ -125,13 +121,13 @@ export default class VersionCheckCommand extends BaseCommand {
       });
 
       const nextVersion = decision === versionUtils.Decision.UNDECIDED
-        ? <Text color={`yellow`}>{currentVersion}</Text>
+        ? <Text color={`yellow`}>{workspace.manifest.version}</Text>
         : decision === versionUtils.Decision.DECLINE
-          ? <Text color={`green`}>{currentVersion}</Text>
-          : <Text><Text color={`magenta`}>{currentVersion}</Text> → <Text color={`green`}>{
+          ? <Text color={`green`}>{workspace.manifest.version}</Text>
+          : <Text><Text color={`magenta`}>{workspace.manifest.version}</Text> → <Text color={`green`}>{
             semver.valid(decision)
               ? decision
-              : semver.inc(currentVersion, decision as versionUtils.IncrementDecision)
+              : semver.inc(workspace.manifest.version, decision as versionUtils.IncrementDecision)
           }</Text></Text>;
 
       return (
