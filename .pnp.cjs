@@ -31018,8 +31018,7 @@ const RAW_RUNTIME_STATE =
       ["npm:4.3.0", {\
         "packageLocation": "./.yarn/unplugged/node-addon-api-npm-4.3.0-a07a1232df/node_modules/node-addon-api/",\
         "packageDependencies": [\
-          ["node-addon-api", "npm:4.3.0"],\
-          ["node-gyp", "npm:12.1.0"]\
+          ["node-addon-api", "npm:4.3.0"]\
         ],\
         "linkType": "HARD"\
       }]\
