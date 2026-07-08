@@ -83,5 +83,19 @@ describe(`NpmSemverResolver`, () => {
 
       expect(pkg.dependencies.has(nodeGypIdent.identHash)).toEqual(true);
     });
+
+    it(`should inject node-gyp when an install script delegates to another script using it`, async () => {
+      mockPackageMetadata({
+        build: `node-gyp rebuild`,
+        install: `yarn build`,
+      });
+
+      const resolver = new NpmSemverResolver();
+      const locator = structUtils.makeLocator(ident, `npm:1.0.0`);
+
+      const pkg = await resolver.resolve(locator, makeResolveOptions());
+
+      expect(pkg.dependencies.has(nodeGypIdent.identHash)).toEqual(true);
+    });
   });
 });
