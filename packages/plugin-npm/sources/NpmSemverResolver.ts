@@ -11,6 +11,7 @@ import * as npmHttpUtils                                                        
 
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
+const NODE_GYP_BUILD_SCRIPTS = [`preinstall`, `install`, `postinstall`];
 
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
@@ -152,10 +153,12 @@ export class NpmSemverResolver implements Resolver {
     // Manually add node-gyp dependency if there is a script using it and not already set
     // This is because the npm registry will automatically add a `node-gyp rebuild` install script
     // in the metadata if there is not already an install script and a binding.gyp file exists.
-    // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in scripts.
+    // Also, node-gyp is not always set as a dependency in packages, so it will also be added if used in build scripts.
     if (!manifest.dependencies.has(NODE_GYP_IDENT.identHash) && !manifest.peerDependencies.has(NODE_GYP_IDENT.identHash)) {
-      for (const value of manifest.scripts.values()) {
-        if (value.match(NODE_GYP_MATCH)) {
+      for (const scriptName of NODE_GYP_BUILD_SCRIPTS) {
+        const value = manifest.scripts.get(scriptName);
+
+        if (typeof value !== `undefined` && NODE_GYP_MATCH.test(value)) {
           manifest.dependencies.set(NODE_GYP_IDENT.identHash, structUtils.makeDescriptor(NODE_GYP_IDENT, `latest`));
           break;
         }
