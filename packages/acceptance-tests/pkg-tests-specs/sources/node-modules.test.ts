@@ -1,5 +1,6 @@
 import {WindowsLinkType}                           from '@yarnpkg/core';
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
+import {parseSyml}                                 from '@yarnpkg/parsers';
 
 
 const {
@@ -145,6 +146,34 @@ describe(`Node_Modules`, () => {
         if (process.platform !== `win32`) {
           // Check that destination has 0o700 - execute for all permissions set
           expect(stats.mode & 0o700).toEqual(0o700);
+        }
+      },
+    ),
+  );
+
+  test(`should prefer direct dependency bins over transitive dependency bins`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@fixture/native`]: `npm:has-bin-entries@2.0.0`,
+          [`has-bin-entries`]: `npm:one-dep-alias-bins@1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        const installState = parseSyml(await xfs.readFilePromise(ppath.join(path, `node_modules/.yarn-state.yml` as PortablePath), `utf8`));
+        const rootState = Object.values<any>(installState).find(({locations}) => locations?.includes(``));
+
+        expect(rootState?.bin?.[`.`]?.[`has-bin-entries-with-relative-require`]).toEqual(`@fixture/native/bin-with-relative-require.js`);
+
+        if (process.platform !== `win32`) {
+          await expect(run(`node`, `${path}/node_modules/.bin/has-bin-entries-with-relative-require`)).resolves.toMatchObject({
+            stdout: `2.0.0\n`,
+          });
         }
       },
     ),

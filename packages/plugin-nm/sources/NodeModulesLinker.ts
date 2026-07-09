@@ -1053,7 +1053,9 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
       for (const [childLocation, childNode] of node.children) {
         const childSymlinks = getBinSymlinks(ppath.join(location, childLocation), parentLocatorLocation, childNode);
         for (const [name, symlinkTarget] of childSymlinks) {
-          symlinks.set(name, symlinkTarget);
+          if (!symlinks.has(name)) {
+            symlinks.set(name, symlinkTarget);
+          }
         }
       }
     }
