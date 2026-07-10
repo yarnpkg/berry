@@ -1,9 +1,5 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Cache, Configuration, MessageName}   from '@yarnpkg/core';
-import {Project, StreamReport}               from '@yarnpkg/core';
-import {Command, Option, Usage}              from 'clipanion';
-
-import * as versionUtils                     from '../../versionUtils';
+import {BaseCommand}            from '@yarnpkg/cli';
+import {Command, Option, Usage} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends BaseCommand {
@@ -39,6 +35,10 @@ export default class VersionApplyCommand extends BaseCommand {
     description: `Apply the deferred version changes on all workspaces`,
   });
 
+  recursive = Option.Boolean(`-R,--recursive`, {
+    description: `Release the transitive workspaces as well`,
+  });
+
   dryRun = Option.Boolean(`--dry-run`, false, {
     description: `Print the versions without actually generating the package archive`,
   });
@@ -52,85 +52,33 @@ export default class VersionApplyCommand extends BaseCommand {
     description: `Use the exact version of each package, removes any range. Useful for nightly releases where the range might match another version.`,
   });
 
-  recursive = Option.Boolean(`-R,--recursive`, {
-    description: `Release the transitive workspaces as well`,
-  });
-
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });
 
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
+    const args = [`version`, `decline`, `--immediate`];
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (this.all)
+      args.push(`--all`);
 
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    if (this.recursive)
+      args.push(`--recursive`);
 
-    const applyReport = await StreamReport.start({
-      configuration,
-      json: this.json,
-      stdout: this.context.stdout,
-    }, async report => {
-      const prerelease = this.prerelease
-        ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`
-        : null;
+    if (this.dryRun)
+      args.push(`--dry-run`);
 
-      const allReleases = await versionUtils.resolveVersionFiles(project, {prerelease});
-      let filteredReleases: typeof allReleases = new Map();
+    if (this.prerelease === true)
+      args.push(`--prerelease`);
+    else if (typeof this.prerelease === `string`)
+      args.push(`--prerelease=${this.prerelease}`);
 
-      if (this.all) {
-        filteredReleases = allReleases;
-      } else {
-        const relevantWorkspaces = this.recursive
-          ? workspace.getRecursiveWorkspaceDependencies()
-          : [workspace];
+    if (this.exact)
+      args.push(`--exact`);
 
-        for (const child of relevantWorkspaces) {
-          const release = allReleases.get(child);
-          if (typeof release !== `undefined`) {
-            filteredReleases.set(child, release);
-          }
-        }
-      }
+    if (this.json)
+      args.push(`--json`);
 
-      if (filteredReleases.size === 0) {
-        const protip = allReleases.size > 0
-          ? ` Did you want to add --all?`
-          : ``;
-
-        report.reportWarning(MessageName.UNNAMED, `The current workspace doesn't seem to require a version bump.${protip}`);
-        return;
-      }
-
-      versionUtils.applyReleases(project, filteredReleases, {report, exact: this.exact});
-
-      if (!this.dryRun) {
-        if (!prerelease) {
-          if (this.all) {
-            await versionUtils.clearVersionFiles(project);
-          } else {
-            await versionUtils.updateVersionFiles(project, [...filteredReleases.keys()]);
-          }
-        }
-
-        report.reportSeparator();
-      }
-    });
-
-    if (this.dryRun || applyReport.hasErrors())
-      return applyReport.exitCode();
-
-    return await project.installWithNewReport({
-      json: this.json,
-      stdout: this.context.stdout,
-    }, {
-      cache,
-    });
+    return await this.cli.run(args);
   }
 }
