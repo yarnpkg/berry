@@ -103,17 +103,7 @@ export default class VersionCommand extends BaseCommand {
     const releases = new Map<Workspace, string>();
     if (isSemver) {
       for (const workspace of workspaces) {
-        if (workspace.manifest.version !== null && deferred) {
-          const suggestedStrategy = versionUtils.suggestStrategy(workspace.manifest.version, this.strategy);
-
-          if (suggestedStrategy !== null) {
-            releases.set(workspace, suggestedStrategy);
-          } else {
-            releases.set(workspace, this.strategy);
-          }
-        } else {
-          releases.set(workspace, this.strategy);
-        }
+        releases.set(workspace, this.strategy);
       }
     } else {
       for (const workspace of workspaces) {
