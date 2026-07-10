@@ -751,6 +751,38 @@ describe(`Commands`, () => {
           await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
         }),
       );
+
+      test(
+        `it should work if the immediate bump is lower than the planned version when --force is set (incremental strategy)`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `major`, `--deferred`);
+          await expect(run(`version`, `patch`, `--force`)).resolves.toMatchObject({
+            code: 0,
+          });
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.2.4`,
+          });
+        }),
+      );
+
+      test(
+        `it should work if the immediate bump is lower than the planned version when --force is set (semver strategy)`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `major`, `--deferred`);
+          await expect(run(`version`, `1.4.5`, `--force`)).resolves.toMatchObject({
+            code: 0,
+          });
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.4.5`,
+          });
+        }),
+      );
     });
   });
 });

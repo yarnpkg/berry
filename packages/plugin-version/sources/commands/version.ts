@@ -69,7 +69,7 @@ export default class VersionCommand extends BaseCommand {
   });
 
   force = Option.Boolean(`--force`, false, {
-    description: `Bypass check for bumping to a lower version than the current one`,
+    description: `Bypass check for bumping to a lower version than the current/deferred one`,
   });
 
   json = Option.Boolean(`--json`, false, {
@@ -192,7 +192,7 @@ export default class VersionCommand extends BaseCommand {
       const storedVersion = storedVersions.get(workspace);
       if (strategy !== versionUtils.Decision.DECLINE) {
         const newVersion = versionUtils.applyStrategy(workspace.manifest.version, strategy, prerelease);
-        if (typeof storedVersion !== `undefined` && semver.lt(newVersion, storedVersion))
+        if (typeof storedVersion !== `undefined` && semver.lt(newVersion, storedVersion) && !this.force)
           throw new UsageError(`Can't bump the version to one that would be lower than the current deferred one (${storedVersion})`);
 
         releases.set(workspace, newVersion);
@@ -210,8 +210,13 @@ export default class VersionCommand extends BaseCommand {
     }, async report => {
       for (const workspace of workspaces) {
         const release = releases.get(workspace);
+        const storedVersion = storedVersions.get(workspace);
+
         if (release === undefined) {
           report.reportWarning(MessageName.UNNAMED, `Workspace ${structUtils.prettyWorkspace(configuration, workspace)} doesn't seem to require a version bump.`);
+        } else if (typeof storedVersion !== `undefined` && semver.lt(release, storedVersion)) {
+          // This can only be reached with --force
+          report.reportWarning(MessageName.UNNAMED, `Bumping ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${release}) than the current deferred one (${storedVersion})`);
         } else if (workspace.manifest.version !== null && semver.lt(release, workspace.manifest.version)) {
           if (this.force) {
             report.reportWarning(MessageName.UNNAMED, `Bumping ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${release}) than the current one (${workspace.manifest.version})`);
