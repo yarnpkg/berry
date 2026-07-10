@@ -1,6 +1,6 @@
-import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
-import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                                                                                                          from 'url';
+import {Filename, npath, ppath, xfs}                                                                                                                          from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_BROKEN_FSTAT_FOR_ZIP_FDS, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                                                        from 'url';
 
 describe(`Plug'n'Play - ESM`, () => {
   test(
@@ -436,6 +436,55 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await expect(run(`node`, `./index.mjs`)).resolves.toMatchObject({
           stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  (HAS_BROKEN_FSTAT_FOR_ZIP_FDS ? it : it.skip)(
+    `it should load extensionless files from zip archives when fstat is broken`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+        dependencies: {
+          'no-deps-extensionless': `1.0.0`,
+          'no-deps-requires-extensionless': `1.0.0`,
+        },
+      },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run}) => {
+        await xfs.writeFilePromise(ppath.join(path, `loader.mjs`), `
+          export async function resolve(specifier, context, nextResolve) {
+            if (specifier !== 'custom:extensionless')
+              return nextResolve(specifier, context);
+
+            const result = await nextResolve('no-deps-extensionless', context);
+            const url = new URL(result.url);
+            url.searchParams.set('chained', '1');
+            return {url: url.href, shortCircuit: true};
+          }
+        `);
+        await xfs.writeFilePromise(ppath.join(path, `index.mjs`), `
+          import commonjsBridge from 'no-deps-requires-extensionless';
+          import esmValue from 'no-deps-extensionless';
+          import chainedEsmValue from 'custom:extensionless';
+
+          const dynamicallyImportedEsm = await commonjsBridge.importEsm();
+          console.log(JSON.stringify({
+            requiredCommonjs: commonjsBridge.required.commonjs,
+            requiredEsm: commonjsBridge.required.esm,
+            importedEsm: esmValue,
+            chainedEsm: chainedEsmValue,
+            dynamicallyImportedEsm: dynamicallyImportedEsm.default,
+          }));
+        `);
+
+        await run(`install`);
+
+        await expect(run(`node`, `--loader`, `./loader.mjs`, `./index.mjs`)).resolves.toMatchObject({
+          stdout: `${JSON.stringify({requiredCommonjs: 42, requiredEsm: 44, importedEsm: 43, chainedEsm: 43, dynamicallyImportedEsm: 43})}\n`,
         });
       },
     ),

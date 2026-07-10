@@ -1,9 +1,19 @@
 import {VirtualFS, npath}                                                                                                          from '@yarnpkg/fslib';
 import fs                                                                                                                          from 'fs';
+import path                                                                                                                        from 'path';
 import {fileURLToPath, pathToFileURL}                                                                                              from 'url';
 
 import {HAS_BROKEN_FSTAT_FOR_ZIP_FDS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
 import * as loaderUtils                                                                                                            from '../loaderUtils';
+
+const initialUncaughtExceptionListenerCount = process.listenerCount(`uncaughtException`);
+
+function isSynchronousLoaderHookCall() {
+  // Node temporarily installs an exception handler while its async loader
+  // worker services a synchronous request; the hook context has no sync flag.
+  // https://github.com/nodejs/node/blob/bd96dfbf0361576724b65322046e2ca9f9609cb9/lib/internal/modules/esm/worker.js#L180-L184
+  return process.listenerCount(`uncaughtException`) > initialUncaughtExceptionListenerCount;
+}
 
 // The default `load` doesn't support reading from zip files
 export async function load(
@@ -25,7 +35,17 @@ export async function load(
 
   const filePath = fileURLToPath(url);
 
-  const format = loaderUtils.getFileFormat(filePath);
+  const shouldReadSource = HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
+  let source: string | undefined;
+  let format = context.format ?? loaderUtils.getFileFormat(filePath);
+  if (!format && shouldReadSource && path.extname(filePath) === ``) {
+    source = await fs.promises.readFile(filePath, `utf8`);
+    format = loaderUtils.getFileFormat(filePath, {
+      considerExtensionless: true,
+      extensionlessSource: isSynchronousLoaderHookCall() ? source : undefined,
+    });
+  }
+
   if (!format)
     return nextLoad(urlString, context, nextLoad);
 
@@ -61,10 +81,8 @@ export async function load(
     });
   }
 
-  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
-  const source = format !== `commonjs` || shouldReadSource
-    ? await fs.promises.readFile(filePath, `utf8`)
-    : undefined;
+  if (source === undefined && (format !== `commonjs` || shouldReadSource))
+    source = await fs.promises.readFile(filePath, `utf8`);
 
   return {
     format,
