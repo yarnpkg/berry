@@ -473,6 +473,58 @@ describe(`Commands`, () => {
 
     describe(`deferred mode`, () => {
       test(
+        `it should apply a deferred incremental strategy to a workspace`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `patch`, `--deferred`);
+          await run(`version`, `apply`);
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.2.4`,
+          });
+        }),
+      );
+
+      test(
+        `it should apply a deferred semver strategy to a workspace`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `4.5.6`, `--deferred`);
+          await run(`version`, `apply`);
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `4.5.6`,
+          });
+        }),
+      );
+
+      test(
+        `it should apply the highest deferred bump when multiple deferred bumps are recorded`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `patch`, `--deferred`);
+          await run(`version`, `major`, `--deferred`);
+          await run(`version`, `minor`, `--deferred`);
+          await run(`version`, `apply`);
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `2.0.0`,
+          });
+
+          await run(`version`, `minor`, `--deferred`);
+          await run(`version`, `2.1.3-rc.1`, `--deferred`);
+          await run(`version`, `apply`);
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `2.1.3-rc.1`,
+          });
+        }),
+      );
+
+      test(
         `it should throw when deferring an invalid strategy`,
         makeTemporaryEnv({
           version: `1.0.0`,
@@ -484,18 +536,12 @@ describe(`Commands`, () => {
       test(
         `it shouldn't immediately bump the version when using --deferred`,
         makeTemporaryEnv({
-          version: `0.0.0`,
+          version: `1.2.3`,
         }, async ({path, run, source}) => {
           await run(`version`, `patch`, `--deferred`);
 
           await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
-            version: `0.0.0`,
-          });
-
-          await run(`version`, `apply`);
-
-          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
-            version: `0.0.1`,
+            version: `1.2.3`,
           });
         }),
       );
@@ -503,20 +549,28 @@ describe(`Commands`, () => {
       test(
         `it shouldn't immediately bump the version when preferDeferredVersions is set`,
         makeTemporaryEnv({
-          version: `0.0.0`,
+          version: `1.2.3`,
         }, {
           preferDeferredVersions: true,
         }, async ({path, run, source}) => {
           await run(`version`, `patch`);
 
           await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
-            version: `0.0.0`,
+            version: `1.2.3`,
           });
+        }),
+      );
 
+      test(
+        `it shouldn't record the version bump when --dry-run is set`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `patch`, `--deferred`, `--dry-run`);
           await run(`version`, `apply`);
 
           await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
-            version: `0.0.1`,
+            version: `1.2.3`,
           });
         }),
       );
