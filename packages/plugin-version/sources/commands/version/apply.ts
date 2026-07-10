@@ -52,6 +52,10 @@ export default class VersionApplyCommand extends BaseCommand {
     description: `Use the exact version of each package, removes any range. Useful for nightly releases where the range might match another version.`,
   });
 
+  force = Option.Boolean(`--force`, false, {
+    description: `Bypass check for bumping to a lower version than the current one`,
+  });
+
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });
@@ -75,6 +79,9 @@ export default class VersionApplyCommand extends BaseCommand {
 
     if (this.exact)
       args.push(`--exact`);
+
+    if (this.force)
+      args.push(`--force`);
 
     if (this.json)
       args.push(`--json`);

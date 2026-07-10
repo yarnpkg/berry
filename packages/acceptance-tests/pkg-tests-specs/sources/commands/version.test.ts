@@ -123,6 +123,30 @@ describe(`Commands`, () => {
       );
 
       test(
+        `it should throw when trying to bump to a lower version than the current one`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await expect(run(`version`, `1.0.0`)).rejects.toThrow(/lower/);
+        }),
+      );
+
+      test(
+        `it should bump to a lower version than the current one if --force is set`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await expect(run(`version`, `1.0.0`, `--force`)).resolves.toMatchObject({
+            code: 0,
+          });
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
+        }),
+      );
+
+      test(
         `it should bump the last numeric prerelease identifier if --prerelease is not set when applying the "prerelease" strategy`,
         makeTemporaryEnv({
           version: `1.2.3-a.1.b.2.c`,
@@ -530,6 +554,53 @@ describe(`Commands`, () => {
           version: `1.0.0`,
         }, async ({path, run, source}) => {
           await expect(run(`version`, `invalid`, `--deferred`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+        }),
+      );
+
+      test(
+        `it should throw when trying to defer a lower version than the current one`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await expect(run(`version`, `1.0.0`, `--deferred`)).rejects.toThrow(/lower/);
+        }),
+      );
+
+      test(
+        `it should defer a lower version than the current one if --force is set`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await expect(run(`version`, `1.0.0`, `--deferred`, `--force`)).resolves.toMatchObject({
+            code: 0,
+          });
+        }),
+      );
+
+      test(
+        `it should throw when trying to apply a lower version than the current one`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `1.0.0`, `--deferred`, `--force`);
+          await expect(run(`version`, `apply`)).rejects.toThrow(/lower/);
+        }),
+      );
+
+      test(
+        `it should apply a lower version than the current one if --force is set`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `1.0.0`, `--deferred`, `--force`);
+
+          await expect(run(`version`, `apply`, `--force`)).resolves.toMatchObject({
+            code: 0,
+          });
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.0.0`,
+          });
         }),
       );
 

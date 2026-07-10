@@ -68,6 +68,10 @@ export default class VersionCommand extends BaseCommand {
     description: `When updating parent workspaces' dependencies, use exact versions of bumped workspaces, removing any range.`,
   });
 
+  force = Option.Boolean(`--force`, false, {
+    description: `Bypass check for bumping to a lower version than the current one`,
+  });
+
   json = Option.Boolean(`--json`, false, {
     description: `Format the output as an NDJSON stream`,
   });
@@ -101,9 +105,33 @@ export default class VersionCommand extends BaseCommand {
     const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
 
     const releases = new Map<Workspace, string>();
-    if (isSemver) {
+      const retrograde = new Set<Workspace>();
+
       for (const workspace of workspaces) {
         releases.set(workspace, this.strategy);
+        if (workspace.manifest.version !== null && semver.lt(this.strategy, workspace.manifest.version)) {
+          retrograde.add(workspace);
+        }
+      }
+
+      if (retrograde.size > 0) {
+        await StreamReport.start({
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+        }, async report => {
+          for (const workspace of retrograde) {
+            if (this.force) {
+              report.reportWarning(MessageName.UNNAMED, `Bumping ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${this.strategy}) than the current one (${workspace.manifest.version})`);
+            } else {
+              report.reportError(MessageName.UNNAMED, `Cannot bump ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${this.strategy}) than the current one (${workspace.manifest.version}).`);
+            }
+          }
+        });
+
+        if (!this.force) {
+          return 1;
+        }
       }
     } else {
       for (const workspace of workspaces) {
@@ -181,10 +209,20 @@ export default class VersionCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, async report => {
       for (const workspace of workspaces) {
-        if (!releases.has(workspace)) {
+        const release = releases.get(workspace);
+        if (release === undefined) {
           report.reportWarning(MessageName.UNNAMED, `Workspace ${structUtils.prettyWorkspace(configuration, workspace)} doesn't seem to require a version bump.`);
+        } else if (workspace.manifest.version !== null && semver.lt(release, workspace.manifest.version)) {
+          if (this.force) {
+            report.reportWarning(MessageName.UNNAMED, `Bumping ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${release}) than the current one (${workspace.manifest.version})`);
+          } else {
+            report.reportError(MessageName.UNNAMED, `Cannot bump ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${release}) than the current one (${workspace.manifest.version}).`);
+          }
         }
       }
+
+      if (report.hasErrors())
+        return;
 
       versionUtils.applyReleases(project, releases, {report, exact: this.exact});
       if (!this.dryRun) {
