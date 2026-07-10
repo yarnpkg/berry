@@ -1,6 +1,7 @@
 import {BaseCommand, WorkspaceRequiredError}                                   from '@yarnpkg/cli';
 import type {Workspace}                                                        from '@yarnpkg/core';
 import {Cache, Configuration, MessageName, Project, StreamReport, structUtils} from '@yarnpkg/core';
+import {npath}                                                                 from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                    from 'clipanion';
 import semver                                                                  from 'semver';
 
@@ -133,10 +134,29 @@ export default class VersionCommand extends BaseCommand {
 
     if (deferred) {
       const versionFile = await versionUtils.openVersionFile(project, {allowEmpty: true});
-      for (const [workspace, strategy] of releases)
-        versionFile.releases.set(workspace, strategy);
 
-      await versionFile.saveAll();
+      if (!this.dryRun) {
+        for (const [workspace, strategy] of releases)
+          versionFile.releases.set(workspace, strategy);
+
+        await versionFile.saveAll();
+      } else {
+        await StreamReport.start({
+          configuration,
+          json: this.json,
+          stdout: this.context.stdout,
+        }, async report => {
+          for (const [workspace, strategy] of releases) {
+            report.reportInfo(MessageName.UNNAMED, `Recording release for ${structUtils.prettyWorkspace(configuration, workspace)}: ${strategy}`);
+            report.reportJson({
+              cwd: npath.fromPortablePath(workspace.cwd),
+              ident: workspace.manifest.name !== null ? structUtils.stringifyIdent(workspace.manifest.name) : null,
+              deferred: true,
+              strategy,
+            });
+          }
+        });
+      }
 
       return 0;
     }
