@@ -118,16 +118,10 @@ export default class VersionCommand extends BaseCommand {
       ];
     }
 
-    let deferred = configuration.get(`preferDeferredVersions`);
-    if (this.deferred)
-      deferred = true;
-    if (this.immediate)
-      deferred = false;
-
-    const isSemver = semver.valid(this.strategy);
-    const isDeclined = this.strategy === versionUtils.Decision.DECLINE;
+    const deferred = (configuration.get(`preferDeferredVersions`) || this.deferred) && !this.immediate;
 
     const releases = new Map<Workspace, string>();
+    if (semver.valid(this.strategy)) {
       const retrograde = new Set<Workspace>();
 
       for (const workspace of workspaces) {
@@ -160,7 +154,7 @@ export default class VersionCommand extends BaseCommand {
       for (const workspace of workspaces) {
         const currentVersion = workspace.manifest.version;
 
-        if (!isDeclined) {
+        if (this.strategy !== versionUtils.Decision.DECLINE) {
           if (currentVersion === null)
             throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
 
