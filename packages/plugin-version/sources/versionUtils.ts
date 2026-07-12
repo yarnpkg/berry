@@ -36,7 +36,15 @@ export function validateReleaseDecision(decision: unknown): string {
   if (semverDecision)
     return semverDecision;
 
-  return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
+  const decisions = Object.values(omit(Decision, `UNDECIDED`));
+  if (decisions.includes(decision as any))
+    return decision as Exclude<Decision, Decision.UNDECIDED>;
+
+  const tip = semver.valid(decision as string, {loose: true})
+    ? ` Did you mean to use "${semver.valid(decision as string, {loose: true})}"?`
+    : ``;
+
+  throw new UsageError(`Invalid strategy: "${decision}". Expected a valid semver or one of ${decisions.map(value => JSON.stringify(value)).join(`, `)}.${tip}`);
 }
 
 function isPrereleaseStrategy(strategy: string) {

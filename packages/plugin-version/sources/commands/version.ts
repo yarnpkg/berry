@@ -118,15 +118,16 @@ export default class VersionCommand extends BaseCommand {
       ];
     }
 
+    const strategy = versionUtils.validateReleaseDecision(this.strategy);
     const deferred = (configuration.get(`preferDeferredVersions`) || this.deferred) && !this.immediate;
 
     const releases = new Map<Workspace, string>();
-    if (semver.valid(this.strategy)) {
+    if (semver.valid(strategy)) {
       const retrograde = new Set<Workspace>();
 
       for (const workspace of workspaces) {
-        releases.set(workspace, this.strategy);
-        if (workspace.manifest.version !== null && semver.lt(this.strategy, workspace.manifest.version)) {
+        releases.set(workspace, strategy);
+        if (workspace.manifest.version !== null && semver.lt(strategy, workspace.manifest.version)) {
           retrograde.add(workspace);
         }
       }
@@ -139,9 +140,9 @@ export default class VersionCommand extends BaseCommand {
         }, async report => {
           for (const workspace of retrograde) {
             if (this.force) {
-              report.reportWarning(MessageName.UNNAMED, `Bumping ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${this.strategy}) than the current one (${workspace.manifest.version})`);
+              report.reportWarning(MessageName.UNNAMED, `Bumping ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${strategy}) than the current one (${workspace.manifest.version})`);
             } else {
-              report.reportError(MessageName.UNNAMED, `Cannot bump ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${this.strategy}) than the current one (${workspace.manifest.version}).`);
+              report.reportError(MessageName.UNNAMED, `Cannot bump ${structUtils.prettyWorkspace(configuration, workspace)} to a lower version (${strategy}) than the current one (${workspace.manifest.version}).`);
             }
           }
         });
@@ -154,7 +155,7 @@ export default class VersionCommand extends BaseCommand {
       for (const workspace of workspaces) {
         const currentVersion = workspace.manifest.version;
 
-        if (this.strategy !== versionUtils.Decision.DECLINE) {
+        if (strategy !== versionUtils.Decision.DECLINE) {
           if (currentVersion === null)
             throw new UsageError(`Can't bump the version if there wasn't a version to begin with - set an initial version then run the command again.`);
 
@@ -163,7 +164,7 @@ export default class VersionCommand extends BaseCommand {
           }
         }
 
-        releases.set(workspace, versionUtils.validateReleaseDecision(this.strategy));
+        releases.set(workspace, strategy);
       }
     }
 

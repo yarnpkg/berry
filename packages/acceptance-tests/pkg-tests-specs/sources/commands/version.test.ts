@@ -118,7 +118,9 @@ describe(`Commands`, () => {
         makeTemporaryEnv({
           version: `1.0.0`,
         }, async ({path, run, source}) => {
-          await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+          await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid strategy: "invalid"`);
+          // Also checks that errors for near-semver suggests a "cleaned" version
+          await expect(run(`version`, `1.2.3-01`)).rejects.toThrow(`1.2.3-1`);
         }),
       );
 
@@ -553,7 +555,9 @@ describe(`Commands`, () => {
         makeTemporaryEnv({
           version: `1.0.0`,
         }, async ({path, run, source}) => {
-          await expect(run(`version`, `invalid`, `--deferred`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+          await expect(run(`version`, `invalid`, `--deferred`)).rejects.toThrow(`Invalid strategy: "invalid"`);
+          // Also checks that errors for near-semver suggests a "cleaned" version
+          await expect(run(`version`, `1.2.3-01`)).rejects.toThrow(`1.2.3-1`);
         }),
       );
 
@@ -748,7 +752,9 @@ describe(`Commands`, () => {
         }, async ({path, run, source}) => {
           await run(`version`, `major`, `--deferred`);
 
-          await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid value for enumeration: "invalid"`);
+          await expect(run(`version`, `invalid`)).rejects.toThrow(`Invalid strategy: "invalid"`);
+          // Also checks that errors for near-semver suggests a "cleaned" version
+          await expect(run(`version`, `1.2.3-01`)).rejects.toThrow(`1.2.3-1`);
         }),
       );
 
