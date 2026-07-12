@@ -9,51 +9,44 @@ export default class VersionApplyCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
-    description: `apply all the deferred version bumps at once`,
+    description: `apply deferred records to workspaces`,
     details: `
-      This command will apply the deferred version changes and remove their definitions from the repository.
+      This command will apply the deferred version changes to workspaces. The applied records are removed from the project.
 
-      Note that if \`--prerelease\` is set, the given prerelease identifier (by default \`rc.%n\`) will be used on all new versions and the version definitions will be kept as-is.
-
-      By default only the current workspace will be bumped, but you can configure this behavior by using one of:
-
-      - \`--recursive\` to also apply the version bump on its dependencies
-      - \`--all\` to apply the version bump on all packages in the repository
-
-      Note that this command will also update the \`workspace:\` references across all your local workspaces, thus ensuring that they keep referring to the same workspaces even after the version bump.
+      For more information on the options, see the \`yarn version\` command. For more information on the deferred versioning workflow, see our documentation (https://yarnpkg.com/features/release-workflow#deferred-versioning).
     `,
     examples: [[
-      `Apply the version change to the local workspace`,
+      `Apply deferred records of current workspace`,
       `yarn version apply`,
     ], [
-      `Apply the version change to all the workspaces in the local workspace`,
+      `Apply deferred records of all the workspaces in the local workspace`,
       `yarn version apply --all`,
     ]],
   });
 
   all = Option.Boolean(`--all`, false, {
-    description: `Apply the deferred version changes on all workspaces`,
+    description: `Bump the version of all workspaces`,
   });
 
   recursive = Option.Boolean(`-R,--recursive`, {
-    description: `Release the transitive workspaces as well`,
-  });
-
-  dryRun = Option.Boolean(`--dry-run`, false, {
-    description: `Print the versions without actually generating the package archive`,
-  });
-
-  prerelease = Option.String(`--prerelease`, {
-    description: `Add a prerelease identifier to new versions`,
-    tolerateBoolean: true,
+    description: `Bump the version of dependent workspaces as well`,
   });
 
   exact = Option.Boolean(`--exact`, false, {
-    description: `Use the exact version of each package, removes any range. Useful for nightly releases where the range might match another version.`,
+    description: `When updating parent workspaces' dependencies, use exact versions of bumped workspaces, removing any range.`,
+  });
+
+  prerelease = Option.String(`--prerelease`, {
+    description: `Specify a prerelease pattern to use when working with prerelease versions`,
+    tolerateBoolean: true,
+  });
+
+  dryRun = Option.Boolean(`--dry-run`, false, {
+    description: `Print version(s)/record(s) without actually bumping versions or recording deferred releases`,
   });
 
   force = Option.Boolean(`--force`, false, {
-    description: `Bypass check for bumping to a lower version than the current one`,
+    description: `Bypass check for bumping to a lower version than the current/deferred one`,
   });
 
   json = Option.Boolean(`--json`, false, {
@@ -69,16 +62,16 @@ export default class VersionApplyCommand extends BaseCommand {
     if (this.recursive)
       args.push(`--recursive`);
 
-    if (this.dryRun)
-      args.push(`--dry-run`);
+    if (this.exact)
+      args.push(`--exact`);
 
     if (this.prerelease === true)
       args.push(`--prerelease`);
     else if (typeof this.prerelease === `string`)
       args.push(`--prerelease=${this.prerelease}`);
 
-    if (this.exact)
-      args.push(`--exact`);
+    if (this.dryRun)
+      args.push(`--dry-run`);
 
     if (this.force)
       args.push(`--force`);
