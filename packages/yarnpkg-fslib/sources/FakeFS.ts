@@ -1,3 +1,4 @@
+import {stringify as tomlStringify}                      from '@iarna/toml';
 import {createHash}                                      from 'crypto';
 import {EventEmitter}                                    from 'events';
 import {Dirent as NodeDirent, ReadStream}                from 'fs';
@@ -767,6 +768,14 @@ export abstract class FakeFS<P extends Path> {
       : 2;
 
     return this.writeFileSync(p, `${JSON.stringify(data, null, space)}\n`);
+  }
+
+  async writeTomlPromise(p: P, data: any) {
+    return await this.writeFilePromise(p, tomlStringify(data));
+  }
+
+  writeTomlSync(p: P, data: any) {
+    return this.writeFileSync(p, tomlStringify(data));
   }
 
   async preserveTimePromise(p: P, cb: () => Promise<P | void>) {
