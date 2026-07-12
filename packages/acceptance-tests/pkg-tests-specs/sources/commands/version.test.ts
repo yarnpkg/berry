@@ -109,7 +109,7 @@ describe(`Commands`, () => {
       test(
         `it shouldn't work if the strategy isn't semver and there is no prior version`,
         makeTemporaryEnv({}, async ({path, run, source}) => {
-          await expect(run(`version`, `patch`)).rejects.toThrow(`Usage Error: Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+          await expect(run(`version`, `patch`)).rejects.toThrow(`Usage Error: Can't bump the version if there wasn't a version to begin with - set an initial version then run the command again.`);
         }),
       );
 

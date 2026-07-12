@@ -156,7 +156,7 @@ export default class VersionCommand extends BaseCommand {
 
         if (this.strategy !== versionUtils.Decision.DECLINE) {
           if (currentVersion === null)
-            throw new UsageError(`Can't bump the version if there wasn't a version to begin with - use 0.0.0 as initial version then run the command again.`);
+            throw new UsageError(`Can't bump the version if there wasn't a version to begin with - set an initial version then run the command again.`);
 
           if (typeof currentVersion !== `string` || !semver.valid(currentVersion)) {
             throw new UsageError(`Can't bump the version (${currentVersion}) if it's not valid semver`);
