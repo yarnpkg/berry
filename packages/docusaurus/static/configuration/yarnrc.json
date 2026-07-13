@@ -39,21 +39,35 @@
       "_package": "@yarnpkg/plugin-catalog",
       "title": "The default catalog of packages.",
       "type": "object",
-      "additionalProperties": {
-        "type": "string"
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "string",
+          "pattern": "^(.+)$",
+          "examples": ["^19.0.0"]
+        }
       },
+      "additionalProperties": false,
       "_exampleKeys": ["react"]
     },
     "catalogs": {
       "_package": "@yarnpkg/plugin-catalog",
       "title": "Named catalogs of packages.",
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": {
-          "type": "string"
+      "patternProperties": {
+        "^\\S+$": {
+          "type": "object",
+          "patternProperties": {
+            "^(?:@([^/]+?)/)?([^/]+?)$": {
+              "type": "string",
+              "pattern": "^(.+)$",
+              "examples": ["^18.3.1"]
+            }
+          },
+          "additionalProperties": false,
+          "_exampleKeys": ["react"]
         }
       },
+      "additionalProperties": false,
       "_exampleKeys": ["react18"]
     },
     "changesetBaseRefs": {
