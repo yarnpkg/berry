@@ -7,7 +7,7 @@ const select = (rangeString: string, versions: Array<string>) => {
   if (range === null)
     throw new Error(`Invalid range: ${rangeString}`);
 
-  return selectMatchingVersions(rangeString, range, versions).map(version => version.raw);
+  return selectMatchingVersions(range, versions).map(version => version.raw);
 };
 
 describe(`NpmSemverResolver`, () => {
