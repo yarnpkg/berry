@@ -1,8 +1,8 @@
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {PnpApi}                          from '@yarnpkg/pnp';
 
-import {Wrapper} from '../sources/generateSdk';
-import {generateTypescriptWrapper} from '../sources/sdks/vscode';
+import {Wrapper}                         from '../sources/generateSdk';
+import {generateTypescriptWrapper}       from '../sources/sdks/vscode';
 
 const makePnpApi = (projectRoot: PortablePath) => {
   return {
