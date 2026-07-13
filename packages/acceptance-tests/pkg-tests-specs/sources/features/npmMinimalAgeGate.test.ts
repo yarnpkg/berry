@@ -1,3 +1,9 @@
+import {xfs, PortablePath} from '@yarnpkg/fslib';
+
+const {
+  tests: {startPackageServer},
+} = require(`pkg-tests-core`);
+
 describe(`Features`, () => {
   describe(`npmMinimalAgeGate and npmPreapprovedPackages`, () => {
     describe(`add`, () => {
@@ -365,6 +371,204 @@ describe(`Features`, () => {
           await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
             name: `@scoped/release-date`,
             version: `1.1.0`,
+          });
+        }),
+      );
+    });
+    describe(`npmScopes override`, () => {
+      test(
+        `scope override tightens the gate beyond the global value`,
+        makeTemporaryEnv({}, async ({path, run}) => {
+          const registryUrl = await startPackageServer();
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: `1m`,
+            npmScopes: {
+              scoped: {
+                npmRegistryServer: registryUrl,
+                npmMinimalAgeGate: `1d`,
+              },
+            },
+          });
+
+          await expect(run(`add`, `@scoped/release-date@1.1.1`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
+        }),
+      );
+
+      test(
+        `scope override loosens the gate below the global value`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          const registryUrl = await startPackageServer();
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: `1d`,
+            npmScopes: {
+              scoped: {
+                npmRegistryServer: registryUrl,
+                npmMinimalAgeGate: 0,
+              },
+            },
+          });
+
+          await run(`add`, `@scoped/release-date@^1.0.0`);
+
+          await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
+            name: `@scoped/release-date`,
+            version: `1.1.2`,
+          });
+        }),
+      );
+
+      test(
+        `scope override does not affect unscoped packages`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: `1d`,
+            npmScopes: {
+              scoped: {
+                npmMinimalAgeGate: 0,
+              },
+            },
+          });
+
+          await run(`add`, `release-date@^1.0.0`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.0`,
+          });
+        }),
+      );
+
+      test(
+        `override on a different scope does not leak`,
+        makeTemporaryEnv({}, async ({path, run}) => {
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: `1d`,
+            npmScopes: {
+              other: {
+                npmMinimalAgeGate: 0,
+              },
+            },
+          });
+
+          await expect(run(`add`, `@scoped/release-date@1.1.1`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
+        }),
+      );
+
+      test(
+        `scope override tightens the gate even when the global is disabled`,
+        makeTemporaryEnv({}, async ({path, run}) => {
+          const registryUrl = await startPackageServer();
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: 0,
+            npmScopes: {
+              scoped: {
+                npmRegistryServer: registryUrl,
+                npmMinimalAgeGate: `1d`,
+              },
+            },
+          });
+
+          await expect(run(`add`, `@scoped/release-date@1.1.1`)).rejects.toThrowError(`All versions satisfying "1.1.1" are quarantined`);
+        }),
+      );
+
+      test(
+        `--no-time-gate bypasses scope override`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          const registryUrl = await startPackageServer();
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: `1d`,
+            npmScopes: {
+              scoped: {
+                npmRegistryServer: registryUrl,
+                npmMinimalAgeGate: `7d`,
+              },
+            },
+          });
+
+          await run(`add`, `--no-time-gate`, `@scoped/release-date@1.1.2`);
+
+          await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
+            name: `@scoped/release-date`,
+            version: `1.1.2`,
+          });
+        }),
+      );
+    });
+    describe(`--no-time-gate`, () => {
+      test(
+        `yarn add should ignore the minimum release age when --no-time-gate is set`,
+        makeTemporaryEnv({}, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`add`, `--no-time-gate`, `release-date@^1.0.0`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+
+      test(
+        `yarn add should ignore the minimum release age for exact versions when --no-time-gate is set`,
+        makeTemporaryEnv({}, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`add`, `--no-time-gate`, `release-date@1.1.1`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+
+      test(
+        `yarn up should ignore the minimum release age when --no-time-gate is set`,
+        makeTemporaryEnv({
+          dependencies: {[`release-date`]: `^1.0.0`},
+        }, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`install`);
+          await run(`set`, `resolution`, `release-date@npm:^1.0.0`, `npm:1.0.0`);
+
+          const preUpVersion = (await source(`require('release-date/package.json')`)).version;
+          if (preUpVersion !== `1.0.0`)
+            throw new Error(`Pre-up version is not 1.0.0`);
+
+          await run(`up`, `--no-time-gate`, `release-date`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+        }),
+      );
+
+      test(
+        `yarn up -R should ignore the minimum release age when --no-time-gate is set`,
+        makeTemporaryEnv({
+          dependencies: {[`release-date`]: `^1.0.0`},
+        }, {
+          npmMinimalAgeGate: `1d`,
+          pnpFallbackMode: `all`,
+          pnpMode: `loose`,
+        }, async ({run, source}) => {
+          await run(`install`);
+          await run(`set`, `resolution`, `release-date@npm:^1.0.0`, `npm:1.0.0`);
+          await run(`set`, `resolution`, `release-date-transitive@npm:^1.0.0`, `npm:1.0.0`);
+
+          await run(`up`, `--no-time-gate`, `-R`, `*`);
+
+          await expect(source(`require('release-date/package.json')`)).resolves.toMatchObject({
+            name: `release-date`,
+            version: `1.1.1`,
+          });
+          await expect(source(`require('release-date-transitive/package.json')`)).resolves.toMatchObject({
+            name: `release-date-transitive`,
+            version: `1.1.1`,
           });
         }),
       );

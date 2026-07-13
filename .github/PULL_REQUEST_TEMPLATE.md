@@ -1,3 +1,23 @@
+<!--
+  IMPORTANT: While Yarn 4.x is still actively developed we're now
+  focusing work on our next major releases (5.x and 6.x).
+
+  These sister releases use the same pattern as TypeScript-Go:
+  
+  - 5.x will only contain a handful of breaking changes to provide a safe
+  migration path.
+
+  - 6.x will be the "true" release, notable for being implemented in Rust
+  and including a significantly improved core.
+  
+  While PRs can still be opened against 4.x, we recommend power users
+  to try Yarn 6.x now and help us get it over the finish line. It uses
+  the same testsuite as Berry, so compatibility should be at its best.
+
+  To check out the working trunk for Yarn 6.x, please refer to this
+  repository: https://github.com/yarnpkg/zpm
+-->
+
 ## What's the problem this PR addresses?
 
 <!-- Describe the rationale of your PR. -->

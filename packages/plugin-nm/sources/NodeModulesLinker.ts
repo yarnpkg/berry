@@ -6,10 +6,10 @@ import {MessageName, Project, FetchResult, Installer}                       from
 import {PortablePath, npath, ppath, Filename}                               from '@yarnpkg/fslib';
 import {VirtualFS, xfs, FakeFS, NativePath}                                 from '@yarnpkg/fslib';
 import {ZipOpenFS}                                                          from '@yarnpkg/libzip';
-import {buildNodeModulesTree}                                               from '@yarnpkg/nm';
+import {buildNodeModulesTree, buildPackageMap}                              from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from '@yarnpkg/nm';
 import {parseSyml}                                                          from '@yarnpkg/parsers';
-import {jsInstallUtils}                                                     from '@yarnpkg/plugin-pnp';
+import {NodePackageMapType, jsInstallUtils}                                 from '@yarnpkg/plugin-pnp';
 import {PnpApi, PackageInformation}                                         from '@yarnpkg/pnp';
 import cmdShim                                                              from '@zkochan/cmd-shim';
 import {UsageError}                                                         from 'clipanion';
@@ -20,11 +20,24 @@ const STATE_FILE_VERSION = 1;
 const NODE_MODULES = `node_modules` as Filename;
 const DOT_BIN = `.bin` as Filename;
 const INSTALL_STATE_FILE = `.yarn-state.yml` as Filename;
+const PACKAGE_MAP_FILE = `.package-map.json` as Filename;
 const MTIME_ACCURANCY = 1000;
 
 type InstallState = {locatorMap: NodeModulesLocatorMap, locationTree: LocationTree, binSymlinks: BinSymlinkMap, nmMode: NodeModulesMode, mtimeMs: number};
+type InstallStateCacheEntry = {statKey: string | null, promise: Promise<InstallState | null>};
 type BinSymlinkMap = Map<PortablePath, Map<Filename, PortablePath>>;
 type LoadManifest = (locator: LocatorKey, installLocation: PortablePath) => Promise<Pick<Manifest, `bin`>>;
+
+const installStateCache: Map<string, InstallStateCacheEntry> = new Map();
+
+function getInstallStateCacheKey(project: Project, {unrollAliases}: {unrollAliases: boolean}) {
+  return `${project.cwd}\0${unrollAliases ? `unroll` : `plain`}`;
+}
+
+function clearInstallStateCache(project: Project) {
+  installStateCache.delete(getInstallStateCacheKey(project, {unrollAliases: true}));
+  installStateCache.delete(getInstallStateCacheKey(project, {unrollAliases: false}));
+}
 
 export enum NodeModulesMode {
   CLASSIC = `classic`,
@@ -33,8 +46,6 @@ export enum NodeModulesMode {
 }
 
 export class NodeModulesLinker implements Linker {
-  private installStateCache: Map<string, Promise<InstallState | null>> = new Map();
-
   getCustomDataKey() {
     return JSON.stringify({
       name: `NodeModulesLinker`,
@@ -54,9 +65,7 @@ export class NodeModulesLinker implements Linker {
     if (workspace)
       return workspace.cwd;
 
-    const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
-      return await findInstallState(opts.project, {unrollAliases: true});
-    });
+    const installState = await this.findInstallState(opts.project, {unrollAliases: true});
 
     if (installState === null)
       throw new UsageError(`Couldn't find the node_modules state file - running an install might help (findPackageLocation)`);
@@ -79,9 +88,7 @@ export class NodeModulesLinker implements Linker {
     if (!this.isEnabled(opts))
       return null;
 
-    const installState = await miscUtils.getFactoryWithDefault(this.installStateCache, opts.project.cwd, async () => {
-      return await findInstallState(opts.project, {unrollAliases: true});
-    });
+    const installState = await this.findInstallState(opts.project, {unrollAliases: true});
 
     if (installState === null)
       return null;
@@ -105,6 +112,19 @@ export class NodeModulesLinker implements Linker {
 
   makeInstaller(opts: LinkOptions) {
     return new NodeModulesInstaller(opts);
+  }
+
+  private async findInstallState(project: Project, {unrollAliases}: {unrollAliases: boolean}) {
+    const cacheKey = getInstallStateCacheKey(project, {unrollAliases});
+    const statKey = await getInstallStateStatKey(project);
+    const cached = installStateCache.get(cacheKey);
+
+    if (cached?.statKey === statKey)
+      return await cached.promise;
+
+    const promise = findInstallState(project, {unrollAliases});
+    installStateCache.set(cacheKey, {statKey, promise});
+    return await promise;
   }
 
   private isEnabled(opts: MinimalLinkOptions) {
@@ -319,7 +339,14 @@ class NodeModulesInstaller implements Installer {
     }
     const locatorMap = buildLocatorMap(tree);
 
-    await persistNodeModules(preinstallState, locatorMap, {
+    const packageMap = buildPackageMap(tree, {
+      basePath: ppath.join(this.opts.project.cwd, NODE_MODULES),
+      pnp: this.opts.project.configuration.get(`nodePackageMapType`) === NodePackageMapType.STANDARD
+        ? pnpApi
+        : null,
+    });
+
+    await persistNodeModules(preinstallState, locatorMap, packageMap, {
       baseFs: defaultFsLayer,
       project: this.opts.project,
       report: this.opts.report,
@@ -447,13 +474,29 @@ async function writeInstallState(project: Project, locatorMap: NodeModulesLocato
   const rootPath = project.cwd;
   const installStatePath = ppath.join(rootPath, NODE_MODULES, INSTALL_STATE_FILE);
 
-  // Force install state file rewrite, so that it has mtime bigger than all node_modules subfolders
-  if (installChangedByUser)
-    await xfs.removePromise(installStatePath);
+  try {
+    // Force install state file rewrite, so that it has mtime bigger than all node_modules subfolders
+    if (installChangedByUser)
+      await xfs.removePromise(installStatePath);
 
-  await xfs.changeFilePromise(installStatePath, locatorState, {
-    automaticNewlines: true,
-  });
+    await xfs.changeFilePromise(installStatePath, locatorState, {
+      automaticNewlines: true,
+    });
+  } finally {
+    clearInstallStateCache(project);
+  }
+}
+
+async function getInstallStateStatKey(project: Project) {
+  const rootPath = project.cwd;
+  const installStatePath = ppath.join(rootPath, NODE_MODULES, INSTALL_STATE_FILE);
+
+  try {
+    const stats = await xfs.statPromise(installStatePath);
+    return `${stats.mtimeMs}:${stats.size}`;
+  } catch {
+    return null;
+  }
 }
 
 async function findInstallState(project: Project, {unrollAliases = false}: {unrollAliases?: boolean} = {}): Promise<InstallState | null> {
@@ -1067,7 +1110,7 @@ function invalidateBinSymlinks(binSymlinks: BinSymlinkMap, changedLocations: Set
   }
 }
 
-async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
+async function persistNodeModules(preinstallState: InstallState, installState: NodeModulesLocatorMap, packageMap: ReturnType<typeof buildPackageMap>, {baseFs, project, report, loadManifest, realLocatorChecksums}: {project: Project, baseFs: FakeFS<PortablePath>, report: Report, loadManifest: LoadManifest, realLocatorChecksums: Map<LocatorHash, string | null>}) {
   const rootNmDirPath = ppath.join(project.cwd, NODE_MODULES);
 
   const {
@@ -1335,6 +1378,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     await Promise.all(addQueue);
 
     await xfs.mkdirPromise(rootNmDirPath, {recursive: true});
+    await xfs.changeFilePromise(ppath.join(rootNmDirPath, PACKAGE_MAP_FILE), JSON.stringify(packageMap, null, 2), {
+      automaticNewlines: true,
+    });
 
     invalidateBinSymlinks(prevBinSymlinks, new Set(addList.map(l => l.dstDir)));
     const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});

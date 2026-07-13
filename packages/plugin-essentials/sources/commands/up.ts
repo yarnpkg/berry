@@ -84,6 +84,10 @@ export default class UpCommand extends BaseCommand {
     description: `Resolve again ALL resolutions for those packages`,
   });
 
+  noTimeGate = Option.Boolean(`--no-time-gate`, false, {
+    description: `Disable the minimum release age check for this command`,
+  });
+
   mode = Option.String(`--mode`, {
     description: `Change what artifacts installs generate`,
     validator: t.isEnum(InstallMode),
@@ -105,6 +109,10 @@ export default class UpCommand extends BaseCommand {
 
   async executeUpRecursive() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+    if (this.noTimeGate)
+      suggestUtils.disableTimeGate(configuration);
+
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
@@ -151,6 +159,10 @@ export default class UpCommand extends BaseCommand {
 
   async executeUpClassic() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+    if (this.noTimeGate)
+      suggestUtils.disableTimeGate(configuration);
+
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 

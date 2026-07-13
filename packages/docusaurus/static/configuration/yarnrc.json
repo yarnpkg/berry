@@ -35,6 +35,27 @@
       "enum": ["required-only", "match-spec", "always"],
       "default": "always"
     },
+    "catalog": {
+      "_package": "@yarnpkg/plugin-catalog",
+      "title": "The default catalog of packages.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "_exampleKeys": ["react"]
+    },
+    "catalogs": {
+      "_package": "@yarnpkg/plugin-catalog",
+      "title": "Named catalogs of packages.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "_exampleKeys": ["react18"]
+    },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
       "title": "List of git refs against which Yarn will compare your branch when it needs to detect changes.",
@@ -70,6 +91,17 @@
       "description": "We by default limit it to 2 concurrent clone operations.",
       "type": "number",
       "default": 2
+    },
+    "approvedGitRepositories": {
+      "_package": "@yarnpkg/plugin-git",
+      "title": "Array of git repository URL glob patterns that are allowed to be fetched.",
+      "description": "When set, Yarn will block any git dependency whose normalized repository URL doesn't match one of these patterns. GitHub repositories must be explicitly approved.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "_exampleItems": ["https://github.com/yarnpkg/*", "ssh://git@github.com/yarnpkg/*"]
     },
     "compressionLevel": {
       "_package": "@yarnpkg/core",
@@ -217,9 +249,9 @@
     "enableScripts": {
       "_package": "@yarnpkg/core",
       "title": "Define whether to run postinstall scripts or not.",
-      "description": "If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).\n\nNote that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.",
+      "description": "If false (the default), Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).\n\nNote that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.",
       "type": "boolean",
-      "default": true
+      "default": false
     },
     "enableStrictSsl": {
       "_package": "@yarnpkg/core",
@@ -483,6 +515,21 @@
       "type": "string",
       "default": "pnp"
     },
+    "nodeExperimentalPackageMap": {
+      "_package": "@yarnpkg/plugin-pnp",
+      "title": "Define whether Yarn should enable Node.js package maps for installs that support them.",
+      "description": "If true, Yarn will inject Node.js' experimental `--experimental-package-map` option into `NODE_OPTIONS` when using `nodeLinker: node-modules` or `nodeLinker: pnpm` and a package map has been generated.",
+      "type": "boolean",
+      "default": false
+    },
+    "nodePackageMapType": {
+      "_package": "@yarnpkg/plugin-pnp",
+      "title": "Define how Yarn should generate Node.js package maps.",
+      "description": "Possible values are:\n\n- If `standard` (the default), package maps will reflect the dependency graph and reject undeclared dependencies.\n- If `loose`, package maps will reflect the hoisted `node_modules` layout and mimic Node.js resolution more closely.\n\nThis setting applies to both `nodeLinker: node-modules` and `nodeLinker: pnpm`.",
+      "type": "string",
+      "enum": ["standard", "loose"],
+      "default": "standard"
+    },
     "npmMinimalAgeGate": {
       "_package": "@yarnpkg/core",
       "title": "Minimum age of a package version according to the publish date on the npm registry to be considered for installation.",
@@ -492,7 +539,8 @@
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
       ],
-      "default": "3d"
+      "default": "1d",
+      "examples": ["1w", "1d", "3h", "30m"]
     },
     "npmPreapprovedPackages": {
       "_package": "@yarnpkg/core",

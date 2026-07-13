@@ -73,6 +73,7 @@ describe(`Install Artifact Cleanup`, () => {
               [`no-deps-scripted`]: `1.0.0`,
             },
           }, {
+            enableScripts: true,
             pnpEnableEsmLoader: true,
           }, async ({path, run, source}) => {
             await run(`install`);

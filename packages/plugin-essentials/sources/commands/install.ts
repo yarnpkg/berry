@@ -23,6 +23,18 @@ const LOCKFILE_MIGRATION_RULES: Array<{
   selector: v => v !== -1 && v < 8,
   name: `compressionLevel`,
   value: `mixed`,
+}, {
+  selector: v => v < 9,
+  name: `approvedGitRepositories` as keyof ConfigurationValueMap,
+  value: [`**`],
+}, {
+  selector: v => v < 9,
+  name: `enableScripts`,
+  value: true,
+}, {
+  selector: v => v < 10,
+  name: `npmMinimalAgeGate` as keyof ConfigurationValueMap,
+  value: `0`,
 }];
 
 // eslint-disable-next-line arca/no-default-export

@@ -381,6 +381,7 @@ export function parseDescriptor(string: string, strict: boolean = false): Descri
 
 const DESCRIPTOR_REGEX_STRICT = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))$/;
 const DESCRIPTOR_REGEX_LOOSE = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/;
+const DESCRIPTOR_RANGE_UNSPECIFIED = `unknown`;
 
 /**
  * Parses a `string` into a descriptor
@@ -388,7 +389,7 @@ const DESCRIPTOR_REGEX_LOOSE = /^(?:@([^/]+?)\/)?([^@/]+?)(?:@(.+))?$/;
  * Returns `null` if the descriptor cannot be parsed.
  *
  * @param string The descriptor string (eg. `lodash@^1.0.0`)
- * @param strict If `false`, the range is optional (`unknown` will be used as fallback)
+ * @param strict If `false`, the range is optional ({@link DESCRIPTOR_RANGE_UNSPECIFIED `unknown`} will be used as fallback)
  */
 export function tryParseDescriptor(string: string, strict: boolean = false): Descriptor | null {
   const match = strict
@@ -399,7 +400,7 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
     return null;
 
   const [, scope, name, range] = match;
-  if (range === `unknown`)
+  if (range === DESCRIPTOR_RANGE_UNSPECIFIED)
     throw new Error(`Invalid range (${string})`);
 
   const realScope = typeof scope !== `undefined`
@@ -408,7 +409,7 @@ export function tryParseDescriptor(string: string, strict: boolean = false): Des
 
   const realRange = typeof range !== `undefined`
     ? range
-    : `unknown`;
+    : DESCRIPTOR_RANGE_UNSPECIFIED;
 
   return makeDescriptor(makeIdent(realScope, name), realRange);
 }
@@ -886,6 +887,28 @@ export function prettyDependent(configuration: Configuration, locator: Locator, 
  */
 export function getIdentVendorPath(ident: Ident) {
   return `node_modules/${stringifyIdent(ident)}` as PortablePath;
+}
+
+/**
+ * Returns `true` in the following cases:
+ *
+ * - `range` === `'unknown'`
+ * - `pkg.version` is falsy
+ * - `pkg.version` satisfies the given `range`
+ *
+ * Returns `false` in any other case
+ *
+ * @remarks
+ *
+ * This function relies on the `range` param to be an actual {@link Descriptor.range range} or fall back to {@link DESCRIPTOR_RANGE_UNSPECIFIED `'unknown'`}.
+ *
+ * @see {@link parseDescriptor parseDescriptor's strict} parameter about {@link DESCRIPTOR_RANGE_UNSPECIFIED `'unknown'`}
+ */
+export function isPackageInRange(pkg: Package, range: Descriptor[`range`]) {
+  // console.log(`Checking if version is in range`, pkg.version, range);
+  if (range === DESCRIPTOR_RANGE_UNSPECIFIED || !pkg.version)
+    return true;
+  return semver.satisfies(pkg.version ?? ``, range);
 }
 
 /**

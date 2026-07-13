@@ -68,13 +68,16 @@ const registrySettings = {
   },
 } satisfies Record<string, SettingsDefinition>;
 
-const packageGateSettings = {
+const scopablePackageGateSettings = {
   npmMinimalAgeGate: {
     description: `Minimum age of a package version according to the publish date on the npm registry to be considered for installation`,
     type: SettingsType.DURATION,
     unit: DurationUnit.MINUTES,
-    default: `0m`,
+    default: `1d`,
   },
+} satisfies Record<string, SettingsDefinition>;
+
+const globalOnlyPackageGateSettings = {
   npmPreapprovedPackages: {
     description: `Array of package descriptors or package name glob patterns to exclude from the minimum release age check`,
     type: SettingsType.STRING,
@@ -103,6 +106,8 @@ declare module '@yarnpkg/core' {
 
       npmPublishRegistry: string | null;
       npmRegistryServer: string;
+
+      npmMinimalAgeGate: number;
     }>>;
     npmRegistries: Map<string, miscUtils.ToMapValue<{
       npmAlwaysAuth: boolean;
@@ -116,7 +121,8 @@ const plugin: Plugin = {
   configuration: {
     ...authSettings,
     ...registrySettings,
-    ...packageGateSettings,
+    ...scopablePackageGateSettings,
+    ...globalOnlyPackageGateSettings,
 
     npmScopes: {
       description: `Settings per package scope`,
@@ -127,6 +133,7 @@ const plugin: Plugin = {
         properties: {
           ...authSettings,
           ...registrySettings,
+          ...scopablePackageGateSettings,
         },
       },
     },

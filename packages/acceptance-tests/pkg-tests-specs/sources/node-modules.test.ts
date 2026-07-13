@@ -105,6 +105,7 @@ describe(`Node_Modules`, () => {
         },
       },
       {
+        enableScripts: true,
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
@@ -1760,6 +1761,7 @@ describe(`Node_Modules`, () => {
         },
       },
       {
+        enableScripts: true,
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
@@ -1990,6 +1992,7 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
+          `.package-map.json`,
           `.yarn-state.yml`,
           `native`,
           `native-foo-x64`,
