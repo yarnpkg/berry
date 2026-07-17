@@ -98,7 +98,7 @@
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "vsce": "^2.9.2"
   },
   "scripts": {

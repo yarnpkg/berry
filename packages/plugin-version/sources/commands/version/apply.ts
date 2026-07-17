@@ -1,9 +1,5 @@
-import {BaseCommand, WorkspaceRequiredError} from '@yarnpkg/cli';
-import {Cache, Configuration, MessageName}   from '@yarnpkg/core';
-import {Project, StreamReport}               from '@yarnpkg/core';
-import {Command, Option, Usage}              from 'clipanion';
-
-import * as versionUtils                     from '../../versionUtils';
+import {BaseCommand}            from '@yarnpkg/cli';
+import {Command, Option, Usage} from 'clipanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class VersionApplyCommand extends BaseCommand {
@@ -13,47 +9,44 @@ export default class VersionApplyCommand extends BaseCommand {
 
   static usage: Usage = Command.Usage({
     category: `Release-related commands`,
-    description: `apply all the deferred version bumps at once`,
+    description: `apply deferred records to workspaces`,
     details: `
-      This command will apply the deferred version changes and remove their definitions from the repository.
+      This command will apply the deferred version changes to workspaces. The applied records are removed from the project.
 
-      Note that if \`--prerelease\` is set, the given prerelease identifier (by default \`rc.%n\`) will be used on all new versions and the version definitions will be kept as-is.
-
-      By default only the current workspace will be bumped, but you can configure this behavior by using one of:
-
-      - \`--recursive\` to also apply the version bump on its dependencies
-      - \`--all\` to apply the version bump on all packages in the repository
-
-      Note that this command will also update the \`workspace:\` references across all your local workspaces, thus ensuring that they keep referring to the same workspaces even after the version bump.
+      For more information on the options, see the \`yarn version\` command. For more information on the deferred versioning workflow, see our documentation (https://yarnpkg.com/features/release-workflow#deferred-versioning).
     `,
     examples: [[
-      `Apply the version change to the local workspace`,
+      `Apply deferred records of current workspace`,
       `yarn version apply`,
     ], [
-      `Apply the version change to all the workspaces in the local workspace`,
+      `Apply deferred records of all the workspaces in the local workspace`,
       `yarn version apply --all`,
     ]],
   });
 
   all = Option.Boolean(`--all`, false, {
-    description: `Apply the deferred version changes on all workspaces`,
-  });
-
-  dryRun = Option.Boolean(`--dry-run`, false, {
-    description: `Print the versions without actually generating the package archive`,
-  });
-
-  prerelease = Option.String(`--prerelease`, {
-    description: `Add a prerelease identifier to new versions`,
-    tolerateBoolean: true,
-  });
-
-  exact = Option.Boolean(`--exact`, false, {
-    description: `Use the exact version of each package, removes any range. Useful for nightly releases where the range might match another version.`,
+    description: `Bump the version of all workspaces`,
   });
 
   recursive = Option.Boolean(`-R,--recursive`, {
-    description: `Release the transitive workspaces as well`,
+    description: `Bump the version of dependent workspaces as well`,
+  });
+
+  exact = Option.Boolean(`--exact`, false, {
+    description: `When updating parent workspaces' dependencies, use exact versions of bumped workspaces, removing any range.`,
+  });
+
+  prerelease = Option.String(`--prerelease`, {
+    description: `Specify a prerelease pattern to use when working with prerelease versions`,
+    tolerateBoolean: true,
+  });
+
+  dryRun = Option.Boolean(`--dry-run`, false, {
+    description: `Print version(s)/record(s) without actually bumping versions or recording deferred releases`,
+  });
+
+  force = Option.Boolean(`--force`, false, {
+    description: `Bypass check for bumping to a lower version than the current/deferred one`,
   });
 
   json = Option.Boolean(`--json`, false, {
@@ -61,76 +54,31 @@ export default class VersionApplyCommand extends BaseCommand {
   });
 
   async execute() {
-    const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
-    const {project, workspace} = await Project.find(configuration, this.context.cwd);
-    const cache = await Cache.find(configuration);
+    const args = [`version`, `decline`, `--immediate`];
 
-    if (!workspace)
-      throw new WorkspaceRequiredError(project.cwd, this.context.cwd);
+    if (this.all)
+      args.push(`--all`);
 
-    await project.restoreInstallState({
-      restoreResolutions: false,
-    });
+    if (this.recursive)
+      args.push(`--recursive`);
 
-    const applyReport = await StreamReport.start({
-      configuration,
-      json: this.json,
-      stdout: this.context.stdout,
-    }, async report => {
-      const prerelease = this.prerelease
-        ? typeof this.prerelease !== `boolean` ? this.prerelease : `rc.%n`
-        : null;
+    if (this.exact)
+      args.push(`--exact`);
 
-      const allReleases = await versionUtils.resolveVersionFiles(project, {prerelease});
-      let filteredReleases: typeof allReleases = new Map();
+    if (this.prerelease === true)
+      args.push(`--prerelease`);
+    else if (typeof this.prerelease === `string`)
+      args.push(`--prerelease=${this.prerelease}`);
 
-      if (this.all) {
-        filteredReleases = allReleases;
-      } else {
-        const relevantWorkspaces = this.recursive
-          ? workspace.getRecursiveWorkspaceDependencies()
-          : [workspace];
+    if (this.dryRun)
+      args.push(`--dry-run`);
 
-        for (const child of relevantWorkspaces) {
-          const release = allReleases.get(child);
-          if (typeof release !== `undefined`) {
-            filteredReleases.set(child, release);
-          }
-        }
-      }
+    if (this.force)
+      args.push(`--force`);
 
-      if (filteredReleases.size === 0) {
-        const protip = allReleases.size > 0
-          ? ` Did you want to add --all?`
-          : ``;
+    if (this.json)
+      args.push(`--json`);
 
-        report.reportWarning(MessageName.UNNAMED, `The current workspace doesn't seem to require a version bump.${protip}`);
-        return;
-      }
-
-      versionUtils.applyReleases(project, filteredReleases, {report, exact: this.exact});
-
-      if (!this.dryRun) {
-        if (!prerelease) {
-          if (this.all) {
-            await versionUtils.clearVersionFiles(project);
-          } else {
-            await versionUtils.updateVersionFiles(project, [...filteredReleases.keys()]);
-          }
-        }
-
-        report.reportSeparator();
-      }
-    });
-
-    if (this.dryRun || applyReport.hasErrors())
-      return applyReport.exitCode();
-
-    return await project.installWithNewReport({
-      json: this.json,
-      stdout: this.context.stdout,
-    }, {
-      cache,
-    });
+    return await this.cli.run(args);
   }
 }
