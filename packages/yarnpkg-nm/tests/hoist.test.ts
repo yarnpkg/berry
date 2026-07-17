@@ -666,4 +666,18 @@ describe(`hoist`, () => {
     };
     expect(getTreeHeight(hoist(toTree(tree), {check: true}))).toEqual(4);
   });
+
+  it(`should hoistingLimits when top level dependency matches a transitive dependency`, () => {
+    // . -> A -> B -> C
+    //   -> B -> C
+    // with hoistingLimits: dependencies, C should not be hoisted to the top
+    const tree = {
+      '.': {dependencies: [`A`, `B`]},
+      A: {dependencies: [`B`]},
+      B: {dependencies: [`C`]},
+    };
+    const hoistedTree = hoist(toTree(tree), {check: true, hoistingLimits: new Map([[`.@`, new Set([`A`, `B`])]])});
+    const C = Array.from(hoistedTree.dependencies).filter(x => x.name === `C`);
+    expect(C).toEqual([]);
+  });
 });
