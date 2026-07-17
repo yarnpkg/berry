@@ -1,4 +1,5 @@
 import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+import {yarn}                 from 'pkg-tests-core';
 
 describe(`Commands`, () => {
   describe(`up`, () => {
@@ -163,6 +164,80 @@ describe(`Commands`, () => {
         expect(stdout).not.toContain(`no-deps-scripted@npm:1.0.0 must be built because it never has been before`);
         expect(stdout).not.toContain(`STDOUT preinstall out`);
       }),
+    );
+
+    test(
+      `it should update the default catalog entry instead of rewriting catalog: references in package.json`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `catalog:`,
+          },
+        },
+        async ({path, run, source}) => {
+          await yarn.writeConfiguration(path, {
+            catalog: {
+              [`no-deps`]: `1.0.0`,
+            },
+          });
+
+          await run(`install`);
+          await run(`up`, `no-deps@2.0.0`);
+
+          // package.json should still reference the catalog protocol
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps`]: `catalog:`,
+            },
+          });
+
+          // .yarnrc.yml should have the updated version
+          await expect(yarn.readConfiguration(path)).resolves.toMatchObject({
+            catalog: {
+              [`no-deps`]: `2.0.0`,
+            },
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should update a named catalog entry instead of rewriting catalog:<name> references in package.json`,
+      makeTemporaryEnv(
+        {
+          dependencies: {
+            [`no-deps`]: `catalog:react18`,
+          },
+        },
+        async ({path, run, source}) => {
+          await yarn.writeConfiguration(path, {
+            catalogs: {
+              react18: {
+                [`no-deps`]: `1.0.0`,
+              },
+            },
+          });
+
+          await run(`install`);
+          await run(`up`, `no-deps@2.0.0`);
+
+          // package.json should still reference the named catalog protocol
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            dependencies: {
+              [`no-deps`]: `catalog:react18`,
+            },
+          });
+
+          // .yarnrc.yml should have the updated version in the named catalog
+          await expect(yarn.readConfiguration(path)).resolves.toMatchObject({
+            catalogs: {
+              react18: {
+                [`no-deps`]: `2.0.0`,
+              },
+            },
+          });
+        },
+      ),
     );
   });
 });
