@@ -1,0 +1,7 @@
+{
+  "name": "no-deps-requires-extensionless",
+  "version": "1.0.0",
+  "dependencies": {
+    "no-deps-extensionless": "1.0.0"
+  }
+}
