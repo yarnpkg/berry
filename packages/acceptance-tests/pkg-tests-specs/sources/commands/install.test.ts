@@ -972,6 +972,40 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should ignore cache misses from packages that are only needed during resolution when using \`--mode=update-lockfile\``,
+      makeTemporaryEnv({
+        dependencies: {
+          [`pkg`]: `file:./pkg.tgz`,
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run}) => {
+        const archivePath = await tests.getPackageArchivePath(`no-deps`, `1.0.0`);
+        await xfs.copyPromise(ppath.join(path, `pkg.tgz`), archivePath);
+
+        await run(`install`);
+
+        await xfs.writeJsonPromise(ppath.join(path, Filename.manifest), {
+          dependencies: {
+            [`pkg`]: `file:./pkg.tgz`,
+            [`no-deps`]: `2.0.0`,
+          },
+        });
+
+        const cacheBefore = await xfs.readdirPromise(ppath.join(path, `.yarn/cache`));
+        await xfs.removePromise(ppath.join(path, `.yarn/cache`, cacheBefore.find(entry => entry.includes(`pkg-file`))!));
+
+        await expect(tests.startRegistryRecording(async () => {
+          await run(`install`, `--mode=update-lockfile`);
+        })).resolves.toEqual([{
+          type: `packageTarball`,
+          scope: undefined,
+          localName: `no-deps`,
+          version: `2.0.0`,
+        }]);
+      }),
+    );
+
+    test(
       `it should disable immutable installs when using \`--mode=update-lockfile\``,
       makeTemporaryEnv({
         dependencies: {
