@@ -123,7 +123,7 @@ export class NpmSemverResolver implements Resolver {
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    const results = miscUtils.mapAndFilter(locators, locator => {
+    const candidates = miscUtils.mapAndFilter(locators, locator => {
       if (locator.identHash !== descriptor.identHash)
         return miscUtils.mapAndFilter.skip;
 
@@ -131,14 +131,18 @@ export class NpmSemverResolver implements Resolver {
       if (!parsedRange)
         return miscUtils.mapAndFilter.skip;
 
-      const version = new semverUtils.SemVer(parsedRange.selector);
-      if (!range.test(version))
-        return miscUtils.mapAndFilter.skip;
-
-      return {locator, version};
+      return {locator, version: new semverUtils.SemVer(parsedRange.selector)};
     });
 
-    const sortedResults = results
+    // Route the candidate selection through the same helper as `getCandidates`
+    // so the `*`-only-prerelease case (see issue #6469) resolves consistently
+    // here, which is what `yarn install --check-resolutions` relies on.
+    const matchingVersions = new Set(
+      selectMatchingVersions(range, candidates.map(({version}) => version.raw)).map(version => version.raw),
+    );
+
+    const sortedResults = candidates
+      .filter(({version}) => matchingVersions.has(version.raw))
       .sort((a, b) => -a.version.compare(b.version))
       .map(({locator}) => locator);
 
