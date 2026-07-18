@@ -218,6 +218,7 @@ jobs:
     - id: versions
       shell: bash
       run: >
+        # Get the latest and LTS major versions that we support
         echo -n 'versions='
         >> $GITHUB_OUTPUT
 
@@ -225,36 +226,47 @@ jobs:
         jq -c '[.[0:1] + map(select(.lts)) | .[].version | capture("^v(?<major>\\d+)") | .major | tonumber] | unique | map(select(. >= 18))'
         >> $GITHUB_OUTPUT
 
+        # Get the latest nightly version that runs on both macOS and Windows
+        echo -n 'nightly='
+        >> $GITHUB_OUTPUT
+
+        curl https://nodejs.org/download/nightly/index.json |
+        jq -r 'map(select([("osx-arm64-tar", "win-x64-exe") as $FILE | .files | any(. == $FILE)] | all)) | first | .version'
+        >> $GITHUB_OUTPUT
+
+        # Show output in logs
+        cat $GITHUB_OUTPUT
+
   acceptance:
     strategy:
       fail-fast: false
       matrix:
         # We run the ubuntu tests on multiple Node versions with 2 shards since they're the fastest.
         node: ${{ fromJson(needs.node-versions.outputs.versions) }}
-        platform: [[ubuntu, 22.04]]
+        platform: [ubuntu-22.04]
         shard: ['1/2', '2/2']
         include:
           # We run the rest of the tests on the minimum Node version we support with 3 shards.
           # Windows tests
-          - {node: 18, platform: [windows, latest], shard: 1/3}
-          - {node: 18, platform: [windows, latest], shard: 2/3}
-          - {node: 18, platform: [windows, latest], shard: 3/3}
+          - {node: 18, platform: windows-latest, shard: 1/3}
+          - {node: 18, platform: windows-latest, shard: 2/3}
+          - {node: 18, platform: windows-latest, shard: 3/3}
           # macOS tests
-          - {node: 18, platform: [macos, latest], shard: 1/3}
-          - {node: 18, platform: [macos, latest], shard: 2/3}
-          - {node: 18, platform: [macos, latest], shard: 3/3}
+          - {node: 18, platform: macos-latest, shard: 1/3}
+          - {node: 18, platform: macos-latest, shard: 2/3}
+          - {node: 18, platform: macos-latest, shard: 3/3}
           # We also run them on the maximum Node version we support, to catch potential regressions in Node.js.
           # Windows tests
-          - {node: 27-nightly, platform: [windows, latest], shard: 1/3}
-          - {node: 27-nightly, platform: [windows, latest], shard: 2/3}
-          - {node: 27-nightly, platform: [windows, latest], shard: 3/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 1/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 2/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 3/3}
           # macOS tests
-          - {node: 27-nightly, platform: [macos, latest], shard: 1/3}
-          - {node: 27-nightly, platform: [macos, latest], shard: 2/3}
-          - {node: 27-nightly, platform: [macos, latest], shard: 3/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 1/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 2/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 3/3}
 
-    name: '${{matrix.platform[0]}}-latest w/ Node.js ${{matrix.node}}.x (${{matrix.shard}})'
-    runs-on: ${{matrix.platform[0]}}-${{matrix.platform[1]}}
+    name: '${{matrix.platform}} w/ Node.js ${{matrix.node}} (${{matrix.shard}})'
+    runs-on: ${{matrix.platform}}
     needs: [build, node-versions]
 
     # Permission required to produce a valid provenance statement during the tests
@@ -327,3 +339,18 @@ jobs:
       shell: bash
       if: |
         success() || failure()
+
+  test-results:
+    name: 'Acceptance test results'
+    runs-on: ubuntu-latest
+    needs: acceptance
+    if: github.event_name == "pull_request" || github.event_name == "merge_group"
+    steps:
+    - id: test-results
+      shell: bash
+      run: >
+        if [[ "${{ needs.acceptance.result }}" != "success" ]]; then
+          exit 1
+        elif [[ "${{ needs.big-endian.result }}" != "success" && "${{ needs.big-endian.result }}" != "skipped" ]]; then
+          exit 1
+        fi
