@@ -213,6 +213,7 @@ jobs:
     name: 'Acceptance test node versions'
     outputs:
       versions: ${{ steps.versions.outputs.versions }}
+      nightly: ${{ steps.versions.outputs.nightly }}
     runs-on: ubuntu-latest
     steps:
     - id: versions
