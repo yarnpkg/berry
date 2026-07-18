@@ -343,8 +343,8 @@ jobs:
   test-results:
     name: 'Acceptance test results'
     runs-on: ubuntu-latest
-    needs: acceptance
-    if: github.event_name == "pull_request" || github.event_name == "merge_group"
+    needs: [acceptance, big-endian]
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
     steps:
     - id: test-results
       shell: bash
