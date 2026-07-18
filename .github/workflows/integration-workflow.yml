@@ -348,7 +348,7 @@ jobs:
     name: 'Acceptance test results'
     runs-on: ubuntu-latest
     needs: [acceptance, big-endian]
-    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    if: "!cancelled() && (github.event_name == 'pull_request' || github.event_name == 'merge_group')"
     steps:
     - id: test-results
       shell: bash
