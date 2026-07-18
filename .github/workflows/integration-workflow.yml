@@ -219,6 +219,7 @@ jobs:
       shell: bash
       run: >
         # Get the latest and LTS major versions that we support
+
         echo -n 'versions='
         >> $GITHUB_OUTPUT
 
@@ -227,6 +228,7 @@ jobs:
         >> $GITHUB_OUTPUT
 
         # Get the latest nightly version that runs on both macOS and Windows
+
         echo -n 'nightly='
         >> $GITHUB_OUTPUT
 
@@ -235,6 +237,7 @@ jobs:
         >> $GITHUB_OUTPUT
 
         # Show output in logs
+
         cat $GITHUB_OUTPUT
 
   acceptance:
