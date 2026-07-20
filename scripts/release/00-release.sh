@@ -10,5 +10,5 @@ if ! [[ -z $(git status --porcelain) ]]; then
   exit 1
 fi
 
-"$THIS_DIR"/release-tags.sh
-"$THIS_DIR"/release-builds.sh
+"$THIS_DIR"/01-release-tags.sh
+"$THIS_DIR"/02-release-builds.sh
