@@ -29,6 +29,89 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should report a warning when a workspace peer dependency is satisfied by the requester's dev dependency`,
+      makeTemporaryMonorepoEnv({
+        workspaces: [`packages/*`],
+      }, {
+        [`packages/a`]: {
+          name: `a`,
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        },
+        [`packages/b`]: {
+          name: `b`,
+          dependencies: {
+            [`a`]: `workspace:^`,
+          },
+        },
+      }, async ({run}) => {
+        const {stdout} = await run(`install`);
+
+        expect(stdout).toContain(`YN0093`);
+        expect(stdout).toContain(`a uses a devDependency fallback that won't be available in production contexts`);
+      }),
+    );
+
+    test(
+      `it should report a warning when a workspace peer dependency is satisfied by the root workspace's dev dependency`,
+      makeTemporaryMonorepoEnv({
+        name: `root`,
+        workspaces: [`packages/*`],
+        dependencies: {
+          [`a`]: `workspace:^`,
+        },
+        devDependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, {
+        [`packages/a`]: {
+          name: `a`,
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        },
+      }, async ({run}) => {
+        const {stdout} = await run(`install`);
+
+        expect(stdout).toContain(`YN0093`);
+        expect(stdout).toContain(`only as a dev-dependency to a`);
+      }),
+    );
+
+    test(
+      `it should report a warning when a workspace peer dependency is satisfied by the parent's dev dependency`,
+      makeTemporaryMonorepoEnv({
+        workspaces: [`packages/*`],
+      }, {
+        [`packages/a`]: {
+          name: `a`,
+          peerDependencies: {
+            [`no-deps`]: `*`,
+          },
+        },
+        [`packages/b`]: {
+          name: `b`,
+          dependencies: {
+            [`a`]: `workspace:^`,
+          },
+          devDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        },
+      }, async ({run}) => {
+        const {stdout} = await run(`install`);
+
+        expect(stdout).toContain(`YN0093`);
+        expect(stdout).toContain(`b provides no-deps`);
+        expect(stdout).toContain(`only as a dev-dependency to a`);
+      }),
+    );
+
+    test(
       `it should report collapsed a peer dependency warning when a direct peerDependency request is mismatched`,
       makeTemporaryEnv(
         {
