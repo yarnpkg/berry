@@ -15,7 +15,8 @@
     "build:libzip:wasm": "cd ./artifacts && ./build.sh",
     "postpack": "rm -rf lib",
     "prepack": "run build:compile \"$(pwd)\"",
-    "release": "yarn npm publish"
+    "release": "yarn npm publish",
+    "test": "run test:unit \"$(pwd)\""
   },
   "publishConfig": {
     "main": "./lib/sync.js",
