@@ -1012,4 +1012,21 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       fastify: `^4.0.0`,
     },
   }],
+  // https://github.com/vuejs/devtools/pull/1097
+  [`vite-plugin-vue-devtools@>=7.4.3`, {
+    peerDependencies: {
+      vue: `*`,
+    },
+  }],
+  // https://github.com/parcel-bundler/parcel/pull/10342
+  [`@parcel/resolver-default@>=2`, {
+    peerDependencies: {
+      "@parcel/core": `*`,
+    },
+  }],
+  [`@parcel/node-resolver-core@>=2`, {
+    peerDependencies: {
+      "@parcel/core": `*`,
+    },
+  }],
 ];
