@@ -27,6 +27,16 @@ export type ProcessImplementation = (
 
 const activeChildren = new Set<ChildProcess>();
 
+const PIPE_STDIN = Symbol(`PIPE_STDIN`);
+
+type PipeStdin = Readable & {
+  [PIPE_STDIN]?: boolean;
+};
+
+export function isPipeStdin(stream: Readable) {
+  return (stream as PipeStdin)[PIPE_STDIN] === true;
+}
+
 function sigintHandler() {
   // We don't want SIGINT to kill our process; we want it to kill the
   // innermost process, whose end will cause our own to exit.
@@ -36,6 +46,22 @@ function sigtermHandler() {
   for (const child of activeChildren) {
     child.kill();
   }
+}
+
+function bindChildOutput(child: ChildProcess, source: Readable, target: Transform) {
+  const closeSource = () => {
+    source.destroy();
+  };
+
+  const cleanup = () => {
+    target.off(`close`, closeSource);
+    target.off(`error`, closeSource);
+  };
+
+  target.on(`close`, closeSource);
+  target.on(`error`, closeSource);
+  child.on(`close`, cleanup);
+  child.on(`error`, cleanup);
 }
 
 export function makeProcess(name: string, args: Array<string>, opts: ShellOptions, spawnOpts: any): ProcessImplementation {
@@ -67,10 +93,14 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
 
     if (stdio[0] instanceof Transform)
       stdio[0].pipe(child.stdin!);
-    if (stdio[1] instanceof Transform)
+    if (stdio[1] instanceof Transform) {
       child.stdout!.pipe(stdio[1], {end: false});
-    if (stdio[2] instanceof Transform)
+      bindChildOutput(child, child.stdout!, stdio[1]);
+    }
+    if (stdio[2] instanceof Transform) {
       child.stderr!.pipe(stdio[2], {end: false});
+      bindChildOutput(child, child.stderr!, stdio[2]);
+    }
 
     return {
       stdin: child.stdin!,
@@ -121,9 +151,13 @@ export function makeProcess(name: string, args: Array<string>, opts: ShellOption
 
 export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImplementation {
   return (stdio: Stdio) => {
-    const stdin = stdio[0] === `pipe`
+    const hasPipeStdin = stdio[0] === `pipe`;
+    const stdin = hasPipeStdin
       ? new PassThrough()
       : stdio[0];
+
+    if (hasPipeStdin)
+      (stdin as PipeStdin)[PIPE_STDIN] = true;
 
     return {
       stdin,
@@ -131,7 +165,11 @@ export function makeBuiltin(builtin: (opts: any) => Promise<number>): ProcessImp
         stdin,
         stdout: stdio[1],
         stderr: stdio[2],
-      })),
+      })).finally(() => {
+        if (hasPipeStdin) {
+          stdin.destroy();
+        }
+      }),
     };
   };
 }

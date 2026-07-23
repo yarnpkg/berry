@@ -9,7 +9,7 @@ import {setTimeout}                                                             
 import EntryCommand                                                                                         from './commands/entry';
 import {ShellError}                                                                                         from './errors';
 import * as globUtils                                                                                       from './globUtils';
-import {createOutputStreamsWithPrefix, makeBuiltin, makeProcess}                                            from './pipe';
+import {createOutputStreamsWithPrefix, isPipeStdin, makeBuiltin, makeProcess}                               from './pipe';
 import {Handle, ProcessImplementation, ProtectedStream, Stdio, start, Pipe}                                 from './pipe';
 
 export {EntryCommand};
@@ -54,6 +54,7 @@ export type ShellState = {
   stdin: Readable;
   stdout: Writable;
   stderr: Writable;
+  closeStdinOnRedirectionOnly: boolean;
   variables: {[key: string]: string};
   nextBackgroundJobIndex: number;
   backgroundJobs: Array<Promise<unknown>>;
@@ -64,39 +65,68 @@ enum StreamType {
   Writable = 0b10,
 }
 
-function getFileDescriptorStream(fd: number, type: StreamType, state: ShellState) {
+function isWritableClosed(stream: Writable) {
+  return stream.destroyed || (stream as Writable & {closed?: boolean}).closed === true;
+}
+
+function throwBadFileDescriptor(fd: number): never {
+  throw new ShellError(`Bad file descriptor: "${fd}"`);
+}
+
+function getFileDescriptorStream(fd: number, type: StreamType, state: ShellState, {endReadable = false}: {endReadable?: boolean} = {}) {
   const stream = new PassThrough({autoDestroy: true});
+  const pipeToWritable = (target: Writable) => {
+    const onTargetClose = () => {
+      stream.destroy();
+    };
+    const onTargetError = (error: Error) => {
+      stream.destroy(error);
+    };
+
+    target.on(`close`, onTargetClose);
+    target.on(`error`, onTargetError);
+    stream.on(`close`, () => {
+      target.off(`close`, onTargetClose);
+      target.off(`error`, onTargetError);
+    });
+
+    if (isWritableClosed(target)) {
+      stream.destroy();
+    } else {
+      stream.pipe(target, {end: false});
+    }
+  };
 
   switch (fd) {
     case Pipe.STDIN: {
       if ((type & StreamType.Readable) === StreamType.Readable)
-        state.stdin.pipe(stream, {end: false});
+        state.stdin.pipe(stream, {end: endReadable});
 
-      if ((type & StreamType.Writable) === StreamType.Writable && state.stdin instanceof Writable) {
-        stream.pipe(state.stdin, {end: false});
+      if ((type & StreamType.Writable) === StreamType.Writable) {
+        throwBadFileDescriptor(fd);
       }
     } break;
 
     case Pipe.STDOUT: {
       if ((type & StreamType.Readable) === StreamType.Readable)
-        state.stdout.pipe(stream, {end: false});
+        throwBadFileDescriptor(fd);
 
       if ((type & StreamType.Writable) === StreamType.Writable) {
-        stream.pipe(state.stdout, {end: false});
+        pipeToWritable(state.stdout);
       }
     } break;
 
     case Pipe.STDERR: {
       if ((type & StreamType.Readable) === StreamType.Readable)
-        state.stderr.pipe(stream, {end: false});
+        throwBadFileDescriptor(fd);
 
       if ((type & StreamType.Writable) === StreamType.Writable) {
-        stream.pipe(state.stderr, {end: false});
+        pipeToWritable(state.stderr);
       }
     } break;
 
     default: {
-      throw new ShellError(`Bad file descriptor: "${fd}"`);
+      throwBadFileDescriptor(fd);
     }
   }
 
@@ -138,6 +168,10 @@ const BUILTINS = new Map<string, ShellBuiltin>([
   }],
 
   [`true`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
+    return 0;
+  }],
+
+  [`__ysh_validate_redirects`, async (args: Array<string>, opts: ShellOptions, state: ShellState) => {
     return 0;
   }],
 
@@ -193,8 +227,172 @@ const BUILTINS = new Map<string, ShellBuiltin>([
     let stderr = state.stderr;
 
     const inputs: Array<() => Readable> = [];
+    const validateInputs: Array<() => Promise<void>> = [];
     const outputs: Array<Writable> = [];
     const errors: Array<Writable> = [];
+    let endReadableFdStreams = false;
+    let readsFromStdinFd = false;
+
+    const makeCloseTargets = (stream: Writable, targets: Array<Writable>) => {
+      if (targets.length === 0)
+        return async () => {};
+
+      const absorbStreamError = () => {};
+      stream.on(`error`, absorbStreamError);
+
+      const closePromises = targets.map(target => {
+        return new Promise<void>((resolve, reject) => {
+          let settled = false;
+
+          const cleanup = () => {
+            target.off(`error`, onError);
+            target.off(`close`, onClose);
+          };
+
+          const settle = (next: () => void) => {
+            if (settled)
+              return;
+
+            settled = true;
+            cleanup();
+            next();
+          };
+
+          const onError = (error: Error) => {
+            if (!stream.destroyed)
+              stream.destroy(error);
+
+            settle(() => {
+              reject(error);
+            });
+          };
+
+          const onClose = () => {
+            settle(() => {
+              resolve();
+            });
+          };
+
+          if (isWritableClosed(target)) {
+            settle(() => {
+              resolve();
+            });
+          } else {
+            target.on(`error`, onError);
+            target.on(`close`, onClose);
+          }
+        });
+      });
+      closePromises.forEach(closePromise => {
+        closePromise.catch(() => {});
+      });
+
+      return async () => {
+        if (!stream.destroyed)
+          stream.end();
+
+        try {
+          await Promise.all(closePromises);
+        } finally {
+          stream.off(`error`, absorbStreamError);
+        }
+      };
+    };
+
+    const copyStream = async (source: Readable, target: Writable) => {
+      const isSinkClosedError = (error: Error) => {
+        return [`EPIPE`, `ERR_STREAM_DESTROYED`, `ERR_STREAM_WRITE_AFTER_END`].includes(
+          (error as NodeJS.ErrnoException).code ?? ``,
+        );
+      };
+
+      const writeChunk = async (chunk: Buffer | string) => {
+        return await new Promise<boolean>((resolve, reject) => {
+          let settled = false;
+
+          const silenceFutureSinkClosedErrors = () => {
+            target.on(`error`, error => {
+              if (!isSinkClosedError(error)) {
+                throw error;
+              }
+            });
+          };
+
+          const cleanup = () => {
+            target.off(`error`, onError);
+            target.off(`close`, onClose);
+          };
+
+          const settle = (next: () => void) => {
+            if (settled)
+              return;
+
+            settled = true;
+            cleanup();
+            next();
+          };
+
+          const onError = (error: Error) => {
+            if (isSinkClosedError(error)) {
+              silenceFutureSinkClosedErrors();
+              settle(() => {
+                resolve(false);
+              });
+            } else {
+              settle(() => {
+                reject(error);
+              });
+            }
+          };
+
+          const onClose = () => {
+            settle(() => {
+              resolve(false);
+            });
+          };
+
+          target.on(`error`, onError);
+          target.on(`close`, onClose);
+
+          try {
+            target.write(chunk, error => {
+              if (typeof error === `undefined` || error === null) {
+                settle(() => {
+                  resolve(true);
+                });
+              } else if (isSinkClosedError(error)) {
+                silenceFutureSinkClosedErrors();
+                settle(() => {
+                  resolve(false);
+                });
+              } else {
+                settle(() => {
+                  reject(error);
+                });
+              }
+            });
+          } catch (error) {
+            if (error instanceof Error && isSinkClosedError(error)) {
+              silenceFutureSinkClosedErrors();
+              settle(() => {
+                resolve(false);
+              });
+            } else {
+              settle(() => {
+                reject(error);
+              });
+            }
+          }
+        });
+      };
+
+      for await (const chunk of source) {
+        if (!await writeChunk(chunk)) {
+          source.destroy();
+          return;
+        }
+      }
+    };
 
     let t = 0;
 
@@ -236,8 +434,13 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       for (let u = t; u < last; ++t, ++u) {
         switch (type) {
           case `<`: {
+            const inputPath = ppath.resolve(state.cwd, npath.toPortablePath(args[u]));
             pushInput(() => {
-              return opts.baseFs.createReadStream(ppath.resolve(state.cwd, npath.toPortablePath(args[u])));
+              return opts.baseFs.createReadStream(inputPath);
+            });
+            validateInputs.push(async () => {
+              const fd = await opts.baseFs.openPromise(inputPath, `r`);
+              await opts.baseFs.closePromise(fd);
             });
           } break;
           case `<<<`: {
@@ -251,7 +454,14 @@ const BUILTINS = new Map<string, ShellBuiltin>([
             });
           } break;
           case `<&`: {
-            pushInput(() => getFileDescriptorStream(Number(args[u]), StreamType.Readable, state));
+            const fd = Number(args[u]);
+            readsFromStdinFd ||= fd === Pipe.STDIN;
+            pushInput(() => getFileDescriptorStream(fd, StreamType.Readable, state, {endReadable: endReadableFdStreams}));
+            validateInputs.push(async () => {
+              if (fd !== Pipe.STDIN) {
+                throwBadFileDescriptor(fd);
+              }
+            });
           } break;
 
           case `>`:
@@ -282,7 +492,11 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       }
     }
 
-    if (inputs.length > 0) {
+    const commandArgs = args.slice(t + 1);
+    const validatesOnly = commandArgs.length === 1 && commandArgs[0] === `__ysh_validate_redirects`;
+    endReadableFdStreams = commandArgs.length === 0;
+
+    if (inputs.length > 0 && !validatesOnly) {
       const pipe = new PassThrough();
       stdin = pipe;
 
@@ -292,6 +506,9 @@ const BUILTINS = new Map<string, ShellBuiltin>([
         } else {
           const input = inputs[n]();
           input.pipe(pipe, {end: false});
+          input.on(`error`, error => {
+            pipe.destroy(error);
+          });
           input.on(`end`, () => {
             bindInput(n + 1);
           });
@@ -319,39 +536,62 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       }
     }
 
-    const exitCode = await start(makeCommandAction(args.slice(t + 1), opts, state), {
-      stdin: new ProtectedStream<Readable>(stdin),
-      stdout: new ProtectedStream<Writable>(stdout),
-      stderr: new ProtectedStream<Writable>(stderr),
-    }).run();
+    const closeStdoutTargets = makeCloseTargets(stdout, outputs);
+    const closeStderrTargets = makeCloseTargets(stderr, errors);
 
-    // Close all the outputs (since the shell never closes the output stream)
-    await Promise.all(outputs.map(output => {
-      // Wait until the output got flushed to the disk
-      return new Promise<void>((resolve, reject) => {
-        output.on(`error`, error => {
-          reject(error);
-        });
-        output.on(`close`, () => {
-          resolve();
-        });
-        output.end();
-      });
-    }));
+    const closeTargets = async () => {
+      let firstError: unknown = null;
 
-    // Close all the errors (since the shell never closes the error stream)
-    await Promise.all(errors.map(err => {
-      // Wait until the error got flushed to the disk
-      return new Promise<void>((resolve, reject) => {
-        err.on(`error`, error => {
-          reject(error);
-        });
-        err.on(`close`, () => {
-          resolve();
-        });
-        err.end();
-      });
-    }));
+      for (const closeTarget of [closeStdoutTargets, closeStderrTargets]) {
+        try {
+          await closeTarget();
+        } catch (error) {
+          firstError ??= error;
+        }
+      }
+
+      if (firstError !== null) {
+        throw firstError;
+      }
+    };
+
+    const closeUnusedStdin = () => {
+      if (state.closeStdinOnRedirectionOnly && !readsFromStdinFd && isPipeStdin(state.stdin)) {
+        state.stdin.destroy();
+      }
+    };
+
+    const validateInputRedirections = async () => {
+      for (const validateInput of validateInputs) {
+        await validateInput();
+      }
+    };
+
+    let exitCode = 0;
+    try {
+      if (commandArgs.length === 0) {
+        closeUnusedStdin();
+
+        if (inputs.length > 0) {
+          await copyStream(stdin, stdout);
+        }
+      } else {
+        if (validatesOnly)
+          await validateInputRedirections();
+
+        exitCode = await start(makeCommandAction(
+          commandArgs,
+          opts,
+          state,
+        ), {
+          stdin: new ProtectedStream<Readable>(stdin),
+          stdout: new ProtectedStream<Writable>(stdout),
+          stderr: new ProtectedStream<Writable>(stderr),
+        }).run();
+      }
+    } finally {
+      await closeTargets();
+    }
 
     return exitCode;
   }],
@@ -685,21 +925,99 @@ function makeCommandAction(args: Array<string>, opts: ShellOptions, state: Shell
   });
 }
 
+function isRedirectionOnlyCommand(args: Array<string>) {
+  if (args[0] !== `__ysh_set_redirects`)
+    return false;
+
+  let separatorIndex = 1;
+  while (separatorIndex < args.length && args[separatorIndex] !== `--`) {
+    const count = Number(args[separatorIndex + 1]);
+    if (!Number.isInteger(count) || count < 0)
+      return false;
+
+    separatorIndex += 2 + count;
+  }
+
+  return args[separatorIndex] === `--` && separatorIndex === args.length - 1;
+}
+
+function persistEnvironmentAfterSuccess(action: ProcessImplementation, activeState: ShellState, environment: {[key: string]: string}) {
+  return (stdio: Stdio) => {
+    const handle = action(stdio);
+
+    return {
+      stdin: handle.stdin,
+      promise: handle.promise.then(exitCode => {
+        activeState.environment = {...activeState.environment, ...environment};
+        return exitCode;
+      }),
+    };
+  };
+}
+
 function makeSubshellAction(ast: ShellLine, opts: ShellOptions, state: ShellState) {
   return (stdio: Stdio) => {
-    const stdin = new PassThrough();
-    const promise = executeShellLine(ast, opts, cloneState(state, {stdin}));
+    const pipedStdin = stdio[0] === `pipe`
+      ? new PassThrough()
+      : null;
+    const stdin = pipedStdin ?? (stdio[0] instanceof Readable ? stdio[0] : state.stdin);
+    const stdout = stdio[1] instanceof Writable ? stdio[1] : state.stdout;
+    const stderr = stdio[2] instanceof Writable ? stdio[2] : state.stderr;
+    const returnedStdin = pipedStdin ?? new PassThrough();
+    if (pipedStdin === null)
+      returnedStdin.end();
 
-    return {stdin, promise};
+    const promise = executeShellLine(ast, opts, cloneState(state, {
+      stdin,
+      stdout,
+      stderr,
+      closeStdinOnRedirectionOnly: false,
+    })).finally(() => {
+      if (pipedStdin !== null) {
+        pipedStdin.destroy();
+      } else if (state.closeStdinOnRedirectionOnly && isPipeStdin(stdin)) {
+        stdin.destroy();
+      }
+    });
+
+    return {stdin: returnedStdin, promise};
   };
 }
 
 function makeGroupAction(ast: ShellLine, opts: ShellOptions, state: ShellState) {
   return (stdio: Stdio) => {
-    const stdin = new PassThrough();
-    const promise = executeShellLine(ast, opts, state);
+    const pipedStdin = stdio[0] === `pipe`
+      ? new PassThrough()
+      : null;
+    const stdin = pipedStdin ?? (stdio[0] instanceof Readable ? stdio[0] : state.stdin);
+    const stdout = stdio[1] instanceof Writable ? stdio[1] : state.stdout;
+    const stderr = stdio[2] instanceof Writable ? stdio[2] : state.stderr;
+    const returnedStdin = pipedStdin ?? new PassThrough();
+    if (pipedStdin === null)
+      returnedStdin.end();
 
-    return {stdin, promise};
+    const previousStdin = state.stdin;
+    const previousStdout = state.stdout;
+    const previousStderr = state.stderr;
+    const previousCloseStdinOnRedirectionOnly = state.closeStdinOnRedirectionOnly;
+    state.stdin = stdin;
+    state.stdout = stdout;
+    state.stderr = stderr;
+    state.closeStdinOnRedirectionOnly = false;
+    const promise = executeShellLine(ast, opts, state).finally(() => {
+      state.stdin = previousStdin;
+      state.stdout = previousStdout;
+      state.stderr = previousStderr;
+      state.closeStdinOnRedirectionOnly = previousCloseStdinOnRedirectionOnly;
+
+      if (pipedStdin !== null) {
+        pipedStdin.destroy();
+      } else if (previousCloseStdinOnRedirectionOnly && isPipeStdin(stdin)) {
+        stdin.destroy();
+      }
+    });
+
+    return {stdin: returnedStdin, promise};
   };
 }
 
@@ -736,11 +1054,18 @@ async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, s
     switch (current.type) {
       case `command`: {
         const args = await interpolateArguments(current.args, opts, state);
-        const environment = await applyEnvVariables(current.envs, opts, state);
 
-        action = current.envs.length
-          ? makeCommandAction(args, opts, cloneState(activeState, {environment}))
-          : makeCommandAction(args, opts, activeState);
+        if (current.envs.length) {
+          const environment = await applyEnvVariables(current.envs, opts, state);
+
+          if (isRedirectionOnlyCommand(args)) {
+            action = persistEnvironmentAfterSuccess(makeCommandAction([...args, `__ysh_validate_redirects`], opts, activeState), activeState, environment);
+          } else {
+            action = makeCommandAction(args, opts, cloneState(activeState, {environment}));
+          }
+        } else {
+          action = makeCommandAction(args, opts, activeState);
+        }
       } break;
 
       case `subshell`: {
@@ -1080,6 +1405,7 @@ export async function execute(command: string, args: Array<string> = [], {
     stdin,
     stdout,
     stderr,
+    closeStdinOnRedirectionOnly: true,
     variables: Object.assign({}, variables, {
       [`?`]: 0,
     }),
