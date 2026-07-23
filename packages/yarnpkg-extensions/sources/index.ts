@@ -1012,4 +1012,16 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       fastify: `^4.0.0`,
     },
   }],
+  // https://github.com/ATQQ/sugar-blog/issues/429
+  [`vitepress-plugin-pagefind@*`, {
+    peerDependencies: {
+      vue: `^3.0.0`,
+    },
+  }],
+  // https://github.com/xiaoluoboding/vue-command-palette/issues/29
+  [`vue-command-palette@*`, {
+    peerDependencies: {
+      vue: `^3.0.0`,
+    },
+  }],
 ];
