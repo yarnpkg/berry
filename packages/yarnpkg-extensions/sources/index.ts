@@ -1027,6 +1027,8 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`@parcel/node-resolver-core@>=2`, {
     peerDependencies: {
       "@parcel/core": `*`,
+    },
+  }],
   // https://github.com/volarjs/volar.js/issues/284
   [`@volar/typescript@*`, {
     peerDependencies: {
