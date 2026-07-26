@@ -525,7 +525,7 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
     }, async report => {
       report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
 
-      if (!process.env.YARN_IS_TEST_ENV) {
+      if (!process.env.YARN_IS_TEST_ENV && process.stdin.isTTY) {
         const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
         if (autoOpen && nodeUtils.openUrl) {
           const {openNow} = await prompt<{openNow: boolean}>({
@@ -552,6 +552,9 @@ async function askForOtp(error: any, {configuration}: {configuration: Configurat
 
   if (process.env.YARN_IS_TEST_ENV)
     return process.env.YARN_INJECT_NPM_2FA_TOKEN || ``;
+
+  if (!process.stdin.isTTY)
+    throw new ReportError(MessageName.AUTHENTICATION_NOT_FOUND, `The registry requires additional authentication, but Yarn is not running in an interactive terminal`);
 
   const {otp} = await prompt<{otp: string}>({
     type: `password`,
