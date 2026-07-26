@@ -147,7 +147,7 @@ const buildPackageMapFromDependencyFilter = (nodeModulesTree: NodeModulesTree, {
       const packageLocations = packageLocationsByNodeModulesPath.get(nodeModulesPath);
 
       if (typeof packageLocations !== `undefined`) {
-        for (const [dependencyName, dependencyLocation] of Array.from(packageLocations).sort(([a], [b]) => compareStrings(a, b))) {
+        for (const [dependencyName, dependencyLocation] of packageLocations) {
           if (dependencyNames !== null && !dependencyNames.has(dependencyName))
             continue;
 
