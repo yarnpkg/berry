@@ -1027,6 +1027,49 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
   [`@parcel/node-resolver-core@>=2`, {
     peerDependencies: {
       "@parcel/core": `*`,
+  // https://github.com/volarjs/volar.js/issues/284
+  [`@volar/typescript@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/volar.js/issues/284
+  [`@volar/language-server@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/volar.js/issues/284
+  [`@volar/language-service@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/services/issues/125
+  [`volar-service-typescript@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/services/issues/125
+  [`volar-service-typescript-twoslash-queries@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
     },
   }],
 ];
