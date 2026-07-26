@@ -144,5 +144,52 @@ describe(`Protocols`, () => {
         },
       ),
     );
+
+    test(
+      `it should resolve a "*" range to a prerelease when the package only has prereleases`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`prerelease-only`]: `*`},
+        },
+        async ({run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('prerelease-only')`)).resolves.toMatchObject({
+            name: `prerelease-only`,
+            version: `1.0.0-rc.2`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should resolve a "*" range to the stable version when the package has one`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`no-deps-tags`]: `*`},
+        },
+        async ({run, source}) => {
+          await run(`install`);
+
+          await expect(source(`require('no-deps-tags')`)).resolves.toMatchObject({
+            name: `no-deps-tags`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should pass --check-resolutions for a "*" range that only has prereleases`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`prerelease-only`]: `*`},
+        },
+        async ({run}) => {
+          await run(`install`);
+          await run(`install`, `--check-resolutions`);
+        },
+      ),
+    );
   });
 });
