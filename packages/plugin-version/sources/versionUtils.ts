@@ -6,6 +6,12 @@ import {UsageError}                                                             
 import {omit}                                                                                                                                from 'es-toolkit/compat';
 import semver                                                                                                                                from 'semver';
 
+// The latest @types/semver does not have this yet
+// TODO: when this is added to @types/semver, use that instead
+declare module 'semver' {
+  export function truncate(version: string | semver.SemVer, truncation: semver.ReleaseType, optionsOrLoose?: boolean | semver.Options): string | null;
+}
+
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
@@ -30,7 +36,19 @@ export function validateReleaseDecision(decision: unknown): string {
   if (semverDecision)
     return semverDecision;
 
-  return miscUtils.validateEnum(omit(Decision, `UNDECIDED`), decision as string);
+  const decisions = Object.values(omit(Decision, `UNDECIDED`));
+  if (decisions.includes(decision as any))
+    return decision as Exclude<Decision, Decision.UNDECIDED>;
+
+  const tip = semver.valid(decision as string, {loose: true})
+    ? ` Did you mean to use "${semver.valid(decision as string, {loose: true})}"?`
+    : ``;
+
+  throw new UsageError(`Invalid strategy: "${decision}". Expected a valid semver or one of ${decisions.map(value => JSON.stringify(value)).join(`, `)}.${tip}`);
+}
+
+function isPrereleaseStrategy(strategy: string) {
+  return strategy === Decision.PREMAJOR || strategy === Decision.PREMINOR || strategy === Decision.PREPATCH || strategy === Decision.PRERELEASE;
 }
 
 export type VersionFile = {
@@ -56,7 +74,7 @@ export type VersionFile = {
 });
 
 export async function resolveVersionFiles(project: Project, {prerelease = null}: {prerelease?: string | null} = {}) {
-  let candidateReleases = new Map<Workspace, string>();
+  const candidateReleases = new Map<Workspace, string>();
 
   const deferredVersionFolder = project.configuration.get(`deferredVersionFolder`);
   if (!xfs.existsSync(deferredVersionFolder))
@@ -85,20 +103,11 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
       if (workspace.manifest.version === null)
         throw new Error(`Assertion failed: Expected the workspace to have a version (${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)})`);
 
-      // If there's a `stableVersion` field, then we assume that `version`
-      // contains a prerelease version and that we need to base the version
-      // bump relative to the latest stable instead.
-      const baseVersion = workspace.manifest.raw.stableVersion ?? workspace.manifest.version;
-
       const candidateRelease = candidateReleases.get(workspace);
-      // In case of prerelease decision with a prerelease version, the trailing number should be bumped
-      const suggestedRelease = Decision.PRERELEASE === decision ?
-        applyStrategy(workspace.manifest.version, validateReleaseDecision(decision)) :
-        applyStrategy(baseVersion, validateReleaseDecision(decision));
-
+      const suggestedRelease = applyStrategy(workspace.manifest.version, validateReleaseDecision(decision), prerelease);
 
       if (suggestedRelease === null)
-        throw new Error(`Assertion failed: Expected ${baseVersion} to support being bumped via strategy ${decision}`);
+        throw new Error(`Assertion failed: Expected ${workspace.manifest.version} to support being bumped via strategy ${decision}`);
 
       const bestRelease = typeof candidateRelease !== `undefined`
         ? semver.gt(suggestedRelease, candidateRelease) ? suggestedRelease : candidateRelease
@@ -106,12 +115,6 @@ export async function resolveVersionFiles(project: Project, {prerelease = null}:
 
       candidateReleases.set(workspace, bestRelease);
     }
-  }
-
-  if (prerelease) {
-    candidateReleases = new Map([...candidateReleases].map(([workspace, release]) => {
-      return [workspace, applyPrerelease(release, {current: workspace.manifest.version!, prerelease})];
-    }));
   }
 
   return candidateReleases;
@@ -375,7 +378,7 @@ export function suggestStrategy(from: string, to: string) {
   return null;
 }
 
-export function applyStrategy(version: string | null, strategy: string) {
+export function applyStrategy(version: string | null, strategy: string, prerelease: string | null = null) {
   if (semver.valid(strategy))
     return strategy;
 
@@ -383,6 +386,21 @@ export function applyStrategy(version: string | null, strategy: string) {
     throw new UsageError(`Cannot apply the release strategy "${strategy}" unless the workspace already has a valid version`);
   if (!semver.valid(version))
     throw new UsageError(`Cannot apply the release strategy "${strategy}" on a non-semver version (${version})`);
+
+  if (isPrereleaseStrategy(strategy)) {
+    const base = semver.inc(version, strategy === Decision.PRERELEASE ? `patch` : strategy.slice(3) as any);
+    if (base === null)
+      throw new UsageError(`Cannot apply the release strategy "${strategy.slice(3)}" on the specified version (${version}) while trying to determine the base of the prerelease bump`);
+
+    if (prerelease) {
+      return applyPrerelease(base, {current: version, prerelease});
+    } else if (base === semver.truncate(version, `patch`)) {
+      // This implies that the current version is already a prerelease, so we can just bump it
+      return semver.inc(version, `prerelease`)!;
+    } else {
+      return `${base}-0`;
+    }
+  }
 
   const nextVersion = semver.inc(version, strategy as any);
   if (nextVersion === null)
@@ -430,18 +448,14 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
   for (const [workspace, newVersion] of newVersions) {
     const oldVersion = workspace.manifest.version;
     workspace.manifest.version = newVersion;
-
-    if (semver.prerelease(newVersion) === null)
-      delete workspace.manifest.raw.stableVersion;
-    else if (!workspace.manifest.raw.stableVersion)
-      workspace.manifest.raw.stableVersion = oldVersion;
+    delete workspace.manifest.raw.stableVersion;
 
     const identString = workspace.manifest.name !== null
       ? structUtils.stringifyIdent(workspace.manifest.name)
       : null;
 
     report.reportInfo(MessageName.UNNAMED, `${structUtils.prettyLocator(project.configuration, workspace.anchoredLocator)}: Bumped to ${newVersion}`);
-    report.reportJson({cwd: npath.fromPortablePath(workspace.cwd), ident: identString, oldVersion, newVersion});
+    report.reportJson({cwd: npath.fromPortablePath(workspace.cwd), ident: identString, deferred: false, oldVersion, newVersion});
 
     const dependents = allDependents.get(workspace);
     if (typeof dependents === `undefined`)
@@ -482,41 +496,35 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
   }
 }
 
-const placeholders: Map<string, {
-  extract: (parts: Array<string | number>) => [string | number, Array<string | number>] | null;
-  generate: (previous?: number) => string;
-}> = new Map([
-  [`%n`, {
-    extract: parts => {
-      if (parts.length >= 1) {
-        return [parts[0], parts.slice(1)];
-      } else {
-        return null;
-      }
-    },
-    generate: (previous = 0) => {
-      return `${previous + 1}`;
-    },
+const placeholders: Map<string, (parts: Array<string | number>) => (
+  // Using two cases here so that it is treated as a discriminated union
+  | {increment: null, reset: string | number}
+  | {increment: string | number, reset: string | number}
+)> = new Map([
+  [`%n`, parts => {
+    if (parts.length > 0 && typeof parts[0] === `number`) {
+      return {increment: (parts.shift() as number) + 1, reset: 1};
+    } else {
+      return {increment: null, reset: 1};
+    }
   }],
 ]);
 
 export function applyPrerelease(version: string, {current, prerelease}: {current: string, prerelease: string}) {
   const currentVersion = new semver.SemVer(current);
+  const stable = semver.truncate(version, `patch`);
+  if (stable === null)
+    throw new Error(`Assertion failed: Expected the version to be a valid semver version (${version})`);
 
-  let currentPreParts = currentVersion.prerelease.slice();
-  const nextPreParts = [];
-
-  currentVersion.prerelease = [];
+  const currentPreParts = currentVersion.prerelease.slice();
 
   // If the version we have in mind has nothing in common with the one we want,
   // we don't want to reuse its prerelease identifiers (1.0.0-rc.5 -> 1.1.0->rc.1)
-  if (currentVersion.format() !== version)
-    currentPreParts.length = 0;
+  // so go directly into the unmatched state
+  let patternMatched = semver.truncate(currentVersion, `patch`) === stable;
+  const nextPreParts: Array<string | number | {increment: string | number, reset: string | number}> = [];
 
-  let patternMatched = true;
-
-  const patternParts = prerelease.split(/\./g);
-  for (const part of patternParts) {
+  for (const part of prerelease.split(/\./g)) {
     const placeholder = placeholders.get(part);
 
     if (typeof placeholder === `undefined`) {
@@ -528,22 +536,21 @@ export function applyPrerelease(version: string, {current, prerelease}: {current
         patternMatched = false;
       }
     } else {
-      const res = patternMatched
-        ? placeholder.extract(currentPreParts)
-        : null;
+      const result = placeholder(currentPreParts);
 
-      if (res !== null && typeof res[0] === `number`) {
-        nextPreParts.push(placeholder.generate(res[0]));
-        currentPreParts = res[1];
+      if (patternMatched && result.increment !== null) {
+        nextPreParts.push(result);
       } else {
-        nextPreParts.push(placeholder.generate());
+        nextPreParts.push(result.reset);
         patternMatched = false;
       }
     }
   }
 
-  if (currentVersion.prerelease)
-    currentVersion.prerelease = [];
+  // If there are more prerelease identifiers than the prerelease pattern needs, it's also a mismatch
+  patternMatched &&= currentPreParts.length === 0;
 
-  return `${version}-${nextPreParts.join(`.`)}`;
+  const finalPreParts = nextPreParts.map(part => typeof part === `object` ? (patternMatched ? part.increment : part.reset) : part);
+
+  return `${stable}-${finalPreParts.join(`.`)}`;
 }
