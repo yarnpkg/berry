@@ -3,6 +3,178 @@ import CJSON          from 'comment-json';
 import * as miscUtils from '../sources/miscUtils';
 
 describe(`miscUtils`, () => {
+  describe(`replaceEnvVariables`, () => {
+    it(`should replace environment variables with their values`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A}, VAR_B: \${VAR_B}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: ValueA, VAR_B: ValueB`);
+    });
+
+    it(`should use fallback when using the :- operator if environment variables are empty or unset`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-FallbackA}, VAR_B: \${VAR_B:-FallbackB}`,
+          {
+            env: {
+              VAR_A: ``,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: FallbackA, VAR_B: FallbackB`);
+    });
+
+    it(`should use fallback when using the - operator only if environment variables are not set`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A-FallbackA}, VAR_B: \${VAR_B-FallbackB}`,
+          {
+            env: {
+              VAR_A: ``,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: , VAR_B: FallbackB`);
+    });
+
+    it(`should throw on unset environment variables without fallback`, () => {
+      expect(() =>
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A}, VAR_B: \${VAR_B}`,
+          {env: {}},
+        ),
+      ).toThrow();
+    });
+
+    it(`should throw on unclosed substitutions`, () => {
+      expect(() =>
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A}, VAR_B: \${VAR_B`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toThrow();
+    });
+
+    it(`should throw on unknown operators`, () => {
+      expect(() =>
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A}, VAR_B: \${VAR_B:+}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toThrow();
+    });
+
+    it(`should not replace escaped environment variables`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \\\${VAR_A}, VAR_B: \\\${VAR_B}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: \${VAR_A}, VAR_B: \${VAR_B}`);
+    });
+
+    it(`should treat escaped backslashes literally`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \\\\\${VAR_A}, VAR_B: \\\\\${VAR_B}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: \\ValueA, VAR_B: \\ValueB`);
+    });
+
+    it(`should treat escaped braces and unmatched braces literally`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `VAR_A: \${VAR_A:-\\}}, VAR_B: \${VAR_B}}`,
+          {
+            env: {
+              VAR_A: ``,
+              VAR_B: `ValueB`,
+            },
+          },
+        ),
+      ).toBe(`VAR_A: }, VAR_B: ValueB}`);
+    });
+
+    it(`should allow nested environment variables`, () => {
+      expect(
+        miscUtils.replaceEnvVariables(
+          `\${VAR_A-\${VAR_B-\${VAR_C-fallback}}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+              VAR_C: `ValueC`,
+            },
+          },
+        ),
+      ).toBe(`ValueA`);
+      expect(
+        miscUtils.replaceEnvVariables(
+          `\${VAR_X-\${VAR_B-\${VAR_C-fallback}}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+              VAR_C: `ValueC`,
+            },
+          },
+        ),
+      ).toBe(`ValueB`);
+      expect(
+        miscUtils.replaceEnvVariables(
+          `\${VAR_X-\${VAR_Y-\${VAR_C-fallback}}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+              VAR_C: `ValueC`,
+            },
+          },
+        ),
+      ).toBe(`ValueC`);
+      expect(
+        miscUtils.replaceEnvVariables(
+          `\${VAR_X-\${VAR_Y-\${VAR_Z-fallback}}}`,
+          {
+            env: {
+              VAR_A: `ValueA`,
+              VAR_B: `ValueB`,
+              VAR_C: `ValueC`,
+            },
+          },
+        ),
+      ).toBe(`fallback`);
+    });
+  });
+
   describe(`mapAndFind`, () => {
     it(`should work with a simple example`, () => {
       expect(
@@ -135,7 +307,9 @@ describe(`miscUtils`, () => {
       const b = {n: [4, 5, 6]};
       const c = miscUtils.mergeIntoTarget(a, b);
 
-      expect(CJSON.stringify(c, null, 2)).toStrictEqual(CJSON.stringify(CJSON.parse(`{
+      expect(CJSON.stringify(c, null, 2)).toStrictEqual(
+        CJSON.stringify(
+          CJSON.parse(`{
         // n
         "n":
         // array
@@ -150,7 +324,11 @@ describe(`miscUtils`, () => {
           5,
           6
         ]
-      }`), null, 2));
+      }`),
+          null,
+          2,
+        ),
+      );
     });
   });
 });

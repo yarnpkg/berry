@@ -94,6 +94,9 @@ export class NpmSemverFetcher implements Fetcher {
     if (version === null)
       throw new ReportError(MessageName.RESOLVER_NOT_FOUND, `The npm semver resolver got selected, but the version isn't semver`);
 
-    return `${npmHttpUtils.getIdentUrl(locator)}/-/${locator.name}-${version}.tgz`;
+    const encodedName = encodeURIComponent(locator.name);
+    const encodedVersion = encodeURIComponent(version);
+
+    return `${npmHttpUtils.getIdentUrl(locator)}/-/${encodedName}-${encodedVersion}.tgz`;
   }
 }

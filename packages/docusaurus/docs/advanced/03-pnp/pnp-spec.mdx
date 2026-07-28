@@ -201,7 +201,7 @@ RESOLVE_TO_UNQUALIFIED(specifier, parentURL)
 
 12. Otherwise, if `referenceOrAlias` is an array, then
 
-    1. Let `alias` be `referenceOrAlias`
+    1. Let `alias` be `{ident: referenceOrAlias[0], reference: referenceOrAlias[1]}`
 
     2. Let `dependencyPkg` be [`GET_PACKAGE`](#get_package)`(manifest, alias)`
 
@@ -261,7 +261,7 @@ The algorithm described here is quite inefficient. You should make sure to prepa
 
             1. If `registryPkg.packageLocation.length` is greater than `bestLength`, then
 
-                1. If `relativeUrl` starts with `registryPkg.packageLocation`, then
+                1. If `relativeUrlWithDot` starts with `registryPkg.packageLocation`, then
 
                     1. Set `bestLength` to `registryPkg.packageLocation.length`
 

@@ -23,6 +23,18 @@ const LOCKFILE_MIGRATION_RULES: Array<{
   selector: v => v !== -1 && v < 8,
   name: `compressionLevel`,
   value: `mixed`,
+}, {
+  selector: v => v < 9,
+  name: `approvedGitRepositories` as keyof ConfigurationValueMap,
+  value: [`**`],
+}, {
+  selector: v => v < 9,
+  name: `enableScripts`,
+  value: true,
+}, {
+  selector: v => v < 10,
+  name: `npmMinimalAgeGate` as keyof ConfigurationValueMap,
+  value: `0`,
 }];
 
 // eslint-disable-next-line arca/no-default-export
@@ -245,7 +257,7 @@ export default class YarnCommand extends BaseCommand {
           report.reportSeparator();
         } else if (Configuration.telemetry?.shouldShowTips) {
           const data = await httpUtils.get(`https://repo.yarnpkg.com/tags`, {configuration, jsonResponse: true}).catch(() => null) as {
-            latest: {stable: string, canary: string};
+            latest: {stable: string | null, canary: string | null};
             tips: Array<{message: string, url?: string}>;
           } | null;
 
@@ -256,7 +268,7 @@ export default class YarnCommand extends BaseCommand {
               const releaseType = isRcBinary ? `canary` : `stable`;
               const candidate = data.latest[releaseType];
 
-              if (semver.gt(candidate, YarnVersion)) {
+              if (candidate !== null && semver.gt(candidate, YarnVersion)) {
                 newVersion = [releaseType, candidate];
               }
             }

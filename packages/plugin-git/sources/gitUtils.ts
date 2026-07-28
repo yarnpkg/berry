@@ -1,8 +1,8 @@
 import {Configuration, Hooks, Locator, Project, execUtils, httpUtils, miscUtils, semverUtils, structUtils, ReportError, MessageName, formatUtils} from '@yarnpkg/core';
 import {Filename, npath, PortablePath, ppath, xfs}                                                                                                from '@yarnpkg/fslib';
 import {UsageError}                                                                                                                               from 'clipanion';
+import {capitalize}                                                                                                                               from 'es-toolkit/compat';
 import GitUrlParse                                                                                                                                from 'git-url-parse';
-import capitalize                                                                                                                                 from 'lodash/capitalize';
 import querystring                                                                                                                                from 'querystring';
 import semver                                                                                                                                     from 'semver';
 
@@ -123,10 +123,20 @@ export function normalizeLocator(locator: Locator) {
 }
 
 export function validateRepoUrl(url: string, {configuration}: {configuration: Configuration}) {
-  const normalizedRepoUrl = normalizeRepoUrl(url, {git: true});
+  const {repo} = splitRepoUrl(url);
+  const normalizedRepoUrl = normalizeRepoUrl(repo, {git: true});
+
   const networkSettings = httpUtils.getNetworkSettings(`https://${GitUrlParse(normalizedRepoUrl).resource}`, {configuration});
   if (!networkSettings.enableNetwork)
     throw new ReportError(MessageName.NETWORK_DISABLED, `Request to '${normalizedRepoUrl}' has been blocked because of your configuration settings`);
+
+  const approvedGitRepositoriesPattern = miscUtils.buildIgnorePattern(configuration.get(`approvedGitRepositories`));
+  if (approvedGitRepositoriesPattern === null || !normalizedRepoUrl.match(approvedGitRepositoriesPattern)) {
+    throw new ReportError(
+      MessageName.NETWORK_DISABLED,
+      `Request to '${normalizedRepoUrl}' has been blocked because it doesn't match any of the patterns in 'approvedGitRepositories'`,
+    );
+  }
 
   return normalizedRepoUrl;
 }
@@ -259,7 +269,7 @@ export async function clone(url: string, configuration: Configuration) {
     const directory = await xfs.mktempPromise();
     const execOpts = {cwd: directory, env: makeGitEnvironment()};
 
-    await git(`cloning the repository`, [`clone`, `-c core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
+    await git(`cloning the repository`, [`clone`, `-c`, `core.autocrlf=false`, normalizedRepoUrl, npath.fromPortablePath(directory)], execOpts, {configuration, normalizedRepoUrl});
     await git(`switching branch`, [`checkout`, `${request}`], execOpts, {configuration, normalizedRepoUrl});
 
     return directory;

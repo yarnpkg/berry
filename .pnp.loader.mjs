@@ -1428,11 +1428,12 @@ class VirtualFS extends ProxiedFS {
 
 const URL = Number(process.versions.node.split('.', 1)[0]) < 20 ? URL$1 : globalThis.URL;
 
-const [major, minor] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
+const [major, minor, patch] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 const HAS_LAZY_LOADED_TRANSLATORS = major === 20 && minor < 6 || major === 19 && minor >= 3;
 const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || major === 20 && minor >= 10 || major === 18 && minor >= 20;
 const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
+const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major === 26 && minor < 1 || major === 25 && minor >= 7 || major === 24 && minor === 15 || major === 22 && (minor > 22 || minor === 22 && patch >= 3);
 
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
@@ -1549,9 +1550,11 @@ async function load$1(urlString, context, nextLoad) {
       "watch:import": WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend
     });
   }
+  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
+  const source = format !== `commonjs` || shouldReadSource ? await fs.promises.readFile(filePath, `utf8`) : void 0;
   return {
     format,
-    source: format === `commonjs` ? void 0 : await fs.promises.readFile(filePath, `utf8`),
+    source,
     shortCircuit: true
   };
 }
@@ -1976,7 +1979,7 @@ function packageImportsResolve({ name, base, conditions, readFileSyncFn }) {
 let findPnpApi = esmModule.findPnpApi;
 if (!findPnpApi) {
   const require = createRequire(import.meta.url);
-  const pnpApi = require(`./.pnp.cjs`);
+  const pnpApi = require(structuredClone(`./.pnp.cjs`));
   pnpApi.setup();
   findPnpApi = esmModule.findPnpApi;
 }

@@ -22,6 +22,9 @@ describe(`Features`, () => {
         // We don't care about this flag; in an actual attack,
         // the hash would be correct
         checksumBehavior: `ignore`,
+        approvedGitRepositories: [
+          `https://github.com/yarnpkg/util-deprecate.git`,
+        ],
       }, async ({path, run, source}) => {
         await run(`add`, replacement);
 

@@ -8,6 +8,8 @@ Hi everyone! After exactly 365 days of _very_ intensive development, I'm extreme
 
 _If you're interested to know more about what will happen to Yarn 1, keep reading as we detail our plans later down this post: [Future Plans](#what-will-happen-to-the-legacy-codebase). If you just want to start right now with Yarn 2, check out the [Getting Started](https://next.yarnpkg.com/getting-started/install) or [Migration](https://next.yarnpkg.com/advanced/migration) guides._
 
+{/* truncate */}
+
 ## **Release Overview**
 
 Describing this release is particularly difficult - it contains core, fundamental changes, shipped together with new features born from our own usage.
@@ -328,7 +330,7 @@ Packages aren't allowed to require other packages unless they actually list them
 // Error: Something that got detected as your top-level application
 // (because it doesn't seem to belong to any package) tried to access
 // a package that is not declared in your dependencies
-// 
+//
 // Required package: not-a-dependency (via "not-a-dependency")
 // Required by: /Users/mael/my-app/
 require(`not-a-dependency`);

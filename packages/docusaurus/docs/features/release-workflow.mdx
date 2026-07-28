@@ -75,6 +75,57 @@ Writing this file can be tedious; fortunately `yarn version check` implements a 
 
 The [`changesetIgnorePatterns`](/configuration/yarnrc#changesetIgnorePatterns) configuration option can be used to ignore files when checking which files have changed. It is useful for excluding files that don't affect the release process (e.g. test files).
 
+## Staged Publishing
+
+Staged publishing allows package maintainers to decouple the act of publishing from proof-of-presence (2FA). With staged publishing, an automated workflow (such as CI/CD) can stage a package version without a 2FA prompt. The maintainer can then review and approve the staged package at their convenience, providing 2FA only at the approval step.
+
+### How it works
+
+1. **Stage** — CI runs `yarn npm publish --staged`. The package version is uploaded to the registry in a pending state, not publicly available. No 2FA is required.
+2. **Review** — The maintainer runs `yarn npm stage list` to see pending staged packages.
+3. **Approve or Reject** — The maintainer runs `yarn npm stage approve <stage-id>` (with 2FA) to publish, or `yarn npm stage reject <stage-id>` to discard.
+
+### Commands
+
+#### Stage a package
+
+```
+yarn npm publish --staged
+```
+
+Works like `yarn npm publish` but stages the package instead of publishing it directly. The stage ID is printed in the output.
+
+#### List staged packages
+
+```
+yarn npm stage list [package-name]
+```
+
+Lists all staged package versions awaiting approval. Optionally filter by package name.
+
+#### Approve a staged package
+
+```
+yarn npm stage approve <stage-id>
+```
+
+Approves and publishes the staged package. Requires 2FA — you will be prompted for an OTP token, or you can pass one via `--otp`.
+
+#### Reject a staged package
+
+```
+yarn npm stage reject <stage-id>
+```
+
+Permanently removes the staged package from the registry. Requires 2FA.
+
+### Key behaviors
+
+- Staged packages share the same semver version uniqueness constraint as published packages — you cannot publish a version that already exists as a staged version.
+- Normal `yarn npm publish` continues to work alongside staged publishing.
+- Multiple versions of the same package can be staged concurrently.
+- `yarn npm publish --staged` respects `"private": true` in `package.json`, refusing to stage the package.
+
 ### Caveat
 
 #### Commit history

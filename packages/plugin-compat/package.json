@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/plugin-compat",
-  "version": "4.0.11",
+  "version": "4.0.13",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -24,7 +24,7 @@
     "@yarnpkg/plugin-npm": "workspace:^",
     "@yarnpkg/plugin-patch": "workspace:^",
     "resolve": "^1.17.0",
-    "semver": "^7.1.2"
+    "semver": "^7.8.5"
   },
   "repository": {
     "type": "git",
@@ -50,5 +50,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.0.11"
+  "stableVersion": "4.0.13"
 }

@@ -310,16 +310,16 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.symlinkSync(mappedTarget, mappedP, type);
   }
 
-  async readFilePromise(p: FSPath<P>, encoding?: null): Promise<Buffer>;
+  async readFilePromise(p: FSPath<P>, encoding?: null): Promise<NonSharedBuffer>;
   async readFilePromise(p: FSPath<P>, encoding: BufferEncoding): Promise<string>;
-  async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
   async readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null) {
     return this.baseFs.readFilePromise(this.fsMapToBase(p), encoding);
   }
 
-  readFileSync(p: FSPath<P>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<P>, encoding?: null): NonSharedBuffer;
   readFileSync(p: FSPath<P>, encoding: BufferEncoding): string;
-  readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
   readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null) {
     return this.baseFs.readFileSync(this.fsMapToBase(p), encoding);
   }

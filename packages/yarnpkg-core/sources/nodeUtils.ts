@@ -26,9 +26,10 @@ export const openUrl = typeof openUrlBinary !== `undefined`
 const LDD_PATH = `/usr/bin/ldd` as PortablePath;
 
 function getLibc() {
-  // Darwin and Windows have their own standard libraries, and the getReport() call is costly.
-  // It also seems that Node randomly crashes with no output under some circumstances when running a getReport() on Windows.
-  if (process.platform === `darwin` || process.platform === `win32`)
+  // As of 2025, linux is the only possible process.platform value that does not imply the libc for Node's purposes.
+  // Technically mingw32 (a way to build and run software using glibc on Windows) exists and even has a node.js port, but no one in
+  // the broader node.js ecosystem seems to care about it. There have been issues in the past running getReport() on Windows.
+  if (process.platform !== `linux`)
     return null;
 
   let header: Buffer | undefined;
@@ -39,7 +40,7 @@ function getLibc() {
   // Since the getReport can be prohibitely expensive (it also queries DNS which, if misconfigured, can take a long time to timeout),
   // we first check if the ldd binary is glibc or musl, and only then run the getReport() if we can't determine the libc variant.
   if (typeof header !== `undefined`) {
-    if (header && (header.includes(`GLIBC`) || header.includes(`libc`)))
+    if (header && (header.includes(`GLIBC`) || header.includes(`GNU libc`) || header.includes(`GNU C Library`)))
       return `glibc`;
     if (header && header.includes(`musl`)) {
       return `musl`;
@@ -83,9 +84,9 @@ let architectureSet: ArchitectureSet | undefined;
 
 export function getArchitecture() {
   return architecture = architecture ?? {
-    os: process.platform,
-    cpu: process.arch,
-    libc: getLibc(),
+    os: (process.env.YARN_IS_TEST_ENV ? process.env.YARN_OS_OVERRIDE : undefined) ?? process.platform,
+    cpu: (process.env.YARN_IS_TEST_ENV ? process.env.YARN_CPU_OVERRIDE : undefined) ?? process.arch,
+    libc: (process.env.YARN_IS_TEST_ENV ? process.env.YARN_LIBC_OVERRIDE : undefined) ?? getLibc(),
   };
 }
 

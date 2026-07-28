@@ -1,7 +1,14 @@
+const {npath, ppath, xfs} = require(`@yarnpkg/fslib`);
+
 const {
   exec: {execFile},
   fs: {writeJson, writeFile},
+  tests: {testIf, FEATURE_CHECKS},
 } = require(`pkg-tests-core`);
+
+const forEachVerboseDone = FEATURE_CHECKS.forEachVerboseDone
+  ? []
+  : [`Done\n`];
 
 async function setupWorkspaces(path) {
   await writeFile(`${path}/mutexes/workspace-a`, ``);
@@ -92,7 +99,8 @@ async function setupWorkspaces(path) {
 
 describe(`Commands`, () => {
   describe(`workspace foreach`, () => {
-    test(
+    testIf(
+      `forEachWorktree`,
       `should run on current and descendant workspaces when --worktree is set`,
       makeTemporaryEnv(
         {
@@ -103,12 +111,24 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--worktree`, `run`, `print`, {cwd: `${path}/packages/workspace-c`})).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--worktree`, `run`, `print`, {cwd: `${path}/packages/workspace-c`})).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `Test Workspace C\n`,
+              `Test Workspace D\n`,
+              `Test Workspace E\n`,
+              `Test Workspace F\n`,
+              `Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
 
-    test(
+    testIf(
+      `forEachWorktree`,
       `should support self referencing workspaces field`,
       makeTemporaryEnv(
         {
@@ -118,13 +138,14 @@ describe(`Commands`, () => {
         async ({path, run}) => {
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--worktree`, `exec`, `echo`, `42`)).resolves.toMatchObject(
-            {
-              code: 0,
-              stdout: `42\nDone\n`,
-              stderr: ``,
-            },
-          );
+          await expect(run(`workspaces`, `foreach`, `--worktree`, `exec`, `echo`, `42`)).resolves.toMatchObject({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `42\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -134,21 +155,27 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`],
+          workspaces: [`packages/*`, `packages/*/packages/*`],
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--worktree`, `--parallel`, `--topological`, `node`, `-p`, `require("./package.json").name ?? "root"`, {cwd: `${path}/packages/workspace-c`});
-
-          const orderedStdout = stdout.trim().split(`\n`);
-          expect(orderedStdout.pop()).toContain(`Done`);
-
-          // The exact order is unstable, so just make sure all the workspaces we expect to be there, are.
-          orderedStdout.sort();
-
-          expect({code, orderedStdout, stderr}).toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `node`, `-p`, `require("./package.json").name ?? "root"`)).resolves.toMatchObject({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `root\n`,
+              `workspace-a\n`,
+              `workspace-b\n`,
+              `workspace-c\n`,
+              `workspace-d\n`,
+              `workspace-e\n`,
+              `workspace-f\n`,
+              `workspace-g\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -158,7 +185,7 @@ describe(`Commands`, () => {
       makeTemporaryEnv(
         {
           private: true,
-          workspaces: [`packages/*`],
+          workspaces: [`packages/*`, `packages/*/packages/*`],
         },
         async ({path, run}) => {
           await setupWorkspaces(path);
@@ -171,8 +198,9 @@ describe(`Commands`, () => {
 
           let isInterlaced = false;
 
-          // Expect Done on the last line
-          expect(lines.pop()).toContain(`Done`);
+          if (!FEATURE_CHECKS.forEachVerboseDone)
+            expect(lines.pop()).toEqual(`Done`);
+
           expect(lines.length).toBeGreaterThan(0);
           expect(code).toBe(0);
           expect(stderr).toBe(``);
@@ -209,9 +237,15 @@ describe(`Commands`, () => {
           // A and G have the same precedence
           expect([order[0], order[1]]).toEqual(expect.arrayContaining([`A`, `G`]));
 
-          expect(order.slice(2)).toMatchSnapshot();
+          expect(order.slice(2)).toEqual([
+            `C`,
+            `B`,
+            `D`,
+            `E`,
+            `F`,
+          ]);
 
-          await expect({code, stderr}).toMatchSnapshot();
+          expect({code, stderr}).toEqual({code: 0, stderr: ``});
         },
       ),
     );
@@ -228,7 +262,20 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `--verbose`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `--verbose`, `run`, `print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `[workspace-a]: Test Workspace A\n`,
+              `[workspace-b]: Test Workspace B\n`,
+              `[workspace-c]: Test Workspace C\n`,
+              `[workspace-d]: Test Workspace D\n`,
+              `[workspace-e]: Test Workspace E\n`,
+              `[workspace-f]: Test Workspace F\n`,
+              `[workspace-g]: Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -244,7 +291,40 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `run`, `print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `[workspace-a]: Process started\n`,
+              `[workspace-a]: Test Workspace A\n`,
+              `[workspace-a]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-b]: Process started\n`,
+              `[workspace-b]: Test Workspace B\n`,
+              `[workspace-b]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-c]: Process started\n`,
+              `[workspace-c]: Test Workspace C\n`,
+              `[workspace-c]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-d]: Process started\n`,
+              `[workspace-d]: Test Workspace D\n`,
+              `[workspace-d]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-e]: Process started\n`,
+              `[workspace-e]: Test Workspace E\n`,
+              `[workspace-e]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-f]: Process started\n`,
+              `[workspace-f]: Test Workspace F\n`,
+              `[workspace-f]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-g]: Process started\n`,
+              `[workspace-g]: Test Workspace G\n`,
+              `[workspace-g]: Process exited (exit code 0)\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -260,7 +340,20 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `--no-verbose`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `--no-verbose`, `run`, `print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `Test Workspace A\n`,
+              `Test Workspace B\n`,
+              `Test Workspace C\n`,
+              `Test Workspace D\n`,
+              `Test Workspace E\n`,
+              `Test Workspace F\n`,
+              `Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -276,7 +369,20 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `--include`, `workspace-a`, `--include`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `--include`, `workspace-a`, `--include`, `packages/workspace-b`, `run`, `print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `[workspace-a]: Process started\n`,
+              `[workspace-a]: Test Workspace A\n`,
+              `[workspace-a]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-b]: Process started\n`,
+              `[workspace-b]: Test Workspace B\n`,
+              `[workspace-b]: Process exited (exit code 0)\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -292,7 +398,32 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `--include`, `packages/workspace-c/**`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `--include`, `packages/workspace-c/**`, `run`, `print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `[workspace-c]: Process started\n`,
+              `[workspace-c]: Test Workspace C\n`,
+              `[workspace-c]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-d]: Process started\n`,
+              `[workspace-d]: Test Workspace D\n`,
+              `[workspace-d]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-e]: Process started\n`,
+              `[workspace-e]: Test Workspace E\n`,
+              `[workspace-e]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-f]: Process started\n`,
+              `[workspace-f]: Test Workspace F\n`,
+              `[workspace-f]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-g]: Process started\n`,
+              `[workspace-g]: Test Workspace G\n`,
+              `[workspace-g]: Process exited (exit code 0)\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -308,7 +439,32 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `--exclude`, `workspace-a`, `--exclude`, `packages/workspace-b`, `run`, `print`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `-vv`, `--exclude`, `workspace-a`, `--exclude`, `packages/workspace-b`, `run`, `print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `[workspace-c]: Process started\n`,
+              `[workspace-c]: Test Workspace C\n`,
+              `[workspace-c]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-d]: Process started\n`,
+              `[workspace-d]: Test Workspace D\n`,
+              `[workspace-d]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-e]: Process started\n`,
+              `[workspace-e]: Test Workspace E\n`,
+              `[workspace-e]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-f]: Process started\n`,
+              `[workspace-f]: Test Workspace F\n`,
+              `[workspace-f]: Process exited (exit code 0)\n`,
+              `\n`,
+              `[workspace-g]: Process started\n`,
+              `[workspace-g]: Test Workspace G\n`,
+              `[workspace-g]: Process exited (exit code 0)\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -327,7 +483,20 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`print`)).resolves.toMatchSnapshot();
+          await expect(run(`print`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `Test Workspace A\n`,
+              `Test Workspace B\n`,
+              `Test Workspace C\n`,
+              `Test Workspace D\n`,
+              `Test Workspace E\n`,
+              `Test Workspace F\n`,
+              `Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -344,7 +513,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `--jobs`, `2`, `run`, `print`)).rejects.toThrowError(/parallel must be set/);
+          await expect(run(`workspaces`, `foreach`, `--all`, `--jobs`, `2`, `run`, `print`)).rejects.toThrow(/parallel must be set/);
         },
       ),
     );
@@ -360,7 +529,7 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `--parallel`, `--jobs`, `0`, `run`, `print`)).rejects.toThrowError(/to be at least 1 \(got 0\)/);
+          await expect(run(`workspaces`, `foreach`, `--all`, `--parallel`, `--jobs`, `0`, `run`, `print`)).rejects.toThrow(/to be at least 1 \(got 0\)/);
         },
       ),
     );
@@ -376,12 +545,16 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          const {code, stdout, stderr} = await run(`workspaces`, `foreach`, `--all`, `--parallel`, `--jobs`, `unlimited`, `-vv`, `run`, `print`);
+          const flagPath = ppath.join(path, `test`);
+          await xfs.writeFilePromise(flagPath, ``);
+          const nFlagPath = npath.fromPortablePath(flagPath);
 
-          // We don't care what order they start in, just that they all started at the beginning.
-          const first7Lines = stdout.split(`\n`).slice(0, 7).sort().join(`\n`);
+          // When they start, each job validates that the flag file exists. If it does,
+          // wait for 1s then removes it. The idea is that if the jobs aren't all running
+          // in parallel, then the file will be removed before queued jobs start. The sleep
+          // ensures we give a bit of time for all jobs to start.
 
-          await expect({code, first7Lines, stderr}).toMatchSnapshot();
+          await run(`workspaces`, `foreach`, `--all`, `--parallel`, `--jobs`, `unlimited`, `-vv`, `node`, `-e`, `fs.readFileSync(${JSON.stringify(nFlagPath)}); setTimeout(() => {try {fs.unlinkSync(${JSON.stringify(nFlagPath)})} catch {}}, 1000)`);
         },
       ),
     );
@@ -420,7 +593,15 @@ describe(`Commands`, () => {
 
         await run(`install`);
 
-        await expect(run(`workspaces`, `foreach`, `--all`, `--no-private`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--all`, `--no-private`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            `Test Workspace A\n`,
+            `Test Workspace C\n`,
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       },
     ));
 
@@ -461,7 +642,21 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `--topological`, `run`, `test:colon`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `--topological`, `run`, `test:colon`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `One execution\n`,
+              `One execution\n`,
+              `One execution\n`,
+              `One execution\n`,
+              `One execution\n`,
+              `One execution\n`,
+              `One execution\n`,
+              `One execution\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -481,7 +676,21 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`test:foo`)).resolves.toMatchSnapshot();
+          await expect(run(`test:foo`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `\n`,
+              `packages/workspace-a\n`,
+              `packages/workspace-b\n`,
+              `packages/workspace-c\n`,
+              `packages/workspace-c/packages/workspace-d\n`,
+              `packages/workspace-c/packages/workspace-d/packages/workspace-e\n`,
+              `packages/workspace-c/packages/workspace-f\n`,
+              `packages/workspace-c/packages/workspace-g\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -500,7 +709,15 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--all`, `--topological`, `run`, `g:echo`)).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--all`, `--topological`, `run`, `g:echo`)).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `root workspace\n`,
+              `Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -516,7 +733,16 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological`, `run`, `print`, {cwd: `${path}/packages/workspace-b`})).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological`, `run`, `print`, {cwd: `${path}/packages/workspace-b`})).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `Test Workspace A\n`,
+              `Test Workspace C\n`,
+              `Test Workspace B\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -532,7 +758,17 @@ describe(`Commands`, () => {
           await setupWorkspaces(path);
           await run(`install`);
 
-          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological`, `--from`, `{workspace-a,workspace-b,workspace-g}`, `run`, `print`, {cwd: path})).resolves.toMatchSnapshot();
+          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological`, `--from`, `{workspace-a,workspace-b,workspace-g}`, `run`, `print`, {cwd: path})).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `Test Workspace A\n`,
+              `Test Workspace C\n`,
+              `Test Workspace B\n`,
+              `Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
         },
       ),
     );
@@ -540,7 +776,13 @@ describe(`Commands`, () => {
     test(
       `--since runs on no workspaces if there have been no changes`,
       makeWorkspacesForeachSinceEnv(async ({run}) => {
-        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       }),
     );
 
@@ -549,7 +791,14 @@ describe(`Commands`, () => {
       makeWorkspacesForeachSinceEnv(async ({path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
-        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            `Test Workspace A\n`,
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       }),
     );
 
@@ -561,7 +810,13 @@ describe(`Commands`, () => {
         await git(`add`, `.`);
         await git(`commit`, `-m`, `wip`);
 
-        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       }),
     );
 
@@ -578,7 +833,15 @@ describe(`Commands`, () => {
         await writeJson(`${path}/packages/workspace-b/delta.json`, {});
         await writeJson(`${path}/packages/workspace-c/delta.json`, {});
 
-        await expect(run(`workspaces`, `foreach`, `--since=${ref}`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--since=${ref}`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            `Test Workspace B\n`,
+            `Test Workspace C\n`,
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       }),
     );
 
@@ -594,7 +857,15 @@ describe(`Commands`, () => {
         await writeJson(`${path}/packages/workspace-b/delta.json`, {});
         await writeJson(`${path}/packages/workspace-c/delta.json`, {});
 
-        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--since`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            `Test Workspace B\n`,
+            `Test Workspace C\n`,
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       }),
     );
 
@@ -603,7 +874,19 @@ describe(`Commands`, () => {
       makeWorkspacesForeachSinceEnv(async ({git, path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
 
-        await expect(run(`workspaces`, `foreach`, `--since`, `--recursive`, `run`, `print`)).resolves.toMatchSnapshot();
+        await expect(run(`workspaces`, `foreach`, `--since`, `--recursive`, `run`, `print`)).resolves.toEqual({
+          code: 0,
+          stderr: ``,
+          stdout: [
+            `Test Workspace A\n`,
+            `Test Workspace B\n`,
+            `Test Workspace C\n`,
+            `Test Workspace D\n`,
+            `Test Workspace E\n`,
+            `Test Workspace F\n`,
+            ...forEachVerboseDone,
+          ].join(``),
+        });
       }),
     );
 

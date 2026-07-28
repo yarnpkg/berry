@@ -6,10 +6,6 @@
   background: transparent;
 }
 
-.html [class~="menu"] a svg:not([role="img"]) {
-  display: none;
-}
-
 .sidebarEntry {
   display: flex;
   align-items: center;
@@ -28,6 +24,11 @@
   width: 100px;
 
   margin-left: 10px;
+}
+
+/* Hide external link icon */
+.sidebarEntry + svg {
+  display: none;
 }
 
 .versionSelector {

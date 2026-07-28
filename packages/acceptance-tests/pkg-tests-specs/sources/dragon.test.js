@@ -692,6 +692,9 @@ describe(`Dragon tests`, () => {
           `pkg-b`,
         ],
       },
+      {
+        enableScripts: true,
+      },
       async ({path, run, source}) => {
         // This dragon test represents the following scenario:
         //

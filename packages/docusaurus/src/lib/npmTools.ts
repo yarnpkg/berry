@@ -1,9 +1,9 @@
+import {useSuspenseQuery}          from '@tanstack/react-query';
 import {normalizeRepoUrl}          from '@yarnpkg/monorepo/packages/plugin-git/sources/utils/normalizeRepoUrl';
 import DOMPurify                   from 'dompurify';
 import gitUrlParse                 from 'git-url-parse';
 // @ts-expect-error - reason TBS
 import {Marked}                    from 'marked';
-import {useQuery}                  from 'react-query';
 import {resolve as resolveExports} from 'resolve.exports';
 import resolve                     from 'resolve';
 
@@ -67,24 +67,30 @@ export type PackageInfoQuery = ReturnType<typeof usePackageInfo>;
 export type ReleaseInfoQuery = ReturnType<typeof useReleaseInfo>;
 
 export function usePackageInfo(name: string) {
-  return useQuery([`packageRegistryMetadata`, name], async (): Promise<PackageInfo> => {
-    // eslint-disable-next-line no-restricted-globals
-    const req = await fetch(`https://registry.yarnpkg.com/${name}`);
-    const res = await req.json();
+  return useSuspenseQuery({
+    queryKey: [`packageRegistryMetadata`, name],
+    queryFn: async (): Promise<PackageInfo> => {
+      // eslint-disable-next-line no-restricted-globals
+      const req = await fetch(`https://registry.yarnpkg.com/${name}`);
+      const res = await req.json();
 
-    return res;
+      return res;
+    },
   }).data!;
 }
 
 export function usePackageExists(name: string | null) {
-  return useQuery([`packageExists`, name], async () => {
-    if (name === null)
-      return false;
+  return useSuspenseQuery({
+    queryKey: [`packageExists`, name],
+    queryFn: async () => {
+      if (name === null)
+        return false;
 
-    // eslint-disable-next-line no-restricted-globals
-    const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}/package.json`);
+      // eslint-disable-next-line no-restricted-globals
+      const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}/package.json`);
 
-    return req.status === 200;
+      return req.status === 200;
+    },
   });
 }
 
@@ -102,16 +108,19 @@ export function useReleaseInfo({name, version}: {name: string, version: string |
     version,
   });
 
-  const jsDelivrInfo = useQuery([`packageFiles`, name, resolvedVersion], async () => {
-    // eslint-disable-next-line no-restricted-globals
-    const req = await fetch(`https://data.jsdelivr.com/v1/package/npm/${name}@${resolvedVersion}/flat`);
-    const res = await req.json();
+  const jsDelivrInfo = useSuspenseQuery({
+    queryKey: [`packageFiles`, name, resolvedVersion],
+    queryFn: async () => {
+      // eslint-disable-next-line no-restricted-globals
+      const req = await fetch(`https://data.jsdelivr.com/v1/package/npm/${name}@${resolvedVersion}/flat`);
+      const res = await req.json();
 
-    const fileSet = new Set<string>();
-    for (const file of res.files)
-      fileSet.add(file.name);
+      const fileSet = new Set<string>();
+      for (const file of res.files)
+        fileSet.add(file.name);
 
-    return {files: res.files as Array<ReleaseFile>, fileSet};
+      return {files: res.files as Array<ReleaseFile>, fileSet};
+    },
   }).data!;
 
   return {
@@ -123,15 +132,18 @@ export function useReleaseInfo({name, version}: {name: string, version: string |
 }
 
 export function useReleaseFile({name, version}: {name: string, version: string}, path: string | null) {
-  return useQuery([`packageFile`, name, version, path], async () => {
-    if (path === null)
-      return null;
+  return useSuspenseQuery({
+    queryKey: [`packageFile`, name, version, path],
+    queryFn: async () => {
+      if (path === null)
+        return null;
 
-    // eslint-disable-next-line no-restricted-globals
-    const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}@${version}${path}`);
-    const res = await req.text();
+      // eslint-disable-next-line no-restricted-globals
+      const req = await fetch(`https://cdn.jsdelivr.net/npm/${name}@${version}${path}`);
+      const res = await req.text();
 
-    return res;
+      return res;
+    },
   }).data!;
 }
 
@@ -215,9 +227,10 @@ export function useResolution({name, version}: {name: string, version: string}, 
     version,
   });
 
-  const exportsResolution = resolveExports(releaseInfo.npm, `.`, {
-    conditions,
-  })?.[0];
+  let exportsResolution;
+  try {
+    exportsResolution = resolveExports(releaseInfo.npm, `.`, {conditions})?.[0];
+  } catch {}
 
   if (releaseInfo.npm.exports && !exportsResolution)
     return null;

@@ -18,12 +18,14 @@ export type BigIntStats = NodeBigIntStats & {
   crc?: number;
 };
 
-export type Dirent<T extends Path> = Omit<NodeDirent, `name` | `path`> & {
+export type Dirent<T extends Path> = Omit<NodeDirent, `name` | `path` | `parentPath`> & {
   name: Filename;
+  /** @deprecated */
   path: T;
+  parentPath: T;
 };
 
-export type DirentNoPath = Omit<NodeDirent, `name` | `path`> & {
+export type DirentNoPath = Omit<NodeDirent, `name` | `path` | `parentPath`> & {
   name: Filename;
 };
 
@@ -293,13 +295,13 @@ export abstract class FakeFS<P extends Path> {
   abstract lutimesPromise(p: P, atime: Date | string | number, mtime: Date | string | number): Promise<void>;
   abstract lutimesSync(p: P, atime: Date | string | number, mtime: Date | string | number): void;
 
-  abstract readFilePromise(p: FSPath<P>, encoding?: null): Promise<Buffer>;
+  abstract readFilePromise(p: FSPath<P>, encoding?: null): Promise<NonSharedBuffer>;
   abstract readFilePromise(p: FSPath<P>, encoding: BufferEncoding): Promise<string>;
-  abstract readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  abstract readFilePromise(p: FSPath<P>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
 
-  abstract readFileSync(p: FSPath<P>, encoding?: null): Buffer;
+  abstract readFileSync(p: FSPath<P>, encoding?: null): NonSharedBuffer;
   abstract readFileSync(p: FSPath<P>, encoding: BufferEncoding): string;
-  abstract readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): Buffer | string;
+  abstract readFileSync(p: FSPath<P>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
 
   abstract readlinkPromise(p: P): Promise<P>;
   abstract readlinkSync(p: P): P;

@@ -1,7 +1,7 @@
-import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator, LocatorHash} from '@yarnpkg/core';
-import semver                                                                                                 from  'semver';
+import {Project, Workspace, formatUtils, structUtils, treeUtils, Descriptor, miscUtils, Locator, LocatorHash, MinimalResolveOptions} from '@yarnpkg/core';
+import semver                                                                                                                        from  'semver';
 
-import * as npmAuditTypes                                                                                     from './npmAuditTypes';
+import * as npmAuditTypes                                                                                                            from './npmAuditTypes';
 
 export const allSeverities = [
   npmAuditTypes.Severity.Info,
@@ -110,6 +110,8 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
 
   const traversed = new Set<LocatorHash>();
   const queue: Array<[Locator, Descriptor]> = [];
+  const resolver = project.configuration.makeResolver();
+  const resolveOptions: MinimalResolveOptions = {project, resolver};
 
   const processDescriptor = (parent: Locator, descriptor: Descriptor) => {
     const resolution = project.storedResolutions.get(descriptor.descriptorHash);
@@ -125,6 +127,16 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     if (typeof pkg === `undefined`)
       throw new Error(`Assertion failed: The package should have been registered`);
 
+    const devirtualizedDescriptor = structUtils.ensureDevirtualizedDescriptor(descriptor);
+    if (resolver.supportsDescriptor(devirtualizedDescriptor, resolveOptions)) {
+      const resolutionDependencies = resolver.getResolutionDependencies(devirtualizedDescriptor, resolveOptions);
+
+      if (Object.keys(resolutionDependencies).length > 0) {
+        for (const resolutionDependencyDescriptor of Object.values(resolutionDependencies)) {
+          processDescriptor(parent, resolutionDependencyDescriptor);
+        }
+      }
+    }
     const devirtualizedLocator = structUtils.ensureDevirtualizedLocator(pkg);
 
     if (devirtualizedLocator.reference.startsWith(`npm:`) && pkg.version !== null) {

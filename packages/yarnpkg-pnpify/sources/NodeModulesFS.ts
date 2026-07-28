@@ -491,16 +491,16 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.symlinkSync(this.resolveDirOrFilePath(target), this.resolveDirOrFilePath(p));
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<NonSharedBuffer>;
   readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return await this.baseFs.readFilePromise(this.resolveFilePath(p), encoding);
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): NonSharedBuffer;
   readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     return this.baseFs.readFileSync(this.resolveFilePath(p), encoding);
   }
@@ -534,6 +534,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         return Object.assign(this.lstatSync(ppath.join(p, name)), {
           name,
           path: undefined,
+          parentPath: undefined,
         });
       });
     } else {
@@ -570,6 +571,7 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
         return Object.assign(this.lstatSync(ppath.join(p, name)), {
           name,
           path: undefined,
+          parentPath: undefined,
         });
       });
     } else {

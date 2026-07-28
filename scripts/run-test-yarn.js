@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-require(`../.pnp.cjs`).setup();
+// We call structuredClone to prevent TS from digging into the PnP file
+require(structuredClone(`../.pnp.cjs`)).setup();
+
 require(`@yarnpkg/monorepo/scripts/setup-ts-execution`);
 
 const {tests: {startPackageServer}} = require(`../packages/acceptance-tests/pkg-tests-core`);

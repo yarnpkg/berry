@@ -43,7 +43,7 @@ export class NpmHttpFetcher implements Fetcher {
     };
   }
 
-  async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
+  private async fetchFromNetwork(locator: Locator, opts: FetchOptions) {
     const {params} = structUtils.parseRange(locator.reference);
     if (params === null || typeof params.__archiveUrl !== `string`)
       throw new Error(`Assertion failed: The archiveUrl querystring parameter should have been available`);

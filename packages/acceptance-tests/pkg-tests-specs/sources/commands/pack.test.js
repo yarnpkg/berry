@@ -1,6 +1,6 @@
 import {xfs, npath}          from '@yarnpkg/fslib';
 import {fs as fsUtils, misc} from 'pkg-tests-core';
-import tar                   from 'tar';
+import * as tar              from 'tar';
 
 async function genPackList(run) {
   const {stdout} = await run(`pack`, `--dry-run`, `--json`);

@@ -191,7 +191,7 @@ export function convertToBigIntStats(stats: Stats): BigIntStats {
       const element = stats[key as keyof typeof stats];
       if (typeof element === `number`) {
         // @ts-expect-error Typescript isn't able to tell this is valid
-        bigintStats[key as keyof typeof bigintStats] = BigInt(element);
+        bigintStats[key as keyof typeof bigintStats] = BigInt(Math.floor(element));
       } else if (nodeUtils.types.isDate(element)) {
         // @ts-expect-error Typescript isn't able to tell this is valid
         bigintStats[key as keyof typeof bigintStats] = new Date(element);
@@ -199,10 +199,10 @@ export function convertToBigIntStats(stats: Stats): BigIntStats {
     }
   }
 
-  bigintStats.atimeNs = bigintStats.atimeMs * BigInt(1e6);
-  bigintStats.mtimeNs = bigintStats.mtimeMs * BigInt(1e6);
-  bigintStats.ctimeNs = bigintStats.ctimeMs * BigInt(1e6);
-  bigintStats.birthtimeNs = bigintStats.birthtimeMs * BigInt(1e6);
+  bigintStats.atimeNs = bigintStats.atimeMs * BigInt(1e6) + BigInt(Math.floor((stats.atimeMs % 1) * 1e3)) * BigInt(1e3);
+  bigintStats.mtimeNs = bigintStats.mtimeMs * BigInt(1e6) + BigInt(Math.floor((stats.mtimeMs % 1) * 1e3)) * BigInt(1e3);
+  bigintStats.ctimeNs = bigintStats.ctimeMs * BigInt(1e6) + BigInt(Math.floor((stats.ctimeMs % 1) * 1e3)) * BigInt(1e3);
+  bigintStats.birthtimeNs = bigintStats.birthtimeMs * BigInt(1e6) + BigInt(Math.floor((stats.birthtimeMs % 1) * 1e3)) * BigInt(1e3);
 
   return bigintStats as unknown as BigIntStats;
 }

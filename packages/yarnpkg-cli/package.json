@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/cli",
-  "version": "4.9.1",
+  "version": "4.17.1",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -13,6 +13,7 @@
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/libzip": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
+    "@yarnpkg/plugin-catalog": "workspace:^",
     "@yarnpkg/plugin-compat": "workspace:^",
     "@yarnpkg/plugin-constraints": "workspace:^",
     "@yarnpkg/plugin-dlx": "workspace:^",
@@ -40,7 +41,7 @@
     "@yarnpkg/shell": "workspace:^",
     "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "tslib": "^2.4.0",
     "typanion": "^3.14.0"
   },
@@ -78,6 +79,7 @@
     "bundles": {
       "standard": [
         "@yarnpkg/plugin-essentials",
+        "@yarnpkg/plugin-catalog",
         "@yarnpkg/plugin-compat",
         "@yarnpkg/plugin-constraints",
         "@yarnpkg/plugin-dlx",
@@ -112,5 +114,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.9.1"
+  "stableVersion": "4.17.1"
 }

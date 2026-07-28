@@ -1,6 +1,6 @@
 import {Manifest}                 from '@yarnpkg/core';
 import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
-import {merge}                    from 'lodash';
+import {merge}                    from 'es-toolkit/compat';
 import {fs, yarn}                 from 'pkg-tests-core';
 
 const {unpackToDirectory} = fs;
@@ -167,14 +167,14 @@ describe(`Plugins`, () => {
         makeTemporaryEnv({}, {
           tsEnableAutoTypes: true,
         }, async ({path, run, source}) => {
-          await run(`add`, `@babel/traverse@7.99.0`);
+          await run(`add`, `@hapi/joi@17.99.0`);
 
           await expect(readManifest(path)).resolves.toMatchObject({
             dependencies: {
-              [`@babel/traverse`]: `7.99.0`,
+              [`@hapi/joi`]: `17.99.0`,
             },
             devDependencies: {
-              [`@types/babel__traverse`]: `^7`,
+              [`@types/hapi__joi`]: `^17`,
             },
           });
         }),

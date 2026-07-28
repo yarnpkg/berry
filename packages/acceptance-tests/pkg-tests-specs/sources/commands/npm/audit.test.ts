@@ -284,5 +284,37 @@ describe(`Commands`, () => {
         await expect(run(`npm`, `audit`)).rejects.toThrow(/no-deps-deprecated-whitespace \(deprecation\)/);
       }),
     );
+
+    test(
+      `it should audit packages behind patch protocol (resolution dependencies)`,
+      makeTemporaryEnv({
+        resolutions: {
+          [`vulnerable@npm:1.0.0`]: `patch:vulnerable@npm:1.0.0#./vulnerable.patch`,
+        },
+        dependencies: {
+          [`vulnerable`]: `patch:vulnerable@1.0.0#./vulnerable.patch`,
+        },
+      }, async ({path, run, source}) => {
+        const patchContent = `diff --git a/index.js b/index.js
+index bb9c6f687..5b141d3df 100644
+--- a/index.js
++++ b/index.js
+@@ -1,5 +1,7 @@
+ module.exports = require(\`./package.json\`);
+
++module.exports.hello = \`world\`;
++
+ for (const key of [\`dependencies\`, \`devDependencies\`, \`peerDependencies\`]) {
+   for (const dep of Object.keys(module.exports[key] || {})) {
+     module.exports[key][dep] = require(dep);
+`;
+
+        await xfs.writeFilePromise(ppath.join(path, `vulnerable.patch`), patchContent);
+
+        await run(`install`);
+
+        await expect(run(`npm`, `audit`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);
+      }),
+    );
   });
 });

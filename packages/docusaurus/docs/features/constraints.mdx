@@ -134,6 +134,10 @@ This code ensures that no two workspaces in your project can list the same packa
 const {defineConfig} = require(`@yarnpkg/types`);
 
 /**
+ * @typedef {import('@yarnpkg/types').Yarn.Constraints.Context} Context
+ */
+
+/**
  * This rule will enforce that a workspace MUST depend on the same version of
  * a dependency as the one used by the other workspaces.
  *

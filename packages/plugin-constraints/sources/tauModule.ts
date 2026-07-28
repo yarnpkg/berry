@@ -2,7 +2,7 @@
 
 import {Project, structUtils} from '@yarnpkg/core';
 import {PortablePath}         from '@yarnpkg/fslib';
-import getPath                from 'lodash/get';
+import {get as getPath}       from 'es-toolkit/compat';
 import pl                     from 'tau-prolog';
 import vm                     from 'vm';
 

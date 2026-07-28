@@ -1000,4 +1000,78 @@ export const packageExtensions: Array<[string, PackageExtensionData]> = [
       csstype: `^3.0.10`,
     },
   }],
+  // https://github.com/fastify/fastify-type-provider-typebox/issues/114
+  // https://github.com/fastify/fastify-type-provider-typebox/pull/165
+  [`@fastify/type-provider-typebox@^5.0.0`, {
+    peerDependencies: {
+      fastify: `^5.0.0`,
+    },
+  }],
+  [`@fastify/type-provider-typebox@^4.0.0`, {
+    peerDependencies: {
+      fastify: `^4.0.0`,
+    },
+  }],
+  // https://github.com/vuejs/devtools/pull/1097
+  [`vite-plugin-vue-devtools@>=7.4.3`, {
+    peerDependencies: {
+      vue: `*`,
+    },
+  }],
+  // https://github.com/parcel-bundler/parcel/pull/10342
+  [`@parcel/resolver-default@>=2`, {
+    peerDependencies: {
+      "@parcel/core": `*`,
+    },
+  }],
+  [`@parcel/node-resolver-core@>=2`, {
+    peerDependencies: {
+      "@parcel/core": `*`,
+    },
+  }],
+  // https://github.com/volarjs/volar.js/issues/284
+  [`@volar/typescript@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/volar.js/issues/284
+  [`@volar/language-server@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/volar.js/issues/284
+  [`@volar/language-service@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/services/issues/125
+  [`volar-service-typescript@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
+  // https://github.com/volarjs/services/issues/125
+  [`volar-service-typescript-twoslash-queries@*`, {
+    peerDependencies: {
+      typescript: `*`,
+    },
+    peerDependenciesMeta: {
+      typescript: optionalPeerDep,
+    },
+  }],
 ];

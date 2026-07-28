@@ -1,5 +1,6 @@
 import {WindowsLinkType}                           from '@yarnpkg/core';
 import {xfs, npath, PortablePath, ppath, Filename} from '@yarnpkg/fslib';
+import {parseSyml}                                 from '@yarnpkg/parsers';
 
 
 const {
@@ -105,6 +106,7 @@ describe(`Node_Modules`, () => {
         },
       },
       {
+        enableScripts: true,
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
@@ -144,6 +146,34 @@ describe(`Node_Modules`, () => {
         if (process.platform !== `win32`) {
           // Check that destination has 0o700 - execute for all permissions set
           expect(stats.mode & 0o700).toEqual(0o700);
+        }
+      },
+    ),
+  );
+
+  test(`should prefer direct dependency bins over transitive dependency bins`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@fixture/native`]: `npm:has-bin-entries@2.0.0`,
+          [`has-bin-entries`]: `npm:one-dep-alias-bins@1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        const installState = parseSyml(await xfs.readFilePromise(ppath.join(path, `node_modules/.yarn-state.yml` as PortablePath), `utf8`));
+        const rootState = Object.values<any>(installState).find(({locations}) => locations?.includes(``));
+
+        expect(rootState?.bin?.[`.`]?.[`has-bin-entries-with-relative-require`]).toEqual(`@fixture/native/bin-with-relative-require.js`);
+
+        if (process.platform !== `win32`) {
+          await expect(run(`node`, `${path}/node_modules/.bin/has-bin-entries-with-relative-require`)).resolves.toMatchObject({
+            stdout: `2.0.0\n`,
+          });
         }
       },
     ),
@@ -1760,6 +1790,7 @@ describe(`Node_Modules`, () => {
         },
       },
       {
+        enableScripts: true,
         nodeLinker: `node-modules`,
       },
       async ({path, run, source}) => {
@@ -1776,6 +1807,81 @@ describe(`Node_Modules`, () => {
           name: `one-dep-scripted`,
           version: `1.0.0`,
         });
+      },
+    ),
+  );
+
+  it(`should set correct permissions on binaries in installed packages`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+        const {mode} = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/has-bin-entries/bin.js`));
+        const permissions = (mode & 0o777).toString(8);
+        expect(permissions).toBe(process.platform === `win32` ? `666` : `755`);
+      },
+    ),
+  );
+
+  it(`should set correct permissions on binaries in packages that were upgraded`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+          [`scoped/has-bin-entry`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+        await xfs.writeJsonPromise(`${path}/package.json` as PortablePath, {
+          dependencies: {
+            'has-bin-entries': `2.0.0`,
+            '@scoped/has-bin-entry': `2.0.0`,
+          },
+        });
+        await run(`install`);
+
+        const binaries = [
+          `has-bin-entries/bin.js`,
+          `@scoped/has-bin-entry/bin.js`,
+        ];
+
+        for (const binary of binaries) {
+          const {mode} = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/${binary}`));
+          const permissions = (mode & 0o777).toString(8);
+          expect(permissions).toBe(process.platform === `win32` ? `666` : `755`);
+        }
+      },
+    ),
+  );
+
+  it(`should reinstall and set correct permissions on next install when packages have been deleted by the user`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+        await xfs.removePromise(`${path}/node_modules/has-bin-entries` as PortablePath);
+        await run(`install`);
+        const {mode} = await xfs.lstatPromise(npath.toPortablePath(`${path}/node_modules/has-bin-entries/bin.js`));
+        const permissions = (mode & 0o777).toString(8);
+        expect(permissions).toBe(process.platform === `win32` ? `666` : `755`);
       },
     ),
   );
@@ -1915,6 +2021,7 @@ describe(`Node_Modules`, () => {
         await run(`install`);
 
         await expect(xfs.readdirPromise(ppath.join(path, Filename.nodeModules))).resolves.toEqual([
+          `.package-map.json`,
           `.yarn-state.yml`,
           `native`,
           `native-foo-x64`,

@@ -1,12 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                              from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash} from '@yarnpkg/core';
-import * as libuiUtils                                                                                                    from '@yarnpkg/libui/sources/libuiUtils';
-import type {SubmitInjectedComponent}                                                                                     from '@yarnpkg/libui/sources/misc/renderForm';
-import {suggestUtils}                                                                                                     from '@yarnpkg/plugin-essentials';
-import {Command, Usage}                                                                                                   from 'clipanion';
-import {diffWords}                                                                                                        from 'diff';
-import semver                                                                                                             from 'semver';
-import {WriteStream}                                                                                                      from 'tty';
+import {BaseCommand, WorkspaceRequiredError}                                                                                           from '@yarnpkg/cli';
+import {Cache, Configuration, Project, HardDependencies, InstallMode, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash} from '@yarnpkg/core';
+import * as libuiUtils                                                                                                                 from '@yarnpkg/libui/sources/libuiUtils';
+import type {SubmitInjectedComponent}                                                                                                  from '@yarnpkg/libui/sources/misc/renderForm';
+import {suggestUtils}                                                                                                                  from '@yarnpkg/plugin-essentials';
+import {Command, Option, Usage}                                                                                                        from 'clipanion';
+import {diffWords}                                                                                                                     from 'diff';
+import semver                                                                                                                          from 'semver';
+import {WriteStream}                                                                                                                   from 'tty';
+import * as t                                                                                                                          from 'typanion';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
@@ -30,11 +31,22 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     description: `open the upgrade interface`,
     details: `
       This command opens a fullscreen terminal interface where you can see any out of date packages used by your application, their status compared to the latest versions available on the remote registry, and select packages to upgrade.
+
+      If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
+
+      - \`skip-build\` will not run the build scripts at all. Note that this is different from setting \`enableScripts\` to false because the latter will disable build scripts, and thus affect the content of the artifacts generated on disk, whereas the former will just disable the build step - but not the scripts themselves, which just won't run.
+
+      - \`update-lockfile\` will skip the link step altogether, and only fetch packages that are missing from the lockfile (or that have no associated checksums). This mode is typically used by tools like Renovate or Dependabot to keep a lockfile up-to-date without incurring the full install cost.
     `,
     examples: [[
       `Open the upgrade window`,
       `yarn upgrade-interactive`,
     ]],
+  });
+
+  mode = Option.String(`--mode`, {
+    description: `Change what artifacts installs generate`,
+    validator: t.isEnum(InstallMode),
   });
 
   async execute() {
@@ -43,10 +55,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const {ItemOptions} = await import(`@yarnpkg/libui/sources/components/ItemOptions`);
     const {Pad} = await import(`@yarnpkg/libui/sources/components/Pad`);
     const {ScrollableItems} = await import(`@yarnpkg/libui/sources/components/ScrollableItems`);
-    const {useMinistore} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {useMinistore, useMinistoreSetAll} = await import(`@yarnpkg/libui/sources/hooks/useMinistore`);
+    const {useKeypress} = await import(`@yarnpkg/libui/sources/hooks/useKeypress`);
     const {renderForm} = await import(`@yarnpkg/libui/sources/misc/renderForm`);
     const {Box, Text} = await import(`ink`);
-    const {default: React, useEffect, useRef, useState} = await import(`react`);
+    const {default: React, useCallback, useEffect, useRef, useState} = await import(`react`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
@@ -59,14 +72,14 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       restoreResolutions: false,
     });
 
-    // 7 = 1-line command written by the user
-    //   + 2-line prompt
+    // 8 = 1-line command written by the user
+    //   + 3-line prompt
     //   + 1 newline
     //   + 1-line header
     //   + 1 newline
     //     [...package list]
     //   + 1 empty line
-    const VIEWPORT_SIZE = (this.context.stdout as WriteStream).rows - 7;
+    const VIEWPORT_SIZE = (this.context.stdout as WriteStream).rows - 8;
 
     const colorizeRawDiff = (from: string, to: string) => {
       const diff = diffWords(from, to);
@@ -181,6 +194,11 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
                 Press <Text bold color={`cyanBright`}>{`<left>`}</Text>/<Text bold color={`cyanBright`}>{`<right>`}</Text> to select versions.
               </Text>
             </Box>
+            <Box marginLeft={1}>
+              <Text>
+                Press <Text bold color={`cyanBright`}>c</Text>/<Text bold color={`cyanBright`}>r</Text>/<Text bold color={`cyanBright`}>l</Text> to select all <Text bold color={`cyanBright`}>current</Text>/<Text bold color={`cyanBright`}>range</Text>/<Text bold color={`cyanBright`}>latest</Text>.
+              </Text>
+            </Box>
           </Box>
           <Box flexDirection={`column`}>
             <Box marginLeft={1}>
@@ -232,6 +250,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     };
 
     const UpgradeEntries = ({dependencies}: {dependencies: Array<Descriptor>}) => {
+      const setAll = useMinistoreSetAll();
       const [suggestions, setSuggestions] = useState<Array<{descriptor: Descriptor, suggestions: UpgradeSuggestions} | null>>(dependencies.map(() => null));
       const mountedRef = useRef<boolean>(true);
 
@@ -306,6 +325,31 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         });
       }, []);
 
+      const handleBulkSelect = useCallback((ch: string) => {
+        if (ch !== `c` && ch !== `r` && ch !== `l`)
+          return;
+
+        const entries: Array<[string, string | null]> = [];
+        for (const suggestion of suggestions) {
+          if (suggestion === null)
+            continue;
+
+          let value: string | null;
+          if (ch === `c`)
+            value = null;
+          else if (ch === `r`)
+            value = suggestion.suggestions[1].value;
+          else
+            value = suggestion.suggestions[2].value ?? suggestion.suggestions[1].value;
+
+          entries.push([suggestion.descriptor.descriptorHash, value]);
+        }
+
+        setAll(entries);
+      }, [suggestions, setAll]);
+
+      useKeypress({active: true}, handleBulkSelect, [handleBulkSelect]);
+
       if (!suggestions.length)
         return <Text>No upgrades found</Text>;
 
@@ -373,6 +417,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       stdout: this.context.stdout,
     }, {
       cache,
+      mode: this.mode,
     });
   }
 }

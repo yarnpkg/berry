@@ -14,16 +14,15 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
-    "@types/tar": "^4.0.4",
     "@yarnpkg/cli": "workspace:^",
     "@yarnpkg/core": "workspace:^",
     "@yarnpkg/fslib": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/parsers": "workspace:^",
     "@yarnpkg/pnp": "workspace:^",
-    "lodash": "^4.17.15",
+    "es-toolkit": "^1.39.7",
     "pkg-tests-core": "workspace:^",
-    "tar": "^6.0.5",
+    "tar": "^7.5.3",
     "tslib": "^2.4.0"
   },
   "engines": {

@@ -1,5 +1,6 @@
 const {
   fs: {writeFile},
+  tests: {testIf},
 } = require(`pkg-tests-core`);
 
 const {environments} = require(`./environments`);
@@ -15,7 +16,8 @@ describe(`Commands`, () => {
   describe(`constraints source`, () => {
     for (const [environmentDescription, environment] of Object.entries(environments)) {
       for (const [scriptDescription, script] of Object.entries(constraints)) {
-        test(
+        testIf(
+          `prologConstraints`,
           `test (${environmentDescription} / ${scriptDescription})`,
           makeTemporaryEnv({}, async ({path, run, source}) => {
             await environment(path);

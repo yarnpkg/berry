@@ -16,7 +16,7 @@ env:
   STORYBOOK_DISABLE_TELEMETRY: 1
 jobs:
   chore:
-    name: 'Validating Storybook (with a React app)'
+    name: 'Validating Storybook (React with Vite app)'
     runs-on: ubuntu-latest
 
     steps:
@@ -27,9 +27,7 @@ jobs:
     - name: 'Running the integration test'
       run: |
         source scripts/e2e-setup-ci.sh
-        yarn create react-app my-cra && cd my-cra
-
-        yarn add @babel/preset-env
+        yarn create vite react --template react && cd react
 
         yarn dlx storybook@latest init --yes --no-dev
         yarn build-storybook

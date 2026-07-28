@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/pnp",
-  "version": "4.1.1",
+  "version": "4.1.7",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -9,7 +9,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/node": "^18.17.15",
+    "@types/node": "^18.19.124",
     "@yarnpkg/fslib": "workspace:^"
   },
   "devDependencies": {
@@ -21,7 +21,7 @@
     "esbuild": "npm:esbuild-wasm@^0.23.0",
     "rollup": "^2.59.0",
     "rollup-plugin-esbuild": "^3.0.2",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "tslib": "^2.4.0"
   },
   "scripts": {
@@ -51,5 +51,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.1.1"
+  "stableVersion": "4.1.7"
 }

@@ -37,7 +37,29 @@ export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpA
   });
 };
 
+export const generateOxfmtWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addCocVimWorkspaceConfiguration(pnpApi, CocVimConfiguration.settings, {
+    [`oxc.oxfmt.binPath`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        ppath.normalize(wrapper.manifest.bin.oxfmt),
+      ),
+    ),
+  });
+};
+
+export const generateOxlintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  await addCocVimWorkspaceConfiguration(pnpApi, CocVimConfiguration.settings, {
+    [`oxc.oxlint.binPath`]: npath.fromPortablePath(
+      wrapper.getProjectPathTo(
+        ppath.normalize(wrapper.manifest.bin.oxlint),
+      ),
+    ),
+  });
+};
+
 export const COC_VIM_SDKS: IntegrationSdks = [
   [`eslint`, generateEslintWrapper],
   [`typescript`, generateTypescriptWrapper],
+  [`oxfmt`, generateOxfmtWrapper],
+  [`oxlint`, generateOxlintWrapper],
 ];

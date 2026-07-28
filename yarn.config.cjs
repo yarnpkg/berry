@@ -209,6 +209,7 @@ module.exports = defineConfig({
     enforceConsistentDependenciesAcrossTheProject(ctx);
     enforceWorkspaceDependenciesWhenPossible(ctx);
     forbidDependency(ctx, `inquirer`, `Don't depend on inquirer - we use enquirer instead`);
+    forbidDependency(ctx, `lodash`, `Don't depend on lodash - we use es-toolkit instead`);
     enforceDependencyRelationship(ctx, `typescript`, `tslib`, true);
     enforceUpdateLocalScripts(ctx);
     enforcePrepackScripts(ctx);

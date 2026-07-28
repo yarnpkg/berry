@@ -1326,6 +1326,9 @@ describe(`Plug'n'Play`, () => {
       {
         dependencies: {[`no-deps-scripted`]: `1.0.0`},
       },
+      {
+        enableScripts: true,
+      },
       async ({path, run, source}) => {
         await run(`install`);
 
@@ -1388,6 +1391,9 @@ describe(`Plug'n'Play`, () => {
     makeTemporaryEnv(
       {
         dependencies: {[`no-deps-scripted`]: `1.0.0`},
+      },
+      {
+        enableScripts: true,
       },
       async ({path, run, source}) => {
         await run(`install`);
@@ -1952,6 +1958,9 @@ describe(`Plug'n'Play`, () => {
         dependencies: {
           'no-deps-scripted': `*`,
         },
+      },
+      {
+        enableScripts: true,
       },
       async ({path, run, source}) => {
         await run(`install`);

@@ -813,7 +813,7 @@ export class ZipFS extends BasePortableFakeFS {
   }
 
 
-  private setFileSource(p: PortablePath, content: string | Buffer | ArrayBuffer | DataView) {
+  private setFileSource(p: PortablePath, content: string | NodeJS.ArrayBufferView) {
     const buffer = Buffer.isBuffer(content) ? content : Buffer.from(content as any);
 
     const target = ppath.relative(PortablePath.root, p);
@@ -1271,9 +1271,9 @@ export class ZipFS extends BasePortableFakeFS {
     this.symlinkCount += 1;
   }
 
-  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<Buffer>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: null): Promise<NonSharedBuffer>;
   readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
-  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<Buffer | string>;
+  readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
@@ -1284,9 +1284,9 @@ export class ZipFS extends BasePortableFakeFS {
     return encoding ? data.toString(encoding) : data;
   }
 
-  readFileSync(p: FSPath<PortablePath>, encoding?: null): Buffer;
+  readFileSync(p: FSPath<PortablePath>, encoding?: null): NonSharedBuffer;
   readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
-  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Buffer | string;
+  readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
     // This is messed up regarding the TS signatures
     if (typeof encoding === `object`)
@@ -1362,6 +1362,7 @@ export class ZipFS extends BasePortableFakeFS {
           return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
             name,
             path: PortablePath.dot,
+            parentPath: PortablePath.dot,
           });
         });
 
@@ -1376,6 +1377,7 @@ export class ZipFS extends BasePortableFakeFS {
             entries.push(Object.assign(this.statImpl(`lstat`, ppath.join(p, subPath, child)), {
               name: child,
               path: subPath,
+              parentPath: subPath,
             }));
           }
         }
@@ -1401,6 +1403,7 @@ export class ZipFS extends BasePortableFakeFS {
         return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
           name,
           path: undefined,
+          parentPath: undefined,
         });
       });
     } else {

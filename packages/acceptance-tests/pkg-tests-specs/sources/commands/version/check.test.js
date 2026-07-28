@@ -173,7 +173,7 @@ function makeVersionCheckEnv(cb) {
 
     await run(`install`);
 
-    await git(`init`, `.`);
+    await git(`init`, `--initial-branch=master`);
 
     // Otherwise we can't always commit
     await git(`config`, `user.name`, `John Doe`);
