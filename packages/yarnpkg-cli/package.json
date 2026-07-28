@@ -41,7 +41,7 @@
     "@yarnpkg/shell": "workspace:^",
     "ci-info": "^4.0.0",
     "clipanion": "^4.0.0-rc.2",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "tslib": "^2.4.0",
     "typanion": "^3.14.0"
   },

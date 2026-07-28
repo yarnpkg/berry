@@ -5803,7 +5803,7 @@ __metadata:
     chalk: "npm:^4.1.2"
     clipanion: "npm:^4.0.0-rc.2"
     esbuild: "npm:esbuild-wasm@^0.23.0"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     typescript: "catalog:"
   bin:
@@ -5851,7 +5851,7 @@ __metadata:
     "@yarnpkg/shell": "workspace:^"
     ci-info: "npm:^4.0.0"
     clipanion: "npm:^4.0.0-rc.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     typanion: "npm:^3.14.0"
   peerDependencies:
@@ -5901,7 +5901,7 @@ __metadata:
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     strip-ansi: "npm:^6.0.0"
     tar: "npm:^7.5.3"
     tinylogic: "npm:^2.0.0"
@@ -6010,7 +6010,7 @@ __metadata:
     react-window: "npm:^1.8.11"
     resolve: "npm:1.22.2"
     resolve.exports: "npm:^2.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     three: "npm:^0.145.0"
     tslib: "npm:^2.4.0"
     typedoc: "npm:^0.25.7"
@@ -6118,7 +6118,7 @@ __metadata:
     jest: "npm:^29.2.1"
     micromatch: "npm:^4.0.2"
     pirates: "npm:^4.0.5"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     typescript: "catalog:"
   dependenciesMeta:
@@ -6182,7 +6182,7 @@ __metadata:
     "@yarnpkg/plugin-npm": "workspace:^"
     "@yarnpkg/plugin-patch": "workspace:^"
     resolve: "npm:^1.17.0"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/plugin-patch": "workspace:^"
@@ -6239,7 +6239,7 @@ __metadata:
     enquirer: "npm:^2.3.6"
     es-toolkit: "npm:^1.39.7"
     micromatch: "npm:^4.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     typanion: "npm:^3.14.0"
   peerDependencies:
@@ -6286,7 +6286,7 @@ __metadata:
     clipanion: "npm:^4.0.0-rc.2"
     es-toolkit: "npm:^1.39.7"
     git-url-parse: "npm:^13.1.0"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/core": "workspace:^"
@@ -6351,7 +6351,7 @@ __metadata:
     ink: "npm:^3.2.0"
     ink-text-input: "npm:^4.0.3"
     react: "npm:^17.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     typanion: "npm:^3.14.0"
   peerDependencies:
@@ -6421,7 +6421,7 @@ __metadata:
     clipanion: "npm:^4.0.0-rc.2"
     enquirer: "npm:^2.3.6"
     micromatch: "npm:^4.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     typanion: "npm:^3.14.0"
   peerDependencies:
@@ -6445,7 +6445,7 @@ __metadata:
     enquirer: "npm:^2.3.6"
     es-toolkit: "npm:^1.39.7"
     micromatch: "npm:^4.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     sigstore: "npm:^3.1.0"
     ssri: "npm:^12.0.0"
     tslib: "npm:^2.4.0"
@@ -6558,7 +6558,7 @@ __metadata:
     "@yarnpkg/plugin-essentials": "workspace:^"
     "@yarnpkg/plugin-pack": "workspace:^"
     algoliasearch: "npm:^4.2.0"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -6584,7 +6584,7 @@ __metadata:
     es-toolkit: "npm:^1.39.7"
     ink: "npm:^3.2.0"
     react: "npm:^17.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@yarnpkg/cli": "workspace:^"
@@ -6630,7 +6630,7 @@ __metadata:
     esbuild: "npm:esbuild-wasm@^0.23.0"
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
   languageName: unknown
   linkType: soft
@@ -16873,7 +16873,7 @@ pem@dexus/pem:
     invariant: "npm:^2.2.4"
     pem: dexus/pem
     pkg-tests-fixtures: "workspace:^"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     serve-static: "npm:^1.14.1"
     sigstore: "npm:^3.1.0"
     super-resolve: "npm:^1.0.0"
@@ -19399,14 +19399,12 @@ pem@dexus/pem:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.1.2, semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.4, semver@npm:^7.6.0":
-  version: 7.6.0
-  resolution: "semver@npm:7.6.0"
-  dependencies:
-    lru-cache: "npm:^6.0.0"
+"semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.8.5":
+  version: 7.8.5
+  resolution: "semver@npm:7.8.5"
   bin:
     semver: bin/semver.js
-  checksum: 10/1b41018df2d8aca5a1db4729985e8e20428c650daea60fcd16e926e9383217d00f574fab92d79612771884a98d2ee2a1973f49d630829a8d54d6570defe62535
+  checksum: 10/9b01d2ff11e6e4a4539b7ca3c5f280c8704cb397a28504469f2ed4f00ad2194748d756647362a9712fff30984d15772ab7f083108c2fb508e2096ae9e708f22c
   languageName: node
   linkType: hard
 
@@ -21681,7 +21679,7 @@ pem@dexus/pem:
     rollup: "npm:^2.59.0"
     rollup-plugin-esbuild: "npm:^3.0.2"
     rollup-plugin-terser: "npm:^7.0.2"
-    semver: "npm:^7.1.2"
+    semver: "npm:^7.8.5"
     tslib: "npm:^2.4.0"
     vsce: "npm:^2.9.2"
   languageName: unknown
