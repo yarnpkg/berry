@@ -122,6 +122,43 @@ export interface Hooks {
   ) => Promise<void>;
 
   /**
+   * Called before a new dependency is added to a workspace. Note that this
+   * hook is only called by the CLI commands like `yarn add` - manually adding
+   * the dependencies into the manifest and running `yarn install` won't
+   * trigger it.
+   */
+  beforeWorkspaceDependencyAddition?: (
+    workspace: Workspace,
+    target: suggestUtils.Target,
+    descriptor: Descriptor,
+  ) => Promise<void>;
+
+  /**
+   * Called before a dependency range is replaced inside a workspace. Note that
+   * this hook is only called by the CLI commands like `yarn add` or `yarn up` -
+   * manually updating the dependencies from the manifest and running
+   * `yarn install` won't trigger it.
+   */
+  beforeWorkspaceDependencyReplacement?: (
+    workspace: Workspace,
+    target: suggestUtils.Target,
+    fromDescriptor: Descriptor,
+    toDescriptor: Descriptor,
+  ) => Promise<void>;
+
+  /**
+   * Called before a dependency range is removed from a workspace. Note that
+   * this hook is only called by the CLI commands like `yarn remove` - manually
+   * removing the dependencies from the manifest and running `yarn install`
+   * won't trigger it.
+   */
+  beforeWorkspaceDependencyRemoval?: (
+    workspace: Workspace,
+    target: suggestUtils.Target,
+    descriptor: Descriptor,
+  ) => Promise<void>;
+
+  /**
    * Called by `yarn info`. The `extra` field is the set of parameters passed
    * to the `-X,--extra` flag. Calling `registerData` will add a new set of
    * data that will be added to the package information.
