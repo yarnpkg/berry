@@ -4911,7 +4911,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-router-config", "npm:5.0.11"],\
           ["combine-promises", "npm:1.1.0"],\
           ["fs-extra", "npm:11.2.0"],\
-          ["js-yaml", "npm:4.1.0"],\
+          ["js-yaml", "npm:4.3.0"],\
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:19.1.0"],\
           ["react-dom", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:19.1.0"],\
@@ -5450,7 +5450,7 @@ const RAW_RUNTIME_STATE =
           ["globby", "npm:11.1.0"],\
           ["gray-matter", "npm:4.0.3"],\
           ["jiti", "npm:1.21.0"],\
-          ["js-yaml", "npm:4.1.0"],\
+          ["js-yaml", "npm:4.3.0"],\
           ["lodash", "npm:4.17.21"],\
           ["micromatch", "npm:4.0.5"],\
           ["prompts", "npm:2.4.2"],\
@@ -5485,7 +5485,7 @@ const RAW_RUNTIME_STATE =
           ["@docusaurus/utils-validation", "npm:3.7.0"],\
           ["fs-extra", "npm:11.2.0"],\
           ["joi", "npm:17.12.1"],\
-          ["js-yaml", "npm:4.1.0"],\
+          ["js-yaml", "npm:4.3.0"],\
           ["lodash", "npm:4.17.21"],\
           ["tslib", "npm:2.6.2"]\
         ],\
@@ -5988,7 +5988,7 @@ const RAW_RUNTIME_STATE =
           ["globals", "npm:14.0.0"],\
           ["ignore", "npm:5.3.1"],\
           ["import-fresh", "npm:3.3.0"],\
-          ["js-yaml", "npm:4.1.0"],\
+          ["js-yaml", "npm:4.3.0"],\
           ["minimatch", "npm:3.1.2"],\
           ["strip-json-comments", "npm:3.1.1"]\
         ],\
@@ -10596,7 +10596,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/js-yaml", "npm:3.12.5"],\
           ["@yarnpkg/parsers", "workspace:packages/yarnpkg-parsers"],\
-          ["js-yaml", "npm:3.14.1"],\
+          ["js-yaml", "npm:4.3.0"],\
           ["pegjs", "npm:0.10.0"],\
           ["tslib", "npm:2.6.2"]\
         ],\
@@ -22851,7 +22851,7 @@ const RAW_RUNTIME_STATE =
           ["@types/typescript", null],\
           ["cosmiconfig", "virtual:bf74191dfa0c5cad5d5bcc60a1f0e6f58f452bb8ae41538349055d9842a52bc22b032efccff3e1ea29b89ac22f63d9619bcf7c8b6f174efb2549f9279bab6b59#npm:8.3.6"],\
           ["import-fresh", "npm:3.3.0"],\
-          ["js-yaml", "npm:4.1.0"],\
+          ["js-yaml", "npm:4.3.0"],\
           ["parse-json", "npm:5.2.0"],\
           ["path-type", "npm:4.0.0"],\
           ["typescript", null]\
@@ -28925,11 +28925,11 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:4.1.0", {\
-        "packageLocation": "./.yarn/cache/js-yaml-npm-4.1.0-3606f32312-c138a34a3f.zip/node_modules/js-yaml/",\
+      ["npm:4.3.0", {\
+        "packageLocation": "./.yarn/cache/js-yaml-npm-4.3.0-1586601382-2bcec3a811.zip/node_modules/js-yaml/",\
         "packageDependencies": [\
           ["argparse", "npm:2.0.1"],\
-          ["js-yaml", "npm:4.1.0"]\
+          ["js-yaml", "npm:4.3.0"]\
         ],\
         "linkType": "HARD"\
       }]\
