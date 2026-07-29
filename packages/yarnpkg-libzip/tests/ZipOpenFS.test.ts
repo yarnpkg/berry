@@ -28,6 +28,8 @@ export const ZIP_FILE3 = ppath.join(ZIP_DIR3, `foo.txt`);
 export const ZIP_FILE4 = ppath.join(ZIP_DIR4, `foo.txt`);
 export const ZIP_FILE5 = ppath.join(ZIP_DIR5, `foo.txt`);
 
+const itSkipWin32 = process.platform !== `win32` ? it : it.skip;
+
 afterEach(() => {
   jest.useRealTimers();
 });
@@ -100,7 +102,8 @@ describe(`ZipOpenFS`, () => {
     fs.discardAndClose();
   });
 
-  it(`can read from a zip file that's a symlink`, () => {
+  // This test does not work on win32 because the checked in symlink is not properly materialized from git.
+  itSkipWin32(`can read from a zip file that's a symlink`, () => {
     const fs = new ZipOpenFS();
 
     expect(fs.readFileSync(ZIP_FILE4, `utf8`)).toEqual(`foo\n`);
