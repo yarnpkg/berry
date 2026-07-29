@@ -156,11 +156,11 @@ export class Manifest {
       throw error;
     }
 
-    this.load(data);
+    this.load(data, {packageDir: {baseFs, dir: ppath.dirname(path)}});
     this.indent = getIndent(content);
   }
 
-  load(data: any, {yamlCompatibilityMode = false}: {yamlCompatibilityMode?: boolean} = {}) {
+  load(data: any, {yamlCompatibilityMode = false, packageDir = null}: {yamlCompatibilityMode?: boolean, packageDir?: null | {baseFs: FakeFS<PortablePath>, dir: PortablePath}} = {}) {
     if (typeof data !== `object` || data === null)
       throw new Error(`Utterly invalid manifest data (${data})`);
 
@@ -309,6 +309,12 @@ export class Manifest {
         // }
         const binaryIdent = structUtils.parseIdent(key);
         this.bin.set(binaryIdent.name, normalizeSlashes(value));
+      }
+    } else if (packageDir !== null && typeof data.directories?.bin === `string`) {
+      for (const file of packageDir.baseFs.readdirSync(ppath.join(packageDir.dir, data.directories.bin), {withFileTypes: true})) {
+        if (file.isFile()) {
+          this.bin.set(file.name, normalizeSlashes(ppath.join(data.directories.bin, file.name)));
+        }
       }
     }
 
