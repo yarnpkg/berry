@@ -6,6 +6,10 @@ let registeredFactory: () => Libzip = () => {
   throw new Error(`Assertion failed: No libzip instance is available, and no factory was configured`);
 };
 
+export function newInstance() {
+  return registeredFactory();
+}
+
 export function setFactory(factory: () => Libzip) {
   registeredFactory = factory;
 }
