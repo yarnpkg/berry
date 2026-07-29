@@ -168,7 +168,7 @@ export enum DurationUnit {
   WEEKS = `w`,
 }
 export type DurationSettingsDefinition = BaseSettingsDefinition<SettingsType.DURATION> & {
-  default: string;
+  default: string | null;
   unit: DurationUnit;
   isNullable?: boolean;
 };
@@ -810,6 +810,9 @@ function parseSingleValue(configuration: Configuration, path: string, valueBase:
   if (value === null && !definition.isNullable && definition.default !== null)
     throw new Error(`Non-nullable configuration settings "${path}" cannot be set to null`);
 
+  if (value === null)
+    return null;
+
   if (`values` in definition && definition.values?.includes(value))
     return value;
 
@@ -953,6 +956,9 @@ function getDefaultValue(configuration: Configuration, definition: SettingsDefin
       }
     }
     case SettingsType.DURATION: {
+      if (definition.default === null)
+        return null;
+
       return miscUtils.parseDuration(definition.default, definition.unit);
     }
     default: {
