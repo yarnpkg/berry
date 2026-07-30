@@ -1,0 +1,58 @@
+# Yarn
+
+> Yarn is a package manager for JavaScript/TypeScript projects, providing dependency installation, workspaces, Plug'n'Play resolution, and a plugin-based extensibility model.
+
+## Getting Started
+
+- [Introduction](https://yarnpkg.com/getting-started): What Yarn is and why to use it
+- [Installation](https://yarnpkg.com/getting-started/install): Installing Yarn via Corepack
+- [Usage](https://yarnpkg.com/getting-started/usage): Common day-to-day commands
+- [Q&A](https://yarnpkg.com/getting-started/qa): Frequently asked questions
+- [Recipes](https://yarnpkg.com/getting-started/recipes): Common configuration recipes
+- [Editor SDKs](https://yarnpkg.com/getting-started/editor-sdks): IDE/editor integration setup
+- [Corepack](https://yarnpkg.com/corepack): Managing Yarn versions via Corepack
+
+## Migration (from Yarn Classic)
+
+- [Migration overview](https://yarnpkg.com/migration/overview): Benefits of migrating to modern Yarn
+- [Migration guide](https://yarnpkg.com/migration/guide): Step-by-step migration steps
+- [Plug'n'Play migration](https://yarnpkg.com/migration/pnp): Migrating to the PnP install strategy
+
+## Features
+
+- [Workspaces](https://yarnpkg.com/features/workspaces): Monorepo support
+- [Plug'n'Play](https://yarnpkg.com/features/pnp): The PnP dependency resolution strategy
+- [Linkers / install modes](https://yarnpkg.com/features/linkers): node-modules, pnp, and pnpm-style linkers
+- [Caching](https://yarnpkg.com/features/caching): How the package cache works
+- [Catalogs](https://yarnpkg.com/features/catalogs): Shared dependency version catalogs
+- [Constraints](https://yarnpkg.com/features/constraints): Enforcing rules across a workspace
+- [Extensibility](https://yarnpkg.com/features/extensibility): Plugin system overview
+- [Patching](https://yarnpkg.com/features/patching): Patching third-party dependencies
+- [Performances](https://yarnpkg.com/features/performances): Performance characteristics
+- [Release workflow](https://yarnpkg.com/features/release-workflow): Versioning and release management
+- [Scripting](https://yarnpkg.com/features/scripting): Writing custom scripts against the Yarn API
+- [Security](https://yarnpkg.com/features/security): Security features and hardening
+
+## Configuration
+
+- [package.json fields](https://yarnpkg.com/configuration/manifest): Yarn-specific manifest fields
+- [.yarnrc.yml](https://yarnpkg.com/configuration/yarnrc): Configuration file reference
+
+## Protocols
+
+- [npm:](https://yarnpkg.com/protocol/npm), [workspace:](https://yarnpkg.com/protocol/workspace), [portal:](https://yarnpkg.com/protocol/portal), [link:](https://yarnpkg.com/protocol/link), [file:](https://yarnpkg.com/protocol/file), [exec:](https://yarnpkg.com/protocol/exec), [patch:](https://yarnpkg.com/protocol/patch), [jsr:](https://yarnpkg.com/protocol/jsr): Dependency reference protocols supported in manifests
+
+## Advanced / Technical Reference
+
+- [Error codes](https://yarnpkg.com/advanced/error-codes): Reference of Yarn CLI error codes
+- [Lexicon](https://yarnpkg.com/advanced/lexicon): Terminology reference
+- [Rulebook](https://yarnpkg.com/advanced/rulebook): Package manager rules and conventions
+- [Lifecycle scripts](https://yarnpkg.com/advanced/lifecycle-scripts): npm lifecycle script support
+- [PnP specification](https://yarnpkg.com/advanced/pnp-spec): Formal Plug'n'Play spec
+- [PnP API](https://yarnpkg.com/advanced/pnpapi): Runtime API exposed under PnP
+- [PnPify](https://yarnpkg.com/advanced/pnpify): Compatibility shim for tools that assume node_modules
+- [Architecture](https://yarnpkg.com/advanced/architecture): Internal architecture overview
+- [Changelog](https://yarnpkg.com/advanced/changelog): Release changelog
+- [Contributing](https://yarnpkg.com/advanced/contributing): How to contribute to Yarn
+- [Plugin tutorial](https://yarnpkg.com/advanced/plugin-tutorial): Writing a Yarn plugin
+- [Telemetry](https://yarnpkg.com/advanced/telemetry): What telemetry Yarn collects and how to opt out
