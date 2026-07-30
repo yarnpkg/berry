@@ -5,6 +5,7 @@ import {isCI}                                                   from 'ci-info';
 import AddCommand                                               from './commands/add';
 import BinCommand                                               from './commands/bin';
 import CacheCleanCommand                                        from './commands/cache/clean';
+import CompletionsCommand                                       from './commands/completions';
 import ConfigGetCommand                                         from './commands/config/get';
 import ConfigSetCommand                                         from './commands/config/set';
 import ConfigUnsetCommand                                       from './commands/config/unset';
@@ -45,6 +46,7 @@ import * as suggestUtils                                        from './suggestU
 export {AddCommand};
 export {BinCommand};
 export {CacheCleanCommand};
+export {CompletionsCommand};
 export {ConfigGetCommand};
 export {ConfigSetCommand};
 export {ConfigUnsetCommand};
@@ -178,6 +180,7 @@ const plugin: Plugin = {
     SetVersionSourcesCommand,
     SetVersionCommand,
     WorkspacesListCommand,
+    CompletionsCommand,
     ClipanionCommand,
     HelpCommand,
     EntryCommand,
