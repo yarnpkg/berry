@@ -142,7 +142,7 @@ Little-known Yarn feature: any script with a colon in its name (`build:foo`) can
     "typescript": "^3.8.0"
   },
   "scripts": {
-    "g:tsc": "cd $INIT_CWD && tsc"
+    "g:tsc": "cd \"$INIT_CWD\" && tsc"
   }
 }
 ```
@@ -172,7 +172,7 @@ Should you want to run a script in the base of your project:
 ```json
 {
   "scripts": {
-    "build": "node ${PROJECT_CWD}/scripts/update-contributors.js"
+    "build": "node \"$PROJECT_CWD/scripts/update-contributors.js\""
   }
 }
 ```
