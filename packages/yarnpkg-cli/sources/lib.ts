@@ -1,8 +1,8 @@
 import {Configuration, CommandContext, PluginConfiguration, TelemetryManager, semverUtils, miscUtils, YarnVersion} from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs}                                                                           from '@yarnpkg/fslib';
-import {execFileSync, type SpawnSyncReturns}                                                                       from 'child_process';
 import {isCI}                                                                                                      from 'ci-info';
 import {Cli, UsageError}                                                                                           from 'clipanion';
+import Module                                                                                                      from 'module';
 
 import {pluginCommands}                                                                                            from './pluginCommands';
 import {getPluginConfiguration}                                                                                    from './tools/getPluginConfiguration';
@@ -61,30 +61,31 @@ async function getCoreConfiguration({selfPath, pluginConfiguration}: {selfPath: 
   });
 }
 
+// We load the binary into the current process,
+// while making it think it was spawned.
 function runYarnPath(cli: YarnCli, argv: Array<string>, {yarnPath}: {yarnPath: PortablePath}) {
   if (!xfs.existsSync(yarnPath)) {
     (cli.error(new Error(`The "yarn-path" option has been set, but the specified location doesn't exist (${yarnPath}).`)));
     return 1;
   }
 
-  process.on(`SIGINT`, () => {
-    // We don't want SIGINT to kill our process; we want it to kill the
-    // innermost process, whose end will cause our own to exit.
-  });
+  const binPath = npath.fromPortablePath(yarnPath);
 
-  const yarnPathExecOptions = {
-    stdio: `inherit`,
-    env: {
-      ...process.env,
-      YARN_IGNORE_PATH: `1`,
-    },
-  } as const;
+  process.env.YARN_IGNORE_PATH = `1`;
 
-  try {
-    execFileSync(process.execPath, [npath.fromPortablePath(yarnPath), ...argv], yarnPathExecOptions);
-  } catch (err) {
-    return (err as SpawnSyncReturns<void>).status ?? 1;
-  }
+  process.argv = [
+    process.execPath,
+    binPath,
+    ...argv,
+  ];
+  process.execArgv = [];
+
+  // Unset the mainModule and let Node.js set it when needed.
+  process.mainModule = undefined;
+
+  // Use nextTick to unwind the stack, and consequently remove this binary from
+  // the stack trace of the next binary.
+  process.nextTick(Module.runMain, binPath);
 
   return 0;
 }
