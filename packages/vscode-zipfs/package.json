@@ -37,7 +37,12 @@
           "ZIP"
         ],
         "extensions": [
-          ".zip"
+          ".zip",
+          ".jar",
+          ".war",
+          ".apk",
+          ".ipa",
+          ".crx"
         ]
       }
     ],
