@@ -5270,10 +5270,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^7.1.0":
-  version: 7.5.8
-  resolution: "@types/semver@npm:7.5.8"
-  checksum: 10/3496808818ddb36deabfe4974fd343a78101fa242c4690044ccdc3b95dcf8785b494f5d628f2f47f38a702f8db9c53c67f47d7818f2be1b79f2efb09692e1178
+"@types/semver@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "@types/semver@npm:7.8.0"
+  checksum: 10/bbb33a88cdbc72759cf6b2750f1a28468f4470a61a1543061f494c21a53ad53bb85976e5282d79c811579e7073db0ecb6643ee0bcbf0466e8b5b3cb57ea97de0
   languageName: node
   linkType: hard
 
@@ -5809,7 +5809,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/builder@workspace:packages/yarnpkg-builder"
   dependencies:
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5829,7 +5829,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@yarnpkg/cli@workspace:packages/yarnpkg-cli"
   dependencies:
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5887,7 +5887,7 @@ __metadata:
     "@types/diff": "npm:^5.0.0"
     "@types/micromatch": "npm:^4.0.1"
     "@types/node": "npm:^18.19.124"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@types/treeify": "npm:^1.0.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -5975,7 +5975,7 @@ __metadata:
     "@types/react-virtualized": "npm:^9"
     "@types/react-window": "npm:^1"
     "@types/resolve": "npm:^1.20.0"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@types/three": "npm:^0.144.0"
     "@xterm/addon-serialize": "npm:^0.13.0"
     "@xterm/headless": "npm:^5.5.0"
@@ -6117,7 +6117,7 @@ __metadata:
     "@types/jest": "npm:^28.1.6"
     "@types/micromatch": "npm:^4.0.1"
     "@types/node": "npm:^18.19.124"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/eslint-config": "workspace:^"
@@ -6242,7 +6242,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-essentials@workspace:packages/plugin-essentials"
   dependencies:
     "@types/micromatch": "npm:^4.0.1"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -6294,7 +6294,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-git@workspace:packages/plugin-git"
   dependencies:
     "@types/git-url-parse": "npm:^9.0.0"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
     clipanion: "npm:^4.0.0-rc.2"
@@ -6353,7 +6353,7 @@ __metadata:
   dependencies:
     "@types/diff": "npm:^5.0.0"
     "@types/react": "npm:^16.8.0"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6426,7 +6426,7 @@ __metadata:
   dependencies:
     "@npm/types": "npm:^1.0.1"
     "@types/micromatch": "npm:^4.0.1"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -6451,7 +6451,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-npm@workspace:packages/plugin-npm"
   dependencies:
     "@types/micromatch": "npm:^4.0.1"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@types/ssri": "npm:^7.1.5"
     "@yarnpkg/core": "workspace:^"
     "@yarnpkg/fslib": "workspace:^"
@@ -6564,7 +6564,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-typescript@workspace:packages/plugin-typescript"
   dependencies:
     "@algolia/requester-common": "npm:4.0.0-beta.14"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6586,7 +6586,7 @@ __metadata:
   resolution: "@yarnpkg/plugin-version@workspace:packages/plugin-version"
   dependencies:
     "@types/react": "npm:^16.8.0"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/builder": "workspace:^"
     "@yarnpkg/cli": "workspace:^"
     "@yarnpkg/core": "workspace:^"
@@ -6637,7 +6637,7 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
     "@types/node": "npm:^18.19.124"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
     arg: "npm:^5.0.2"
@@ -16863,7 +16863,7 @@ pem@dexus/pem:
     "@types/finalhandler": "npm:1.1.0"
     "@types/invariant": "npm:^2.2.30"
     "@types/pem": "npm:^1"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@types/serve-static": "npm:1.13.3"
     "@types/tar-fs": "npm:^1.16.1"
     "@types/uuid": "npm:^8"
@@ -21649,7 +21649,7 @@ pem@dexus/pem:
   dependencies:
     "@rollup/plugin-commonjs": "npm:^21.0.1"
     "@rollup/plugin-node-resolve": "npm:^11.0.1"
-    "@types/semver": "npm:^7.1.0"
+    "@types/semver": "npm:^7.8.0"
     "@types/vscode": "npm:^1.54.0"
     "@yarnpkg/fslib": "workspace:^"
     "@yarnpkg/libzip": "workspace:^"
