@@ -374,25 +374,26 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     default: true,
   },
   supportedArchitectures: {
-    description: `Architectures that Yarn will fetch and inject into the resolver`,
+    description: `Architectures that Yarn will fetch and inject into the resolver. Can either be a single entry (fields combinatorially merged together) or a list of entries (entries are matched independently)`,
     type: SettingsType.SHAPE,
+    isArray: true,
     properties: {
       os: {
-        description: `Array of supported process.platform strings, or null to target them all`,
+        description: `Supported process.platform string (or array of strings), or null to target them all`,
         type: SettingsType.STRING,
         isArray: true,
         isNullable: true,
         default: [`current`],
       },
       cpu: {
-        description: `Array of supported process.arch strings, or null to target them all`,
+        description: `Supported process.arch string (or array of strings), or null to target them all`,
         type: SettingsType.STRING,
         isArray: true,
         isNullable: true,
         default: [`current`],
       },
       libc: {
-        description: `Array of supported libc libraries, or null to target them all`,
+        description: `Supported libc library (or array of libraries), or null to target them all`,
         type: SettingsType.STRING,
         isArray: true,
         isNullable: true,
@@ -685,7 +686,7 @@ export interface ConfigurationValueMap {
   defaultLanguageName: string;
   defaultProtocol: string;
   enableTransparentWorkspaces: boolean;
-  supportedArchitectures: miscUtils.ToMapValue<SupportedArchitectures>;
+  supportedArchitectures: Array<miscUtils.ToMapValue<SupportedArchitectures>>;
 
   enableMirror: boolean;
   enableNetwork: boolean;
@@ -779,7 +780,13 @@ function parseValue(configuration: Configuration, path: string, valueBase: unkno
   const value = configUtils.getValue(valueBase);
 
   if (definition.isArray || (definition.type === SettingsType.ANY && Array.isArray(value))) {
+    if ((value === null || value === `null`) && `isNullable` in definition && definition.isNullable)
+      return null;
+
     if (!Array.isArray(value)) {
+      if (definition.type === SettingsType.SHAPE || definition.type === SettingsType.MAP)
+        return [parseSingleValue(configuration, `${path}[0]`, valueBase, definition, folder)];
+
       return String(value).split(/,/).map(segment => {
         return parseSingleValue(configuration, path, segment, definition, folder);
       });
@@ -1810,23 +1817,31 @@ export class Configuration {
     return linkers;
   }
 
-  getSupportedArchitectures(): nodeUtils.ArchitectureSet {
+  getSupportedArchitectures(): nodeUtils.ArchitectureSetList {
     const architecture = nodeUtils.getArchitecture();
     const supportedArchitectures = this.get(`supportedArchitectures`);
 
-    let os = supportedArchitectures.get(`os`);
-    if (os !== null)
-      os = os.map(value => value === `current` ? architecture.os : value);
+    // An empty list would mean "no architecture at all", which is never what
+    // the user wants; we fallback on the current architecture instead (which
+    // is also what happens when the setting isn't set at all).
+    if (supportedArchitectures.length === 0)
+      return [nodeUtils.getArchitectureSet()];
 
-    let cpu = supportedArchitectures.get(`cpu`);
-    if (cpu !== null)
-      cpu = cpu.map(value => value === `current` ? architecture.cpu : value);
+    return supportedArchitectures.map(entry => {
+      let os = entry.get(`os`);
+      if (os !== null)
+        os = os.map(value => value === `current` ? architecture.os : value);
 
-    let libc = supportedArchitectures.get(`libc`);
-    if (libc !== null)
-      libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
+      let cpu = entry.get(`cpu`);
+      if (cpu !== null)
+        cpu = cpu.map(value => value === `current` ? architecture.cpu : value);
 
-    return {os, cpu, libc};
+      let libc = entry.get(`libc`);
+      if (libc !== null)
+        libc = miscUtils.mapAndFilter(libc, value => value === `current` ? architecture.libc ?? miscUtils.mapAndFilter.skip : value);
+
+      return {os, cpu, libc};
+    });
   }
 
   isInteractive({interactive, stdout}: {interactive?: boolean, stdout: Writable}): boolean {
