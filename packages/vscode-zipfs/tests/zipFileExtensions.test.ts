@@ -13,6 +13,7 @@ describe(`ZipFS archive extensions`, () => {
     [`app.apk`, true],
     [`application.ipa`, true],
     [`extension.crx`, true],
+    [`model.3mf`, true],
     [`archive.tar.gz`, false],
   ])(`recognizes %s as %s`, (path, expected) => {
     expect(isZipFile(path)).toBe(expected);

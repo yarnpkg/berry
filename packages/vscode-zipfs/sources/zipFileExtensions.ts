@@ -7,6 +7,7 @@ export const ZIP_FILE_EXTENSIONS = [
   `.apk`,
   `.ipa`,
   `.crx`,
+  `.3mf`,
 ];
 
 export function isZipFile(path: string): boolean {
