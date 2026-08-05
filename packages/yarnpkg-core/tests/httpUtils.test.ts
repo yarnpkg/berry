@@ -1,8 +1,10 @@
 import {Configuration, Plugin, httpUtils} from '@yarnpkg/core';
 import {npath}                            from '@yarnpkg/fslib';
+import events                             from 'events';
 import http                               from 'http';
 import {AddressInfo, Socket}              from 'net';
 import net                                from 'net';
+import {setTimeout}                       from 'timers/promises';
 
 describe(`httpUtils`, () => {
   describe(`request`, () => {
@@ -40,25 +42,11 @@ describe(`httpUtils`, () => {
     });
 
     it(`cancels active requests and releases their network concurrency slot`, async () => {
-      const sockets = new Set<Socket>();
-      let resolveRequest!: () => void;
-      const requestReceived = new Promise<void>(resolve => {
-        resolveRequest = resolve;
-      });
+      // Requests are never answered, so they stay active until they get cancelled
+      const server = http.createServer(() => {});
 
-      const server = http.createServer(() => {
-        resolveRequest();
-      });
-      server.on(`connection`, socket => {
-        sockets.add(socket);
-        socket.on(`close`, () => {
-          sockets.delete(socket);
-        });
-      });
-
-      await new Promise<void>(resolve => {
-        server.listen(0, `127.0.0.1`, resolve);
-      });
+      server.listen(0, `127.0.0.1`);
+      await events.once(server, `listening`);
 
       try {
         const configuration = Configuration.create(npath.toPortablePath(`.`));
@@ -73,7 +61,7 @@ describe(`httpUtils`, () => {
           signal: abortController.signal,
         });
 
-        await requestReceived;
+        await events.once(server, `request`);
 
         let queuedRequestStarted = false;
         const queuedRequest = configuration.getLimit(`networkConcurrency`)(async () => {
@@ -89,44 +77,25 @@ describe(`httpUtils`, () => {
         abortController.abort();
 
         await requestExpectation;
-        await queuedRequest;
+        await expectToSettle(queuedRequest, `Expected the cancelled request to release its network concurrency slot`);
 
         expect(queuedRequestStarted).toBe(true);
       } finally {
-        for (const socket of sockets)
-          socket.destroy();
-
-        await new Promise<void>(resolve => {
-          server.close(() => resolve());
-        });
+        server.closeAllConnections();
+        server.close();
+        await events.once(server, `close`);
       }
     });
 
     it(`cancels proxy connections while their tunnel is being established`, async () => {
-      const sockets = new Set<Socket>();
-      let resolveProxyRequest!: () => void;
-      const proxyRequestReceived = new Promise<void>(resolve => {
-        resolveProxyRequest = resolve;
-      });
-      let resolveProxySocketClosed!: () => void;
-      const proxySocketClosed = new Promise<void>(resolve => {
-        resolveProxySocketClosed = resolve;
-      });
+      // The tunnel is never established, so the proxy connection stays open until
+      // it gets cancelled
+      const server = net.createServer();
 
-      const server = net.createServer(socket => {
-        sockets.add(socket);
-        socket.once(`data`, () => {
-          resolveProxyRequest();
-        });
-        socket.once(`close`, () => {
-          sockets.delete(socket);
-          resolveProxySocketClosed();
-        });
-      });
+      server.listen(0, `127.0.0.1`);
+      await events.once(server, `listening`);
 
-      await new Promise<void>(resolve => {
-        server.listen(0, `127.0.0.1`, resolve);
-      });
+      let proxySocket: Socket | undefined;
 
       try {
         const configuration = Configuration.create(npath.toPortablePath(`.`));
@@ -135,12 +104,18 @@ describe(`httpUtils`, () => {
         configuration.values.set(`httpRetry`, 0);
 
         const abortController = new AbortController();
+        const proxyConnection = events.once(server, `connection`);
         const request = httpUtils.request(`https://example.com`, null, {
           configuration,
           signal: abortController.signal,
         });
 
-        await proxyRequestReceived;
+        const [socket] = await proxyConnection as [Socket];
+        proxySocket = socket;
+
+        await events.once(socket, `data`);
+
+        const proxySocketClosed = events.once(socket, `close`);
 
         const requestExpectation = expect(request).rejects.toMatchObject({
           name: `CancelError`,
@@ -149,30 +124,22 @@ describe(`httpUtils`, () => {
         abortController.abort();
 
         await requestExpectation;
-
-        let timeout: ReturnType<typeof setTimeout> | undefined;
-        try {
-          await Promise.race([
-            proxySocketClosed,
-            new Promise<never>((_resolve, reject) => {
-              timeout = setTimeout(() => {
-                reject(new Error(`Expected the aborted proxy connection to close`));
-              }, 2_000);
-            }),
-          ]);
-        } finally {
-          clearTimeout(timeout);
-        }
+        await expectToSettle(proxySocketClosed, `Expected the cancelled proxy connection to close`);
       } finally {
-        for (const socket of sockets)
-          socket.destroy();
-
-        await new Promise<void>(resolve => {
-          server.close(() => resolve());
-        });
+        proxySocket?.destroy();
+        server.close();
+        await events.once(server, `close`);
       }
     });
   });
+
+  // Without this the tests would hang until Jest's own timeout kicks in, which
+  // wouldn't tell us which of the expectations actually failed
+  async function expectToSettle(promise: Promise<unknown>, message: string) {
+    await Promise.race([promise, setTimeout(2_000, undefined, {ref: false}).then(() => {
+      throw new Error(message);
+    })]);
+  }
 
   function getPluginsWithMockWrapNetworkRequestPlugin() {
     const mockWrapNetworkRequest = jest.fn();

@@ -21,12 +21,6 @@ interface AlgoliaObj {
   };
 }
 
-class AlgoliaTimeoutError extends Error {
-  constructor() {
-    super(`Timed out after ${ALGOLIA_TIMEOUT}ms`);
-  }
-}
-
 export const hasDefinitelyTyped = async (
   descriptor: Descriptor,
   configuration: Configuration,
@@ -36,27 +30,21 @@ export const hasDefinitelyTyped = async (
   const algoliaClient = createAlgoliaClient(configuration, abortController.signal);
   const index = algoliaClient.initIndex(`npm-search`);
 
-  let timeout: ReturnType<typeof setTimeout> | undefined;
+  // Note that we can't use `AbortSignal.timeout` here: its timer lives in Node's
+  // internals rather than on the global `setTimeout`, so tests can't advance it.
+  const timeout = setTimeout(() => {
+    abortController.abort(new Error(`Timed out after ${ALGOLIA_TIMEOUT}ms`));
+  }, ALGOLIA_TIMEOUT);
 
   try {
-    const packageInfo = await Promise.race([
-      index.getObject<AlgoliaObj>(stringifiedIdent, {attributesToRetrieve: [`types`]}),
-      new Promise<never>((resolve, reject) => {
-        timeout = setTimeout(() => {
-          const error = new AlgoliaTimeoutError();
-
-          reject(error);
-          abortController.abort(error);
-        }, ALGOLIA_TIMEOUT);
-      }),
-    ]);
+    const packageInfo = await index.getObject<AlgoliaObj>(stringifiedIdent, {attributesToRetrieve: [`types`]});
 
     return packageInfo.types?.ts === `definitely-typed`;
   } catch (error) {
     // A timeout or a network error (eg. a proxy blocking the request) shouldn't
     // prevent the package from being added - we just can't tell whether it needs
     // a matching `@types` package, so we let the user know and carry on.
-    if (error instanceof AlgoliaTimeoutError || error?.name === `RetryError`)
+    if (abortController.signal.aborted || error?.name === `RetryError`)
       reportAutoTypesError(configuration, descriptor, error);
 
     return false;
@@ -68,8 +56,13 @@ export const hasDefinitelyTyped = async (
 const reportAutoTypesError = (configuration: Configuration, descriptor: Descriptor, error: Error) => {
   const prettyIdent = structUtils.prettyIdent(configuration, descriptor);
 
+  // Reported as two warnings rather than one multi-line message, as reports
+  // only prefix the first line of what they're given
   process.emitWarning(
-    `Couldn't query Algolia's npm-search index to check whether ${prettyIdent} needs a matching @types package (${error.message}); the package will be added without it.\n` +
+    `Couldn't query Algolia's npm-search index to check whether ${prettyIdent} needs a matching @types package (${error.message}); the package will be added without it.`,
+  );
+
+  process.emitWarning(
     `You can disable this lookup by setting ${formatUtils.pretty(configuration, `tsEnableAutoTypes`, formatUtils.Type.SETTING)} to false in your .yarnrc.yml (or by setting the YARN_TS_ENABLE_AUTO_TYPES="false" environment variable).`,
   );
 };
