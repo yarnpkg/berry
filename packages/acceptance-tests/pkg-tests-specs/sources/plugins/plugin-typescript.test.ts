@@ -1,6 +1,9 @@
 import {Manifest}                 from '@yarnpkg/core';
 import {PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 import {merge}                    from 'es-toolkit/compat';
+import events                     from 'events';
+import {AddressInfo}              from 'net';
+import net                        from 'net';
 import {fs, yarn}                 from 'pkg-tests-core';
 
 const {unpackToDirectory} = fs;
@@ -63,6 +66,52 @@ describe(`Plugins`, () => {
               [`@types/is-number`]: `^2`,
             },
           });
+        }),
+      );
+
+      test(
+        `it should warn and add the package without @types when the Algolia index can't be reached`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          // Accepts the connection then immediately drops it, just like a
+          // firewall sitting between Yarn and Algolia would
+          const blackhole = net.createServer(socket => socket.destroy());
+
+          blackhole.listen(0, `127.0.0.1`);
+          await events.once(blackhole, `listening`);
+
+          try {
+            const {port} = blackhole.address() as AddressInfo;
+
+            await xfs.writeFilePromise(ppath.join(path, `tsconfig.json`), ``);
+
+            // Only the Algolia lookup goes through the blackhole; the registry
+            // is configured through the environment and stays reachable
+            await xfs.writeFilePromise(ppath.join(path, `.yarnrc.yml`), [
+              `httpRetry: 0`,
+              `networkSettings:`,
+              `  "*.algolia.net":`,
+              `    httpsProxy: "http://127.0.0.1:${port}"`,
+              `  "*.algolianet.com":`,
+              `    httpsProxy: "http://127.0.0.1:${port}"`,
+            ].join(`\n`));
+
+            const {stdout} = await run(`add`, `is-number`);
+
+            expect(stdout).toMatch(/Couldn't query Algolia's npm-search index/);
+
+            const manifest = await readManifest(path);
+
+            expect(manifest).toMatchObject({
+              dependencies: {
+                [`is-number`]: `^2.0.0`,
+              },
+            });
+
+            expect(manifest).not.toHaveProperty(`devDependencies`);
+          } finally {
+            blackhole.close();
+            await events.once(blackhole, `close`);
+          }
         }),
       );
 
