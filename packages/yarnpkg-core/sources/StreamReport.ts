@@ -11,6 +11,7 @@ import * as formatUtils                                                         
 
 export type StreamReportOptions = {
   configuration: Configuration;
+  failOnWarnings?: boolean;
   forceSectionAlignment?: boolean;
   includeFooter?: boolean;
   includeInfos?: boolean;
@@ -185,6 +186,7 @@ export class StreamReport extends Report {
   }
 
   private configuration: Configuration;
+  private failOnWarnings: boolean;
   private forceSectionAlignment: boolean;
   private includeNames: boolean;
   private includePrefix: boolean;
@@ -225,6 +227,7 @@ export class StreamReport extends Report {
     configuration,
     stdout,
     json = false,
+    failOnWarnings = false,
     forceSectionAlignment = false,
     includeNames = true,
     includePrefix = true,
@@ -238,6 +241,7 @@ export class StreamReport extends Report {
     formatUtils.addLogFilterSupport(this, {configuration});
 
     this.configuration = configuration;
+    this.failOnWarnings = failOnWarnings;
     this.forceSectionAlignment = forceSectionAlignment;
     this.includeNames = includeNames;
     this.includePrefix = includePrefix;
@@ -264,8 +268,18 @@ export class StreamReport extends Report {
     return this.errorCount > 0;
   }
 
+  hasWarnings() {
+    return this.warningCount > 0;
+  }
+
   exitCode() {
-    return this.hasErrors() ? 1 : 0;
+    if (this.hasErrors())
+      return 1;
+
+    if (this.failOnWarnings && this.hasWarnings())
+      return 1;
+
+    return 0;
   }
 
   getRecommendedLength() {
