@@ -216,6 +216,20 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should resolve relative paths from the source directory`,
+      makeTemporaryEnv(
+        {},
+        async ({path, run, source}) => {
+          await xfs.writeFilePromise(`${path}/ca.crt`, ``);
+          await yarn.writeConfiguration(path, {
+            httpsCaFilePath: `./ca.crt`,
+          });
+          await expect(run(`dlx`, `has-bin-entries`)).resolves.not.toThrow();
+        },
+      ),
+    );
+
+    test(
       `it shouldn't warn on unused package extensions in projects created by dlx (peerDependenciesMeta)`,
       makeTemporaryEnv(
         {
