@@ -14,6 +14,11 @@ export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCo
   await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
 };
 
+export const removeVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
+  const relativeFilePath = `.vscode/${type}` as PortablePath;
+  await sdkUtils.removeSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
+};
+
 export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: PnpApi) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`search.exclude`]: {
@@ -94,15 +99,21 @@ export const generateRelayCompilerWrapper: GenerateIntegrationWrapper = async (p
 };
 
 export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
+  // Remove old TypeScript settings if present to prevent deprecation warnings from vscode
+  await removeVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, [
+    `typescript.tsdk`,
+    `typescript.enablePromptUseWorkspaceTsdk`,
+  ]);
+
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
-    [`typescript.tsdk`]: npath.fromPortablePath(
+    [`js/ts.tsdk.path`]: npath.fromPortablePath(
       ppath.dirname(
         wrapper.getProjectPathTo(
           `lib/tsserver.js` as PortablePath,
         ),
       ),
     ),
-    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
+    [`js/ts.tsdk.promptToUseWorkspaceVersion`]: true,
   });
 };
 

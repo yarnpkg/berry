@@ -21,3 +21,25 @@ export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeF
     automaticNewlines: true,
   });
 };
+
+export const removeSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeFileName: PortablePath, keysToRemove: Array<string>) => {
+  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
+  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+  const filePath = ppath.join(projectRoot, relativeFileName);
+
+  if (!await xfs.existsPromise(filePath))
+    return;
+
+  const content = await xfs.readFilePromise(filePath, `utf8`);
+  const data = CJSON.parse(content);
+
+  for (const key of keysToRemove)
+    delete data[key];
+
+  const patched = `${CJSON.stringify(data, null, 2)}\n`;
+
+  await xfs.changeFilePromise(filePath, patched, {
+    automaticNewlines: true,
+  });
+};
