@@ -33,10 +33,12 @@ export function getFileFormat(filepath: string): string | null {
   const ext = path.extname(filepath);
 
   switch (ext) {
-    case `.mjs`: {
+    case `.mjs`:
+    case `.mts`: {
       return `module`;
     }
-    case `.cjs`: {
+    case `.cjs`:
+    case `.cts`: {
       return `commonjs`;
     }
     case `.wasm`: {
