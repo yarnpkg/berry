@@ -5,7 +5,7 @@ import {parsePatchFile} from '../sources/tools/parse';
 
 describe(`diffFolders`,  () => {
   const fs = new NodeFS();
-  const fixtures = npath.join(__dirname, `fixtures`);
+  const fixtures = npath.join(__dirname, `fixtures`, `diff`);
 
   for (const iterator of fs.readdirSync(npath.toPortablePath(fixtures))) {
     it(`Makes and parses diff for '${iterator}'`, async () => {
