@@ -14,6 +14,11 @@ export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCo
   await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
 };
 
+export const removeVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
+  const relativeFilePath = `.vscode/${type}` as PortablePath;
+  await sdkUtils.removeSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
+};
+
 export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: PnpApi) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`search.exclude`]: {
@@ -94,16 +99,38 @@ export const generateRelayCompilerWrapper: GenerateIntegrationWrapper = async (p
 };
 
 export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
-  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
-    [`typescript.tsdk`]: npath.fromPortablePath(
-      ppath.dirname(
-        wrapper.getProjectPathTo(
-          `lib/tsserver.js` as PortablePath,
-        ),
-      ),
-    ),
-    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
-  });
+  let patch = {};
+  const [major, minor] = await getVSCodeVersion();
+  const tsdkPath = npath.fromPortablePath(ppath.dirname(wrapper.getProjectPathTo(`lib/tsserver.js` as PortablePath)));
+
+  if (major === undefined || minor === undefined) {
+    // could not detect vscode version, use both for compatibility
+    patch = {
+      [`js/ts.tsdk.path`]: tsdkPath,
+      [`js/ts.tsdk.promptToUseWorkspaceVersion`]: true,
+      [`typescript.tsdk`]: tsdkPath,
+      [`typescript.enablePromptUseWorkspaceTsdk`]: true,
+    };
+  } else if (major === 0 || (major === 1 && minor < 110)) {
+    // use separate ts settings (old format)
+    patch = {
+      [`typescript.tsdk`]: tsdkPath,
+      [`typescript.enablePromptUseWorkspaceTsdk`]: true,
+    };
+  } else {
+    // use unified js/ts settings (new format)
+    patch = {
+      [`js/ts.tsdk.path`]: tsdkPath,
+      [`js/ts.tsdk.promptToUseWorkspaceVersion`]: true,
+    };
+    // Remove old TypeScript settings if present to prevent deprecation warnings from vscode
+    await removeVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, [
+      `typescript.tsdk`,
+      `typescript.enablePromptUseWorkspaceTsdk`,
+    ]);
+  }
+
+  await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, patch);
 };
 
 export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
@@ -188,3 +215,15 @@ export const VSCODE_SDKS: IntegrationSdks = [
   [`oxlint`, generateOxlintWrapper],
   [`oxlint-tsgolint`, generateOxlintTsgolintWrapper],
 ];
+
+async function getVSCodeVersion() {
+  try {
+    const command = `code${process.platform === `win32` ? `.cmd` : ``} --version`;
+    const {stdout} = await sdkUtils.execPromise(command, {encoding: `utf8`});
+    const version = stdout.split(`\n`)[0].trim();
+    return version.split(`.`).map(value => parseInt(value, 10));
+  } catch {
+    // VS Code CLI might not be in the PATH
+    return [void 0, void 0];
+  }
+}
