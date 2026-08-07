@@ -1,8 +1,8 @@
-import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
-import {execute, UserOptions}     from '@yarnpkg/shell';
-import {PassThrough}              from 'stream';
-import stripAnsi                  from 'strip-ansi';
-import {setTimeout}               from 'timers/promises';
+import {xfs, npath, ppath, PortablePath} from '@yarnpkg/fslib';
+import {execute, UserOptions}            from '@yarnpkg/shell';
+import {PassThrough}                     from 'stream';
+import stripAnsi                         from 'strip-ansi';
+import {setTimeout}                      from 'timers/promises';
 
 const isNotWin32 = process.platform !== `win32`;
 
@@ -574,6 +574,26 @@ describe(`Shell`, () => {
           `FOO=""; echo-arguments "$FOO"`,
         ), {
           stdout: `""\n`,
+        });
+      });
+
+      it(`should expose the cwd via $PWD`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expectResult(bufferResult(
+            `cd ${tmpDir}; echo $PWD`,
+          ), {
+            stdout: `${npath.fromPortablePath(tmpDir)}\n`,
+          });
+        });
+      });
+
+      it(`should expose the previous cwd via $OLDPWD`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          await expectResult(bufferResult(
+            `cd ${tmpDir}; echo $OLDPWD`,
+          ), {
+            stdout: `${process.cwd()}\n`,
+          });
         });
       });
     });
