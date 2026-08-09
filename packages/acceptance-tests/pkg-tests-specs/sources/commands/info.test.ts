@@ -62,6 +62,26 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should report virtual locators for nested virtual dependencies`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`peer-deps-lvl0`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        const {stdout} = await run(`info`, `peer-deps-lvl1`, `--recursive`, `--virtuals`, `--json`);
+        const data = stdout.match(/.*\n/g)!.map(line => JSON.parse(line));
+        const base = data.find(entry => entry.value === `peer-deps-lvl1@npm:1.0.0`);
+
+        expect(base.children.Dependencies).toEqual([{
+          descriptor: `peer-deps-lvl2@npm:1.0.0`,
+          locator: expect.stringMatching(/^peer-deps-lvl2@virtual:/),
+        }]);
+      }),
+    );
+
+    test(
       `it shouldn't print info for other workspaces by default`,
       makeTemporaryEnv({
         workspaces: [
