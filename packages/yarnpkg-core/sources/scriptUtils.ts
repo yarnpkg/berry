@@ -37,16 +37,27 @@ interface PackageManagerSelection {
   reason: string;
 }
 
-async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = []) {
-  if (process.platform === `win32`) {
-    // https://github.com/microsoft/terminal/issues/217#issuecomment-737594785
-    const cmdScript = `@goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*`;
-    await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
-  }
+async function makePathWrapper(location: PortablePath, name: Filename, argv0: NativePath, args: Array<string> = [], nodeWrapperPath?: NativePath) {
+  if (nodeWrapperPath && (argv0 === process.execPath || npath.toPortablePath(argv0) === npath.toPortablePath(process.execPath))) {
+    if (process.platform === `win32`) {
+      const cmdScript = `@goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"${process.execPath}" "${nodeWrapperPath}" "${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*`;
+      await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
+    }
 
-  await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`, {
-    mode: 0o755,
-  });
+    await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${process.execPath}" "${nodeWrapperPath}" "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`, {
+      mode: 0o755,
+    });
+  } else {
+    if (process.platform === `win32`) {
+      // https://github.com/microsoft/terminal/issues/217#issuecomment-737594785
+      const cmdScript = `@goto #_undefined_# 2>NUL || @title %COMSPEC% & @setlocal & @"${argv0}" ${args.map(arg => `"${arg.replace(`"`, `""`)}"`).join(` `)} %*`;
+      await xfs.writeFilePromise(ppath.format({dir: location, name, ext: `.cmd`}), cmdScript);
+    }
+
+    await xfs.writeFilePromise(ppath.join(location, name), `#!/bin/sh\nexec "${argv0}" ${args.map(arg => `'${arg.replace(/'/g, `'"'"'`)}'`).join(` `)} "$@"\n`, {
+      mode: 0o755,
+    });
+  }
 }
 
 /**
@@ -119,6 +130,63 @@ export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack
   // binaries for the dependencies of the active package
   scriptEnv.BERRY_BIN_FOLDER = npath.fromPortablePath(nBinFolder);
 
+  let nodeWrapperNativePath: string | undefined;
+  if (project) {
+    scriptEnv.BERRY_PROJECT_ROOT = npath.fromPortablePath(project.cwd);
+
+    const nodeWrapperPath = ppath.join(binFolder, `node-wrapper.js` as Filename);
+    const nodeWrapperContent = `const child_process = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+const realNode = process.argv[2];
+const args = process.argv.slice(3);
+
+let strip = false;
+const projectRoot = process.env.BERRY_PROJECT_ROOT;
+if (projectRoot) {
+  const resolvedProjectRoot = path.resolve(projectRoot);
+  for (const arg of args) {
+    if (arg.startsWith('-'))
+      continue;
+
+    try {
+      if (fs.existsSync(arg) && fs.statSync(arg).isFile()) {
+        const resolvedPath = path.resolve(arg);
+        const relative = path.relative(resolvedProjectRoot, resolvedPath);
+        const isOutside = relative.startsWith('..') || path.isAbsolute(relative);
+        if (isOutside) {
+          strip = true;
+          break;
+        }
+      }
+    } catch {}
+  }
+}
+
+const env = { ...process.env };
+if (strip && env.NODE_OPTIONS) {
+  env.NODE_OPTIONS = env.NODE_OPTIONS
+    .replace(/--experimental-package-map(?:="[^"]*"|='[^']*'|=\\S+)/g, '')
+    .trim();
+}
+
+const res = child_process.spawnSync(realNode, args, {
+  stdio: 'inherit',
+  env,
+});
+
+if (res.error) {
+  console.error(res.error);
+  process.exit(1);
+}
+
+process.exit(res.status ?? 0);
+`;
+    await xfs.writeFilePromise(nodeWrapperPath, nodeWrapperContent);
+    nodeWrapperNativePath = npath.fromPortablePath(nodeWrapperPath);
+  }
+
   // Otherwise we'd override the Corepack binaries, and thus break the detection
   // of the `packageManager` field when running Yarn in other directories.
   const yarnBin = process.env.COREPACK_ROOT && !ignoreCorepack
@@ -128,12 +196,12 @@ export async function makeScriptEnv({project, locator, binFolder, ignoreCorepack
   // Register some binaries that must be made available in all subprocesses
   // spawned by Yarn (we thus ensure that they always use the right version)
   await Promise.all([
-    makePathWrapper(binFolder, `node` as Filename, process.execPath),
+    makePathWrapper(binFolder, `node` as Filename, process.execPath, [], nodeWrapperNativePath),
     ...YarnVersion !== null ? [
-      makePathWrapper(binFolder, `run` as Filename, process.execPath, [yarnBin, `run`]),
-      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [yarnBin]),
-      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [yarnBin]),
-      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [yarnBin, `run`, `--top-level`, `node-gyp`]),
+      makePathWrapper(binFolder, `run` as Filename, process.execPath, [yarnBin, `run`], nodeWrapperNativePath),
+      makePathWrapper(binFolder, `yarn` as Filename, process.execPath, [yarnBin], nodeWrapperNativePath),
+      makePathWrapper(binFolder, `yarnpkg` as Filename, process.execPath, [yarnBin], nodeWrapperNativePath),
+      makePathWrapper(binFolder, `node-gyp` as Filename, process.execPath, [yarnBin, `run`, `--top-level`, `node-gyp`], nodeWrapperNativePath),
     ] : [],
   ]);
 
@@ -729,11 +797,16 @@ export async function getWorkspaceAccessibleBinaries(workspace: Workspace) {
 }
 
 async function installBinaries(target: PortablePath, binaries: PackageAccessibleBinaries) {
+  const nodeWrapperPath = ppath.join(target, `node-wrapper.js` as Filename);
+  const nodeWrapperNativePath = xfs.existsSync(nodeWrapperPath)
+    ? npath.fromPortablePath(nodeWrapperPath)
+    : undefined;
+
   await Promise.all(
     Array.from(binaries, ([binaryName, [, binaryPath, isScript]]) => {
       return isScript
-        ? makePathWrapper(target, binaryName as Filename, process.execPath, [binaryPath])
-        : makePathWrapper(target, binaryName as Filename, binaryPath, []);
+        ? makePathWrapper(target, binaryName as Filename, process.execPath, [binaryPath], nodeWrapperNativePath)
+        : makePathWrapper(target, binaryName as Filename, binaryPath, [], nodeWrapperNativePath);
     }),
   );
 }
