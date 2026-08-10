@@ -765,7 +765,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await run(`pack`, `--out`, `%s.tgz`);
-        expect(xfs.existsSync(`${path}/@scope-test.tgz`)).toEqual(true);
+        expect(xfs.existsSync(`${path}/@scope_test.tgz`)).toEqual(true);
       }),
     );
 
@@ -791,7 +791,7 @@ describe(`Commands`, () => {
         await run(`install`);
 
         await run(`pack`, `--out`, `%s-%v.tgz`);
-        expect(xfs.existsSync(`${path}/@scope-test-0.0.1.tgz`)).toEqual(true);
+        expect(xfs.existsSync(`${path}/@scope_test-0.0.1.tgz`)).toEqual(true);
       }),
     );
 
