@@ -83,6 +83,35 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it shouldn't audit development dependencies of nested workspaces in production`,
+      makeTemporaryEnv({
+        private: true,
+        workspaces: [
+          `packages/*`,
+        ],
+        dependencies: {
+          [`workspace-dependency`]: `workspace:*`,
+        },
+      }, async ({path, run}) => {
+        const workspacePath = ppath.join(path, `packages/workspace-dependency`);
+        await xfs.mkdirpPromise(workspacePath);
+        await xfs.writeJsonPromise(ppath.join(workspacePath, Filename.manifest), {
+          name: `workspace-dependency`,
+          version: `1.0.0`,
+          devDependencies: {
+            [`vulnerable`]: `1.0.0`,
+          },
+        });
+        await xfs.writeFilePromise(ppath.join(path, Filename.lockfile), ``);
+
+        await run(`install`);
+
+        await run(`npm`, `audit`, `--recursive`, `--environment=production`);
+        await expect(run(`npm`, `audit`, `--recursive`, `--json`)).rejects.toThrow(/"https:\/\/example\.com\/advisories\/1"/);
+      }),
+    );
+
+    test(
       `it should also audit only development packages if requested`,
       makeTemporaryEnv({
         dependencies: {
