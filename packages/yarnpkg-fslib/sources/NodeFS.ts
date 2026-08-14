@@ -393,6 +393,16 @@ export class NodeFS extends BasePortableFakeFS {
     this.realFs.utimesSync(npath.fromPortablePath(p), atime, mtime);
   }
 
+  async futimesPromise(fd: number, atime: Date | string | number, mtime: Date | string | number) {
+    return await new Promise<void>((resolve, reject) => {
+      this.realFs.futimes(fd, atime, mtime, this.makeCallback(resolve, reject));
+    });
+  }
+
+  futimesSync(fd: number, atime: Date | string | number, mtime: Date | string | number) {
+    this.realFs.futimesSync(fd, atime, mtime);
+  }
+
   async lutimesPromise(p: PortablePath, atime: Date | string | number, mtime: Date | string | number) {
     return await new Promise<void>((resolve, reject) => {
       this.realFs.lutimes(npath.fromPortablePath(p), atime, mtime, this.makeCallback(resolve, reject));
