@@ -1416,9 +1416,8 @@ export class Configuration {
 
     if (configuration.get(`enableGlobalCache`)) {
       const cacheFolderSource = configuration.sources.get(`cacheFolder`);
-      if (cacheFolderSource) {
+      if (cacheFolderSource)
         process.stderr.write(`${stringifyMessageName(MessageName.IGNORED_CACHE_FOLDER)}: cacheFolder from ${cacheFolderSource} is ignored because enableGlobalCache is true (using the system-wide cache instead)\n`);
-      }
 
       configuration.values.set(`cacheFolder`, `${configuration.get(`globalFolder`)}/cache`);
       configuration.sources.set(`cacheFolder`, `<internal>`);
