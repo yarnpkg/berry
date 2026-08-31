@@ -400,19 +400,16 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
     } break;
 
     case `@`: {
-      if (segment.quoted) {
-        for (const raw of opts.args) {
-          pushAndClose(raw);
-        }
-      } else {
-        for (const raw of opts.args) {
-          const parts = split(raw);
+      const parts = segment.quoted
+        ? opts.args
+        : opts.args.flatMap(raw => split(raw));
 
-          for (let t = 0; t < parts.length - 1; ++t)
-            pushAndClose(parts[t]);
+      for (let t = 0; t < parts.length - 1; ++t)
+        pushAndClose(parts[t]);
 
-          push(parts[parts.length - 1]);
-        }
+      const part = parts[parts.length - 1];
+      if (typeof part !== `undefined`) {
+        push(part);
       }
     } break;
 

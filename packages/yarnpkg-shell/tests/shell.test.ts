@@ -488,6 +488,38 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should preserve argument boundaries when spreading via $@`, async () => {
+        const args = [`arg1`, `arg2  has  spaces`, `arg3`];
+
+        await expectResult(bufferResult(`echo-arguments $@`, args), {
+          stdout: `"arg1"\n"arg2"\n"has"\n"spaces"\n"arg3"\n`,
+        });
+
+        await expectResult(bufferResult(`echo-arguments 'prefix'$@'suffix'`, args), {
+          stdout: `"prefixarg1"\n"arg2"\n"has"\n"spaces"\n"arg3suffix"\n`,
+        });
+
+        await expectResult(bufferResult(`echo-arguments "$@"`, args), {
+          stdout: `"arg1"\n"arg2  has  spaces"\n"arg3"\n`,
+        });
+
+        await expectResult(bufferResult(`echo-arguments 'prefix'"$@"'suffix'`, args), {
+          stdout: `"prefixarg1"\n"arg2  has  spaces"\n"arg3suffix"\n`,
+        });
+
+        await expectResult(bufferResult(`echo-arguments "$@"`, [``, ``]), {
+          stdout: `""\n""\n`,
+        });
+
+        await expectResult(bufferResult(`echo-arguments 'prefix'"$@"'suffix'`, [``, ``]), {
+          stdout: `"prefix"\n"suffix"\n`,
+        });
+
+        await expectResult(bufferResult(`echo-arguments 'prefix'"$@"'suffix'`), {
+          stdout: `"prefixsuffix"\n`,
+        });
+      });
+
       it(`should expose the shell pid via $$`, async () => {
         await expectResult(bufferResult(
           `echo $$`,
