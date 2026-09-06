@@ -299,8 +299,15 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
 
   // we cannot rely on exit code, because --no-index implies --exit-code
   // i.e. git diff will exit with 1 if there were differences
-  if (stderr.length > 0)
-    throw new Error(`Unable to diff directories. Make sure you have a recent version of 'git' available in PATH.\nThe following error was reported by 'git':\n${stderr}`);
+  // git also writes warnings to stderr on success (empty HOME can make it
+  // complain about /.config/git/attributes), so ignore those lines.
+  const gitErrors = stderr
+    .split(/\r?\n/)
+    .filter(line => line.length > 0 && !/^warning:/i.test(line))
+    .join(`\n`);
+
+  if (gitErrors.length > 0)
+    throw new Error(`Unable to diff directories. Make sure you have a recent version of 'git' available in PATH.\nThe following error was reported by 'git':\n${gitErrors}`);
 
 
   const normalizePath = folderAN.startsWith(`/`)
