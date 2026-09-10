@@ -278,6 +278,13 @@ export async function extractPackageToDisk(locator: Locator, {cache, project}: {
   return userPath;
 }
 
+export function gitStderrErrors(stderr: string) {
+  return stderr
+    .split(/\r?\n/)
+    .filter(line => line.length > 0 && !/^warning:/i.test(line))
+    .join(`\n`);
+}
+
 export async function diffFolders(folderA: PortablePath, folderB: PortablePath) {
   const folderAN = npath.fromPortablePath(folderA).replace(/\\/g, `/`);
   const folderBN = npath.fromPortablePath(folderB).replace(/\\/g, `/`);
@@ -301,10 +308,7 @@ export async function diffFolders(folderA: PortablePath, folderB: PortablePath) 
   // i.e. git diff will exit with 1 if there were differences
   // git also writes warnings to stderr on success (empty HOME can make it
   // complain about /.config/git/attributes), so ignore those lines.
-  const gitErrors = stderr
-    .split(/\r?\n/)
-    .filter(line => line.length > 0 && !/^warning:/i.test(line))
-    .join(`\n`);
+  const gitErrors = gitStderrErrors(stderr);
 
   if (gitErrors.length > 0)
     throw new Error(`Unable to diff directories. Make sure you have a recent version of 'git' available in PATH.\nThe following error was reported by 'git':\n${gitErrors}`);
