@@ -289,16 +289,16 @@ export const generateOxfmtBaseWrapper: GenerateBaseWrapper = async (pnpApi: PnpA
   const wrapper = new Wrapper(`oxfmt` as PortablePath, {pnpApi, target});
 
   const oxfmtMonkeyPatch = `
-    module => module;
-
-    const binPath = resolve(absRequire.resolve(\`oxfmt/package.json\`), \`..\`, \`${wrapper.manifest.bin.oxfmt}\`);
-    absRequire(binPath);
+    manifest => {
+      const binPath = resolve(absRequire.resolve(\`oxfmt/package.json\`), \`..\`, manifest.bin.oxfmt);
+      return import(pathToFileURL(binPath));
+    };
   `;
 
   await wrapper.writeDefaults();
   await wrapper.writeBinary(`bin/oxfmt` as PortablePath, {
     setupEnv: true,
-    requirePath: `` as PortablePath,
+    requirePath: `package.json` as PortablePath,
     wrapModule: oxfmtMonkeyPatch,
   });
 
