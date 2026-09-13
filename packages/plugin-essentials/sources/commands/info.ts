@@ -1,10 +1,10 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                                                                                 from '@yarnpkg/cli';
-import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, formatUtils, miscUtils, Locator, Cache, FetchOptions, ThrowReport, Manifest, treeUtils, IdentHash, Descriptor} from '@yarnpkg/core';
-import {xfs}                                                                                                                                                                                 from '@yarnpkg/fslib';
-import {Command, Option, Usage, UsageError}                                                                                                                                                  from 'clipanion';
-import mm                                                                                                                                                                                    from 'micromatch';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                                          from '@yarnpkg/cli';
+import {Configuration, Project, structUtils, Workspace, LocatorHash, Package, formatUtils, miscUtils, Locator, Cache, FetchOptions, ThrowReport, Manifest, treeUtils} from '@yarnpkg/core';
+import {xfs}                                                                                                                                                          from '@yarnpkg/fslib';
+import {Command, Option, Usage, UsageError}                                                                                                                           from 'clipanion';
+import mm                                                                                                                                                             from 'micromatch';
 
-import {Hooks}                                                                                                                                                                               from '..';
+import {Hooks}                                                                                                                                                        from '..';
 
 // eslint-disable-next-line arca/no-default-export
 export default class InfoCommand extends BaseCommand {
@@ -229,8 +229,6 @@ export default class InfoCommand extends BaseCommand {
 
     const infoTreeChildren: treeUtils.TreeMap = {};
     const infoTree: treeUtils.TreeNode = {children: infoTreeChildren};
-    const dependencyData = new Map<LocatorHash, Map<IdentHash, {descriptor: Descriptor, locator: Locator | null}>>();
-
     const fetcher = configuration.makeFetcher();
     const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), cacheOptions: {skipIntegrityCheck: true}};
 
@@ -358,41 +356,22 @@ export default class InfoCommand extends BaseCommand {
       }
 
       if (pkg.dependencies.size > 0 && !isVirtual) {
-        const dependencies = new Map([...pkg.dependencies.values()].map(dependency => {
-          const resolutionHash = project.storedResolutions.get(dependency.descriptorHash);
+        const dependencyPkg = allInstances.get(pkg.locatorHash)?.[0] ?? pkg;
+        const dependencies = [...pkg.dependencies.values()].map(dependency => {
+          const resolvedDependency = dependencyPkg.dependencies.get(dependency.identHash) ?? dependency;
+          const resolutionHash = project.storedResolutions.get(resolvedDependency.descriptorHash);
 
           const resolution = typeof resolutionHash !== `undefined`
             ? project.storedPackages.get(resolutionHash) ?? null
             : null;
 
-          return [dependency.identHash, {
+          return formatUtils.tuple(formatUtils.Type.RESOLUTION, {
             descriptor: dependency,
             locator: resolution,
-          }] as const;
-        }));
+          });
+        });
 
-        dependencyData.set(pkg.locatorHash, dependencies);
-        registerData(`Dependencies`, [...dependencies.values()].map(dependency => {
-          return formatUtils.tuple(formatUtils.Type.RESOLUTION, dependency);
-        }));
-      }
-
-      if (isVirtual) {
-        const base = structUtils.devirtualizeLocator(pkg);
-        const baseDependencies = dependencyData.get(base.locatorHash);
-
-        if (typeof baseDependencies !== `undefined`) {
-          for (const dependency of pkg.dependencies.values()) {
-            const baseDependency = baseDependencies.get(dependency.identHash);
-            if (typeof baseDependency === `undefined`)
-              continue;
-
-            const resolutionHash = project.storedResolutions.get(dependency.descriptorHash);
-            baseDependency.locator = typeof resolutionHash !== `undefined`
-              ? project.storedPackages.get(resolutionHash) ?? null
-              : null;
-          }
-        }
+        registerData(`Dependencies`, dependencies);
       }
 
       if (pkg.peerDependencies.size > 0 && isVirtual) {
