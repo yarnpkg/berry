@@ -318,16 +318,22 @@ export async function fetchBase(root: PortablePath, {baseRefs}: {baseRefs: Array
   return {hash, title};
 }
 
+function parseGitZPaths(stdout: string): Array<string> {
+  return stdout.split(`\0`).filter(file => file.length > 0);
+}
+
 // Note: This returns all changed files from the git diff,
 // which can include files not belonging to a workspace
 export async function fetchChangedFiles(root: PortablePath, {base, project}: {base: string, project: Project}) {
   const ignorePattern = miscUtils.buildIgnorePattern(project.configuration.get(`changesetIgnorePatterns`));
 
-  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `--name-only`, `${base}`], {cwd: root, strict: true});
-  const trackedFiles = localStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
+  // `-z` keeps names that git would otherwise C-quote (`"` / non-ASCII) as a
+  // single path instead of splitting them into extra `git diff --name-only` tokens.
+  const {stdout: localStdout} = await execUtils.execvp(`git`, [`diff`, `-z`, `--name-only`, `${base}`], {cwd: root, strict: true});
+  const trackedFiles = parseGitZPaths(localStdout).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
-  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
-  const untrackedFiles = untrackedStdout.split(/\r\n|\r|\n/).filter(file => file.length > 0).map(file => ppath.resolve(root, npath.toPortablePath(file)));
+  const {stdout: untrackedStdout} = await execUtils.execvp(`git`, [`ls-files`, `-z`, `--others`, `--exclude-standard`], {cwd: root, strict: true});
+  const untrackedFiles = parseGitZPaths(untrackedStdout).map(file => ppath.resolve(root, npath.toPortablePath(file)));
 
   const changedFiles = [...new Set([...trackedFiles, ...untrackedFiles].sort())];
 
