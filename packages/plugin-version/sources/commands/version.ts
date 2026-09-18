@@ -248,7 +248,9 @@ export default class VersionCommand extends BaseCommand {
         return;
 
       versionUtils.applyReleases(project, releases, {report, exact: this.exact});
-      if (!this.dryRun) {
+      // When --prerelease is set (including via `yarn version apply`), keep the
+      // deferred records so the next stable apply can still consume them.
+      if (!this.dryRun && !prerelease) {
         if (this.all) {
           await versionUtils.clearVersionFiles(project);
         } else {

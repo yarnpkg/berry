@@ -406,6 +406,10 @@ export function applyStrategy(version: string | null, strategy: string, prerelea
   if (nextVersion === null)
     throw new UsageError(`Cannot apply the release strategy "${strategy}" on the specified version (${version})`);
 
+  // Regular bumps still honor --prerelease (e.g. patch + alpha.0 -> 1.0.33-alpha.0).
+  if (prerelease)
+    return applyPrerelease(nextVersion, {current: version, prerelease});
+
   return nextVersion;
 }
 
@@ -448,7 +452,13 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
   for (const [workspace, newVersion] of newVersions) {
     const oldVersion = workspace.manifest.version;
     workspace.manifest.version = newVersion;
-    delete workspace.manifest.raw.stableVersion;
+
+    // Keep the previous stable version around while on a prerelease so the
+    // next non-prerelease bump can start from that baseline again.
+    if (semver.prerelease(newVersion) === null)
+      delete workspace.manifest.raw.stableVersion;
+    else if (!workspace.manifest.raw.stableVersion)
+      workspace.manifest.raw.stableVersion = oldVersion;
 
     const identString = workspace.manifest.name !== null
       ? structUtils.stringifyIdent(workspace.manifest.name)
