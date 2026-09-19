@@ -44685,6 +44685,7 @@ function getPathForDisplay(p) {
 const [major, minor, patch] = process.versions.node.split(`.`).map((value) => parseInt(value, 10));
 const WATCH_MODE_MESSAGE_USES_ARRAYS = major > 19 || major === 19 && minor >= 2 || major === 18 && minor >= 13;
 
+const packageJsonCache = /* @__PURE__ */ new Map();
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
@@ -44705,9 +44706,16 @@ function readPackageScope(checkPath) {
 }
 function readPackage(requestPath) {
   const jsonPath = npath.resolve(requestPath, `package.json`);
-  if (!fs__default.default.existsSync(jsonPath))
-    return null;
-  return JSON.parse(fs__default.default.readFileSync(jsonPath, `utf8`));
+  const cached = packageJsonCache.get(jsonPath);
+  if (cached !== void 0)
+    return cached;
+  let data = null;
+  if (fs__default.default.existsSync(jsonPath)) {
+    const { type } = JSON.parse(fs__default.default.readFileSync(jsonPath, `utf8`));
+    data = { type };
+  }
+  packageJsonCache.set(jsonPath, data);
+  return data;
 }
 function ERR_REQUIRE_ESM(filename, parentPath = null) {
   const basename = parentPath && path__default.default.basename(filename) === path__default.default.basename(parentPath) ? filename : path__default.default.basename(filename);
