@@ -8,6 +8,7 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+- `supportedArchitectures` now accepts a list of `{os, cpu, libc}` entries, letting you describe the exact architectures you want to support rather than the cross product of every field. Useful to keep zero-install caches as small as possible.
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
 - `node-modules` linker now honors user-defined symlinks for `<workspace>/node_modules` directories
 - `node-modules` linker supports hoisting into inner workspaces that are parents of other workspaces
