@@ -1,8 +1,44 @@
-import {type Descriptor, type Locator, type Plugin, type Project, type Resolver, type ResolveOptions, type Workspace, SettingsType, structUtils, Manifest, ThrowReport} from '@yarnpkg/core';
-import {Hooks as CoreHooks}                                                                                                                                             from '@yarnpkg/core';
-import {Hooks as PackHooks}                                                                                                                                             from '@yarnpkg/plugin-pack';
+import {type Descriptor, type Locator, type Plugin, type Project, type Resolver, type ResolveOptions, type Workspace, SettingsType, structUtils, Manifest, ThrowReport, Configuration} from '@yarnpkg/core';
+import {Hooks as CoreHooks}                                                                                                                                                            from '@yarnpkg/core';
+import {Hooks as PackHooks}                                                                                                                                                            from '@yarnpkg/plugin-pack';
 
-import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                                               from './utils';
+import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                                                              from './utils';
+
+const SAFE_PROTOCOLS_TO_ALWAYS_KEEP = new Set<string>([`patch:`, `portal:`, `link:`]);
+
+function tryRoundTripRange(range: string, configuration: Configuration): string {
+  try {
+    const parsed = structUtils.parseRange(range);
+    let {protocol, source, params, selector} = parsed;
+
+    const defaultProtocol = configuration.get(`defaultProtocol`);
+
+    // only drop protocol when it's exactly the default npm protocol and no special semantics needed
+    const canDropProtocol =
+      protocol != null &&
+      protocol === defaultProtocol &&
+      protocol === `npm:` && // be explicit
+      !SAFE_PROTOCOLS_TO_ALWAYS_KEEP.has(protocol);
+
+    if (canDropProtocol)
+      protocol = null;
+
+    // Replace the catalog reference with the resolved range
+    const normalized = structUtils.makeRange({protocol, source, params, selector});
+
+    // idempotency check: if normalization changes meaningfully, keep original
+    const reparsed = structUtils.parseRange(normalized);
+    const sameShape =
+      reparsed.protocol === (canDropProtocol ? null : parsed.protocol) &&
+      reparsed.source === parsed.source &&
+      JSON.stringify(reparsed.params) === JSON.stringify(parsed.params) &&
+      reparsed.selector === parsed.selector;
+
+    return sameShape ? normalized : range;
+  } catch {
+    return range;
+  }
+}
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -85,12 +121,11 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
           // Resolve the catalog reference to get the actual version range
           const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor, resolver, resolveOptions);
 
-          let {protocol, source, params, selector} = structUtils.parseRange(structUtils.convertToManifestRange(resolvedDescriptor.range));
-          if (protocol === workspace.project.configuration.get(`defaultProtocol`))
-            protocol = null;
+          // Convert to manifest range to strip internal params
+          const resolvedRange = structUtils.convertToManifestRange(resolvedDescriptor.range);
 
           // Replace the catalog reference with the resolved range
-          dependencies[identStr] = structUtils.makeRange({protocol, source, params, selector});
+          dependencies[identStr] = tryRoundTripRange(resolvedRange, workspace.project.configuration);
         }
       }
     },
