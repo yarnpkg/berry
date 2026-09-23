@@ -136,6 +136,10 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
       } does not provide ${
         formatUtils.pretty(project.configuration, root.ident, formatUtils.Type.IDENT)
       }${problem}.`);
+
+      if (warning?.type === PeerWarningType.NodeProvidedByDevDependency) {
+        report.reportInfo(MessageName.UNNAMED, `  The peer request is currently satisfied by a workspace devDependency fallback, which won't be available in production contexts.`);
+      }
     } else {
       const providedLocatorHash = project.storedResolutions.get(root.provided.descriptorHash);
       if (!providedLocatorHash)
@@ -151,7 +155,7 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
         formatUtils.pretty(project.configuration, root.ident, formatUtils.Type.IDENT)
       } with version ${
         structUtils.prettyReference(project.configuration, providedPackage.version ?? `0.0.0`)
-      }, ${warning ? `which does not satisfy all requests.` : `which satisfies all requests`}`);
+      }, ${warning?.type === PeerWarningType.NodeProvidedByDevDependency ? `but only through devDependencies.` : warning ? `which does not satisfy all requests.` : `which satisfies all requests`}`);
 
       if (warning?.type === PeerWarningType.NodeNotCompatible) {
         if (warning.range) {
@@ -159,6 +163,8 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
         } else {
           report.reportInfo(MessageName.UNNAMED, `  Unfortunately, the requested ranges have no overlap`);
         }
+      } else if (warning?.type === PeerWarningType.NodeProvidedByDevDependency) {
+        report.reportInfo(MessageName.UNNAMED, `  Dev dependencies won't be available to satisfy peer requests in production contexts.`);
       }
     }
   });
