@@ -58,6 +58,13 @@ async function prettyNetworkError(response: Promise<Response>, {configuration, c
       message += `(can be increased via ${formatUtils.pretty(configuration, `httpTimeout`, formatUtils.Type.SETTING)})`;
 
     const networkError = new ReportError(MessageName.NETWORK_ERROR, message, report => {
+      if (err.response?.headers[`content-type`]?.includes(`application/problem+json`) && err.response?.body) {
+        report.reportError(MessageName.NETWORK_ERROR, `  ${formatUtils.prettyField(configuration, {
+          label: `RFC9457`,
+          value: formatUtils.tuple(formatUtils.Type.INSPECT, err.response.body.toString()),
+        })}`);
+      }
+
       if (err.response) {
         report.reportError(MessageName.NETWORK_ERROR, `  ${formatUtils.prettyField(configuration, {
           label: `Response Code`,
