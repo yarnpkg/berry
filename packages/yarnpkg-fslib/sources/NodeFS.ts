@@ -12,6 +12,8 @@ function direntToPortable(dirent: Dirent<NativePath>): Dirent<PortablePath> {
 
   if (typeof dirent.path === `string`)
     portableDirent.path = npath.toPortablePath(dirent.path);
+  if (typeof dirent.parentPath === `string`)
+    portableDirent.parentPath = npath.toPortablePath(dirent.parentPath);
 
   return portableDirent;
 }
