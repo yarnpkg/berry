@@ -371,6 +371,7 @@ export default class YarnCommand extends BaseCommand {
 
     const report = await StreamReport.start({
       configuration,
+      failOnWarnings: this.context.failOnWarnings,
       json: this.json,
       stdout: this.context.stdout,
       forceSectionAlignment: true,
