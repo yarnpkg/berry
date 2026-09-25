@@ -5892,7 +5892,7 @@ __metadata:
     es-toolkit: "npm:^1.39.7"
     esbuild: "npm:esbuild-wasm@^0.23.0"
     fast-glob: "npm:^3.2.2"
-    got: "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch"
+    got: "npm:^11.7.0"
     hpagent: "npm:^1.2.0"
     micromatch: "npm:^4.0.2"
     p-limit: "npm:^2.2.0"
