@@ -168,11 +168,12 @@ export type Options = {
   jsonRequest?: boolean;
   jsonResponse?: boolean;
   method?: Method;
+  signal?: AbortSignal;
   wrapNetworkRequest?: (executor: () => Promise<Response>, extra: WrapNetworkRequestInfo) => Promise<() => Promise<Response>>;
 };
 
-export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, wrapNetworkRequest}: Omit<Options, `customErrorMessage`>) {
-  const options = {target, body, configuration, headers, jsonRequest, jsonResponse, method};
+export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, signal, wrapNetworkRequest}: Omit<Options, `customErrorMessage`>) {
+  const options = {target, body, configuration, headers, jsonRequest, jsonResponse, method, signal};
 
   const realRequest = async () => await requestImpl(target, body, options);
 
@@ -187,13 +188,14 @@ export async function request(target: string | URL, body: Body, {configuration, 
   return await executor();
 }
 
-export async function get(target: string, {configuration, jsonResponse, customErrorMessage, wrapNetworkRequest, ...rest}: Options) {
-  const runRequest = () => prettyNetworkError(request(target, null, {configuration, wrapNetworkRequest, ...rest}), {configuration, customErrorMessage})
+export async function get(target: string, {configuration, jsonResponse, customErrorMessage, signal, wrapNetworkRequest, ...rest}: Options) {
+  const runRequest = () => prettyNetworkError(request(target, null, {configuration, signal, wrapNetworkRequest, ...rest}), {configuration, customErrorMessage})
     .then(response => response.body);
 
-  // We cannot cache responses when wrapNetworkRequest is used, as it can differ between calls
+  // We cannot cache responses when wrapNetworkRequest is used, as it can differ between calls.
+  // Requests with a signal must also stay independent so aborting one doesn't cancel another.
   const entry = await (
-    typeof wrapNetworkRequest !== `undefined`
+    typeof wrapNetworkRequest !== `undefined` || typeof signal !== `undefined`
       ? runRequest()
       : miscUtils.getFactoryWithDefault(cache, target, () => {
         return runRequest().then(body => {
@@ -228,7 +230,7 @@ export async function del(target: string, {customErrorMessage, ...options}: Opti
   return response.body;
 }
 
-async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, `customErrorMessage`>): Promise<Response> {
+async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, signal}: Omit<Options, `customErrorMessage`>): Promise<Response> {
   const url = typeof target === `string` ? new URL(target) : target;
 
   const networkConfig = getNetworkSettings(url, {configuration});
@@ -276,6 +278,7 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     ca: certificateAuthority,
     cert: certificate,
     key,
+    signal,
   };
 
   const agent = {
@@ -311,7 +314,18 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     ...gotOptions,
   });
 
-  return configuration.getLimit(`networkConcurrency`)(() => {
-    return gotClient(url);
+  return configuration.getLimit(`networkConcurrency`)(async () => {
+    signal?.throwIfAborted();
+
+    const request = gotClient(url);
+    const cancelRequest = () => request.cancel();
+
+    signal?.addEventListener(`abort`, cancelRequest, {once: true});
+
+    try {
+      return await request;
+    } finally {
+      signal?.removeEventListener(`abort`, cancelRequest);
+    }
   });
 }

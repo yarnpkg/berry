@@ -1,6 +1,6 @@
 import {BaseCommand, WorkspaceRequiredError}                                     from '@yarnpkg/cli';
 import {Cache, Configuration, Descriptor, formatUtils, LightReport, MessageName} from '@yarnpkg/core';
-import {Project, Workspace, Ident, InstallMode}                                  from '@yarnpkg/core';
+import {Project, StreamReport, Workspace, Ident, InstallMode}                    from '@yarnpkg/core';
 import {structUtils}                                                             from '@yarnpkg/core';
 import {PortablePath}                                                            from '@yarnpkg/fslib';
 import {Command, Option, Usage, UsageError}                                      from 'clipanion';
@@ -331,15 +331,28 @@ export default class AddCommand extends BaseCommand {
       }
     }
 
-    await configuration.triggerMultipleHooks(
-      (hooks: Hooks) => hooks.afterWorkspaceDependencyAddition,
-      afterWorkspaceDependencyAdditionList,
-    );
+    // Those hooks may report warnings (eg. plugin-typescript when it can't
+    // reach Algolia); without a report around them Node would print them as
+    // raw process warnings rather than as regular Yarn messages
+    const hookReport = await StreamReport.start({
+      configuration,
+      includeFooter: false,
+      json: this.json,
+      stdout: this.context.stdout,
+    }, async () => {
+      await configuration.triggerMultipleHooks(
+        (hooks: Hooks) => hooks.afterWorkspaceDependencyAddition,
+        afterWorkspaceDependencyAdditionList,
+      );
 
-    await configuration.triggerMultipleHooks(
-      (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
-      afterWorkspaceDependencyReplacementList,
-    );
+      await configuration.triggerMultipleHooks(
+        (hooks: Hooks) => hooks.afterWorkspaceDependencyReplacement,
+        afterWorkspaceDependencyReplacementList,
+      );
+    });
+
+    if (hookReport.hasErrors())
+      return hookReport.exitCode();
 
     if (askedQuestions)
       this.context.stdout.write(`\n`);
