@@ -103,7 +103,7 @@ export default class NpmAuditCommand extends BaseCommand {
     await project.restoreInstallState();
 
     const topLevelDependencies = npmAuditUtils.getTopLevelDependencies(project, workspace, {all: this.all, environment: this.environment});
-    const packages = npmAuditUtils.getPackages(project, topLevelDependencies, {recursive: this.recursive});
+    const packages = npmAuditUtils.getPackages(project, topLevelDependencies, {recursive: this.recursive, environment: this.environment});
 
     const excludedPackages = Array.from(new Set([
       ...configuration.get(`npmAuditExcludePackages`),
