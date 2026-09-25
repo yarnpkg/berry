@@ -44903,6 +44903,21 @@ Require stack:
     }
     return false;
   };
+  const originalModuleCompile = require$$0.Module.prototype._compile;
+  require$$0.Module.prototype._compile = function(content, filename) {
+    const patch = `if (typeof require !== 'undefined') { if (!require.cache) require.cache = Module._cache; if (!require.extensions) require.extensions = Module._extensions; };`;
+    let patchedContent = content;
+    if (content.startsWith(`#!`)) {
+      const newlineIndex = content.indexOf(`
+`);
+      if (newlineIndex !== -1) {
+        patchedContent = content.slice(0, newlineIndex + 1) + patch + content.slice(newlineIndex + 1);
+      }
+    } else {
+      patchedContent = patch + content;
+    }
+    return originalModuleCompile.call(this, patchedContent, filename);
+  };
   if (!process.features.require_module) {
     const originalExtensionJSFunction = require$$0.Module._extensions[`.js`];
     require$$0.Module._extensions[`.js`] = function(module, filename) {
