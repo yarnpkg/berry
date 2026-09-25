@@ -701,6 +701,39 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should set the +x flag on executableFiles glob patterns`,
+      makeTemporaryEnv({
+        publishConfig: {
+          executableFiles: [
+            `scripts/**/*.sh`,
+          ],
+        },
+      }, async ({path, run, source}) => {
+        await xfs.mkdirPromise(`${path}/scripts`, {recursive: true});
+        await xfs.writeFilePromise(`${path}/scripts/build.sh`, `#!/bin/bash\necho hello`);
+        await xfs.writeFilePromise(`${path}/scripts/deploy.sh`, `#!/bin/bash\necho deploy`);
+        await xfs.writeFilePromise(`${path}/index.js`, `module.exports = 42;`);
+
+        await run(`install`);
+        await run(`pack`);
+
+        const modes = {};
+        await new Promise(resolve => {
+          tar.t({
+            file: npath.fromPortablePath(`${path}/package.tgz`),
+            onentry: entry => {
+              modes[entry.path] = entry.mode;
+            },
+          }, [`package/scripts/build.sh`, `package/scripts/deploy.sh`, `package/index.js`], resolve);
+        });
+
+        expect(modes[`package/scripts/build.sh`]).toEqual(0o755);
+        expect(modes[`package/scripts/deploy.sh`]).toEqual(0o755);
+        expect(modes[`package/index.js`]).toEqual(0o644);
+      }),
+    );
+
+    test(
       `it should make the filename non-descriptive by default`,
       makeTemporaryEnv({
         name: `@yarnpkg/core`,
