@@ -180,9 +180,13 @@ export default class InfoCommand extends BaseCommand {
         };
       });
 
-      const sortedLookup = miscUtils.sortMap([...lookupSet], pkg => {
-        return structUtils.stringifyLocator(pkg);
-      });
+      const sortedLookup = miscUtils.sortMap([...lookupSet], [
+        pkg => structUtils.stringifyLocator(structUtils.isVirtualLocator(pkg)
+          ? structUtils.devirtualizeLocator(pkg)
+          : pkg),
+        pkg => structUtils.isVirtualLocator(pkg) ? `1` : `0`,
+        pkg => structUtils.stringifyLocator(pkg),
+      ]);
 
       const selection = sortedLookup.filter(pkg => {
         return matchers.length === 0 || matchers.some(matcher => matcher(pkg));
@@ -225,7 +229,6 @@ export default class InfoCommand extends BaseCommand {
 
     const infoTreeChildren: treeUtils.TreeMap = {};
     const infoTree: treeUtils.TreeNode = {children: infoTreeChildren};
-
     const fetcher = configuration.makeFetcher();
     const fetcherOptions: FetchOptions = {project, fetcher, cache, checksums: project.storedChecksums, report: new ThrowReport(), cacheOptions: {skipIntegrityCheck: true}};
 
@@ -353,8 +356,10 @@ export default class InfoCommand extends BaseCommand {
       }
 
       if (pkg.dependencies.size > 0 && !isVirtual) {
-        registerData(`Dependencies`, [...pkg.dependencies.values()].map(dependency => {
-          const resolutionHash = project.storedResolutions.get(dependency.descriptorHash);
+        const dependencyPkg = allInstances.get(pkg.locatorHash)?.[0] ?? pkg;
+        const dependencies = [...pkg.dependencies.values()].map(dependency => {
+          const resolvedDependency = dependencyPkg.dependencies.get(dependency.identHash) ?? dependency;
+          const resolutionHash = project.storedResolutions.get(resolvedDependency.descriptorHash);
 
           const resolution = typeof resolutionHash !== `undefined`
             ? project.storedPackages.get(resolutionHash) ?? null
@@ -364,7 +369,9 @@ export default class InfoCommand extends BaseCommand {
             descriptor: dependency,
             locator: resolution,
           });
-        }));
+        });
+
+        registerData(`Dependencies`, dependencies);
       }
 
       if (pkg.peerDependencies.size > 0 && isVirtual) {
