@@ -473,6 +473,31 @@ describe(`Features`, () => {
       );
 
       test(
+        `scope inherits disabled global gate when unset`,
+        makeTemporaryEnv({}, async ({path, run, source}) => {
+          const registryUrl = await startPackageServer();
+          await xfs.writeJsonPromise(`${path}/.yarnrc.yml` as PortablePath, {
+            npmMinimalAgeGate: 0,
+            npmScopes: {
+              scoped: {
+                npmRegistryServer: registryUrl,
+              },
+            },
+          });
+
+          const {stdout} = await run(`config`, `get`, `npmScopes`, `--json`);
+          expect(JSON.parse(stdout).scoped.npmMinimalAgeGate).toBeNull();
+
+          await run(`add`, `@scoped/release-date@^1.0.0`);
+
+          await expect(source(`require('@scoped/release-date/package.json')`)).resolves.toMatchObject({
+            name: `@scoped/release-date`,
+            version: `1.1.2`,
+          });
+        }),
+      );
+
+      test(
         `--no-time-gate bypasses scope override`,
         makeTemporaryEnv({}, async ({path, run, source}) => {
           const registryUrl = await startPackageServer();
