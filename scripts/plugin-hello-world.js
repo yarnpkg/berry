@@ -9,7 +9,7 @@ module.exports = {
         [`hello`],
       ];
 
-      static usageusage = Command.Usage({
+      static usage = Command.Usage({
         description: `hello world!`,
         details: `
           This command will print a nice message.
