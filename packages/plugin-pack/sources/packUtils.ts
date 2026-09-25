@@ -77,6 +77,9 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   for (const value of workspace.manifest.bin.values())
     executableFiles.add(ppath.normalize(value));
 
+  // Generated before streaming so that hook errors reject instead of crashing the process
+  const manifest = await genPackageManifest(workspace);
+
   const pack = tar.pack();
 
   process.nextTick(async () => {
@@ -118,7 +121,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
         // The root package.json supports replacement fields in publishConfig
         if (file === `package.json`)
-          content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
+          content = Buffer.from(JSON.stringify(manifest, null, 2));
         else
           content = await xfs.readFilePromise(source);
 
