@@ -1,7 +1,7 @@
 {
   "editor.tabSize": 2,
   "files.eol": "\n",
-  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "js/ts.tsdk.path": ".yarn/sdks/typescript/lib",
   "typescript.tsserver.watchOptions": {
     "watchFile": "useFsEventsOnParentDirectory",
     "watchDirectory": "useFsEvents"
@@ -21,7 +21,7 @@
   "pasteImage.basePath": "${projectRoot}/packages/gatsby/static",
   "pasteImage.forceUnixStyleSeparator": true,
   "pasteImage.prefix": "/",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "search.exclude": {
     "**/.pnp.*": true,
     "**/.yarn": true,
