@@ -156,6 +156,6 @@ case $PACKAGE_MANAGER in
       'pnpm add dummy-pkg@link:./dummy-pkg'
     ;;
   *)
-    echo "Invalid package manager ${$1}"
-    return 1;;
+    echo "Invalid package manager ${PACKAGE_MANAGER}"
+    exit 1;;
 esac
