@@ -2,8 +2,8 @@
 // @ts-nocheck
 
 import fs from 'fs';
-import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
+import { URL as URL$1, pathToFileURL, fileURLToPath } from 'url';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
 import esmModule, { createRequire, isBuiltin } from 'module';
@@ -1460,6 +1460,7 @@ function readPackage(requestPath) {
   return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
 }
 
+const { containsModuleSyntax } = process.binding(`contextify`);
 async function tryReadFile$1(path2) {
   try {
     return await fs.promises.readFile(path2, `utf8`);
@@ -1480,7 +1481,7 @@ let entrypointPath = null;
 function setEntrypointPath(file) {
   entrypointPath = file;
 }
-function getFileFormat(filepath) {
+function getFileFormat(filepath, { considerExtensionless = false, extensionlessSource } = {}) {
   const ext = path.extname(filepath);
   switch (ext) {
     case `.mjs`: {
@@ -1504,6 +1505,14 @@ function getFileFormat(filepath) {
       return pkg.data.type ?? `commonjs`;
     }
     default: {
+      if (considerExtensionless && ext === ``) {
+        if (extensionlessSource !== void 0)
+          return containsModuleSyntax(extensionlessSource, filepath, pathToFileURL(filepath).href) ? `module` : `commonjs`;
+        const pkg2 = readPackageScope(filepath);
+        if (!pkg2)
+          return `commonjs`;
+        return pkg2.data.type ?? `commonjs`;
+      }
       if (entrypointPath !== filepath)
         return null;
       const pkg = readPackageScope(filepath);
@@ -1516,12 +1525,25 @@ function getFileFormat(filepath) {
   }
 }
 
+const initialUncaughtExceptionListenerCount = process.listenerCount(`uncaughtException`);
+function isSynchronousLoaderHookCall() {
+  return process.listenerCount(`uncaughtException`) > initialUncaughtExceptionListenerCount;
+}
 async function load$1(urlString, context, nextLoad) {
   const url = tryParseURL(urlString);
   if (url?.protocol !== `file:`)
     return nextLoad(urlString, context, nextLoad);
   const filePath = fileURLToPath(url);
-  const format = getFileFormat(filePath);
+  const shouldReadSource = HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
+  let source;
+  let format = context.format ?? getFileFormat(filePath);
+  if (!format && shouldReadSource && path.extname(filePath) === ``) {
+    source = await fs.promises.readFile(filePath, `utf8`);
+    format = getFileFormat(filePath, {
+      considerExtensionless: true,
+      extensionlessSource: isSynchronousLoaderHookCall() ? source : void 0
+    });
+  }
   if (!format)
     return nextLoad(urlString, context, nextLoad);
   if (format === `json`) {
@@ -1550,8 +1572,8 @@ async function load$1(urlString, context, nextLoad) {
       "watch:import": WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend
     });
   }
-  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
-  const source = format !== `commonjs` || shouldReadSource ? await fs.promises.readFile(filePath, `utf8`) : void 0;
+  if (source === void 0 && (format !== `commonjs` || shouldReadSource))
+    source = await fs.promises.readFile(filePath, `utf8`);
   return {
     format,
     source,
