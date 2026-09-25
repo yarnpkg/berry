@@ -8,7 +8,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@types/semver": "^7.1.0",
+    "@types/semver": "^7.8.0",
     "@yarnpkg/fslib": "workspace:^",
     "clipanion": "^4.0.0-rc.2",
     "es-toolkit": "^1.39.7",

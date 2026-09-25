@@ -274,7 +274,7 @@ const RAW_RUNTIME_STATE =
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
           ["@types/node", "npm:18.19.124"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
@@ -8523,10 +8523,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@types/semver", [\
-      ["npm:7.5.8", {\
-        "packageLocation": "./.yarn/cache/@types-semver-npm-7.5.8-26073743d7-3496808818.zip/node_modules/@types/semver/",\
+      ["npm:7.8.0", {\
+        "packageLocation": "./.yarn/cache/@types-semver-npm-7.8.0-9c468999fb-bbb33a88cd.zip/node_modules/@types/semver/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"]\
+          ["@types/semver", "npm:7.8.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -9249,7 +9249,7 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/yarnpkg-builder", {\
         "packageLocation": "./packages/yarnpkg-builder/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -9272,7 +9272,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-a4e201fc3c/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:142f2540721377707149f0b1d7ad0188d020f822e234abcdca162642d42824b344a1ac44bd6035644a0ca9babd62eb7d72923350ac75b876b51e87eb92b3e464#workspace:packages/yarnpkg-cli"],\
@@ -9323,7 +9323,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:14a22fb3831dfc762a1bb8a042d17886271c56698e1a83233f09eaacff5a5b83fe6f87adb9255774eab3586392c18ff98cf87aa6b374d572d9b72f88829f6d9e#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-1c3d72c6b3/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:14a22fb3831dfc762a1bb8a042d17886271c56698e1a83233f09eaacff5a5b83fe6f87adb9255774eab3586392c18ff98cf87aa6b374d572d9b72f88829f6d9e#workspace:packages/yarnpkg-cli"],\
@@ -9374,7 +9374,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-6fc63e4d1a/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/yarnpkg-cli"],\
@@ -9425,7 +9425,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-4ff153bc11/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#workspace:packages/yarnpkg-cli"],\
@@ -9476,7 +9476,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-b4c0e602e8/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:3f21a2572d1fa6d1ff8d16d86e25bcefcbff7d17161c440fdbddbd871d9d675c377d66a2cbd98ddb8f2c024060bc7bc6c01e8ae328fa1fef861c72a9b2c30755#workspace:packages/yarnpkg-cli"],\
@@ -9527,7 +9527,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-f8376ca2bc/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli"],\
@@ -9578,7 +9578,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-2351fd5ac4/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:616a2ba0d005227805d037f4c8ec29f1dd09fdb3e3f49f7b5c4a07a62139a147d373d38bc5ebcb31bddab3956c3fc25d54edf8722741d9ebdbe9d36d21968f91#workspace:packages/yarnpkg-cli"],\
@@ -9629,7 +9629,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-54c8b951e7/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
@@ -9680,7 +9680,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:743b60015fc887fe314a7ee01ea4843b516ac512d77939f47dc39d50bc7db742dc8994fe9bb2245ada0b3ce6f8aa58329d603fbc24093050cd499cb16a1a995f#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-d1d72d9e39/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:743b60015fc887fe314a7ee01ea4843b516ac512d77939f47dc39d50bc7db742dc8994fe9bb2245ada0b3ce6f8aa58329d603fbc24093050cd499cb16a1a995f#workspace:packages/yarnpkg-cli"],\
@@ -9731,7 +9731,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:86c95fabbcd56c56f5f2d2e080e64a1095e3fe233877aa9f7958f317f88a95627e0be2765e89c0cff02c9f08f27b64b7cbc9d5c3960c1df509d5e6ea98cca4f4#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-ce4dc31355/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:86c95fabbcd56c56f5f2d2e080e64a1095e3fe233877aa9f7958f317f88a95627e0be2765e89c0cff02c9f08f27b64b7cbc9d5c3960c1df509d5e6ea98cca4f4#workspace:packages/yarnpkg-cli"],\
@@ -9782,7 +9782,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-7b82ac5a37/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:8bb72793b532d34e63bbc26264dcbcfc4dc4faa0a42627635e997081722bf229d67b7a677d86a568dad949d756630e45b9d4da97ee14b1b4c506494f8a58ea91#workspace:packages/yarnpkg-cli"],\
@@ -9833,7 +9833,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:a027ddc7edcbf74025e90effce333897039d2c6f8e1ebe319fb72c52c5be1b885da91acc56476d19bb6ce2e31cbc2d5b11241940b82f833a2cac262496c0088f#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-a7c38e9a42/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:a027ddc7edcbf74025e90effce333897039d2c6f8e1ebe319fb72c52c5be1b885da91acc56476d19bb6ce2e31cbc2d5b11241940b82f833a2cac262496c0088f#workspace:packages/yarnpkg-cli"],\
@@ -9884,7 +9884,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-10635d85d4/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-cli"],\
@@ -9935,7 +9935,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-b63ad86102/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:baf8bf095598663073ea5e8bd5af72409e894f8926160bf6fe0a24c693d417f91b536d9e3bbb0ea5f3d0ad8cd2f1ec38b71e964f9475ba719a1f5a8505cf10c3#workspace:packages/yarnpkg-cli"],\
@@ -9986,7 +9986,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-adaf1cec87/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli"],\
@@ -10037,7 +10037,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:e3ce0ce4b7f0796ca44011528cb9cdc133fc62a76363fea6de68497bae04bdbe5a6dd47e6b9f23c282eb8e4533d75e96cf378c943d07a4e78aae0b715f06a450#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-c4bd2716e3/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:e3ce0ce4b7f0796ca44011528cb9cdc133fc62a76363fea6de68497bae04bdbe5a6dd47e6b9f23c282eb8e4533d75e96cf378c943d07a4e78aae0b715f06a450#workspace:packages/yarnpkg-cli"],\
@@ -10088,7 +10088,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-45a6746f11/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:ef8e1544cc953676e27fe7445218564293b5a190d023e4610c14767688870b772297269e2848a1d8d72f54605aacc9da3b2b7dc56dca754d297b70b14e6a665e#workspace:packages/yarnpkg-cli"],\
@@ -10139,7 +10139,7 @@ const RAW_RUNTIME_STATE =
       ["virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-cli-virtual-16f564b307/1/packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:f4e4f4a9a0213f122880195b39adaee7de5cb560c1d806ebc8bace6a3124e5b8f820bbb89ebecd4d535caeb6f527d343143210aa405689c118ff2813b78998a0#workspace:packages/yarnpkg-cli"],\
@@ -10190,7 +10190,7 @@ const RAW_RUNTIME_STATE =
       ["workspace:packages/yarnpkg-cli", {\
         "packageLocation": "./packages/yarnpkg-cli/",\
         "packageDependencies": [\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -10248,7 +10248,7 @@ const RAW_RUNTIME_STATE =
           ["@types/diff", "npm:5.0.2"],\
           ["@types/micromatch", "npm:4.0.1"],\
           ["@types/node", "npm:18.19.124"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/treeify", "npm:1.0.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -10341,7 +10341,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-virtualized", "npm:9.21.22"],\
           ["@types/react-window", "npm:1.8.5"],\
           ["@types/resolve", "npm:1.20.2"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/three", "npm:0.144.0"],\
           ["@xterm/addon-serialize", "virtual:efae73f2e9aa11493dde5182b5b7f0894b5c101cb3c916b74523dc0bde92d8579259d43c7f83a5363dbd8939dc3d1e6c45c5965b9191878533d9a2c19b046d70#npm:0.13.0"],\
           ["@xterm/headless", "npm:5.5.0"],\
@@ -10555,7 +10555,7 @@ const RAW_RUNTIME_STATE =
           ["@types/jest", "npm:28.1.6"],\
           ["@types/micromatch", "npm:4.0.1"],\
           ["@types/node", "npm:18.19.124"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/cli", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/eslint-config", "virtual:e470d99b1e4fdf4c5db5d090ff5472cdeba0404b7ffd31cd2efab3493dd184c67bc45f60c2ef1c040e2c41afe38c6280bffc5df2fbe3aefaa2b6eacf685ab07c#workspace:packages/eslint-config"],\
@@ -12367,7 +12367,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-e51035a0cd/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12400,7 +12400,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-ef9db74902/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12433,7 +12433,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-a61608b862/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12466,7 +12466,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-56d958157c/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12499,7 +12499,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-438dc58496/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12531,7 +12531,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-cc462e7460/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12564,7 +12564,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-ba2aa356ff/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12597,7 +12597,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-6ab02ab8e0/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12630,7 +12630,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-2cb710994c/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12663,7 +12663,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-d9186031a9/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12696,7 +12696,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-c90abbe1cc/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12729,7 +12729,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-59637079f8/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12762,7 +12762,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-6ef07c69ef/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12794,7 +12794,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-6343d19cda/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12827,7 +12827,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-bf4b2b429d/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12860,7 +12860,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-68f2d58aeb/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12893,7 +12893,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-cbd2a9c28b/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12926,7 +12926,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-ba5500f249/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12959,7 +12959,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-e33c2283a9/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -12992,7 +12992,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-c2f404fd45/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -13025,7 +13025,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-essentials-virtual-4a08378673/1/packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -13058,7 +13058,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/plugin-essentials/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/cli", "virtual:cfce476fbcac37853570c2d41665757b5f868b1c2f089ee6edbc8bb5aa32141e156cae7d75350d1095258d90afbabe2b2bb142142b995d133c3ee535c89d459b#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -13140,7 +13140,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-git-virtual-0aab12d756/1/packages/plugin-git/",\
         "packageDependencies": [\
           ["@types/git-url-parse", "npm:9.0.0"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__core", null],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -13161,7 +13161,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/plugin-git/",\
         "packageDependencies": [\
           ["@types/git-url-parse", "npm:9.0.0"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/plugin-git", "workspace:packages/plugin-git"],\
@@ -13631,7 +13631,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13666,7 +13666,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13701,7 +13701,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13736,7 +13736,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13771,7 +13771,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13806,7 +13806,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13841,7 +13841,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13876,7 +13876,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13911,7 +13911,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13946,7 +13946,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -13981,7 +13981,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14016,7 +14016,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14051,7 +14051,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14086,7 +14086,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14121,7 +14121,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14156,7 +14156,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14191,7 +14191,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14226,7 +14226,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14261,7 +14261,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -14296,7 +14296,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/diff", "npm:5.0.2"],\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:a4e4e792796cefb4fb82f09187fa18bf4c97a9cb5b106da0eab6189e1895a4bb9bf068e5c91168fec85cee1392df48e4a120f3bae6cbbbde019ff2c21186a374#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -14889,7 +14889,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-62b5fdf575/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -14916,7 +14916,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-9b5e15c7a8/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -14944,7 +14944,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-b849f17967/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -14972,7 +14972,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-d10a34a30c/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15000,7 +15000,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-5066cb1bc2/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15028,7 +15028,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-1d0f0cf8f5/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15056,7 +15056,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-ac09774f7e/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15084,7 +15084,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-fdb17b9327/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15112,7 +15112,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-3ea9bf04ef/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15140,7 +15140,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-d0a5a66e87/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15168,7 +15168,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-347ff97d4b/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15196,7 +15196,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-572569575a/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15223,7 +15223,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-badf9df693/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15251,7 +15251,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-d0a74e03b3/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15279,7 +15279,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-2395b4e5d3/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15307,7 +15307,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-8792f06b17/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15335,7 +15335,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-708f4ba711/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15363,7 +15363,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-8e76aa50aa/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15391,7 +15391,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-d0252a53c5/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15419,7 +15419,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-bfcf790ec1/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15447,7 +15447,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-npm-virtual-87450824e1/1/packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-pack", null],\
@@ -15475,7 +15475,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/plugin-npm/",\
         "packageDependencies": [\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/ssri", "npm:7.1.5"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -15498,7 +15498,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15533,7 +15533,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15568,7 +15568,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15603,7 +15603,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15638,7 +15638,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15673,7 +15673,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15708,7 +15708,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15743,7 +15743,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15778,7 +15778,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15813,7 +15813,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15848,7 +15848,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15880,7 +15880,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15915,7 +15915,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15950,7 +15950,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -15985,7 +15985,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -16020,7 +16020,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -16055,7 +16055,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -16090,7 +16090,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -16125,7 +16125,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -16160,7 +16160,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-npm", null],\
@@ -16195,7 +16195,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@npm/types", "npm:1.0.1"],\
           ["@types/micromatch", "npm:4.0.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/cli", "virtual:4a733c8d9614e2148392368219d98ec1a70b4e8ce99164edd551241b22f6c5233e9d0ccf9f6d83265c8a5aafc617cfd3c4100b3efef1e092a42053c23770ed9a#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
@@ -18511,7 +18511,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-4c5a866c44/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18540,7 +18540,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-490cec5ffd/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18569,7 +18569,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-c917949672/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18598,7 +18598,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-cb28bf38c9/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18627,7 +18627,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-b703e32dce/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18656,7 +18656,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-44a70d709d/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18685,7 +18685,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-c2c01ffdc0/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18714,7 +18714,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-f6dc7d5cc6/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18743,7 +18743,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-ff5a958b14/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18772,7 +18772,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-2f069d1713/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18801,7 +18801,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-9151505766/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18830,7 +18830,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-cf3837d704/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18859,7 +18859,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-096875f3c9/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18888,7 +18888,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-2d4eea8f82/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18917,7 +18917,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-0cb9833e10/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18946,7 +18946,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-e99dcf2156/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -18975,7 +18975,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-8a5dd8d83e/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -19004,7 +19004,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-029df34125/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -19033,7 +19033,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-typescript-virtual-1e4008b8b6/1/packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-essentials", null],\
@@ -19062,7 +19062,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/plugin-typescript/",\
         "packageDependencies": [\
           ["@algolia/requester-common", "npm:4.0.0-beta.14"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:27ebb8cf1fa70157f710b4926b6d25c44192e74dbac3a766c8dc6505a59ebc433221bfb4b5aabc8cca814bbe95fcb6e1ecffcf94ba96ee6112a57c89364571ac#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -19082,7 +19082,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-7d20acd3c5/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19115,7 +19115,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-b162ff15a8/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19148,7 +19148,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-49806834b3/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19181,7 +19181,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-dab262e92a/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19214,7 +19214,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-60476a8671/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19247,7 +19247,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-0dfa48e4ab/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19280,7 +19280,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-1ca21579b6/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19313,7 +19313,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-58c6a160e6/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19346,7 +19346,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-53a2b3777a/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19379,7 +19379,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-5d4de18604/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19412,7 +19412,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-c31ee0150f/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19445,7 +19445,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-68d6872f8c/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19478,7 +19478,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-429f5a0565/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19511,7 +19511,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-680fffeb4f/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19544,7 +19544,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-9e73657ee6/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19577,7 +19577,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-b54fa36549/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19610,7 +19610,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-fa39d07cef/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19643,7 +19643,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-448ea695de/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19676,7 +19676,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/@yarnpkg-plugin-version-virtual-67ce6ad1a8/1/packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/yarnpkg__cli", null],\
           ["@types/yarnpkg__core", null],\
           ["@types/yarnpkg__plugin-git", null],\
@@ -19709,7 +19709,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./packages/plugin-version/",\
         "packageDependencies": [\
           ["@types/react", "npm:16.14.56"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/builder", "workspace:packages/yarnpkg-builder"],\
           ["@yarnpkg/cli", "virtual:35104c47575f2fe378d8d20383ae667f19d4dd801df8cc4c76848603aa6b4a2234a00142ff12fd557f6f48bd2810880e31c40c767010ea61a31fca302c2cc5e0#workspace:packages/yarnpkg-cli"],\
           ["@yarnpkg/core", "workspace:packages/yarnpkg-core"],\
@@ -20326,7 +20326,7 @@ const RAW_RUNTIME_STATE =
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
           ["@types/node", "npm:18.19.124"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
           ["@yarnpkg/pnp", "workspace:packages/yarnpkg-pnp"],\
@@ -31969,7 +31969,7 @@ const RAW_RUNTIME_STATE =
           ["@types/finalhandler", "npm:1.1.0"],\
           ["@types/invariant", "npm:2.2.30"],\
           ["@types/pem", "npm:1.9.5"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/serve-static", "npm:1.13.3"],\
           ["@types/tar-fs", "npm:1.16.1"],\
           ["@types/uuid", "npm:8.3.3"],\
@@ -38223,7 +38223,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@rollup/plugin-commonjs", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:21.0.1"],\
           ["@rollup/plugin-node-resolve", "virtual:712d04b0098634bdb13868ff8f85b327022bd7d3880873ada8c0ae56847ed36cf9da1fd74a88519380129cec528fe2bd2201426bc28ac9d4a8cc6734ff25c538#npm:11.2.1"],\
-          ["@types/semver", "npm:7.5.8"],\
+          ["@types/semver", "npm:7.8.0"],\
           ["@types/vscode", "npm:1.54.0"],\
           ["@yarnpkg/fslib", "workspace:packages/yarnpkg-fslib"],\
           ["@yarnpkg/libzip", "virtual:b73ceab179a3b4f89c4a5be81bd0c20a80eda623489cb284f304cc8104dbb771916bbc246d0ba809faebd8459cb6554cf114954badb021279ea7aee216456122#workspace:packages/yarnpkg-libzip"],\
