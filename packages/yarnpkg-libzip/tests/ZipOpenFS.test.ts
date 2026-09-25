@@ -65,6 +65,27 @@ describe(`ZipOpenFS`, () => {
     fs.discardAndClose();
   });
 
+  it(`reads from the current cursor of a zip file descriptor`, async () => {
+    const fs = new ZipOpenFS();
+    const fd = fs.openSync(ZIP_FILE1, `r`);
+    const prefix = Buffer.alloc(1);
+
+    expect(fs.readSync(fd, prefix, 0, 1, -1)).toBe(1);
+    expect(prefix.toString()).toBe(`f`);
+    expect(fs.readFileSync(fd, `utf8`)).toBe(`oo\n`);
+    expect(fs.readFileSync(fd, `utf8`)).toBe(``);
+
+    fs.closeSync(fd);
+
+    const asyncFd = await fs.openPromise(ZIP_FILE1, `r`);
+    expect(await fs.readPromise(asyncFd, prefix, 0, 1, -1)).toBe(1);
+    await expect(fs.readFilePromise(asyncFd, `utf8`)).resolves.toBe(`oo\n`);
+    await expect(fs.readFilePromise(asyncFd, `utf8`)).resolves.toBe(``);
+    await fs.closePromise(asyncFd);
+
+    fs.discardAndClose();
+  });
+
   it(`can read from a zip file in a path containing .zip`, () => {
     const fs = new ZipOpenFS();
 
