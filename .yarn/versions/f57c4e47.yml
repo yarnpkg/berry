@@ -1,0 +1,6 @@
+releases:
+  "@yarnpkg/shell": patch
+
+declined:
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"

@@ -20,6 +20,29 @@ const expectResult = async (promise: Promise<any>, {exitCode = 0, stdout = ``, s
   return await expect(promise).resolves.toMatchObject({exitCode, stdout, stderr});
 };
 
+const withTimeout = async <T>(promise: Promise<T>, duration: number, message: string) => {
+  let timeout: ReturnType<typeof globalThis.setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timeout = globalThis.setTimeout(() => {
+          reject(new Error(message));
+        }, duration);
+
+        if (typeof timeout !== `number`) {
+          timeout.unref?.();
+        }
+      }),
+    ]);
+  } finally {
+    if (typeof timeout !== `undefined`) {
+      globalThis.clearTimeout(timeout);
+    }
+  }
+};
+
 const bufferResult = async (command: string, args: Array<string> = [], options: Partial<UserOptions> & {tty?: boolean} = {}): Promise<Result> => {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
@@ -161,6 +184,19 @@ describe(`Shell`, () => {
       ), {
         stdout: `hello\n`,
       });
+    });
+
+    it(`should not retain process output listeners`, async () => {
+      const stdout = new PassThrough();
+      const stderr = new PassThrough();
+      const command = Array.from({length: 12}, () => `node -e ""`).join(`; `);
+
+      await expect(execute(command, [], {stdout, stderr})).resolves.toEqual(0);
+
+      expect(stdout.listenerCount(`close`)).toEqual(0);
+      expect(stdout.listenerCount(`error`)).toEqual(0);
+      expect(stderr.listenerCount(`close`)).toEqual(0);
+      expect(stderr.listenerCount(`error`)).toEqual(0);
     });
 
     it(`should support empty string as argument`, async () => {
@@ -386,6 +422,30 @@ describe(`Shell`, () => {
       });
     });
 
+    it(`should allow subshells to read inherited stdin`, async () => {
+      const stdin = new PassThrough();
+      stdin.end(`hello world`);
+
+      await expectResult(bufferResult(
+        `( cat )`,
+        [],
+        {stdin},
+      ), {
+        stdout: `hello world`,
+      });
+
+      await xfs.mktempPromise(async tmpDir => {
+        const file = ppath.join(tmpDir, `file`);
+        await xfs.writeFilePromise(file, `hello world\n`);
+
+        await expectResult(bufferResult(
+          `( cat ) < "${file}"`,
+        ), {
+          stdout: `hello world\n`,
+        });
+      });
+    });
+
     it(`should support redirections on groups (one command)`, async () => {
       await xfs.mktempPromise(async tmpDir => {
         const file = ppath.join(tmpDir, `file`);
@@ -411,6 +471,30 @@ describe(`Shell`, () => {
         });
 
         await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\ngoodbye world\n`);
+      });
+    });
+
+    it(`should allow groups to read inherited stdin`, async () => {
+      const stdin = new PassThrough();
+      stdin.end(`hello world`);
+
+      await expectResult(bufferResult(
+        `{ cat; }`,
+        [],
+        {stdin},
+      ), {
+        stdout: `hello world`,
+      });
+
+      await xfs.mktempPromise(async tmpDir => {
+        const file = ppath.join(tmpDir, `file`);
+        await xfs.writeFilePromise(file, `hello world\n`);
+
+        await expectResult(bufferResult(
+          `{ cat; } < "${file}"`,
+        ), {
+          stdout: `hello world\n`,
+        });
       });
     });
 
@@ -659,6 +743,111 @@ describe(`Shell`, () => {
           });
         });
 
+        it(`should support env assignment without command and with redirection`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            const file = ppath.join(tmpDir, `file`);
+
+            await expectResult(bufferResult([
+              `FOO=1`,
+              `FOO=2 > "${file}"`,
+              `echo $FOO`,
+            ].join(` ; `)), {
+              stdout: `2\n`,
+            });
+
+            await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(``);
+          });
+        });
+
+        it(`should not copy input when env assignment without command has redirection`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            const source = ppath.join(tmpDir, `source`);
+            const target = ppath.join(tmpDir, `target`);
+            await xfs.writeFilePromise(source, `hello world\n`);
+
+            await expectResult(bufferResult([
+              `FOO=1`,
+              `FOO=2 < "${source}"`,
+              `FOO=3 < "${source}" > "${target}"`,
+              `echo $FOO`,
+            ].join(` ; `)), {
+              stdout: `3\n`,
+            });
+
+            await expect(xfs.readFilePromise(target, `utf8`)).resolves.toEqual(``);
+          });
+        });
+
+        it(`should support env assignment without command and with stdin fd redirection`, async () => {
+          const stdin = new PassThrough();
+          stdin.end(`hello world\n`);
+
+          await expectResult(withTimeout(
+            bufferResult([
+              `FOO=1`,
+              `FOO=2 <&0`,
+              `echo $FOO`,
+            ].join(` ; `), [], {stdin}),
+            1000,
+            `Timed out waiting for commandless assignment stdin fd redirection`,
+          ), {
+            stdout: `2\n`,
+          });
+        });
+
+        ifNotWin32It(`should not drain env assignment without command input redirections`, async () => {
+          await expectResult(withTimeout(
+            bufferResult([
+              `FOO=1`,
+              `FOO=2 < /dev/zero`,
+              `echo $FOO`,
+            ].join(` ; `)),
+            1000,
+            `Timed out waiting for commandless assignment input redirection`,
+          ), {
+            stdout: `2\n`,
+          });
+        });
+
+        it(`should fail env assignment without command when input redirection fails`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            const missing = ppath.join(tmpDir, `missing`);
+
+            await expect(bufferResult([
+              `FOO=1`,
+              `FOO=2 < "${missing}"`,
+              `echo $FOO`,
+            ].join(` ; `))).rejects.toThrowError(`ENOENT: no such file or directory, open`);
+          });
+        });
+
+        it(`should support env assignment without command and with a -- redirection target`, async () => {
+          await xfs.mktempPromise(async tmpDir => {
+            const file = ppath.join(tmpDir, `--`);
+
+            await expectResult(bufferResult([
+              `FOO=1`,
+              `FOO=2 > "${file}"`,
+              `echo $FOO`,
+            ].join(` ; `)), {
+              stdout: `2\n`,
+            });
+
+            await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(``);
+          });
+        });
+
+        it(`should not persist env assignment when commandless redirection fails`, async () => {
+          await expectResult(bufferResult([
+            `FOO=1`,
+            `FOO=2 >&42`,
+            `echo $FOO`,
+          ].join(` ; `)), {
+            stdout: `1\n`,
+            stderr: `Bad file descriptor: "42"\n`,
+          });
+        });
+
         it(`should evaluate variables once before starting execution`, async () => {
           await expectResult(bufferResult([
             `FOO=1`,
@@ -785,6 +974,113 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should support redirection-only commands (file)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          await xfs.writeFilePromise(file, `hello world\n`);
+
+          await expectResult(bufferResult(
+            `< "${file}"`,
+          ), {
+            stdout: `hello world\n`,
+          });
+        });
+      });
+
+      it(`should support redirection-only commands from stdin fd`, async () => {
+        for (const redirection of [`<&0`, `0<&0`]) {
+          const stdin = new PassThrough();
+          stdin.end(`hello world\n`);
+
+          await expectResult(withTimeout(
+            bufferResult(redirection, [], {stdin}),
+            1000,
+            `Timed out waiting for ${redirection}`,
+          ), {
+            stdout: `hello world\n`,
+          });
+        }
+      });
+
+      it(`should throw recoverable errors for input redirections from output fds`, async () => {
+        for (const [command, fd] of [[`cat <&1`, 1], [`cat <&2`, 2], [`<&1`, 1], [`<&2`, 2]] as const) {
+          await expectResult(withTimeout(
+            bufferResult(command),
+            1000,
+            `Timed out waiting for ${command}`,
+          ), {
+            exitCode: 1,
+            stderr: `Bad file descriptor: "${fd}"\n`,
+          });
+        }
+      });
+
+      it(`should support large redirection-only copies`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const source = ppath.join(tmpDir, `source`);
+          const target = ppath.join(tmpDir, `target`);
+          const contents = Buffer.alloc(4 * 1024 * 1024, `x`);
+
+          await xfs.writeFilePromise(source, contents);
+
+          await expectResult(bufferResult(
+            `< "${source}" > "${target}"`,
+          ), {
+            stdout: ``,
+          });
+
+          const output = await xfs.readFilePromise(target);
+          expect(output.length).toEqual(contents.length);
+          expect(output.equals(contents)).toEqual(true);
+        });
+      });
+
+      it(`should throw on redirection-only copies to inexistent folders`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const source = ppath.join(tmpDir, `source`);
+          const target = ppath.join(tmpDir, `missing`, `target`);
+
+          await xfs.writeFilePromise(source, `hello world\n`);
+
+          await expect(bufferResult(
+            `< "${source}" > "${target}"`,
+          )).rejects.toThrowError(`ENOENT: no such file or directory, open`);
+        });
+      });
+
+      it(`should throw on redirection-only commands with missing inputs`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `missing`);
+
+          await expect(bufferResult(
+            `< "${file}"`,
+          )).rejects.toThrowError(`ENOENT: no such file or directory, open`);
+        });
+      });
+
+      it(`should support redirection-only commands in subshells (file)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          await xfs.writeFilePromise(file, `hello world\n`);
+
+          await expectResult(bufferResult(
+            `echo "$(< "${file}")"`,
+          ), {
+            stdout: `hello world\n`,
+          });
+        });
+      });
+
+      it(`should throw on redirection-only commands with missing inputs in subshells`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `missing`);
+
+          await expect(bufferResult(
+            `echo "$(< "${file}")"`,
+          )).rejects.toThrowError(`ENOENT: no such file or directory, open`);
+        });
+      });
+
       it(`should support input redirections to fd (file)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file`);
@@ -880,6 +1176,21 @@ describe(`Shell`, () => {
           });
 
           await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`hello world\n`);
+        });
+      });
+
+      it(`should support redirection-only commands (overwrite)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          await xfs.writeFilePromise(file, `hello world\n`);
+
+          await expectResult(bufferResult(
+            `> "${file}"`,
+          ), {
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(``);
         });
       });
 
@@ -1020,6 +1331,21 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should support redirection-only commands (append)`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          await xfs.writeFilePromise(file, `foo bar baz\n`);
+
+          await expectResult(bufferResult(
+            `>> "${file}"`,
+          ), {
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`foo bar baz\n`);
+        });
+      });
+
       it(`should support output redirections from fd (stdout)`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           const file = ppath.join(tmpDir, `file`);
@@ -1143,6 +1469,18 @@ describe(`Shell`, () => {
             stderr: `Bad file descriptor: "42"\n`,
           });
         });
+
+        await xfs.mktempPromise(async tmpDir => {
+          await expectResult(bufferResult(
+            `echo "hello world" >& 0 && echo OK || echo KO`,
+            [],
+            {cwd: tmpDir},
+          ), {
+            exitCode: 0,
+            stdout: `KO\n`,
+            stderr: `Bad file descriptor: "0"\n`,
+          });
+        });
       });
     });
   });
@@ -1194,6 +1532,197 @@ describe(`Shell`, () => {
           `test-builtin`,
         ].join(` | `)), {
           stdout: `aei\n`,
+        });
+      });
+
+      it(`should pipe the result of a command into a group`, async () => {
+        await expectResult(bufferResult([
+          `node -e 'process.stdout.write("hello world")'`,
+          `{ cat; }`,
+        ].join(` | `)), {
+          stdout: `hello world`,
+        });
+      });
+
+      ifNotWin32It(`should allow redirection-only producers when consumers close early`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          await xfs.writeFilePromise(file, Buffer.alloc(4 * 1024 * 1024, `x`));
+
+          await expectResult(bufferResult(
+            `< "${file}" | head -c 1`,
+          ), {
+            stdout: `x`,
+          });
+        });
+      });
+
+      it(`should stop redirection-only producers when builtin consumers exit`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          await xfs.writeFilePromise(file, Buffer.alloc(4 * 1024 * 1024, `x`));
+
+          await expectResult(withTimeout(
+            bufferResult(`< "${file}" | true`),
+            1000,
+            `Timed out waiting for redirection-only producer to stop`,
+          ), {
+            stdout: ``,
+          });
+
+          await expectResult(withTimeout(
+            bufferResult(`< "${file}" | echo ok`),
+            1000,
+            `Timed out waiting for redirection-only producer to stop`,
+          ), {
+            stdout: `ok\n`,
+          });
+        });
+      });
+
+      it(`should stop fd-redirected producers when builtin consumers exit`, async () => {
+        await expectResult(withTimeout(
+          bufferResult(`node -e 'process.stdout.write("hello world")' >&1 | echo ok`),
+          10000,
+          `Timed out waiting for stdout fd-redirected producer to stop`,
+        ), {
+          stdout: `ok\n`,
+        });
+
+        await expectResult(withTimeout(
+          bufferResult(`node -e 'process.stderr.write("hello world")' 2>&1 | echo ok`),
+          10000,
+          `Timed out waiting for stderr fd-redirected producer to stop`,
+        ), {
+          stdout: `ok\n`,
+        });
+      });
+
+      ifNotWin32It(`should let native producers continue after builtin consumers close`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          const producer = `node -e 'process.stdout.end(); setTimeout(() => require("fs").writeFileSync(${JSON.stringify(file)}, "done"), 200);'`;
+
+          await expectResult(bufferResult(`${producer} | true`), {
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(`done`);
+        });
+      });
+
+      it(`should support piped redirection-only stdin fd copies`, async () => {
+        await expectResult(withTimeout(
+          bufferResult(`node -e 'process.stdout.write("hello world")' | <&0`),
+          10000,
+          `Timed out waiting for piped stdin fd redirection`,
+        ), {
+          stdout: `hello world`,
+        });
+      });
+
+      ifNotWin32It(`should close unused pipeline input in redirection-only commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          const producer = `node -e 'process.stdout.on("error", error => { if (error.code === "EPIPE") process.exit(0); throw error; }); const chunk = "x".repeat(1024); function write() { while (process.stdout.write(chunk)); process.stdout.once("drain", write); } write(); setTimeout(() => process.exit(2), 5000);'`;
+
+          await expectResult(withTimeout(
+            bufferResult(`${producer} | > "${file}"`),
+            10000,
+            `Timed out waiting for redirection-only command to close unused pipeline input`,
+          ), {
+            stdout: ``,
+            stderr: ``,
+            exitCode: 0,
+          });
+        });
+      });
+
+      ifNotWin32It(`should close unused piped subshell input after redirection-only commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          const producer = `node -e 'process.stdout.on("error", error => { if (error.code === "EPIPE") process.exit(0); throw error; }); const chunk = "x".repeat(1024); function write() { while (process.stdout.write(chunk)); process.stdout.once("drain", write); } write(); setTimeout(() => process.exit(2), 5000);'`;
+
+          await expectResult(withTimeout(
+            bufferResult(`${producer} | ( > "${file}" )`),
+            10000,
+            `Timed out waiting for subshell to close unused pipeline input`,
+          ), {
+            stdout: ``,
+            stderr: ``,
+            exitCode: 0,
+          });
+        });
+      });
+
+      ifNotWin32It(`should close unused piped group input after redirection-only commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          const producer = `node -e 'process.stdout.on("error", error => { if (error.code === "EPIPE") process.exit(0); throw error; }); const chunk = "x".repeat(1024); function write() { while (process.stdout.write(chunk)); process.stdout.once("drain", write); } write(); setTimeout(() => process.exit(2), 5000);'`;
+
+          await expectResult(withTimeout(
+            bufferResult(`${producer} | { > "${file}"; }`),
+            10000,
+            `Timed out waiting for group to close unused pipeline input`,
+          ), {
+            stdout: ``,
+            stderr: ``,
+            exitCode: 0,
+          });
+        });
+      });
+
+      it(`should keep piped subshell input after redirection-only commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+
+          await expectResult(bufferResult(
+            `node -e 'process.stdout.write("hello world")' | ( > "${file}"; cat )`,
+          ), {
+            stdout: `hello world`,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(``);
+        });
+      });
+
+      it(`should keep redirected piped subshell input after redirection-only commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          const output = ppath.join(tmpDir, `output`);
+
+          await expectResult(withTimeout(
+            bufferResult(
+              `node -e 'process.stdout.write("hello world")' | ( > "${file}"; cat ) > "${output}"`,
+            ),
+            10000,
+            `Timed out waiting for redirected subshell to preserve pipeline input`,
+          ), {
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(``);
+          await expect(xfs.readFilePromise(output, `utf8`)).resolves.toEqual(`hello world`);
+        });
+      });
+
+      it(`should keep redirected piped group input after redirection-only commands`, async () => {
+        await xfs.mktempPromise(async tmpDir => {
+          const file = ppath.join(tmpDir, `file`);
+          const output = ppath.join(tmpDir, `output`);
+
+          await expectResult(withTimeout(
+            bufferResult(
+              `node -e 'process.stdout.write("hello world")' | { > "${file}"; cat; } > "${output}"`,
+            ),
+            10000,
+            `Timed out waiting for redirected group to preserve pipeline input`,
+          ), {
+            stdout: ``,
+          });
+
+          await expect(xfs.readFilePromise(file, `utf8`)).resolves.toEqual(``);
+          await expect(xfs.readFilePromise(output, `utf8`)).resolves.toEqual(`hello world`);
         });
       });
 
