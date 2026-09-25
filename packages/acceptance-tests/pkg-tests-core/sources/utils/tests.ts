@@ -486,9 +486,11 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
             }),
           )),
         ),
-        time: name in RELEASE_DATE_PACKAGES
-          ? RELEASE_DATE_PACKAGES[name]
-          : Object.fromEntries(versions.map(version => [version, OLD_RELEASE_DATE])),
+        ...(!name.startsWith(`no-time-`) ? {
+          time: name in RELEASE_DATE_PACKAGES
+            ? RELEASE_DATE_PACKAGES[name]
+            : Object.fromEntries(versions.map(version => [version, OLD_RELEASE_DATE])),
+        } : {}),
         [`dist-tags`]: {
           latest: semver.maxSatisfying(versions, `*`),
           ...distTags,

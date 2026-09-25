@@ -573,5 +573,21 @@ describe(`Features`, () => {
         }),
       );
     });
+
+    describe(`packages with no release time metadata (e.g. GitHub Packages)`, () => {
+      test(
+        `it should install a package with no release time even if npmMinimalAgeGate is set`,
+        makeTemporaryEnv({}, {
+          npmMinimalAgeGate: `1d`,
+        }, async ({run, source}) => {
+          await run(`add`, `no-time-deps`);
+
+          await expect(source(`require('no-time-deps/package.json')`)).resolves.toMatchObject({
+            name: `no-time-deps`,
+            version: `1.0.0`,
+          });
+        }),
+      );
+    });
   });
 });
