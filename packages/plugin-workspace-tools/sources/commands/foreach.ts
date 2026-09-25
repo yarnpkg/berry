@@ -1,14 +1,14 @@
-import {BaseCommand, WorkspaceRequiredError}                         from '@yarnpkg/cli';
-import {Configuration, LocatorHash, Project, scriptUtils, Workspace} from '@yarnpkg/core';
-import {DescriptorHash, MessageName, Report, StreamReport}           from '@yarnpkg/core';
-import {formatUtils, miscUtils, structUtils, nodeUtils}              from '@yarnpkg/core';
-import {gitUtils}                                                    from '@yarnpkg/plugin-git';
-import {Command, Option, Usage, UsageError}                          from 'clipanion';
-import micromatch                                                    from 'micromatch';
-import pLimit                                                        from 'p-limit';
-import {Writable}                                                    from 'stream';
-import {WriteStream}                                                 from 'tty';
-import * as t                                                        from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                    from '@yarnpkg/cli';
+import {Configuration, LocatorHash, Manifest, Project, scriptUtils, ThrowReport, Workspace}     from '@yarnpkg/core';
+import {Descriptor, DescriptorHash, Locator, MessageName, Report, ResolveOptions, StreamReport} from '@yarnpkg/core';
+import {formatUtils, miscUtils, structUtils, nodeUtils}                                         from '@yarnpkg/core';
+import {gitUtils}                                                                               from '@yarnpkg/plugin-git';
+import {Command, Option, Usage, UsageError}                                                     from 'clipanion';
+import micromatch                                                                               from 'micromatch';
+import pLimit                                                                                   from 'p-limit';
+import {Writable}                                                                               from 'stream';
+import {WriteStream}                                                                            from 'tty';
+import * as t                                                                                   from 'typanion';
 
 // eslint-disable-next-line arca/no-default-export
 export default class WorkspacesForeachCommand extends BaseCommand {
@@ -156,6 +156,90 @@ export default class WorkspacesForeachCommand extends BaseCommand {
       this.context.stdout.write(`${msg}\n`);
     };
 
+    const resolver = configuration.makeResolver();
+    const resolveOptions: ResolveOptions = {
+      project,
+      resolver,
+      report: new ThrowReport(),
+    };
+    const workspaceDependencyCache = new Map<string, Workspace | null>();
+
+    const getWorkspaceByDependency = async (descriptor: Descriptor, fromLocator: Locator) => {
+      const cacheKey = `${fromLocator.locatorHash}:${descriptor.descriptorHash}`;
+      const cachedWorkspace = workspaceDependencyCache.get(cacheKey);
+      if (typeof cachedWorkspace !== `undefined`)
+        return cachedWorkspace;
+
+      const dependency = await configuration.reduceHook(hooks => {
+        return hooks.reduceDependency;
+      }, descriptor, project, fromLocator, descriptor, {
+        resolver,
+        resolveOptions,
+      });
+
+      if (!structUtils.areIdentsEqual(descriptor, dependency))
+        throw new Error(`Assertion failed: The descriptor ident cannot be changed through aliases`);
+
+      const bound = resolver.bindDescriptor(dependency, fromLocator, resolveOptions);
+
+      const workspace = project.tryWorkspaceByDescriptor(bound);
+      workspaceDependencyCache.set(cacheKey, workspace);
+
+      return workspace;
+    };
+
+    const getRecursiveWorkspaceDependencies = async (workspace: Workspace, {dependencies = Manifest.hardDependencies}: {dependencies?: typeof Manifest.hardDependencies} = {}) => {
+      const workspaceList = new Set<Workspace>();
+
+      const visitWorkspace = async (workspace: Workspace) => {
+        for (const dependencyType of dependencies) {
+          for (const descriptor of workspace.manifest[dependencyType].values()) {
+            const foundWorkspace = await getWorkspaceByDependency(descriptor, workspace.anchoredLocator);
+            if (foundWorkspace === null || workspaceList.has(foundWorkspace))
+              continue;
+
+            workspaceList.add(foundWorkspace);
+            await visitWorkspace(foundWorkspace);
+          }
+        }
+      };
+
+      await visitWorkspace(workspace);
+      return workspaceList;
+    };
+
+    const getRecursiveWorkspaceDependents = async (workspace: Workspace, {dependencies = Manifest.hardDependencies}: {dependencies?: typeof Manifest.hardDependencies} = {}) => {
+      const workspaceList = new Set<Workspace>();
+
+      const visitWorkspace = async (workspace: Workspace) => {
+        for (const projectWorkspace of project.workspaces) {
+          let isDependent = false;
+
+          for (const dependencyType of dependencies) {
+            for (const descriptor of projectWorkspace.manifest[dependencyType].values()) {
+              const foundWorkspace = await getWorkspaceByDependency(descriptor, projectWorkspace.anchoredLocator);
+              if (foundWorkspace !== null && structUtils.areLocatorsEqual(foundWorkspace.anchoredLocator, workspace.anchoredLocator)) {
+                isDependent = true;
+                break;
+              }
+            }
+
+            if (isDependent) {
+              break;
+            }
+          }
+
+          if (isDependent && !workspaceList.has(projectWorkspace)) {
+            workspaceList.add(projectWorkspace);
+            await visitWorkspace(projectWorkspace);
+          }
+        }
+      };
+
+      await visitWorkspace(workspace);
+      return workspaceList;
+    };
+
     const getFromWorkspaces = () => {
       const matchers = this.from!.map(pattern => micromatch.matcher(pattern));
 
@@ -200,10 +284,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     if (this.recursive) {
       if (this.since) {
         log(`Option --recursive --since is set; recursively selecting all dependent workspaces`);
-        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependents()]).flat());
+        extra = new Set((await Promise.all(selection.map(workspace => getRecursiveWorkspaceDependents(workspace)))).flatMap(workspaces => [...workspaces]));
       } else {
         log(`Option --recursive is set; recursively selecting all transitive dependencies`);
-        extra = new Set(selection.map(workspace => [...workspace.getRecursiveWorkspaceDependencies()]).flat());
+        extra = new Set((await Promise.all(selection.map(workspace => getRecursiveWorkspaceDependencies(workspace)))).flatMap(workspaces => [...workspaces]));
       }
     } else if (this.worktree) {
       log(`Option --worktree is set; recursively selecting all nested workspaces`);
@@ -382,13 +466,19 @@ export default class WorkspacesForeachCommand extends BaseCommand {
           let isRunnable = true;
 
           if (this.topological || this.topologicalDev) {
-            const resolvedSet = this.topologicalDev
-              ? new Map([...workspace.manifest.dependencies, ...workspace.manifest.devDependencies])
-              : workspace.manifest.dependencies;
+            const dependencyTypes = this.topologicalDev
+              ? Manifest.hardDependencies
+              : [`dependencies`] as const;
 
-            for (const descriptor of resolvedSet.values()) {
-              const workspace = project.tryWorkspaceByDescriptor(descriptor);
-              isRunnable = workspace === null || !needsProcessing.has(workspace.anchoredLocator.locatorHash);
+            for (const dependencyType of dependencyTypes) {
+              for (const descriptor of workspace.manifest[dependencyType].values()) {
+                const dependencyWorkspace = await getWorkspaceByDependency(descriptor, workspace.anchoredLocator);
+                isRunnable = dependencyWorkspace === null || !needsProcessing.has(dependencyWorkspace.anchoredLocator.locatorHash);
+
+                if (!isRunnable) {
+                  break;
+                }
+              }
 
               if (!isRunnable) {
                 break;
