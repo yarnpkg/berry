@@ -42,6 +42,8 @@ export default class VersionCommand extends BaseCommand {
 
       If the \`--prerelease\` option is set without a value, the default pattern of \`rc.%n\` will be used.
 
+      When \`--prerelease\` is set, it also forces a prerelease bump when the chosen strategy (or a deferred record being applied) is an otherwise stable bump such as \`patch\`, \`minor\`, or \`major\`. For example, \`yarn version patch --prerelease=alpha.0\` turns \`1.0.32\` into \`1.0.33-alpha.0\`, and \`yarn version apply --prerelease\` does the same for deferred stable records. In that apply path the deferred records are kept so a later stable \`yarn version apply\` can still consume them.
+
       ### Immediate vs deferred versioning
 
       By default, the version bump will be applied immediately. If the \`--deferred\` flag or the \`preferDeferredVersions\` configuration option is set, deferred versioning will be used instead. The version bump will only be recorded, and can be applied in the future by running \`yarn version apply\`. The \`--immediate\` flag can be used to force immediate mode even if \`preferDeferredVersions\` is set.
@@ -83,7 +85,7 @@ export default class VersionCommand extends BaseCommand {
   });
 
   prerelease = Option.String(`--prerelease`, {
-    description: `Specify a prerelease pattern to use when working with prerelease versions`,
+    description: `Add or update a prerelease id (forces a prerelease even for stable strategies, and keeps deferred records when applying)`,
     tolerateBoolean: true,
   });
 

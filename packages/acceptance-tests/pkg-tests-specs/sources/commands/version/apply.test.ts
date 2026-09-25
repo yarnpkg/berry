@@ -164,6 +164,48 @@ describe(`Commands`, () => {
       ),
     );
 
+    test(
+      `it should apply a deferred stable bump as a prerelease when --prerelease is set`,
+      makeTemporaryEnv(
+        {
+          version: `1.0.32`,
+        },
+        async ({path, run}) => {
+          await run(`version`, `patch`, `--deferred`);
+
+          await run(`version`, `apply`, `--prerelease=alpha.0`);
+
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            version: `1.0.33-alpha.0`,
+          });
+        },
+      ),
+    );
+
+    test(
+      `it should keep deferred records when applying with --prerelease`,
+      makeTemporaryEnv(
+        {
+          version: `1.0.32`,
+        },
+        async ({path, run}) => {
+          await run(`version`, `patch`, `--deferred`);
+
+          await run(`version`, `apply`, `--prerelease=alpha.0`);
+
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            version: `1.0.33-alpha.0`,
+          });
+
+          await run(`version`, `apply`);
+
+          await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
+            version: `1.0.34`,
+          });
+        },
+      ),
+    );
+
 
     const alternatives = [
       [`implicit`, `1.0.0`, true],

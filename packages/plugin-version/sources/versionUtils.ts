@@ -453,12 +453,10 @@ export function applyReleases(project: Project, newVersions: Map<Workspace, stri
     const oldVersion = workspace.manifest.version;
     workspace.manifest.version = newVersion;
 
-    // Keep the previous stable version around while on a prerelease so the
-    // next non-prerelease bump can start from that baseline again.
+    // Only drop stableVersion once we land on a stable release. Do not write
+    // it back for prereleases; leave an existing value alone if present.
     if (semver.prerelease(newVersion) === null)
       delete workspace.manifest.raw.stableVersion;
-    else if (!workspace.manifest.raw.stableVersion)
-      workspace.manifest.raw.stableVersion = oldVersion;
 
     const identString = workspace.manifest.name !== null
       ? structUtils.stringifyIdent(workspace.manifest.name)
