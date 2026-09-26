@@ -171,6 +171,28 @@ async function copyFolder<P1 extends Path, P2 extends Path>(prelayout: Operation
   return updated;
 }
 
+/**
+ * Determines whether a hard link error should trigger a copy fallback.
+ *
+ * - EXDEV:  cross-device link (index and project on different volumes)
+ * - EMLINK: too many links (inode limit on Linux/macOS)
+ * - UNKNOWN + link syscall: NTFS hard link limit on Windows (1024 per file);
+ *   libuv does not map ERROR_TOO_MANY_LINKS to EMLINK
+ * - EPERM + link syscall: insufficient privileges for hard links (e.g.
+ *   Windows without Developer Mode enabled)
+ */
+function shouldFallbackToCopy(err: any): boolean {
+  if (err.code === `EXDEV`)
+    return true;
+  if (err.code === `EMLINK`)
+    return true;
+  if (err.code === `UNKNOWN` && err.syscall === `link`)
+    return true;
+  if (err.code === `EPERM` && err.syscall === `link`)
+    return true;
+  return false;
+}
+
 async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Operations, postlayout: Operations, destinationFs: FakeFS<P1>, destination: P1, destinationStat: Stats | null, sourceFs: FakeFS<P2>, source: P2, sourceStat: Stats, opts: CopyOptions<P1>, linkStrategy: HardlinkFromIndexStrategy<P1>) {
   const sourceHash = await sourceFs.checksumFilePromise(source, {algorithm: `sha1`});
 
@@ -264,7 +286,19 @@ async function copyFileViaIndex<P1 extends Path, P2 extends Path>(prelayout: Ope
     }
 
     if (!destinationStat) {
-      await destinationFs.linkPromise(indexPath, destination);
+      try {
+        await destinationFs.linkPromise(indexPath, destination);
+      } catch (err) {
+        if (shouldFallbackToCopy(err)) {
+          const content = await destinationFs.readFilePromise(indexPath);
+          await destinationFs.writeFilePromise(destination, content);
+          if (sourceMode !== defaultMode) {
+            await destinationFs.chmodPromise(destination, sourceMode);
+          }
+        } else {
+          throw err;
+        }
+      }
     }
   });
 
