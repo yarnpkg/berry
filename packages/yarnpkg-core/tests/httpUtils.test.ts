@@ -28,10 +28,54 @@ describe(`httpUtils`, () => {
       expect(hookArgumentResult.target).toBe(target);
       expect(hookArgumentResult.body).toBe(body);
       expect(hookArgumentResult.configuration).toBe(configuration);
-      expect(hookArgumentResult.headers).toBe(headers);
+      expect(hookArgumentResult.headers).toEqual({
+        ...headers,
+        [`user-agent`]: expect.stringMatching(new RegExp(`^yarn/.+ node/${process.version}$`)),
+      });
       expect(hookArgumentResult.jsonRequest).toBe(jsonRequest);
       expect(hookArgumentResult.jsonResponse).toBe(jsonResponse);
       expect(hookArgumentResult.method).toBe(method);
+    });
+
+    it(`sets a Yarn User-Agent header by default`, async () => {
+      // Arrange
+      const target = `https://my/fake/target`;
+
+      const {plugins, mockWrapNetworkRequest} = getPluginsWithMockWrapNetworkRequestPlugin();
+      const configuration = Configuration.create(npath.toPortablePath(`.`), plugins);
+      mockWrapNetworkRequest.mockReturnValue(() => {});
+
+      // Act
+      await httpUtils.request(target, null, {configuration});
+
+      // Assert
+      const hookArgumentResult = mockWrapNetworkRequest.mock.calls[0][1];
+      expect(hookArgumentResult.headers).toEqual({
+        [`user-agent`]: expect.stringMatching(new RegExp(`^yarn/.+ node/${process.version}$`)),
+      });
+    });
+
+    it(`preserves a custom User-Agent header`, async () => {
+      // Arrange
+      const target = `https://my/fake/target`;
+
+      const {plugins, mockWrapNetworkRequest} = getPluginsWithMockWrapNetworkRequestPlugin();
+      const configuration = Configuration.create(npath.toPortablePath(`.`), plugins);
+      mockWrapNetworkRequest.mockReturnValue(() => {});
+
+      // Act
+      await httpUtils.request(target, null, {
+        configuration,
+        headers: {
+          [`User-Agent`]: `custom-user-agent`,
+        },
+      });
+
+      // Assert
+      const hookArgumentResult = mockWrapNetworkRequest.mock.calls[0][1];
+      expect(hookArgumentResult.headers).toEqual({
+        [`User-Agent`]: `custom-user-agent`,
+      });
     });
   });
 
