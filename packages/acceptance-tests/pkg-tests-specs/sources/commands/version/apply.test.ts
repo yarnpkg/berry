@@ -199,8 +199,9 @@ describe(`Commands`, () => {
 
           await run(`version`, `apply`);
 
+          // Deferred patch still applies against the prerelease (1.0.33-alpha.0 -> 1.0.33).
           await expect(xfs.readJsonPromise(ppath.join(path, Filename.manifest))).resolves.toMatchObject({
-            version: `1.0.34`,
+            version: `1.0.33`,
           });
         },
       ),
