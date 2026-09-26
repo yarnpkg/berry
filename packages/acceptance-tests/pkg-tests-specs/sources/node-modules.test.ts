@@ -4,6 +4,7 @@ import {parseSyml}                                 from '@yarnpkg/parsers';
 
 
 const {
+  exec: {execFile},
   fs: {writeFile, writeJson, FsLinkType, determineLinkType},
   tests: {testIf},
 } = require(`pkg-tests-core`);
@@ -175,6 +176,58 @@ describe(`Node_Modules`, () => {
             stdout: `2.0.0\n`,
           });
         }
+      },
+    ),
+  );
+
+  testIf(() => process.platform === `win32` && typeof process.env.MSYSTEM !== `undefined`,
+    `should generate .bin shims that run from MSYS2 shells without argument path conversion`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`has-bin-entries`]: `1.0.0`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await run(`install`);
+
+        // A bin reached through an absolute path (or the PATH) gets an MSYS path as `$0`
+        await expect(execFile(`sh`, [`-c`, `"$PWD/node_modules/.bin/has-bin-entries" foo`], {
+          cwd: path,
+          env: {
+            ...process.env,
+            MSYS_NO_PATHCONV: `1`,
+            MSYS2_ARG_CONV_EXCL: `*`,
+          },
+        })).resolves.toMatchObject({
+          stdout: `foo\n`,
+        });
+      },
+    ),
+  );
+
+  testIf(() => process.platform === `win32`,
+    `should generate .bin shims for bins using an env -S shebang`,
+    makeTemporaryEnv(
+      {
+        name: `pkg`,
+        bin: `bin.js`,
+      },
+      {
+        nodeLinker: `node-modules`,
+      },
+      async ({path, run}) => {
+        await writeFile(`${path}/bin.js`, `#!/usr/bin/env -S node --enable-source-maps\nconsole.log(process.execArgv.join(\` \`));\n`);
+        await run(`install`);
+
+        await expect(execFile(`cmd.exe`, [`/d`, `/s`, `/c`, `node_modules\\.bin\\pkg`], {
+          cwd: path,
+        })).resolves.toMatchObject({
+          stdout: `--enable-source-maps\n`,
+        });
       },
     ),
   );
@@ -511,10 +564,18 @@ describe(`Node_Modules`, () => {
 
         await run(`install`);
 
-        const binPath = `${path}/node_modules/.bin/dep1` as PortablePath;
-        await expect(xfs.lstatPromise(binPath)).resolves.toBeDefined();
+        const binPaths = [`${path}/node_modules/.bin/dep1` as PortablePath];
+        if (process.platform === `win32`)
+          binPaths.push(`${path}/node_modules/.bin/dep1.cmd` as PortablePath);
+
+        for (const binPath of binPaths)
+          await expect(xfs.lstatPromise(binPath)).resolves.toBeDefined();
+
         await run(`remove`, `dep1`);
-        await expect(xfs.lstatPromise(binPath)).rejects.toBeDefined();
+
+        for (const binPath of binPaths) {
+          await expect(xfs.lstatPromise(binPath)).rejects.toBeDefined();
+        }
       },
     ),
   );

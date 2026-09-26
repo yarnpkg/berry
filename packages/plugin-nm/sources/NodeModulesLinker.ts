@@ -11,7 +11,6 @@ import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from
 import {parseSyml}                                                          from '@yarnpkg/parsers';
 import {NodePackageMapType, jsInstallUtils}                                 from '@yarnpkg/plugin-pnp';
 import {PnpApi, PackageInformation}                                         from '@yarnpkg/pnp';
-import cmdShim                                                              from '@zkochan/cmd-shim';
 import {UsageError}                                                         from 'clipanion';
 import crypto                                                               from 'crypto';
 import fs                                                                   from 'fs';
@@ -1433,6 +1432,8 @@ async function persistBinSymlinks(previousBinSymlinks: BinSymlinkMap, binSymlink
         continue;
 
       if (process.platform === `win32`) {
+        // Loaded on demand: cmd-shim loads graceful-fs, which patches `process.cwd` and `fs.close` on import
+        const {default: cmdShim} = await import(`@zkochan/cmd-shim`);
         await cmdShim(npath.fromPortablePath(target), npath.fromPortablePath(symlinkPath), {createPwshFile: false});
       } else {
         await xfs.removePromise(symlinkPath);
