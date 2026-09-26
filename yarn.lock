@@ -6395,7 +6395,7 @@ __metadata:
     "@yarnpkg/parsers": "workspace:^"
     "@yarnpkg/plugin-pnp": "workspace:^"
     "@yarnpkg/pnp": "workspace:^"
-    "@zkochan/cmd-shim": "npm:^5.1.0"
+    "@zkochan/cmd-shim": "npm:^7.0.0"
     clipanion: "npm:^4.0.0-rc.2"
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -6698,12 +6698,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@zkochan/cmd-shim@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@zkochan/cmd-shim@npm:5.1.0"
+"@zkochan/cmd-shim@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@zkochan/cmd-shim@npm:7.0.0"
   dependencies:
+    cmd-extension: "npm:^1.0.2"
+    graceful-fs: "npm:^4.2.10"
     is-windows: "npm:^1.0.2"
-  checksum: 10/6c31eb543d30cdef3a8aa7f0fa06b4f338b8ebed66de36fe846092f01e6d77e5a0fadaa43d6bb3a8a03b4d1713e709cef9c8a881345b52b8eef5aaaaf1e8c58d
+  checksum: 10/a925271f85e985af370f377762ce7547fb17c0bee60d7ec1e2262785bf06bdedd264c1f002b6a30d364e37e9147d7252fe4be96be9bbffd31cc3460d1e7260e7
   languageName: node
   linkType: hard
 
@@ -8254,6 +8256,13 @@ __metadata:
   version: 2.1.0
   resolution: "clsx@npm:2.1.0"
   checksum: 10/2e0ce7c3b6803d74fc8147c408f88e79245583202ac14abd9691e2aebb9f312de44270b79154320d10bb7804a9197869635d1291741084826cff20820f31542b
+  languageName: node
+  linkType: hard
+
+"cmd-extension@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "cmd-extension@npm:1.0.2"
+  checksum: 10/4cbcdd53196a3c1db3484f67aa49ed83c0e6069713f60193a94d747cb84050e8e64d688673aa5159cf0184e054cb806ceb6119e45744f721cbd3a09a3e7038cb
   languageName: node
   linkType: hard
 
@@ -11616,7 +11625,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
+"graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.10, graceful-fs@npm:^4.2.11, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10/bf152d0ed1dc159239db1ba1f74fdbc40cb02f626770dcd5815c427ce0688c2635a06ed69af364396da4636d0408fcf7d4afdf7881724c3307e46aff30ca49e2
