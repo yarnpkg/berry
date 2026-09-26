@@ -36,6 +36,52 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should list dependencies that are also declared as peers`,
+      makeTemporaryEnv({
+        workspaces: [`packages/*`],
+      }, async ({path, run, source}) => {
+        await fs.writeJson(ppath.join(path, `packages/a/package.json`), {
+          name: `a`,
+          dependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+          peerDependencies: {
+            [`no-deps`]: `1.0.0`,
+          },
+        });
+
+        await run(`install`);
+
+        const {stdout} = await run(`why`, `no-deps`, `--json`);
+
+        expect(misc.parseJsonStream(stdout)).toEqual([{
+          value: `a@workspace:packages/a`,
+          children: {
+            [`no-deps@npm:1.0.0`]: {
+              descriptor: `no-deps@npm:1.0.0`,
+              locator: `no-deps@npm:1.0.0`,
+            },
+          },
+        }]);
+
+        const {stdout: recursiveStdout} = await run(`why`, `-R`, `no-deps`, `--json`);
+
+        expect(misc.parseJsonStream(recursiveStdout)).toEqual([{
+          value: `a@workspace:packages/a`,
+          children: {
+            [`no-deps@npm:1.0.0`]: {
+              value: {
+                descriptor: `no-deps@npm:1.0.0`,
+                locator: `no-deps@npm:1.0.0`,
+              },
+              children: {},
+            },
+          },
+        }]);
+      }),
+    );
+
+    test(
       `it should list the packages using a specific dependency`,
       makeTemporaryEnv({
         workspaces: [`packages/*`],

@@ -30,7 +30,8 @@
     "ink@^3.2.0": "patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch",
     "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
     "make-fetch-happen@npm:^14.0.1": "portal:packages/make-fetch-smaller",
-    "make-fetch-happen@npm:^14.0.2": "portal:packages/make-fetch-smaller"
+    "make-fetch-happen@npm:^14.0.2": "portal:packages/make-fetch-smaller",
+    "got@npm:^12.1.0": "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch"
   },
   "dependenciesMeta": {
     "core-js": {
@@ -80,7 +81,7 @@
     "@yarnpkg/types": "workspace:^",
     "chalk": "^4.1.2",
     "micromatch": "^4.0.2",
-    "semver": "^7.1.2"
+    "semver": "^7.8.5"
   },
   "packageManager": "yarn@4.2.1+sha256.15ce76682a8cd2090257b883cd69c637925b29573f9573e8403ec227d5ab6815"
 }

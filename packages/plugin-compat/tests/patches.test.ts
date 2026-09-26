@@ -6,11 +6,16 @@ import PatchPlugin                                                              
 import CompatPlugin                                                                                                from '../sources/index';
 
 function getConfiguration(p: PortablePath) {
-  return Configuration.create(p, p, new Map([
+  const configuration = Configuration.create(p, p, new Map([
     [`@yarnpkg/plugin-compat`, CompatPlugin],
     [`@yarnpkg/plugin-npm`, NpmPlugin],
     [`@yarnpkg/plugin-patch`, PatchPlugin],
   ]));
+
+  // The compatibility matrix intentionally checks prereleases such as TypeScript RCs.
+  configuration.use(`<tests>`, {npmMinimalAgeGate: `0`}, p, {overwrite: true});
+
+  return configuration;
 }
 
 async function createProject(configuration: Configuration, p: PortablePath, manifest: object = {}) {
@@ -95,6 +100,8 @@ const TEST_RANGES: Array<[string, Array<string>]> = [
   ], [
     `typescript`, [
       `>=3.2`,
+      `npm:@typescript/typescript6@^6.0.0`,
+      `7.0.1-rc`,
       `latest`,
       `next`,
     ],

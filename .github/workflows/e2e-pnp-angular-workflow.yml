@@ -20,9 +20,6 @@ jobs:
     - uses: actions/checkout@v4
 
     - uses: ./.github/actions/prepare
-      with:
-        # TODO: Remove when the issue causing timeouts / crashes in Node.js >= 21 is fixed.
-        node-version: 20
 
     - name: 'Running the integration test'
       run: |

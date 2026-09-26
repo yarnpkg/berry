@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/core",
-  "version": "4.8.0",
+  "version": "4.9.2",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -27,11 +27,11 @@
     "dotenv": "^16.3.1",
     "es-toolkit": "^1.39.7",
     "fast-glob": "^3.2.2",
-    "got": "^11.7.0",
+    "got": "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch",
     "hpagent": "^1.2.0",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "strip-ansi": "^6.0.0",
     "tar": "^7.5.3",
     "tinylogic": "^2.0.0",
@@ -84,5 +84,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "4.8.0"
+  "stableVersion": "4.9.2"
 }

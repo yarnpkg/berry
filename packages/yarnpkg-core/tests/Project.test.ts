@@ -1,4 +1,4 @@
-import {Cache, Configuration, Project, ThrowReport, structUtils, LocatorHash, Package} from '@yarnpkg/core';
+import {Cache, Configuration, LocatorHash, Package, Project, ThrowReport, structUtils} from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                                            from '@yarnpkg/fslib';
 import LinkPlugin                                                                      from '@yarnpkg/plugin-link';
 import PnpPlugin                                                                       from '@yarnpkg/plugin-pnp';
@@ -299,6 +299,23 @@ describe(`Project`, () => {
       await xfs.writeFilePromise(statePath, `invalid state`);
 
       await expect(project.restoreInstallState()).resolves.toBeUndefined();
+    });
+  });
+
+  it(`should find workspace when cwd is the filesystem root (/)`, async () => {
+    await xfs.mktempPromise(async dir => {
+      await xfs.writeFilePromise(ppath.join(dir, Filename.lockfile), ``);
+      await xfs.writeJsonPromise(ppath.join(dir, Filename.manifest), {name: `my-project`});
+
+      const configuration = await getConfiguration(dir);
+      const project = new Project(dir, {configuration});
+
+      // Simulate a workspace registered at the filesystem root
+      const mockWorkspace = {} as any;
+      project.workspacesByCwd.set(PortablePath.root, mockWorkspace);
+
+      // Before the fix, '/' would be stripped to '' and the lookup would return null
+      expect(project.tryWorkspaceByCwd(PortablePath.root)).toBe(mockWorkspace);
     });
   });
 });

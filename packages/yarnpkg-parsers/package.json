@@ -1,6 +1,6 @@
 {
   "name": "@yarnpkg/parsers",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "license": "BSD-2-Clause",
   "main": "./sources/index.ts",
   "exports": {
@@ -8,7 +8,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "js-yaml": "^3.10.0",
+    "js-yaml": "^4.3.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
@@ -43,5 +43,5 @@
   "engines": {
     "node": ">=18.12.0"
   },
-  "stableVersion": "3.0.3"
+  "stableVersion": "3.1.0"
 }

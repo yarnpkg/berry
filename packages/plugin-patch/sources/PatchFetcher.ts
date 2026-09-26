@@ -8,6 +8,10 @@ import * as patchUtils                                                          
 import {UnmatchedHunkError}                                                           from './tools/UnmatchedHunkError';
 import {reportHunk}                                                                   from './tools/format';
 
+function isMissingFileError(err: unknown) {
+  return err instanceof Error && `code` in err && err.code === `ENOENT`;
+}
+
 export class PatchFetcher implements Fetcher {
   supports(locator: Locator, opts: MinimalFetchOptions) {
     if (!patchUtils.isPatchLocator(locator))
@@ -83,20 +87,25 @@ export class PatchFetcher implements Fetcher {
           version: sourceVersion,
         });
       } catch (err) {
-        if (!(err instanceof UnmatchedHunkError))
+        const unmatchedHunkError = err instanceof UnmatchedHunkError
+          ? err
+          : null;
+        const shouldFallback = unmatchedHunkError !== null || (optional && isMissingFileError(err));
+
+        if (!shouldFallback)
           throw err;
 
         const enableInlineHunks = opts.project.configuration.get(`enableInlineHunks`);
-        const suggestion = !enableInlineHunks && !optional
+        const suggestion = unmatchedHunkError !== null && !enableInlineHunks && !optional
           ? ` (set enableInlineHunks for details)`
           : ``;
 
-        const message = `${structUtils.prettyLocator(opts.project.configuration, locator)}: ${err.message}${suggestion}`;
+        const message = `${structUtils.prettyLocator(opts.project.configuration, locator)}: ${(err as Error).message}${suggestion}`;
         const reportExtra = (report: Report) => {
-          if (!enableInlineHunks)
+          if (unmatchedHunkError === null || !enableInlineHunks)
             return;
 
-          reportHunk(err.hunk, {
+          reportHunk(unmatchedHunkError.hunk, {
             configuration: opts.project.configuration,
             report,
           });

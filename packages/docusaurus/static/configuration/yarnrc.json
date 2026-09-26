@@ -35,6 +35,41 @@
       "enum": ["required-only", "match-spec", "always"],
       "default": "always"
     },
+    "catalog": {
+      "_package": "@yarnpkg/plugin-catalog",
+      "title": "The default catalog of packages.",
+      "type": "object",
+      "patternProperties": {
+        "^(?:@([^/]+?)/)?([^/]+?)$": {
+          "type": "string",
+          "pattern": "^(.+)$",
+          "examples": ["^19.0.0"]
+        }
+      },
+      "additionalProperties": false,
+      "_exampleKeys": ["react"]
+    },
+    "catalogs": {
+      "_package": "@yarnpkg/plugin-catalog",
+      "title": "Named catalogs of packages.",
+      "type": "object",
+      "patternProperties": {
+        "^\\S+$": {
+          "type": "object",
+          "patternProperties": {
+            "^(?:@([^/]+?)/)?([^/]+?)$": {
+              "type": "string",
+              "pattern": "^(.+)$",
+              "examples": ["^18.3.1"]
+            }
+          },
+          "additionalProperties": false,
+          "_exampleKeys": ["react"]
+        }
+      },
+      "additionalProperties": false,
+      "_exampleKeys": ["react18"]
+    },
     "changesetBaseRefs": {
       "_package": "@yarnpkg/plugin-git",
       "title": "List of git refs against which Yarn will compare your branch when it needs to detect changes.",
@@ -494,6 +529,21 @@
       "type": "string",
       "default": "pnp"
     },
+    "nodeExperimentalPackageMap": {
+      "_package": "@yarnpkg/plugin-pnp",
+      "title": "Define whether Yarn should enable Node.js package maps for installs that support them.",
+      "description": "If true, Yarn will inject Node.js' experimental `--experimental-package-map` option into `NODE_OPTIONS` when using `nodeLinker: node-modules` or `nodeLinker: pnpm` and a package map has been generated.",
+      "type": "boolean",
+      "default": false
+    },
+    "nodePackageMapType": {
+      "_package": "@yarnpkg/plugin-pnp",
+      "title": "Define how Yarn should generate Node.js package maps.",
+      "description": "Possible values are:\n\n- If `standard` (the default), package maps will reflect the dependency graph and reject undeclared dependencies.\n- If `loose`, package maps will reflect the hoisted `node_modules` layout and mimic Node.js resolution more closely.\n\nThis setting applies to both `nodeLinker: node-modules` and `nodeLinker: pnpm`.",
+      "type": "string",
+      "enum": ["standard", "loose"],
+      "default": "standard"
+    },
     "npmMinimalAgeGate": {
       "_package": "@yarnpkg/core",
       "title": "Minimum age of a package version according to the publish date on the npm registry to be considered for installation.",
@@ -503,7 +553,8 @@
         { "type": "number" },
         { "type": "string", "pattern": "^(\\d*\\.?\\d+)(ms|s|m|h|d|w)?$" }
       ],
-      "default": "1d"
+      "default": "1d",
+      "examples": ["1w", "1d", "3h", "30m"]
     },
     "npmPreapprovedPackages": {
       "_package": "@yarnpkg/core",

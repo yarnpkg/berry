@@ -1,0 +1,7 @@
+{
+  "name": "one-dep-alias-bins",
+  "version": "1.0.0",
+  "dependencies": {
+    "@fixture/old": "npm:has-bin-entries@1.0.0"
+  }
+}

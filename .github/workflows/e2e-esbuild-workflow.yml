@@ -26,7 +26,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D esbuild ts-node typescript
+        yarn add -D esbuild ts-node 'typescript@<7.0.0-0'
 
         echo "require('esbuild').build({bundle: true, format: 'cjs', target: 'node14', entryPoints: ['./src/main.js'], outfile: './dist/bundle.js'})" > build.js
 
@@ -39,7 +39,7 @@ jobs:
 
         yarn ts-node --transpile-only build.js
         [[ "$(node dist/bundle.js)" = "125" ]]
-        ! cat dist/bundle.js | grep "square"
+        ! grep "square" dist/bundle.js
 
         # With NPM packages
         yarn add lodash

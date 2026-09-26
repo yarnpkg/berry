@@ -54,7 +54,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add eslint typescript typescript-eslint
+        yarn add eslint 'typescript@<7.0.0-0' typescript-eslint
 
         cat > eslint.config.mjs <<EOT
         import tseslint from 'typescript-eslint';

@@ -27,6 +27,8 @@ Yarn has a native integration for the background job syntax (`foo&`) within scri
 
 <TerminalCode command={`yarn lint & yarn test`}/>
 
+Background jobs are waited on before the script returns, but they don't determine the script exit code. The final exit code comes from the foreground command on the right; in the example above, a failing `yarn lint` job will be reported in the output, but the script will exit with `yarn test`'s status.
+
 ## Portable shell
 
 Windows portability can be troublesome with other package managers. Scripts can't expect a Posix shell to be available, so you have to rely on strange hacks to use semi-portable scripts - or drop them altogether and use Node.js scripts instead, defeating the point of small, non-intrusive scripts in the first place. That is, unless you use Yarn!

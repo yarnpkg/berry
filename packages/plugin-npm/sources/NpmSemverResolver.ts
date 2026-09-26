@@ -12,6 +12,36 @@ import * as npmHttpUtils                                                        
 const NODE_GYP_IDENT = structUtils.makeIdent(null, `node-gyp`);
 const NODE_GYP_MATCH = /\b(node-gyp|prebuild-install)\b/;
 
+/**
+ * Returns the versions from `versions` that satisfy the given range.
+ *
+ * When `range.raw` is exactly `*` and nothing matched, every published version
+ * is a prerelease (a stable `*` range never matches a prerelease by default).
+ * In that specific case we retry while tolerating prereleases, so the package
+ * can still be resolved until a stable release exists. This stays deliberately
+ * scoped to `*` to avoid changing the semantics of other ranges.
+ * See https://github.com/yarnpkg/berry/issues/6469.
+ */
+export function selectMatchingVersions(range: semver.Range, versions: Array<string>) {
+  const match = (matchRange: semver.Range) => miscUtils.mapAndFilter(versions, version => {
+    try {
+      const candidate = new semverUtils.SemVer(version);
+      if (matchRange.test(candidate)) {
+        return candidate;
+      }
+    } catch { }
+
+    return miscUtils.mapAndFilter.skip;
+  });
+
+  const matched = match(range);
+  if (matched.length > 0 || range.raw !== `*`)
+    return matched;
+
+  // eslint-disable-next-line no-restricted-properties
+  return match(new semver.Range(`*`, {includePrerelease: true}));
+}
+
 export class NpmSemverResolver implements Resolver {
   supportsDescriptor(descriptor: Descriptor, opts: MinimalResolveOptions) {
     if (!descriptor.range.startsWith(PROTOCOL))
@@ -54,16 +84,7 @@ export class NpmSemverResolver implements Resolver {
       version: semver.valid(range.raw) ? range.raw : undefined,
     });
 
-    const semverCandidates = miscUtils.mapAndFilter(Object.keys(registryData.versions), version => {
-      try {
-        const candidate = new semverUtils.SemVer(version);
-        if (range.test(candidate)) {
-          return candidate;
-        }
-      } catch { }
-
-      return miscUtils.mapAndFilter.skip;
-    });
+    const semverCandidates = selectMatchingVersions(range, Object.keys(registryData.versions));
 
     const candidates = semverCandidates.filter(candidate => {
       return isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidate.raw, publishTimes: registryData.time});
@@ -102,7 +123,7 @@ export class NpmSemverResolver implements Resolver {
     if (range === null)
       throw new Error(`Expected a valid range, got ${descriptor.range.slice(PROTOCOL.length)}`);
 
-    const results = miscUtils.mapAndFilter(locators, locator => {
+    const candidates = miscUtils.mapAndFilter(locators, locator => {
       if (locator.identHash !== descriptor.identHash)
         return miscUtils.mapAndFilter.skip;
 
@@ -110,14 +131,18 @@ export class NpmSemverResolver implements Resolver {
       if (!parsedRange)
         return miscUtils.mapAndFilter.skip;
 
-      const version = new semverUtils.SemVer(parsedRange.selector);
-      if (!range.test(version))
-        return miscUtils.mapAndFilter.skip;
-
-      return {locator, version};
+      return {locator, version: new semverUtils.SemVer(parsedRange.selector)};
     });
 
-    const sortedResults = results
+    // Route the candidate selection through the same helper as `getCandidates`
+    // so the `*`-only-prerelease case (see issue #6469) resolves consistently
+    // here, which is what `yarn install --check-resolutions` relies on.
+    const matchingVersions = new Set(
+      selectMatchingVersions(range, candidates.map(({version}) => version.raw)).map(version => version.raw),
+    );
+
+    const sortedResults = candidates
+      .filter(({version}) => matchingVersions.has(version.raw))
       .sort((a, b) => -a.version.compare(b.version))
       .map(({locator}) => locator);
 

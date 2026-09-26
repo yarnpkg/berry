@@ -81,7 +81,7 @@ function whySimple(project: Project, targetPkg: Descriptor, {configuration, peer
     const node: treeUtils.TreeNode | null = null;
 
     for (const dependency of pkg.dependencies.values()) {
-      if (!peers && pkg.peerDependencies.has(dependency.identHash))
+      if (!peers && isVirtualPeerDependency(pkg, dependency))
         continue;
 
       const resolution = project.storedResolutions.get(dependency.descriptorHash);
@@ -137,7 +137,7 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
     let depends = false;
 
     for (const dependency of pkg.dependencies.values()) {
-      if (!peers && pkg.peerDependencies.has(dependency.identHash))
+      if (!peers && isVirtualPeerDependency(pkg, dependency))
         continue;
 
       const resolution = project.storedResolutions.get(dependency.descriptorHash);
@@ -197,7 +197,7 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
     printed.add(pkg.locatorHash);
 
     for (const dependency of pkg.dependencies.values()) {
-      if (!peers && pkg.peerDependencies.has(dependency.identHash))
+      if (!peers && isVirtualPeerDependency(pkg, dependency))
         continue;
 
       const resolution = project.storedResolutions.get(dependency.descriptorHash);
@@ -216,4 +216,8 @@ function whyRecursive(project: Project, targetPkg: Descriptor, {configuration, p
     printAllDependents(workspace.anchoredPackage, rootChildren, null);
 
   return root;
+}
+
+function isVirtualPeerDependency(pkg: Package, dependency: Descriptor) {
+  return structUtils.isVirtualLocator(pkg) && pkg.peerDependencies.has(dependency.identHash);
 }

@@ -31,6 +31,7 @@ describe(`loaderFlags`, () => {
     it(`should keep the existing affected version ranges`, () => {
       expect(hasBrokenFstatForZipFds(`24.14.0`)).toBe(false);
       expect(hasBrokenFstatForZipFds(`24.15.0`)).toBe(true);
+      expect(hasBrokenFstatForZipFds(`24.16.0`)).toBe(false);
       expect(hasBrokenFstatForZipFds(`25.6.0`)).toBe(false);
       expect(hasBrokenFstatForZipFds(`25.7.0`)).toBe(true);
       expect(hasBrokenFstatForZipFds(`26.0.0`)).toBe(true);
