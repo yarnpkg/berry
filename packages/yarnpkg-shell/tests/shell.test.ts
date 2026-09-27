@@ -706,6 +706,70 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should support assigning default arguments via \${ARG:=...}`, async () => {
+        await expectResult(bufferResult(
+          `echo "\${DOESNT_EXIST:=hello world}" "$DOESNT_EXIST"`,
+        ), {
+          stdout: `hello world hello world\n`,
+        });
+      });
+
+      it(`should persist \${ARG:=...} assignments across commands`, async () => {
+        await expectResult(bufferResult(
+          `echo \${FOOBAR:=hello}; echo $FOOBAR`,
+        ), {
+          stdout: `hello\nhello\n`,
+        });
+
+        await expectResult(bufferResult(
+          `echo \${FOOBAR:=hello} && echo $FOOBAR`,
+        ), {
+          stdout: `hello\nhello\n`,
+        });
+      });
+
+      it(`should not reassign \${ARG:=...} when the variable is set`, async () => {
+        await expectResult(bufferResult(
+          `echo "\${FOOBAR:=hello}" "$FOOBAR"`,
+          [],
+          {env: {FOOBAR: `goodbye`}},
+        ), {
+          stdout: `goodbye goodbye\n`,
+        });
+      });
+
+      it(`should assign \${ARG:=...} when the variable is empty`, async () => {
+        await expectResult(bufferResult(
+          `FOOBAR=; echo "\${FOOBAR:=hello}" "$FOOBAR"`,
+        ), {
+          stdout: `hello hello\n`,
+        });
+      });
+
+      it(`should support empty \${ARG:=} assignments`, async () => {
+        await expectResult(bufferResult(
+          `echo "foo\${DOESNT_EXIST:=}bar"; echo "\${DOESNT_EXIST:-unset}"`,
+        ), {
+          stdout: `foobar\n\n`,
+        });
+      });
+
+      it(`should not leak \${ARG:=...} assignments out of subshells`, async () => {
+        await expectResult(bufferResult(
+          `(echo \${FOOBAR:=hello}); echo "\${FOOBAR:-unset}"`,
+        ), {
+          stdout: `hello\nunset\n`,
+        });
+      });
+
+      it(`should not leak \${ARG:=...} assignments out of pipeline members`, async () => {
+        await expectResult(bufferResult(
+          `echo \${FOOBAR:=hello} | cat; echo "\${FOOBAR:-unset}"`,
+        ), {
+          stdout: `hello\nunset\n`,
+        });
+      });
+
       it(`should support alternative arguments via \${ARG:+...}`, async () => {
         await expectResult(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
