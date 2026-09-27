@@ -149,8 +149,8 @@ export function stringifyArgumentSegment(argumentSegment: ArgumentSegment): stri
               ? `\${${argumentSegment.name}:+}`
               : `\${${argumentSegment.name}:+${argumentSegment.alternativeValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`
           : argumentSegment.defaultValue.length === 0
-            ? `\${${argumentSegment.name}:-}`
-            : `\${${argumentSegment.name}:-${argumentSegment.defaultValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`,
+            ? `\${${argumentSegment.name}${argumentSegment.assign ? `:=` : `:-`}}`
+            : `\${${argumentSegment.name}${argumentSegment.assign ? `:=` : `:-`}${argumentSegment.defaultValue.map(argument => stringifyValueArgument(argument)).join(` `)}}`,
         argumentSegment.quoted,
       );
 
