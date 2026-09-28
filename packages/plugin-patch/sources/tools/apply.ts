@@ -132,6 +132,8 @@ export async function applyPatch({hunks, path}: FilePatch, {baseFs, dryRun = fal
 
   const fileContents = await baseFs.readFileSync(path, `utf8`);
   const fileLines = fileContents.split(/\n/);
+  if (fileLines.at(-1) !== ``)
+    fileLines.push(``);
 
   const result: Array<Array<Modification>> = [];
 
