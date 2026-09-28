@@ -2072,16 +2072,22 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
   const binding = process.binding(`fs`);
   const originalReadFile = binding.readFileUtf8 || binding.readFileSync;
   if (originalReadFile) {
+    let isInPatchedReadFile = false;
     binding[originalReadFile.name] = function(...args) {
-      try {
-        return fs.readFileSync(args[0], {
-          encoding: `utf8`,
-          // @ts-expect-error - The docs says it needs to be a string but
-          // links to https://nodejs.org/dist/latest-v20.x/docs/api/fs.html#file-system-flags
-          // which says it can be a number which matches the implementation.
-          flag: args[1]
-        });
-      } catch {
+      if (!isInPatchedReadFile) {
+        isInPatchedReadFile = true;
+        try {
+          return fs.readFileSync(args[0], {
+            encoding: `utf8`,
+            // @ts-expect-error - The docs says it needs to be a string but
+            // links to https://nodejs.org/dist/latest-v20.x/docs/api/fs.html#file-system-flags
+            // which says it can be a number which matches the implementation.
+            flag: args[1]
+          });
+        } catch {
+        } finally {
+          isInPatchedReadFile = false;
+        }
       }
       return originalReadFile.apply(this, args);
     };
