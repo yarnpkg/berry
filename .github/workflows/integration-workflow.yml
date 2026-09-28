@@ -271,7 +271,7 @@ jobs:
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}} (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
-    continue-on-error: ${{matrix.nightly}}
+    continue-on-error: ${{matrix.nightly == true}}
     needs: [build, node-versions]
 
     # Permission required to produce a valid provenance statement during the tests
