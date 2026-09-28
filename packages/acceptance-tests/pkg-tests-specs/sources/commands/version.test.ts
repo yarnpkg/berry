@@ -149,6 +149,19 @@ describe(`Commands`, () => {
       );
 
       test(
+        `it should apply --prerelease on a regular patch bump`,
+        makeTemporaryEnv({
+          version: `1.0.32`,
+        }, async ({path, run, source}) => {
+          await run(`version`, `patch`, `--prerelease=alpha.0`);
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.0.33-alpha.0`,
+          });
+        }),
+      );
+
+      test(
         `it should bump the last numeric prerelease identifier if --prerelease is not set when applying the "prerelease" strategy`,
         makeTemporaryEnv({
           version: `1.2.3-a.1.b.2.c`,
