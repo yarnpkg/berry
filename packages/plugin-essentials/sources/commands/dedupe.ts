@@ -116,16 +116,18 @@ export default class DedupeCommand extends BaseCommand {
     if (dedupeReport.hasErrors())
       return dedupeReport.exitCode();
 
-    if (this.check) {
+    if (this.check)
       return dedupedPackageCount ? 1 : 0;
-    } else {
-      return await project.installWithNewReport({
-        json: this.json,
-        stdout: this.context.stdout,
-      }, {
-        cache,
-        mode: this.mode,
-      });
-    }
+
+    if (dedupedPackageCount === 0)
+      return 0;
+
+    return await project.installWithNewReport({
+      json: this.json,
+      stdout: this.context.stdout,
+    }, {
+      cache,
+      mode: this.mode,
+    });
   }
 }
