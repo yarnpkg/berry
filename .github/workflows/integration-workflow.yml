@@ -261,16 +261,17 @@ jobs:
           - {node: 18, platform: macos-latest, shard: 3/3}
           # We also run them on the maximum Node version we support, to catch potential regressions in Node.js.
           # Windows tests
-          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 1/3}
-          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 2/3}
-          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 3/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 1/3, nightly: true}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 2/3, nightly: true}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: windows-latest, shard: 3/3, nightly: true}
           # macOS tests
-          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 1/3}
-          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 2/3}
-          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 3/3}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 1/3, nightly: true}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 2/3, nightly: true}
+          - {node: "${{ needs.node-versions.outputs.nightly }}", platform: macos-latest, shard: 3/3, nightly: true}
 
     name: '${{matrix.platform}} w/ Node.js ${{matrix.node}} (${{matrix.shard}})'
     runs-on: ${{matrix.platform}}
+    continue-on-error: ${{matrix.nightly}}
     needs: [build, node-versions]
 
     # Permission required to produce a valid provenance statement during the tests
