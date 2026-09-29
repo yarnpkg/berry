@@ -286,6 +286,22 @@ export class NoFS extends FakeFS<PortablePath> {
     throw makeError();
   }
 
+  async fsyncPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  fsyncSync(): never {
+    throw makeError();
+  }
+
+  async fdatasyncPromise(): Promise<never> {
+    throw makeError();
+  }
+
+  fdatasyncSync(): never {
+    throw makeError();
+  }
+
   watch(): never {
     throw makeError();
   }

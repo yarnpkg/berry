@@ -613,6 +613,22 @@ export class PortableNodeModulesFS extends FakeFS<PortablePath> {
     return this.baseFs.ftruncateSync(fd, len);
   }
 
+  async fsyncPromise(fd: number): Promise<void> {
+    return this.baseFs.fsyncPromise(fd);
+  }
+
+  fsyncSync(fd: number): void {
+    return this.baseFs.fsyncSync(fd);
+  }
+
+  async fdatasyncPromise(fd: number): Promise<void> {
+    return this.baseFs.fdatasyncPromise(fd);
+  }
+
+  fdatasyncSync(fd: number): void {
+    return this.baseFs.fdatasyncSync(fd);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback): Watcher {
