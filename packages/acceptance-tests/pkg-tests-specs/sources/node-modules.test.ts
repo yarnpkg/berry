@@ -8,6 +8,25 @@ const {
   tests: {testIf},
 } = require(`pkg-tests-core`);
 
+const IDENTICAL_FILE_CONTENT = `export {};\n`;
+
+const writeIdenticalFilesPackage = async (packagePath: PortablePath, name: string, fileCount: number) => {
+  await writeJson(ppath.join(packagePath, Filename.manifest), {
+    name,
+    version: `1.0.0`,
+  });
+
+  for (let i = 0; i < fileCount; i++) {
+    await xfs.writeFilePromise(ppath.join(packagePath, `file${i}.d.ts` as Filename), IDENTICAL_FILE_CONTENT);
+  }
+};
+
+const expectIdenticalFiles = async (packagePath: PortablePath, fileCount: number) => {
+  for (let i = 0; i < fileCount; i++) {
+    expect(await xfs.readFilePromise(ppath.join(packagePath, `file${i}.d.ts` as Filename), `utf8`)).toEqual(IDENTICAL_FILE_CONTENT);
+  }
+};
+
 describe(`Node_Modules`, () => {
   it(`should install one dependency`,
     makeTemporaryEnv(
@@ -1559,7 +1578,7 @@ describe(`Node_Modules`, () => {
   );
 
   testIf(() => process.platform === `win32`,
-    `should fail the install instead of silently skipping files when the store file reaches the hard link limit in nmMode: hardlinks-global`,
+    `should install every file when the store file reaches the hard link limit in nmMode: hardlinks-global`,
     makeTemporaryEnv(
       {
         dependencies: {
@@ -1571,17 +1590,92 @@ describe(`Node_Modules`, () => {
         nmMode: `hardlinks-global`,
       },
       async ({path, run}) => {
-        await writeJson(ppath.resolve(path, `dep/package.json`), {
-          name: `dep`,
-          version: `1.0.0`,
-        });
-
         // NTFS allows at most 1023 hard links per file, and every file below
         // shares a single store entry
-        for (let i = 0; i < 1100; i++)
-          await xfs.writeFilePromise(ppath.resolve(path, `dep/file${i}.d.ts` as PortablePath), `export {};\n`);
+        await writeIdenticalFilesPackage(ppath.resolve(path, `dep` as PortablePath), `dep`, 1100);
 
-        await expect(run(`install`)).rejects.toThrow(/While persisting/);
+        await run(`install`);
+
+        await expectIdenticalFiles(ppath.resolve(path, `node_modules/dep` as PortablePath), 1100);
+      },
+    ),
+  );
+
+  testIf(() => process.platform === `win32`,
+    `should install every file when cloning duplicate package locations reaches the hard link limit in nmMode: hardlinks-global`,
+    makeTemporaryEnv(
+      {
+        workspaces: [`ws1`, `ws2`, `ws3`, `ws4`],
+        resolutions: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        // Each workspace gets its own copy of dep, and the copies after the
+        // first one are hard linked from it
+        await writeIdenticalFilesPackage(ppath.resolve(path, `dep` as PortablePath), `dep`, 300);
+        for (const ws of [`ws1`, `ws2`, `ws3`, `ws4`]) {
+          await writeJson(ppath.resolve(path, `${ws}/package.json` as PortablePath), {
+            name: ws,
+            dependencies: {
+              dep: `*`,
+            },
+          });
+        }
+
+        await run(`install`);
+
+        for (const ws of [`ws1`, `ws2`, `ws3`, `ws4`]) {
+          await expectIdenticalFiles(ppath.resolve(path, `${ws}/node_modules/dep` as PortablePath), 300);
+        }
+      },
+    ),
+  );
+
+  testIf(() => process.platform === `win32`,
+    `should install every file when concurrent installs sharing the store reach the hard link limit in nmMode: hardlinks-global`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async path2 => {
+          // A different package name keeps the two installs from racing on the same
+          // cache archive, while the identical content still shares store entries
+          await writeJson(ppath.join(path2, Filename.manifest), {
+            dependencies: {
+              dep2: `file:./dep2`,
+            },
+          });
+          await xfs.writeFilePromise(ppath.join(path2, Filename.rc), `nodeLinker: node-modules\nnmMode: hardlinks-global\n`);
+
+          await writeIdenticalFilesPackage(ppath.resolve(path, `dep` as PortablePath), `dep`, 600);
+          await writeIdenticalFilesPackage(ppath.resolve(path2, `dep2` as PortablePath), `dep2`, 600);
+
+          // Create the store up front, so that the concurrent installs below only
+          // race on linking its entries
+          await run(`install`, {cwd: path});
+          await xfs.removePromise(ppath.resolve(path, `node_modules` as PortablePath));
+
+          await Promise.all([
+            run(`install`, {cwd: path}),
+            run(`install`, {cwd: path2}),
+          ]);
+
+          await expectIdenticalFiles(ppath.resolve(path, `node_modules/dep` as PortablePath), 600);
+          await expectIdenticalFiles(ppath.resolve(path2, `node_modules/dep2` as PortablePath), 600);
+        });
       },
     ),
   );
