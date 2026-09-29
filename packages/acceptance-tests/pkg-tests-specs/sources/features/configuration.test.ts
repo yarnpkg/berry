@@ -110,6 +110,35 @@ describe(`Features`, () => {
       await expect(run(`config`, `get`, `--json`, `immutablePatterns`)).resolves.toMatchObject({stdout: `["foo","bar"]\n`});
     }));
 
+    test(`it should keep home registry auth when the project key only differs by a trailing slash`, makeTemporaryEnv({
+    }, async ({path, run, source}) => {
+      await xfs.mkdirPromise(ppath.join(path, `..`), {recursive: true});
+
+      await xfs.writeJsonPromise(ppath.join(path, `..`, Filename.rc), {
+        npmRegistries: {
+          [`https://example.org/repository/npm-all`]: {
+            npmAuthToken: `token-without-slash`,
+          },
+        },
+      });
+
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        npmRegistries: {
+          [`https://example.org/repository/npm-all/`]: {
+            npmAlwaysAuth: true,
+          },
+        },
+      });
+
+      const {stdout} = await run(`config`, `get`, `--json`, `--no-redacted`, `npmRegistries`);
+      const registries = JSON.parse(stdout);
+
+      expect(registries[`https://example.org/repository/npm-all`]).toMatchObject({
+        npmAuthToken: `token-without-slash`,
+        npmAlwaysAuth: true,
+      });
+    }));
+
     test(`it should return a helpful error if the rc file is wrong`, makeTemporaryEnv({
     }, async ({path, run, source}) => {
       await xfs.mkdirPromise(ppath.join(path, `..` as PortablePath), {recursive: true});
