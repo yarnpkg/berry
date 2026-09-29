@@ -1515,6 +1515,34 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  testIf(() => process.platform === `win32`,
+    `should fail the install instead of silently skipping files when the store file reaches the hard link limit in nmMode: hardlinks-global`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.resolve(path, `dep/package.json`), {
+          name: `dep`,
+          version: `1.0.0`,
+        });
+
+        // NTFS allows at most 1023 hard links per file, and every file below
+        // shares a single store entry
+        for (let i = 0; i < 1100; i++)
+          await xfs.writeFilePromise(ppath.resolve(path, `dep/file${i}.d.ts` as PortablePath), `export {};\n`);
+
+        await expect(run(`install`)).rejects.toThrow(/While persisting/);
+      },
+    ),
+  );
+
   test(`should give priority to direct workspace dependencies over indirect regular dependencies`,
     // Despite 'one-fixed-dep' and 'has-bin-entries' depend on 'no-deps:1.0.0',
     // the 'no-deps:2.0.0' should be hoisted to the top-level
