@@ -795,6 +795,8 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
           if (e && e.code && e.code == `EXDEV`) {
             nmMode.value = NodeModulesMode.HARDLINKS_LOCAL;
             await baseFs.copyFilePromise(srcPath, dstPath);
+          } else {
+            throw e;
           }
         }
       }
