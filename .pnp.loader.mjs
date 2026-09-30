@@ -892,6 +892,18 @@ class ProxiedFS extends FakeFS {
   ftruncateSync(fd, len) {
     return this.baseFs.ftruncateSync(fd, len);
   }
+  async fsyncPromise(fd) {
+    return this.baseFs.fsyncPromise(fd);
+  }
+  fsyncSync(fd) {
+    return this.baseFs.fsyncSync(fd);
+  }
+  async fdatasyncPromise(fd) {
+    return this.baseFs.fdatasyncPromise(fd);
+  }
+  fdatasyncSync(fd) {
+    return this.baseFs.fdatasyncSync(fd);
+  }
   watch(p, a, b) {
     return this.baseFs.watch(
       this.mapToBase(p),
@@ -1319,6 +1331,22 @@ class NodeFS extends BasePortableFakeFS {
   }
   ftruncateSync(fd, len) {
     return this.realFs.ftruncateSync(fd, len);
+  }
+  async fsyncPromise(fd) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.fsync(fd, this.makeCallback(resolve, reject));
+    });
+  }
+  fsyncSync(fd) {
+    return this.realFs.fsyncSync(fd);
+  }
+  async fdatasyncPromise(fd) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.fdatasync(fd, this.makeCallback(resolve, reject));
+    });
+  }
+  fdatasyncSync(fd) {
+    return this.realFs.fdatasyncSync(fd);
   }
   watch(p, a, b) {
     return this.realFs.watch(

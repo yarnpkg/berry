@@ -192,10 +192,15 @@ describe(`NodeFS`, () => {
       const fd = await nodeFs.openPromise(p, `r`);
       await nodeFs.closePromise(fd);
 
-      await expect(nodeFs.fsyncPromise(fd)).rejects.toMatchObject({code: `EBADF`});
-      await expect(nodeFs.fdatasyncPromise(fd)).rejects.toMatchObject({code: `EBADF`});
-      expect(() => nodeFs.fsyncSync(fd)).toThrow(expect.objectContaining({code: `EBADF`}));
-      expect(() => nodeFs.fdatasyncSync(fd)).toThrow(expect.objectContaining({code: `EBADF`}));
+      // Windows Node reports EPERM for some closed-fd fsync and fdatasync calls.
+      const code = process.platform === `win32`
+        ? expect.stringMatching(/^(?:EBADF|EPERM)$/)
+        : `EBADF`;
+
+      await expect(nodeFs.fsyncPromise(fd)).rejects.toMatchObject({code});
+      await expect(nodeFs.fdatasyncPromise(fd)).rejects.toMatchObject({code});
+      expect(() => nodeFs.fsyncSync(fd)).toThrow(expect.objectContaining({code}));
+      expect(() => nodeFs.fdatasyncSync(fd)).toThrow(expect.objectContaining({code}));
     });
   });
 });
