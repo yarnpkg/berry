@@ -131,4 +131,76 @@ describe(`NodeFS`, () => {
       expect((nodeFs.statSync(p)).mode & 0o777).toBe(0o744);
     });
   });
+
+  it(`should support fsyncPromise`, async () => {
+    await xfs.mktempPromise(async dir => {
+      const p = `${dir}/foo.txt` as PortablePath;
+      await nodeFs.writeFilePromise(p, `foo`);
+
+      const fd = await nodeFs.openPromise(p, `r+`);
+      await nodeFs.fsyncPromise(fd);
+      await nodeFs.closePromise(fd);
+
+      await expect(nodeFs.readFilePromise(p, `utf8`)).resolves.toEqual(`foo`);
+    });
+  });
+
+  it(`should support fsyncSync`, () => {
+    xfs.mktempSync(dir => {
+      const p = `${dir}/foo.txt` as PortablePath;
+      nodeFs.writeFileSync(p, `foo`);
+
+      const fd = nodeFs.openSync(p, `r+`);
+      nodeFs.fsyncSync(fd);
+      nodeFs.closeSync(fd);
+
+      expect(nodeFs.readFileSync(p, `utf8`)).toEqual(`foo`);
+    });
+  });
+
+  it(`should support fdatasyncPromise`, async () => {
+    await xfs.mktempPromise(async dir => {
+      const p = `${dir}/foo.txt` as PortablePath;
+      await nodeFs.writeFilePromise(p, `foo`);
+
+      const fd = await nodeFs.openPromise(p, `r+`);
+      await nodeFs.fdatasyncPromise(fd);
+      await nodeFs.closePromise(fd);
+
+      await expect(nodeFs.readFilePromise(p, `utf8`)).resolves.toEqual(`foo`);
+    });
+  });
+
+  it(`should support fdatasyncSync`, () => {
+    xfs.mktempSync(dir => {
+      const p = `${dir}/foo.txt` as PortablePath;
+      nodeFs.writeFileSync(p, `foo`);
+
+      const fd = nodeFs.openSync(p, `r+`);
+      nodeFs.fdatasyncSync(fd);
+      nodeFs.closeSync(fd);
+
+      expect(nodeFs.readFileSync(p, `utf8`)).toEqual(`foo`);
+    });
+  });
+
+  it(`should reject fsync and fdatasync on a closed fd`, async () => {
+    await xfs.mktempPromise(async dir => {
+      const p = `${dir}/foo.txt` as PortablePath;
+      await nodeFs.writeFilePromise(p, `foo`);
+
+      const fd = await nodeFs.openPromise(p, `r`);
+      await nodeFs.closePromise(fd);
+
+      // Windows Node reports EPERM for some closed-fd fsync and fdatasync calls.
+      const code = process.platform === `win32`
+        ? expect.stringMatching(/^(?:EBADF|EPERM)$/)
+        : `EBADF`;
+
+      await expect(nodeFs.fsyncPromise(fd)).rejects.toMatchObject({code});
+      await expect(nodeFs.fdatasyncPromise(fd)).rejects.toMatchObject({code});
+      expect(() => nodeFs.fsyncSync(fd)).toThrow(expect.objectContaining({code}));
+      expect(() => nodeFs.fdatasyncSync(fd)).toThrow(expect.objectContaining({code}));
+    });
+  });
 });

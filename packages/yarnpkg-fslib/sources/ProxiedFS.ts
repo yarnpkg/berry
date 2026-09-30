@@ -376,6 +376,22 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.ftruncateSync(fd, len);
   }
 
+  async fsyncPromise(fd: number): Promise<void> {
+    return this.baseFs.fsyncPromise(fd);
+  }
+
+  fsyncSync(fd: number): void {
+    return this.baseFs.fsyncSync(fd);
+  }
+
+  async fdatasyncPromise(fd: number): Promise<void> {
+    return this.baseFs.fdatasyncPromise(fd);
+  }
+
+  fdatasyncSync(fd: number): void {
+    return this.baseFs.fdatasyncSync(fd);
+  }
+
   watch(p: P, cb?: WatchCallback): Watcher;
   watch(p: P, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: P, a?: WatchOptions | WatchCallback, b?: WatchCallback) {

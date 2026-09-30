@@ -40384,6 +40384,18 @@ class ProxiedFS extends FakeFS {
   ftruncateSync(fd, len) {
     return this.baseFs.ftruncateSync(fd, len);
   }
+  async fsyncPromise(fd) {
+    return this.baseFs.fsyncPromise(fd);
+  }
+  fsyncSync(fd) {
+    return this.baseFs.fsyncSync(fd);
+  }
+  async fdatasyncPromise(fd) {
+    return this.baseFs.fdatasyncPromise(fd);
+  }
+  fdatasyncSync(fd) {
+    return this.baseFs.fdatasyncSync(fd);
+  }
   watch(p, a, b) {
     return this.baseFs.watch(
       this.mapToBase(p),
@@ -40811,6 +40823,22 @@ class NodeFS extends BasePortableFakeFS {
   }
   ftruncateSync(fd, len) {
     return this.realFs.ftruncateSync(fd, len);
+  }
+  async fsyncPromise(fd) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.fsync(fd, this.makeCallback(resolve, reject));
+    });
+  }
+  fsyncSync(fd) {
+    return this.realFs.fsyncSync(fd);
+  }
+  async fdatasyncPromise(fd) {
+    return await new Promise((resolve, reject) => {
+      this.realFs.fdatasync(fd, this.makeCallback(resolve, reject));
+    });
+  }
+  fdatasyncSync(fd) {
+    return this.realFs.fdatasyncSync(fd);
   }
   watch(p, a, b) {
     return this.realFs.watch(
@@ -41514,6 +41542,42 @@ class MountFS extends BasePortableFakeFS {
     const [mountFs, realFd] = entry;
     return mountFs.ftruncateSync(realFd, len);
   }
+  async fsyncPromise(fd) {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fsyncPromise(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fsync`);
+    const [mountFs, realFd] = entry;
+    return mountFs.fsyncPromise(realFd);
+  }
+  fsyncSync(fd) {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fsyncSync(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fsyncSync`);
+    const [mountFs, realFd] = entry;
+    return mountFs.fsyncSync(realFd);
+  }
+  async fdatasyncPromise(fd) {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fdatasyncPromise(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fdatasync`);
+    const [mountFs, realFd] = entry;
+    return mountFs.fdatasyncPromise(realFd);
+  }
+  fdatasyncSync(fd) {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fdatasyncSync(fd);
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw EBADF(`fdatasyncSync`);
+    const [mountFs, realFd] = entry;
+    return mountFs.fdatasyncSync(realFd);
+  }
   watch(p, a, b) {
     return this.makeCallSync(p, () => {
       return this.baseFs.watch(
@@ -41864,13 +41928,21 @@ class FileHandle {
   createWriteStream(options) {
     return this[kBaseFs].createWriteStream(null, { ...options, fd: this.fd });
   }
-  // FIXME: Missing FakeFS version
-  datasync() {
-    throw new Error(`Method not implemented.`);
+  async datasync() {
+    try {
+      this[kRef](this.datasync);
+      return await this[kBaseFs].fdatasyncPromise(this.fd);
+    } finally {
+      this[kUnref]();
+    }
   }
-  // FIXME: Missing FakeFS version
-  sync() {
-    throw new Error(`Method not implemented.`);
+  async sync() {
+    try {
+      this[kRef](this.sync);
+      return await this[kBaseFs].fsyncPromise(this.fd);
+    } finally {
+      this[kUnref]();
+    }
   }
   async read(bufferOrOptions, offsetOrOptions, length, position) {
     try {
@@ -42074,6 +42146,8 @@ const SYNC_IMPLEMENTATIONS = /* @__PURE__ */ new Set([
   `symlinkSync`,
   `truncateSync`,
   `ftruncateSync`,
+  `fsyncSync`,
+  `fdatasyncSync`,
   `unlinkSync`,
   `unwatchFile`,
   `utimesSync`,
@@ -42110,6 +42184,8 @@ const ASYNC_IMPLEMENTATIONS = /* @__PURE__ */ new Set([
   `symlinkPromise`,
   `truncatePromise`,
   `ftruncatePromise`,
+  `fsyncPromise`,
+  `fdatasyncPromise`,
   `unlinkPromise`,
   `utimesPromise`,
   `writeFilePromise`,
@@ -44390,6 +44466,20 @@ class ZipFS extends BasePortableFakeFS {
   }
   ftruncateSync(fd, len) {
     return this.truncateSync(this.fdToPath(fd, `ftruncateSync`), len);
+  }
+  async fsyncPromise(fd) {
+    return this.fsyncSync(fd);
+  }
+  fsyncSync(fd) {
+    this.fdToPath(fd, `fsyncSync`);
+    throw new Error(`Unimplemented`);
+  }
+  async fdatasyncPromise(fd) {
+    return this.fdatasyncSync(fd);
+  }
+  fdatasyncSync(fd) {
+    this.fdToPath(fd, `fdatasyncSync`);
+    throw new Error(`Unimplemented`);
   }
   watch(p, a, b) {
     let persistent;
