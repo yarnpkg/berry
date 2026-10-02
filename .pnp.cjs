@@ -41437,6 +41437,13 @@ class MountFS extends BasePortableFakeFS {
     });
   }
   async readFilePromise(p, encoding) {
+    if (typeof p === `number` && (p & MOUNT_MASK) === this.magic) {
+      const entry = this.fdMap.get(p);
+      if (typeof entry === `undefined`)
+        throw EBADF(`read`);
+      const [mountFs, realFd] = entry;
+      return await mountFs.readFilePromise(realFd, encoding);
+    }
     return this.makeCallPromise(p, async () => {
       return await this.baseFs.readFilePromise(p, encoding);
     }, async (mountFs, { subPath }) => {
@@ -41444,6 +41451,13 @@ class MountFS extends BasePortableFakeFS {
     });
   }
   readFileSync(p, encoding) {
+    if (typeof p === `number` && (p & MOUNT_MASK) === this.magic) {
+      const entry = this.fdMap.get(p);
+      if (typeof entry === `undefined`)
+        throw EBADF(`read`);
+      const [mountFs, realFd] = entry;
+      return mountFs.readFileSync(realFd, encoding);
+    }
     return this.makeCallSync(p, () => {
       return this.baseFs.readFileSync(p, encoding);
     }, (mountFs, { subPath }) => {
@@ -44261,14 +44275,24 @@ class ZipFS extends BasePortableFakeFS {
   async readFilePromise(p, encoding) {
     if (typeof encoding === `object`)
       encoding = encoding ? encoding.encoding : void 0;
-    const data = await this.readFileBuffer(p, { asyncDecompress: true });
+    const data = this.readFileFromDescriptor(p, await this.readFileBuffer(p, { asyncDecompress: true }));
     return encoding ? data.toString(encoding) : data;
   }
   readFileSync(p, encoding) {
     if (typeof encoding === `object`)
       encoding = encoding ? encoding.encoding : void 0;
-    const data = this.readFileBuffer(p);
+    const data = this.readFileFromDescriptor(p, this.readFileBuffer(p));
     return encoding ? data.toString(encoding) : data;
+  }
+  readFileFromDescriptor(p, data) {
+    if (typeof p !== `number`)
+      return data;
+    const entry = this.fds.get(p);
+    if (typeof entry === `undefined`)
+      throw EBADF(`read`);
+    const remaining = data.subarray(entry.cursor);
+    entry.cursor += remaining.length;
+    return remaining;
   }
   readFileBuffer(p, opts = { asyncDecompress: false }) {
     if (typeof p === `number`)
