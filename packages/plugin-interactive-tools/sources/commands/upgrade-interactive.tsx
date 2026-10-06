@@ -19,6 +19,10 @@ function partition<T>(array: Array<T>, size: number): Array<Array<T>> {
 
 type UpgradeSuggestion = {value: string | null, label: string};
 type UpgradeSuggestions = Array<UpgradeSuggestion>;
+type UpgradeSuggestionResult = {
+  suggestions: UpgradeSuggestions;
+  errors: Array<unknown>;
+};
 
 // eslint-disable-next-line arca/no-default-export
 export default class UpgradeInteractiveCommand extends BaseCommand {
@@ -143,15 +147,21 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         return descriptor.range;
       }
     };
-
-    const fetchSuggestions = async (descriptor: Descriptor): Promise<UpgradeSuggestions> => {
+    const fetchSuggestions = async (descriptor: Descriptor): Promise<UpgradeSuggestionResult> => {
       const referenceRange = semver.valid(descriptor.range)
         ? `^${descriptor.range}`
         : descriptor.range;
 
+      const errors: Array<unknown> = [];
       const [resolution, latest] = await Promise.all([
-        fetchUpdatedDescriptor(descriptor, descriptor.range, referenceRange).catch(() => null),
-        fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`).catch(() => null),
+        fetchUpdatedDescriptor(descriptor, descriptor.range, referenceRange).catch(error => {
+          errors.push(error);
+          return null;
+        }),
+        fetchUpdatedDescriptor(descriptor, descriptor.range, `latest`).catch(error => {
+          errors.push(error);
+          return null;
+        }),
       ]);
 
       const suggestions: Array<{value: string | null, label: string}> = [{
@@ -177,7 +187,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         suggestions.push({value: null, label: ``});
       }
 
-      return suggestions;
+      return {suggestions, errors};
     };
 
     const Prompt = () => {
@@ -231,7 +241,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       );
     };
 
-    const UpgradeEntry = ({active, descriptor, suggestions}: {active: boolean, descriptor: Descriptor, suggestions: Array<UpgradeSuggestion>}) => {
+    const UpgradeEntry = ({active, descriptor, suggestions, errors}: {active: boolean, descriptor: Descriptor, suggestions: Array<UpgradeSuggestion>, errors: Array<unknown>}) => {
       const [action, setAction] = useMinistore<string | null>(descriptor.descriptorHash, null);
 
       const packageIdentifier = structUtils.stringifyIdent(descriptor);
@@ -246,20 +256,38 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
           </Box>
           <ItemOptions active={active} options={suggestions} value={action} skewer={true} onChange={setAction} sizes={[17, 17, 17]} />
         </Box>
+        {errors.map((error, index) => {
+          const message = error instanceof Error ? error.message : String(error);
+          return (
+            <Box key={index} marginLeft={2}>
+              <Text color={`yellow`}>
+                {`⚠ Failed to query registry: ${message}`}
+              </Text>
+            </Box>
+          );
+        })}
       </>;
     };
-
     const UpgradeEntries = ({dependencies}: {dependencies: Array<Descriptor>}) => {
       const setAll = useMinistoreSetAll();
-      const [suggestions, setSuggestions] = useState<Array<{descriptor: Descriptor, suggestions: UpgradeSuggestions} | null>>(dependencies.map(() => null));
+      const [suggestions, setSuggestions] = useState<Array<{descriptor: Descriptor, suggestions: UpgradeSuggestions, errors: Array<unknown>} | null>>(dependencies.map(() => null));
       const mountedRef = useRef<boolean>(true);
-
       const getSuggestionsForDescriptor = async (descriptor: Descriptor) => {
-        const suggestions = await fetchSuggestions(descriptor);
-        if (suggestions.filter(suggestion => suggestion.label !== ``).length <= 1)
+        const result = await fetchSuggestions(descriptor);
+        if (result.suggestions.filter(suggestion => suggestion.label !== ``).length <= 1 && result.errors.length === 0)
           return null;
 
-        return {descriptor, suggestions};
+        const errorMessages = new Set<string>();
+        const errors = result.errors.filter(error => {
+          const message = error instanceof Error ? error.message : String(error);
+          if (errorMessages.has(message))
+            return false;
+
+          errorMessages.add(message);
+          return true;
+        });
+
+        return {descriptor, suggestions: result.suggestions, errors};
       };
 
       useEffect(() => {
@@ -356,7 +384,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       return <ScrollableItems radius={VIEWPORT_SIZE >> 1} children={suggestions.map((suggestion, index) => {
         // We use the same keys so that we don't lose the selection when a suggestion finishes loading
         return suggestion !== null
-          ? <UpgradeEntry key={index} active={false} descriptor={suggestion.descriptor} suggestions={suggestion.suggestions} />
+          ? <UpgradeEntry key={index} active={false} descriptor={suggestion.descriptor} suggestions={suggestion.suggestions} errors={suggestion.errors} />
           : <Text key={index}>Loading...</Text>;
       })} />;
     };
