@@ -54,19 +54,13 @@ describe(`ZipImpl memory behavior`, () => {
     expect(libError).toBeDefined();
     expect(libError!.message).toMatch(/Malloc failure|Invalid argument|allocate/i);
 
-    const jsInstances: Array<JsZipImpl> = [];
-    try {
-      for (let i = 0; i < 24; i++) {
-        const impl = openOne(JsZipImpl) as JsZipImpl;
-        jsInstances.push(impl);
+    for (let i = 0; i < 24; i++) {
+      const impl = openOne(JsZipImpl) as JsZipImpl;
+      try {
         const {data} = impl.getFileSource(impl.locate(`payload.bin`));
         expect(data.length).toBe(entrySize);
-      }
-    } finally {
-      for (const impl of jsInstances) {
-        try {
-          impl.discard();
-        } catch {}
+      } finally {
+        impl.discard();
       }
     }
   });
