@@ -4,6 +4,8 @@ releases:
   "@yarnpkg/core": patch
   "@yarnpkg/doctor": patch
   "@yarnpkg/extensions": patch
+  "@yarnpkg/fslib": patch
+  "@yarnpkg/libzip": patch
   "@yarnpkg/nm": patch
   "@yarnpkg/plugin-catalog": patch
   "@yarnpkg/plugin-compat": patch
@@ -30,5 +32,8 @@ releases:
   "@yarnpkg/plugin-typescript": patch
   "@yarnpkg/plugin-version": patch
   "@yarnpkg/plugin-workspace-tools": patch
+  "@yarnpkg/pnp": patch
   "@yarnpkg/pnpify": patch
   "@yarnpkg/sdks": patch
+  "@yarnpkg/shell": patch
+  vscode-zipfs: patch
