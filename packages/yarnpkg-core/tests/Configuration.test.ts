@@ -1011,5 +1011,21 @@ describe(`Configuration`, () => {
           expect(() => configuration.get(`registry`)).toThrow(`Invalid configuration key "registry"`);
         });
     });
+
+    it(`should ignore YARN_IGNORE_SCRIPTS while honoring YARN_ENABLE_SCRIPTS`, async () => {
+      process.env.YARN_IGNORE_SCRIPTS = `true`;
+      process.env.YARN_ENABLE_SCRIPTS = `false`;
+
+      try {
+        await initializeConfiguration({},
+          async dir => {
+            const configuration = await Configuration.find(dir, null);
+            expect(configuration.get(`enableScripts`)).toBe(false);
+          });
+      } finally {
+        delete process.env.YARN_IGNORE_SCRIPTS;
+        delete process.env.YARN_ENABLE_SCRIPTS;
+      }
+    });
   });
 });

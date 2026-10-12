@@ -65,7 +65,7 @@
     "react-window": "^1.8.11",
     "resolve": "1.22.2",
     "resolve.exports": "^2.0.2",
-    "semver": "^7.1.2",
+    "semver": "^7.8.5",
     "three": "^0.145.0",
     "tslib": "^2.4.0",
     "typedoc": "^0.25.7",

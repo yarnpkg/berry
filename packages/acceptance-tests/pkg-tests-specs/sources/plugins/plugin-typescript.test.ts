@@ -167,14 +167,14 @@ describe(`Plugins`, () => {
         makeTemporaryEnv({}, {
           tsEnableAutoTypes: true,
         }, async ({path, run, source}) => {
-          await run(`add`, `@babel/traverse@7.99.0`);
+          await run(`add`, `@hapi/joi@17.99.0`);
 
           await expect(readManifest(path)).resolves.toMatchObject({
             dependencies: {
-              [`@babel/traverse`]: `7.99.0`,
+              [`@hapi/joi`]: `17.99.0`,
             },
             devDependencies: {
-              [`@types/babel__traverse`]: `^7`,
+              [`@types/hapi__joi`]: `^17`,
             },
           });
         }),

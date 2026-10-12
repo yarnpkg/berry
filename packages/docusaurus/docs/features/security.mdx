@@ -23,7 +23,7 @@ Yarn doesn't run postinstalls by default ever since 4.14. You must either enable
 
 ## Age gate
 
-Yarn 4.12 introduced `npmMinimalAgeGate` to restrict packages installed on your machine to only packages that got published at least N days prior. The `npmPreapprovedPackages` setting also lets you bypass this check for specific packages.
+Yarn 4.12 introduced `npmMinimalAgeGate` to restrict packages installed on your machine to only packages that got published at least N days prior. The setting defaults to `1d`, so a brand new release won't be installed until it has had a chance to be reviewed by the community. The `npmPreapprovedPackages` setting also lets you bypass this check for specific packages, and the `--no-time-gate` flag on `yarn add` and `yarn up` lets you bypass it for a single command.
 
 ## Hardened mode
 

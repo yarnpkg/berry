@@ -74,6 +74,10 @@ export enum RequestType {
   Repository = `repository`,
   Publish = `publish`,
   BulkAdvisories = `bulkAdvisories`,
+  StageList = `stageList`,
+  StageApprove = `stageApprove`,
+  StageReject = `stageReject`,
+  StagePublish = `stagePublish`,
 }
 
 export type Request = {
@@ -111,6 +115,25 @@ export type Request = {
 } | {
   registry?: string;
   type: RequestType.BulkAdvisories;
+} | {
+  registry?: string;
+  type: RequestType.StageList;
+  packageFilter?: string;
+  page: number;
+  perPage: number;
+} | {
+  registry?: string;
+  type: RequestType.StageApprove;
+  stageId: string;
+} | {
+  registry?: string;
+  type: RequestType.StageReject;
+  stageId: string;
+} | {
+  registry?: string;
+  type: RequestType.StagePublish;
+  scope?: string;
+  localName: string;
 };
 
 export class Login {
@@ -178,6 +201,11 @@ export const ADVISORIES = new Map<string, Array<npmAuditTypes.AuditMetadata>>([
     vulnerable_versions: `<1.1.0`,
   }]],
 ]);
+
+// Packages without an explicit publish date pretend to have been released long
+// ago, so that the `npmMinimalAgeGate` setting (defaulting to `1d`) doesn't
+// quarantine them when running tests.
+const OLD_RELEASE_DATE = new Date(0).toISOString();
 
 const RELEASE_DATE_PACKAGES: Record<string, Record<string, number | string>> = {
   "release-date": {
@@ -359,6 +387,20 @@ export const getPackageDirectoryPath = async (
   return packageVersionEntry.path;
 };
 
+interface StagedPackageEntry {
+  id: string;
+  packageName: string;
+  version: string;
+  tag: string;
+  createdAt: string;
+  actor: string;
+  actorType: string;
+  access: string;
+  shasum: string;
+}
+
+const stagedPackages = new Map<string, StagedPackageEntry>();
+
 const packageServerUrls: {
   http: Promise<string> | null;
   https: Promise<string> | null;
@@ -444,7 +486,9 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
             }),
           )),
         ),
-        time: name in RELEASE_DATE_PACKAGES ? RELEASE_DATE_PACKAGES[name] : undefined,
+        time: name in RELEASE_DATE_PACKAGES
+          ? RELEASE_DATE_PACKAGES[name]
+          : Object.fromEntries(versions.map(version => [version, OLD_RELEASE_DATE])),
         [`dist-tags`]: {
           latest: semver.maxSatisfying(versions, `*`),
           ...distTags,
@@ -654,6 +698,101 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
         return response.end(JSON.stringify(result));
       });
     },
+
+    async [RequestType.StageList](parsedRequest, _, response) {
+      if (parsedRequest.type !== RequestType.StageList)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {packageFilter, page, perPage} = parsedRequest;
+
+      let items = [...stagedPackages.values()];
+      if (packageFilter)
+        items = items.filter(item => item.packageName === packageFilter);
+
+      const total = items.length;
+      const paginatedItems = items.slice(page * perPage, (page + 1) * perPage);
+
+      const data = JSON.stringify({items: paginatedItems, page, perPage, total});
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.end(data);
+    },
+
+    async [RequestType.StageApprove](parsedRequest, _, response) {
+      if (parsedRequest.type !== RequestType.StageApprove)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {stageId} = parsedRequest;
+
+      if (!stagedPackages.has(stageId)) {
+        processError(response, 404, `Stage ID not found: ${stageId}`);
+        return;
+      }
+
+      stagedPackages.delete(stageId);
+
+      const data = JSON.stringify({message: `Package version approved and published successfully.`});
+      response.writeHead(201, {[`Content-Type`]: `application/json`});
+      response.end(data);
+    },
+
+    async [RequestType.StageReject](parsedRequest, _, response) {
+      if (parsedRequest.type !== RequestType.StageReject)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {stageId} = parsedRequest;
+
+      if (!stagedPackages.has(stageId)) {
+        processError(response, 404, `Stage ID not found: ${stageId}`);
+        return;
+      }
+
+      stagedPackages.delete(stageId);
+
+      response.writeHead(204);
+      response.end();
+    },
+
+    async [RequestType.StagePublish](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.StagePublish)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const {scope, localName} = parsedRequest;
+      const name = scope ? `${scope}/${localName}` : localName;
+
+      let rawData = ``;
+
+      request.on(`data`, chunk => rawData += chunk);
+      request.on(`end`, () => {
+        let body;
+        try {
+          body = JSON.parse(rawData);
+        } catch {
+          return processError(response, 400, `Invalid JSON`);
+        }
+
+        const [version] = Object.keys(body.versions);
+        const tag = Object.keys(body[`dist-tags`])[0] || `latest`;
+        const shasum = body.versions[version]?.dist?.shasum || ``;
+
+        const stageId = uuidv5(`${name}-${version}-${Date.now()}`, `06030d6c-8c43-412a-ad0a-787f1fb9e31e`);
+
+        stagedPackages.set(stageId, {
+          id: stageId,
+          packageName: name,
+          version,
+          tag,
+          createdAt: new Date().toISOString(),
+          actor: `test-user`,
+          actorType: `user`,
+          access: body.access || `public`,
+          shasum,
+        });
+
+        const data = JSON.stringify({message: `Package version staged successfully.`, stageId});
+        response.writeHead(201, {[`Content-Type`]: `application/json`});
+        return response.end(data);
+      });
+    },
   };
 
   const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
@@ -703,6 +842,35 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
         return {
           ...registry,
           type: RequestType.BulkAdvisories,
+        };
+      } else if (url.match(/^\/-\/stage(\?|$)/) && method === `GET`) {
+        const urlObj = new URL(url, `http://localhost`);
+        return {
+          ...registry,
+          type: RequestType.StageList,
+          packageFilter: urlObj.searchParams.get(`package`) ?? undefined,
+          page: parseInt(urlObj.searchParams.get(`page`) ?? `0`, 10),
+          perPage: parseInt(urlObj.searchParams.get(`perPage`) ?? `100`, 10),
+        };
+      } else if ((match = url.match(/^\/-\/stage\/([0-9a-f-]+)\/approve$/)) && method === `POST`) {
+        return {
+          ...registry,
+          type: RequestType.StageApprove,
+          stageId: match[1],
+        };
+      } else if ((match = url.match(/^\/-\/stage\/([0-9a-f-]+)$/)) && method === `DELETE`) {
+        return {
+          ...registry,
+          type: RequestType.StageReject,
+          stageId: match[1],
+        };
+      } else if ((match = url.match(/^\/-\/stage\/package\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method === `POST`) {
+        const [, scope, localName] = match;
+        return {
+          ...registry,
+          type: RequestType.StagePublish,
+          scope,
+          localName,
         };
       } else if ((match = url.match(/^\/(?:(@[^/]+)\/)?([^@/][^/]*)$/)) && method == `PUT`) {
         const [, scope, localName] = match;
@@ -755,6 +923,10 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
     switch (parsedRequest.type) {
       case RequestType.Publish:
       case RequestType.Whoami:
+      case RequestType.StageList:
+      case RequestType.StageApprove:
+      case RequestType.StageReject:
+      case RequestType.StagePublish:
         return true;
 
       case RequestType.PackageInfo:
@@ -800,7 +972,10 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
               return;
             }
 
-            if (!applyOtpValidation(req, res, user))
+            const skipOtp = parsedRequest.type === RequestType.StageList
+              || parsedRequest.type === RequestType.StagePublish;
+
+            if (!skipOtp && !applyOtpValidation(req, res, user))
               return;
 
             if (parsedRequest.type === RequestType.Whoami) {

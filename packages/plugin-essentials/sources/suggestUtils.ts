@@ -72,6 +72,15 @@ export enum Strategy {
   CACHE = `cache`,
 }
 
+export function disableTimeGate(configuration: Configuration) {
+  configuration.useWithSource(`<cli>`, {npmMinimalAgeGate: `0`}, configuration.startingCwd, {overwrite: true});
+
+  const npmScopes = configuration.get(`npmScopes`) as Map<string, Map<string, unknown>>;
+  for (const scopeConfiguration of npmScopes.values()) {
+    scopeConfiguration.delete(`npmMinimalAgeGate`);
+  }
+}
+
 export function getModifier(flags: {exact: boolean, caret: boolean, tilde: boolean}, project: Project): Modifier {
   if (flags.exact)
     return Modifier.EXACT;

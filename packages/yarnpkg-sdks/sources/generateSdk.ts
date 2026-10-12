@@ -145,6 +145,9 @@ const TEMPLATE = (relPnpApiPath: PortablePath, module: string, {setupEnv = false
     `\n`,
     `    process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || \`\`;\n`,
     `    process.env.NODE_OPTIONS += \` -r \${absPnpApiPath}\`;\n`,
+    `    if (isPnpLoaderEnabled && register) {\n`,
+    `      process.env.NODE_OPTIONS += \` --experimental-loader \${pathToFileURL(absPnpLoaderPath)}\`;\n`,
+    `    }\n`,
     `  }\n`,
   ] : []),
   ...(usePnpify ? [
@@ -201,7 +204,10 @@ export type SupportedSdk =
   | `typescript-language-server`
   | `typescript`
   | `svelte-language-server`
-  | `flow-bin`;
+  | `flow-bin`
+  | `oxfmt`
+  | `oxlint`
+  | `oxlint-tsgolint`;
 
 export type BaseSdks = Array<[
   SupportedSdk,
@@ -341,6 +347,21 @@ export class Wrapper {
     this.paths.set(relPackagePath, relProjectPath);
 
     return absWrapperPath;
+  }
+
+  async writeRaw(relPackagePath: PortablePath, content: string, options: {mode?: number} = {}) {
+    const topLevelInformation = this.pnpApi.getPackageInformation(this.pnpApi.topLevel)!;
+    const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+    const absPath = ppath.join(this.target, this.name, relPackagePath);
+    const relProjectPath = ppath.relative(projectRoot, absPath);
+
+    await xfs.mkdirPromise(ppath.dirname(absPath), {recursive: true});
+    await xfs.writeFilePromise(absPath, content, {mode: options.mode});
+
+    this.paths.set(relPackagePath, relProjectPath);
+
+    return absPath;
   }
 
   getProjectPathTo(relPackagePath: PortablePath) {

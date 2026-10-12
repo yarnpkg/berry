@@ -309,7 +309,7 @@ const SLICES = [
     from: `99f3e130bbe02473680bfa040d131c1f7f08fcc0`,
     to: `99f3e130bbe02473680bfa040d131c1f7f08fcc0`,
     onto: `c1216dea1a504da7b89b5221b925abcd1702d7e4`,
-    range: `>=5.7.1-rc`,
+    range: `>=5.7.1-rc <7.0.0-0`,
   },
 ];
 

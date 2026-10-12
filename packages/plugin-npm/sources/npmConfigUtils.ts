@@ -96,8 +96,20 @@ export function getAuthConfiguration(registry: string, {configuration, ident}: {
   return registryConfiguration || configuration;
 }
 
-function shouldBeQuarantined({configuration, version, publishTimes}: IsPackageApprovedOptions) {
-  const minimalAgeGate = configuration.get(`npmMinimalAgeGate`);
+export function getMinimalAgeGate(ident: Ident | null, {configuration}: {configuration: Configuration}): number {
+  if (ident?.scope) {
+    const scopeConfiguration = getScopeConfiguration(ident.scope, {configuration});
+    const scopeGate = scopeConfiguration?.get(`npmMinimalAgeGate`);
+    if (typeof scopeGate === `number`) {
+      return scopeGate;
+    }
+  }
+
+  return configuration.get(`npmMinimalAgeGate`);
+}
+
+function shouldBeQuarantined({configuration, ident, version, publishTimes}: IsPackageApprovedOptions) {
+  const minimalAgeGate = getMinimalAgeGate(ident, {configuration});
 
   if (minimalAgeGate) {
     const versionTime = publishTimes?.[version];
