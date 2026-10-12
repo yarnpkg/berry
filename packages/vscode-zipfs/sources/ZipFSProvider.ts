@@ -1,11 +1,14 @@
-import {VirtualFS, PosixFS, npath} from '@yarnpkg/fslib';
-import {ZipOpenFS}                 from '@yarnpkg/libzip';
-import * as vscode                 from 'vscode';
+import {VirtualFS, PosixFS}             from '@yarnpkg/fslib';
+import {ZipOpenFS}                      from '@yarnpkg/libzip';
+import * as vscode                      from 'vscode';
+
+import {isZipFile, ZIP_FILE_EXTENSIONS} from './zipFileExtensions';
 
 export class ZipFSProvider implements vscode.FileSystemProvider {
   private readonly fs = new PosixFS(
     new VirtualFS({
       baseFs: new ZipOpenFS({
+        fileExtensions: ZIP_FILE_EXTENSIONS,
         useCache: true,
         maxOpenFiles: 80,
       }),
@@ -17,7 +20,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
 
     switch (true) {
       case stat.isDirectory():
-      case npath.extname(uri.fsPath) === `.zip`: {
+      case isZipFile(uri.fsPath): {
         stat.type = vscode.FileType.Directory;
       } break;
 
