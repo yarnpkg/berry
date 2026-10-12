@@ -180,13 +180,9 @@ export default class InfoCommand extends BaseCommand {
         };
       });
 
-      const sortedLookup = miscUtils.sortMap([...lookupSet], [
-        pkg => structUtils.stringifyLocator(structUtils.isVirtualLocator(pkg)
-          ? structUtils.devirtualizeLocator(pkg)
-          : pkg),
-        pkg => structUtils.isVirtualLocator(pkg) ? `1` : `0`,
-        pkg => structUtils.stringifyLocator(pkg),
-      ]);
+      const sortedLookup = miscUtils.sortMap([...lookupSet], pkg => {
+        return structUtils.stringifyLocator(pkg);
+      });
 
       const selection = sortedLookup.filter(pkg => {
         return matchers.length === 0 || matchers.some(matcher => matcher(pkg));
