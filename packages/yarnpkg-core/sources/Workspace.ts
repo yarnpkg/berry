@@ -48,16 +48,39 @@ export class Workspace {
     // @ts-expect-error: It's ok to initialize it now, even if it's readonly (setup is called right after construction)
     this.anchoredLocator = structUtils.makeLocator(ident, `${WorkspaceResolver.protocol}${this.relativeCwd}`);
 
-    const patterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
+    const workspaceDefinitionPatterns = this.manifest.workspaceDefinitions.map(({pattern}) => pattern);
 
-    if (patterns.length === 0)
+    if (workspaceDefinitionPatterns.length === 0)
       return;
 
-    const relativeCwds = await fastGlob(patterns, {
+    const resolvePatternsWithAnalysis = async () => {
+      const staticPatterns: Array<string> = [];
+      const dynamicPatterns: Array<string> = [];
+
+      for (const pattern of workspaceDefinitionPatterns) {
+        if (fastGlob.isDynamicPattern(pattern)) {
+          dynamicPatterns.push(pattern);
+        } else {
+          staticPatterns.push(pattern);
+        }
+      }
+
+      const globResults = dynamicPatterns.length > 0
+        ? await resolveGlobPatterns(dynamicPatterns)
+        : [];
+
+      return [...staticPatterns, ...globResults];
+    };
+
+    const resolveGlobPatterns = (globPatterns: Array<string>) => fastGlob(globPatterns, {
       cwd: npath.fromPortablePath(this.cwd),
       onlyDirectories: true,
       ignore: [`**/node_modules`, `**/.git`, `**/.yarn`],
     });
+
+    const relativeCwds = this.project.configuration.get(`enableWorkspacePatternAnalysis`) ?
+      await resolvePatternsWithAnalysis() :
+      await resolveGlobPatterns(workspaceDefinitionPatterns);
 
     // fast-glob returns results in arbitrary order
     relativeCwds.sort();

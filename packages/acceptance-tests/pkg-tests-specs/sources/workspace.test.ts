@@ -36,6 +36,27 @@ describe(`Workspaces tests`, () => {
   );
 
   test(
+    `it should support basic glob patterns with enableWorkspacePatternAnalysis`,
+    makeTemporaryMonorepoEnv({
+      workspaces: [
+        `packages/*`,
+      ],
+    }, {
+      [`packages/foo`]: {},
+      [`packages/bar`]: {},
+      [`packages/baz`]: {},
+    }, async ({path, run, source}) => {
+      await run(`config`, `set`, `enableWorkspacePatternAnalysis`, `true`);
+      await expect(getWorkspaces(run)).resolves.toStrictEqual([
+        `.`,
+        `packages/bar`,
+        `packages/baz`,
+        `packages/foo`,
+      ]);
+    }),
+  );
+
+  test(
     `it should support negated glob patterns`,
     makeTemporaryMonorepoEnv({
       workspaces: [
@@ -47,6 +68,27 @@ describe(`Workspaces tests`, () => {
       [`packages/bar`]: {},
       [`packages/baz`]: {},
     }, async ({path, run, source}) => {
+      await expect(getWorkspaces(run)).resolves.toStrictEqual([
+        `.`,
+        `packages/bar`,
+        `packages/baz`,
+      ]);
+    }),
+  );
+
+  test(
+    `it should support negated glob patterns with enableWorkspacePatternAnalysis`,
+    makeTemporaryMonorepoEnv({
+      workspaces: [
+        `packages/*`,
+        `!packages/foo`,
+      ],
+    }, {
+      [`packages/foo`]: {},
+      [`packages/bar`]: {},
+      [`packages/baz`]: {},
+    }, async ({path, run, source}) => {
+      await run(`config`, `set`, `enableWorkspacePatternAnalysis`, `true`);
       await expect(getWorkspaces(run)).resolves.toStrictEqual([
         `.`,
         `packages/bar`,
