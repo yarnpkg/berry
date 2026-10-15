@@ -105,7 +105,7 @@ export function getTopLevelDependencies(project: Project, workspace: Workspace, 
   return topLevelDependencies;
 }
 
-export function getPackages(project: Project, roots: Array<TopLevelDependency>, {recursive}: {recursive: boolean}) {
+export function getPackages(project: Project, roots: Array<TopLevelDependency>, {recursive, environment}: {recursive: boolean, environment: npmAuditTypes.Environment}) {
   const packages = new Map<string, Map<string, Array<Locator>>>();
 
   const traversed = new Set<LocatorHash>();
@@ -147,7 +147,15 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     }
 
     if (recursive) {
+      const workspace = project.tryWorkspaceByLocator(pkg);
       for (const dependency of pkg.dependencies.values()) {
+        if (workspace && environment !== npmAuditTypes.Environment.All) {
+          const isDevDependency = workspace.manifest.devDependencies.has(dependency.identHash);
+          if (isDevDependency !== (environment === npmAuditTypes.Environment.Development)) {
+            continue;
+          }
+        }
+
         queue.push([pkg, dependency]);
       }
     }
