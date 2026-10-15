@@ -149,10 +149,12 @@ export function getPackages(project: Project, roots: Array<TopLevelDependency>, 
     if (recursive) {
       const workspace = project.tryWorkspaceByLocator(pkg);
       for (const dependency of pkg.dependencies.values()) {
-        // Workspace packages include their development dependencies in the stored package dependency map, even though
-        // those dependencies are not part of the transitive production dependency graph.
-        if (environment === npmAuditTypes.Environment.Production && workspace?.manifest.devDependencies.has(dependency.identHash))
-          continue;
+        if (workspace && environment !== npmAuditTypes.Environment.All) {
+          const isDevDependency = workspace.manifest.devDependencies.has(dependency.identHash);
+          if (isDevDependency !== (environment === npmAuditTypes.Environment.Development)) {
+            continue;
+          }
+        }
 
         queue.push([pkg, dependency]);
       }
