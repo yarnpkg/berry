@@ -111,8 +111,8 @@ export function getMinimalAgeGate(ident: Ident | null, {configuration}: {configu
 function shouldBeQuarantined({configuration, ident, version, publishTimes}: IsPackageApprovedOptions) {
   const minimalAgeGate = getMinimalAgeGate(ident, {configuration});
 
-  if (minimalAgeGate) {
-    const versionTime = publishTimes?.[version];
+  if (minimalAgeGate && publishTimes) {
+    const versionTime = publishTimes[version];
     if (typeof versionTime === `undefined`)
       return true;
 
