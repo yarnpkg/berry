@@ -7169,13 +7169,6 @@ const RAW_RUNTIME_STATE =
           ["@sindresorhus/is", "npm:4.6.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:5.6.0", {\
-        "packageLocation": "./.yarn/cache/@sindresorhus-is-npm-5.6.0-a25321ecc2-b077c325ac.zip/node_modules/@sindresorhus/is/",\
-        "packageDependencies": [\
-          ["@sindresorhus/is", "npm:5.6.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["@sinonjs/commons", [\
@@ -7621,14 +7614,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@szmarczak-http-timer-npm-4.0.5-03463d10ab-27b713859b.zip/node_modules/@szmarczak/http-timer/",\
         "packageDependencies": [\
           ["@szmarczak/http-timer", "npm:4.0.5"],\
-          ["defer-to-connect", "npm:2.0.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:5.0.1", {\
-        "packageLocation": "./.yarn/cache/@szmarczak-http-timer-npm-5.0.1-52261e5986-fc9cb993e8.zip/node_modules/@szmarczak/http-timer/",\
-        "packageDependencies": [\
-          ["@szmarczak/http-timer", "npm:5.0.1"],\
           ["defer-to-connect", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
@@ -10288,7 +10273,7 @@ const RAW_RUNTIME_STATE =
             "npm:0.23.0"\
           ]],\
           ["fast-glob", "npm:3.3.2"],\
-          ["got", "npm:11.8.2"],\
+          ["got", "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch::version=11.8.2&hash=15933f"],\
           ["hpagent", "npm:1.2.0"],\
           ["micromatch", "npm:4.0.5"],\
           ["p-limit", "npm:2.2.0"],\
@@ -21827,30 +21812,9 @@ const RAW_RUNTIME_STATE =
           ["cacheable-lookup", "npm:5.0.3"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:7.0.0", {\
-        "packageLocation": "./.yarn/cache/cacheable-lookup-npm-7.0.0-b6cd95c14a-69ea78cd9f.zip/node_modules/cacheable-lookup/",\
-        "packageDependencies": [\
-          ["cacheable-lookup", "npm:7.0.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["cacheable-request", [\
-      ["npm:10.2.14", {\
-        "packageLocation": "./.yarn/cache/cacheable-request-npm-10.2.14-fd919b07d7-102f454ac6.zip/node_modules/cacheable-request/",\
-        "packageDependencies": [\
-          ["@types/http-cache-semantics", "npm:4.0.4"],\
-          ["cacheable-request", "npm:10.2.14"],\
-          ["get-stream", "npm:6.0.1"],\
-          ["http-cache-semantics", "npm:4.1.1"],\
-          ["keyv", "npm:4.5.4"],\
-          ["mimic-response", "npm:4.0.0"],\
-          ["normalize-url", "npm:8.0.0"],\
-          ["responselike", "npm:3.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:7.0.1", {\
         "packageLocation": "./.yarn/cache/cacheable-request-npm-7.0.1-d870be2496-682a51337a.zip/node_modules/cacheable-request/",\
         "packageDependencies": [\
@@ -25711,15 +25675,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["form-data-encoder", [\
-      ["npm:2.1.4", {\
-        "packageLocation": "./.yarn/cache/form-data-encoder-npm-2.1.4-6f48cca6c9-3778e7db3c.zip/node_modules/form-data-encoder/",\
-        "packageDependencies": [\
-          ["form-data-encoder", "npm:2.1.4"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["format", [\
       ["npm:0.2.2", {\
         "packageLocation": "./.yarn/cache/format-npm-0.2.2-679f3acc64-5f878b8fc1.zip/node_modules/format/",\
@@ -26219,8 +26174,8 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["got", [\
-      ["npm:11.8.2", {\
-        "packageLocation": "./.yarn/cache/got-npm-11.8.2-c1eb105458-be4e806297.zip/node_modules/got/",\
+      ["patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch::version=11.8.2&hash=15933f", {\
+        "packageLocation": "./.yarn/cache/got-patch-dd5a6af1c8-0b2b8737ac.zip/node_modules/got/",\
         "packageDependencies": [\
           ["@sindresorhus/is", "npm:4.6.0"],\
           ["@szmarczak/http-timer", "npm:4.0.5"],\
@@ -26229,29 +26184,11 @@ const RAW_RUNTIME_STATE =
           ["cacheable-lookup", "npm:5.0.3"],\
           ["cacheable-request", "npm:7.0.1"],\
           ["decompress-response", "npm:6.0.0"],\
-          ["got", "npm:11.8.2"],\
+          ["got", "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch::version=11.8.2&hash=15933f"],\
           ["http2-wrapper", "npm:1.0.0-beta.5.2"],\
           ["lowercase-keys", "npm:2.0.0"],\
           ["p-cancelable", "npm:2.0.0"],\
           ["responselike", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:12.6.1", {\
-        "packageLocation": "./.yarn/cache/got-npm-12.6.1-5b6a816a1e-6c22f1449f.zip/node_modules/got/",\
-        "packageDependencies": [\
-          ["@sindresorhus/is", "npm:5.6.0"],\
-          ["@szmarczak/http-timer", "npm:5.0.1"],\
-          ["cacheable-lookup", "npm:7.0.0"],\
-          ["cacheable-request", "npm:10.2.14"],\
-          ["decompress-response", "npm:6.0.0"],\
-          ["form-data-encoder", "npm:2.1.4"],\
-          ["get-stream", "npm:6.0.1"],\
-          ["got", "npm:12.6.1"],\
-          ["http2-wrapper", "npm:2.2.1"],\
-          ["lowercase-keys", "npm:3.0.0"],\
-          ["p-cancelable", "npm:3.0.0"],\
-          ["responselike", "npm:3.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -26923,15 +26860,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/http2-wrapper-npm-1.0.0-beta.5.2-3ea360ab61-935d78c13e.zip/node_modules/http2-wrapper/",\
         "packageDependencies": [\
           ["http2-wrapper", "npm:1.0.0-beta.5.2"],\
-          ["quick-lru", "npm:5.1.1"],\
-          ["resolve-alpn", "npm:1.2.1"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:2.2.1", {\
-        "packageLocation": "./.yarn/cache/http2-wrapper-npm-2.2.1-c033aaabde-e7a5ac6548.zip/node_modules/http2-wrapper/",\
-        "packageDependencies": [\
-          ["http2-wrapper", "npm:2.2.1"],\
           ["quick-lru", "npm:5.1.1"],\
           ["resolve-alpn", "npm:1.2.1"]\
         ],\
@@ -29360,13 +29288,6 @@ const RAW_RUNTIME_STATE =
           ["lowercase-keys", "npm:2.0.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/lowercase-keys-npm-3.0.0-f8c4730215-67a3f81409.zip/node_modules/lowercase-keys/",\
-        "packageDependencies": [\
-          ["lowercase-keys", "npm:3.0.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["lru-cache", [\
@@ -30646,13 +30567,6 @@ const RAW_RUNTIME_STATE =
           ["mimic-response", "npm:3.1.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:4.0.0", {\
-        "packageLocation": "./.yarn/cache/mimic-response-npm-4.0.0-c080547e26-33b804cc96.zip/node_modules/mimic-response/",\
-        "packageDependencies": [\
-          ["mimic-response", "npm:4.0.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["mini-css-extract-plugin", [\
@@ -31177,13 +31091,6 @@ const RAW_RUNTIME_STATE =
           ["normalize-url", "npm:6.1.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:8.0.0", {\
-        "packageLocation": "./.yarn/cache/normalize-url-npm-8.0.0-1f5dc7ece5-4347d6ee39.zip/node_modules/normalize-url/",\
-        "packageDependencies": [\
-          ["normalize-url", "npm:8.0.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["npm-run-path", [\
@@ -31520,13 +31427,6 @@ const RAW_RUNTIME_STATE =
           ["p-cancelable", "npm:2.0.0"]\
         ],\
         "linkType": "HARD"\
-      }],\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/p-cancelable-npm-3.0.0-e6c8101c97-a5eab7cf5a.zip/node_modules/p-cancelable/",\
-        "packageDependencies": [\
-          ["p-cancelable", "npm:3.0.0"]\
-        ],\
-        "linkType": "HARD"\
       }]\
     ]],\
     ["p-finally", [\
@@ -31639,7 +31539,7 @@ const RAW_RUNTIME_STATE =
       ["npm:8.1.1", {\
         "packageLocation": "./.yarn/cache/package-json-npm-8.1.1-0db857e5f3-d97ce9539e.zip/node_modules/package-json/",\
         "packageDependencies": [\
-          ["got", "npm:12.6.1"],\
+          ["got", "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch::version=11.8.2&hash=15933f"],\
           ["package-json", "npm:8.1.1"],\
           ["registry-auth-token", "npm:5.0.2"],\
           ["registry-url", "npm:6.0.1"],\
@@ -35377,14 +35277,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["lowercase-keys", "npm:2.0.0"],\
           ["responselike", "npm:2.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/responselike-npm-3.0.0-9ab07af81f-e0cc9be30d.zip/node_modules/responselike/",\
-        "packageDependencies": [\
-          ["lowercase-keys", "npm:3.0.0"],\
-          ["responselike", "npm:3.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
