@@ -183,9 +183,17 @@ function getDefaultUserAgent() {
 function applyDefaultHeaders(headers: Options[`headers`]) {
   const normalizedHeaders = {...headers};
 
-  const hasUserAgent = Object.entries(normalizedHeaders).some(([headerName, headerValue]) => {
-    return headerName.toLowerCase() === `user-agent` && typeof headerValue !== `undefined`;
-  });
+  let hasUserAgent = false;
+  for (const [headerName, headerValue] of Object.entries(normalizedHeaders)) {
+    if (headerName.toLowerCase() !== `user-agent`)
+      continue;
+
+    if (typeof headerValue === `undefined`) {
+      delete normalizedHeaders[headerName];
+    } else {
+      hasUserAgent = true;
+    }
+  }
 
   if (!hasUserAgent)
     normalizedHeaders[`user-agent`] = getDefaultUserAgent();
