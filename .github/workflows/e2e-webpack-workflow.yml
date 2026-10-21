@@ -59,7 +59,7 @@ jobs:
         source scripts/e2e-setup-ci.sh
 
         yarn init -p
-        yarn add -D webpack webpack-cli ts-loader typescript @types/lodash lodash
+        yarn add -D webpack webpack-cli ts-loader 'typescript@<7.0.0-0' @types/lodash lodash
 
         echo "module.exports = {mode: 'none', entry: './src/index.ts',output: { filename: 'main.js'}, resolve: { extensions: ['.ts', '.tsx', '.js']},module: { rules: [ { test: /\.tsx?$/, loader: require.resolve('ts-loader') }  ]}};" | tee webpack.config.js
 

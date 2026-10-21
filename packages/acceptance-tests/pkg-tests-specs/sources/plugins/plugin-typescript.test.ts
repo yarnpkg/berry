@@ -167,11 +167,11 @@ describe(`Plugins`, () => {
         makeTemporaryEnv({}, {
           tsEnableAutoTypes: true,
         }, async ({path, run, source}) => {
-          await run(`add`, `@hapi/joi@17.1.1`);
+          await run(`add`, `@hapi/joi@17.99.0`);
 
           await expect(readManifest(path)).resolves.toMatchObject({
             dependencies: {
-              [`@hapi/joi`]: `17.1.1`,
+              [`@hapi/joi`]: `17.99.0`,
             },
             devDependencies: {
               [`@types/hapi__joi`]: `^17`,

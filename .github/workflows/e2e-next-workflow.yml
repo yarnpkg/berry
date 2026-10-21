@@ -27,10 +27,8 @@ jobs:
         yarn init
 
         # Required
-        yarn add next@canary react react-dom
-
-        # Test itself
-        yarn add raw-loader
+        yarn add react react-dom raw-loader
+        yarn add --no-time-gate next@canary
 
         mkdir pages
         echo 'import text from "raw-loader!./text.txt"; export default () => <div>{text}</div>;' | tee pages/index.js
@@ -44,7 +42,8 @@ jobs:
         yarn init
 
         # Required
-        yarn add typescript next@canary react react-dom @types/react @types/react-dom @types/node
+        yarn add 'typescript@<7.0.0-0' react react-dom @types/react @types/react-dom @types/node
+        yarn add --no-time-gate next@canary
 
         # Test itself
         yarn add raw-loader
