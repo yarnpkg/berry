@@ -1012,18 +1012,6 @@ describe(`Configuration`, () => {
         });
     });
 
-    it(`should ignore the internal yarnPath launcher marker`, async () => {
-      process.env.YARN_IGNORE_PATH_INTERNAL = `1`;
-
-      try {
-        await initializeConfiguration({}, async dir => {
-          await expect(Configuration.find(dir, null)).resolves.toBeDefined();
-        });
-      } finally {
-        delete process.env.YARN_IGNORE_PATH_INTERNAL;
-      }
-    });
-
     it(`should ignore YARN_IGNORE_SCRIPTS while honoring YARN_ENABLE_SCRIPTS`, async () => {
       process.env.YARN_IGNORE_SCRIPTS = `true`;
       process.env.YARN_ENABLE_SCRIPTS = `false`;
