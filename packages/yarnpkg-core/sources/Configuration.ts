@@ -82,6 +82,10 @@ const IGNORED_ENV_VARIABLES = new Set([
   // current binaries; not an actual configuration settings
   `binFolder`,
 
+  // Used internally to mark when YARN_IGNORE_PATH was injected by the CLI
+  // while delegating to yarnPath; not an actual configuration setting
+  `ignorePathInternal`,
+
   // "version" is set by Docker:
   // https://github.com/nodejs/docker-node/blob/5a6a5e91999358c5b04fddd6c22a9a4eb0bf3fbf/10/alpine/Dockerfile#L51
   `version`,
