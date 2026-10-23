@@ -1,8 +1,31 @@
-import {PortablePath}              from '@yarnpkg/fslib';
-import {PnpApi}                    from '@yarnpkg/pnp';
+import {PortablePath}                     from '@yarnpkg/fslib';
+import {PnpApi}                           from '@yarnpkg/pnp';
 
-import {LinkType, NodeModulesTree} from '../sources/buildNodeModulesTree';
-import {buildPackageMap}           from '../sources';
+import {LinkType, NodeModulesTree}        from '../sources/buildNodeModulesTree';
+import {buildLocatorMap, buildPackageMap} from '../sources';
+
+describe(`buildLocatorMap`, () => {
+  it(`should merge aliases for the same locator`, () => {
+    const tree: NodeModulesTree = new Map([
+      [`/project/node_modules/foo` as PortablePath, {
+        locator: `foo@npm:1.0.0`,
+        target: `/cache/foo` as PortablePath,
+        linkType: LinkType.HARD,
+        nodePath: `/foo`,
+        aliases: [],
+      }],
+      [`/project/packages/workspace/node_modules/foo` as PortablePath, {
+        locator: `foo@npm:1.0.0`,
+        target: `/cache/foo` as PortablePath,
+        linkType: LinkType.HARD,
+        nodePath: `/workspace/foo`,
+        aliases: [`virtual:foo#npm:1.0.0`],
+      }],
+    ]);
+
+    expect(buildLocatorMap(tree).get(`foo@npm:1.0.0`)?.aliases).toEqual([`virtual:foo#npm:1.0.0`]);
+  });
+});
 
 describe(`buildPackageMap`, () => {
   it(`should generate one package map entry for each node_modules package node`, () => {

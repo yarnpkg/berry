@@ -120,8 +120,14 @@ export const buildLocatorMap = (nodeModulesTree: NodeModulesTree): NodeModulesLo
     if (!val.dirList) {
       let entry = map.get(val.locator);
       if (!entry) {
-        entry = {target: val.target, linkType: val.linkType, locations: [], aliases: val.aliases};
+        entry = {target: val.target, linkType: val.linkType, locations: [], aliases: [...val.aliases]};
         map.set(val.locator, entry);
+      } else {
+        for (const alias of val.aliases) {
+          if (!entry.aliases.includes(alias)) {
+            entry.aliases.push(alias);
+          }
+        }
       }
 
       entry.locations.push(location);
