@@ -98,10 +98,13 @@ export async function getRegistry({scope, publish, configuration, cwd}: {scope?:
 type NpmWebLoginInitResponse = {
   loginUrl: string;
   doneUrl: string;
+  notices: Array<string>;
 };
 
 async function webLoginInit(registry: string, configuration: Configuration): Promise<NpmWebLoginInitResponse | null> {
   let response: any;
+  const notices: Array<string> = [];
+
   try {
     response = await npmHttpUtils.post(`/-/v1/login`, null, {
       configuration,
@@ -111,12 +114,35 @@ async function webLoginInit(registry: string, configuration: Configuration): Pro
       headers: {
         [`npm-auth-type`]: `web`,
       },
+      wrapNetworkRequest: async executor => async () => {
+        const webLoginResponse = await executor();
+
+        const notice = webLoginResponse.headers[`npm-notice`];
+        const values = Array.isArray(notice)
+          ? notice
+          : [notice];
+
+        for (const value of values) {
+          if (typeof value !== `string`)
+            continue;
+
+          // The notice is controlled by the registry, so we need to strip any
+          // ANSI escape sequence and terminal control character it may contain
+          // eslint-disable-next-line no-control-regex
+          const sanitized = formatUtils.stripAnsi(value).replace(/[\x00-\x1f\x7f-\x9f]/g, ``);
+          if (sanitized.length > 0) {
+            notices.push(sanitized);
+          }
+        }
+
+        return webLoginResponse;
+      },
     });
   } catch {
     return null;
   }
 
-  return response;
+  return response ? {...response, notices} : null;
 }
 
 type NpmWebLoginCheckResponse =
@@ -144,6 +170,9 @@ async function loginViaWeb({registry, configuration, report}: CredentialOptions)
   const loginResponse = await webLoginInit(registry, configuration);
   if (!loginResponse)
     return null;
+
+  for (const notice of loginResponse.notices)
+    report.reportInfo(MessageName.UNNAMED, notice);
 
   if (nodeUtils.openUrl) {
     report.reportInfo(MessageName.UNNAMED, `Starting the web login process...`);

@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Commands npm login it should fall back to password login when web login init fails 1`] = `
+"{
+  "npmRegistries": {
+    "http://yarn.test.registry": {
+      "npmAuthToken": "9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5"
+    }
+  }
+}"
+`;
+
+exports[`Commands npm login it should fall back to password login when web login init fails 2`] = `
+{
+  "code": 0,
+  "stderr": "",
+  "stdout": "➤ YN0000: Logging in to http://registry.example.org
+
+➤ YN0000: Successfully logged in
+",
+}
+`;
+
 exports[`Commands npm login it should login a user with OTP setup 1`] = `
 "{
   "npmRegistries": {
@@ -86,6 +107,77 @@ exports[`Commands npm login it should login a user with no OTP setup to a specif
 }
 `;
 
+exports[`Commands npm login it should not print anything extra when the web login response has no npm-notice 1`] = `
+"{
+  "npmRegistries": {
+    "http://yarn.test.registry": {
+      "npmAuthToken": "9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5"
+    }
+  }
+}"
+`;
+
+exports[`Commands npm login it should not print anything extra when the web login response has no npm-notice 2`] = `
+{
+  "code": 0,
+  "report": [
+    "➤ YN0000: Starting the web login process...",
+    "➤ YN0000: We failed to automatically open the url; you'll have to open it yourself in your browser of choice:",
+    "➤ YN0000: http://registry.example.org/-/v1/login/browser/1",
+    "➤ YN0000: Successfully logged in",
+  ],
+  "stderr": "",
+}
+`;
+
+exports[`Commands npm login it should print each npm-notice during web login 1`] = `
+"{
+  "npmRegistries": {
+    "http://yarn.test.registry": {
+      "npmAuthToken": "9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5"
+    }
+  }
+}"
+`;
+
+exports[`Commands npm login it should print each npm-notice during web login 2`] = `
+{
+  "code": 0,
+  "report": [
+    "➤ YN0000: First notice, Second notice",
+    "➤ YN0000: Starting the web login process...",
+    "➤ YN0000: We failed to automatically open the url; you'll have to open it yourself in your browser of choice:",
+    "➤ YN0000: http://registry.example.org/-/v1/login/browser/1",
+    "➤ YN0000: Successfully logged in",
+  ],
+  "stderr": "",
+}
+`;
+
+exports[`Commands npm login it should print the npm-notice during web login 1`] = `
+"{
+  "npmRegistries": {
+    "http://yarn.test.registry": {
+      "npmAuthToken": "9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5"
+    }
+  }
+}"
+`;
+
+exports[`Commands npm login it should print the npm-notice during web login 2`] = `
+{
+  "code": 0,
+  "report": [
+    "➤ YN0000: Verification code: 123456. Enter this code in the browser to complete the login.",
+    "➤ YN0000: Starting the web login process...",
+    "➤ YN0000: We failed to automatically open the url; you'll have to open it yourself in your browser of choice:",
+    "➤ YN0000: http://registry.example.org/-/v1/login/browser/1",
+    "➤ YN0000: Successfully logged in",
+  ],
+  "stderr": "",
+}
+`;
+
 exports[`Commands npm login it should print the npm-notice when an OTP is requested 1`] = `
 "{
   "npmRegistries": {
@@ -117,5 +209,29 @@ exports[`Commands npm login it should store npmAlwaysAuth when passed as option 
 
 ➤ YN0000: Successfully logged in
 ",
+}
+`;
+
+exports[`Commands npm login it should strip ANSI sequences and control characters from the npm-notice during web login 1`] = `
+"{
+  "npmRegistries": {
+    "http://yarn.test.registry": {
+      "npmAuthToken": "9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5"
+    }
+  }
+}"
+`;
+
+exports[`Commands npm login it should strip ANSI sequences and control characters from the npm-notice during web login 2`] = `
+{
+  "code": 0,
+  "report": [
+    "➤ YN0000: Verification code: 123456",
+    "➤ YN0000: Starting the web login process...",
+    "➤ YN0000: We failed to automatically open the url; you'll have to open it yourself in your browser of choice:",
+    "➤ YN0000: http://registry.example.org/-/v1/login/browser/1",
+    "➤ YN0000: Successfully logged in",
+  ],
+  "stderr": "",
 }
 `;
