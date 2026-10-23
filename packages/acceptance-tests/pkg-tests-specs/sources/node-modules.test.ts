@@ -1477,6 +1477,49 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should install every file when concurrent installs create the store at the same time in nmMode: hardlinks-global`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          dep: `file:./dep`,
+        },
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmMode: `hardlinks-global`,
+      },
+      async ({path, run}) => {
+        await xfs.mktempPromise(async path2 => {
+          // A different package name keeps the two installs from racing on the same
+          // cache archive, while the identical content still shares a store entry
+          await writeJson(ppath.join(path2, Filename.manifest), {
+            dependencies: {
+              dep2: `file:./dep2`,
+            },
+          });
+          await xfs.writeFilePromise(ppath.join(path2, Filename.rc), `nodeLinker: node-modules\nnmMode: hardlinks-global\n`);
+
+          const content = `The same content`;
+          for (const [projectPath, name] of [[path, `dep`], [path2, `dep2`]] as Array<[PortablePath, string]>) {
+            await writeJson(ppath.resolve(projectPath, `${name}/package.json` as PortablePath), {
+              name,
+              version: `1.0.0`,
+            });
+            await xfs.writeFilePromise(ppath.resolve(projectPath, `${name}/index.js` as PortablePath), content);
+          }
+
+          await Promise.all([
+            run(`install`, {cwd: path}),
+            run(`install`, {cwd: path2}),
+          ]);
+
+          expect(await xfs.readFilePromise(ppath.resolve(path, `node_modules/dep/index.js` as PortablePath), `utf8`)).toEqual(content);
+          expect(await xfs.readFilePromise(ppath.resolve(path2, `node_modules/dep2/index.js` as PortablePath), `utf8`)).toEqual(content);
+        });
+      },
+    ),
+  );
+
   test(`should recover from changes to the store on next install in nmMode: hardlinks-global, when system clock is changed by the user`,
     makeTemporaryEnv(
       {

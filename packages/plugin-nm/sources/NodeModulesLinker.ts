@@ -1352,10 +1352,12 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     // crawl the zip archives for each package).
     const globalHardlinksStore = nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL ? `${getGlobalHardlinksStore(project.configuration)}/v1` as PortablePath : null;
     if (globalHardlinksStore) {
-      if (!await xfs.existsPromise(globalHardlinksStore)) {
+      // The subdirectories are created in order, so until the last one exists another
+      // install may still be creating them, and we create any missing ones ourselves
+      if (!await xfs.existsPromise(ppath.join(globalHardlinksStore, `ff` as Filename))) {
         await xfs.mkdirpPromise(globalHardlinksStore);
         for (let idx = 0; idx < 256; idx++) {
-          await xfs.mkdirPromise(ppath.join(globalHardlinksStore, idx.toString(16).padStart(2, `0`) as Filename));
+          await xfs.mkdirPromise(ppath.join(globalHardlinksStore, idx.toString(16).padStart(2, `0`) as Filename), {recursive: true});
         }
       }
     }
