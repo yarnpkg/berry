@@ -745,58 +745,37 @@ async function atomicFileWrite(tmpDir: PortablePath, dstPath: PortablePath, cont
   }
 }
 
-async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, baseFs, nmMode}: {srcPath: PortablePath, dstPath: PortablePath, entry: DirEntry, globalHardlinksStore: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: {value: NodeModulesMode}}) {
+// NTFS allows at most 1023 hard links per file (1024 names in total)
+const NTFS_MAX_LINK_COUNT = 1024;
+
+const getStoreContentFilePath = (globalHardlinksStore: PortablePath, digest: string, slot: number) => {
+  const suffix = slot === 0 ? `.dat` : `.${slot}.dat`;
+  return ppath.join(globalHardlinksStore, digest.substring(0, 2) as Filename, `${digest.substring(2)}${suffix}` as Filename);
+};
+
+const isLinkLimitError = async (e: any, contentFilePath: PortablePath) => {
+  if (e && e.code === `EMLINK`)
+    return true;
+
+  // libuv has no mapping for ERROR_TOO_MANY_LINKS, so Windows reports it as UNKNOWN
+  if (process.platform === `win32` && e && e.code === `UNKNOWN` && e.syscall === `link`) {
+    try {
+      return (await xfs.statPromise(contentFilePath)).nlink >= NTFS_MAX_LINK_COUNT;
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+};
+
+async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, baseFs, nmMode, storeSlots}: {srcPath: PortablePath, dstPath: PortablePath, entry: DirEntry, globalHardlinksStore: PortablePath | null, baseFs: FakeFS<PortablePath>, nmMode: {value: NodeModulesMode}, storeSlots: Map<string, number>}) {
   if (entry.kind === DirEntryKind.FILE) {
     if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && globalHardlinksStore && entry.digest) {
-      const contentFilePath = ppath.join(globalHardlinksStore, entry.digest.substring(0, 2) as Filename, `${entry.digest.substring(2)}.dat` as Filename);
-
-      let doesContentFileExist;
-      try {
-        const stats = await xfs.statPromise(contentFilePath);
-
-        if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
-          const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
-          if (contentDigest !== entry.digest) {
-            // If file content was modified by the user, or corrupted, we first move it out of the way
-            const tmpPath = ppath.join(globalHardlinksStore, `${crypto.randomBytes(16).toString(`hex`)}.tmp`);
-            await xfs.renamePromise(contentFilePath, tmpPath);
-
-            // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
-            const content = await baseFs.readFilePromise(srcPath);
-            await xfs.writeFilePromise(tmpPath, content);
-
-            try {
-            // Then we try to move content file back on its place, if its still free
-            // If we fail here, it means that some other process or thread has created content file
-            // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
-              await xfs.linkPromise(tmpPath, contentFilePath);
-              entry.mtimeMs = new Date().getTime();
-              await xfs.unlinkPromise(tmpPath);
-            } catch {
-            }
-          } else if (!entry.mtimeMs) {
-            entry.mtimeMs = Math.ceil(stats.mtimeMs);
-          }
-        }
-
-        await xfs.linkPromise(contentFilePath, dstPath);
-        doesContentFileExist = true;
-      } catch {
-        doesContentFileExist = false;
-      }
-
-      if (!doesContentFileExist) {
-        const content = await baseFs.readFilePromise(srcPath);
-        await atomicFileWrite(globalHardlinksStore, contentFilePath, content);
-        entry.mtimeMs = new Date().getTime();
-        try {
-          await xfs.linkPromise(contentFilePath, dstPath);
-        } catch (e) {
-          if (e && e.code && e.code == `EXDEV`) {
-            nmMode.value = NodeModulesMode.HARDLINKS_LOCAL;
-            await baseFs.copyFilePromise(srcPath, dstPath);
-          }
-        }
+      let slot = storeSlots.get(entry.digest) ?? 0;
+      while (!await linkFromStoreSlot({srcPath, dstPath, entry, digest: entry.digest, globalHardlinksStore, baseFs, nmMode, slot})) {
+        slot += 1;
+        storeSlots.set(entry.digest, slot);
       }
     } else {
       await baseFs.copyFilePromise(srcPath, dstPath);
@@ -807,6 +786,71 @@ async function copyFilePromise({srcPath, dstPath, entry, globalHardlinksStore, b
       await xfs.chmodPromise(dstPath, mode);
     }
   }
+}
+
+/**
+ * Returns false when the store entry for this slot cannot take another hard link
+ */
+async function linkFromStoreSlot({srcPath, dstPath, entry, digest, globalHardlinksStore, baseFs, nmMode, slot}: {srcPath: PortablePath, dstPath: PortablePath, entry: DirEntry & {kind: DirEntryKind.FILE}, digest: string, globalHardlinksStore: PortablePath, baseFs: FakeFS<PortablePath>, nmMode: {value: NodeModulesMode}, slot: number}) {
+  const contentFilePath = getStoreContentFilePath(globalHardlinksStore, digest, slot);
+
+  let doesContentFileExist;
+  try {
+    const stats = await xfs.statPromise(contentFilePath);
+
+    if (process.platform === `win32` && stats.nlink >= NTFS_MAX_LINK_COUNT)
+      return false;
+
+    if (stats && (!entry.mtimeMs || stats.mtimeMs > entry.mtimeMs || stats.mtimeMs < entry.mtimeMs - MTIME_ACCURANCY)) {
+      const contentDigest = await hashUtils.checksumFile(contentFilePath, {baseFs: xfs, algorithm: `sha1`});
+      if (contentDigest !== digest) {
+        // If file content was modified by the user, or corrupted, we first move it out of the way
+        const tmpPath = ppath.join(globalHardlinksStore, `${crypto.randomBytes(16).toString(`hex`)}.tmp`);
+        await xfs.renamePromise(contentFilePath, tmpPath);
+
+        // Then we overwrite the temporary file, thus restorting content of original file in all the linked projects
+        const content = await baseFs.readFilePromise(srcPath);
+        await xfs.writeFilePromise(tmpPath, content);
+
+        try {
+        // Then we try to move content file back on its place, if its still free
+        // If we fail here, it means that some other process or thread has created content file
+        // And this is okay, we will end up with two content files, but both with original content, unlucky files will have `.tmp` extension
+          await xfs.linkPromise(tmpPath, contentFilePath);
+          entry.mtimeMs = new Date().getTime();
+          await xfs.unlinkPromise(tmpPath);
+        } catch {
+        }
+      } else if (!entry.mtimeMs) {
+        entry.mtimeMs = Math.ceil(stats.mtimeMs);
+      }
+    }
+
+    await xfs.linkPromise(contentFilePath, dstPath);
+    doesContentFileExist = true;
+  } catch {
+    doesContentFileExist = false;
+  }
+
+  if (!doesContentFileExist) {
+    const content = await baseFs.readFilePromise(srcPath);
+    await atomicFileWrite(globalHardlinksStore, contentFilePath, content);
+    try {
+      await xfs.linkPromise(contentFilePath, dstPath);
+    } catch (e) {
+      if (e && e.code && e.code == `EXDEV`) {
+        nmMode.value = NodeModulesMode.HARDLINKS_LOCAL;
+        await baseFs.copyFilePromise(srcPath, dstPath);
+      } else if (await isLinkLimitError(e, contentFilePath)) {
+        return false;
+      } else {
+        throw e;
+      }
+    }
+    entry.mtimeMs = new Date().getTime();
+  }
+
+  return true;
 }
 
 enum DirEntryKind {
@@ -825,7 +869,7 @@ type DirEntry = {
   symlinkTo: PortablePath;
 };
 
-const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, windowsLinkType: windowsLinkType, packageChecksum}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, windowsLinkType: WindowsLinkType, packageChecksum: string | null}) => {
+const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, globalHardlinksStore, nmMode, windowsLinkType: windowsLinkType, packageChecksum, storeSlots}: {baseFs: FakeFS<PortablePath>, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode}, windowsLinkType: WindowsLinkType, packageChecksum: string | null, storeSlots: Map<string, number>}) => {
   await xfs.mkdirPromise(dstDir, {recursive: true});
 
   const getEntriesRecursive = async (relativePath: PortablePath = PortablePath.dot): Promise<Map<PortablePath, DirEntry>> => {
@@ -883,7 +927,7 @@ const copyPromise = async (dstDir: PortablePath, srcDir: PortablePath, {baseFs, 
       await xfs.mkdirPromise(dstPath, {recursive: true});
     } else if (entry.kind === DirEntryKind.FILE) {
       const originalMtime = entry.mtimeMs;
-      await copyFilePromise({srcPath, dstPath, entry, nmMode, baseFs, globalHardlinksStore});
+      await copyFilePromise({srcPath, dstPath, entry, nmMode, baseFs, globalHardlinksStore, storeSlots});
       if (entry.mtimeMs !== originalMtime) {
         mtimesChanged = true;
       }
@@ -1125,6 +1169,8 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
   const locationTree = buildLocationTree(installState, {skipPrefix: project.cwd});
 
   const addQueue: Array<Promise<void>> = [];
+  // Current store overflow slot for each content digest, see copyFilePromise
+  const storeSlots = new Map<string, number>();
   const addModule = async ({srcDir, dstDir, linkType, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum}: {srcDir: PortablePath, dstDir: PortablePath, linkType: LinkType, globalHardlinksStore: PortablePath | null, nmMode: {value: NodeModulesMode},  windowsLinkType: WindowsLinkType, packageChecksum: string | null}) => {
     const promise: Promise<any> = (async () => {
       try {
@@ -1132,7 +1178,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
           await xfs.mkdirPromise(ppath.dirname(dstDir), {recursive: true});
           await symlinkPromise(ppath.resolve(srcDir), dstDir, windowsLinkType);
         } else {
-          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum});
+          await copyPromise(dstDir, srcDir, {baseFs, globalHardlinksStore, nmMode, windowsLinkType, packageChecksum, storeSlots});
         }
       } catch (e) {
         e.message = `While persisting ${srcDir} -> ${dstDir} ${e.message}`;
@@ -1147,9 +1193,9 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     }
   };
 
-  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options: {nmMode: {value: NodeModulesMode}, innerLoop?: boolean}) => {
+  const cloneModule = async (srcDir: PortablePath, dstDir: PortablePath, options: {nmMode: {value: NodeModulesMode}, globalHardlinksStore?: PortablePath | null, innerLoop?: boolean}) => {
     const promise: Promise<any> = (async () => {
-      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options: {nmMode: {value: NodeModulesMode}, innerLoop?: boolean}) => {
+      const cloneDir = async (srcDir: PortablePath, dstDir: PortablePath, options: {nmMode: {value: NodeModulesMode}, globalHardlinksStore?: PortablePath | null, innerLoop?: boolean}) => {
         try {
           if (!options.innerLoop)
             await xfs.mkdirPromise(dstDir, {recursive: true});
@@ -1169,7 +1215,19 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
               }
             } else {
               if (nmMode.value === NodeModulesMode.HARDLINKS_LOCAL || nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL) {
-                await xfs.linkPromise(src, dst);
+                try {
+                  await xfs.linkPromise(src, dst);
+                } catch (e) {
+                  // In hardlinks-global mode the first copy shares its inode with a store entry,
+                  // so once that entry is full we link from the next store entry for the same content
+                  if (nmMode.value === NodeModulesMode.HARDLINKS_GLOBAL && options.globalHardlinksStore && await isLinkLimitError(e, src)) {
+                    const {mode} = await xfs.statPromise(src);
+                    const digest = await hashUtils.checksumFile(src, {baseFs: xfs, algorithm: `sha1`});
+                    await copyFilePromise({srcPath: src, dstPath: dst, entry: {kind: DirEntryKind.FILE, mode, digest}, globalHardlinksStore: options.globalHardlinksStore, baseFs: xfs, nmMode, storeSlots});
+                  } else {
+                    throw e;
+                  }
+                }
               } else {
                 await xfs.copyFilePromise(src, dst, fs.constants.COPYFILE_FICLONE);
               }
@@ -1373,7 +1431,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     for (const entry of addList) {
       const persistedDir = persistedLocations.get(entry.srcDir)!;
       if (entry.linkType !== LinkType.SOFT && entry.dstDir !== persistedDir) {
-        await cloneModule(persistedDir, entry.dstDir, {nmMode});
+        await cloneModule(persistedDir, entry.dstDir, {nmMode, globalHardlinksStore});
       }
     }
 
