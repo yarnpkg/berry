@@ -309,6 +309,12 @@ export abstract class FakeFS<P extends Path> {
   abstract ftruncatePromise(fd: number, len?: number): Promise<void>;
   abstract ftruncateSync(fd: number, len?: number): void;
 
+  abstract fsyncPromise(fd: number): Promise<void>;
+  abstract fsyncSync(fd: number): void;
+
+  abstract fdatasyncPromise(fd: number): Promise<void>;
+  abstract fdatasyncSync(fd: number): void;
+
   abstract truncatePromise(p: P, len?: number): Promise<void>;
   abstract truncateSync(p: P, len?: number): void;
 

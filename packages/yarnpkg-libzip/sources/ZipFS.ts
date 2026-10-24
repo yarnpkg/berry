@@ -1481,6 +1481,24 @@ export class ZipFS extends BasePortableFakeFS {
     return this.truncateSync(this.fdToPath(fd, `ftruncateSync`), len);
   }
 
+  async fsyncPromise(fd: number): Promise<void> {
+    return this.fsyncSync(fd);
+  }
+
+  fsyncSync(fd: number): void {
+    this.fdToPath(fd, `fsyncSync`);
+    throw new Error(`Unimplemented`);
+  }
+
+  async fdatasyncPromise(fd: number): Promise<void> {
+    return this.fdatasyncSync(fd);
+  }
+
+  fdatasyncSync(fd: number): void {
+    this.fdToPath(fd, `fdatasyncSync`);
+    throw new Error(`Unimplemented`);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {

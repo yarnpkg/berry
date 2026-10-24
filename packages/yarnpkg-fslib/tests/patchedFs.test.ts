@@ -334,6 +334,49 @@ describe(`patchedFs`, () => {
     });
   });
 
+  it(`should support fsyncSync and fdatasyncSync`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const p = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      patchedFs.writeFileSync(p, `foo`);
+
+      const fd = patchedFs.openSync(p, `r+`);
+      patchedFs.fsyncSync(fd);
+      patchedFs.fdatasyncSync(fd);
+      patchedFs.closeSync(fd);
+
+      expect(patchedFs.readFileSync(p, `utf8`)).toEqual(`foo`);
+    });
+  });
+
+  it(`should support fsync and fdatasync`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const p = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      patchedFs.writeFileSync(p, `foo`);
+
+      const fd = patchedFs.openSync(p, `r+`);
+
+      await new Promise<void>((resolve, reject) => {
+        patchedFs.fsync(fd, err => {
+          err ? reject(err) : resolve();
+        });
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        patchedFs.fdatasync(fd, err => {
+          err ? reject(err) : resolve();
+        });
+      });
+
+      patchedFs.closeSync(fd);
+
+      expect(patchedFs.readFileSync(p, `utf8`)).toEqual(`foo`);
+    });
+  });
+
   it(`should support FileHandle.stat`, async () => {
     const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
 
@@ -722,6 +765,22 @@ describe(`patchedFs`, () => {
       await fd.chmod(0o744);
       expect((await fd.stat()).mode & 0o777).toBe(0o744);
       await fd.close();
+    });
+  });
+
+  it(`should support FileHandle.sync and FileHandle.datasync`, async () => {
+    const patchedFs = extendFs(fs, new PosixFS(new NodeFS()));
+
+    await xfs.mktempPromise(async dir => {
+      const filepath = npath.join(npath.fromPortablePath(dir), `foo.txt`);
+      await patchedFs.promises.writeFile(filepath, `foo`);
+
+      const fd = await patchedFs.promises.open(filepath, `r+`);
+      await fd.sync();
+      await fd.datasync();
+      await fd.close();
+
+      await expect(patchedFs.promises.readFile(filepath, `utf8`)).resolves.toEqual(`foo`);
     });
   });
 });
