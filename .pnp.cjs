@@ -10275,6 +10275,7 @@ const RAW_RUNTIME_STATE =
           ["fast-glob", "npm:3.3.2"],\
           ["got", "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch::version=11.8.2&hash=15933f"],\
           ["hpagent", "npm:1.2.0"],\
+          ["http-proxy-agent", "npm:7.0.2"],\
           ["micromatch", "npm:4.0.5"],\
           ["p-limit", "npm:2.2.0"],\
           ["rollup", "npm:2.59.0"],\

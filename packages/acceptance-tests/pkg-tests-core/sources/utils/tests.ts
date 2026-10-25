@@ -16,6 +16,7 @@ import semver                                      from 'semver';
 import serveStatic                                 from 'serve-static';
 import * as sigstore                               from 'sigstore';
 import stream                                      from 'stream';
+import {createSecureContext}                       from 'tls';
 import * as t                                      from 'typanion';
 import {promisify}                                 from 'util';
 import {v5 as uuidv5}                              from 'uuid';
@@ -1019,14 +1020,12 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
   });
 };
 
-const proxyServerUrls: {
-  http: Promise<string> | null;
-  https: Promise<string> | null;
-} = {http: null, https: null};
+const proxyServerUrls = new Map<string, Promise<string>>();
 
-export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServerUrls} = {}): Promise<string> => {
-  const serverUrl = proxyServerUrls[type];
-  if (serverUrl !== null)
+export const startProxyServer = ({type = `http`, allowConnect = true, requireSni = false}: {type?: `http` | `https`, allowConnect?: boolean, requireSni?: boolean} = {}): Promise<string> => {
+  const key = `${type}/${allowConnect}/${requireSni}`;
+  const serverUrl = proxyServerUrls.get(key);
+  if (typeof serverUrl !== `undefined`)
     return serverUrl;
 
   const sendError = (res: ServerResponse, statusCode: number, errorMessage: string): void => {
@@ -1034,7 +1033,7 @@ export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServ
     res.end(errorMessage);
   };
 
-  return proxyServerUrls[type] = new Promise((resolve, reject) => {
+  const promise = new Promise<string>((resolve, reject) => {
     const listener: http.RequestListener = (req, res) => {
       void (async () => {
         try {
@@ -1078,10 +1077,22 @@ export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServ
       if (type === `https`) {
         const certs = await getHttpsCertificates();
 
-        server = https.createServer({
+        const contextOptions = {
           cert: certs.server.certificate,
           key: certs.server.clientKey,
+        };
+
+        server = https.createServer({
+          ...!requireSni && contextOptions,
           ca: certs.ca.certificate,
+          SNICallback: requireSni ? (servername, callback) => {
+            if (servername !== `localhost`) {
+              callback(new Error(`Unexpected proxy servername: ${servername}`));
+              return;
+            }
+
+            callback(null, createSecureContext(contextOptions));
+          } : undefined,
         }, listener);
       } else {
         server = http.createServer(listener);
@@ -1089,6 +1100,11 @@ export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServ
 
       // Handle the CONNECT method using the 'connect' event
       server.on(`connect`, (req, clientSocket, head) => {
+        if (!allowConnect) {
+          clientSocket.end(`HTTP/1.1 501 Not Implemented\r\nContent-Length: 0\r\nConnection: close\r\n\r\n`);
+          return;
+        }
+
         // Parse the target and establish the connection
         const [targetHost, targetPort] = (req.url || ``).split(`:`);
         const port = parseInt(targetPort) || 443;
@@ -1121,6 +1137,9 @@ export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServ
       });
     })();
   });
+
+  proxyServerUrls.set(key, promise);
+  return promise;
 };
 
 export interface PackageDriver {

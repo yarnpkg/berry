@@ -5,6 +5,44 @@ const {writeFile} = fs;
 const {startPackageServer, startProxyServer, getHttpsCertificates, validLogins} = tests;
 
 describe(`Proxy tests`, () => {
+  for (const type of [`http`, `https`] as const) {
+    test(
+      `it should install packages from an HTTP server through a forward-only ${type.toUpperCase()} proxy`,
+      makeTemporaryEnv(
+        {
+          dependencies: {[`@private/package`]: `1.0.0`},
+        },
+        async ({path, run, source}) => {
+          const url = await startPackageServer();
+          const proxyUrl = await startProxyServer({type, allowConnect: false, requireSni: type === `https`});
+          const configuration = [
+            `httpProxy: "${proxyUrl}"`,
+            `httpRetry: 0`,
+            `npmScopes:`,
+            `  private:`,
+            `    npmRegistryServer: "${url}"`,
+            `    npmAuthToken: ${validLogins.fooUser.npmAuthToken}`,
+          ];
+
+          if (type === `https`) {
+            const certs = await getHttpsCertificates();
+            const caPath = ppath.join(path, `rootCA.crt`);
+            await writeFile(caPath, certs.ca.certificate);
+            configuration.push(`httpsCaFilePath: ${caPath}`);
+          }
+
+          await writeFile(ppath.join(path, `.yarnrc.yml`), configuration.join(`\n`));
+          await run(`install`);
+
+          await expect(source(`require('@private/package')`)).resolves.toMatchObject({
+            name: `@private/package`,
+            version: `1.0.0`,
+          });
+        },
+      ),
+    );
+  }
+
   test(
     `it should install packages from an HTTP server through an HTTP proxy`,
     makeTemporaryEnv(
