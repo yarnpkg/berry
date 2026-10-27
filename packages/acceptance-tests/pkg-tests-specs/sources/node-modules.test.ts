@@ -1063,6 +1063,41 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should find binaries for virtual aliases merged across workspace locations`,
+    makeTemporaryEnv(
+      {
+        private: true,
+        workspaces: [`packages/*`],
+      },
+      {
+        nodeLinker: `node-modules`,
+        nmHoistingLimits: `workspaces`,
+      },
+      async ({path, run}) => {
+        await writeJson(ppath.join(path, `wrapper/package.json`), {
+          name: `wrapper`,
+          version: `1.0.0`,
+          dependencies: {[`has-bin-peer-deps`]: `1.0.0`},
+        });
+        await writeJson(ppath.join(path, `packages/lib/package.json`), {
+          name: `lib`,
+          dependencies: {wrapper: `file:../../wrapper`},
+        });
+        await writeJson(ppath.join(path, `packages/webapp/package.json`), {
+          name: `webapp`,
+          dependencies: {[`has-bin-peer-deps`]: `1.0.0`, wrapper: `file:../../wrapper`, [`no-deps`]: `1.0.0`},
+        });
+
+        await run(`install`);
+
+        await expect(run(`workspace`, `webapp`, `run`, `has-bin-peer-deps`)).resolves.toMatchObject({stdout: `tool\n`});
+        await expect(run(`workspace`, `webapp`, `bin`, `has-bin-peer-deps`)).resolves.toMatchObject({
+          stdout: `${npath.fromPortablePath(ppath.join(path, `packages/webapp/node_modules/has-bin-peer-deps/bin.js`))}\n`,
+        });
+      },
+    ),
+  );
+
   test(`should allow running binaries unrelated to incompatible package`,
     makeTemporaryEnv(
       {
