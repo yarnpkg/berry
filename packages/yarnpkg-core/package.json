@@ -29,6 +29,7 @@
     "fast-glob": "^3.2.2",
     "got": "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch",
     "hpagent": "^1.2.0",
+    "http-proxy-agent": "^7.0.0",
     "micromatch": "^4.0.2",
     "p-limit": "^2.2.0",
     "semver": "^7.8.5",
