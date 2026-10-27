@@ -5,7 +5,7 @@ import {LocatorHash, Descriptor, DependencyMeta, Configuration}             from
 import {MessageName, Project, FetchResult, Installer}                       from '@yarnpkg/core';
 import {PortablePath, npath, ppath, Filename}                               from '@yarnpkg/fslib';
 import {VirtualFS, xfs, FakeFS, NativePath}                                 from '@yarnpkg/fslib';
-import {ZipOpenFS}                                                          from '@yarnpkg/libzip';
+import {JsZipImpl, ZipOpenFS}                                               from '@yarnpkg/libzip';
 import {buildNodeModulesTree, buildPackageMap}                              from '@yarnpkg/nm';
 import {NodeModulesLocatorMap, buildLocatorMap, NodeModulesHoistingLimits}  from '@yarnpkg/nm';
 import {parseSyml}                                                          from '@yarnpkg/parsers';
@@ -244,6 +244,7 @@ class NodeModulesInstaller implements Installer {
       baseFs: new ZipOpenFS({
         maxOpenFiles: 80,
         readOnlyArchives: true,
+        customZipImplementation: this.opts.project.configuration.get(`cacheZipBackend`) === `js` ? JsZipImpl : undefined,
       }),
     });
 

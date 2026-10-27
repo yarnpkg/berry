@@ -1028,4 +1028,20 @@ describe(`Configuration`, () => {
       }
     });
   });
+
+  describe(`cacheZipBackend`, () => {
+    it(`should default to the libzip (WASM) reader, preserving current behavior`, async () => {
+      await initializeConfiguration({}, async dir => {
+        const configuration = await Configuration.find(dir, null);
+        expect(configuration.get(`cacheZipBackend`)).toBe(`libzip`);
+      });
+    });
+
+    it(`should accept the opt-in js reader`, async () => {
+      await initializeConfiguration({cacheZipBackend: `js`}, async dir => {
+        const configuration = await Configuration.find(dir, null);
+        expect(configuration.get(`cacheZipBackend`)).toBe(`js`);
+      });
+    });
+  });
 });

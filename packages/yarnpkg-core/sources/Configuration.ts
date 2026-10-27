@@ -295,6 +295,12 @@ export const coreDefinitions: {[coreSettingName: string]: SettingsDefinition} = 
     values: [`always`, `match-spec`, `required-only`],
     default: `always`,
   },
+  cacheZipBackend: {
+    description: `Which reader to use when opening cache archives during installs: "libzip" (default, WASM-based) or "js" (pure-JS, avoids the WASM memory limit that can crash installs of large packages).`,
+    type: SettingsType.STRING,
+    values: [`libzip`, `js`],
+    default: `libzip`,
+  },
 
   // Settings related to the output style
   enableColors: {
@@ -670,6 +676,7 @@ export interface ConfigurationValueMap {
   rcFilename: Filename;
   enableGlobalCache: boolean;
   cacheMigrationMode: `always` | `match-spec` | `required-only`;
+  cacheZipBackend: `libzip` | `js`;
 
   enableColors: boolean;
   enableHyperlinks: boolean;

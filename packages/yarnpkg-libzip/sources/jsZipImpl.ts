@@ -1,4 +1,4 @@
-import {FakeFS, PortablePath, constants}                                       from '@yarnpkg/fslib';
+import {PortablePath, constants}                                               from '@yarnpkg/fslib';
 
 import {Stat, ZIP_UNIX, type CompressionData, type ZipImpl, type ZipImplInput} from './ZipFS';
 
@@ -23,60 +23,59 @@ export interface Entry {
 }
 
 export class JsZipImpl implements ZipImpl {
-  private fd: number | `closed`;
-  private baseFs: FakeFS<PortablePath>;
+  private data: Buffer;
   private entries: Array<Entry>;
   public filesShouldBeCached = false;
 
   constructor(opts: ZipImplInput) {
-    if (`buffer` in opts)
-      throw new Error(`Buffer based zip archives are not supported`);
-
     if (!opts.readOnly)
       throw new Error(`Writable zip archives are not supported`);
 
-    this.baseFs = opts.baseFs;
-    this.fd = this.baseFs.openSync(opts.path, `r`);
+    // The whole archive is read into a single buffer up front and all entries
+    // are served as slices of it. This matches the libzip reader's I/O pattern
+    // (one read per archive instead of a syscall per file) while keeping the
+    // data in the Node heap rather than the fixed-size libzip WASM heap.
+    if (`buffer` in opts) {
+      this.data = Buffer.isBuffer(opts.buffer) ? opts.buffer : Buffer.from(opts.buffer as any);
+    } else {
+      const fd = opts.baseFs.openSync(opts.path, `r`);
+      try {
+        const data = Buffer.allocUnsafe(opts.size);
+        let read = 0;
+        while (read < opts.size) {
+          const bytes = opts.baseFs.readSync(fd, data, read, opts.size - read, read);
+          if (bytes === 0)
+            break;
+          read += bytes;
+        }
+        if (read !== opts.size)
+          throw new Error(`Incomplete read`);
 
-    try {
-      this.entries = JsZipImpl.readZipSync(this.fd, this.baseFs, opts.size);
-    } catch (error) {
-      this.baseFs.closeSync(this.fd);
-      this.fd = `closed`;
-      throw error;
+        this.data = data;
+      } finally {
+        opts.baseFs.closeSync(fd);
+      }
     }
+
+    this.entries = JsZipImpl.readZipSync(this.data);
   }
 
-  static readZipSync(fd: number, baseFs: FakeFS<PortablePath>, fileSize: number): Array<Entry> {
+  static readZipSync(data: Buffer): Array<Entry> {
+    const fileSize = data.length;
+
     if (fileSize < noCommentCDSize)
       throw new Error(`Invalid ZIP file: EOCD not found`);
 
     let eocdOffset = -1;
 
     // fast read if no comment
-    let eocdBuffer = Buffer.alloc(noCommentCDSize);
-    baseFs.readSync(
-      fd,
-      eocdBuffer,
-      0,
-      noCommentCDSize,
-      fileSize - noCommentCDSize,
-    );
+    let eocdBuffer = data.subarray(fileSize - noCommentCDSize);
 
     if (eocdBuffer.readUInt32LE(0) === SIGNATURE.END_OF_CENTRAL_DIRECTORY) {
       eocdOffset = 0;
     } else {
       const bufferSize = Math.min(65557, fileSize);
-      eocdBuffer = Buffer.alloc(bufferSize);
-
-      // Read potential EOCD area
-      baseFs.readSync(
-        fd,
-        eocdBuffer,
-        0,
-        bufferSize,
-        Math.max(0, fileSize - bufferSize),
-      );
+      eocdBuffer = data.subarray(fileSize - bufferSize);
 
       // Find EOCD signature
       for (let i = eocdBuffer.length - 4; i >= 0; i--) {
@@ -113,9 +112,10 @@ export class JsZipImpl implements ZipImpl {
       throw new Error(`Zip archive inconsistent`);
 
     // Read central directory
-    const cdBuffer = Buffer.alloc(centralDirSize);
-    if (baseFs.readSync(fd, cdBuffer, 0, cdBuffer.length, centralDirOffset) !== cdBuffer.length)
+    if (centralDirOffset + centralDirSize > fileSize)
       throw new Error(`Zip archive inconsistent`);
+
+    const cdBuffer = data.subarray(centralDirOffset, centralDirOffset + centralDirSize);
 
     const entries: Array<Entry> = [];
 
@@ -221,36 +221,26 @@ export class JsZipImpl implements ZipImpl {
   }
 
   getFileSource(index: number) {
-    if (this.fd === `closed`)
-      throw new Error(`ZIP file is closed`);
-
     const entry = this.entries[index];
-    const localHeaderBuf = Buffer.alloc(30);
 
-    this.baseFs.readSync(
-      this.fd,
-      localHeaderBuf,
-      0,
-      localHeaderBuf.length,
-      entry.localHeaderOffset,
-    );
-
-    const nameLength = localHeaderBuf.readUInt16LE(26);
-    // const flags = localHeaderBuf.readUInt16LE(6);
-    const extraLength = localHeaderBuf.readUInt16LE(28);
-
-    const buffer = Buffer.alloc(entry.compressedSize);
-    if (this.baseFs.readSync(this.fd, buffer, 0, entry.compressedSize, entry.localHeaderOffset + 30 + nameLength + extraLength) !== entry.compressedSize)
+    const localHeaderOffset = entry.localHeaderOffset;
+    if (localHeaderOffset + 30 > this.data.length)
       throw new Error(`Invalid ZIP file`);
 
-    return {data: buffer, compressionMethod: entry.compressionMethod};
+    const nameLength = this.data.readUInt16LE(localHeaderOffset + 26);
+    const extraLength = this.data.readUInt16LE(localHeaderOffset + 28);
+
+    const start = localHeaderOffset + 30 + nameLength + extraLength;
+    const end = start + entry.compressedSize;
+    if (end > this.data.length)
+      throw new Error(`Invalid ZIP file`);
+
+    return {data: this.data.subarray(start, end), compressionMethod: entry.compressionMethod};
   }
 
   discard(): void {
-    if (this.fd !== `closed`) {
-      this.baseFs.closeSync(this.fd);
-      this.fd = `closed`;
-    }
+    this.data = Buffer.alloc(0);
+    this.entries = [];
   }
 
   addDirectory(path: string): number {
