@@ -1,0 +1,13 @@
+{
+  "name": "has-bin-peer-deps",
+  "version": "1.0.0",
+  "bin": "./bin.js",
+  "peerDependencies": {
+    "no-deps": "*"
+  },
+  "peerDependenciesMeta": {
+    "no-deps": {
+      "optional": true
+    }
+  }
+}
