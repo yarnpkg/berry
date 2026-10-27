@@ -20,6 +20,11 @@
   },
   "activationEvents": [
     "workspaceContains:**/*.zip",
+    "workspaceContains:**/*.jar",
+    "workspaceContains:**/*.war",
+    "workspaceContains:**/*.apk",
+    "workspaceContains:**/*.ipa",
+    "workspaceContains:**/*.crx",
     "onLanguage:zip",
     "onFileSystem:zip",
     "onCommand:zipfs.mountZipFile",
@@ -37,7 +42,12 @@
           "ZIP"
         ],
         "extensions": [
-          ".zip"
+          ".zip",
+          ".jar",
+          ".war",
+          ".apk",
+          ".ipa",
+          ".crx"
         ]
       }
     ],
