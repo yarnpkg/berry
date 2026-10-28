@@ -804,6 +804,15 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   readFilePromise(p: FSPath<PortablePath>, encoding: BufferEncoding): Promise<string>;
   readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): Promise<NonSharedBuffer | string>;
   async readFilePromise(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
+    if (typeof p === `number` && (p & MOUNT_MASK) === this.magic) {
+      const entry = this.fdMap.get(p);
+      if (typeof entry === `undefined`)
+        throw errors.EBADF(`read`);
+
+      const [mountFs, realFd] = entry;
+      return await mountFs.readFilePromise(realFd, encoding);
+    }
+
     return this.makeCallPromise(p, async () => {
       return await this.baseFs.readFilePromise(p, encoding);
     }, async (mountFs, {subPath}) => {
@@ -815,6 +824,15 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   readFileSync(p: FSPath<PortablePath>, encoding: BufferEncoding): string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null): NonSharedBuffer | string;
   readFileSync(p: FSPath<PortablePath>, encoding?: BufferEncoding | null) {
+    if (typeof p === `number` && (p & MOUNT_MASK) === this.magic) {
+      const entry = this.fdMap.get(p);
+      if (typeof entry === `undefined`)
+        throw errors.EBADF(`read`);
+
+      const [mountFs, realFd] = entry;
+      return mountFs.readFileSync(realFd, encoding);
+    }
+
     return this.makeCallSync(p, () => {
       return this.baseFs.readFileSync(p, encoding);
     }, (mountFs, {subPath}) => {
