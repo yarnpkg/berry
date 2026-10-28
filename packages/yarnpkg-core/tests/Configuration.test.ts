@@ -53,6 +53,29 @@ describe(`TAG_REGEXP`, () => {
 });
 
 describe(`Configuration`, () => {
+  it(`should merge npmRegistries entries whose keys differ only by a trailing slash`, async () => {
+    await initializeConfiguration({
+      npmRegistries: {
+        [`https://example.org/repository/npm-all`]: {
+          npmAuthToken: `token-without-slash`,
+        },
+        [`https://example.org/repository/npm-all/`]: {
+          npmAlwaysAuth: true,
+        },
+      },
+    }, async dir => {
+      const configuration = await Configuration.find(dir, {
+        modules: new Map([[`@yarnpkg/plugin-npm`, NpmPlugin]]),
+        plugins: new Set([`@yarnpkg/plugin-npm`]),
+      });
+
+      const entry = configuration.get(`npmRegistries`).get(`https://example.org/repository/npm-all`);
+
+      expect(entry?.get(`npmAuthToken`)).toEqual(`token-without-slash`);
+      expect(entry?.get(`npmAlwaysAuth`)).toEqual(true);
+    });
+  });
+
   it(`should hide secrets`, async () => {
     await initializeConfiguration({
       npmAuthToken: `my-token`,
