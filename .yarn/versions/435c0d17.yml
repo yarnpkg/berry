@@ -1,0 +1,5 @@
+releases:
+  "@yarnpkg/plugin-interactive-tools": patch
+
+declined:
+  - "@yarnpkg/cli"
