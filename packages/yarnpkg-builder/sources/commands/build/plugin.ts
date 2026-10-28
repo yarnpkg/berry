@@ -6,6 +6,7 @@ import path                                                                 from
 import semver                                                               from 'semver';
 
 import pkg                                                                  from '../../../package.json';
+import {getExternalDependencies}                                            from '../../tools/getExternalDependencies';
 import {isDynamicLib}                                                       from '../../tools/isDynamicLib';
 
 const matchAll = /()/;
@@ -56,6 +57,14 @@ export default class BuildPluginCommand extends Command {
 
   metafile = Option.Boolean(`--metafile`, false, {
     description: `Emit a metafile next to the bundle`,
+  });
+
+  external = Option.Array(`--external`, [], {
+    description: `Dependencies that should remain external in the bundle`,
+  });
+
+  externalFile = Option.String(`--external-file`, {
+    description: `Path to a JSON file listing dependencies that should remain external in the bundle`,
   });
 
   async execute() {
@@ -128,6 +137,11 @@ export default class BuildPluginCommand extends Command {
           minify: !this.noMinify,
           sourcemap: this.sourceMap ? `inline` : false,
           target: `node${semver.minVersion(pkg.engines.node)!.version}`,
+          external: getExternalDependencies({
+            cwd: basedir,
+            external: this.external,
+            externalFile: this.externalFile,
+          }),
           supported: {
             /*
             Yarn plugin-runtime did not support builtin modules prefixed with "node:".
