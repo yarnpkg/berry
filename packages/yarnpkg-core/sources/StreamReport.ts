@@ -47,6 +47,11 @@ const supportsEmojis = [`iTerm.app`, `Apple_Terminal`, `WarpTerminal`, `vscode`]
 
 const makeRecord = <T>(obj: {[key: string]: T}) => obj;
 const PROGRESS_STYLES = makeRecord({
+  cupid: {
+    date: [14, 2],
+    chars: [`💘`, `🩷`],
+    size: 40,
+  },
   patrick: {
     date: [17, 3],
     chars: [`🍀`, `🌱`],
