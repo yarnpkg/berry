@@ -9,6 +9,7 @@ import {ConfigurationValueMap, Configuration}     from './Configuration';
 import {MessageName}                              from './MessageName';
 import {WrapNetworkRequestInfo}                   from './Plugin';
 import {ReportError}                              from './Report';
+import {YarnVersion}                              from './YarnVersion';
 import * as formatUtils                           from './formatUtils';
 import {MapValue, MapValueToObjectValue}          from './miscUtils';
 import * as miscUtils                             from './miscUtils';
@@ -171,8 +172,37 @@ export type Options = {
   wrapNetworkRequest?: (executor: () => Promise<Response>, extra: WrapNetworkRequestInfo) => Promise<() => Promise<Response>>;
 };
 
+function getDefaultUserAgent() {
+  const version = YarnVersion !== null
+    ? YarnVersion
+    : `${miscUtils.dynamicRequire(`@yarnpkg/core/package.json`).version}-core`;
+
+  return `yarn/${version} node/${process.version}`;
+}
+
+function applyDefaultHeaders(headers: Options[`headers`]) {
+  const normalizedHeaders = {...headers};
+
+  let hasUserAgent = false;
+  for (const [headerName, headerValue] of Object.entries(normalizedHeaders)) {
+    if (headerName.toLowerCase() !== `user-agent`)
+      continue;
+
+    if (typeof headerValue === `undefined`) {
+      delete normalizedHeaders[headerName];
+    } else {
+      hasUserAgent = true;
+    }
+  }
+
+  if (!hasUserAgent)
+    normalizedHeaders[`user-agent`] = getDefaultUserAgent();
+
+  return normalizedHeaders;
+}
+
 export async function request(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET, wrapNetworkRequest}: Omit<Options, `customErrorMessage`>) {
-  const options = {target, body, configuration, headers, jsonRequest, jsonResponse, method};
+  const options = {target, body, configuration, headers: applyDefaultHeaders(headers), jsonRequest, jsonResponse, method};
 
   const realRequest = async () => await requestImpl(target, body, options);
 
