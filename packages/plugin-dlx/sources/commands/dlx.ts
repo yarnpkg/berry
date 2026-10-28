@@ -17,14 +17,24 @@ export default class DlxCommand extends BaseCommand {
 
       By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
 
+      The package name can include a version (e.g., \`create-vite@4\`), which will install that specific version.
+
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
+
+      If the specified command doesn't match any binary exposed by the installed package, but that package exposes exactly one binary, Yarn will automatically run that binary instead. This behavior only applies when installing a single package via the command argument (not when using \`-p,--package\`).
     `,
     examples: [[
       `Use create-vite to scaffold a new Vite project`,
       `yarn dlx create-vite`,
     ], [
+      `Install a specific version of a package`,
+      `yarn dlx create-vite@4 my-project`,
+    ], [
       `Install multiple packages for a single command`,
       `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
+    ], [
+      `Install a specific version using the -p flag`,
+      `yarn dlx -p typescript@5.0.4 tsc --version`,
     ]],
   });
 
