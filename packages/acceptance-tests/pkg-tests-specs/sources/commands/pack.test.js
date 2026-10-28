@@ -2,6 +2,22 @@ import {xfs, npath}          from '@yarnpkg/fslib';
 import {fs as fsUtils, misc} from 'pkg-tests-core';
 import * as tar              from 'tar';
 
+const NO_DEPS_PATCH = `diff --git a/index.js b/index.js
+index bb9c6f687..5b141d3df 100644
+--- a/index.js
++++ b/index.js
+@@ -1,5 +1,7 @@
+ module.exports = require(\`./package.json\`);
+
++module.exports.hello = \`world\`;
++
+ for (const key of [\`dependencies\`, \`devDependencies\`, \`peerDependencies\`]) {
+   for (const dep of Object.keys(module.exports[key] || {})) {
+     module.exports[key][dep] = require(dep);
+`;
+
+const PATCH_NAME = `my-patch.patch`;
+
 async function genPackList(run) {
   const {stdout} = await run(`pack`, `--dry-run`, `--json`);
 
@@ -903,6 +919,74 @@ describe(`Commands`, () => {
 
         expect(originalManifest.dependencies).toBe(undefined);
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:*`);
+      }),
+    );
+
+    test(
+      `it should refuse to pack a public package with a patch: dependency`,
+      makeTemporaryEnv({
+        dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/${PATCH_NAME}`, NO_DEPS_PATCH);
+
+        await run(`install`);
+
+        await expect(run(`pack`)).rejects.toThrow(/YN0093.*The patch: protocol can't be used/);
+      }),
+    );
+
+    test(
+      `it should refuse to pack a public package with a patch: optional dependency`,
+      makeTemporaryEnv({
+        optionalDependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/${PATCH_NAME}`, NO_DEPS_PATCH);
+
+        await run(`install`);
+
+        await expect(run(`pack`)).rejects.toThrow(/YN0093/);
+      }),
+    );
+
+    test(
+      `it should allow packing a public package with a patch: dev dependency`,
+      makeTemporaryEnv({
+        devDependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/${PATCH_NAME}`, NO_DEPS_PATCH);
+
+        await run(`install`);
+
+        await expect(run(`pack`)).resolves.toBeTruthy();
+      }),
+    );
+
+    test(
+      `it should allow packing a private package with a patch: dependency`,
+      makeTemporaryEnv({
+        private: true,
+        dependencies: {[`no-deps`]: `patch:no-deps@1.0.0#${PATCH_NAME}`},
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/${PATCH_NAME}`, NO_DEPS_PATCH);
+
+        await run(`install`);
+
+        await expect(run(`pack`)).resolves.toBeTruthy();
+      }),
+    );
+
+    test(
+      `it should allow packing a public package whose patch is applied through resolutions`,
+      makeTemporaryEnv({
+        dependencies: {[`no-deps`]: `1.0.0`},
+        resolutions: {[`no-deps@npm:1.0.0`]: `patch:no-deps@npm%3A1.0.0#${PATCH_NAME}`},
+      }, async ({path, run, source}) => {
+        await xfs.writeFilePromise(`${path}/${PATCH_NAME}`, NO_DEPS_PATCH);
+
+        await run(`install`);
+
+        await expect(source(`require('no-deps').hello`)).resolves.toEqual(`world`);
+        await expect(run(`pack`)).resolves.toBeTruthy();
       }),
     );
   });
