@@ -80,6 +80,76 @@ describe(`Configuration`, () => {
     });
   });
 
+  describe(`supportedArchitectures`, () => {
+    const getSupportedArchitectures = async (value: any) => {
+      return await initializeConfiguration({supportedArchitectures: value}, async dir => {
+        const configuration = await Configuration.find(dir, null);
+        return configuration.getSupportedArchitectures();
+      });
+    };
+
+    it(`should support the legacy object form, as a single entry`, async () => {
+      await expect(getSupportedArchitectures({
+        os: [`darwin`, `linux`],
+        cpu: [`arm64`, `x64`],
+        libc: [`glibc`],
+      })).resolves.toEqual([{
+        os: [`darwin`, `linux`],
+        cpu: [`arm64`, `x64`],
+        libc: [`glibc`],
+      }]);
+    });
+
+    it(`should support a list of entries`, async () => {
+      await expect(getSupportedArchitectures([{
+        os: `darwin`,
+        cpu: `arm64`,
+        libc: `musl`,
+      }, {
+        os: `linux`,
+        cpu: `x64`,
+        libc: `glibc`,
+      }])).resolves.toEqual([{
+        os: [`darwin`],
+        cpu: [`arm64`],
+        libc: [`musl`],
+      }, {
+        os: [`linux`],
+        cpu: [`x64`],
+        libc: [`glibc`],
+      }]);
+    });
+
+    it(`should default the fields that aren't set on an entry`, async () => {
+      const [entry] = await getSupportedArchitectures([{
+        os: `linux`,
+      }]);
+
+      expect(entry.os).toEqual([`linux`]);
+      expect(entry.cpu).toEqual([process.arch]);
+    });
+
+    it(`should preserve null fields inside a list entry (targeting all values)`, async () => {
+      await expect(getSupportedArchitectures([{
+        os: `foo`,
+        cpu: [`x64`, `x86`],
+        libc: null,
+      }])).resolves.toEqual([{
+        os: [`foo`],
+        cpu: [`x64`, `x86`],
+        libc: null,
+      }]);
+    });
+
+    it(`should fallback on the current architecture when the list is empty`, async () => {
+      await expect(getSupportedArchitectures([])).resolves.toEqual([{
+        os: [process.platform],
+        cpu: [process.arch],
+        libc: expect.anything(),
+      }]);
+    });
+  });
+
   describe(`Environment interpolation`, () => {
     it(`should replace env variables`, async () => {
       process.env.ENV_AUTH_TOKEN = `AAA-BBB-CCC`;

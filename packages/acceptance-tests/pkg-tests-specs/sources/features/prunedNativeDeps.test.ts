@@ -166,6 +166,145 @@ describe(`Features`, () => {
       }]);
     }));
 
+    it(`should only fetch the exact architectures listed when using the list form`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run}) => {
+      // The matrix form would fetch the cross product of both entries (and
+      // thus also fetch native-foo-x86 and native-bar-x64); the list form only
+      // fetches packages compatible with one of the entries taken as a whole.
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: [{
+          os: `foo`,
+          cpu: `x64`,
+          libc: `glibc`,
+        }, {
+          os: `bar`,
+          cpu: `x86`,
+          libc: `musl`,
+        }],
+      });
+
+      const recording = await startRegistryRecording(async () => {
+        await run(`install`);
+      });
+
+      const tarballRequests = recording.filter(request => {
+        return request.type === RequestType.PackageTarball;
+      }).sort((a, b) => {
+        const aJson = JSON.stringify(a);
+        const bJson = JSON.stringify(b);
+        return aJson < bJson ? -1 : aJson > bJson ? 1 : 0;
+      });
+
+      expect(tarballRequests).toEqual([{
+        type: RequestType.PackageTarball,
+        localName: `native-foo-x64`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-glibc`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-musl`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `optional-native`,
+        version: `1.0.0`,
+      }]);
+    }));
+
+    it(`should support the list form with multiple values and nulls inside a single entry`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: [{
+          os: `foo`,
+          cpu: [`x64`, `x86`],
+          libc: null,
+        }],
+      });
+
+      const recording = await startRegistryRecording(async () => {
+        await run(`install`);
+      });
+
+      const tarballRequests = recording.filter(request => {
+        return request.type === RequestType.PackageTarball;
+      }).sort((a, b) => {
+        const aJson = JSON.stringify(a);
+        const bJson = JSON.stringify(b);
+        return aJson < bJson ? -1 : aJson > bJson ? 1 : 0;
+      });
+
+      expect(tarballRequests).toEqual([{
+        type: RequestType.PackageTarball,
+        localName: `native-foo-x64`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-foo-x86`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-glibc`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-musl`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `optional-native`,
+        version: `1.0.0`,
+      }]);
+    }));
+
+    it(`should treat a list with a single entry just like the legacy object form`, makeTemporaryEnv({
+      dependencies: {
+        [`optional-native`]: `1.0.0`,
+      },
+    }, async ({path, run, source}) => {
+      await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+        supportedArchitectures: [{
+          os: [`foo`],
+          cpu: [`x64`],
+          libc: [`glibc`],
+        }],
+      });
+
+      const recording = await startRegistryRecording(async () => {
+        await run(`install`);
+      });
+
+      const tarballRequests = recording.filter(request => {
+        return request.type === RequestType.PackageTarball;
+      }).sort((a, b) => {
+        const aJson = JSON.stringify(a);
+        const bJson = JSON.stringify(b);
+        return aJson < bJson ? -1 : aJson > bJson ? 1 : 0;
+      });
+
+      expect(tarballRequests).toEqual([{
+        type: RequestType.PackageTarball,
+        localName: `native-foo-x64`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `native-libc-glibc`,
+        version: `1.0.0`,
+      }, {
+        type: RequestType.PackageTarball,
+        localName: `optional-native`,
+        version: `1.0.0`,
+      }]);
+    }));
+
     it(`should produce a stable lockfile, regardless of the architecture`, makeTemporaryEnv({
       dependencies: {
         [`optional-native`]: `1.0.0`,
