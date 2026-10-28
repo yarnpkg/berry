@@ -22,7 +22,7 @@ export abstract class ProxiedFS<P extends Path, IP extends Path> extends FakeFS<
     return this.baseFs.getExtractHint(hints);
   }
 
-  resolve(path: P)  {
+  resolve(path: P) {
     return this.mapFromBase(this.baseFs.resolve(this.mapToBase(path)));
   }
 

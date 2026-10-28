@@ -1,11 +1,11 @@
-import {Manifest, Report, Workspace, scriptUtils}                             from '@yarnpkg/core';
-import {FakeFS, JailFS, xfs, PortablePath, ppath, Filename, npath, constants} from '@yarnpkg/fslib';
-import {Hooks as StageHooks}                                                  from '@yarnpkg/plugin-stage';
-import mm                                                                     from 'micromatch';
-import tar                                                                    from 'tar-stream';
-import {createGzip}                                                           from 'zlib';
+import {Manifest, Report, Workspace, scriptUtils}                            from '@yarnpkg/core';
+import {FakeFS, SubFS, xfs, PortablePath, ppath, Filename, npath, constants} from '@yarnpkg/fslib';
+import {Hooks as StageHooks}                                                 from '@yarnpkg/plugin-stage';
+import mm                                                                    from 'micromatch';
+import tar                                                                   from 'tar-stream';
+import {createGzip}                                                          from 'zlib';
 
-import {Hooks}                                                                from './';
+import {Hooks}                                                               from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -249,7 +249,7 @@ export async function genPackList(workspace: Workspace) {
 async function walk(initialCwd: PortablePath, {hasExplicitFileList, globalList, ignoreList}: {hasExplicitFileList: boolean, globalList: IgnoreList, ignoreList: IgnoreList}) {
   const list: Array<PortablePath> = [];
 
-  const cwdFs = new JailFS(initialCwd);
+  const cwdFs = new SubFS(initialCwd);
   const cwdList: Array<[PortablePath, Array<IgnoreList>]> = [[PortablePath.root, [ignoreList]]];
 
   while (cwdList.length > 0) {
