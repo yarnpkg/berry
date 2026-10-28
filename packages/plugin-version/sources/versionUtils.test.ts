@@ -25,5 +25,11 @@ describe(`versionUtils`, () => {
       expect(versionUtils.applyStrategy(`1.2.3`, `preminor`)).toEqual(`1.3.0-0`);
       expect(versionUtils.applyStrategy(`1.2.3`, `premajor`)).toEqual(`2.0.0-0`);
     });
+
+    it(`should apply a prerelease pattern on regular major/minor/patch bumps`, () => {
+      expect(versionUtils.applyStrategy(`1.0.32`, `patch`, `alpha.0`)).toEqual(`1.0.33-alpha.0`);
+      expect(versionUtils.applyStrategy(`1.0.32`, `minor`, `alpha.0`)).toEqual(`1.1.0-alpha.0`);
+      expect(versionUtils.applyStrategy(`1.0.32`, `major`, `rc.%n`)).toEqual(`2.0.0-rc.1`);
+    });
   });
 });
