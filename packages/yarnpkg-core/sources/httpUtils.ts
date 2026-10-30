@@ -9,6 +9,7 @@ import {ConfigurationValueMap, Configuration}     from './Configuration';
 import {MessageName}                              from './MessageName';
 import {WrapNetworkRequestInfo}                   from './Plugin';
 import {ReportError}                              from './Report';
+import {YarnVersion}                              from './YarnVersion';
 import * as formatUtils                           from './formatUtils';
 import {MapValue, MapValueToObjectValue}          from './miscUtils';
 import * as miscUtils                             from './miscUtils';
@@ -231,6 +232,9 @@ export async function del(target: string, {customErrorMessage, ...options}: Opti
 async function requestImpl(target: string | URL, body: Body, {configuration, headers, jsonRequest, jsonResponse, method = Method.GET}: Omit<Options, `customErrorMessage`>): Promise<Response> {
   const url = typeof target === `string` ? new URL(target) : target;
 
+  const yarnVersion = YarnVersion ?? `unknown`;
+  const userAgent = `yarn/${yarnVersion} node/${process.version}`;
+
   const networkConfig = getNetworkSettings(url, {configuration});
   if (networkConfig.enableNetwork === false)
     throw new ReportError(MessageName.NETWORK_DISABLED, `Request to '${url.href}' has been blocked because of your configuration settings`);
@@ -238,7 +242,10 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
   if (url.protocol === `http:` && !micromatch.isMatch(url.hostname, configuration.get(`unsafeHttpWhitelist`)))
     throw new ReportError(MessageName.NETWORK_UNSAFE_HTTP, `Unsafe http requests must be explicitly whitelisted in your configuration (${url.hostname})`);
 
-  const gotOptions: ExtendOptions = {headers, method};
+  const gotOptions: ExtendOptions = {headers: {
+    'user-agent': userAgent,
+    ...headers,
+  }, method};
   gotOptions.responseType = jsonResponse
     ? `json`
     : `buffer`;
