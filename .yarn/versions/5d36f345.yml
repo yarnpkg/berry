@@ -1,0 +1,13 @@
+declined:
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-git"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-version"
+  - vscode-zipfs
+  - "@yarnpkg/builder"
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"
+  - "@yarnpkg/pnp"

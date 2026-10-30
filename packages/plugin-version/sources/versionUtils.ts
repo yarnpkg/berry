@@ -6,12 +6,6 @@ import {UsageError}                                                             
 import {omit}                                                                                                                                from 'es-toolkit/compat';
 import semver                                                                                                                                from 'semver';
 
-// The latest @types/semver does not have this yet
-// TODO: when this is added to @types/semver, use that instead
-declare module 'semver' {
-  export function truncate(version: string | semver.SemVer, truncation: semver.ReleaseType, optionsOrLoose?: boolean | semver.Options): string | null;
-}
-
 // Basically we only support auto-upgrading the ranges that are very simple (^x.y.z, ~x.y.z, >=x.y.z, and of course x.y.z)
 const SUPPORTED_UPGRADE_REGEXP = /^(>=|[~^]|)(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/;
 
