@@ -4,6 +4,9 @@ import fs                               from 'fs';
 import path                             from 'path';
 
 import {WATCH_MODE_MESSAGE_USES_ARRAYS} from '../esm-loader/loaderFlags';
+import type {PackageJson}               from '../types';
+
+const packageJsonCache = new Map<NativePath, PackageJson | null>();
 
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L315-L330
 export function readPackageScope(checkPath: NativePath) {
@@ -26,13 +29,23 @@ export function readPackageScope(checkPath: NativePath) {
 }
 
 // https://github.com/nodejs/node/blob/e817ba70f56c4bfd5d4a68dce8b165142312e7b6/lib/internal/modules/cjs/loader.js#L284-L313
+// Package manifest lookups should be cached: https://github.com/yarnpkg/berry/issues/7258
+// Only the `type` field is used by the consumers, so we save on memory.
 export function readPackage(requestPath: NativePath) {
   const jsonPath = npath.resolve(requestPath, `package.json`);
 
-  if (!fs.existsSync(jsonPath))
-    return null;
+  const cached = packageJsonCache.get(jsonPath);
+  if (cached !== undefined)
+    return cached;
 
-  return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
+  let data: PackageJson | null = null;
+  if (fs.existsSync(jsonPath)) {
+    const {type} = JSON.parse(fs.readFileSync(jsonPath, `utf8`)) as PackageJson;
+    data = {type};
+  }
+
+  packageJsonCache.set(jsonPath, data);
+  return data;
 }
 
 // https://github.com/nodejs/node/blob/972d9218559877f7fff4bb6086afacac8933f8d1/lib/internal/errors.js#L1450-L1478
