@@ -48,9 +48,9 @@ export const generateAstroLanguageServerWrapper: GenerateIntegrationWrapper = as
 export const generateEslintWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
     [`eslint.nodePath`]: npath.fromPortablePath(
-      ppath.dirname(ppath.dirname(
+      ppath.dirname(
         wrapper.getProjectPathTo(Filename.manifest),
-      )),
+      ),
     ),
   });
 
