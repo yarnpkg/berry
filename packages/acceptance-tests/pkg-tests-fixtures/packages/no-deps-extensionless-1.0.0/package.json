@@ -1,0 +1,11 @@
+{
+  "name": "no-deps-extensionless",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./entry-esm",
+      "require": "./index"
+    }
+  }
+}

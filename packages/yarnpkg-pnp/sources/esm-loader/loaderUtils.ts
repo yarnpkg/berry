@@ -1,8 +1,13 @@
-import {NativePath}   from '@yarnpkg/fslib';
-import fs             from 'fs';
-import path           from 'path';
+import {NativePath}    from '@yarnpkg/fslib';
+import fs              from 'fs';
+import path            from 'path';
+import {pathToFileURL} from 'url';
 
-import * as nodeUtils from '../loader/nodeUtils';
+import * as nodeUtils  from '../loader/nodeUtils';
+
+const {containsModuleSyntax} = (process as any).binding(`contextify`) as {
+  containsModuleSyntax: (source: string, filename: string, url: string) => boolean;
+};
 
 export async function tryReadFile(path: NativePath): Promise<string | null> {
   try {
@@ -29,7 +34,7 @@ export function setEntrypointPath(file: NativePath) {
   entrypointPath = file;
 }
 
-export function getFileFormat(filepath: string): string | null {
+export function getFileFormat(filepath: string, {considerExtensionless = false, extensionlessSource}: {considerExtensionless?: boolean, extensionlessSource?: string} = {}): string | null {
   const ext = path.extname(filepath);
 
   switch (ext) {
@@ -60,6 +65,16 @@ export function getFileFormat(filepath: string): string | null {
     // --experimental-loader behavior but is required to work around
     // https://github.com/nodejs/node/issues/33226
     default: {
+      if (considerExtensionless && ext === ``) {
+        if (extensionlessSource !== undefined)
+          return containsModuleSyntax(extensionlessSource, filepath, pathToFileURL(filepath).href) ? `module` : `commonjs`;
+
+        const pkg = nodeUtils.readPackageScope(filepath);
+        if (!pkg)
+          return `commonjs`;
+        return pkg.data.type ?? `commonjs`;
+      }
+
       if (entrypointPath !== filepath)
         return null;
       const pkg = nodeUtils.readPackageScope(filepath);

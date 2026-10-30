@@ -1,0 +1,4 @@
+module.exports = {
+  commonjs: require(`./nested`),
+  esm: require(`./esm`).default,
+};
