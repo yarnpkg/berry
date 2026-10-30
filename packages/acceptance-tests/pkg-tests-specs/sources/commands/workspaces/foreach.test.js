@@ -4,6 +4,7 @@ const {
   exec: {execFile},
   fs: {writeJson, writeFile},
   tests: {testIf, FEATURE_CHECKS},
+  yarn,
 } = require(`pkg-tests-core`);
 
 const forEachVerboseDone = FEATURE_CHECKS.forEachVerboseDone
@@ -766,6 +767,54 @@ describe(`Commands`, () => {
               `Test Workspace C\n`,
               `Test Workspace B\n`,
               `Test Workspace G\n`,
+              ...forEachVerboseDone,
+            ].join(``),
+          });
+        },
+      ),
+    );
+
+    test(
+      `should include workspace dependencies resolved through catalogs if using --from and --recursive`,
+      makeTemporaryEnv(
+        {
+          private: true,
+          workspaces: [`packages/*`],
+        },
+        async ({path, run}) => {
+          await writeJson(`${path}/packages/my-dep/package.json`, {
+            name: `my-dep`,
+            version: `1.0.0`,
+            scripts: {
+              print: `echo Test My Dep`,
+            },
+          });
+
+          await writeJson(`${path}/packages/my-package/package.json`, {
+            name: `my-package`,
+            version: `1.0.0`,
+            scripts: {
+              print: `echo Test My Package`,
+            },
+            dependencies: {
+              [`my-dep`]: `catalog:`,
+            },
+          });
+
+          await yarn.writeConfiguration(path, {
+            enableTransparentWorkspaces: false,
+            catalog: {
+              [`my-dep`]: `workspace:*`,
+            },
+          });
+
+          await run(`install`);
+
+          await expect(run(`workspaces`, `foreach`, `--recursive`, `--topological-dev`, `--from`, `my-package`, `--exclude`, `my-package`, `run`, `print`, {cwd: path})).resolves.toEqual({
+            code: 0,
+            stderr: ``,
+            stdout: [
+              `Test My Dep\n`,
               ...forEachVerboseDone,
             ].join(``),
           });
