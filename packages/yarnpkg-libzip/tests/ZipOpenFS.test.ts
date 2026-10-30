@@ -1,5 +1,5 @@
-import {ppath, npath, Filename, PortablePath} from '@yarnpkg/fslib';
-import {ZipOpenFS, getArchivePart}            from '@yarnpkg/libzip';
+import {ppath, npath, Filename, PortablePath, xfs} from '@yarnpkg/fslib';
+import {ZipFS, ZipOpenFS, getArchivePart}          from '@yarnpkg/libzip';
 
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
@@ -104,6 +104,27 @@ describe(`ZipOpenFS`, () => {
     const fs = new ZipOpenFS();
 
     expect(fs.readFileSync(ZIP_FILE4, `utf8`)).toEqual(`foo\n`);
+
+    fs.discardAndClose();
+  });
+
+  it(`falls back to the base filesystem when a cached archive path becomes a directory`, () => {
+    const tmpdir = xfs.mktempSync();
+    const archivePath = ppath.join(tmpdir, `cache.foo` as Filename);
+    const nestedPath = ppath.join(archivePath, `nested.txt` as Filename);
+
+    const zipFs = new ZipFS(archivePath, {create: true});
+    zipFs.writeFileSync(`/entry.txt` as PortablePath, `from zip`);
+    zipFs.saveAndClose();
+
+    const fs = new ZipOpenFS({fileExtensions: [`.foo`]});
+    expect(fs.readFileSync(ppath.join(archivePath, `entry.txt` as Filename), `utf8`)).toEqual(`from zip`);
+
+    xfs.unlinkSync(archivePath);
+    xfs.mkdirSync(archivePath);
+    xfs.writeFileSync(nestedPath, `from directory`);
+
+    expect(fs.readFileSync(nestedPath, `utf8`)).toEqual(`from directory`);
 
     fs.discardAndClose();
   });
