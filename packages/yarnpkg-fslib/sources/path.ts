@@ -33,6 +33,7 @@ export const Filename = {
   pnpEsmLoader: `.pnp.loader.mjs` as Filename,
   rc: `.yarnrc.yml` as Filename,
   env: `.env` as Filename,
+  reuseToml: `REUSE.toml` as Filename,
 };
 
 export type TolerateLiterals<T> = {
