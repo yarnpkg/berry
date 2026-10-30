@@ -1095,6 +1095,7 @@ export class Project {
       mockedPackages: this.disabledLocators,
       unstablePackages: this.conditionalLocators,
     };
+    const initialCacheMisses = new Set(report.cacheMisses);
 
     const fetcher = userFetcher || this.configuration.makeFetcher();
     const fetcherOptions = {checksums: this.storedChecksums, project: this, cache, fetcher, report, cacheOptions};
@@ -1163,8 +1164,12 @@ export class Project {
       ? await this.cacheCleanup({cache, report})
       : null;
 
-    if (report.cacheMisses.size > 0 || cleanInfo) {
-      const addedSizes = await Promise.all([...report.cacheMisses].map(async locatorHash => {
+    const fetchCacheMisses = [...report.cacheMisses].filter(locatorHash => {
+      return !initialCacheMisses.has(locatorHash);
+    });
+
+    if (fetchCacheMisses.length > 0 || cleanInfo) {
+      const addedSizes = await Promise.all(fetchCacheMisses.map(async locatorHash => {
         const locator = this.storedPackages.get(locatorHash);
         const checksum = this.storedChecksums.get(locatorHash) ?? null;
 
@@ -1176,7 +1181,7 @@ export class Project {
 
       const finalSizeChange = addedSizes.reduce((sum, size) => sum + size, 0) - (cleanInfo?.size ?? 0);
 
-      const addedCount = report.cacheMisses.size;
+      const addedCount = fetchCacheMisses.length;
       const removedCount = cleanInfo?.count ?? 0;
 
       const addedLine = `${miscUtils.plural(addedCount, {
