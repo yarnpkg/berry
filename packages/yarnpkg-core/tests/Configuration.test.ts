@@ -1028,4 +1028,44 @@ describe(`Configuration`, () => {
       }
     });
   });
+
+  it(`should warn when an explicit cacheFolder is discarded by enableGlobalCache`, async () => {
+    await initializeConfiguration({
+      cacheFolder: `./.custom-cache`,
+    }, async dir => {
+      const writes: Array<string> = [];
+      const spy = jest.spyOn(process.stderr, `write`).mockImplementation((chunk: any) => {
+        writes.push(String(chunk));
+        return true;
+      });
+
+      try {
+        const configuration = await Configuration.find(dir, null);
+        expect(configuration.sources.get(`cacheFolder`)).toEqual(`<internal>`);
+        expect(writes.join(``)).toMatch(/YN0093: cacheFolder from .* is ignored because enableGlobalCache is true/);
+      } finally {
+        spy.mockRestore();
+      }
+    });
+  });
+
+  it(`should not warn about cacheFolder when enableGlobalCache is false`, async () => {
+    await initializeConfiguration({
+      enableGlobalCache: false,
+      cacheFolder: `./.custom-cache`,
+    }, async dir => {
+      const writes: Array<string> = [];
+      const spy = jest.spyOn(process.stderr, `write`).mockImplementation((chunk: any) => {
+        writes.push(String(chunk));
+        return true;
+      });
+
+      try {
+        await Configuration.find(dir, null);
+        expect(writes.join(``)).not.toMatch(/YN0093/);
+      } finally {
+        spy.mockRestore();
+      }
+    });
+  });
 });
