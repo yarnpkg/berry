@@ -1,0 +1,26 @@
+releases:
+  "@yarnpkg/cli": patch
+  "@yarnpkg/parsers": minor
+  "@yarnpkg/shell": minor
+
+declined:
+  - "@yarnpkg/core"
+  - "@yarnpkg/plugin-essentials"
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-version"
+  - "@yarnpkg/sdks"
+  - "@yarnpkg/builder"
+  - "@yarnpkg/doctor"
+  - "@yarnpkg/plugin-compat"
+  - "@yarnpkg/plugin-constraints"
+  - "@yarnpkg/plugin-dlx"
+  - "@yarnpkg/plugin-init"
+  - "@yarnpkg/plugin-interactive-tools"
+  - "@yarnpkg/plugin-npm-cli"
+  - "@yarnpkg/plugin-pack"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/plugin-pnp"
+  - "@yarnpkg/plugin-pnpm"
+  - "@yarnpkg/plugin-stage"
+  - "@yarnpkg/plugin-typescript"
+  - "@yarnpkg/plugin-workspace-tools"

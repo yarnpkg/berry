@@ -452,6 +452,14 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
         }
       }
 
+      if (segment.assign && (typeof raw === `undefined` || raw === ``)) {
+        if (isArgument)
+          throw new ShellError(`Cannot assign to argument #${argIndex}`);
+
+        raw = (await interpolateArguments(segment.defaultValue ?? [], opts, state)).join(` `);
+        state.variables[segment.name] = raw;
+      }
+
       if (typeof raw !== `undefined` && segment.alternativeValue) {
         raw = (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `);
       } else if (typeof raw === `undefined`) {
@@ -729,14 +737,14 @@ async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, s
     // Only the final segment is allowed to modify the shell state; all the
     // other ones are isolated
     const activeState = current.then
-      ? {...state}
+      ? cloneState(state)
       : state;
 
     let action;
     switch (current.type) {
       case `command`: {
-        const args = await interpolateArguments(current.args, opts, state);
-        const environment = await applyEnvVariables(current.envs, opts, state);
+        const args = await interpolateArguments(current.args, opts, activeState);
+        const environment = await applyEnvVariables(current.envs, opts, activeState);
 
         action = current.envs.length
           ? makeCommandAction(args, opts, cloneState(activeState, {environment}))
@@ -744,7 +752,7 @@ async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, s
       } break;
 
       case `subshell`: {
-        const args = await interpolateArguments(current.args, opts, state);
+        const args = await interpolateArguments(current.args, opts, activeState);
 
         // We don't interpolate the subshell because it will be recursively
         // interpolated within its own context
@@ -754,7 +762,7 @@ async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, s
       } break;
 
       case `group`: {
-        const args = await interpolateArguments(current.args, opts, state);
+        const args = await interpolateArguments(current.args, opts, activeState);
 
         const procedure = makeGroupAction(current.group, opts, activeState);
 
@@ -762,7 +770,7 @@ async function executeCommandChainImpl(node: CommandChain, opts: ShellOptions, s
       } break;
 
       case `envs`: {
-        const environment = await applyEnvVariables(current.envs, opts, state);
+        const environment = await applyEnvVariables(current.envs, opts, activeState);
         activeState.environment = {...activeState.environment, ...environment};
         action = makeCommandAction([`true`], opts, activeState);
       } break;

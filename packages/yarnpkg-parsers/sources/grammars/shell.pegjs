@@ -163,6 +163,8 @@ Subshell
 Variable
   = '${' name:Identifier ':-' arg:CommandString '}' { return { name, defaultValue: arg } }
   / '${' name:Identifier ':-}' { return { name, defaultValue: [] } }
+  / '${' name:Identifier ':=' arg:CommandString '}' { return { name, defaultValue: arg, assign: true } }
+  / '${' name:Identifier ':=}' { return { name, defaultValue: [], assign: true } }
   / '${' name:Identifier ':+' arg:CommandString '}' { return { name, alternativeValue: arg } }
   / '${' name:Identifier ':+}' { return { name, alternativeValue: [] } }
   / '${' name:Identifier '}' { return { name } }
