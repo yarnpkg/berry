@@ -106,6 +106,34 @@ describe(`NodeFS`, () => {
     });
   });
 
+
+    it(`should support futimesPromise`, async () => {
+      await xfs.mktempPromise(async dir => {
+        const p = `${dir}/foo.txt` as PortablePath;
+        await nodeFs.writeFilePromise(p, `foo`);
+
+        const fd = await nodeFs.openPromise(p, `r+`);
+        await nodeFs.ftruncatePromise(fd, 2);
+        await nodeFs.closePromise(fd);
+
+        await expect(nodeFs.readFilePromise(p, `utf8`)).resolves.toEqual(`fo`);
+      });
+    });
+
+    it(`should support futimesSync`, () => {
+      xfs.mktempSync(dir => {
+        const p = `${dir}/foo.txt` as PortablePath;
+        nodeFs.writeFileSync(p, `foo`);
+
+        const fd =  nodeFs.openSync(p, `r+`);
+        nodeFs.ftruncateSync(fd, 2);
+        nodeFs.closeSync(fd);
+
+        expect(nodeFs.readFileSync(p, `utf8`)).toEqual(`fo`);
+      });
+    });
+  });
+
   ifNotWin32It(`should support fchmodPromise`, async () => {
     await xfs.mktempPromise(async dir => {
       const p = ppath.join(dir, `foo.txt`);
