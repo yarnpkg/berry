@@ -40,6 +40,9 @@ export default class UpCommand extends BaseCommand {
       **Note:** The ranges have to be static, only the package scopes and names can contain glob patterns.
     `,
     examples: [[
+      `Upgrade all packages`,
+      `$0 up`,
+    ], [
       `Upgrade all instances of lodash to the latest release`,
       `$0 up lodash`,
     ], [
