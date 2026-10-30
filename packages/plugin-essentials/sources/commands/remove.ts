@@ -117,7 +117,19 @@ export default class RemoveCommand extends BaseCommand {
             if (typeof removedDescriptor === `undefined`)
               throw new Error(`Assertion failed: Expected the descriptor to be registered`);
 
-            workspace.manifest[target].delete(identHash);
+            for (const plugin of configuration.plugins.values()) {
+              const hooks = plugin.hooks as Hooks;
+              if (!hooks?.beforeWorkspaceDependencyRemoval)
+                continue;
+
+              await hooks.beforeWorkspaceDependencyRemoval(
+                workspace,
+                target,
+                removedDescriptor,
+              );
+            }
+
+            workspace.manifest[target].delete(removedDescriptor.identHash);
 
             afterWorkspaceDependencyRemovalList.push([
               workspace,
