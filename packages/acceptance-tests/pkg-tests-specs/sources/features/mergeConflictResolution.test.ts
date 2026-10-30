@@ -284,5 +284,7 @@ describe(`Features`, () => {
         },
       ),
     );
+
+    // TODO: Add tests for `enableMergeConflictPrompt`
   });
 });
