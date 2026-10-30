@@ -32,12 +32,12 @@ export const acceptedStrategies = new Set(Object.values(Strategy));
 const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
   highest: async (project, patterns, {resolver, fetcher, resolveOptions, fetchOptions}) => {
     const locatorsByIdent = new Map<IdentHash, Set<LocatorHash>>();
-    for (const [descriptorHash, locatorHash] of project.storedResolutions) {
-      const descriptor = project.storedDescriptors.get(descriptorHash);
-      if (typeof descriptor === `undefined`)
-        throw new Error(`Assertion failed: The descriptor (${descriptorHash}) should have been registered`);
+    for (const locatorHash of project.storedResolutions.values()) {
+      const locator = project.originalPackages.get(locatorHash);
+      if (typeof locator === `undefined`)
+        throw new Error(`Assertion failed: The locator (${locatorHash}) should have been registered`);
 
-      miscUtils.getSetWithDefault(locatorsByIdent, descriptor.identHash).add(locatorHash);
+      miscUtils.getSetWithDefault(locatorsByIdent, locator.identHash).add(locatorHash);
     }
 
     const deferredMap = new Map<DescriptorHash, miscUtils.Deferred<PackageUpdate>>(
@@ -91,9 +91,11 @@ const DEDUPE_ALGORITHMS: Record<Strategy, Algorithm> = {
         if (!resolver.shouldPersistResolution(currentPackage, resolveOptions))
           return currentPackage;
 
-        const candidateHashes = locatorsByIdent.get(descriptor.identHash);
+        // As the descriptor may resolve into other ident, (i.e. npm: with package name specified)
+        // locators should be looked up by the current resolution rather than the descriptor.
+        const candidateHashes = locatorsByIdent.get(currentPackage.identHash);
         if (typeof candidateHashes === `undefined`)
-          throw new Error(`Assertion failed: The resolutions (${descriptor.identHash}) should have been registered`);
+          throw new Error(`Assertion failed: The resolutions (${currentPackage.identHash}) should have been registered`);
 
         // No need to choose when there's only one possibility
         if (candidateHashes.size === 1)
