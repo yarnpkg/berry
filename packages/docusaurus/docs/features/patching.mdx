@@ -25,6 +25,10 @@ Once you're done with your changes, run `yarn patch-commit -s` with the temporar
 
 By default, `yarn patch` will always reset the patch. If you wish to add new changes, use the `yarn patch ! --update` flag and follow the same procedure as before - your patch will be regenerated.
 
+## Removing patches
+
+To remove a patch, remove the matching `.patch` file in `.yarn/patches`. Finally, remove the reference to the patch from the `resolutions` section of your `package.json`.
+
 ## Limitations
 
 - Because they're currently computed at fetch time rather than resolution time, the package dependencies have already been resolved and patches won't be able to alter them. Instead, use the `packageExtensions` mechanism which is specifically made to add new runtime dependencies to packages.
