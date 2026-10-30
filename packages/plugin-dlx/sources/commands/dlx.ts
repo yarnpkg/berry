@@ -57,8 +57,8 @@ export default class DlxCommand extends BaseCommand {
       // project it's run in has enableGlobalCache set to false, otherwise we risk running into
       // `Unable to locate pnpapi ... is controlled by multiple pnpapi instances` errors when
       // running something like `yarn dlx sb init`
-      const enableGlobalCache = !(await Configuration.find(this.context.cwd, null, {strict: false})).get(`enableGlobalCache`);
-
+      const sourceConfiguration = await Configuration.find(this.context.cwd, null, {strict: false});
+      const enableGlobalCache = !(sourceConfiguration).get(`enableGlobalCache`);
       const dlxConfiguration = {
         enableGlobalCache,
         enableTelemetry: false,
@@ -80,6 +80,14 @@ export default class DlxCommand extends BaseCommand {
 
         await Configuration.updateConfiguration(tmpDir, current => {
           const nextConfiguration = miscUtils.toMerged(current, dlxConfiguration);
+
+          // if `SettingsType.ABSOLUTE_PATH`'s value is a relative path, we need the path relative to the source configuration.
+          // for convenience, all types of fields use the values parsed by source configuration
+          for (const key of Object.keys(current)) {
+            const value = sourceConfiguration.settings.get(key);
+            if (!value) continue;
+            nextConfiguration[key] = sourceConfiguration.values.get(key);
+          }
 
           if (Array.isArray(current.plugins)) {
             nextConfiguration.plugins = current.plugins.map((plugin: any) => {
