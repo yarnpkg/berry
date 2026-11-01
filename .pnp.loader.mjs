@@ -1490,9 +1490,7 @@ function getFileFormat(filepath) {
       return `commonjs`;
     }
     case `.wasm`: {
-      throw new Error(
-        `Unknown file extension ".wasm" for ${filepath}`
-      );
+      return `wasm`;
     }
     case `.json`: {
       return `json`;
@@ -1551,7 +1549,7 @@ async function load$1(urlString, context, nextLoad) {
     });
   }
   const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
-  const source = format !== `commonjs` || shouldReadSource ? await fs.promises.readFile(filePath, `utf8`) : void 0;
+  const source = format === `wasm` ? await fs.promises.readFile(filePath) : format !== `commonjs` || shouldReadSource ? await fs.promises.readFile(filePath, `utf8`) : void 0;
   return {
     format,
     source,
