@@ -273,6 +273,37 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it shouldn't crash when the registry metadata doesn't list a locked version`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps-deprecated`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        // Simulate stale metadata (or an unpublished version) by removing the locked version from the cached packument
+        const metadataFolder = ppath.join(path, `.yarn/global/metadata/npm`);
+        for (const entry of await xfs.readdirPromise(metadataFolder, {recursive: true})) {
+          if (!entry.endsWith(`.json`))
+            continue;
+
+          const metadataPath = ppath.join(metadataFolder, entry);
+          const cached = await xfs.readJsonPromise(metadataPath);
+          delete cached.metadata.versions[`1.0.0`];
+          await xfs.writeJsonPromise(metadataPath, cached);
+        }
+
+        await xfs.writeJsonPromise(ppath.join(path, Filename.rc), {
+          enableOfflineMode: true,
+        });
+
+        await expect(run(`npm`, `audit`)).resolves.toMatchObject({
+          stdout: expect.stringContaining(`No audit suggestions`),
+        });
+      }),
+    );
+
+    test(
       `it should report deprecations as audit issues even when they're set to whitespaces`,
       makeTemporaryEnv({
         dependencies: {
