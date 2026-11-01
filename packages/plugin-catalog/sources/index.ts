@@ -1,8 +1,8 @@
-import {type Descriptor, type Locator, type Plugin, type Project, type Resolver, type ResolveOptions, type Workspace, SettingsType, structUtils, Manifest, ThrowReport} from '@yarnpkg/core';
-import {Hooks as CoreHooks}                                                                                                                                             from '@yarnpkg/core';
-import {Hooks as PackHooks}                                                                                                                                             from '@yarnpkg/plugin-pack';
+import {type Descriptor, type Locator, type Plugin, type Project, type Resolver, type ResolveOptions, type Workspace, SettingsType, structUtils, semverUtils, Manifest, ThrowReport, TAG_REGEXP} from '@yarnpkg/core';
+import {Hooks as CoreHooks}                                                                                                                                                                      from '@yarnpkg/core';
+import {Hooks as PackHooks}                                                                                                                                                                      from '@yarnpkg/plugin-pack';
 
-import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                                               from './utils';
+import {isCatalogReference, resolveDescriptorFromCatalog}                                                                                                                                        from './utils';
 
 declare module '@yarnpkg/core' {
   interface ConfigurationValueMap {
@@ -86,7 +86,8 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
           const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor, resolver, resolveOptions);
 
           let {protocol, source, params, selector} = structUtils.parseRange(structUtils.convertToManifestRange(resolvedDescriptor.range));
-          if (protocol === workspace.project.configuration.get(`defaultProtocol`))
+          // Only drop the default protocol when it can be implied back (not for aliases like `npm:foo@^1.0.0`)
+          if (protocol === workspace.project.configuration.get(`defaultProtocol`) && (semverUtils.validRange(selector) || TAG_REGEXP.test(selector)))
             protocol = null;
 
           // Replace the catalog reference with the resolved range

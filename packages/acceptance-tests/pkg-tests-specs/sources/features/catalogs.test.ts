@@ -216,6 +216,35 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should preserve the npm protocol of aliased catalog entries during pack`,
+      makeTemporaryEnv(
+        {
+          name: `my-package`,
+          version: `1.0.0`,
+          dependencies: {
+            [`aliased`]: `catalog:`,
+          },
+        },
+        async ({path, run}) => {
+          await yarn.writeConfiguration(path, {
+            catalog: {
+              [`aliased`]: `npm:no-deps@^2.0.0`,
+            },
+          });
+
+          await run(`install`);
+          await run(`pack`);
+
+          await fsUtils.unpackToDirectory(path, `${path}/package.tgz` as PortablePath);
+
+          const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json` as PortablePath);
+
+          expect(packedManifest.dependencies.aliased).toBe(`npm:no-deps@^2.0.0`);
+        },
+      ),
+    );
+
+    test(
       `it should handle complex version ranges in catalogs`,
       makeTemporaryEnv(
         {
