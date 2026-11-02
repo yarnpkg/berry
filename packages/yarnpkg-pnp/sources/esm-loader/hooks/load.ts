@@ -18,7 +18,7 @@ export async function load(
     };
   },
   nextLoad: typeof load,
-): Promise<{format: string, source?: string, shortCircuit: boolean}> {
+): Promise<{format: string, source?: string | Buffer, shortCircuit: boolean}> {
   const url = loaderUtils.tryParseURL(urlString);
   if (url?.protocol !== `file:`)
     return nextLoad(urlString, context, nextLoad);
@@ -62,9 +62,11 @@ export async function load(
   }
 
   const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
-  const source = format !== `commonjs` || shouldReadSource
-    ? await fs.promises.readFile(filePath, `utf8`)
-    : undefined;
+  const source = format === `wasm`
+    ? await fs.promises.readFile(filePath)
+    : format !== `commonjs` || shouldReadSource
+      ? await fs.promises.readFile(filePath, `utf8`)
+      : undefined;
 
   return {
     format,

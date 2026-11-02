@@ -539,6 +539,26 @@ describe(`Plug'n'Play - ESM`, () => {
   );
 
   test(
+    `it should support importing WebAssembly modules`,
+    makeTemporaryEnv(
+      {
+        type: `module`,
+      },
+      async ({path, run, source}) => {
+        // A module exporting `answer()`, which returns 42
+        await xfs.writeFilePromise(ppath.join(path, `answer.wasm`), Buffer.from(`0061736d010000000105016000017f03020100070a0106616e7377657200000a06010400412a0b`, `hex`));
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `import {answer} from './answer.wasm';\nconsole.log(answer())`);
+
+        await run(`install`);
+        await expect(run(`node`, `--experimental-wasm-modules`, `index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `42\n`,
+        });
+      },
+    ),
+  );
+
+  test(
     `it should support dynamic imports in commonjs mode`,
     makeTemporaryEnv(
       {
