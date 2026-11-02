@@ -513,6 +513,25 @@ describe(`Commands`, () => {
       );
 
       test(
+        `it should record a deferred strategy when no base ref can be found`,
+        makeTemporaryEnv({
+          version: `1.2.3`,
+        }, async ({path, run, source}) => {
+          await exec.execGitInit({cwd: path});
+          await exec.execFile(`git`, [`checkout`, `-b`, `ci`], {cwd: path});
+          await exec.execFile(`git`, [`add`, `.`], {cwd: path});
+          await exec.execFile(`git`, [`commit`, `-m`, `First commit`], {cwd: path});
+
+          await run(`version`, `patch`, `--deferred`);
+          await run(`version`, `apply`);
+
+          await expect(xfs.readJsonPromise(`${path}/package.json` as PortablePath)).resolves.toMatchObject({
+            version: `1.2.4`,
+          });
+        }),
+      );
+
+      test(
         `it should apply a deferred semver strategy to a workspace`,
         makeTemporaryEnv({
           version: `1.2.3`,

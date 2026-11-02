@@ -179,12 +179,20 @@ export async function openVersionFile(project: Project, {allowEmpty = false}: {a
 
   const root = await gitUtils.fetchRoot(configuration.projectCwd);
 
-  const base = root !== null
-    ? await gitUtils.fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)})
-    : null;
+  let base: {hash: string, title: string} | null = null;
+  if (root !== null) {
+    try {
+      base = await gitUtils.fetchBase(root, {baseRefs: configuration.get(`changesetBaseRefs`)});
+    } catch (error) {
+      // Recording a release doesn't need a base (e.g. shallow CI clones); we just start a new versioning file
+      if (!allowEmpty || !(error instanceof UsageError)) {
+        throw error;
+      }
+    }
+  }
 
-  const changedFiles = root !== null
-    ? await gitUtils.fetchChangedFiles(root, {base: base!.hash, project})
+  const changedFiles = root !== null && base !== null
+    ? await gitUtils.fetchChangedFiles(root, {base: base.hash, project})
     : [];
 
   const deferredVersionFolder = configuration.get(`deferredVersionFolder`);
