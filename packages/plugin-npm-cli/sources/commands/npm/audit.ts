@@ -137,7 +137,8 @@ export default class NpmAuditCommand extends BaseCommand {
         });
 
         return miscUtils.mapAndFilter(versions, version => {
-          const {deprecated} = registryData.versions[version];
+          // The version may be missing from the metadata (unpublished, filtered by a mirror, stale cache, ...)
+          const deprecated = registryData.versions[version]?.deprecated;
 
           // Apparently some packages have a `deprecated` field set to an empty string
           // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
