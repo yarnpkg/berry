@@ -1,0 +1,8 @@
+{
+    "name": "binding-gyp-scripts-gypfile-false",
+    "version": "1.0.0",
+    "gypfile": false,
+    "dependencies": {
+        "node-gyp": "^1.0.0"
+    }
+}
