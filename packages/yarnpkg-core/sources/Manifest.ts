@@ -83,6 +83,7 @@ export class Manifest {
   public installConfig: InstallConfig | null = null;
 
   public preferUnplugged: boolean | null = null;
+  public gypfile: boolean | null = null;
 
   public raw: {[key: string]: any} = {};
 
@@ -622,6 +623,11 @@ export class Manifest {
       this.preferUnplugged = data.preferUnplugged;
     else
       this.preferUnplugged = null;
+
+    if (typeof data.gypfile === `boolean`)
+      this.gypfile = data.gypfile;
+    else
+      this.gypfile = null;
 
     this.errors = errors;
   }
