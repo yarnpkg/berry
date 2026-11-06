@@ -45,10 +45,12 @@ describe(`Commands`, () => {
 
         await execFile(`git`, [`init`], {cwd: path});
 
+        const [registryFolder] = await xfs.readdirPromise(`${path}/.yarn/global/metadata/npm/a3cd44`);
+
         await expect(run(`stage`, `-n`, {cwd: path})).resolves.toMatchObject({
           stdout: [
             `${npath.fromPortablePath(`${path}/.pnp.cjs`)}\n`,
-            `${npath.fromPortablePath(`${path}/.yarn/global/metadata/npm/a3cd44/localhost/no-deps.json`)}\n`,
+            `${npath.fromPortablePath(`${path}/.yarn/global/metadata/npm/a3cd44/${registryFolder}/no-deps.json`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/global/cache/no-deps-npm-1.0.0-cf533b267a-0c0.zip`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/cache/.gitignore`)}\n`,
             `${npath.fromPortablePath(`${path}/.yarn/cache/no-deps-npm-1.0.0-cf533b267a-af041f19ff.zip`)}\n`,
