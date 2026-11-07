@@ -184,6 +184,8 @@ describe(`Features`, () => {
           version: `1.0.0`,
           dependencies: {
             [`no-deps`]: `catalog:`,
+            [`alias`]: `catalog:`,
+            [`scoped-alias`]: `catalog:`,
           },
           devDependencies: {
             [`one-fixed-dep`]: `catalog:dev`,
@@ -193,6 +195,8 @@ describe(`Features`, () => {
           await yarn.writeConfiguration(path, {
             catalog: {
               [`no-deps`]: `^2.0.0`,
+              [`alias`]: `npm:no-deps@^2.0.0`,
+              [`scoped-alias`]: `npm:@scoped/create-test-app@1.0.0`,
             },
             catalogs: {
               dev: {
@@ -210,6 +214,8 @@ describe(`Features`, () => {
           const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json` as PortablePath);
 
           expect(packedManifest.dependencies[`no-deps`]).toBe(`^2.0.0`);
+          expect(packedManifest.dependencies.alias).toBe(`npm:no-deps@^2.0.0`);
+          expect(packedManifest.dependencies[`scoped-alias`]).toBe(`npm:@scoped/create-test-app@1.0.0`);
           expect(packedManifest.devDependencies[`one-fixed-dep`]).toBe(`~1.0.0`);
         },
       ),
