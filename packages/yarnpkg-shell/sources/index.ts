@@ -452,15 +452,10 @@ async function evaluateVariable(segment: ArgumentSegment & {type: `variable`}, o
         }
       }
 
-      if (typeof raw !== `undefined` && segment.alternativeValue) {
-        raw = (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `);
-      } else if (typeof raw === `undefined`) {
-        if (segment.defaultValue) {
-          raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
-        } else if (segment.alternativeValue) {
-          raw = ``; // if raw === `undefined`, but there is an alternative value, it should not be thrown.
-        }
-      }
+      if (segment.defaultValue && !raw)
+        raw = (await interpolateArguments(segment.defaultValue, opts, state)).join(` `);
+      else if (segment.alternativeValue)
+        raw = raw ? (await interpolateArguments(segment.alternativeValue, opts, state)).join(` `) : ``;
 
       if (typeof raw === `undefined`) {
         if (isArgument)
@@ -1081,7 +1076,7 @@ export async function execute(command: string, args: Array<string> = [], {
     stdout,
     stderr,
     variables: Object.assign({}, variables, {
-      [`?`]: 0,
+      [`?`]: `0`,
     }),
     nextBackgroundJobIndex: 1,
     backgroundJobs: [],
