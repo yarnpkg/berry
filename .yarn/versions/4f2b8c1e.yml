@@ -1,0 +1,13 @@
+releases:
+  "@yarnpkg/libzip": patch
+
+declined:
+  - "@yarnpkg/cli"
+  - "@yarnpkg/core"
+  - "@yarnpkg/docusaurus"
+  - "@yarnpkg/fslib"
+  - "@yarnpkg/plugin-file"
+  - "@yarnpkg/plugin-nm"
+  - "@yarnpkg/plugin-patch"
+  - "@yarnpkg/pnp"
+  - vscode-zipfs
