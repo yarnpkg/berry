@@ -272,6 +272,22 @@ export function applyPatch(pnpapi: PnpApi, opts: ApplyPatchOptions) {
     return false;
   };
 
+  const originalModuleCompile = (Module.prototype as any)._compile;
+  (Module.prototype as any)._compile = function (this: NodeModule, content: string, filename: string) {
+    const patch = `if (typeof require !== 'undefined') { if (!require.cache) require.cache = Module._cache; if (!require.extensions) require.extensions = Module._extensions; };`;
+    let patchedContent = content;
+    if (content.startsWith(`#!`)) {
+      const newlineIndex = content.indexOf(`\n`);
+      if (newlineIndex !== -1) {
+        patchedContent = content.slice(0, newlineIndex + 1) + patch + content.slice(newlineIndex + 1);
+      }
+    } else {
+      patchedContent = patch + content;
+    }
+    return originalModuleCompile.call(this, patchedContent, filename);
+  };
+
+
   // @ts-expect-error - Missing types
   if (!process.features.require_module) {
     // https://github.com/nodejs/node/blob/3743406b0a44e13de491c8590386a964dbe327bb/lib/internal/modules/cjs/loader.js#L1110-L1154
