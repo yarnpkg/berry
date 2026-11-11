@@ -6,7 +6,7 @@ export function checkManifestCompatibility(pkg: Package) {
 }
 
 export type ExtractBuildScriptDataRequirements = {
-  manifest: Pick<Manifest, `scripts`>;
+  manifest: Pick<Manifest, `scripts`> & Partial<Pick<Manifest, `gypfile`>>;
   misc: {
     hasBindingGyp: boolean;
   };
@@ -20,7 +20,7 @@ export function extractBuildRequest(pkg: Package, requirements: ExtractBuildScri
       directives.push({type: BuildDirectiveType.SCRIPT, script: scriptName});
 
   // Detect cases where a package has a binding.gyp but no install script
-  if (!requirements.manifest.scripts.has(`install`) && requirements.misc.hasBindingGyp)
+  if (!requirements.manifest.scripts.has(`install`) && requirements.misc.hasBindingGyp && requirements.manifest.gypfile !== false)
     directives.push({type: BuildDirectiveType.SHELLCODE, script: `node-gyp rebuild`});
 
   if (directives.length === 0)

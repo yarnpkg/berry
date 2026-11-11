@@ -308,6 +308,12 @@
       "type": "boolean",
       "examples": [false]
     },
+    "gypfile": {
+      "title": "Define whether Yarn should run `node-gyp rebuild` for a package with a `binding.gyp` file.",
+      "description": "When a package has a `binding.gyp` file at its root but no `install` script, Yarn runs `node-gyp rebuild` when installing it.\n\nThe `gypfile` field lets you skip this by setting it to `false`, for example when your package ships prebuilt binaries.",
+      "type": "boolean",
+      "examples": [false]
+    },
     "files": {
       "title": "Array of file glob patterns that will be included within the published tarball.",
       "description": "File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `[\"*\"]`, which means it will include all files.\n\nIf this field is missing, Yarn will use the project's `.gitignore` to generate the pack list, or the `.npmignore` file instead if available.\n\nSome special files and directories are also [included](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L11) or [excluded](https://github.com/yarnpkg/berry/blob/ab2e84588b1eacb2ec60a751f12b168415224a19/packages/plugin-pack/sources/packUtils.ts#L27) regardless of whether they exist in the `files` array.",
