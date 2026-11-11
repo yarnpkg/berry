@@ -86,7 +86,7 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
           const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor, resolver, resolveOptions);
 
           let {protocol, source, params, selector} = structUtils.parseRange(structUtils.convertToManifestRange(resolvedDescriptor.range));
-          if (protocol === workspace.project.configuration.get(`defaultProtocol`))
+          if (protocol === workspace.project.configuration.get(`defaultProtocol`) && !structUtils.tryParseDescriptor(selector, true))
             protocol = null;
 
           // Replace the catalog reference with the resolved range
