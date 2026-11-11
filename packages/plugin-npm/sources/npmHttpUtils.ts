@@ -308,9 +308,10 @@ const CACHE_KEY = hashUtils.makeHash(`time`, ...CACHED_FIELDS).slice(0, 6);
 
 function getRegistryFolder(configuration: Configuration, registry: string) {
   const metadataFolder = getMetadataFolder(configuration);
-  const parsed = new URL(registry);
+  // Paths and ports may select different registries on the same host.
+  const registryHash = hashUtils.makeHash(registry).slice(0, 32);
 
-  return ppath.join(metadataFolder, CACHE_KEY as Filename, parsed.hostname as Filename);
+  return ppath.join(metadataFolder, CACHE_KEY as Filename, registryHash as Filename);
 }
 
 function getMetadataFolder(configuration: Configuration) {
