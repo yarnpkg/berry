@@ -491,3 +491,9 @@ publish:
 A feature you're using depends on an experimental or unstable API provided by the underlying runtime (e.g. Node.js). While the feature works today, the API it relies on may change or be removed without notice in future runtime versions, which could lead to breakage.
 
 This is informational — everything should work correctly for now, but be aware that updates to your runtime may require corresponding updates to Yarn before the feature can continue to work as expected.
+
+## YN0093 - `UNPUBLISHABLE_DEPENDENCY`
+
+A non-private workspace lists a dependency that won't work once the package is published, so packing it was aborted.
+
+This currently applies to the `patch:` protocol. The patch file is resolved relative to your project and isn't shipped alongside the package, so installs from the registry would fail. To patch a dependency of a published package, apply the patch through the [`resolutions`](/configuration/manifest#resolutions) field of your project root instead, and keep a regular semver range in the published package.
