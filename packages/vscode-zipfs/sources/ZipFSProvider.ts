@@ -2,12 +2,20 @@ import {VirtualFS, PosixFS, npath} from '@yarnpkg/fslib';
 import {ZipOpenFS}                 from '@yarnpkg/libzip';
 import * as vscode                 from 'vscode';
 
+/**
+ * The file extensions that will be interpreted as zip archives. Must be kept in sync with
+ * the `languages`, `activationEvents` and `menus` contributions in `./package.json`, which
+ * cannot reference this constant.
+ */
+const ZIP_ARCHIVE_EXTENSIONS = [`.zip`, `.jar`, `.war`, `.apk`, `.ipa`, `.crx`];
+
 export class ZipFSProvider implements vscode.FileSystemProvider {
   private readonly fs = new PosixFS(
     new VirtualFS({
       baseFs: new ZipOpenFS({
         useCache: true,
         maxOpenFiles: 80,
+        fileExtensions: ZIP_ARCHIVE_EXTENSIONS,
       }),
     }),
   );
@@ -17,7 +25,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
 
     switch (true) {
       case stat.isDirectory():
-      case npath.extname(uri.fsPath) === `.zip`: {
+      case ZIP_ARCHIVE_EXTENSIONS.includes(npath.extname(uri.fsPath)): {
         stat.type = vscode.FileType.Directory;
       } break;
 
