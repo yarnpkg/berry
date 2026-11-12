@@ -11,12 +11,23 @@ const configs = [{
 }, {
   nodeLinker: `pnpm`,
 }, {
+  nodeLinker: `pnpm`,
+  cacheZipBackend: `js`,
+}, {
   nodeLinker: `node-modules`,
+}, {
+  nodeLinker: `node-modules`,
+  cacheZipBackend: `js`,
 }];
 
 describe(`Basic tests`, () => {
   for (const config of configs) {
-    describe(`w/ the ${config.nodeLinker} linker${config.pnpZipBackend ? ` and ${config.pnpZipBackend} zip backend` : ``}`, () => {
+    const zipBackendLabel = config.pnpZipBackend
+      ? ` and ${config.pnpZipBackend} zip backend`
+      : config.cacheZipBackend
+        ? ` and ${config.cacheZipBackend} cache zip backend`
+        : ``;
+    describe(`w/ the ${config.nodeLinker} linker${zipBackendLabel}`, () => {
       test(
         `it should correctly handle browser fields in package.json`,
         makeTemporaryEnv(

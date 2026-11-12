@@ -1,6 +1,9 @@
 import {ppath, npath, Filename, PortablePath} from '@yarnpkg/fslib';
 import {ZipOpenFS, getArchivePart}            from '@yarnpkg/libzip';
 
+import {ZipFS}                                from '../sources/ZipFS';
+import {JsZipImpl, LibZipImpl}                from '../sources/sync';
+
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
   `fixtures/foo.zip` as Filename,
@@ -259,5 +262,47 @@ describe(`ZipOpenFS`, () => {
     expect(dir2.readSync()!.name).toStrictEqual(`foo.txt`);
 
     fs.discardAndClose();
+  });
+});
+
+describe(`customZipImplementation selection`, () => {
+  it(`defaults ZipFS to the WASM-backed LibZipImpl`, () => {
+    const zipFs = new ZipFS(npath.toPortablePath(ZIP_DIR1));
+    // @ts-expect-error: zipImpl is private
+    expect(zipFs.zipImpl).toBeInstanceOf(LibZipImpl);
+    zipFs.discardAndClose();
+  });
+
+  it(`uses the provided customZipImplementation for ZipFS`, () => {
+    const zipFs = new ZipFS(npath.toPortablePath(ZIP_DIR1), {customZipImplementation: JsZipImpl, readOnly: true});
+    // @ts-expect-error: zipImpl is private
+    expect(zipFs.zipImpl).toBeInstanceOf(JsZipImpl);
+    zipFs.discardAndClose();
+  });
+
+  it(`forwards customZipImplementation to the mounted ZipFS`, () => {
+    const fs = new ZipOpenFS({customZipImplementation: JsZipImpl, readOnlyArchives: true});
+
+    expect(fs.readFileSync(ZIP_FILE1, `utf8`)).toEqual(`foo\n`);
+
+    // @ts-expect-error: mountInstances is private
+    const mounts = [...fs.mountInstances!.values()];
+    expect(mounts.length).toBeGreaterThan(0);
+    for (const mount of mounts)
+      // @ts-expect-error: zipImpl is private
+      expect(mount.childFs.zipImpl).toBeInstanceOf(JsZipImpl);
+
+    fs.discardAndClose();
+  });
+
+  it(`reads identical bytes through the JS reader and the default reader`, () => {
+    const defaultFs = new ZipOpenFS({readOnlyArchives: true});
+    const jsFs = new ZipOpenFS({customZipImplementation: JsZipImpl, readOnlyArchives: true});
+
+    for (const file of [ZIP_FILE1, ZIP_FILE4])
+      expect(jsFs.readFileSync(file).equals(defaultFs.readFileSync(file))).toBe(true);
+
+    defaultFs.discardAndClose();
+    jsFs.discardAndClose();
   });
 });

@@ -1,6 +1,6 @@
 import {LinkOptions, structUtils}                      from '@yarnpkg/core';
 import {VirtualFS, ppath, Filename}                    from '@yarnpkg/fslib';
-import {ZipOpenFS}                                     from '@yarnpkg/libzip';
+import {JsZipImpl, ZipOpenFS}                          from '@yarnpkg/libzip';
 import {NodeModulesPackageNode, buildNodeModulesTree}  from '@yarnpkg/nm';
 import {PnpInstaller, PnpLinker}                       from '@yarnpkg/plugin-pnp';
 import {PnpSettings, makeRuntimeApi, DependencyTarget} from '@yarnpkg/pnp';
@@ -21,6 +21,7 @@ class PnpLooseInstaller extends PnpInstaller {
       baseFs: new ZipOpenFS({
         maxOpenFiles: 80,
         readOnlyArchives: true,
+        customZipImplementation: this.opts.project.configuration.get(`cacheZipBackend`) === `js` ? JsZipImpl : undefined,
       }),
     });
 
