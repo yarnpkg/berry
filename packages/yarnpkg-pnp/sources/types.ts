@@ -26,6 +26,10 @@ export type DependencyTarget =
 export type PackageInformation<P extends Path> = {packageLocation: P, packageDependencies: Map<string, DependencyTarget>, packagePeers: Set<string>, linkType: LinkType, discardFromLookup: boolean};
 export type PackageInformationData<P extends Path> = {packageLocation: P, packageDependencies: Array<[string, DependencyTarget]>, packagePeers?: Array<string>, linkType: LinkType, discardFromLookup?: boolean};
 
+export type PackageJson = {
+  type?: `commonjs` | `module`;
+};
+
 export type PackageStore = Map<string | null, PackageInformation<PortablePath>>;
 export type PackageStoreData = Array<[string | null, PackageInformationData<PortablePath>]>;
 

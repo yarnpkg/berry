@@ -1435,6 +1435,7 @@ const SUPPORTS_IMPORT_ATTRIBUTES = major >= 21 || major === 20 && minor >= 10 ||
 const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
 const HAS_BROKEN_FSTAT_FOR_ZIP_FDS = major === 26 && minor < 1 || major === 25 && minor >= 7 || major === 24 && minor === 15 || major === 22 && (minor > 22 || minor === 22 && patch >= 3);
 
+const packageJsonCache = /* @__PURE__ */ new Map();
 function readPackageScope(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
@@ -1455,9 +1456,16 @@ function readPackageScope(checkPath) {
 }
 function readPackage(requestPath) {
   const jsonPath = npath.resolve(requestPath, `package.json`);
-  if (!fs.existsSync(jsonPath))
-    return null;
-  return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
+  const cached = packageJsonCache.get(jsonPath);
+  if (cached !== void 0)
+    return cached;
+  let data = null;
+  if (fs.existsSync(jsonPath)) {
+    const { type } = JSON.parse(fs.readFileSync(jsonPath, `utf8`));
+    data = { type };
+  }
+  packageJsonCache.set(jsonPath, data);
+  return data;
 }
 
 async function tryReadFile$1(path2) {
