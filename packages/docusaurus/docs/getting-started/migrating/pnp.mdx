@@ -56,7 +56,7 @@ We can see that the Doctor spotted a couple of legitimate issues:
 Now you should have a working Yarn Plug'n'Play setup, but your repository might still need some extra care. Some things to keep in mind:
 
 - There are no `node_modules` folders. Use `require.resolve` instead.
-- There are no `.bin` folders. If you relied on them, use [`yarn run bin`](#call-binaries-using-yarn-run-rather-than-node_modulesbin) instead.
+- There are no `.bin` folders. If you relied on them, use [`yarn run bin`](#call-binaries-using-yarn-run-bin-rather-than-node_modulesbin) instead.
 - Replace any calls to `node` that are not inside the `scripts` field by `yarn node`.
 - Custom pre-hooks (e.g. `prestart`) need to be called manually now (`yarn prestart`).
 
