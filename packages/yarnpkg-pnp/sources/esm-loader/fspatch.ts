@@ -1,6 +1,6 @@
-import fs                            from 'fs';
+import fs from 'fs';
 
-import {HAS_LAZY_LOADED_TRANSLATORS} from './loaderFlags';
+import { HAS_LAZY_LOADED_TRANSLATORS } from './loaderFlags';
 
 //#region ESM to CJS support
 if (!HAS_LAZY_LOADED_TRANSLATORS) {
@@ -19,8 +19,16 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
 
   const originalReadFile = binding.readFileUtf8 || binding.readFileSync;
   if (originalReadFile) {
+    // `fs.readFileSync` calls straight back into this binding for utf8 reads,
+    // so without this every read will recurse until the stack overflows
+    let isReading = false;
+
     // @ts-expect-error - No index signature
     binding[originalReadFile.name] = function (...args: Parameters<typeof originalReadFile>) {
+      if (isReading)
+        return originalReadFile.apply(this, args);
+
+      isReading = true;
       try {
         return fs.readFileSync(args[0], {
           encoding: `utf8`,
@@ -29,7 +37,10 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
           // which says it can be a number which matches the implementation.
           flag: args[1],
         });
-      } catch { }
+      } catch {
+      } finally {
+        isReading = false;
+      }
 
       return originalReadFile.apply(this, args);
     };
