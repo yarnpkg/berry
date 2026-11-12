@@ -918,6 +918,54 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     return mountFs.ftruncateSync(realFd, len);
   }
 
+  async fsyncPromise(fd: number): Promise<void> {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fsyncPromise(fd);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fsync`);
+
+    const [mountFs, realFd] = entry;
+    return mountFs.fsyncPromise(realFd);
+  }
+
+  fsyncSync(fd: number): void {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fsyncSync(fd);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fsyncSync`);
+
+    const [mountFs, realFd] = entry;
+    return mountFs.fsyncSync(realFd);
+  }
+
+  async fdatasyncPromise(fd: number): Promise<void> {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fdatasyncPromise(fd);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fdatasync`);
+
+    const [mountFs, realFd] = entry;
+    return mountFs.fdatasyncPromise(realFd);
+  }
+
+  fdatasyncSync(fd: number): void {
+    if ((fd & MOUNT_MASK) !== this.magic)
+      return this.baseFs.fdatasyncSync(fd);
+
+    const entry = this.fdMap.get(fd);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`fdatasyncSync`);
+
+    const [mountFs, realFd] = entry;
+    return mountFs.fdatasyncSync(realFd);
+  }
+
   watch(p: PortablePath, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, opts: WatchOptions, cb?: WatchCallback): Watcher;
   watch(p: PortablePath, a?: WatchOptions | WatchCallback, b?: WatchCallback) {

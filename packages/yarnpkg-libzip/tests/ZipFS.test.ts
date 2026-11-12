@@ -787,6 +787,23 @@ describe(`ZipFS`, () => {
     zipFs.discardAndClose();
   });
 
+  it(`should reject fsync and fdatasync until implemented`, async () => {
+    const zipFs = new ZipFS();
+
+    const fd = zipFs.openSync(`/foo.txt` as PortablePath, `r`);
+
+    expect(() => zipFs.fsyncSync(fd)).toThrow(`Unimplemented`);
+    await expect(zipFs.fsyncPromise(fd)).rejects.toThrow(`Unimplemented`);
+    expect(() => zipFs.fdatasyncSync(fd)).toThrow(`Unimplemented`);
+    await expect(zipFs.fdatasyncPromise(fd)).rejects.toThrow(`Unimplemented`);
+
+    expect(() => zipFs.fsyncSync(-1)).toThrow(expect.objectContaining({code: `EBADF`}));
+    expect(() => zipFs.fdatasyncSync(-1)).toThrow(expect.objectContaining({code: `EBADF`}));
+
+    zipFs.closeSync(fd);
+    zipFs.discardAndClose();
+  });
+
   it(`should support fchmodSync`, () => {
     const zipFs = new ZipFS();
 

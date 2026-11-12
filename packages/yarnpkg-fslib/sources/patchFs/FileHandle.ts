@@ -97,14 +97,22 @@ export class FileHandle<P extends Path> {
     return this[kBaseFs].createWriteStream(null, {...options, fd: this.fd});
   }
 
-  // FIXME: Missing FakeFS version
-  datasync(): Promise<void> {
-    throw new Error(`Method not implemented.`);
+  async datasync(): Promise<void> {
+    try {
+      this[kRef](this.datasync);
+      return await this[kBaseFs].fdatasyncPromise(this.fd);
+    } finally {
+      this[kUnref]();
+    }
   }
 
-  // FIXME: Missing FakeFS version
-  sync(): Promise<void> {
-    throw new Error(`Method not implemented.`);
+  async sync(): Promise<void> {
+    try {
+      this[kRef](this.sync);
+      return await this[kBaseFs].fsyncPromise(this.fd);
+    } finally {
+      this[kUnref]();
+    }
   }
 
   // TODO: Once we drop Node 20 support, switch to ReadOptions and ReadOptionsWithoutBuffer from `@types/node`
