@@ -914,16 +914,20 @@ export function isPackageInRange(pkg: Package, range: Descriptor[`range`]) {
 /**
  * Returns whether the given package is compatible with the specified environment.
  */
-export function isPackageCompatible(pkg: Package, architectures: nodeUtils.ArchitectureSet) {
+export function isPackageCompatible(pkg: Package, architectures: nodeUtils.ArchitectureSet | nodeUtils.ArchitectureSetList) {
   if (!pkg.conditions)
     return true;
 
-  return conditionParser(pkg.conditions, specifier => {
+  const architectureList = Array.isArray(architectures)
+    ? architectures
+    : [architectures];
+
+  return architectureList.some(architecture => conditionParser(pkg.conditions!, specifier => {
     const [, name, value] = specifier.match(CONDITION_REGEX)!;
-    const supported = architectures[name as keyof typeof architectures];
+    const supported = architecture[name as keyof typeof architecture];
 
     return supported ? supported.includes(value) : true;
-  });
+  }));
 }
 
 export function allPeerRequests(root: PeerRequestNode | PeerRequirementNode): Iterable<PeerRequestNode> {

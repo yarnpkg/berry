@@ -79,6 +79,8 @@ export type ArchitectureSet = {
   libc: Array<string> | null;
 };
 
+export type ArchitectureSetList = Array<ArchitectureSet>;
+
 let architecture: Architecture | undefined;
 let architectureSet: ArchitectureSet | undefined;
 
