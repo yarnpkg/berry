@@ -326,6 +326,55 @@ describe(`ZipFS`, () => {
     zipFs2.discardAndClose();
   });
 
+  it(`should read only the remaining bytes from a file descriptor`, () => {
+    const zipFs = new ZipFS();
+    const file = `/foo.txt` as PortablePath;
+    zipFs.writeFileSync(file, `aébc`);
+
+    const fd = zipFs.openSync(file, `r`);
+    const otherFd = zipFs.openSync(file, `r`);
+    const prefix = Buffer.alloc(1);
+
+    expect(zipFs.readSync(fd, prefix, 0, 1, null)).toBe(1);
+    expect(prefix.toString()).toBe(`a`);
+    expect(zipFs.readFileSync(fd, `utf8`)).toBe(`ébc`);
+    expect(zipFs.readFileSync(fd)).toEqual(Buffer.alloc(0));
+    expect(zipFs.readFileSync(otherFd, `utf8`)).toBe(`aébc`);
+    expect(zipFs.readFileSync(file, `utf8`)).toBe(`aébc`);
+
+    zipFs.closeSync(fd);
+    expect(() => zipFs.readFileSync(fd)).toThrowError(`EBADF`);
+    zipFs.closeSync(otherFd);
+    zipFs.discardAndClose();
+  });
+
+  it(`should preserve the descriptor cursor when reading from an explicit position`, async () => {
+    const tmpdir = xfs.mktempSync();
+    const archive = `${tmpdir}/archive.zip` as PortablePath;
+    const file = `/foo.txt` as PortablePath;
+
+    const zipFs = new ZipFS(archive, {create: true});
+    zipFs.writeFileSync(file, `aébc`);
+    zipFs.saveAndClose();
+
+    const reopenedZipFs = new ZipFS(archive);
+    const fd = reopenedZipFs.openSync(file, `r`);
+    const suffix = Buffer.alloc(1);
+    expect(await reopenedZipFs.readPromise(fd, suffix, 0, 1, 4)).toBe(1);
+    expect(suffix.toString()).toBe(`c`);
+
+    const prefix = Buffer.alloc(1);
+    expect(await reopenedZipFs.readPromise(fd, prefix, 0, 1, null)).toBe(1);
+    expect(prefix.toString()).toBe(`a`);
+    await expect(reopenedZipFs.readFilePromise(fd, `utf8`)).resolves.toBe(`ébc`);
+    await expect(reopenedZipFs.readFilePromise(fd)).resolves.toEqual(Buffer.alloc(0));
+    await expect(reopenedZipFs.readFilePromise(file, `utf8`)).resolves.toBe(`aébc`);
+
+    reopenedZipFs.closeSync(fd);
+    await expect(reopenedZipFs.readFilePromise(fd)).rejects.toThrow(`EBADF`);
+    reopenedZipFs.discardAndClose();
+  });
+
   it(`should support truncate`, () => {
     const zipFs = new ZipFS();
 
@@ -348,7 +397,8 @@ describe(`ZipFS`, () => {
   it(`should support ftruncate`, async () => {
     const zipFs = new ZipFS();
 
-    const fd = zipFs.openSync(`/foo.txt` as PortablePath, `r+`);
+    const file = `/foo.txt` as PortablePath;
+    const fd = zipFs.openSync(file, `r+`);
 
     zipFs.writeFileSync(fd, `1234567890`);
 
@@ -356,7 +406,8 @@ describe(`ZipFS`, () => {
     expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`12345`);
 
     await zipFs.ftruncatePromise(fd, 4);
-    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(`1234`);
+    expect(zipFs.readFileSync(fd, `utf8`)).toStrictEqual(``);
+    expect(zipFs.readFileSync(file, `utf8`)).toStrictEqual(`1234`);
 
     zipFs.closeSync(fd);
     zipFs.discardAndClose();
@@ -847,8 +898,10 @@ describe(`ZipFS`, () => {
     await expect(zipFs.readFilePromise(fd, `utf8`)).resolves.toEqual(`new content`);
 
     await zipFs.writeFilePromise(fd, `new new content`);
-
-    expect(zipFs.readFileSync(fd, `utf8`)).toEqual(`new new content`);
+    zipFs.closeSync(fd);
+    const freshFd = zipFs.openSync(`/dir/file` as PortablePath, `r`);
+    expect(zipFs.readFileSync(freshFd, `utf8`)).toEqual(`new new content`);
+    zipFs.closeSync(freshFd);
 
     zipFs.discardAndClose();
   });
