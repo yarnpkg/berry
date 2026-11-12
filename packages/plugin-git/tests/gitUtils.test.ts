@@ -1,4 +1,8 @@
-import * as gitUtils from '../sources/gitUtils';
+import {execUtils}            from '@yarnpkg/core';
+import {Filename, ppath, xfs} from '@yarnpkg/fslib';
+
+import * as gitUtils          from '../sources/gitUtils';
+
 
 const VALID_PATTERNS = [
   [`GitHubOrg/foo-bar.js`, {
@@ -281,4 +285,42 @@ describe(`gitUtils`, () => {
       expect(gitUtils.splitRepoUrl(pattern)).toEqual(split);
     });
   }
+
+  it(`should keep special-character paths from git name-only listings`, async () => {
+    await xfs.mktempPromise(async dir => {
+      await execUtils.execvp(`git`, [`init`, `--initial-branch=master`], {cwd: dir, strict: true});
+      await execUtils.execvp(`git`, [`config`, `user.email`, `you@example.com`], {cwd: dir, strict: true});
+      await execUtils.execvp(`git`, [`config`, `user.name`, `Your Name`], {cwd: dir, strict: true});
+      await execUtils.execvp(`git`, [`config`, `commit.gpgSign`, `false`], {cwd: dir, strict: true});
+      await execUtils.execvp(`git`, [`config`, `core.quotepath`, `true`], {cwd: dir, strict: true});
+
+      await xfs.writeFilePromise(ppath.join(dir, `keep.txt` as Filename), `a\n`);
+      await execUtils.execvp(`git`, [`add`, `.`], {cwd: dir, strict: true});
+      await execUtils.execvp(`git`, [`commit`, `-m`, `init`], {cwd: dir, strict: true});
+
+      const {stdout: baseStdout} = await execUtils.execvp(`git`, [`rev-parse`, `HEAD`], {cwd: dir, strict: true});
+      const base = baseStdout.trim();
+
+      const stagedName = process.platform === `win32` ? `caf\u00e9-staged.txt` : `weird"quote-staged.txt`;
+      const untrackedName = process.platform === `win32` ? `caf\u00e9-untracked.txt` : `weird"quote-untracked.txt`;
+
+      await xfs.writeFilePromise(ppath.join(dir, stagedName as Filename), `b\n`);
+      await execUtils.execvp(`git`, [`add`, `--`, stagedName], {cwd: dir, strict: true});
+      await xfs.writeFilePromise(ppath.join(dir, untrackedName as Filename), `c\n`);
+
+      const project = {
+        cwd: dir,
+        configuration: {
+          get: () => [],
+        },
+      } as any;
+
+      const files = await gitUtils.fetchChangedFiles(dir, {base, project});
+      const names = files.map(file => ppath.basename(file));
+
+      expect(names).toContain(stagedName);
+      expect(names).toContain(untrackedName);
+      expect(names.every(name => !name.startsWith(`"`) && !name.includes(`\\303`))).toBe(true);
+    });
+  });
 });
