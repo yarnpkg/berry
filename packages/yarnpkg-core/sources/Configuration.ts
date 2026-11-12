@@ -884,6 +884,23 @@ function parseShape(configuration: Configuration, path: string, valueBase: unkno
   return result;
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === `object` && value !== null && !Array.isArray(value);
+}
+
+// When a map setting normalizes keys (e.g. npmRegistries strips a trailing
+// slash), two distinct YAML keys can collapse onto one. Merge the raw objects
+// first so later entries don't wipe fields that they never set.
+function mergeMapEntryValues(current: unknown, incoming: unknown): unknown {
+  const currentValue = configUtils.getValue(current);
+  const incomingValue = configUtils.getValue(incoming);
+
+  if (isPlainObject(currentValue) && isPlainObject(incomingValue))
+    return {...currentValue, ...incomingValue};
+
+  return incoming;
+}
+
 function parseMap(configuration: Configuration, path: string, valueBase: unknown, definition: MapSettingsDefinition, folder: PortablePath) {
   const value = configUtils.getValue(valueBase);
 
@@ -895,8 +912,17 @@ function parseMap(configuration: Configuration, path: string, valueBase: unknown
   if (value === null)
     return result;
 
+  const grouped = new Map<string, unknown>();
+
   for (const [propKey, propValue] of Object.entries(value)) {
     const normalizedKey = definition.normalizeKeys ? definition.normalizeKeys(propKey) : propKey;
+    const previous = grouped.get(normalizedKey);
+    grouped.set(normalizedKey, typeof previous !== `undefined`
+      ? mergeMapEntryValues(previous, propValue)
+      : propValue);
+  }
+
+  for (const [normalizedKey, propValue] of grouped) {
     const subPath = `${path}['${normalizedKey}']`;
 
     // @ts-expect-error: SettingsDefinitionNoDefault has ... no default ... but
