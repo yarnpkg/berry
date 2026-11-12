@@ -67,6 +67,8 @@ export type PackageRunDriver = (
 
 export enum RequestType {
   Login = `login`,
+  WebLoginInit = `webLoginInit`,
+  WebLoginCheck = `webLoginCheck`,
   PackageInfo = `packageInfo`,
   PackageTarball = `packageTarball`,
   PackageVersion = `packageVersion`,
@@ -84,6 +86,13 @@ export type Request = {
   registry?: string;
   type: RequestType.Login;
   username: string;
+} | {
+  registry?: string;
+  type: RequestType.WebLoginInit;
+} | {
+  registry?: string;
+  type: RequestType.WebLoginCheck;
+  session: string;
 } | {
   registry?: string;
   type: RequestType.PackageInfo;
@@ -236,6 +245,29 @@ export const validLogins = {
 
 let whitelist = new Map();
 let recording: Array<Request> | null = null;
+
+export type WebLoginMock = {
+  notice: string | Array<string> | null;
+  initFails: boolean;
+};
+
+let webLoginMock: WebLoginMock = {notice: null, initFails: false};
+let webLoginSessionCount = 0;
+const webLoginDoneAttempts = new Map<string, number>();
+
+export const setWebLoginMock = async (
+  mock: Partial<WebLoginMock>,
+  fn: () => Promise<void>,
+) => {
+  webLoginMock = {notice: null, initFails: false, ...mock};
+  webLoginSessionCount = 0;
+  webLoginDoneAttempts.clear();
+  try {
+    await fn();
+  } finally {
+    webLoginMock = {notice: null, initFails: false};
+  }
+};
 
 export function sortJson<T>(data: Iterable<T>): Array<T> {
   return miscUtils.sortMap(data, request => {
@@ -618,6 +650,50 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       });
     },
 
+    async [RequestType.WebLoginInit](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.WebLoginInit)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      if (webLoginMock.initFails) {
+        processError(response, 404, `Web login isn't supported by this registry`);
+        return;
+      }
+
+      const session = `${++webLoginSessionCount}`;
+      const serverUrl = `${type}://${request.headers.host}`;
+
+      const data = JSON.stringify({
+        loginUrl: `${serverUrl}/-/v1/login/browser/${session}`,
+        doneUrl: `${serverUrl}/-/v1/login/done/${session}`,
+      });
+
+      response.writeHead(200, {
+        [`Content-Type`]: `application/json`,
+        ...webLoginMock.notice !== null && {
+          [`npm-notice`]: webLoginMock.notice,
+        },
+      });
+      response.end(data);
+    },
+
+    async [RequestType.WebLoginCheck](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.WebLoginCheck)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const attempts = (webLoginDoneAttempts.get(parsedRequest.session) ?? 0) + 1;
+      webLoginDoneAttempts.set(parsedRequest.session, attempts);
+
+      if (attempts === 1) {
+        response.writeHead(202, {[`retry-after`]: `0`});
+        response.end();
+        return;
+      }
+
+      const data = JSON.stringify({token: validLogins.fooUser.npmAuthToken});
+      response.writeHead(200, {[`Content-Type`]: `application/json`});
+      response.end(data);
+    },
+
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));
     },
@@ -830,6 +906,17 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
           ...registry,
           type: RequestType.Login,
           username,
+        };
+      } else if (url === `/-/v1/login` && method === `POST`) {
+        return {
+          ...registry,
+          type: RequestType.WebLoginInit,
+        };
+      } else if ((match = url.match(/^\/-\/v1\/login\/done\/(.+)$/)) && method === `GET`) {
+        return {
+          ...registry,
+          type: RequestType.WebLoginCheck,
+          session: match[1],
         };
       } else if (url === `/-/whoami`) {
         return {
