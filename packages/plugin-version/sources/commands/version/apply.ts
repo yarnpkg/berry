@@ -11,7 +11,7 @@ export default class VersionApplyCommand extends BaseCommand {
     category: `Release-related commands`,
     description: `apply deferred records to workspaces`,
     details: `
-      This command will apply the deferred version changes to workspaces. The applied records are removed from the project.
+      This command will apply the deferred version changes to workspaces. The applied records are removed from the project, unless \`--prerelease\` is set, in which case deferred records are kept so a later stable apply can still consume them.
 
       For more information on the options, see the \`yarn version\` command. For more information on the deferred versioning workflow, see our documentation (https://yarnpkg.com/features/release-workflow#deferred-versioning).
     `,
@@ -37,7 +37,7 @@ export default class VersionApplyCommand extends BaseCommand {
   });
 
   prerelease = Option.String(`--prerelease`, {
-    description: `Specify a prerelease pattern to use when working with prerelease versions`,
+    description: `Add or update a prerelease id when applying deferred stable bumps (keeps deferred records)`,
     tolerateBoolean: true,
   });
 
