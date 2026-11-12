@@ -1356,13 +1356,20 @@ export class ZipFS extends BasePortableFakeFS {
     if (!directoryListing)
       throw errors.ENOTDIR(`scandir '${p}'`);
 
+    const getParentPath = (subPath: PortablePath) => {
+      const parentPath = ppath.join(resolvedP, subPath);
+      return this.path === null
+        ? parentPath
+        : ppath.join(this.path, ppath.relative(PortablePath.root, parentPath));
+    };
+
     if (opts?.recursive) {
       if (opts?.withFileTypes) {
         const entries = Array.from(directoryListing, name => {
           return Object.assign(this.statImpl(`lstat`, ppath.join(p, name)), {
             name,
             path: PortablePath.dot,
-            parentPath: PortablePath.dot,
+            parentPath: getParentPath(PortablePath.dot),
           });
         });
 
@@ -1377,7 +1384,7 @@ export class ZipFS extends BasePortableFakeFS {
             entries.push(Object.assign(this.statImpl(`lstat`, ppath.join(p, subPath, child)), {
               name: child,
               path: subPath,
-              parentPath: subPath,
+              parentPath: getParentPath(subPath),
             }));
           }
         }
