@@ -77,6 +77,7 @@ function runYarnPath(cli: YarnCli, argv: Array<string>, {yarnPath}: {yarnPath: P
     env: {
       ...process.env,
       YARN_IGNORE_PATH: `1`,
+      IGNORE_YARN_PATH_INTERNAL: `1`,
     },
   } as const;
 
@@ -155,7 +156,13 @@ async function run(cli: YarnCli, argv: Array<string>, {selfPath, pluginConfigura
   if (yarnPath && !ignorePath)
     return runYarnPath(cli, argv, {yarnPath});
 
-  delete process.env.YARN_IGNORE_PATH;
+  // Only clear the flag when it was injected while delegating to `yarnPath`.
+  // A user-provided value must remain available to lifecycle scripts and their
+  // nested Yarn invocations.
+  if (process.env.IGNORE_YARN_PATH_INTERNAL === `1`) {
+    delete process.env.IGNORE_YARN_PATH_INTERNAL;
+    delete process.env.YARN_IGNORE_PATH;
+  }
 
   const postCwdArgv = checkCwd(cli, argv);
 
