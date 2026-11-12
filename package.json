@@ -27,6 +27,7 @@
     "typescript": "catalog:"
   },
   "resolutions": {
+    "got@npm:^11.7.0": "patch:got@npm%3A11.8.2#~/.yarn/patches/got-npm-11.8.2-c1eb105458.patch",
     "ink@^3.2.0": "patch:ink@npm%3A3.2.0#~/.yarn/patches/ink-npm-3.2.0-2f1df5b094.patch",
     "yoga-layout-prebuilt": "patch:yoga-layout-prebuilt@1.10.0#./.yarn/patches/yoga-layout-prebuilt.patch",
     "make-fetch-happen@npm:^14.0.1": "portal:packages/make-fetch-smaller",

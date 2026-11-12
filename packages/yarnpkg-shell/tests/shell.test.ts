@@ -446,6 +446,12 @@ describe(`Shell`, () => {
         ), {
           stdout: `1\n`,
         });
+
+        await expectResult(bufferResult(
+          `echo $?`,
+        ), {
+          stdout: `0\n`,
+        });
       });
 
       it(`should expose the number of arguments via $#`, async () => {
@@ -706,6 +712,16 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should use the default value when the variable is empty`, async () => {
+        await expectResult(bufferResult(
+          `echo "\${FOOBAR:-hello world}"`,
+          [],
+          {env: {FOOBAR: ``}},
+        ), {
+          stdout: `hello world\n`,
+        });
+      });
+
       it(`should support alternative arguments via \${ARG:+...}`, async () => {
         await expectResult(bufferResult(
           `echo "\${FOOBAR:+hello world}"`,
@@ -722,6 +738,16 @@ describe(`Shell`, () => {
         });
       });
 
+      it(`should not use the alternative value when the variable is empty`, async () => {
+        await expectResult(bufferResult(
+          `echo "foo\${FOOBAR:+hello world}bar"`,
+          [],
+          {env: {FOOBAR: ``}},
+        ), {
+          stdout: `foobar\n`,
+        });
+      });
+
       it(`should support alternative arguments via \${N:+...}`, async () => {
         await expectResult(bufferResult(
           `echo "\${0:+hello world}"`, [`goodbye world`],
@@ -731,6 +757,12 @@ describe(`Shell`, () => {
 
         await expectResult(bufferResult(
           `echo "\${0:+hello world}"`,
+        ), {
+          stdout: `\n`,
+        });
+
+        await expectResult(bufferResult(
+          `echo "\${0:+hello world}"`, [``],
         ), {
           stdout: `\n`,
         });
