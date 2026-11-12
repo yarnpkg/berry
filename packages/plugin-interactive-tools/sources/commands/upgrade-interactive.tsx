@@ -49,6 +49,10 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     validator: t.isEnum(InstallMode),
   });
 
+  noTimeGate = Option.Boolean(`--no-time-gate`, false, {
+    description: `Disable the minimum release age check for this command`,
+  });
+
   async execute() {
     libuiUtils.checkRequirements(this.context);
 
@@ -62,6 +66,9 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     const {default: React, useCallback, useEffect, useRef, useState} = await import(`react`);
 
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
+
+    if (this.noTimeGate)
+      suggestUtils.disableTimeGate(configuration);
     const {project, workspace} = await Project.find(configuration, this.context.cwd);
     const cache = await Cache.find(configuration);
 
