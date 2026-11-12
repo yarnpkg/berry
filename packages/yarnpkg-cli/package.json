@@ -46,7 +46,7 @@
     "typanion": "^3.14.0"
   },
   "devDependencies": {
-    "@types/semver": "^7.1.0",
+    "@types/semver": "^7.8.0",
     "@yarnpkg/builder": "workspace:^",
     "@yarnpkg/monorepo": "workspace:^",
     "@yarnpkg/pnpify": "workspace:^"
