@@ -19,12 +19,13 @@ Note that those commands only need to be run once for the whole project and will
 ## Migration steps
 
 1. Make sure you're using Node 18+
-2. Run <CommandLineHighlight type={`inlineCode`} lines={[{type: `command`, command: {name: `corepack`, path: [`enable`], argv: [`enable`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `enable`}]}]}/> to activate [Corepack](https://nodejs.org/api/corepack.html)
-2. Go into your project directory
-3. Run `yarn set version berry`
-4. Convert your `.npmrc` and `.yarnrc` files into [`.yarnrc.yml`](/configuration/yarnrc) (details [here](/migration/guide#update-your-configuration-to-the-new-settings))
-5. Run `yarn install` to migrate the lockfile
-6. Commit all changes
+1. Run <CommandLineHighlight type={`inlineCode`} lines={[{type: `command`, command: {name: `corepack`, path: [`enable`], argv: [`enable`]}, split: false, tooltip: null, tokens: [{type: `path`, segmentIndex: 0, text: `enable`}]}]}/> to activate [Corepack](https://nodejs.org/api/corepack.html)
+1. Go into your project directory
+1. Run `yarn set version berry`
+1. Convert your `.npmrc` and `.yarnrc` files into [`.yarnrc.yml`](/configuration/yarnrc) (details [here](/migration/guide#update-your-configuration-to-the-new-settings))
+1. Run `yarn install` to migrate the lockfile
+1. Update your project's `.gitignore` (details [here](/getting-started/qa#which-files-should-be-gitignored))
+1. Commit all changes
 
 Good, you should now have a working Yarn install! Some things might still require some adjustments in your CI scripts (for example the deprecation of [arbitrary `pre/post`-scripts](/advanced/lifecycle-scripts), or the renaming of `--frozen-lockfile` into `yarn install ! --immutable`), but at least we have a working project.
 
