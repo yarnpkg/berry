@@ -6,7 +6,7 @@ authors: [arcanis]
 
 Hi everyone! After exactly 365 days of _very_ intensive development, I'm extremely happy to unveil the first stable release of Yarn 2. In this post I will explain what this release will mean for our community. Buckle up!
 
-_If you're interested to know more about what will happen to Yarn 1, keep reading as we detail our plans later down this post: [Future Plans](#what-will-happen-to-the-legacy-codebase). If you just want to start right now with Yarn 2, check out the [Getting Started](https://next.yarnpkg.com/getting-started/install) or [Migration](https://next.yarnpkg.com/advanced/migration) guides._
+_If you're interested to know more about what will happen to Yarn 1, keep reading as we detail our plans later down this post: [Future Plans](#what-will-happen-to-the-legacy-codebase). If you just want to start right now with Yarn 2, check out the [Getting Started](https://yarnpkg.com/getting-started/install) or [Migration](https://yarnpkg.com/migration/guide) guides._
 
 {/* truncate */}
 
@@ -44,7 +44,7 @@ Describing this release is particularly difficult - it contains core, fundamenta
 * [Bundle dependencies aren't supported anymore](#deprecating-bundle-dependencies)
 * [Packages are stored in read-only archives](#readonly-packages)
 
-Those highlights are only a subset of all the changes and improvements; a more detailed changelog can be found [here](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md), and the upgrade instructions are available [here](https://next.yarnpkg.com/advanced/migration).
+Those highlights are only a subset of all the changes and improvements; a more detailed changelog can be found [here](https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md), and the upgrade instructions are available [here](https://yarnpkg.com/migration/guide).
 
 ## **Frequently Asked Questions**
 
@@ -60,9 +60,9 @@ And finally, the project lead and design architect for Yarn 2 has been yours tru
 
 ### **How easy will it be to migrate to Yarn 2?**
 
-Thanks to our beta testers and the general support of the ecosystem we've been able to soften a lot the pain associated with such a major upgrade. A [Migration Guide](https://next.yarnpkg.com/advanced/migration) is available that goes into more detail, but generally speaking as long as you use the latest versions of your tools (ESLint, Babel, TypeScript, Gatsby, etc), things should be fine.
+Thanks to our beta testers and the general support of the ecosystem we've been able to soften a lot the pain associated with such a major upgrade. A [Migration Guide](https://yarnpkg.com/migration/guide) is available that goes into more detail, but generally speaking as long as you use the latest versions of your tools (ESLint, Babel, TypeScript, Gatsby, etc), things should be fine.
 
-One particular caveat however: **Flow and React-Native cannot be used at the moment under Plug’n’Play (PnP) environments**. We're looking forward to working with their respective teams to figure out how to make our technologies compatible. In the meantime you can choose to remain on Yarn 1 for as long as you need, or to use the [`node_modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-node-modules), which aims to provide a graceful degradation path for smoother upgrade (note that it's still a work in progress - expect dragons). More details [here](https://next.yarnpkg.com/advanced/migration#if-required-install-the-node-modules-plugin).
+One particular caveat however: **Flow and React-Native cannot be used at the moment under Plug’n’Play (PnP) environments**. We're looking forward to working with their respective teams to figure out how to make our technologies compatible. In the meantime you can choose to remain on Yarn 1 for as long as you need, or to use the [`node_modules` plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-nm), which aims to provide a graceful degradation path for smoother upgrade (note that it's still a work in progress - expect dragons). More details [here](https://yarnpkg.com/migration/guide).
 
 > **If you don't want to upgrade all of your projects**, just run `yarn policies set-version ^1` in the repositories that need to stay on Yarn 1, and commit the result. Yarn will always prefer the checked-in binaries over the global ones, making it the best way to ensure that everyone in your team shares the exact same release!
 
@@ -74,7 +74,7 @@ Yarn 1.22 will be released next week. Once done, the 1.x branch will officially 
 
 * The modern repository will **not** be renamed into `yarnpkg/yarn`, as that would break a significant amount of backlink history. It will remain  [`yarnpkg/berry`](https://github.com/yarnpkg/berry) for the foreseeable future.
 
-* The old website will move over to classic.yarnpkg.com, and the new website (currently [next.yarnpkg.com](https://next.yarnpkg.com)) will be migrated to the main domain name.
+* The old website will move over to classic.yarnpkg.com, and the new website (currently [next.yarnpkg.com](https://yarnpkg.com)) will be migrated to the main domain name.
 
 * The `yarn` package on npm will not change; we will distribute further version using the new [`yarn set version`](https://yarnpkg.com/cli/set/version) command.
 
@@ -88,7 +88,7 @@ Back when Yarn was released its CLI output was a good step forward compared to o
 
 ![](https://i.imgur.com/qetNioL.png)
 
-Almost all messages now have their own error codes that can be searched within our [documentation](https://next.yarnpkg.com/advanced/error-codes). Here you'll find comprehensive explanations of the in-and-outs of each message - including suggested fixes. The colours are now used to support the important parts of each message, usually the package names and versions, rather than on a per-line basis.
+Almost all messages now have their own error codes that can be searched within our [documentation](https://yarnpkg.com/advanced/error-codes). Here you'll find comprehensive explanations of the in-and-outs of each message - including suggested fixes. The colours are now used to support the important parts of each message, usually the package names and versions, rather than on a per-line basis.
 
 We expect some adjustments to be made during the following months (in particular with regard to colour blindness accessibility), but over time I think you'll come to love this new display!
 
@@ -100,7 +100,7 @@ Yarn now facilitates the maintenance of such setups through various means:
 
 * `yarn up <name>` will upgrade a package in all workspaces at once
 * `yarn add -i <name>` will offer to reuse the same version as the ones used by your other workspaces (and some other choices)
-* The [version plugin](https://next.yarnpkg.com/features/release-workflow) will give you a way to check that all the relevant workspaces are bumped when one of them is released again.
+* The [version plugin](https://yarnpkg.com/features/release-workflow) will give you a way to check that all the relevant workspaces are bumped when one of them is released again.
 
 Those changes highlight the new experience that we want to bring to Yarn: the tool becomes an ally rather than a burden.
 
@@ -112,11 +112,11 @@ While not a feature in itself, the term "Zero Install" encompasses a lot of Yarn
 
 To make it short, because Yarn now reads the vendor files directly from the cache, if the cache becomes part of your repository then you never need to run yarn install again. It has a repository size impact, of course, but on par with the [offline mirror feature](https://yarnpkg.com/blog/2016/11/24/offline-mirror/) from Yarn 1 - very reasonable.
 
-For more details (such as "why is it different from checking in the `node_modules` directory"), refer to  this [documentation page](https://next.yarnpkg.com/features/zero-installs).
+For more details (such as "why is it different from checking in the `node_modules` directory"), refer to  this [documentation page](https://yarnpkg.com/features/caching#zero-installs).
 
 ### **New Command: `yarn dlx`**
 
-Yarn 2 introduces a new command called [`yarn dlx`](https://next.yarnpkg.com/cli/dlx) (dlx stands for _download and execute_) which basically does the same thing as [`npx`](https://www.npmjs.com/package/npx) in a slightly less dangerous way. Since `npx` is meant to be used for both local and remote scripts, there is a decent risk that a typo could open the door to an attacker:
+Yarn 2 introduces a new command called [`yarn dlx`](https://yarnpkg.com/cli/dlx) (dlx stands for _download and execute_) which basically does the same thing as [`npx`](https://www.npmjs.com/package/npx) in a slightly less dangerous way. Since `npx` is meant to be used for both local and remote scripts, there is a decent risk that a typo could open the door to an attacker:
 
 ```
 $ npx serv # Oops, should have been "serve"
@@ -138,7 +138,7 @@ Running a command over multiple repositories is a relatively common use case, an
 $ yarn workspaces foreach run build
 ```
 
-The command also supports options to control the execution which allow you to tell Yarn to follow dependencies, to execute the commands in parallel, to skip workspaces, and more. Check out the full list of options [here](https://next.yarnpkg.com/cli/workspaces/foreach).
+The command also supports options to control the execution which allow you to tell Yarn to follow dependencies, to execute the commands in parallel, to skip workspaces, and more. Check out the full list of options [here](https://yarnpkg.com/cli/workspaces/foreach).
 
 ### **New Protocol: `patch:`**
 
@@ -152,7 +152,7 @@ Yarn 2 features a new protocol called `patch:`. This protocol can be used whenev
 }
 ```
 
-Together with the [`resolutions`](https://next.yarnpkg.com/configuration/manifest#resolutions) field, you can even patch a package located deep within your dependency tree. And since the `patch:` protocol is just another data source, it benefits from the same mechanisms as all other protocols - including caching and checksums!
+Together with the [`resolutions`](https://yarnpkg.com/configuration/manifest#resolutions) field, you can even patch a package located deep within your dependency tree. And since the `patch:` protocol is just another data source, it benefits from the same mechanisms as all other protocols - including caching and checksums!
 
 ### **New Protocol: `portal:`**
 
@@ -175,7 +175,7 @@ Working with workspaces brings its own bag of problems, and scalable releases ma
 
 When we started releasing the beta builds for Yarn 2, we quickly noticed we would be hitting the same walls. We looked around, but existing solutions seemed to have significant requirements - for example, using Lerna you would have to either release all your packages every time, or to keep track yourself of which packages need to be released. Some of that work can be automated, but it becomes even more complex when you consider that a workspace being released may require unrelated packages to be released again too (for example because they use it in their prepack steps)!
 
-To solve this problem, we've designed a whole new workflow available through a plugin called [`version`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-version). This workflow, documented [here](https://next.yarnpkg.com/features/release-workflow), allows you to delegate part of the release responsibility to your contributors. And to make things even better, it also ships with a visual interface that makes managing releases a walk in the park!
+To solve this problem, we've designed a whole new workflow available through a plugin called [`version`](https://github.com/yarnpkg/berry/tree/master/packages/plugin-version). This workflow, documented [here](https://yarnpkg.com/features/release-workflow), allows you to delegate part of the release responsibility to your contributors. And to make things even better, it also ships with a visual interface that makes managing releases a walk in the park!
 
 ![](https://i.imgur.com/cusXKDV.png)
 
@@ -185,7 +185,7 @@ This workflow is sill experimental, but it works well enough for us that we thin
 
 Workspaces quickly proved themselves being one of our most valuable features. Countless projects and applications switched to them during the years. Still, they are not flawless. In particular, it takes a lot of care to keep the workspace dependencies synchronized.
 
-Yarn 2 ships with a new concept called [Constraints](https://next.yarnpkg.com/features/constraints). Constraints offer a way to specify generic rules (using [Prolog](https://en.wikipedia.org/wiki/Prolog), a declarative programming language) that must be met in all of your workspaces for the validation to pass. For example, the following will prevent your workspaces from ever depending on underscore - and will be autofixable!
+Yarn 2 ships with a new concept called [Constraints](https://yarnpkg.com/features/constraints). Constraints offer a way to specify generic rules (using [Prolog](https://en.wikipedia.org/wiki/Prolog), a declarative programming language) that must be met in all of your workspaces for the validation to pass. For example, the following will prevent your workspaces from ever depending on underscore - and will be autofixable!
 
 ```prolog
 gen_enforced_dependency(WorkspaceCwd, 'underscore', null, DependencyType) :-
@@ -231,7 +231,7 @@ Yarn 2 now allows you to specify whether a build script should run or not on a p
 }
 ```
 
-If you instead prefer to disable everything by default, just toggle off [`enableScripts`](https://next.yarnpkg.com/configuration/yarnrc#enableScripts) in your settings then explicitly enable the [`built`](https://next.yarnpkg.com/configuration/manifest#dependenciesMeta.built) flag in `dependenciesMeta`.
+If you instead prefer to disable everything by default, just toggle off [`enableScripts`](https://yarnpkg.com/configuration/yarnrc#enableScripts) in your settings then explicitly enable the [`built`](https://yarnpkg.com/configuration/manifest#dependenciesMeta.built) flag in `dependenciesMeta`.
 
 
 ### **Normalized Shell**
@@ -308,7 +308,7 @@ In particular, this means two interesting things:
 
 * You can have a dependency on the Yarn core itself and instantiate the classes yourself (note that this part is still a bit experimental as we figure out the best way to include the builtin plugins when operating under this mode).
 
-To give you an idea, we've built a [typescript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript) which will automatically add the relevant `@types/` packages each time you run `yarn add`. Plugins are easy to write - we even have a [tutorial](https://next.yarnpkg.com/advanced/plugin-tutorial) -, so give it a shot sometime!
+To give you an idea, we've built a [typescript plugin](https://github.com/yarnpkg/berry/tree/master/packages/plugin-typescript) which will automatically add the relevant `@types/` packages each time you run `yarn add`. Plugins are easy to write - we even have a [tutorial](https://yarnpkg.com/advanced/plugin-tutorial) -, so give it a shot sometime!
 
 ### **Normalized Configuration**
 
@@ -320,7 +320,7 @@ npmPublishAccess: public
 yarnPath: scripts/run-yarn.js
 ```
 
-In Yarn 2, the whole configuration has been revamped and everything is now kept within a single source of truth named `.yarnrc.yml`. The settings names have changed too in order to become uniform (no more `experimental-pack-script-packages-in-mirror` vs `workspaces-experimental`), so be sure to take a look at our shiny new [documentation](https://next.yarnpkg.com/configuration/yarnrc).
+In Yarn 2, the whole configuration has been revamped and everything is now kept within a single source of truth named `.yarnrc.yml`. The settings names have changed too in order to become uniform (no more `experimental-pack-script-packages-in-mirror` vs `workspaces-experimental`), so be sure to take a look at our shiny new [documentation](https://yarnpkg.com/configuration/yarnrc).
 
 ### **Strict Package Boundaries**
 
@@ -348,7 +348,7 @@ Bundle dependencies are an artefact of another time, and all support for them ha
 }
 ```
 
-Should you use bundle dependencies, please check the [Migration Guide](https://next.yarnpkg.com/advanced/migration) for suggested alternatives.
+Should you use bundle dependencies, please check the [Migration Guide](https://yarnpkg.com/migration/guide) for suggested alternatives.
 
 ### **Read-Only Packages**
 
@@ -362,7 +362,7 @@ const lodash = require.resolve(`lodash`);
 writeFileSync(lodash, `module.exports = 42;`);
 ```
 
-If a package needs to modify its own source code, it will need to be [unplugged](https://next.yarnpkg.com/advanced/lexicon#unplugged-package) - either explicitly in the [`dependenciesMeta` field](https://next.yarnpkg.com/configuration/manifest#dependenciesMeta.unplugged), or implicitly by listing a postinstall script.
+If a package needs to modify its own source code, it will need to be [unplugged](https://yarnpkg.com/advanced/lexicon#unplugged-package) - either explicitly in the [`dependenciesMeta` field](https://yarnpkg.com/configuration/manifest#dependenciesMeta.unplugged), or implicitly by listing a postinstall script.
 
 
 ## **Conclusion**
