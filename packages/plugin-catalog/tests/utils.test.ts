@@ -438,5 +438,75 @@ describe(`utils`, () => {
       expect(result).toBe(modifiedDescriptor);
       expect(result.range).toBe(`npm:^18.0.0-modified`);
     });
+
+    it(`should preserve patch: protocol when resolving catalog reference.`, () => {
+      const catalog = new Map();
+      catalog.set(`typescript`, `patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>`);
+      configuration.values.set(`catalog`, catalog);
+
+      const dependency = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `typescript`),
+        `catalog:`,
+      );
+
+      // Mock the resolver to return the patch descriptor
+      const patchRange = `patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>`;
+      const patchDescriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `typescript`),
+        patchRange,
+      );
+      mockResolver.bindDescriptor.mockReturnValue(patchDescriptor);
+
+      const result = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
+
+      expect(result.range).toBe(patchRange);
+      expect(result.range).toMatch(/^patch:/);
+    });
+
+    it(`should preserve portal: protocol when resolving catalog reference`, () => {
+      const catalog = new Map();
+      catalog.set(`my-package`, `portal:../local-package`);
+      configuration.values.set(`catalog`, catalog);
+
+      const dependency = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `my-package`),
+        `catalog:`,
+      );
+
+      const portalRange = `portal:../local-package`;
+      const portalDescriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `my-package`),
+        portalRange,
+      );
+      mockResolver.bindDescriptor.mockReturnValue(portalDescriptor);
+
+      const result = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
+
+      expect(result.range).toBe(portalRange);
+      expect(result.range).toMatch(/^portal:/);
+    });
+
+    it(`should preserve link: protocol when resolving catalog reference`, () => {
+      const catalog = new Map();
+      catalog.set(`my-package`, `link:../linked-package`);
+      configuration.values.set(`catalog`, catalog);
+
+      const dependency = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `my-package`),
+        `catalog:`,
+      );
+
+      const linkRange = `link:../linked-package`;
+      const linkDescriptor = structUtils.makeDescriptor(
+        structUtils.makeIdent(null, `my-package`),
+        linkRange,
+      );
+      mockResolver.bindDescriptor.mockReturnValue(linkDescriptor);
+
+      const result = resolveDescriptorFromCatalog(project, dependency, mockResolver, resolveOptions);
+
+      expect(result.range).toBe(linkRange);
+      expect(result.range).toMatch(/^link:/);
+    });
   });
 });
