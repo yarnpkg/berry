@@ -1,6 +1,8 @@
 import {Configuration, Manifest, Ident, structUtils, semverUtils} from '@yarnpkg/core';
 import micromatch                                                 from 'micromatch';
 
+import type {PackageMetadata}                                     from './npmHttpUtils';
+
 export enum RegistryType {
   AUDIT_REGISTRY = `npmAuditRegistry`,
   FETCH_REGISTRY = `npmRegistryServer`,
@@ -108,7 +110,30 @@ export function getMinimalAgeGate(ident: Ident | null, {configuration}: {configu
   return configuration.get(`npmMinimalAgeGate`);
 }
 
-function shouldBeQuarantined({configuration, ident, version, publishTimes}: IsPackageApprovedOptions) {
+/**
+ * A version is a trust downgrade when it has no provenance attestation while
+ * a version published before it had one, which is what a publish from a stolen
+ * token looks like on a package that normally publishes from CI.
+ */
+function isTrustDowngrade({version, publishTimes, versions}: Pick<IsPackageApprovedOptions, `version` | `publishTimes` | `versions`>) {
+  if (!versions || versions[version]?.dist?.attestations)
+    return false;
+
+  // Like the age gate, a version without a publish date can't be checked, so it gets quarantined
+  const versionTime = publishTimes?.[version];
+  if (typeof versionTime === `undefined`)
+    return Object.values(versions).some(other => other.dist?.attestations);
+
+  return Object.entries(versions).some(([otherVersion, other]) => {
+    const otherTime = publishTimes?.[otherVersion];
+    return other.dist?.attestations && typeof otherTime !== `undefined` && new Date(otherTime) < new Date(versionTime);
+  });
+}
+
+function shouldBeQuarantined({configuration, ident, version, publishTimes, versions}: IsPackageApprovedOptions) {
+  if (configuration.get(`npmTrustPolicyGate`) && isTrustDowngrade({version, publishTimes, versions}))
+    return true;
+
   const minimalAgeGate = getMinimalAgeGate(ident, {configuration});
 
   if (minimalAgeGate) {
@@ -151,6 +176,7 @@ export type IsPackageApprovedOptions = {
   ident: Ident;
   version: string;
   publishTimes?: Record<string, string>;
+  versions?: PackageMetadata[`versions`];
 };
 
 function isPreapproved({configuration, ident, version}: IsPackageApprovedOptions) {

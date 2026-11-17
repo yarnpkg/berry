@@ -87,7 +87,7 @@ export class NpmSemverResolver implements Resolver {
     const semverCandidates = selectMatchingVersions(range, Object.keys(registryData.versions));
 
     const candidates = semverCandidates.filter(candidate => {
-      return isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidate.raw, publishTimes: registryData.time});
+      return isPackageApproved({configuration: opts.project.configuration, ident: descriptor, version: candidate.raw, publishTimes: registryData.time, versions: registryData.versions});
     });
 
     if (semverCandidates.length > 0 && candidates.length === 0)

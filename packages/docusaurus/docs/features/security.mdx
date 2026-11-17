@@ -25,6 +25,12 @@ Yarn doesn't run postinstalls by default ever since 4.14. You must either enable
 
 Yarn 4.12 introduced `npmMinimalAgeGate` to restrict packages installed on your machine to only packages that got published at least N days prior. The setting defaults to `1d`, so a brand new release won't be installed until it has had a chance to be reviewed by the community. The `npmPreapprovedPackages` setting also lets you bypass this check for specific packages, and the `--no-time-gate` flag on `yarn add` and `yarn up` lets you bypass it for a single command.
 
+## Trust policy gate
+
+When `npmTrustPolicyGate` is set to `true`, Yarn won't install a package version that was published without a [provenance attestation](https://docs.npmjs.com/generating-provenance-statements) if an earlier version of the same package had one. Packages that publish from CI usually keep their provenance from one release to the next, so a release that suddenly lacks it may have been published with a stolen token. When the newest matching version is affected, Yarn falls back to an older one that passes the check.
+
+A package can legitimately lose its provenance, for example when a maintenance branch is still published by hand. Add such versions to `npmPreapprovedPackages` to install them anyway.
+
 ## Hardened mode
 
 The hardened mode can be set (or disabled) using either the `enableHardenedMode` setting or by defining `YARN_ENABLE_HARDENED_MODE=1|0` in your environment variables, but in most cases you won't even have to think about it - the hardened mode is enabled by default when Yarn detects it runs in a pull request from a public GitHub repository.

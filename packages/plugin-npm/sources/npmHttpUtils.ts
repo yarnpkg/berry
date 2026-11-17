@@ -260,6 +260,7 @@ const CACHED_FIELDS = [
   `name`,
 
   `dist.tarball`,
+  `dist.attestations`,
 
   `bin`,
   `scripts`,
@@ -285,6 +286,7 @@ export type PackageMetadata = {
   } & {
     dist: {
       tarball: string;
+      attestations?: unknown;
     };
   }>;
   time?: Record<string, string>;
