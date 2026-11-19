@@ -137,7 +137,10 @@ export default class NpmAuditCommand extends BaseCommand {
         });
 
         return miscUtils.mapAndFilter(versions, version => {
-          const {deprecated} = registryData.versions[version];
+          // The registry metadata may not list a version that the lockfile holds
+          // (for example if it got unpublished, or if a mirror filters it out). It
+          // can't be reported as deprecated then, but the audit itself is still valid.
+          const deprecated = registryData.versions[version]?.deprecated;
 
           // Apparently some packages have a `deprecated` field set to an empty string
           // (even though that shouldn't be possible since `npm deprecate ... ""` undeprecates
