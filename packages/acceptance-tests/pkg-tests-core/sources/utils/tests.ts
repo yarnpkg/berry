@@ -1024,6 +1024,17 @@ const proxyServerUrls: {
   https: Promise<string> | null;
 } = {http: null, https: null};
 
+const proxyServerConnectCounts: Record<keyof typeof proxyServerUrls, number> = {http: 0, https: 0};
+
+/**
+ * Number of CONNECT requests (tunnels) the proxy server of the given type has
+ * accepted so far. The servers are shared between tests, so compare counts
+ * before and after the action under test.
+ */
+export const getProxyServerConnectCount = ({type = `http`}: {type?: keyof typeof proxyServerUrls} = {}): number => {
+  return proxyServerConnectCounts[type];
+};
+
 export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServerUrls} = {}): Promise<string> => {
   const serverUrl = proxyServerUrls[type];
   if (serverUrl !== null)
@@ -1089,6 +1100,8 @@ export const startProxyServer = ({type = `http`}: {type?: keyof typeof proxyServ
 
       // Handle the CONNECT method using the 'connect' event
       server.on(`connect`, (req, clientSocket, head) => {
+        proxyServerConnectCounts[type] += 1;
+
         // Parse the target and establish the connection
         const [targetHost, targetPort] = (req.url || ``).split(`:`);
         const port = parseInt(targetPort) || 443;

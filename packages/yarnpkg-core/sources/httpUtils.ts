@@ -21,6 +21,34 @@ const fileCache = new Map<PortablePath, Promise<Buffer> | Buffer>();
 const globalHttpAgent = new HttpAgent({keepAlive: true});
 const globalHttpsAgent = new HttpsAgent({keepAlive: true});
 
+// Like the global agents, proxy agents live as long as the process and keep their
+// sockets alive, so that a CONNECT tunnel is reused by the following requests
+// instead of being opened for a single request.
+const proxyAgents = new Map<string, HttpProxyAgent | HttpsProxyAgent>();
+
+function getProxyAgent(protocol: `http`, proxy: string, proxyRequestOptions: RequestOptions, settingsKey: string): HttpProxyAgent;
+function getProxyAgent(protocol: `https`, proxy: string, proxyRequestOptions: RequestOptions, settingsKey: string): HttpsProxyAgent;
+function getProxyAgent(protocol: `http` | `https`, proxy: string, proxyRequestOptions: RequestOptions, settingsKey: string) {
+  // The proxy URL may contain credentials; the key must never be printed
+  const key = JSON.stringify([protocol, proxy, settingsKey]);
+
+  return miscUtils.getFactoryWithDefault(proxyAgents, key, () => {
+    return protocol === `https`
+      ? new HttpsProxyAgent({
+        keepAlive: true,
+        proxy,
+        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
+        proxyRequestOptions,
+      })
+      : new HttpProxyAgent({
+        keepAlive: true,
+        proxy,
+        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
+        proxyRequestOptions,
+      });
+  });
+}
+
 async function getCachedFile(filePath: PortablePath) {
   return miscUtils.getFactoryWithDefault(fileCache, filePath, () => {
     return xfs.readFilePromise(filePath).then(file => {
@@ -278,20 +306,16 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     key,
   };
 
+  // The settings that proxyRequestOptions is built from; the file contents are
+  // cached per path, so the paths identify them
+  const proxySettingsKey = JSON.stringify([rejectUnauthorized, httpsCaFilePath, httpsCertFilePath, httpsKeyFilePath]);
+
   const agent = {
     http: networkConfig.httpProxy
-      ? new HttpProxyAgent({
-        proxy: networkConfig.httpProxy,
-        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
-        proxyRequestOptions,
-      })
+      ? getProxyAgent(`http`, networkConfig.httpProxy, proxyRequestOptions, proxySettingsKey)
       : globalHttpAgent,
     https: networkConfig.httpsProxy
-      ? new HttpsProxyAgent({
-        proxy: networkConfig.httpsProxy,
-        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
-        proxyRequestOptions,
-      })
+      ? getProxyAgent(`https`, networkConfig.httpsProxy, proxyRequestOptions, proxySettingsKey)
       : globalHttpsAgent,
   };
 
