@@ -301,8 +301,9 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       bindInput(0);
     }
 
+    let outputPipe: PassThrough | null = null;
     if (outputs.length > 0) {
-      const pipe = new PassThrough();
+      const pipe = outputPipe = new PassThrough();
       stdout = pipe;
 
       for (const output of outputs) {
@@ -310,8 +311,9 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       }
     }
 
+    let errorPipe: PassThrough | null = null;
     if (errors.length > 0) {
-      const pipe = new PassThrough();
+      const pipe = errorPipe = new PassThrough();
       stderr = pipe;
 
       for (const error of errors) {
@@ -325,37 +327,39 @@ const BUILTINS = new Map<string, ShellBuiltin>([
       stderr: new ProtectedStream<Writable>(stderr),
     }).run();
 
-    // Close all the outputs (since the shell never closes the output stream)
-    await Promise.all(outputs.map(output => {
-      // Wait until the output got flushed to the disk
-      return new Promise<void>((resolve, reject) => {
-        output.on(`error`, error => {
-          reject(error);
-        });
-        output.on(`close`, () => {
-          resolve();
-        });
-        output.end();
-      });
-    }));
-
-    // Close all the errors (since the shell never closes the error stream)
-    await Promise.all(errors.map(err => {
-      // Wait until the error got flushed to the disk
-      return new Promise<void>((resolve, reject) => {
-        err.on(`error`, error => {
-          reject(error);
-        });
-        err.on(`close`, () => {
-          resolve();
-        });
-        err.end();
-      });
-    }));
+    // Close all the outputs and errors (since the shell never closes them)
+    await closeRedirectionTargets(outputPipe, outputs);
+    await closeRedirectionTargets(errorPipe, errors);
 
     return exitCode;
   }],
 ]);
+
+/**
+ * Ends a redirection and waits until all its targets got flushed (to the disk,
+ * for files). We must end the pipe feeding the targets rather than the targets
+ * themselves: the pipe may still buffer data (for example when a target applied
+ * backpressure), which would otherwise be silently discarded.
+ */
+async function closeRedirectionTargets(pipe: PassThrough | null, targets: Array<Writable>) {
+  if (pipe === null)
+    return;
+
+  const flushed = Promise.all(targets.map(target => {
+    return new Promise<void>((resolve, reject) => {
+      target.on(`error`, error => {
+        reject(error);
+      });
+      target.on(`close`, () => {
+        resolve();
+      });
+    });
+  }));
+
+  pipe.end();
+
+  await flushed;
+}
 
 async function executeBufferedSubshell(ast: ShellLine, opts: ShellOptions, state: ShellState) {
   const chunks: Array<Buffer> = [];
