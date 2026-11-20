@@ -4,6 +4,22 @@ import {tests}                from 'pkg-tests-core';
 describe(`Features`, () => {
   describe(`Resolution cache`, () => {
     test(
+      `it should not reuse fixed-version metadata from a different registry path`,
+      makeTemporaryEnv({}, async ({path, run}) => {
+        const registryUrl = await tests.startPackageServer();
+        await run(`add`, `no-deps@1.0.0`, {registryUrl: `${registryUrl}/registry/one`});
+        await xfs.removePromise(ppath.join(path, Filename.lockfile));
+
+        // A separate install must read the second registry, where the version is unavailable.
+        await tests.setPackageWhitelist(new Map([
+          [`no-deps`, new Set([`2.0.0`])],
+        ]), async () => {
+          await expect(run(`install`, {registryUrl: `${registryUrl}/registry/two`})).rejects.toThrow(`No candidates found`);
+        });
+      }),
+    );
+
+    test(
       `it should use a cache metadata when resolving fixed versions`,
       makeTemporaryEnv({}, {
         enableGlobalCache: false,
