@@ -1,7 +1,7 @@
 import {formatUtils}                                             from '@yarnpkg/core';
 import {FakeFS, LazyFS, NodeFS, PortablePath, Filename, AliasFS} from '@yarnpkg/fslib';
 import {ppath, xfs}                                              from '@yarnpkg/fslib';
-import {ZipFS}                                                   from '@yarnpkg/libzip';
+import {JsZipImpl, ZipFS}                                        from '@yarnpkg/libzip';
 import {randomBytes}                                             from 'crypto';
 import fs                                                        from 'fs';
 
@@ -472,10 +472,14 @@ export class Cache {
     if (!shouldMock)
       this.markedFiles.add(cachePath);
 
+    const customZipImplementation = this.configuration.get(`cacheZipBackend`) === `js`
+      ? JsZipImpl
+      : undefined;
+
     const createRefCount = () => this.refCountedZipFsCache.addOrCreate(cachePath, () => {
       return shouldMock
         ? makeMockPackage()
-        : new ZipFS(cachePath, {baseFs, readOnly: true});
+        : new ZipFS(cachePath, {baseFs, readOnly: true, customZipImplementation});
     });
 
     let refCountedCacheEntry: RefCountedCacheEntry<ZipFS> | undefined;
