@@ -8,6 +8,8 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
+- The PnP ESM loader now supports the Node.js versions that removed `--experimental-loader` (starting from the v28 nightlies); the loader is preloaded through `--import` there.
+- Fixes `yarn npm publish` failing to generate a provenance statement with a `409` error when a retried request reaches the transparency log after it already recorded the entry.
 - The `npm-notice` header sent by registries is now printed (once per notice, labelled as coming from the registry) by `yarn npm login`, including during the web login flow, and by the `yarn npm publish`, `yarn npm tag add|remove`, and `yarn npm stage approve|reject` commands.
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
 - `node-modules` linker now honors user-defined symlinks for `<workspace>/node_modules` directories

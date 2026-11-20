@@ -26,6 +26,16 @@ type ResolveContext = {
   parentURL: string | undefined;
 };
 
+type ResolveResult = {
+  url: string;
+  shortCircuit: boolean;
+};
+
+// Returned when the resolution must be delegated to the next hook
+type ResolveDelegation = {
+  delegate: string;
+};
+
 function tryReadFile(filePath: string) {
   try {
     return fs.readFileSync(filePath, `utf8`);
@@ -37,7 +47,7 @@ function tryReadFile(filePath: string) {
   }
 }
 
-async function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext, nextResolve: typeof resolve): Promise<{url: string, shortCircuit: boolean}> {
+function resolvePrivateRequest(specifier: string, issuer: string, context: ResolveContext): ResolveResult | ResolveDelegation {
   const resolved = packageImportsResolve({
     name: specifier,
     base: pathToFileURL(issuer),
@@ -53,23 +63,19 @@ async function resolvePrivateRequest(specifier: string, issuer: string, context:
       // https://github.com/nodejs/node/issues/40579
       throw new Error(`Mapping from one private import to another isn't allowed`);
 
-    return resolve(resolved, context, nextResolve);
+    return resolveRequest(resolved, context);
   }
 }
 
-export async function resolve(
-  originalSpecifier: string,
-  context: ResolveContext,
-  nextResolve: typeof resolve,
-): Promise<{url: string, shortCircuit: boolean}> {
+function resolveRequest(originalSpecifier: string, context: ResolveContext): ResolveResult | ResolveDelegation {
   if (!findPnpApi || isBuiltin(originalSpecifier))
-    return nextResolve(originalSpecifier, context, nextResolve);
+    return {delegate: originalSpecifier};
 
   let specifier = originalSpecifier;
   const url = loaderUtils.tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : undefined);
   if (url) {
     if (url.protocol !== `file:`)
-      return nextResolve(originalSpecifier, context, nextResolve);
+      return {delegate: originalSpecifier};
 
     specifier = fileURLToPath(url);
   }
@@ -83,10 +89,10 @@ export async function resolve(
   // zip file and the issuer doesn't belong to a pnpapi
   const pnpapi = findPnpApi(issuer) ?? (url ? findPnpApi(specifier) : null);
   if (!pnpapi)
-    return nextResolve(originalSpecifier, context, nextResolve);
+    return {delegate: originalSpecifier};
 
   if (specifier.startsWith(`#`))
-    return resolvePrivateRequest(specifier, issuer, context, nextResolve);
+    return resolvePrivateRequest(specifier, issuer, context);
 
   const dependencyNameMatch = specifier.match(pathRegExp);
 
@@ -100,7 +106,7 @@ export async function resolve(
     if (subPath === `` && dependencyName !== `pnpapi`) {
       const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, issuer);
       if (resolved) {
-        const content = await loaderUtils.tryReadFile(resolved);
+        const content = tryReadFile(resolved);
         if (content) {
           const pkg = JSON.parse(content);
           allowLegacyResolve = pkg.exports == null;
@@ -142,4 +148,40 @@ export async function resolve(
     url: resultURL.href,
     shortCircuit: true,
   };
+}
+
+/**
+ * Hook for the off-thread loaders (`--experimental-loader`).
+ */
+export async function resolve(
+  originalSpecifier: string,
+  context: ResolveContext,
+  nextResolve: typeof resolve,
+): Promise<ResolveResult> {
+  const result = resolveRequest(originalSpecifier, context);
+
+  return `delegate` in result
+    ? nextResolve(result.delegate, context, nextResolve)
+    : result;
+}
+
+/**
+ * Hook for the in-thread loaders (`module.registerHooks`).
+ */
+export function resolveSync(
+  originalSpecifier: string,
+  context: ResolveContext,
+  nextResolve: typeof resolveSync,
+): ResolveResult {
+  // Unlike the off-thread hooks, those ones also see the `require` calls,
+  // which are already handled by the patches the PnP runtime applies to the
+  // CommonJS loader.
+  if (!context.conditions?.includes(`import`))
+    return nextResolve(originalSpecifier, context, nextResolve);
+
+  const result = resolveRequest(originalSpecifier, context);
+
+  return `delegate` in result
+    ? nextResolve(result.delegate, context, nextResolve)
+    : result;
 }
