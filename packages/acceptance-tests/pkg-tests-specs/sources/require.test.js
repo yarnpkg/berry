@@ -40,6 +40,25 @@ describe(`Require tests`, () => {
   );
 
   test(
+    `it should expose require.cache and require.extensions inside dependencies`,
+    makeTemporaryEnv(
+      {
+        dependencies: {[`no-deps`]: `1.0.0`},
+      },
+      async ({path, run, source}) => {
+        await run(`install`);
+
+        await expect(
+          source(
+            `{ const mod = require('no-deps'); return typeof require.cache === 'object' && typeof require.extensions === 'object'; }`,
+          ),
+        ).resolves.toEqual(true);
+      },
+    ),
+  );
+
+
+  test(
     `it should allow resetting a loaded module by deleting its entry from require.cache`,
     makeTemporaryEnv(
       {
