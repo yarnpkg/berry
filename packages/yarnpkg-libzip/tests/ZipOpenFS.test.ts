@@ -1,5 +1,5 @@
-import {ppath, npath, Filename, PortablePath} from '@yarnpkg/fslib';
-import {ZipOpenFS, getArchivePart}            from '@yarnpkg/libzip';
+import {ppath, npath, Filename, PortablePath, xfs} from '@yarnpkg/fslib';
+import {ZipFS, ZipOpenFS, getArchivePart}          from '@yarnpkg/libzip';
 
 export const ZIP_DIR1 = ppath.join(
   npath.toPortablePath(__dirname),
@@ -57,6 +57,24 @@ describe(`getArchivePart`, () => {
 });
 
 describe(`ZipOpenFS`, () => {
+  it(`returns absolute parent paths for recursive directory entries`, () => {
+    const archivePath = ppath.join(xfs.mktempSync(), `archive.zip` as Filename);
+    const zipFs = new ZipFS(archivePath, {create: true});
+
+    zipFs.mkdirpSync(`/node_modules/semver/classes` as PortablePath);
+    zipFs.writeFileSync(`/node_modules/semver/classes/comparator.js` as PortablePath, `test`);
+    zipFs.saveAndClose();
+
+    const fs = new ZipOpenFS();
+    const dirPath = ppath.join(archivePath, `node_modules/semver` as Filename);
+    const dirent = fs.readdirSync(dirPath, {recursive: true, withFileTypes: true})
+      .find(({name}) => name === `comparator.js`)!;
+
+    expect(dirent.parentPath).toStrictEqual(ppath.join(dirPath, `classes` as Filename));
+
+    fs.discardAndClose();
+  });
+
   it(`can read from a zip file`, () => {
     const fs = new ZipOpenFS();
 
