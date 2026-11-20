@@ -2,12 +2,41 @@ import {VirtualFS, PosixFS, npath} from '@yarnpkg/fslib';
 import {ZipOpenFS}                 from '@yarnpkg/libzip';
 import * as vscode                 from 'vscode';
 
+/**
+ * The file extensions that will be interpreted as zip archives unless the user overrides them
+ * through the `zipfs.fileExtensions` setting. Must be kept in sync with the `languages`,
+ * `activationEvents` and `menus` contributions in `./package.json`, which cannot reference this
+ * constant (VS Code resolves those statically, so a custom extension only takes effect after a
+ * reload and only activates the extension when the workspace already contains a matching archive).
+ */
+const DEFAULT_ZIP_ARCHIVE_EXTENSIONS = [`.zip`, `.jar`, `.war`, `.apk`, `.ipa`, `.crx`];
+
+function readArchiveExtensions(): Array<string> {
+  const configured = vscode.workspace
+    .getConfiguration(`zipfs`)
+    .get<Array<string>>(`fileExtensions`);
+
+  if (!Array.isArray(configured))
+    return DEFAULT_ZIP_ARCHIVE_EXTENSIONS;
+
+  const extensions = configured.filter(
+    extension => typeof extension === `string` && extension.length > 0,
+  );
+
+  return extensions.length > 0
+    ? extensions
+    : DEFAULT_ZIP_ARCHIVE_EXTENSIONS;
+}
+
 export class ZipFSProvider implements vscode.FileSystemProvider {
+  private readonly archiveExtensions = readArchiveExtensions();
+
   private readonly fs = new PosixFS(
     new VirtualFS({
       baseFs: new ZipOpenFS({
         useCache: true,
         maxOpenFiles: 80,
+        fileExtensions: this.archiveExtensions,
       }),
     }),
   );
@@ -17,7 +46,7 @@ export class ZipFSProvider implements vscode.FileSystemProvider {
 
     switch (true) {
       case stat.isDirectory():
-      case npath.extname(uri.fsPath) === `.zip`: {
+      case this.archiveExtensions.includes(npath.extname(uri.fsPath)): {
         stat.type = vscode.FileType.Directory;
       } break;
 

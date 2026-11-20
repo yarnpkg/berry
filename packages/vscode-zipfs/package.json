@@ -20,6 +20,11 @@
   },
   "activationEvents": [
     "workspaceContains:**/*.zip",
+    "workspaceContains:**/*.jar",
+    "workspaceContains:**/*.war",
+    "workspaceContains:**/*.apk",
+    "workspaceContains:**/*.ipa",
+    "workspaceContains:**/*.crx",
     "onLanguage:zip",
     "onFileSystem:zip",
     "onCommand:zipfs.mountZipFile",
@@ -29,6 +34,26 @@
   "main": "./build/index.js",
   "sideEffects": false,
   "contributes": {
+    "configuration": {
+      "title": "ZipFS",
+      "properties": {
+        "zipfs.fileExtensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".zip",
+            ".jar",
+            ".war",
+            ".apk",
+            ".ipa",
+            ".crx"
+          ],
+          "markdownDescription": "File extensions treated as zip archives. The defaults are also declared as static `languages`, `activationEvents` and `menus` contributions, which VS Code cannot read from this setting, so a reload is required after changing it and a custom extension only activates the extension when the workspace already contains a matching archive."
+        }
+      }
+    },
     "languages": [
       {
         "id": "zip",
@@ -37,7 +62,12 @@
           "ZIP"
         ],
         "extensions": [
-          ".zip"
+          ".zip",
+          ".jar",
+          ".war",
+          ".apk",
+          ".ipa",
+          ".crx"
         ]
       }
     ],
