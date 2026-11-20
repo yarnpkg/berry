@@ -59,6 +59,7 @@ export default class NpmTagAddCommand extends BaseCommand {
         configuration,
         registry,
         ident: descriptor,
+        report,
         jsonRequest: true,
         jsonResponse: true,
       });
