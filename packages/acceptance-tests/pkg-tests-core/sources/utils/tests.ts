@@ -234,6 +234,16 @@ const RELEASE_DATE_PACKAGES: Record<string, Record<string, number | string>> = {
     "1.1.1": new Date().toISOString(),
     "1.1.2": new Date(new Date().getTime() - /* 5 days */ 1000 * 60 * 60 * 24 * 5).toISOString(),
   },
+  "provenance-downgrade": {
+    "1.0.0": `2020-01-01T00:00:00.000Z`,
+    "1.1.0": `2021-01-01T00:00:00.000Z`,
+    "1.2.0": `2022-01-01T00:00:00.000Z`,
+  },
+};
+
+// Versions that the registry reports as published with a provenance attestation
+const ATTESTED_VERSIONS: Record<string, Array<string>> = {
+  "provenance-downgrade": [`1.1.0`],
 };
 
 export const validLogins = {
@@ -495,6 +505,9 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
                     tarball: (localName === `unconventional-tarball` || localName === `private-unconventional-tarball`)
                       ? (await getPackageHttpArchivePath(name, version)).replace(`/-/`, `/tralala/`)
                       : await getPackageHttpArchivePath(name, version),
+                    ...ATTESTED_VERSIONS[name]?.includes(version) && {
+                      attestations: {provenance: {predicateType: `https://slsa.dev/provenance/v1`}},
+                    },
                   },
                 }),
               };

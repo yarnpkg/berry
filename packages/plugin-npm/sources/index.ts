@@ -79,10 +79,15 @@ const scopablePackageGateSettings = {
 
 const globalOnlyPackageGateSettings = {
   npmPreapprovedPackages: {
-    description: `Array of package descriptors or package name glob patterns to exclude from the minimum release age check`,
+    description: `Array of package descriptors or package name glob patterns to exclude from the package gates`,
     type: SettingsType.STRING,
     isArray: true,
     default: [],
+  },
+  npmTrustPolicyGate: {
+    description: `If true, package versions without provenance attestations won't be considered for installation when an earlier version had one`,
+    type: SettingsType.BOOLEAN,
+    default: false,
   },
 } satisfies Record<string, SettingsDefinition>;
 
@@ -98,6 +103,7 @@ declare module '@yarnpkg/core' {
 
     npmMinimalAgeGate: number;
     npmPreapprovedPackages: Array<string>;
+    npmTrustPolicyGate: boolean;
 
     npmScopes:  Map<string, miscUtils.ToMapValue<{
       npmAlwaysAuth: boolean;

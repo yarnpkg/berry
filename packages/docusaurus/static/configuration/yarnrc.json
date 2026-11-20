@@ -567,6 +567,13 @@
       "default": [],
       "examples": ["@scoped-package/*", "package", "package*", "package@^1.0.0", "package@1.0.0"]
     },
+    "npmTrustPolicyGate": {
+      "_package": "@yarnpkg/plugin-npm",
+      "title": "Define whether to reject package versions that lost the provenance attestation of earlier versions.",
+      "description": "If true, a package version published without a provenance attestation won't be considered for installation when a version published before it had one. Such a trust downgrade is what a publish from a stolen npm token looks like. Versions listed in `npmPreapprovedPackages` bypass this check.",
+      "type": "boolean",
+      "default": false
+    },
     "pnpmStoreFolder": {
       "_package": "@yarnpkg/plugin-pnpm",
       "title": "Path where the pnpm store will be stored",
