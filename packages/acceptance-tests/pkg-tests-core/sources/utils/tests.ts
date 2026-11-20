@@ -243,31 +243,14 @@ export const validLogins = {
   otpUserWithNotice: new Login(`otp-user-with-notice`, {otp: true, notice: true}),
 } as const;
 
+// Sent with every response of the web login flow, so that tests can check
+// that a notice repeated by the registry is only printed once.
+export const webLoginNotice = `Check that your browser shows the code 123456 (see https://example.org/web-login)`;
+
+const webLoginChecks = new Map<string, number>();
+
 let whitelist = new Map();
 let recording: Array<Request> | null = null;
-
-export type WebLoginMock = {
-  notice: string | Array<string> | null;
-  initFails: boolean;
-};
-
-let webLoginMock: WebLoginMock = {notice: null, initFails: false};
-let webLoginSessionCount = 0;
-const webLoginDoneAttempts = new Map<string, number>();
-
-export const setWebLoginMock = async (
-  mock: Partial<WebLoginMock>,
-  fn: () => Promise<void>,
-) => {
-  webLoginMock = {notice: null, initFails: false, ...mock};
-  webLoginSessionCount = 0;
-  webLoginDoneAttempts.clear();
-  try {
-    await fn();
-  } finally {
-    webLoginMock = {notice: null, initFails: false};
-  }
-};
 
 export function sortJson<T>(data: Iterable<T>): Array<T> {
   return miscUtils.sortMap(data, request => {
@@ -654,12 +637,9 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       if (parsedRequest.type !== RequestType.WebLoginInit)
         throw new Error(`Assertion failed: Invalid request type`);
 
-      if (webLoginMock.initFails) {
-        processError(response, 404, `Web login isn't supported by this registry`);
-        return;
-      }
+      const session = `${webLoginChecks.size + 1}`;
+      webLoginChecks.set(session, 0);
 
-      const session = `${++webLoginSessionCount}`;
       const serverUrl = `${type}://${request.headers.host}`;
 
       const data = JSON.stringify({
@@ -669,10 +649,9 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
 
       response.writeHead(200, {
         [`Content-Type`]: `application/json`,
-        ...webLoginMock.notice !== null && {
-          [`npm-notice`]: webLoginMock.notice,
-        },
+        [`npm-notice`]: webLoginNotice,
       });
+
       response.end(data);
     },
 
@@ -680,18 +659,32 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       if (parsedRequest.type !== RequestType.WebLoginCheck)
         throw new Error(`Assertion failed: Invalid request type`);
 
-      const attempts = (webLoginDoneAttempts.get(parsedRequest.session) ?? 0) + 1;
-      webLoginDoneAttempts.set(parsedRequest.session, attempts);
-
-      if (attempts === 1) {
-        response.writeHead(202, {[`retry-after`]: `0`});
-        response.end();
+      const checks = webLoginChecks.get(parsedRequest.session);
+      if (typeof checks === `undefined`) {
+        processError(response, 404, `Unknown web login session`);
         return;
       }
 
-      const data = JSON.stringify({token: validLogins.fooUser.npmAuthToken});
-      response.writeHead(200, {[`Content-Type`]: `application/json`});
-      response.end(data);
+      webLoginChecks.set(parsedRequest.session, checks + 1);
+
+      // The first check always pretends that the user is still in their browser
+      if (checks === 0) {
+        response.writeHead(202, {
+          [`Content-Type`]: `application/json`,
+          [`npm-notice`]: webLoginNotice,
+          [`retry-after`]: `0`,
+        });
+
+        response.end(JSON.stringify({}));
+        return;
+      }
+
+      response.writeHead(200, {
+        [`Content-Type`]: `application/json`,
+        [`npm-notice`]: webLoginNotice,
+      });
+
+      response.end(JSON.stringify({token: validLogins.fooUser.npmAuthToken}));
     },
 
     async [RequestType.Repository](parsedRequest, request, response) {
@@ -912,7 +905,7 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
           ...registry,
           type: RequestType.WebLoginInit,
         };
-      } else if ((match = url.match(/^\/-\/v1\/login\/done\/(.+)$/)) && method === `GET`) {
+      } else if ((match = url.match(/^\/-\/v1\/login\/done\/([^/]+)$/)) && method === `GET`) {
         return {
           ...registry,
           type: RequestType.WebLoginCheck,

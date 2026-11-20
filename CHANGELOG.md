@@ -8,7 +8,7 @@ Yarn now accepts sponsors! Please take a look at our [OpenCollective](https://op
 Features in `master` can be tried out by running `yarn set version from sources` in your project.
 :::
 
-- `yarn npm login` now prints the `npm-notice` header sent by the registry during the web login handshake.
+- The `npm-notice` header sent by registries is now printed (once per notice, labelled as coming from the registry) by `yarn npm login`, including during the web login flow, and by the `yarn npm publish`, `yarn npm tag add|remove`, and `yarn npm stage approve|reject` commands.
 - Fixes `preferInteractive` forcing interactive mode in non-TTY environments.
 - `node-modules` linker now honors user-defined symlinks for `<workspace>/node_modules` directories
 - `node-modules` linker supports hoisting into inner workspaces that are parents of other workspaces

@@ -57,6 +57,7 @@ export default class NpmTagRemoveCommand extends BaseCommand {
         configuration,
         registry,
         ident,
+        report,
         jsonResponse: true,
       });
 

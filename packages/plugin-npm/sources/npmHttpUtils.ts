@@ -1,5 +1,5 @@
 import {Configuration, Ident, formatUtils, httpUtils, nodeUtils, StreamReport, structUtils, hashUtils, Project, miscUtils, Cache} from '@yarnpkg/core';
-import {MessageName, ReportError}                                                                                                 from '@yarnpkg/core';
+import {MessageName, Report, ReportError}                                                                                         from '@yarnpkg/core';
 import {Filename, PortablePath, ppath, xfs}                                                                                       from '@yarnpkg/fslib';
 import {prompt}                                                                                                                   from 'enquirer';
 import {pick}                                                                                                                     from 'es-toolkit/compat';
@@ -28,6 +28,16 @@ export type Options = httpUtils.Options & RegistryOptions & {
   authType?: AuthType;
   allowOidc?: boolean;
   otp?: string;
+};
+
+export type MutationOptions = Options & {
+  attemptedAs?: string;
+
+  /**
+   * When set, the `npm-notice` headers sent by the registry (in both
+   * successful and failed responses) are printed through this report.
+   */
+  report?: Report;
 };
 
 /**
@@ -336,8 +346,9 @@ export async function get(path: string, {configuration, headers, ident, authType
   }
 }
 
-export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function post(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, report, ...rest}: MutationOptions) {
   registry = normalizeRegistry(configuration, {ident, registry});
+  rest.wrapNetworkRequest = wrapNoticeReporting(rest.wrapNetworkRequest, {configuration, report});
 
   const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
@@ -368,8 +379,9 @@ export async function post(path: string, body: httpUtils.Body, {attemptedAs, con
   }
 }
 
-export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function put(path: string, body: httpUtils.Body, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, report, ...rest}: MutationOptions) {
   registry = normalizeRegistry(configuration, {ident, registry});
+  rest.wrapNetworkRequest = wrapNoticeReporting(rest.wrapNetworkRequest, {configuration, report});
 
   const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
@@ -400,8 +412,9 @@ export async function put(path: string, body: httpUtils.Body, {attemptedAs, conf
   }
 }
 
-export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, ...rest}: Options & {attemptedAs?: string}) {
+export async function del(path: string, {attemptedAs, configuration, headers, ident, authType = AuthType.ALWAYS_AUTH, allowOidc, registry, otp, report, ...rest}: MutationOptions) {
   registry = normalizeRegistry(configuration, {ident, registry});
+  rest.wrapNetworkRequest = wrapNoticeReporting(rest.wrapNetworkRequest, {configuration, report});
 
   const auth = await getAuthenticationHeader(registry, {authType, allowOidc, configuration, ident});
   if (auth)
@@ -514,16 +527,80 @@ async function whoami(registry: string, headers: {[key: string]: string | undefi
   }
 }
 
+const REPORTED_NOTICES = new Set<string>();
+
+function getNotice(headers: httpUtils.Response[`headers`] | undefined) {
+  const header = headers?.[`npm-notice`];
+  if (typeof header === `undefined`)
+    return null;
+
+  // The notice is controlled by the registry, so we strip everything that
+  // could be interpreted by the terminal before printing it.
+  const notice = formatUtils.stripAnsi(Array.isArray(header) ? header.join(`, `) : header)
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x1f\x7f-\x9f]/g, ``)
+    .trim();
+
+  return notice.length > 0
+    ? notice
+    : null;
+}
+
+function prettyNotice(notice: string, {configuration}: {configuration: Configuration}) {
+  return `${formatUtils.pretty(configuration, `Registry notice`, `yellow`)}: ${notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL))}`;
+}
+
+/**
+ * Prints the `npm-notice` header of a registry response, if any. A given
+ * notice is only printed once per process, since registries tend to attach
+ * the same one to many responses.
+ */
+export function reportNotice(headers: httpUtils.Response[`headers`] | undefined, {configuration, report}: {configuration: Configuration, report: Report}) {
+  const notice = getNotice(headers);
+  if (notice === null || REPORTED_NOTICES.has(notice))
+    return;
+
+  REPORTED_NOTICES.add(notice);
+  report.reportInfo(MessageName.UNNAMED, prettyNotice(notice, {configuration}));
+}
+
+function wrapNoticeReporting(wrapNetworkRequest: httpUtils.Options[`wrapNetworkRequest`], {configuration, report}: {configuration: Configuration, report?: Report}): httpUtils.Options[`wrapNetworkRequest`] {
+  if (typeof report === `undefined`)
+    return wrapNetworkRequest;
+
+  return async (executor, extra) => {
+    const wrappedExecutor = typeof wrapNetworkRequest !== `undefined`
+      ? await wrapNetworkRequest(executor, extra)
+      : executor;
+
+    return async () => {
+      try {
+        const response = await wrappedExecutor();
+        reportNotice(response.headers, {configuration, report});
+        return response;
+      } catch (error) {
+        // The notices attached to OTP challenges are printed by `askForOtp`
+        if (error.name === `HTTPError` && !isOtpChallenge(error.response))
+          reportNotice(error.response?.headers, {configuration, report});
+
+        throw error;
+      }
+    };
+  };
+}
+
 async function askForOtp(error: any, {configuration}: {configuration: Configuration}) {
-  const notice = error.originalError?.response.headers[`npm-notice`];
+  const notice = getNotice(error.originalError?.response.headers);
 
   if (notice) {
+    REPORTED_NOTICES.add(notice);
+
     await StreamReport.start({
       configuration,
       stdout: process.stdout,
       includeFooter: false,
     }, async report => {
-      report.reportInfo(MessageName.UNNAMED, notice.replace(/(https?:\/\/\S+)/g, formatUtils.pretty(configuration, `$1`, formatUtils.Type.URL)));
+      report.reportInfo(MessageName.UNNAMED, prettyNotice(notice, {configuration}));
 
       if (!process.env.YARN_IS_TEST_ENV && process.stdin.isTTY) {
         const autoOpen = notice.match(/open (https?:\/\/\S+)/i);
@@ -573,8 +650,12 @@ function isOtpError(error: any) {
   if (error.originalError?.name !== `HTTPError`)
     return false;
 
+  return isOtpChallenge(error.originalError.response);
+}
+
+function isOtpChallenge(response: any) {
   try {
-    const authMethods = error.originalError?.response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
+    const authMethods = response.headers[`www-authenticate`].split(/,\s*/).map((s: string) => s.toLowerCase());
     return authMethods.includes(`otp`);
   } catch {
     return false;

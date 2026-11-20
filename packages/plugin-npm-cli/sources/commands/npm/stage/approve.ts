@@ -49,6 +49,7 @@ export default class NpmStageApproveCommand extends BaseCommand {
       await npmHttpUtils.post(`/-/stage/${this.stageId}/approve`, null, {
         configuration,
         registry,
+        report,
         otp: this.otp,
         jsonResponse: true,
         authType: npmHttpUtils.AuthType.ALWAYS_AUTH,

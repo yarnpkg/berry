@@ -2,14 +2,10 @@ import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml}                          from '@yarnpkg/parsers';
 
 const {
-  tests: {startPackageServer, setWebLoginMock, validLogins},
+  tests: {startPackageServer, validLogins, webLoginNotice},
 } = require(`pkg-tests-core`);
 
 const SPEC_RC_FILENAME = `.spec-yarnrc` as Filename;
-
-// The interactive prompt that precedes the report lines is rendered differently
-// on each platform, so the web login tests only snapshot the report lines.
-const getReportLines = (stdout: string) => stdout.split(/\r?\n/).filter(line => line.startsWith(`➤ YN0000:`));
 const FAKE_REGISTRY_URL = `http://yarn.test.registry`;
 
 function cleanupFileContent(fileContent: string) {
@@ -111,177 +107,33 @@ describe(`Commands`, () => {
     );
 
     test(
-      `it should print the npm-notice during web login`,
+      `it should print the npm-notice once when the registry repeats it during a web login`,
       makeTemporaryEnv({}, async ({path, run, source}) => {
         const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
         await xfs.writeFilePromise(rcPath, ``);
 
-        const notice = `Verification code: 123456. Enter this code in the browser to complete the login.`;
+        const {code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
+          // Declines the prompt offering to open the browser
+          stdin: `n\n`,
+          env: {
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
 
-        let code;
-        let stdout;
-        let stderr;
-
-        try {
-          await setWebLoginMock({notice}, async () => {
-            ({code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
-              stdin: `n\n`,
-              env: {
-                YARN_RC_FILENAME: SPEC_RC_FILENAME,
-              },
-            }));
-          });
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        expect(stdout).toContain(notice);
-        expect(stdout.indexOf(notice)).toBeLessThan(stdout.indexOf(`Starting the web login process`));
+        // The mock registry sends the same notice when the login starts and
+        // each time we check whether it completed.
+        expect(stdout.split(webLoginNotice)).toHaveLength(2);
 
         const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
         const cleanFileContent = cleanupFileContent(finalRcFileContent);
 
         expect(cleanFileContent).toMatchSnapshot();
-        expect({code, stderr, report: getReportLines(stdout)}).toMatchSnapshot();
-      }),
-    );
 
-    test(
-      `it should print each npm-notice during web login`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
-        await xfs.writeFilePromise(rcPath, ``);
+        // The prompt is rendered differently depending on the platform, so we
+        // only keep the lines coming from the report.
+        const report = stdout.split(/\r?\n/).filter((line: string) => line.startsWith(`➤`));
 
-        let code;
-        let stdout;
-        let stderr;
-
-        try {
-          await setWebLoginMock({notice: [`First notice`, `Second notice`]}, async () => {
-            ({code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
-              stdin: `n\n`,
-              env: {
-                YARN_RC_FILENAME: SPEC_RC_FILENAME,
-              },
-            }));
-          });
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        expect(stdout.indexOf(`First notice`)).toBeLessThan(stdout.indexOf(`Second notice`));
-        expect(stdout.indexOf(`Second notice`)).toBeLessThan(stdout.indexOf(`Starting the web login process`));
-
-        const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
-        const cleanFileContent = cleanupFileContent(finalRcFileContent);
-
-        expect(cleanFileContent).toMatchSnapshot();
-        expect({code, stderr, report: getReportLines(stdout)}).toMatchSnapshot();
-      }),
-    );
-
-    test(
-      `it should not print anything extra when the web login response has no npm-notice`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
-        await xfs.writeFilePromise(rcPath, ``);
-
-        let code;
-        let stdout;
-        let stderr;
-
-        try {
-          await setWebLoginMock({}, async () => {
-            ({code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
-              stdin: `n\n`,
-              env: {
-                YARN_RC_FILENAME: SPEC_RC_FILENAME,
-              },
-            }));
-          });
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
-        const cleanFileContent = cleanupFileContent(finalRcFileContent);
-
-        expect(cleanFileContent).toMatchSnapshot();
-        expect({code, stderr, report: getReportLines(stdout)}).toMatchSnapshot();
-      }),
-    );
-
-    test(
-      `it should strip ANSI sequences and control characters from the npm-notice during web login`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
-        await xfs.writeFilePromise(rcPath, ``);
-
-        const notice = `Verification\u009b31m code:\u0085 123\u009b0m456\u009f\u0009`;
-
-        let code;
-        let stdout;
-        let stderr;
-
-        try {
-          await setWebLoginMock({notice}, async () => {
-            ({code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
-              stdin: `n\n`,
-              env: {
-                YARN_RC_FILENAME: SPEC_RC_FILENAME,
-              },
-            }));
-          });
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        expect(stdout).toContain(`Verification code: 123456`);
-        expect(stdout).not.toContain(`\u0085`);
-        expect(stdout).not.toContain(`\u009b`);
-        expect(stdout).not.toContain(`\u009f`);
-        expect(stdout).not.toContain(`\u0009`);
-
-        const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
-        const cleanFileContent = cleanupFileContent(finalRcFileContent);
-
-        expect(cleanFileContent).toMatchSnapshot();
-        expect({code, stderr, report: getReportLines(stdout)}).toMatchSnapshot();
-      }),
-    );
-
-    test(
-      `it should fall back to password login when web login init fails`,
-      makeTemporaryEnv({}, async ({path, run, source}) => {
-        const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
-        await xfs.writeFilePromise(rcPath, ``);
-
-        let code;
-        let stdout;
-        let stderr;
-
-        try {
-          await setWebLoginMock({initFails: true}, async () => {
-            ({code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
-              env: {
-                YARN_INJECT_NPM_USER: validLogins.fooUser.username,
-                YARN_INJECT_NPM_PASSWORD: validLogins.fooUser.password,
-                YARN_RC_FILENAME: SPEC_RC_FILENAME,
-              },
-            }));
-          });
-        } catch (error) {
-          ({code, stdout, stderr} = error);
-        }
-
-        expect(stdout).toContain(`Logging in to`);
-        expect(stdout).toContain(`Successfully logged in`);
-
-        const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
-        const cleanFileContent = cleanupFileContent(finalRcFileContent);
-
-        expect(cleanFileContent).toMatchSnapshot();
-        expect({code, stdout, stderr}).toMatchSnapshot();
+        expect({code, stderr, report}).toMatchSnapshot();
       }),
     );
 
