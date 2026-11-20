@@ -225,7 +225,7 @@ jobs:
         >> $GITHUB_OUTPUT
 
         curl https://nodejs.org/dist/index.json |
-        jq -c '[.[0:1] + map(select(.lts)) | .[].version | capture("^v(?<major>\\d+)") | .major | tonumber] | unique | map(select(. >= 18))'
+        jq -c '[.[0:1] + map(select(.lts)) | .[].version | . as $version | capture("^v(?<major>\\d+)") | .major | tonumber | select(. >= 18) | if ($version | contains("-")) then ($version | ltrimstr("v")) else . end] | unique'
         >> $GITHUB_OUTPUT
 
         # Get the latest nightly version that runs on both macOS and Windows

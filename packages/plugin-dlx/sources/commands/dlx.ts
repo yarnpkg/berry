@@ -17,6 +17,10 @@ export default class DlxCommand extends BaseCommand {
 
       By default Yarn will download the package named \`command\`, but this can be changed through the use of the \`-p,--package\` flag which will instruct Yarn to still run the same command but from a different package.
 
+      A specific version of the package can be requested by appending it to \`command\` (or to one of the \`-p,--package\` entries) using the regular semver range syntax, for example \`yarn dlx eslint@8\`.
+
+      If the requested package exposes multiple binaries, the one that gets called is the one matching \`command\` (which defaults to the package name when no \`-p,--package\` flag is used); a different binary from the same package can be selected by changing \`command\` to that binary's name instead. Calling a binary name that doesn't exist within the installed package(s) will make the command fail with a "Binary not found" error.
+
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,
     examples: [[
@@ -25,6 +29,12 @@ export default class DlxCommand extends BaseCommand {
     ], [
       `Install multiple packages for a single command`,
       `yarn dlx -p typescript -p ts-node ts-node --transpile-only -e "console.log('hello!')"`,
+    ], [
+      `Run a specific version of a package`,
+      `yarn dlx eslint@8 .`,
+    ], [
+      `Run a binary other than the package's own name (here, running the \`tsc\` binary exposed by the \`typescript\` package)`,
+      `yarn dlx -p typescript tsc --version`,
     ]],
   });
 
