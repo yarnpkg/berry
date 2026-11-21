@@ -231,6 +231,23 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it shouldn't crash when the registry metadata doesn't list a locked version`,
+      makeTemporaryEnv({
+        dependencies: {
+          [`no-deps`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await tests.setPackageWhitelist(new Map([[`no-deps`, new Set([`1.1.0`])]]), async () => {
+          await expect(run(`npm`, `audit`)).resolves.toMatchObject({
+            stdout: expect.stringContaining(`No audit suggestions`),
+          });
+        });
+      }),
+    );
+
+    test(
       `it should perform the deprecation checks against the package registry, not the audit registry`,
       makeTemporaryEnv({
         dependencies: {
