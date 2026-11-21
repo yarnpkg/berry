@@ -199,6 +199,26 @@ describe(`Node_Modules`, () => {
     ),
   );
 
+  test(`should prefer a declared binary even when a hoisted scope is visited first`,
+    makeTemporaryEnv(
+      {
+        dependencies: {
+          [`@fixture/anchor`]: `npm:no-deps@1.0.0`,
+          [`has-bin-entries`]: `2.0.0`,
+          [`one-dep-alias-bins`]: `1.0.0`,
+        },
+      },
+      {nodeLinker: `node-modules`},
+      async ({path, run}) => {
+        await run(`install`);
+
+        const state = parseSyml(await xfs.readFilePromise(ppath.join(path, `node_modules/.yarn-state.yml` as PortablePath), `utf8`));
+        const root = Object.values<any>(state).find(({locations}) => locations?.includes(``));
+        expect(root?.bin?.[`.`]?.[`has-bin-entries-with-relative-require`]).toBe(`has-bin-entries/bin-with-relative-require.js`);
+      },
+    ),
+  );
+
   testIf(() => process.platform === `win32` && typeof process.env.MSYSTEM !== `undefined`,
     `should generate .bin shims that run from MSYS2 shells without argument path conversion`,
     makeTemporaryEnv(

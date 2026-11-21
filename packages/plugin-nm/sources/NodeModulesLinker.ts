@@ -1054,8 +1054,8 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
   return descriptor.range.startsWith(`link:`);
 }
 
-async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: LoadManifest}) {
-  const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
+async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, project: Project, {loadManifest}: {loadManifest: LoadManifest}) {
+  const locatorScriptMap = new Map<LocatorKey, Map<Filename, string>>();
   for (const [locatorKey, {locations}] of installState) {
     const manifest = !isLinkLocator(locatorKey)
       ? await loadManifest(locatorKey, locations[0])
@@ -1076,25 +1076,40 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 
   const binSymlinks: BinSymlinkMap = new Map();
 
-  const getBinSymlinks = (location: PortablePath, parentLocatorLocation: PortablePath, node: LocationNode): Map<Filename, PortablePath> => {
-    const symlinks = new Map();
-    const internalPath = ppath.contains(projectRoot, location);
+  type BinOwner = {
+    nodeModules: PortablePath;
+    dependencies: Package[`dependencies`];
+    directBins: Map<Filename, PortablePath>;
+  };
+
+  const getBinSymlinks = (location: PortablePath, node: LocationNode, owner?: BinOwner): Map<Filename, PortablePath> => {
+    const symlinks = new Map<Filename, PortablePath>();
+    const internalPath = ppath.contains(project.cwd, location);
     if (node.locator && internalPath !== null) {
       const binScripts = locatorScriptMap.get(node.locator)!;
-      for (const [filename, scriptPath] of binScripts) {
-        const symlinkTarget = ppath.join(location, npath.toPortablePath(scriptPath));
-        symlinks.set(filename, symlinkTarget);
+      if (binScripts.size > 0) {
+        // Use the installed name, which can differ from the package name for npm aliases.
+        const isDirect = owner && owner.dependencies.has(structUtils.parseIdent(ppath.relative(owner.nodeModules, location)).identHash);
+        for (const [filename, scriptPath] of binScripts) {
+          const symlinkTarget = ppath.join(location, npath.toPortablePath(scriptPath));
+          symlinks.set(filename, symlinkTarget);
+          if (isDirect && !owner.directBins.has(filename)) {
+            owner.directBins.set(filename, symlinkTarget);
+          }
+        }
       }
       for (const [childLocation, childNode] of node.children) {
         const absChildLocation = ppath.join(location, childLocation);
-        const childSymlinks = getBinSymlinks(absChildLocation, absChildLocation, childNode);
+        const {dependencies} = project.storedPackages.get(structUtils.parseLocator(node.locator).locatorHash)!;
+        const directBins = new Map<Filename, PortablePath>();
+        const childSymlinks = getBinSymlinks(absChildLocation, childNode, {nodeModules: absChildLocation, dependencies, directBins});
         if (childSymlinks.size > 0) {
-          binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...childSymlinks]));
+          binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...childSymlinks, ...directBins]));
         }
       }
     } else {
       for (const [childLocation, childNode] of node.children) {
-        const childSymlinks = getBinSymlinks(ppath.join(location, childLocation), parentLocatorLocation, childNode);
+        const childSymlinks = getBinSymlinks(ppath.join(location, childLocation), childNode, owner);
         for (const [name, symlinkTarget] of childSymlinks) {
           if (!symlinks.has(name)) {
             symlinks.set(name, symlinkTarget);
@@ -1106,9 +1121,12 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
   };
 
   for (const [location, node] of locationTree) {
-    const symlinks = getBinSymlinks(location, location, node);
+    const workspace = !node.locator ? project.tryWorkspaceByCwd(location) : null;
+    const directBins = new Map<Filename, PortablePath>();
+    const owner = workspace ? {nodeModules: ppath.join(location, NODE_MODULES), dependencies: workspace.anchoredPackage.dependencies, directBins} : undefined;
+    const symlinks = getBinSymlinks(location, node, owner);
     if (symlinks.size > 0) {
-      binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...symlinks]));
+      binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...symlinks, ...directBins]));
     }
   }
 
@@ -1444,7 +1462,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     });
 
     invalidateBinSymlinks(prevBinSymlinks, new Set(addList.map(l => l.dstDir)));
-    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
+    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, windowsLinkType);
 
     await writeInstallState(project, installState, binSymlinks, nmMode, {installChangedByUser});
