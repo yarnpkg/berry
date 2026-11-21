@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const {existsSync} = require(`fs`);
-const {createRequire, register} = require(`module`);
+const {createRequire, register, registerHooks} = require(`module`);
 const {resolve} = require(`path`);
 const {pathToFileURL} = require(`url`);
 
@@ -20,6 +20,9 @@ if (existsSync(absPnpApiPath)) {
     require(absPnpApiPath).setup();
     if (isPnpLoaderEnabled && register) {
       register(pathToFileURL(absPnpLoaderPath));
+    } else if (isPnpLoaderEnabled && registerHooks) {
+      // Without `module.register`, the loader registers its hooks when evaluated
+      require(absPnpLoaderPath);
     }
   }
 }

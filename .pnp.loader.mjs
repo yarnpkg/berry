@@ -1,12 +1,12 @@
 /* eslint-disable */
 // @ts-nocheck
 
+import esmModule, { createRequire, isBuiltin } from 'module';
 import fs from 'fs';
 import { URL as URL$1, fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
 import { createHash } from 'crypto';
 import { EOL } from 'os';
-import esmModule, { createRequire, isBuiltin } from 'module';
 import assert from 'assert';
 
 const SAFE_TIME = 456789e3;
@@ -1460,15 +1460,6 @@ function readPackage(requestPath) {
   return JSON.parse(fs.readFileSync(jsonPath, `utf8`));
 }
 
-async function tryReadFile$1(path2) {
-  try {
-    return await fs.promises.readFile(path2, `utf8`);
-  } catch (error) {
-    if (error.code === `ENOENT`)
-      return null;
-    throw error;
-  }
-}
 function tryParseURL(str, base) {
   try {
     return new URL(str, base);
@@ -1516,14 +1507,14 @@ function getFileFormat(filepath) {
   }
 }
 
-async function load$1(urlString, context, nextLoad) {
+function prepareLoad(urlString, context) {
   const url = tryParseURL(urlString);
   if (url?.protocol !== `file:`)
-    return nextLoad(urlString, context, nextLoad);
+    return null;
   const filePath = fileURLToPath(url);
   const format = getFileFormat(filePath);
   if (!format)
-    return nextLoad(urlString, context, nextLoad);
+    return null;
   if (format === `json`) {
     if (SUPPORTS_IMPORT_ATTRIBUTES_ONLY) {
       if (context.importAttributes?.type !== `json`) {
@@ -1550,10 +1541,29 @@ async function load$1(urlString, context, nextLoad) {
       "watch:import": WATCH_MODE_MESSAGE_USES_ARRAYS ? [pathToSend] : pathToSend
     });
   }
-  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
-  const source = format !== `commonjs` || shouldReadSource ? await fs.promises.readFile(filePath, `utf8`) : void 0;
+  const shouldReadSource = format !== `commonjs` || HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
+  return { format, filePath, shouldReadSource };
+}
+async function load$1(urlString, context, nextLoad) {
+  const prepared = prepareLoad(urlString, context);
+  if (prepared === null)
+    return nextLoad(urlString, context, nextLoad);
+  const source = prepared.shouldReadSource ? await fs.promises.readFile(prepared.filePath, `utf8`) : void 0;
   return {
-    format,
+    format: prepared.format,
+    source,
+    shortCircuit: true
+  };
+}
+function loadSync(urlString, context, nextLoad) {
+  if (!context.conditions?.includes(`import`))
+    return nextLoad(urlString, context, nextLoad);
+  const prepared = prepareLoad(urlString, context);
+  if (prepared === null)
+    return nextLoad(urlString, context, nextLoad);
+  const source = prepared.shouldReadSource ? fs.readFileSync(prepared.filePath, `utf8`) : void 0;
+  return {
+    format: prepared.format,
     source,
     shortCircuit: true
   };
@@ -1994,7 +2004,7 @@ function tryReadFile(filePath) {
     throw err;
   }
 }
-async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
+function resolvePrivateRequest(specifier, issuer, context) {
   const resolved = packageImportsResolve({
     name: specifier,
     base: pathToFileURL(issuer),
@@ -2006,26 +2016,26 @@ async function resolvePrivateRequest(specifier, issuer, context, nextResolve) {
   } else {
     if (resolved.startsWith(`#`))
       throw new Error(`Mapping from one private import to another isn't allowed`);
-    return resolve$1(resolved, context, nextResolve);
+    return resolveRequest(resolved, context);
   }
 }
-async function resolve$1(originalSpecifier, context, nextResolve) {
+function resolveRequest(originalSpecifier, context) {
   if (!findPnpApi || isBuiltin(originalSpecifier))
-    return nextResolve(originalSpecifier, context, nextResolve);
+    return { delegate: originalSpecifier };
   let specifier = originalSpecifier;
   const url = tryParseURL(specifier, isRelativeRegexp.test(specifier) ? context.parentURL : void 0);
   if (url) {
     if (url.protocol !== `file:`)
-      return nextResolve(originalSpecifier, context, nextResolve);
+      return { delegate: originalSpecifier };
     specifier = fileURLToPath(url);
   }
   const { parentURL, conditions = [] } = context;
   const issuer = parentURL && tryParseURL(parentURL)?.protocol === `file:` ? fileURLToPath(parentURL) : process.cwd();
   const pnpapi = findPnpApi(issuer) ?? (url ? findPnpApi(specifier) : null);
   if (!pnpapi)
-    return nextResolve(originalSpecifier, context, nextResolve);
+    return { delegate: originalSpecifier };
   if (specifier.startsWith(`#`))
-    return resolvePrivateRequest(specifier, issuer, context, nextResolve);
+    return resolvePrivateRequest(specifier, issuer, context);
   const dependencyNameMatch = specifier.match(pathRegExp);
   let allowLegacyResolve = false;
   if (dependencyNameMatch) {
@@ -2033,7 +2043,7 @@ async function resolve$1(originalSpecifier, context, nextResolve) {
     if (subPath === `` && dependencyName !== `pnpapi`) {
       const resolved = pnpapi.resolveToUnqualified(`${dependencyName}/package.json`, issuer);
       if (resolved) {
-        const content = await tryReadFile$1(resolved);
+        const content = tryReadFile(resolved);
         if (content) {
           const pkg = JSON.parse(content);
           allowLegacyResolve = pkg.exports == null;
@@ -2066,6 +2076,16 @@ async function resolve$1(originalSpecifier, context, nextResolve) {
     url: resultURL.href,
     shortCircuit: true
   };
+}
+async function resolve$1(originalSpecifier, context, nextResolve) {
+  const result = resolveRequest(originalSpecifier, context);
+  return `delegate` in result ? nextResolve(result.delegate, context, nextResolve) : result;
+}
+function resolveSync(originalSpecifier, context, nextResolve) {
+  if (!context.conditions?.includes(`import`))
+    return nextResolve(originalSpecifier, context, nextResolve);
+  const result = resolveRequest(originalSpecifier, context);
+  return `delegate` in result ? nextResolve(result.delegate, context, nextResolve) : result;
 }
 
 if (!HAS_LAZY_LOADED_TRANSLATORS) {
@@ -2125,5 +2145,8 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
 
 const resolve = resolve$1;
 const load = load$1;
+const { registerHooks } = esmModule;
+if (typeof registerHooks === `function` && !process.allowedNodeEnvironmentFlags.has(`--experimental-loader`))
+  registerHooks({ resolve: resolveSync, load: loadSync });
 
 export { load, resolve };
