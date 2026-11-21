@@ -1,19 +1,7 @@
 import {NativePath}   from '@yarnpkg/fslib';
-import fs             from 'fs';
 import path           from 'path';
 
 import * as nodeUtils from '../loader/nodeUtils';
-
-export async function tryReadFile(path: NativePath): Promise<string | null> {
-  try {
-    return await fs.promises.readFile(path, `utf8`);
-  } catch (error) {
-    if (error.code === `ENOENT`)
-      return null;
-
-    throw error;
-  }
-}
 
 export function tryParseURL(str: string, base?: string | URL | undefined) {
   try {

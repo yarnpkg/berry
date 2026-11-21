@@ -2,7 +2,7 @@ import {Filename, PortablePath, ppath, xfs} from '@yarnpkg/fslib';
 import {parseSyml}                          from '@yarnpkg/parsers';
 
 const {
-  tests: {startPackageServer, validLogins},
+  tests: {startPackageServer, validLogins, webLoginNotice},
 } = require(`pkg-tests-core`);
 
 const SPEC_RC_FILENAME = `.spec-yarnrc` as Filename;
@@ -103,6 +103,37 @@ describe(`Commands`, () => {
 
         expect(cleanFileContent).toMatchSnapshot();
         expect({code, stdout, stderr}).toMatchSnapshot();
+      }),
+    );
+
+    test(
+      `it should print the npm-notice once when the registry repeats it during a web login`,
+      makeTemporaryEnv({}, async ({path, run, source}) => {
+        const rcPath = ppath.join(path, PortablePath.parent, SPEC_RC_FILENAME);
+        await xfs.writeFilePromise(rcPath, ``);
+
+        const {code, stdout, stderr} = await run(`npm`, `login`, `--web-login`, {
+          // Declines the prompt offering to open the browser
+          stdin: `n\n`,
+          env: {
+            YARN_RC_FILENAME: SPEC_RC_FILENAME,
+          },
+        });
+
+        // The mock registry sends the same notice when the login starts and
+        // each time we check whether it completed.
+        expect(stdout.split(webLoginNotice)).toHaveLength(2);
+
+        const finalRcFileContent = await xfs.readFilePromise(rcPath, `utf8`);
+        const cleanFileContent = cleanupFileContent(finalRcFileContent);
+
+        expect(cleanFileContent).toMatchSnapshot();
+
+        // The prompt is rendered differently depending on the platform, so we
+        // only keep the lines coming from the report.
+        const report = stdout.split(/\r?\n/).filter((line: string) => line.startsWith(`➤`));
+
+        expect({code, stderr, report}).toMatchSnapshot();
       }),
     );
 

@@ -39,7 +39,7 @@ async function setupScriptEnvironment(project: Project, env: NodeJS.ProcessEnv, 
   // TODO: Drop the question mark in the RegExp after .pnp.js files stop being used.
   // TODO: Support `-r` as an alias for `--require` (in all packages)
   const pnpRegularExpression = /\s*--require\s+\S*\.pnp\.c?js\s*/g;
-  const esmLoaderExpression = /\s*--experimental-loader\s+\S*\.pnp\.loader\.mjs\s*/;
+  const esmLoaderExpression = /\s*--(?:experimental-loader|import)\s+\S*\.pnp\.loader\.mjs\s*/;
   const packageMapExpression = /\s*--experimental-package-map(?:=|\s+)(?:"[^"]*"|'[^']*'|\S+)\s*/g;
 
   const nodeOptions = (env.NODE_OPTIONS ?? ``)
@@ -73,8 +73,15 @@ async function setupScriptEnvironment(project: Project, env: NodeJS.ProcessEnv, 
   const pnpPath = getPnpPath(project);
   let pnpRequire = `--require ${quotePathIfNeeded(npath.fromPortablePath(pnpPath.cjs))}`;
 
-  if (xfs.existsSync(pnpPath.esmLoader))
-    pnpRequire = `${pnpRequire} --experimental-loader ${pathToFileURL(npath.fromPortablePath(pnpPath.esmLoader)).href}`;
+  if (xfs.existsSync(pnpPath.esmLoader)) {
+    // Node.js versions that removed `--experimental-loader` expect the loader
+    // to be preloaded instead; it then registers its hooks by itself.
+    const esmLoaderFlag = process.allowedNodeEnvironmentFlags.has(`--experimental-loader`)
+      ? `--experimental-loader`
+      : `--import`;
+
+    pnpRequire = `${pnpRequire} ${esmLoaderFlag} ${pathToFileURL(npath.fromPortablePath(pnpPath.esmLoader)).href}`;
+  }
 
   if (xfs.existsSync(pnpPath.cjs)) {
     extraNodeOptions.unshift(pnpRequire);
