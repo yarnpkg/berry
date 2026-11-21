@@ -78,7 +78,7 @@ export default class PackCommand extends BaseCommand {
       stdout: this.context.stdout,
       json: this.json,
     }, async report => {
-      await packUtils.prepareForPack(workspace, {report}, async () => {
+      await packUtils.prepareForPack(workspace, {report, dryRun: this.dryRun}, async () => {
         report.reportJson({base: npath.fromPortablePath(workspace.cwd)});
 
         const files = await packUtils.genPackList(workspace);

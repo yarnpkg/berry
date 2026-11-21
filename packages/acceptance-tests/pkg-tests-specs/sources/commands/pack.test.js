@@ -855,6 +855,26 @@ describe(`Commands`, () => {
     );
 
     test(
+      `it should tell the prepack and postpack scripts when running a dry run`,
+      makeTemporaryEnv({
+        scripts: {
+          prepack: `node -e "require('fs').writeFileSync('prepack.txt', String(process.env.npm_config_dry_run))"`,
+          postpack: `node -e "require('fs').writeFileSync('postpack.txt', String(process.env.npm_config_dry_run))"`,
+        },
+      }, async ({path, run, source}) => {
+        await run(`install`);
+
+        await run(`pack`, `--dry-run`);
+        await expect(xfs.readFilePromise(`${path}/prepack.txt`, `utf8`)).resolves.toEqual(`true`);
+        await expect(xfs.readFilePromise(`${path}/postpack.txt`, `utf8`)).resolves.toEqual(`true`);
+
+        await run(`pack`);
+        await expect(xfs.readFilePromise(`${path}/prepack.txt`, `utf8`)).resolves.toEqual(`undefined`);
+        await expect(xfs.readFilePromise(`${path}/postpack.txt`, `utf8`)).resolves.toEqual(`undefined`);
+      }),
+    );
+
+    test(
       `it should reflect changes made to package.json during prepack`,
       makeTemporaryEnv({
         workspaces: [`./dependency`, `./dependant`],
