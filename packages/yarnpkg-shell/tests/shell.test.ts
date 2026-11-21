@@ -1,6 +1,6 @@
 import {xfs, ppath, PortablePath} from '@yarnpkg/fslib';
 import {execute, UserOptions}     from '@yarnpkg/shell';
-import {PassThrough}              from 'stream';
+import {PassThrough, Writable}    from 'stream';
 import stripAnsi                  from 'strip-ansi';
 import {setTimeout}               from 'timers/promises';
 
@@ -1034,6 +1034,45 @@ describe(`Shell`, () => {
           )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
         });
       });
+
+      for (const [name, redirection, write] of [
+        [`stdout`, `>`, (state: any, chunk: Buffer) => state.stdout.write(chunk)],
+        [`stderr`, `2>`, (state: any, chunk: Buffer) => state.stderr.write(chunk)],
+      ] as const) {
+        it(`should flush everything written to a ${name} redirection, even when its target is slow`, async () => {
+          const chunkCount = 100;
+          const chunkSize = 1024;
+
+          // A target slower than the command, so that the data piles up in the
+          // shell while the command has already finished (like a slow disk)
+          let received = 0;
+          const baseFs = Object.create(xfs);
+          baseFs.createWriteStream = () => new Writable({
+            highWaterMark: chunkSize,
+            write(chunk, encoding, callback) {
+              received += chunk.length;
+              setImmediate(callback);
+            },
+          });
+
+          const exitCode = await execute(`write-a-lot ${redirection} file`, [], {
+            baseFs,
+            stdout: new PassThrough(),
+            stderr: new PassThrough(),
+            builtins: {
+              [`write-a-lot`]: async (args, opts, state) => {
+                for (let t = 0; t < chunkCount; ++t)
+                  write(state, Buffer.alloc(chunkSize));
+
+                return 0;
+              },
+            },
+          });
+
+          expect(exitCode).toEqual(0);
+          expect(received).toEqual(chunkCount * chunkSize);
+        });
+      }
     });
 
     describe(`>>`, () => {
