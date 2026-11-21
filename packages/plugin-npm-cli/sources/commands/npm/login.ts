@@ -100,12 +100,13 @@ type NpmWebLoginInitResponse = {
   doneUrl: string;
 };
 
-async function webLoginInit(registry: string, configuration: Configuration): Promise<NpmWebLoginInitResponse | null> {
+async function webLoginInit(registry: string, {configuration, report}: {configuration: Configuration, report: Report}): Promise<NpmWebLoginInitResponse | null> {
   let response: any;
   try {
     response = await npmHttpUtils.post(`/-/v1/login`, null, {
       configuration,
       registry,
+      report,
       authType: npmHttpUtils.AuthType.NO_AUTH,
       jsonResponse: true,
       headers: {
@@ -123,11 +124,13 @@ type NpmWebLoginCheckResponse =
   | {type: `success`, token: string}
   | {type: `waiting`, sleep: number};
 
-async function webLoginCheck(doneUrl: string, configuration: Configuration): Promise<NpmWebLoginCheckResponse | null> {
+async function webLoginCheck(doneUrl: string, {configuration, report}: {configuration: Configuration, report: Report}): Promise<NpmWebLoginCheckResponse | null> {
   const response = await httpUtils.request(doneUrl, null, {
     configuration,
     jsonResponse: true,
   });
+
+  npmHttpUtils.reportNotice(response.headers, {configuration, report});
 
   if (response.statusCode === 202) {
     const retryAfter = response.headers[`retry-after`] ?? `1`;
@@ -141,7 +144,7 @@ async function webLoginCheck(doneUrl: string, configuration: Configuration): Pro
 }
 
 async function loginViaWeb({registry, configuration, report}: CredentialOptions): Promise<string | null> {
-  const loginResponse = await webLoginInit(registry, configuration);
+  const loginResponse = await webLoginInit(registry, {configuration, report});
   if (!loginResponse)
     return null;
 
@@ -168,7 +171,7 @@ async function loginViaWeb({registry, configuration, report}: CredentialOptions)
   }
 
   while (true) {
-    const sleepDuration = await webLoginCheck(loginResponse.doneUrl, configuration);
+    const sleepDuration = await webLoginCheck(loginResponse.doneUrl, {configuration, report});
     if (sleepDuration === null)
       return null;
 
@@ -232,6 +235,7 @@ async function loginOrRegisterViaPassword({registry, configuration, report, stdi
     attemptedAs: credentials.name,
     configuration,
     registry,
+    report,
     jsonResponse: true,
     authType: npmHttpUtils.AuthType.NO_AUTH,
   };

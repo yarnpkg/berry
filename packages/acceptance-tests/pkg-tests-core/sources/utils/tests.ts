@@ -67,6 +67,8 @@ export type PackageRunDriver = (
 
 export enum RequestType {
   Login = `login`,
+  WebLoginInit = `webLoginInit`,
+  WebLoginCheck = `webLoginCheck`,
   PackageInfo = `packageInfo`,
   PackageTarball = `packageTarball`,
   PackageVersion = `packageVersion`,
@@ -84,6 +86,13 @@ export type Request = {
   registry?: string;
   type: RequestType.Login;
   username: string;
+} | {
+  registry?: string;
+  type: RequestType.WebLoginInit;
+} | {
+  registry?: string;
+  type: RequestType.WebLoginCheck;
+  session: string;
 } | {
   registry?: string;
   type: RequestType.PackageInfo;
@@ -243,6 +252,12 @@ export const validLogins = {
   otpUser: new Login(`otp-user`, {otp: true}),
   otpUserWithNotice: new Login(`otp-user-with-notice`, {otp: true, notice: true}),
 } as const;
+
+// Sent with every response of the web login flow, so that tests can check
+// that a notice repeated by the registry is only printed once.
+export const webLoginNotice = `Check that your browser shows the code 123456 (see https://example.org/web-login)`;
+
+const webLoginChecks = new Map<string, number>();
 
 let whitelist = new Map();
 let recording: Array<Request> | null = null;
@@ -631,6 +646,60 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
       });
     },
 
+    async [RequestType.WebLoginInit](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.WebLoginInit)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const session = `${webLoginChecks.size + 1}`;
+      webLoginChecks.set(session, 0);
+
+      const serverUrl = `${type}://${request.headers.host}`;
+
+      const data = JSON.stringify({
+        loginUrl: `${serverUrl}/-/v1/login/browser/${session}`,
+        doneUrl: `${serverUrl}/-/v1/login/done/${session}`,
+      });
+
+      response.writeHead(200, {
+        [`Content-Type`]: `application/json`,
+        [`npm-notice`]: webLoginNotice,
+      });
+
+      response.end(data);
+    },
+
+    async [RequestType.WebLoginCheck](parsedRequest, request, response) {
+      if (parsedRequest.type !== RequestType.WebLoginCheck)
+        throw new Error(`Assertion failed: Invalid request type`);
+
+      const checks = webLoginChecks.get(parsedRequest.session);
+      if (typeof checks === `undefined`) {
+        processError(response, 404, `Unknown web login session`);
+        return;
+      }
+
+      webLoginChecks.set(parsedRequest.session, checks + 1);
+
+      // The first check always pretends that the user is still in their browser
+      if (checks === 0) {
+        response.writeHead(202, {
+          [`Content-Type`]: `application/json`,
+          [`npm-notice`]: webLoginNotice,
+          [`retry-after`]: `0`,
+        });
+
+        response.end(JSON.stringify({}));
+        return;
+      }
+
+      response.writeHead(200, {
+        [`Content-Type`]: `application/json`,
+        [`npm-notice`]: webLoginNotice,
+      });
+
+      response.end(JSON.stringify({token: validLogins.fooUser.npmAuthToken}));
+    },
+
     async [RequestType.Repository](parsedRequest, request, response) {
       staticServer(request as any, response as any, finalhandler(request, response));
     },
@@ -843,6 +912,17 @@ export const startPackageServer = ({type}: {type: keyof typeof packageServerUrls
           ...registry,
           type: RequestType.Login,
           username,
+        };
+      } else if (url === `/-/v1/login` && method === `POST`) {
+        return {
+          ...registry,
+          type: RequestType.WebLoginInit,
+        };
+      } else if ((match = url.match(/^\/-\/v1\/login\/done\/([^/]+)$/)) && method === `GET`) {
+        return {
+          ...registry,
+          type: RequestType.WebLoginCheck,
+          session: match[1],
         };
       } else if (url === `/-/whoami`) {
         return {

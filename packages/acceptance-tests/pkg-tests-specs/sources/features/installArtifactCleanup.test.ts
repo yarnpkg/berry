@@ -79,7 +79,9 @@ describe(`Install Artifact Cleanup`, () => {
             await run(`install`);
 
             const hook = `--require ${JSON.stringify(npath.fromPortablePath(ppath.join(path, Filename.pnpCjs)))}`;
-            const esmLoader = `--experimental-loader ${JSON.stringify(pathToFileURL(npath.fromPortablePath(ppath.join(path, Filename.pnpEsmLoader))).href)}`;
+            // Node.js 28 removed `--experimental-loader`; the loader is preloaded there
+            const esmLoaderFlag = process.allowedNodeEnvironmentFlags.has(`--experimental-loader`) ? `--experimental-loader` : `--import`;
+            const esmLoader = `${esmLoaderFlag} ${JSON.stringify(pathToFileURL(npath.fromPortablePath(ppath.join(path, Filename.pnpEsmLoader))).href)}`;
 
             const env = {
               NODE_OPTIONS: `${hook} ${esmLoader}`,
