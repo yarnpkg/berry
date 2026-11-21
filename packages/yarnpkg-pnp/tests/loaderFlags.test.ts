@@ -22,10 +22,12 @@ describe(`loaderFlags`, () => {
   });
 
   describe(`HAS_BROKEN_FSTAT_FOR_ZIP_FDS`, () => {
-    it(`should only include the affected v22.22 patch releases`, () => {
+    it(`should only include affected Node 22 releases`, () => {
       expect(hasBrokenFstatForZipFds(`22.22.2`)).toBe(false);
       expect(hasBrokenFstatForZipFds(`22.22.3`)).toBe(true);
       expect(hasBrokenFstatForZipFds(`22.23.0`)).toBe(true);
+      expect(hasBrokenFstatForZipFds(`22.23.2`)).toBe(true);
+      expect(hasBrokenFstatForZipFds(`22.23.3`)).toBe(false);
     });
 
     it(`should keep the existing affected version ranges`, () => {
