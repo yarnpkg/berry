@@ -86,6 +86,30 @@ exports[`Commands npm login it should login a user with no OTP setup to a specif
 }
 `;
 
+exports[`Commands npm login it should print the npm-notice once when the registry repeats it during a web login 1`] = `
+"{
+  "npmRegistries": {
+    "http://yarn.test.registry": {
+      "npmAuthToken": "9d33b95c-ac4d-5a16-a2d6-ae920e9da2f5"
+    }
+  }
+}"
+`;
+
+exports[`Commands npm login it should print the npm-notice once when the registry repeats it during a web login 2`] = `
+{
+  "code": 0,
+  "report": [
+    "➤ YN0000: Registry notice: Check that your browser shows the code 123456 (see https://example.org/web-login)",
+    "➤ YN0000: Starting the web login process...",
+    "➤ YN0000: We failed to automatically open the url; you'll have to open it yourself in your browser of choice:",
+    "➤ YN0000: http://registry.example.org/-/v1/login/browser/1",
+    "➤ YN0000: Successfully logged in",
+  ],
+  "stderr": "",
+}
+`;
+
 exports[`Commands npm login it should print the npm-notice when an OTP is requested 1`] = `
 "{
   "npmRegistries": {
@@ -102,7 +126,7 @@ exports[`Commands npm login it should print the npm-notice when an OTP is reques
   "stderr": "",
   "stdout": "➤ YN0000: Logging in to http://registry.example.org
 
-➤ YN0000: You're looking handsome today
+➤ YN0000: Registry notice: You're looking handsome today
 
 ➤ YN0000: Successfully logged in
 ",
