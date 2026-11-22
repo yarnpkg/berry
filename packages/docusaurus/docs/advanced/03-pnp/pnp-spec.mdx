@@ -92,7 +92,9 @@ The `__virtual__` folder name appeared with Yarn 3.0. Earlier releases used `$$v
 
 ## Manifest reference
 
-When [`pnpEnableInlining`](/configuration/yarnrc#pnpEnableInlining) is explicitly set to `false`, Yarn will generate an additional `.pnp.data.json` file containing the following fields.
+By default, Yarn embeds the manifest in the generated `.pnp.cjs` loader. Tools that read the loader as text can locate the start of the payload with the regular expression `/const[ \r\n]+RAW_RUNTIME_STATE[ \r\n]*=[ \r\n]*'/`. The opening quote starts a single-quoted JavaScript string literal containing JSON. Read to the next unescaped single quote, decode the JavaScript string escapes (including backslash-newline continuations), then parse the resulting JSON.
+
+When [`pnpEnableInlining`](/configuration/yarnrc#pnpEnableInlining) is set to `false`, Yarn writes the same manifest to `.pnp.data.json`, which can be parsed directly as JSON.
 
 This document only covers the data file itself - you should define your own in-memory data structures, populated at runtime with the information from the manifest. For example, Yarn turns the `packageRegistryData` table into two separate memory tables: one that maps a path to a package, and another that maps a package to a path.
 
