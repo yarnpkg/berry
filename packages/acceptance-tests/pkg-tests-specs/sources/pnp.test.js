@@ -1667,7 +1667,7 @@ describe(`Plug'n'Play`, () => {
       const match = /const[ \r\n]+RAW_RUNTIME_STATE[ \r\n]*=[ \r\n]*'((?:\\[\s\S]|[^'\\])*)'/.exec(loader);
       expect(match).not.toBeNull();
 
-      const json = match[1].replace(/\\\n/g, ``).replace(/\\(['\\])/g, `$1`);
+      const json = match[1].replace(/\\\r?\n/g, ``).replace(/\\(['\\])/g, `$1`);
       await run(`install`, {env: {YARN_PNP_ENABLE_INLINING: `false`}});
       const data = await xfs.readJsonPromise(ppath.join(path, Filename.pnpData));
       expect(JSON.parse(json)).toEqual(data);
