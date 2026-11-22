@@ -745,6 +745,40 @@ export class Project {
     return miscUtils.dynamicRequire(configPath);
   }
 
+  /**
+   * Returns the first matching root resolutions override for a normalized dependency.
+   */
+  getResolutionOverride(dependency: Descriptor, locator: Locator): Descriptor | null {
+    for (const {pattern, reference} of this.topLevelWorkspace.manifest.resolutions) {
+      if (pattern.descriptor.fullName !== structUtils.stringifyIdent(dependency))
+        continue;
+
+      if (pattern.from) {
+        if (pattern.from.fullName !== structUtils.stringifyIdent(locator))
+          continue;
+
+        const from = this.configuration.normalizeLocator(
+          structUtils.makeLocator(locator, pattern.from.description ?? locator.reference),
+        );
+
+        if (from.locatorHash !== locator.locatorHash) {
+          continue;
+        }
+      }
+
+      const descriptor = this.configuration.normalizeDependency(
+        structUtils.makeDescriptor(dependency, pattern.descriptor.description ?? dependency.range),
+      );
+
+      if (descriptor.descriptorHash !== dependency.descriptorHash)
+        continue;
+
+      return this.configuration.normalizeDependency(structUtils.makeDescriptor(dependency, reference));
+    }
+
+    return null;
+  }
+
   async preparePackage(originalPkg: Package, {resolver, resolveOptions}: {resolver: Resolver, resolveOptions: ResolveOptions}) {
     const packageExtensions = await this.configuration.getPackageExtensions();
 
