@@ -5,8 +5,9 @@
  * https://github.com/npm/cli/blob/04f53ce13201b460123067d7153f1681342548e1/workspaces/libnpmpublish/lib/provenance.js
  */
 
-import {MessageName, ReportError} from '@yarnpkg/core';
-import * as sigstore              from 'sigstore';
+import {bundleToJSON}                                                     from '@sigstore/bundle';
+import {CIContextProvider, DSSEBundleBuilder, FulcioSigner, RekorWitness} from '@sigstore/sign';
+import {MessageName, ReportError}                                         from '@yarnpkg/core';
 
 const {env} = process;
 
@@ -22,7 +23,26 @@ const GITHUB_BUILD_TYPE = `https://slsa-framework.github.io/github-actions-build
 const GITLAB_BUILD_TYPE_PREFIX = `https://github.com/npm/cli/gitlab`;
 const GITLAB_BUILD_TYPE_VERSION = `v0alpha1`;
 
-export const generateProvenance = async (subject: any, opts?: sigstore.SignOptions) => {
+// Same values as the ones used by default by the `sigstore` package
+const SIGSTORE_FETCH_OPTIONS = {
+  retry: {retries: 2},
+  timeout: 5000,
+};
+
+export const makeTransparencyLogWitness = (opts: {rekorBaseURL?: string} = {}) => {
+  return new RekorWitness({
+    ...SIGSTORE_FETCH_OPTIONS,
+    ...opts,
+    entryType: `dsse`,
+    // A request is retried when its response is lost or takes too long, even
+    // if the log already recorded the entry. The log answers such retries
+    // with a conflict pointing to the existing entry, which is the very one
+    // we want (entries are keyed by their content, signature included).
+    fetchOnConflict: true,
+  });
+};
+
+export const generateProvenance = async (subject: any) => {
   let payload: unknown;
   if (env.GITHUB_ACTIONS) {
     if (!env.ACTIONS_ID_TOKEN_REQUEST_URL) {
@@ -216,5 +236,23 @@ export const generateProvenance = async (subject: any, opts?: sigstore.SignOptio
       `Provenance generation is only supported in GitHub Actions and GitLab CI`,
     );
   }
-  return sigstore.attest(Buffer.from(JSON.stringify(payload)), INTOTO_PAYLOAD_TYPE, opts);
+
+  // This is what `sigstore.attest` does, except that it doesn't let us
+  // configure how conflicts in the transparency log are handled.
+  const bundler = new DSSEBundleBuilder({
+    signer: new FulcioSigner({
+      ...SIGSTORE_FETCH_OPTIONS,
+      identityProvider: new CIContextProvider(`sigstore`),
+    }),
+    witnesses: [
+      makeTransparencyLogWitness(),
+    ],
+  });
+
+  const bundle = await bundler.create({
+    data: Buffer.from(JSON.stringify(payload)),
+    type: INTOTO_PAYLOAD_TYPE,
+  });
+
+  return bundleToJSON(bundle);
 };

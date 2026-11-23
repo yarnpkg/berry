@@ -19,7 +19,7 @@ export default class DlxCommand extends BaseCommand {
 
       A specific version of the package can be requested by appending it to \`command\` (or to one of the \`-p,--package\` entries) using the regular semver range syntax, for example \`yarn dlx eslint@8\`.
 
-      If the requested package exposes multiple binaries, the one that gets called is the one matching \`command\` (which defaults to the package name when no \`-p,--package\` flag is used); a different binary from the same package can be selected by changing \`command\` to that binary's name instead. Calling a binary name that doesn't exist within the installed package(s) will make the command fail with a "Binary not found" error.
+      Without \`-p,--package\`, Yarn looks for a binary matching the package name. If there is no match and the package exposes exactly one binary, Yarn runs that binary. To choose a different binary, pass the package with \`-p,--package\` and use the binary name as \`command\`. If Yarn cannot find the requested binary and the single-binary fallback does not apply, the command fails.
 
       Using \`yarn dlx\` as a replacement of \`yarn add\` isn't recommended, as it makes your project non-deterministic (Yarn doesn't keep track of the packages installed through \`dlx\` - neither their name, nor their version).
     `,
