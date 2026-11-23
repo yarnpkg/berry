@@ -967,19 +967,19 @@ describe(`ZipFS`, () => {
 
     const zipFs2 = new ZipFS(zipContent);
     expect(readdir(PortablePath.root)).toEqual([
-      {name: `bar`, path: `.`},
-      {name: `file.txt`, path: `.`},
-      {name: `foo`, path: `.`},
-      {name: `file.txt`, path: `bar`},
-      {name: `bar`, path: `foo`},
-      {name: `file.txt`, path: `foo`},
-      {name: `file.txt`, path: `foo/bar`},
+      {name: `bar`, path: `/`},
+      {name: `file.txt`, path: `/`},
+      {name: `foo`, path: `/`},
+      {name: `file.txt`, path: `/bar`},
+      {name: `bar`, path: `/foo`},
+      {name: `file.txt`, path: `/foo`},
+      {name: `file.txt`, path: `/foo/bar`},
     ]);
 
     expect(readdir(ppath.join(PortablePath.root, `foo`))).toEqual([
-      {name: `bar`, path: `.`},
-      {name: `file.txt`, path: `.`},
-      {name: `file.txt`, path: `bar`},
+      {name: `bar`, path: `/foo`},
+      {name: `file.txt`, path: `/foo`},
+      {name: `file.txt`, path: `/foo/bar`},
     ]);
   });
 

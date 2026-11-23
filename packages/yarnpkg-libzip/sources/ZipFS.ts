@@ -1389,6 +1389,9 @@ export class ZipFS extends BasePortableFakeFS {
           }
         }
 
+        for (const entry of entries)
+          entry.path = entry.parentPath;
+
         return entries;
       } else {
         const entries: Array<PortablePath> = [...directoryListing];

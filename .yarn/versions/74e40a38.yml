@@ -1,4 +1,5 @@
 releases:
+  "@yarnpkg/fslib": patch
   "@yarnpkg/libzip": patch
   "@yarnpkg/cli": patch
 declined:
@@ -23,5 +24,4 @@ declined:
   - "@yarnpkg/builder"
   - "@yarnpkg/core"
   - "@yarnpkg/doctor"
-  - "@yarnpkg/fslib"
   - "@yarnpkg/pnp"

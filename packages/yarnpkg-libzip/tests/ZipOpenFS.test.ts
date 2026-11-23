@@ -57,7 +57,7 @@ describe(`getArchivePart`, () => {
 });
 
 describe(`ZipOpenFS`, () => {
-  it(`returns absolute parent paths for recursive directory entries`, () => {
+  it(`returns compatible parent paths for recursive directory entries`, async () => {
     const archivePath = ppath.join(xfs.mktempSync(), `archive.zip` as Filename);
     const zipFs = new ZipFS(archivePath, {create: true});
 
@@ -71,6 +71,20 @@ describe(`ZipOpenFS`, () => {
       .find(({name}) => name === `comparator.js`)!;
 
     expect(dirent.parentPath).toStrictEqual(ppath.join(dirPath, `classes` as Filename));
+    expect(dirent.path).toStrictEqual(dirent.parentPath);
+
+    const relativeDirPath = ppath.relative(npath.toPortablePath(process.cwd()), dirPath);
+    const relativeDirent = fs.readdirSync(relativeDirPath, {recursive: true, withFileTypes: true})
+      .find(({name}) => name === `comparator.js`)!;
+
+    expect(relativeDirent.parentPath).toStrictEqual(ppath.join(relativeDirPath, `classes` as Filename));
+    expect(relativeDirent.path).toStrictEqual(relativeDirent.parentPath);
+
+    const asyncDirent = (await fs.readdirPromise(relativeDirPath, {recursive: true, withFileTypes: true}))
+      .find(({name}) => name === `comparator.js`)!;
+
+    expect(asyncDirent.parentPath).toStrictEqual(ppath.join(relativeDirPath, `classes` as Filename));
+    expect(asyncDirent.path).toStrictEqual(asyncDirent.parentPath);
 
     fs.discardAndClose();
   });

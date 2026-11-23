@@ -7,7 +7,7 @@ import {CreateReadStreamOptions, CreateWriteStreamOptions, BasePortableFakeFS, E
 import {NodeFS}                                                                                                                                      from './NodeFS';
 import {watchFile, unwatchFile, unwatchAllFiles}                                                                                                     from './algorithms/watchFile';
 import * as errors                                                                                                                                   from './errors';
-import {Filename, FSPath, npath, PortablePath}                                                                                                       from './path';
+import {Filename, FSPath, npath, ppath, PortablePath}                                                                                                from './path';
 
 // Only file descriptors prefixed by those values will be forwarded to the MountFS
 // instances. Note that the highest MOUNT_MAGIC bit MUST NOT be set, otherwise the
@@ -822,6 +822,31 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
     });
   }
 
+  private convertDirentPathsToRelative(entries: Array<unknown>, p: PortablePath) {
+    if (ppath.isAbsolute(p))
+      return;
+
+    const cwd = this.resolve(PortablePath.dot);
+    for (const entry of entries) {
+      if (typeof entry !== `object` || entry === null)
+        continue;
+
+      const dirent = entry as {parentPath?: unknown, path?: unknown};
+      if (typeof dirent.parentPath !== `string`)
+        continue;
+
+      const direntParentPath = dirent.parentPath as PortablePath;
+      if (!ppath.isAbsolute(direntParentPath))
+        continue;
+
+      const parentPath = ppath.relative(cwd, direntParentPath);
+      if (Object.hasOwn(entry, `path`))
+        dirent.path = parentPath;
+
+      dirent.parentPath = parentPath;
+    }
+  }
+
   async readdirPromise(p: PortablePath, opts?: null): Promise<Array<Filename>>;
   async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes: true}): Promise<Array<DirentNoPath>>;
   async readdirPromise(p: PortablePath, opts: {recursive?: false, withFileTypes?: false}): Promise<Array<Filename>>;
@@ -833,13 +858,18 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Promise<Array<PortablePath>>;
   async readdirPromise(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>>;
   async readdirPromise(p: PortablePath, opts?: ReaddirOptions | null): Promise<Array<Dirent<PortablePath> | DirentNoPath | PortablePath>> {
-    return await this.makeCallPromise(p, async () => {
+    const entries = await this.makeCallPromise(p, async () => {
       return await this.baseFs.readdirPromise(p, opts as any);
     }, async (mountFs, {subPath}) => {
       return await mountFs.readdirPromise(subPath, opts as any);
     }, {
       requireSubpath: false,
     });
+
+    if (opts?.recursive && opts?.withFileTypes && !ppath.isAbsolute(p))
+      this.convertDirentPathsToRelative(entries, p);
+
+    return entries;
   }
 
   readdirSync(p: PortablePath, opts?: null): Array<Filename>;
@@ -853,13 +883,18 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
   readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes?: false}): Array<PortablePath>;
   readdirSync(p: PortablePath, opts: {recursive: boolean, withFileTypes: boolean}): Array<Dirent<PortablePath> | DirentNoPath | PortablePath>;
   readdirSync(p: PortablePath, opts?: ReaddirOptions | null): Array<Dirent<PortablePath> | DirentNoPath | PortablePath> {
-    return this.makeCallSync(p, () => {
+    const entries = this.makeCallSync(p, () => {
       return this.baseFs.readdirSync(p, opts as any);
     }, (mountFs, {subPath}) => {
       return mountFs.readdirSync(subPath, opts as any);
     }, {
       requireSubpath: false,
     });
+
+    if (opts?.recursive && opts?.withFileTypes && !ppath.isAbsolute(p))
+      this.convertDirentPathsToRelative(entries, p);
+
+    return entries;
   }
 
   async readlinkPromise(p: PortablePath) {
