@@ -1,4 +1,12 @@
-import {Manifest} from '../sources/Manifest';
+import {Package, nodeUtils, structUtils} from '@yarnpkg/core';
+
+import {Manifest}                        from '../sources/Manifest';
+
+const isCompatible = (manifest: string, {os = null, cpu = null, libc = null}: Partial<nodeUtils.ArchitectureSet>) => {
+  const conditions = Manifest.fromText(manifest).getConditions();
+
+  return structUtils.isPackageCompatible({conditions} as Package, {os, cpu, libc});
+};
 
 describe(`Manifest`, () => {
   it(`should handle byte order mark character`, async () => {
@@ -70,6 +78,67 @@ describe(`Manifest`, () => {
     it(`should ignore non-boolean provenance values`, () => {
       const manifest = Manifest.fromText(`{ "publishConfig": { "provenance": "true" } }`);
       expect(manifest.publishConfig?.provenance).toBeUndefined();
+    });
+  });
+
+  describe(`getConditions`, () => {
+    it(`should keep single values as-is`, () => {
+      expect(Manifest.fromText(`{"os": ["linux"]}`).getConditions()).toEqual(`os=linux`);
+      expect(Manifest.fromText(`{"os": ["!win32"]}`).getConditions()).toEqual(`!os=win32`);
+    });
+
+    it(`should match any of the listed values`, () => {
+      const manifest = `{"cpu": ["x64", "arm64"]}`;
+
+      expect(Manifest.fromText(manifest).getConditions()).toEqual(`(cpu=x64 | cpu=arm64)`);
+      expect(isCompatible(manifest, {cpu: [`x64`]})).toEqual(true);
+      expect(isCompatible(manifest, {cpu: [`arm64`]})).toEqual(true);
+      expect(isCompatible(manifest, {cpu: [`ia32`]})).toEqual(false);
+    });
+
+    it(`should match none of the negated values`, () => {
+      const manifest = `{"cpu": ["!arm", "!arm64", "!riscv64", "!x64"]}`;
+
+      expect(Manifest.fromText(manifest).getConditions()).toEqual(`(!cpu=arm & !cpu=arm64 & !cpu=riscv64 & !cpu=x64)`);
+      expect(isCompatible(manifest, {cpu: [`x64`]})).toEqual(false);
+      expect(isCompatible(manifest, {cpu: [`arm64`]})).toEqual(false);
+      expect(isCompatible(manifest, {cpu: [`ppc64`]})).toEqual(true);
+    });
+
+    it(`should combine listed and negated values`, () => {
+      const manifest = `{"os": ["linux", "darwin", "!darwin"]}`;
+
+      expect(Manifest.fromText(manifest).getConditions()).toEqual(`((os=linux | os=darwin) & !os=darwin)`);
+      expect(isCompatible(manifest, {os: [`linux`]})).toEqual(true);
+      expect(isCompatible(manifest, {os: [`darwin`]})).toEqual(false);
+      expect(isCompatible(manifest, {os: [`win32`]})).toEqual(false);
+    });
+
+    it(`should combine negated values across fields`, () => {
+      const manifest = `{"os": ["!android", "!darwin", "!linux", "!win32"], "cpu": ["!x64"]}`;
+
+      expect(isCompatible(manifest, {os: [`freebsd`], cpu: [`arm64`]})).toEqual(true);
+      expect(isCompatible(manifest, {os: [`freebsd`], cpu: [`x64`]})).toEqual(false);
+      expect(isCompatible(manifest, {os: [`darwin`], cpu: [`arm64`]})).toEqual(false);
+    });
+
+    it(`should accept a set if any of its values is accepted`, () => {
+      const manifest = `{"os": ["!win32"]}`;
+
+      expect(isCompatible(manifest, {os: [`darwin`, `linux`, `win32`]})).toEqual(true);
+      expect(isCompatible(manifest, {os: [`win32`]})).toEqual(false);
+    });
+
+    it(`should check each system of a set on its own`, () => {
+      const manifest = `{"os": ["darwin"], "cpu": ["!x64"]}`;
+
+      expect(isCompatible(manifest, {os: [`darwin`, `linux`], cpu: [`x64`, `arm64`]})).toEqual(true);
+      expect(isCompatible(manifest, {os: [`linux`], cpu: [`x64`, `arm64`]})).toEqual(false);
+    });
+
+    it(`should accept a negated libc when no libc is supported`, () => {
+      expect(isCompatible(`{"libc": ["!musl"]}`, {libc: []})).toEqual(true);
+      expect(isCompatible(`{"libc": ["glibc"]}`, {libc: []})).toEqual(false);
     });
   });
 });
