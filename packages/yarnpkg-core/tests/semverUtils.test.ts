@@ -46,6 +46,12 @@ const SPECS: Specs = [
 
   // These don't match with our patch but do without it
   [`<=5.0.0-beta.0`, `5.0.0-alpha.7`, true],
+
+  // An explicit prerelease lower bound must reject older prereleases on its tuple
+  [`^8.0.0-alpha.14`, `8.0.0-alpha.1`, false],
+  [`>=8.0.0-alpha.14`, `8.0.0-alpha.1`, false],
+  [`~8.0.0-alpha.14`, `8.0.0-alpha.1`, false],
+  [`^8.0.0-alpha.14`, `8.0.0-alpha.20`, true],
 ];
 
 describe(`semverUtils`, () => {
