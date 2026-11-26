@@ -1,5 +1,5 @@
-import {structUtils} from '@yarnpkg/core';
-import {PortablePath} from '@yarnpkg/fslib';
+import {structUtils}                     from '@yarnpkg/core';
+import {PortablePath}                    from '@yarnpkg/fslib';
 
 import {makeDescriptor, parseDescriptor} from '../sources/patchUtils';
 
