@@ -10,16 +10,38 @@ export {parsePatchFile};
 
 const BUILTIN_REGEXP = /^builtin<([^>]+)>$/;
 
+// Same shape as structUtils.parseRange. The selector has to be split before
+// decodeURIComponent, or a %26 written in the range is already an ampersand.
+const PATCH_RANGE_REGEX = /^([^#:]*:)?((?:(?!::)[^#])*)(?:#((?:(?!::).)*))?(?:::(.*))?$/;
+
+function escapePatchPath(patchPath: PortablePath) {
+  return patchPath.replaceAll(`&`, `%26`);
+}
+
+function splitPatchPaths(spec: string) {
+  const match = spec.match(PATCH_RANGE_REGEX);
+  const rawSelector = !match
+    ? ``
+    : typeof match[3] !== `undefined`
+      ? match[3]
+      : match[2] ?? ``;
+
+  if (!rawSelector)
+    return [];
+
+  return rawSelector.split(`&`).map(part => {
+    return npath.toPortablePath(decodeURIComponent(part).replaceAll(`%26`, `&`));
+  });
+}
+
 function parseSpec<T>(spec: string, sourceParser: (source: string) => T) {
-  const {protocol, source, selector, params} = structUtils.parseRange(spec);
+  const {protocol, source, params} = structUtils.parseRange(spec);
   if (protocol !== `patch:`)
     throw new Error(`Invalid patch range`);
   if (source === null)
     throw new Error(`Patch locators must explicitly define their source`);
 
-  const patchPaths = selector
-    ? selector.split(/&/).map(path => npath.toPortablePath(path))
-    : [];
+  const patchPaths = splitPatchPaths(spec);
 
   const parentLocator = params && typeof params.locator === `string`
     ? structUtils.parseLocator(params.locator)
@@ -94,7 +116,7 @@ function makeSpec<T>({parentLocator, sourceItem, patchPaths, sourceVersion, patc
   return structUtils.makeRange({
     protocol: `patch:`,
     source: sourceStringifier(sourceItem),
-    selector: patchPaths.join(`&`),
+    selector: patchPaths.map(path => escapePatchPath(path)).join(`&`),
     params: {
       ...sourceVersionSpread,
       ...patchHashSpread,
