@@ -28,3 +28,6 @@ export const HAS_BROKEN_FSTAT_FOR_ZIP_FDS =
   (major === 25 && minor >= 7) ||
   (major === 24 && minor === 15) ||
   (major === 22 && (minor > 22 || (minor === 22 && patch >= 3)));
+
+// https://github.com/nodejs/node/pull/53619
+export const SUPPORTS_MODULE_SYNTAX_DETECTION = major >= 23 || (major === 22 && minor >= 7);
