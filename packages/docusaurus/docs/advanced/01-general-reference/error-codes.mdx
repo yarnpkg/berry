@@ -186,9 +186,15 @@ Running `yarn cache clean` will cause Yarn to remove everything inside `.yarn/ca
 
 ## YN0020 - `MISSING_LOCKFILE_ENTRY`
 
+Also known as "This package doesn't seem to be present in your lockfile; run "yarn install" to update the lockfile".
+
 A package descriptor cannot be found in the lockfile.
 
 A lot of commands (for example `yarn run`) require the lockfile to be in a state consistent with the current project in order to behave properly. This error will be generated when Yarn detects that your project references a package that isn't listed within the lockfile (usually because you modified a `dependencies` field without running `yarn install`, or because you added a new workspace). Running `yarn install` will almost certainly fix this particular error.
+
+If you've run `yarn install` and it still isn't working, this may indicate that you've accidentally created a `package.json` in one of the parent directories of the project, or your home directory.
+This can happen if, for example, you ran `yarn add react` while your terminal's working directory was not in your project, but rather in your home directory.
+To remedy this, delete the `package.json` file in your home directory if it exists.
 
 ## YN0021 - `WORKSPACE_NOT_FOUND`
 
