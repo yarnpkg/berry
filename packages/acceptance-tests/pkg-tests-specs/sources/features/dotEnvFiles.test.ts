@@ -126,4 +126,23 @@ describe(`DotEnv files`, () => {
       stdout: `hello\n`,
     });
   }));
+
+  it(`should correctly resolve .env.yarn files from project root`, makeTemporaryEnv({}, async ({path, run, source}) => {
+    const subdir = ppath.join(path, `subdir`);
+    await xfs.mkdirPromise(subdir);
+
+    await xfs.writeFilePromise(ppath.join(subdir, `.env.yarn`), [
+      `INJECTED_FROM_SUBDIR_ENV_FILE=hello\n`,
+    ].join(``));
+    await xfs.writeFilePromise(ppath.join(path, `.env.yarn`), [
+      `INJECTED_FROM_ENV_FILE=hello\n`,
+    ].join(``));
+
+    await run(`install`);
+
+    const {stdout} = await run(`exec`, `env`, {cwd: subdir});
+
+    expect(stdout).toMatch(/^INJECTED_FROM_ENV_FILE=hello$/m);
+    expect(stdout).not.toMatch(/^INJECTED_FROM_SUBDIR_ENV_FILE=hello$/m);
+  }));
 });
