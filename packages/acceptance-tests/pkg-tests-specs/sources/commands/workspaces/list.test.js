@@ -1,6 +1,6 @@
 const {
   exec: {execFile},
-  fs: {writeJson},
+  fs: {writeFile, writeJson},
   misc: {parseJsonStream},
 } = require(`pkg-tests-core`);
 
@@ -196,6 +196,28 @@ describe(`Commands`, () => {
       `--since returns only changed workspaces`,
       makeWorkspacesListSinceEnv(async ({path, run}) => {
         await writeJson(`${path}/packages/workspace-a/delta.json`, {});
+
+        await expect(parseJsonStream(
+          (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout,
+          `location`,
+        )).toEqual({
+          [`packages/workspace-a`]: {
+            location: `packages/workspace-a`,
+            name: `workspace-a`,
+            workspaceDependencies: [],
+            mismatchedWorkspaceDependencies: [],
+          },
+        });
+      }),
+    );
+
+    test(
+      `--since keeps workspaces whose changed files have special characters in the name`,
+      makeWorkspacesListSinceEnv(async ({path, run}) => {
+        const specialName = process.platform === `win32`
+          ? `caf\u00e9.json`
+          : `weird"quote.json`;
+        await writeFile(`${path}/packages/workspace-a/${specialName}`, `{}`);
 
         await expect(parseJsonStream(
           (await run(`workspaces`, `list`, `--since`, `-v`, `--json`)).stdout,
