@@ -19,7 +19,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@types/semver": "^7.1.0",
+    "@types/semver": "^7.8.0",
     "@yarnpkg/monorepo": "workspace:^",
     "typescript": "catalog:"
   },
