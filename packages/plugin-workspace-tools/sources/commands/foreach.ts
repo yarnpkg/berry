@@ -59,6 +59,10 @@ export default class WorkspacesForeachCommand extends BaseCommand {
     [
       `Run the build script on several packages and all their dependencies, building dependencies first`,
       `yarn workspaces foreach -Rpt --from '{workspace-a,workspace-b}' run build`,
+    ],
+    [
+      `Run the build script only on a specific set of packages`,
+      `yarn workspaces foreach -A --include '{workspace-a,workspace-b}' run build`,
     ]],
   });
 
