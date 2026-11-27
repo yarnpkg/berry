@@ -15,6 +15,7 @@ import {Locator, Descriptor}                                                    
 export type CommandContext = {
   cwd: PortablePath;
   env: Record<string, string | undefined>;
+  failOnWarnings: boolean;
   plugins: PluginConfiguration;
   quiet: boolean;
   stdin: Readable;

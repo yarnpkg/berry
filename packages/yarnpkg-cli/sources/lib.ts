@@ -21,6 +21,7 @@ function getBaseCli({cwd, pluginConfiguration}: {cwd: PortablePath, pluginConfig
       ...Cli.defaultContext,
       cwd,
       plugins: pluginConfiguration,
+      failOnWarnings: false,
       quiet: false,
       stdin: process.stdin,
       stdout: process.stdout,
