@@ -1,0 +1,7 @@
+releases:
+  "@yarnpkg/cli": decline
+  "@yarnpkg/core": decline
+  "@yarnpkg/plugin-compat": decline
+  "@yarnpkg/plugin-interactive-tools": patch
+  "@yarnpkg/plugin-npm": patch
+  "@yarnpkg/plugin-npm-cli": decline
