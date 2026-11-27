@@ -2,6 +2,10 @@ import {miscUtils}                       from '@yarnpkg/core';
 import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {PnpApi}                          from '@yarnpkg/pnp';
 import CJSON                             from 'comment-json';
+import {exec}                            from 'node:child_process';
+import {promisify}                       from 'node:util';
+
+export const execPromise = promisify(exec);
 
 export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeFileName: PortablePath, patch: any) => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
@@ -17,6 +21,28 @@ export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeF
   const patched = `${CJSON.stringify(miscUtils.mergeIntoTarget(data, patch), null, 2)}\n`;
 
   await xfs.mkdirPromise(ppath.dirname(filePath), {recursive: true});
+  await xfs.changeFilePromise(filePath, patched, {
+    automaticNewlines: true,
+  });
+};
+
+export const removeSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeFileName: PortablePath, keysToRemove: Array<string>) => {
+  const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
+  const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
+
+  const filePath = ppath.join(projectRoot, relativeFileName);
+
+  if (!await xfs.existsPromise(filePath))
+    return;
+
+  const content = await xfs.readFilePromise(filePath, `utf8`);
+  const data = CJSON.parse(content);
+
+  for (const key of keysToRemove)
+    delete data[key];
+
+  const patched = `${CJSON.stringify(data, null, 2)}\n`;
+
   await xfs.changeFilePromise(filePath, patched, {
     automaticNewlines: true,
   });
