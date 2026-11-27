@@ -2092,7 +2092,11 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
   const binding = process.binding(`fs`);
   const originalReadFile = binding.readFileUtf8 || binding.readFileSync;
   if (originalReadFile) {
+    let isReading = false;
     binding[originalReadFile.name] = function(...args) {
+      if (isReading)
+        return originalReadFile.apply(this, args);
+      isReading = true;
       try {
         return fs.readFileSync(args[0], {
           encoding: `utf8`,
@@ -2102,6 +2106,8 @@ if (!HAS_LAZY_LOADED_TRANSLATORS) {
           flag: args[1]
         });
       } catch {
+      } finally {
+        isReading = false;
       }
       return originalReadFile.apply(this, args);
     };
