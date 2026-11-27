@@ -8,9 +8,17 @@ description: A list of Yarn's error codes with detailed explanations.
 <!-- Never remove the entries in this file, as we want to support older releases -->
 
 :::info
-Are you a plugin author and want to declare your own error codes that don't match the semantic of the ones provided here? Please relinquish one character and use the `YNX` prefix (ex `YNX001`) instead of `YN0`!
+Plugin authors should reuse a `MessageName` only when its documented meaning applies to their diagnostic. The `Report` API accepts numeric `MessageName` values, which are formatted with a `YN` prefix; `reportWarning` and `reportError` don't currently support custom `YNX` codes.
 
-Keeping this convention will help our users to figure out which error codes can be found on this documentation and which ones should instead be checked against the individual documentation of the plugins they use.
+For a plugin-specific diagnostic, use `MessageName.UNNAMED` and identify the plugin in the message:
+
+```ts
+import {MessageName} from '@yarnpkg/core';
+
+report.reportWarning(MessageName.UNNAMED, `[my-plugin] The plugin configuration is missing a required field.`);
+```
+
+This prints a `YN0000` warning. Include enough context in the message for users to find the relevant plugin documentation.
 :::
 
 ## YN0000 - `UNNAMED`
@@ -297,6 +305,12 @@ This error is triggered when passing options to a CLI command through its argume
 Starting from the v2, this isn't supported anymore. The reason for this is that we've consolidated all of our configuration inside a single store that can be defined from a yarnrc file. This guarantees that all your commands run inside the same environments (which previously wasn't the case depending on whether you were using `--cache-folder` on all your commands or just the install). CLI options will now only be used to control the *one-time-behaviors* of a particular command (like `--verbose`).
 
 **Special note for Netlify users:** Netlify currently [automatically passes](https://github.com/netlify/build-image/blob/f9c7f9a87c10314e4d65b121d45d68dc976817a2/run-build-functions.sh#L109) the `--cache-folder` option to Yarn, and you cannot disable it. For this reason we decided to make it a warning rather than an error when we detect that Yarn is running on Netlify (we still ignore the flag). We suggest upvoting [the relevant issue](https://github.com/netlify/build-image/issues/319) on their repository, as we're likely to remove this special case in a future major release.
+
+## YN0058 - `PACKAGE_PREPARATION_FAILED`
+
+Yarn couldn't prepare a package for installation. For example, a dependency fetched from a Git repository may need to have its dependencies installed and be packed into an archive. This error occurs when one of those preparation commands exits unsuccessfully.
+
+The error message includes the exit code and the path to a `pack.log` file, which Yarn retains after the failure. Read that log to find the underlying installation or packing error. Depending on what the log reports, check the dependency's package manager requirements, access to its dependencies, or its packaging scripts. `YN0058` alone doesn't identify which of these failed.
 
 ## YN0059 - `INVALID_RANGE_PEER_DEPENDENCY`
 
