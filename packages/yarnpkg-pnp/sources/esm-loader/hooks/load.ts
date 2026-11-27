@@ -5,29 +5,37 @@ import {fileURLToPath, pathToFileURL}                                           
 import {HAS_BROKEN_FSTAT_FOR_ZIP_FDS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, WATCH_MODE_MESSAGE_USES_ARRAYS} from '../loaderFlags';
 import * as loaderUtils                                                                                                            from '../loaderUtils';
 
-// The default `load` doesn't support reading from zip files
-export async function load(
-  urlString: string,
-  context: {
-    format: string | null | undefined;
-    importAssertions?: {
-      type?: `json`;
-    };
-    importAttributes?: {
-      type?: `json`;
-    };
-  },
-  nextLoad: typeof load,
-): Promise<{format: string, source?: string, shortCircuit: boolean}> {
+type LoadContext = {
+  conditions?: Array<string>;
+  format: string | null | undefined;
+  importAssertions?: {
+    type?: `json`;
+  };
+  importAttributes?: {
+    type?: `json`;
+  };
+};
+
+type LoadResult = {
+  format: string;
+  source?: string;
+  shortCircuit: boolean;
+};
+
+/**
+ * Returns the format and the path of the file to load, or `null` when the
+ * load must be delegated to the next hook.
+ */
+function prepareLoad(urlString: string, context: LoadContext) {
   const url = loaderUtils.tryParseURL(urlString);
   if (url?.protocol !== `file:`)
-    return nextLoad(urlString, context, nextLoad);
+    return null;
 
   const filePath = fileURLToPath(url);
 
   const format = loaderUtils.getFileFormat(filePath);
   if (!format)
-    return nextLoad(urlString, context, nextLoad);
+    return null;
 
   if (format === `json`) {
     if (SUPPORTS_IMPORT_ATTRIBUTES_ONLY) {
@@ -61,13 +69,60 @@ export async function load(
     });
   }
 
-  const shouldReadSource = format === `commonjs` && HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`);
-  const source = format !== `commonjs` || shouldReadSource
-    ? await fs.promises.readFile(filePath, `utf8`)
+  const shouldReadSource = format !== `commonjs` || (HAS_BROKEN_FSTAT_FOR_ZIP_FDS && filePath.includes(`.zip/`));
+
+  return {format, filePath, shouldReadSource};
+}
+
+/**
+ * Hook for the off-thread loaders (`--experimental-loader`).
+ *
+ * The default `load` doesn't support reading from zip files.
+ */
+export async function load(
+  urlString: string,
+  context: LoadContext,
+  nextLoad: typeof load,
+): Promise<LoadResult> {
+  const prepared = prepareLoad(urlString, context);
+  if (prepared === null)
+    return nextLoad(urlString, context, nextLoad);
+
+  const source = prepared.shouldReadSource
+    ? await fs.promises.readFile(prepared.filePath, `utf8`)
     : undefined;
 
   return {
-    format,
+    format: prepared.format,
+    source,
+    shortCircuit: true,
+  };
+}
+
+/**
+ * Hook for the in-thread loaders (`module.registerHooks`).
+ */
+export function loadSync(
+  urlString: string,
+  context: LoadContext,
+  nextLoad: typeof loadSync,
+): LoadResult {
+  // Unlike the off-thread hooks, those ones also see the modules loaded
+  // through `require`, which the CommonJS loader already reads through the
+  // `fs` functions patched by the PnP runtime.
+  if (!context.conditions?.includes(`import`))
+    return nextLoad(urlString, context, nextLoad);
+
+  const prepared = prepareLoad(urlString, context);
+  if (prepared === null)
+    return nextLoad(urlString, context, nextLoad);
+
+  const source = prepared.shouldReadSource
+    ? fs.readFileSync(prepared.filePath, `utf8`)
+    : undefined;
+
+  return {
+    format: prepared.format,
     source,
     shortCircuit: true,
   };

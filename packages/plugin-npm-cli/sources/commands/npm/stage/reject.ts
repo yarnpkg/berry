@@ -49,6 +49,7 @@ export default class NpmStageRejectCommand extends BaseCommand {
       await npmHttpUtils.del(`/-/stage/${this.stageId}`, {
         configuration,
         registry,
+        report,
         otp: this.otp,
         authType: npmHttpUtils.AuthType.ALWAYS_AUTH,
       });

@@ -2,6 +2,10 @@ import {Filename, npath, ppath, xfs}                                            
 import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
 import {pathToFileURL}                                                                                                          from 'url';
 
+// Node.js 28 removed the off-thread hooks (`--experimental-loader` and
+// `module.register`); custom hooks are registered from preloaded modules there.
+const SUPPORTS_OFF_THREAD_HOOKS = process.allowedNodeEnvironmentFlags.has(`--experimental-loader`);
+
 describe(`Plug'n'Play - ESM`, () => {
   test(
     `it should be able to import a node builtin`,
@@ -851,7 +855,7 @@ describe(`Plug'n'Play - ESM`, () => {
 
         await run(`install`);
 
-        await expect(run(`node`, `--loader`, `./loader.mjs`, `./index.js`)).resolves.toMatchObject({
+        await expect(run(`node`, SUPPORTS_OFF_THREAD_HOOKS ? `--loader` : `--import`, `./loader.mjs`, `./index.js`)).resolves.toMatchObject({
           code: 0,
           stdout: `42\n`,
           stderr: ``,
@@ -1119,11 +1123,25 @@ describe(`Plug'n'Play - ESM`, () => {
           );
 
           await xfs.writeFilePromise(
+            ppath.join(path, `register.js`),
+            `
+            import {registerHooks} from 'node:module';
+            import * as hooks from './loader.js';
+
+            registerHooks(hooks);
+            `,
+          );
+
+          await xfs.writeFilePromise(
             ppath.join(path, `index.js`),
             `import 'custom:foo'`,
           );
 
-          await expect(run(`node`, `--loader`, `./loader.js`, `./index.js`)).resolves.toMatchObject({
+          const loaderArgs = SUPPORTS_OFF_THREAD_HOOKS
+            ? [`--loader`, `./loader.js`]
+            : [`--import`, `./register.js`];
+
+          await expect(run(`node`, ...loaderArgs, `./index.js`)).resolves.toMatchObject({
             code: 0,
             stdout: `42\n`,
             stderr: ``,

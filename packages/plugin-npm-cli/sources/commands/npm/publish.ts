@@ -184,6 +184,7 @@ export default class NpmPublishCommand extends BaseCommand {
               configuration,
               registry,
               ident,
+              report,
               jsonResponse: true,
               allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI || process.env.CIRCLECI)),
             });
@@ -193,6 +194,7 @@ export default class NpmPublishCommand extends BaseCommand {
               configuration,
               registry,
               ident,
+              report,
               otp: this.otp,
               jsonResponse: true,
               allowOidc: Boolean(process.env.CI && (process.env.GITHUB_ACTIONS || process.env.GITLAB_CI || process.env.CIRCLECI)),
