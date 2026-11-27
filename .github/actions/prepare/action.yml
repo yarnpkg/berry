@@ -6,17 +6,17 @@ inputs:
   node-version:
     description: 'The version of Node.js to use'
     required: false
-    default: '25.6'
+    default: '26.x'
 
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v7
       with:
         node-version: ${{ inputs.node-version }}
 
     #region Build the standard bundle
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       id: cache-build
       with:
         path: packages/yarnpkg-cli/bundles/yarn.js
@@ -35,7 +35,7 @@ runs:
       run: echo "globalFolder=$(YARN_IGNORE_PATH=1 node packages/yarnpkg-cli/bundles/yarn.js config get globalFolder)" >> $GITHUB_OUTPUT
       shell: bash
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: |
           ${{ steps.global-path.outputs.globalFolder }}/cache
