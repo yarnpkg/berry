@@ -289,7 +289,7 @@ export default async function (): Promise<Config> {
       prism: {
         theme: themes.github,
         darkTheme: themes.dracula,
-        additionalLanguages: [`bash`, `json`],
+        additionalLanguages: [`bash`, `diff`, `ignore`, `lisp`, `json`, `prolog`],
       },
     },
   };
