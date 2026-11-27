@@ -6,11 +6,9 @@
     "This file contains the JSON Schema for Yarn Manifest files and is:",
     "1) Hosted on the Yarn Website at http://yarnpkg.com/configuration/manifest.json",
     "2) Used to generate the documentation page at http://yarnpkg.com/configuration/manifest",
-
     "Note: Properties prefixed with a single underscore (e.g. exampleItems, _exampleKeys)",
     "are unique to our documentation generation interpreter. All others will be picked up",
     "by most JSON schema interpreters.",
-
     "Rules:",
     "1) Don't set a default if it's null, dynamic, or an object.",
     "2) Use `examples` for scalars, `exampleItems` for arrays, and `_exampleKeys` for objects."
@@ -22,27 +20,36 @@
       "description": "Used to identify it across the application, especially amongst multiple workspaces. The first part of the name (here `@scope/`) is optional and is used as a namespace).",
       "type": "string",
       "pattern": "^(?:@([^/]+?)/)?([^/]+?)$",
-      "examples": ["@scope/name"]
+      "examples": [
+        "@scope/name"
+      ]
     },
     "version": {
       "title": "Version of the package.",
       "description": "Usually doesn't have any impact on your project, except when it is a workspace - then its version must match the specified ranges for the workspace to be selected as resolution candidate.",
       "type": "string",
       "pattern": "^(?:(.+))$",
-      "examples": ["1.2.3"]
+      "examples": [
+        "1.2.3"
+      ]
     },
     "packageManager": {
       "title": "Define the package manager that should be used when working on this project.",
       "description": "This field is used by [Corepack](https://nodejs.org/api/corepack.html) and similar tools to detect the Yarn version in use in a project - in a sense, it has the same purpose as your lockfile, but only for Yarn itself.\n\nYarn will automatically set this value when running `yarn set version`.",
       "type": "string",
       "format": "uri-reference",
-      "examples": ["yarn@4.0.0"]
+      "examples": [
+        "yarn@4.0.0"
+      ]
     },
     "type": {
       "title": "Define how should be interpreted `.js` files.",
       "description": "A Node.js v13.x [option](https://nodejs.org/api/esm.html#esm_package_json_type_field). Possible values are `commonjs` (the default) and `module`. Yarn 3+ will generate a `.pnp.cjs` file when using PnP regardless of this option.",
       "type": "string",
-      "enum": ["commonjs", "module"],
+      "enum": [
+        "commonjs",
+        "module"
+      ],
       "default": "commonjs"
     },
     "private": {
@@ -50,12 +57,16 @@
       "description": "If true, the package is considered private and Yarn will refuse to publish it regardless of the circumstances.",
       "type": "boolean",
       "default": false,
-      "examples": [true]
+      "examples": [
+        true
+      ]
     },
     "license": {
       "title": "SPDX identifier defining the license under which the package is distributed.",
       "type": "string",
-      "examples": ["MIT"]
+      "examples": [
+        "MIT"
+      ]
     },
     "os": {
       "title": "Set of platforms on which this package works.",
@@ -64,7 +75,11 @@
       "items": {
         "type": "string"
       },
-      "exampleItems": ["linux", "darwin", "win32"]
+      "exampleItems": [
+        "linux",
+        "darwin",
+        "win32"
+      ]
     },
     "cpu": {
       "title": "Set of CPU architectures on which this package works.",
@@ -73,7 +88,11 @@
       "items": {
         "type": "string"
       },
-      "exampleItems": ["x64", "ia32", "arm64"]
+      "exampleItems": [
+        "x64",
+        "ia32",
+        "arm64"
+      ]
     },
     "libc": {
       "title": "Set of C standard libraries on which this package depends.",
@@ -82,28 +101,78 @@
       "items": {
         "type": "string"
       },
-      "exampleItems": ["glibc", "musl"]
+      "exampleItems": [
+        "glibc",
+        "musl"
+      ]
     },
     "main": {
       "title": "Path of the file that should be resolved when requiring the package via a bare identifier.",
       "description": "This field can be modified at publish-time through the use of the `publishConfig.main` field.",
       "type": "string",
       "format": "uri-reference",
-      "examples": ["./sources/index.js"]
+      "examples": [
+        "./sources/index.js"
+      ]
     },
     "module": {
       "title": "Path of the file that should be resolved when requiring the package via a bare identifier in an ES6-compatible bundler environment.",
       "description": "This field should be considered deprecated, with `exports` being its official replacement.",
       "type": "string",
       "format": "uri-reference",
-      "examples": ["./sources/index.mjs"]
+      "examples": [
+        "./sources/index.mjs"
+      ]
+    },
+    "exports": {
+      "title": "Defines which files of a package are exposed to consumers or the entry points that can be imported from your package.",
+      "description": "`exports` is the recommended way for modern packages to describe their entry points",
+      "type": "object",
+      "patternProperties": {
+        "^\\.$": {
+          "type": "string",
+          "examples": [
+            "./index.js"
+          ]
+        },
+        "^\\.\\/cli$": {
+          "type": "string",
+          "examples": [
+            "./cli.js"
+          ]
+        },
+        "^import$": {
+          "type": "string",
+          "examples": [
+            "./esm/index.js"
+          ]
+        },
+        "^require$": {
+          "type": "string",
+          "examples": [
+            "./cjs/index.js"
+          ]
+        },
+        "^(.+)$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true,
+      "exampleKeys": [
+        ".",
+        "./cli",
+        "import",
+        "require"
+      ]
     },
     "languageName": {
       "title": "Arbitrary value selecting the linker to use when installing the dependency.",
       "description": "This is an internal package setting that shouldn't be touched unless you really know what you're doing.",
       "type": "string",
       "default": "node",
-      "examples": ["node"]
+      "examples": [
+        "node"
+      ]
     },
     "bin": {
       "title": "Set of files to expose via `yarn run bin-name` and the shell environment.",
@@ -113,11 +182,15 @@
         "^(.+)$": {
           "type": "string",
           "format": "uri-reference",
-          "examples": ["./dist/my-bin.js"]
+          "examples": [
+            "./dist/my-bin.js"
+          ]
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["my-bin"],
+      "exampleKeys": [
+        "my-bin"
+      ],
       "_margin": false
     },
     "scripts": {
@@ -127,22 +200,32 @@
       "patternProperties": {
         "^test$": {
           "type": "string",
-          "examples": ["NODE_OPTIONS='--max-old-space-size=2048' jest"]
+          "examples": [
+            "NODE_OPTIONS='--max-old-space-size=2048' jest"
+          ]
         },
         "^build$": {
           "type": "string",
-          "examples": ["webpack-cli --config ./webpack.config.js"]
+          "examples": [
+            "webpack-cli --config ./webpack.config.js"
+          ]
         },
         "^count-words$": {
           "type": "string",
-          "examples": ["echo \"$@\" | wc -w"]
+          "examples": [
+            "echo \"$@\" | wc -w"
+          ]
         },
         "^(.+)$": {
           "type": "string"
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["test", "build", "count-words"]
+      "exampleKeys": [
+        "test",
+        "build",
+        "count-words"
+      ]
     },
     "dependencies": {
       "title": "Set of dependencies that must be made available to the current package in order for it to work properly.",
@@ -152,11 +235,15 @@
         "^(?:@([^/]+?)/)?([^/]+?)$": {
           "type": "string",
           "pattern": "^(.+)$",
-          "examples": ["^5.0.0"]
+          "examples": [
+            "^5.0.0"
+          ]
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["webpack"]
+      "exampleKeys": [
+        "webpack"
+      ]
     },
     "optionalDependencies": {
       "title": "Set of dependencies that Yarn should only try to install if the os/cpu/libc fields match those of the host platform.",
@@ -166,11 +253,15 @@
         "^(?:@([^/]+?)/)?([^/]+?)$": {
           "type": "string",
           "pattern": "^(.+)$",
-          "examples": ["^5.0.0"]
+          "examples": [
+            "^5.0.0"
+          ]
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["fsevents"]
+      "exampleKeys": [
+        "fsevents"
+      ]
     },
     "devDependencies": {
       "title": "Set of dependencies that must be made available to the current package in order for it to work properly as a workspace.",
@@ -180,11 +271,15 @@
         "^(?:@([^/]+?)/)?([^/]+?)$": {
           "type": "string",
           "pattern": "^(.+)$",
-          "examples": ["^5.0.0"]
+          "examples": [
+            "^5.0.0"
+          ]
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["webpack"]
+      "exampleKeys": [
+        "webpack"
+      ]
     },
     "peerDependencies": {
       "title": "Set of dependencies that the package must inherit from its ancestor in the dependency tree.",
@@ -194,11 +289,16 @@
         "^(?:@([^/]+?)/)?([^/]+?)$": {
           "type": "string",
           "pattern": "^(.+)$",
-          "examples": ["*"]
+          "examples": [
+            "*"
+          ]
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["react", "react-dom"]
+      "exampleKeys": [
+        "react",
+        "react-dom"
+      ]
     },
     "workspaces": {
       "title": "Array of folder glob patterns referencing the workspaces of the project.",
@@ -207,7 +307,9 @@
       "items": {
         "type": "string"
       },
-      "exampleItems": ["packages/*"]
+      "exampleItems": [
+        "packages/*"
+      ]
     },
     "dependenciesMeta": {
       "title": "Extra settings affecting how the `dependencies` and `devDependencies` fields are interpreted.",
@@ -221,26 +323,34 @@
               "title": "Define whether to run the postinstall script or not.",
               "description": "If false, the package will never be built (deny-list). This behavior is reversed when the `enableScripts` yarnrc setting is toggled off - when that happens, only packages with `built` explicitly set to `true` will be built (allow-list); as for those with `built` explicitly set to `false`, they will simply see their build script warnings downgraded into simple notices.",
               "type": "boolean",
-              "examples": [false]
+              "examples": [
+                false
+              ]
             },
             "optional": {
               "title": "Define whether the dependency is optional or not.",
               "description": "Unlike most other settings in `dependenciesMeta`, `optional` is allowed anywhere in the dependency tree. It has the exact same effect as `optionalDependencies` - in fact, that's internally what `optionalDependencies` compiles down to.",
               "type": "boolean",
-              "examples": [false]
+              "examples": [
+                false
+              ]
             },
             "unplugged": {
               "title": "Define whether the package must be unplugged or not.",
               "description": "If true, the specified package will be automatically unplugged at install time. This should only be needed for packages that contain scripts in other languages than Javascript (for example `nan` contains C++ headers).",
               "type": "boolean",
-              "examples": [true]
+              "examples": [
+                true
+              ]
             }
           },
           "_margin": true
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["fsevents"]
+      "exampleKeys": [
+        "fsevents"
+      ]
     },
     "peerDependenciesMeta": {
       "title": "Extra settings affecting how the `peerDependencies` field is interpreted.",
@@ -254,14 +364,18 @@
               "title": "Define whether to log a warning when the peer dependency can't be satisfied.",
               "description": "If true, the selected peer dependency will be marked as optional by the package manager, silencing any warning we would otherwise emit.",
               "type": "boolean",
-              "examples": [true]
+              "examples": [
+                true
+              ]
             }
           },
           "_margin": true
         }
       },
       "additionalProperties": false,
-      "exampleKeys": ["react-dom"]
+      "exampleKeys": [
+        "react-dom"
+      ]
     },
     "resolutions": {
       "description": "This field allows you to instruct Yarn to use a specific resolution (specific package version) instead of anything the resolver would normally pick. This is useful to enforce all your packages to use a single version of a dependency, or backport a fix. The syntax for the resolution key accepts one level of specificity, so all the following examples are correct.\n\nNote: When a path is relative, like it can be with the `file:` and `portal:` protocols, it is resolved relative to the path of the project.\n\nNote: The `resolutions` field can only be set at the root of the project, and will generate a warning if used in any other workspace.",
@@ -270,23 +384,33 @@
       "patternProperties": {
         "^relay-compiler$": {
           "type": "string",
-          "examples": ["3.0.0"]
+          "examples": [
+            "3.0.0"
+          ]
         },
         "^webpack/memory-fs$": {
           "type": "string",
-          "examples": ["0.4.1"]
+          "examples": [
+            "0.4.1"
+          ]
         },
         "^@babel/core/json5$": {
           "type": "string",
-          "examples": ["2.1.0"]
+          "examples": [
+            "2.1.0"
+          ]
         },
         "^@babel/core/@babel/generator$": {
           "type": "string",
-          "examples": ["7.3.4"]
+          "examples": [
+            "7.3.4"
+          ]
         },
         "^@babel/core@npm:7\\.0\\.0/@babel/generator$": {
           "type": "string",
-          "examples": ["7.3.4"]
+          "examples": [
+            "7.3.4"
+          ]
         },
         "^(?:(?:@([^/]+?)/)?([^/]+?)/?)+$": {
           "type": "string",
@@ -306,7 +430,9 @@
       "title": "Define whether the package must be unplugged or not.",
       "description": "While Yarn attempts to reference and load packages directly from their zip archives, it may not always be possible. A heuristic tries to detect cases where zip-loading would be problematic and unpack the files on disk instead but, being just a heuristic, it may report incorrect results.\n\nThe `preferUnplugged` field lets you define yourself, as a package author, whether your package works or not when stored as an archive. If set, it will override the default heuristic.",
       "type": "boolean",
-      "examples": [false]
+      "examples": [
+        false
+      ]
     },
     "files": {
       "title": "Array of file glob patterns that will be included within the published tarball.",
@@ -316,7 +442,10 @@
         "type": "string",
         "format": "uri-reference"
       },
-      "exampleItems": ["dist/**/*", "lib/**/*"]
+      "exampleItems": [
+        "dist/**/*",
+        "lib/**/*"
+      ]
     },
     "publishConfig": {
       "title": "Extra settings affecting how the package is published.",
@@ -326,20 +455,29 @@
           "title": "Define the access to use when publishing the package.",
           "description": "Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use).",
           "type": "string",
-          "enum": ["public", "restricted"],
-          "examples": ["public"]
+          "enum": [
+            "public",
+            "restricted"
+          ],
+          "examples": [
+            "public"
+          ]
         },
         "bin": {
           "title": "Replacement of the package's `bin` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
-          "examples": ["./build/bin.js"]
+          "examples": [
+            "./build/bin.js"
+          ]
         },
         "browser": {
           "title": "Replacement of the package's `browser` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
-          "examples": ["./build/browser.js"]
+          "examples": [
+            "./build/browser.js"
+          ]
         },
         "executableFiles": {
           "title": "Set of files that must be marked as executable (+x) in the published tarball.",
@@ -348,36 +486,48 @@
             "type": "string",
             "format": "uri-reference"
           },
-          "exampleItems": ["./dist/shim.js"]
+          "exampleItems": [
+            "./dist/shim.js"
+          ]
         },
         "main": {
           "title": "Replacement of the package's `main` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
-          "examples": ["./build/index.js"]
+          "examples": [
+            "./build/index.js"
+          ]
         },
         "module": {
           "title": "Replacement of the package's `module` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
-          "examples": ["./build/index.mjs"]
+          "examples": [
+            "./build/index.mjs"
+          ]
         },
         "provenance": {
           "title": "Define whether to produce a provenance statement for the package when publishing. Overrides all other provenance settings.",
           "type": "boolean",
-          "examples": [true]
+          "examples": [
+            true
+          ]
         },
         "registry": {
           "description": "If present, will replace whatever registry is defined in the configuration when the package is about to be pushed to a remote location.",
           "type": "string",
           "format": "uri",
-          "examples": ["https://npm.pkg.github.com"]
+          "examples": [
+            "https://npm.pkg.github.com"
+          ]
         },
         "type": {
           "title": "Replacement of the package's `type` field, used in the published tarball over the main one.",
           "type": "string",
           "format": "uri-reference",
-          "examples": ["./build/index.d.ts"]
+          "examples": [
+            "./build/index.d.ts"
+          ]
         }
       },
       "_margin": true
@@ -390,16 +540,24 @@
           "title": "Defines the highest point where packages can be hoisted.",
           "description": "See `nmHoistingLimits` for more information.",
           "type": "string",
-          "enum": ["workspaces", "dependencies", "none"],
+          "enum": [
+            "workspaces",
+            "dependencies",
+            "none"
+          ],
           "default": "none",
-          "examples": ["none"]
+          "examples": [
+            "none"
+          ]
         },
         "selfReferences": {
           "title": "Defines whether workspaces are allowed to require themselves.",
           "description": "See `nmSelfReferences` for more information.",
           "type": "boolean",
           "default": true,
-          "examples": [true]
+          "examples": [
+            true
+          ]
         }
       },
       "_margin": true
