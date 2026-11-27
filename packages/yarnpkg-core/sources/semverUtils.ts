@@ -181,7 +181,7 @@ export function stringifyComparator(comparator: Comparator) {
       return comparator.gt[1].version;
 
     if (comparator.gt[0] === `>=` && comparator.lt[0] === `<`) {
-      if (comparator.lt[1].version === `${comparator.gt[1].major + 1}.0.0-0`)
+      if (comparator.gt[1].major > 0 && comparator.lt[1].version === `${comparator.gt[1].major + 1}.0.0-0`)
         return `^${comparator.gt[1].version}`;
 
       if (comparator.lt[1].version === `${comparator.gt[1].major}.${comparator.gt[1].minor + 1}.0-0`) {
