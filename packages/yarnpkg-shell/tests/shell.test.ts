@@ -20,6 +20,10 @@ const expectResult = async (promise: Promise<any>, {exitCode = 0, stdout = ``, s
   return await expect(promise).resolves.toMatchObject({exitCode, stdout, stderr});
 };
 
+// Not all windows sku's ship cat on the path. findstr with "^" will match all the test cases here to map stdin to stdout
+// Should https://learn.microsoft.com/en-us/windows/core-utils/overview ship by default with windows, this can be removed and replaced with cat
+const catTool = isNotWin32 ? `cat` : `findstr "^"`;
+
 const bufferResult = async (command: string, args: Array<string> = [], options: Partial<UserOptions> & {tty?: boolean} = {}): Promise<Result> => {
   const stdout = new PassThrough();
   const stderr = new PassThrough();
@@ -810,7 +814,7 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(file, `hello world\n`);
 
           await expectResult(bufferResult(
-            `cat < "${file}"`,
+            `${catTool} < "${file}"`,
           ), {
             stdout: `hello world\n`,
           });
@@ -823,7 +827,7 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(file, `hello world\n`);
 
           await expectResult(bufferResult(
-            `cat 0< "${file}"`,
+            `${catTool} 0< "${file}"`,
           ), {
             stdout: `hello world\n`,
           });
@@ -839,7 +843,7 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(file2, `hello world\n`);
 
           await expectResult(bufferResult(
-            `cat < "${file1}" < "${file2}"`,
+            `${catTool} < "${file1}" < "${file2}"`,
           ), {
             stdout: `foo bar baz\nhello world\n`,
           });
@@ -852,15 +856,15 @@ describe(`Shell`, () => {
           await xfs.writeFilePromise(file, `hello world\n`);
 
           await expect(bufferResult(
-            `cat 1< "${file}"`,
+            `${catTool} 1< "${file}"`,
           )).rejects.toThrowError(`Unsupported file descriptor: "1"`);
 
           await expect(bufferResult(
-            `cat 2< "${file}"`,
+            `${catTool} 2< "${file}"`,
           )).rejects.toThrowError(`Unsupported file descriptor: "2"`);
 
           await expect(bufferResult(
-            `cat 3< "${file}"`,
+            `${catTool} 3< "${file}"`,
           )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
         });
       });
@@ -869,7 +873,7 @@ describe(`Shell`, () => {
     describe(`<<<`, () => {
       it(`should support input redirections (string)`, async () => {
         await expectResult(bufferResult(
-          `cat <<< "hello world"`,
+          `${catTool} <<< "hello world"`,
         ), {
           stdout: `hello world\n`,
         });
@@ -877,7 +881,7 @@ describe(`Shell`, () => {
 
       it(`should support input redirections to fd (string)`, async () => {
         await expectResult(bufferResult(
-          `cat 0<<< "hello world"`,
+          `${catTool} 0<<< "hello world"`,
         ), {
           stdout: `hello world\n`,
         });
@@ -886,15 +890,15 @@ describe(`Shell`, () => {
       it(`should throw on input redirections to unsupported file descriptors`, async () => {
         await xfs.mktempPromise(async tmpDir => {
           await expect(bufferResult(
-            `cat 1<<< "hello world"`,
+            `${catTool} 1<<< "hello world"`,
           )).rejects.toThrowError(`Unsupported file descriptor: "1"`);
 
           await expect(bufferResult(
-            `cat 2<<< "hello world"`,
+            `${catTool} 2<<< "hello world"`,
           )).rejects.toThrowError(`Unsupported file descriptor: "2"`);
 
           await expect(bufferResult(
-            `cat 3<<< "hello world"`,
+            `${catTool} 3<<< "hello world"`,
           )).rejects.toThrowError(`Unsupported file descriptor: "3"`);
         });
       });
