@@ -1,7 +1,7 @@
-import {Filename, PortablePath, constants, ppath, statUtils, xfs} from '@yarnpkg/fslib';
-import {makeEmptyArchive, ZipFS}                                  from '@yarnpkg/libzip';
-import {S_IFREG}                                                  from 'constants';
-import fs                                                         from 'fs';
+import {AliasFS, FakeFS, Filename, JailFS, LazyFS, PortablePath, constants, npath, ppath, statUtils, xfs} from '@yarnpkg/fslib';
+import {makeEmptyArchive, ZipFS}                                                                          from '@yarnpkg/libzip';
+import {S_IFREG}                                                                                          from 'constants';
+import fs                                                                                                 from 'fs';
 
 const isNotWin32 = process.platform !== `win32`;
 
@@ -211,6 +211,106 @@ describe(`ZipFS`, () => {
     expect(zipFs.existsSync(file)).toBeFalsy();
 
     zipFs.discardAndClose();
+  });
+
+  describe(`unlinkSync`, () => {
+    const getEntryKind = (fakeFs: FakeFS<PortablePath>, p: PortablePath) => {
+      const stat = fakeFs.lstatSync(p, {throwIfNoEntry: false});
+
+      if (typeof stat === `undefined`)
+        return `gone`;
+
+      return stat.isSymbolicLink()
+        ? `symlink`
+        : `entry`;
+    };
+
+    const setupLiveLink = (fakeFs: FakeFS<PortablePath>) => {
+      fakeFs.mkdirSync(`/dir` as PortablePath);
+      fakeFs.writeFileSync(`/dir/target` as PortablePath, `content`);
+      fakeFs.symlinkSync(`/dir/target` as PortablePath, `/link` as PortablePath);
+    };
+
+    const setupDanglingLink = (fakeFs: FakeFS<PortablePath>) => {
+      fakeFs.mkdirSync(`/dir` as PortablePath);
+      fakeFs.symlinkSync(`/dir/absent` as PortablePath, `/dangling` as PortablePath);
+    };
+
+    // The reference implementation: NodeFS simply asks the OS to unlink the
+    // named entry, so a symlink is deleted rather than whatever it points to.
+    const nodeFs = () => new JailFS(npath.toPortablePath(xfs.mktempSync()));
+
+    it(`should unlink the symlink rather than its target`, () => {
+      const controlFs = nodeFs();
+      setupLiveLink(controlFs);
+      controlFs.unlinkSync(`/link` as PortablePath);
+      expect(getEntryKind(controlFs, `/link` as PortablePath)).toEqual(`gone`);
+      expect(getEntryKind(controlFs, `/dir/target` as PortablePath)).toEqual(`entry`);
+
+      const zipFs = new ZipFS();
+      setupLiveLink(zipFs);
+      zipFs.unlinkSync(`/link` as PortablePath);
+      expect(getEntryKind(zipFs, `/link` as PortablePath)).toEqual(`gone`);
+      expect(getEntryKind(zipFs, `/dir/target` as PortablePath)).toEqual(`entry`);
+
+      zipFs.discardAndClose();
+    });
+
+    it(`should unlink dangling symlinks`, () => {
+      const controlFs = nodeFs();
+      setupDanglingLink(controlFs);
+      controlFs.unlinkSync(`/dangling` as PortablePath);
+      expect(getEntryKind(controlFs, `/dangling` as PortablePath)).toEqual(`gone`);
+
+      const zipFs = new ZipFS();
+      setupDanglingLink(zipFs);
+      zipFs.unlinkSync(`/dangling` as PortablePath);
+      expect(getEntryKind(zipFs, `/dangling` as PortablePath)).toEqual(`gone`);
+
+      zipFs.discardAndClose();
+    });
+
+    it(`should keep unlinking regular files`, () => {
+      const controlFs = nodeFs();
+      controlFs.mkdirSync(`/dir` as PortablePath);
+      controlFs.writeFileSync(`/dir/file` as PortablePath, `content`);
+      controlFs.unlinkSync(`/dir/file` as PortablePath);
+      expect(getEntryKind(controlFs, `/dir/file` as PortablePath)).toEqual(`gone`);
+
+      const zipFs = new ZipFS();
+      zipFs.mkdirSync(`/dir` as PortablePath);
+      zipFs.writeFileSync(`/dir/file` as PortablePath, `content`);
+      zipFs.unlinkSync(`/dir/file` as PortablePath);
+      expect(getEntryKind(zipFs, `/dir/file` as PortablePath)).toEqual(`gone`);
+
+      zipFs.discardAndClose();
+    });
+
+    it(`should unlink the symlink rather than its target through wrappers`, () => {
+      const zipFs = new ZipFS();
+
+      const wrappers: Array<[string, FakeFS<PortablePath>]> = [
+        [`LazyFS`, new LazyFS(() => zipFs, ppath)],
+        [`AliasFS`, new AliasFS(`/link` as PortablePath, {baseFs: zipFs, pathUtils: ppath})],
+        [`JailFS`, new JailFS(`/` as PortablePath, {baseFs: zipFs})],
+      ];
+
+      for (const [name, wrapper] of wrappers) {
+        const dir = `/${name}/dir` as PortablePath;
+        const link = `/${name}/link` as PortablePath;
+
+        zipFs.mkdirpSync(dir);
+        zipFs.writeFileSync(ppath.join(dir, `target` as Filename), `content`);
+        zipFs.symlinkSync(ppath.join(dir, `target` as Filename), link);
+
+        wrapper.unlinkSync(link);
+
+        expect(getEntryKind(zipFs, link)).toEqual(`gone`);
+        expect(getEntryKind(zipFs, ppath.join(dir, `target` as Filename))).toEqual(`entry`);
+      }
+
+      zipFs.discardAndClose();
+    });
   });
 
   it(`should support removing empty directories`, () => {

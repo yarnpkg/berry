@@ -1101,7 +1101,10 @@ export class ZipFS extends BasePortableFakeFS {
     if (this.readOnly)
       throw errors.EROFS(`unlink '${p}'`);
 
-    const resolvedP = this.resolveFilename(`unlink '${p}'`, p);
+    // `unlink` removes the named entry itself: a symlink is deleted rather
+    // than the file it points to, so the last path component must not be
+    // resolved (parent components still are, matching Node's behaviour).
+    const resolvedP = this.resolveFilename(`unlink '${p}'`, p, false);
     if (this.listings.has(resolvedP))
       throw errors.EISDIR(`unlink '${p}'`);
 
