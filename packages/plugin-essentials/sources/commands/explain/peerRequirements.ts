@@ -37,6 +37,10 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     ]),
   });
 
+  warnings = Option.Boolean(`--warnings`, false, {
+    description: `Only show umnet peer requirements.`,
+  });
+
   async execute() {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const {project} = await Project.find(configuration, this.context.cwd);
@@ -54,6 +58,7 @@ export default class ExplainPeerRequirementsCommand extends BaseCommand {
     } else {
       return await explainPeerRequirements(project, {
         stdout: this.context.stdout,
+        onlyWarnings: this.warnings,
       });
     }
   }
@@ -167,7 +172,7 @@ export async function explainPeerRequirement(peerRequirementsHash: string, proje
   return report.exitCode();
 }
 
-export async function explainPeerRequirements(project: Project, opts: {stdout: Writable}) {
+export async function explainPeerRequirements(project: Project, opts: {stdout: Writable, onlyWarnings: boolean}) {
   const report = await StreamReport.start({
     configuration: project.configuration,
     stdout: opts.stdout,
@@ -188,6 +193,8 @@ export async function explainPeerRequirements(project: Project, opts: {stdout: W
       const warning = project.peerWarnings.find(warning => {
         return warning.hash === peerRequirement.hash;
       });
+
+      if (!warning && opts.onlyWarnings) continue;
 
       const allRequests = [...structUtils.allPeerRequests(peerRequirement)];
       let andOthers;
