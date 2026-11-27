@@ -65,13 +65,24 @@ export type Options = {
 
 const plugin = async function(context: LoadContext, options: Options): Promise<Plugin<Record<string, Array<Definition>>>> {
   async function createBinaryPages(packageName: string, definitions: Array<Definition>, actions: PluginContentLoadedActions) {
+    // Clipanion may register multiple commands with the same path (e.g. yarn init
+    // and yarn init <initializer>). Keep one entry per path in the generated docs.
+    const uniqueDefinitions: Array<Definition> = [];
+    const seenPaths = new Set<string>();
+    for (const definition of definitions) {
+      if (seenPaths.has(definition.path))
+        continue;
+      seenPaths.add(definition.path);
+      uniqueDefinitions.push(definition);
+    }
+
     const pages = await Promise.all(
-      definitions
+      uniqueDefinitions
         .sort((a, b) => a.path.localeCompare(b.path))
         .map(definition => createCommandPage(packageName, definition, actions)),
     );
 
-    const index = await createBinaryIndexPage(packageName, definitions, actions);
+    const index = await createBinaryIndexPage(packageName, uniqueDefinitions, actions);
 
     return {
       sidebarItem: {
