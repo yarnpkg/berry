@@ -905,5 +905,57 @@ describe(`Commands`, () => {
         expect(originalManifest.devDependencies[dependency]).toBe(`workspace:*`);
       }),
     );
+
+
+    test(
+      `it should allow to make temporary changes to the package.json during prepack, through PACK_MANIFEST`,
+      makeTemporaryEnv({
+        workspaces: [`./dependency`, `./dependant`],
+      }, async({path, run, source}) => {
+        const dependency = `@test/dependency`;
+        const dependant = `@test/dependant`;
+
+        await fsUtils.writeJson(`${path}/dependency/package.json`, {
+          name: dependency,
+          version: `1.0.0`,
+        });
+
+        const packageJson = {
+          name: dependant,
+          version: `1.0.0`,
+          scripts: {
+            prepack: `cp package.json.tmp $PACK_MANIFEST`,
+          },
+          devDependencies: {
+            [dependency]: `workspace:*`,
+          },
+        };
+
+        await fsUtils.writeJson(`${path}/dependant/package.json`, packageJson);
+        await fsUtils.writeJson(`${path}/dependant/package.json.tmp`, {
+          ...packageJson,
+          dependencies: {
+            [dependency]: `workspace:^1.0.0`,
+          },
+        });
+
+        await run(`install`);
+        await run(`pack`, {
+          cwd: `${path}/dependant`,
+        });
+
+        await fsUtils.unpackToDirectory(path, `${path}/dependant/package.tgz`);
+
+        const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json`);
+
+        expect(packedManifest.dependencies[dependency]).toBe(`^1.0.0`);
+        expect(packedManifest.devDependencies[dependency]).toBe(`1.0.0`);
+
+        const originalManifest = await xfs.readJsonPromise(`${path}/dependant/package.json`);
+
+        expect(originalManifest.dependencies).toBe(undefined);
+        expect(originalManifest.devDependencies[dependency]).toBe(`workspace:*`);
+      }),
+    );
   });
 });
