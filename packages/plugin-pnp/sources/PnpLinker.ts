@@ -46,8 +46,11 @@ export class PnpLinker implements Linker {
     const packageLocator = {name: structUtils.stringifyIdent(locator), reference: locator.reference};
     const packageInformation = pnpFile.getPackageInformation(packageLocator);
 
-    if (!packageInformation)
-      throw new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
+    if (!packageInformation) {
+      const err = new UsageError(`Couldn't find ${structUtils.prettyLocator(opts.project.configuration, locator)} in the currently installed PnP map - running an install might help`);
+      (err as any).code = `LOCATOR_NOT_INSTALLED`;
+      throw err;
+    }
 
     return npath.toPortablePath(packageInformation.packageLocation);
   }

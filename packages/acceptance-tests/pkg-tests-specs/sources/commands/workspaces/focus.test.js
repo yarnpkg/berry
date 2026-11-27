@@ -230,6 +230,36 @@ describe(`Commands`, () => {
       ),
     );
 
+    for (const nodeLinker of [`pnp`, `node-modules`]) {
+      test(
+        `should let \`yarn bin\` list the installed binaries even if the install state got invalidated (${nodeLinker})`,
+        makeTemporaryEnv(
+          {
+            private: true,
+            workspaces: [`packages/*`],
+            devDependencies: {[`no-deps-bins`]: `1.0.0`},
+          },
+          {
+            nodeLinker,
+          },
+          async ({path, run}) => {
+            await setupProject(path);
+
+            await run(`install`);
+            await run(`workspaces`, `focus`, `foo`, {cwd: path});
+            // With remote / hermetic build workflow, or fresh clone of zero-install repo.
+            // The install-state.gz would be missing.
+            // `yarn bin` should only require what it needs regardless.
+            await xfs.removePromise(ppath.join(path, `.yarn/install-state.gz`));
+
+            await expect(run(`bin`, {cwd: path})).resolves.toMatchObject({
+              code: 0,
+            });
+          },
+        ),
+      );
+    }
+
     test(
       `should not execute postinstall scripts of unspecified workspace`,
       makeTemporaryEnv(
