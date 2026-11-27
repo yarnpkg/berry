@@ -1,7 +1,7 @@
-import {npath, NodeFS}  from '@yarnpkg/fslib';
+import {npath, NodeFS}                from '@yarnpkg/fslib';
 
-import {diffFolders}    from '../sources/patchUtils';
-import {parsePatchFile} from '../sources/tools/parse';
+import {diffFolders, gitStderrErrors} from '../sources/patchUtils';
+import {parsePatchFile}               from '../sources/tools/parse';
 
 describe(`diffFolders`,  () => {
   const fs = new NodeFS();
@@ -18,4 +18,9 @@ describe(`diffFolders`,  () => {
       expect(parsePatchFile(diff)).toMatchSnapshot();
     });
   }
+
+  it(`ignores git warnings on stderr`, () => {
+    expect(gitStderrErrors(`warning: unable to access '/.config/git/attributes': Permission denied\n`)).toEqual(``);
+    expect(gitStderrErrors(`warning: foo\nfatal: not a git repository\n`)).toEqual(`fatal: not a git repository`);
+  });
 });
