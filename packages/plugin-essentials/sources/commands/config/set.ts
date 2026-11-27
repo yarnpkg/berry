@@ -18,6 +18,8 @@ export default class ConfigSetCommand extends BaseCommand {
       When used without the \`--json\` flag, it can only set a simple configuration setting (a string, a number, or a boolean).
 
       When used with the \`--json\` flag, it can set both simple and complex configuration settings, including Arrays and Objects.
+
+      The examples use Bash syntax. If you use a different shell, you may need to adjust the quoting and escaping to preserve the double quotes in JSON values and indexed property names.
     `,
     examples: [[
       `Set a simple configuration setting (a string, a number, or a boolean)`,
