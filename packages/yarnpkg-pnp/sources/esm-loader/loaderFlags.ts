@@ -23,8 +23,9 @@ export const SUPPORTS_IMPORT_ATTRIBUTES_ONLY = major >= 22;
 
 // https://github.com/nodejs/node/pull/61769 — backported to v24.15.0 and v22.22.3
 // https://github.com/nodejs/node/pull/62835 fixed the broken stat (v26.1.0, backported to v24.16.0)
+// https://github.com/nodejs/node/pull/64722 backported the fix to v22.23.3.
 export const HAS_BROKEN_FSTAT_FOR_ZIP_FDS =
   (major === 26 && minor < 1) ||
   (major === 25 && minor >= 7) ||
   (major === 24 && minor === 15) ||
-  (major === 22 && (minor > 22 || (minor === 22 && patch >= 3)));
+  (major === 22 && ((minor === 22 && patch >= 3) || (minor === 23 && patch < 3)));
