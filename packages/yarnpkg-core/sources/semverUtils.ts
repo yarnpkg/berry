@@ -46,12 +46,28 @@ export function satisfiesWithPrereleases(version: string | null, range: string, 
   if (semverRange.test(semverVersion))
     return true;
 
+  // Stripping prereleases from a comparator would turn a lower bound such as
+  // `>=8.0.0-alpha.14` into `>=8.0.0` and accept older prereleases on the same tuple.
+  const versionTuple = `${semverVersion.major}.${semverVersion.minor}.${semverVersion.patch}`;
+  if (semverVersion.prerelease.length > 0 && semverRange.set.some(comparatorSet =>
+    comparatorSet.some(comparator =>
+      comparator.semver instanceof semver.SemVer &&
+      comparator.semver.prerelease.length > 0 &&
+      `${comparator.semver.major}.${comparator.semver.minor}.${comparator.semver.patch}` === versionTuple,
+    ),
+  ))
+    return false;
+
+  // Use a fresh range so the stripping below doesn't modify the cached one.
+  // eslint-disable-next-line no-restricted-properties
+  const fallbackRange = new semver.Range(range, {includePrerelease: true, loose});
+
   if (semverVersion.prerelease)
     semverVersion.prerelease = [];
 
   // A range has multiple sets of comparators. A version must satisfy all
   // comparators in a set and at least one set to satisfy the range.
-  return semverRange.set.some(comparatorSet => {
+  return fallbackRange.set.some(comparatorSet => {
     for (const comparator of comparatorSet)
       if (comparator.semver.prerelease)
         comparator.semver.prerelease = [];
