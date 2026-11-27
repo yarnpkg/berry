@@ -1014,10 +1014,12 @@ function toConditionToken(name: string, raw: string) {
   return `${prefix}${name}=${value}`;
 }
 
+// Like npm, a value must match one of the listed values (if any) and none of the negated ones
 function toConditionLine(name: string, rawTokens: Array<string>) {
-  if (rawTokens.length === 1) {
-    return toConditionToken(name, rawTokens[0]);
-  } else {
-    return `(${rawTokens.map(raw => toConditionToken(name, raw)).join(` | `)})`;
-  }
+  const tokens = rawTokens.map(raw => toConditionToken(name, raw));
+  const included = tokens.filter(token => !token.startsWith(`!`));
+  const excluded = tokens.filter(token => token.startsWith(`!`));
+
+  const parts = included.length > 1 ? [`(${included.join(` | `)})`, ...excluded] : [...included, ...excluded];
+  return parts.length === 1 ? parts[0] : `(${parts.join(` & `)})`;
 }

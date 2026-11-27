@@ -1,0 +1,5 @@
+{
+  "name": "native-unknown-cpu",
+  "version": "1.0.0",
+  "cpu": ["!x64", "!x86"]
+}

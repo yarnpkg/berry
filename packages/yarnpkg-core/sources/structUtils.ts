@@ -915,15 +915,23 @@ export function isPackageInRange(pkg: Package, range: Descriptor[`range`]) {
  * Returns whether the given package is compatible with the specified environment.
  */
 export function isPackageCompatible(pkg: Package, architectures: nodeUtils.ArchitectureSet) {
-  if (!pkg.conditions)
+  const {conditions} = pkg;
+  if (!conditions)
     return true;
 
-  return conditionParser(pkg.conditions, specifier => {
-    const [, name, value] = specifier.match(CONDITION_REGEX)!;
-    const supported = architectures[name as keyof typeof architectures];
+  const getValues = (values: Array<string> | null) => values?.length ? values : [null];
 
-    return supported ? supported.includes(value) : true;
-  });
+  // Like Yarn 6, check each supported system on its own
+  return getValues(architectures.os).some(os =>
+    getValues(architectures.cpu).some(cpu =>
+      getValues(architectures.libc).some(libc => conditionParser(conditions, specifier => {
+        const [, name, value] = specifier.match(CONDITION_REGEX)!;
+        const key = name as keyof typeof architectures;
+
+        return architectures[key] === null || {os, cpu, libc}[key] === value;
+      })),
+    ),
+  );
 }
 
 export function allPeerRequests(root: PeerRequestNode | PeerRequirementNode): Iterable<PeerRequestNode> {

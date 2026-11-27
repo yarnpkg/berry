@@ -44,6 +44,28 @@ describe(`Features`, () => {
       }));
     }
 
+    for (const [cpu, expected] of [[`x64`, false], [`x86`, false], [`ppc64`, true]] as const) {
+      it(`should exclude a package listing several negated cpus on any of them (${cpu})`, makeTemporaryEnv({
+        optionalDependencies: {
+          [`native-unknown-cpu`]: `1.0.0`,
+        },
+      }, async ({path, run, source}) => {
+        const recording = await startRegistryRecording(async () => {
+          await run(`install`, {
+            env: {
+              YARN_CPU_OVERRIDE: cpu,
+            },
+          });
+        });
+
+        const isFetched = recording.some(request => {
+          return request.type === RequestType.PackageTarball && request.localName === `native-unknown-cpu`;
+        });
+
+        expect(isFetched).toEqual(expected);
+      }));
+    }
+
     it(`should resolve all dependencies, regardless of the system`, makeTemporaryEnv({
       dependencies: {
         [`optional-native`]: `1.0.0`,
