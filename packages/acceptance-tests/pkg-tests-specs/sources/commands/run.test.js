@@ -1,6 +1,8 @@
 import {ppath, xfs} from '@yarnpkg/fslib';
 import {misc}       from 'pkg-tests-core';
 
+const yarnBinary = process.env.TEST_BINARY ?? require.resolve(`../../../../yarnpkg-cli/bundles/yarn.js`);
+
 describe(`Commands`, () => {
   for (const [description, args] of [[`with prefix`, [`run`]], [`without prefix`, []]]) {
     describe(`run ${description}`, () => {
@@ -25,6 +27,39 @@ describe(`Commands`, () => {
 
         await expect(run(...args, `foo`)).rejects.toMatchObject({
           code: 42,
+        });
+      }));
+
+      test(`it should forward a user-provided YARN_IGNORE_PATH to scripts`, makeTemporaryEnv({
+        scripts: {
+          foo: `node -p "process.env.YARN_IGNORE_PATH ?? 'unset'"`,
+        },
+      }, async ({run}) => {
+        await run(`install`);
+
+        await expect(run(...args, `foo`, {
+          env: {YARN_IGNORE_PATH: `1`},
+        })).resolves.toMatchObject({
+          stdout: `1\n`,
+        });
+      }));
+
+      test(`it should not forward the internal YARN_IGNORE_PATH to scripts`, makeTemporaryEnv({
+        scripts: {
+          foo: `node -p "process.env.YARN_IGNORE_PATH ?? 'unset'"`,
+        },
+      }, async ({path, run}) => {
+        await xfs.writeFilePromise(ppath.join(path, `yarn-test-secondary-binary.js`), [
+          `const {execFileSync} = require('child_process');`,
+          `execFileSync(process.execPath, [${JSON.stringify(yarnBinary)}, ...process.argv.slice(2)], {stdio: 'inherit'});`,
+        ].join(`\n`));
+
+        await run(`install`);
+
+        await expect(run(...args, `foo`, {
+          yarnPath: `./yarn-test-secondary-binary.js`,
+        })).resolves.toMatchObject({
+          stdout: `unset\n`,
         });
       }));
 
