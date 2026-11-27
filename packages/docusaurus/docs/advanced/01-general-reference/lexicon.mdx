@@ -9,7 +9,7 @@ description: Definitions of common terms used throughout the documentation.
 
 Refers to tasks executed right after the packages got installed; typically the `postinstall` scripts configured in the `scripts` field from the manifest.
 
-Build scripts should be left to native dependencies, there is virtually no reason for pure JavaScript packages to use them. They have [significant side effects](/advanced/lifecycle-scripts#a-note-about-postinstall) on your user's projects, so weight carefully whether you really need them.
+Build scripts should be left to native dependencies, there is virtually no reason for pure JavaScript packages to use them. They have [significant side effects](/advanced/lifecycle-scripts#postinstall) on your user's projects, so weight carefully whether you really need them.
 
 See also: [Lifecycle Scripts](/advanced/lifecycle-scripts)
 
@@ -29,7 +29,7 @@ A descriptor is a combination of a package name (for example `lodash`) and a pac
 
 A dependency (listed in the `devDependencies` field of the manifest) describes a relationship between two packages.
 
-Development dependencies are very much like regular dependencies except that they only matter for local packages. Packages fetched from remote registries such as npm will not be able to access their development dependencies, but packages installed from local sources (such as [workspaces](#workspaces) or the [`portal:` protocol](#portals)) will.
+Development dependencies are very much like regular dependencies except that they only matter for local packages. Packages fetched from remote registries such as npm will not be able to access their development dependencies, but packages installed from local sources (such as [workspaces](#workspace) or the [`portal:` protocol](#portal)) will.
 
 See also: [Dependency](#dependency), [Peer Dependency](#peer-dependency)
 
@@ -41,7 +41,7 @@ See also: [Architecture](/advanced/architecture), [Fetcher interface](https://gi
 
 ### Hoisting
 
-Hoisting is the act of transforming the dependency tree to optimize it by removing as many nodes as possible. There isn't a single way to decide how to transform the tree, and different package managers make different tradeoffs (some optimize for package popularity, package size, highest versions, ...). For this reason, no guarantee can be made regarding the final hoisting layout - except that packages will always be able to access the dependencies they listed in their [manifests](#Manifest).
+Hoisting is the act of transforming the dependency tree to optimize it by removing as many nodes as possible. There isn't a single way to decide how to transform the tree, and different package managers make different tradeoffs (some optimize for package popularity, package size, highest versions, ...). For this reason, no guarantee can be made regarding the final hoisting layout - except that packages will always be able to access the dependencies they listed in their [manifests](#manifest).
 
 Because the hoisting is heavily connected to the filesystem and the Node resolution, its very design makes it easy to make an error and accidentally access packages without them being properly defined as dependencies - and thus without being accounted for during the hoisting process, making their very existence unpredictable. For this reason and others, hoisting got sidelined starting from Yarn 2 in favour of the [Plug'n'Play resolution](#plugnplay).
 
