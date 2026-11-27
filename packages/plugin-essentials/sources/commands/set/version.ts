@@ -204,12 +204,12 @@ export async function setVersion(configuration: Configuration, bundleVersion: st
 
   const projectCwd = configuration.projectCwd ?? configuration.startingCwd;
 
-  const releaseFolder = ppath.resolve(projectCwd, `.yarn/releases`);
-  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs`);
-  const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
-
   const isTaggedYarnVersion = miscUtils.isTaggedYarnVersion(bundleVersion);
   const yarnPath = configuration.get(`yarnPath`);
+
+  const releaseFolder = ppath.resolve(projectCwd, yarnPath ? ppath.dirname(yarnPath) : `.yarn/releases`);
+  const absolutePath = ppath.resolve(releaseFolder, `yarn-${bundleVersion}.cjs`);
+  const displayPath = ppath.relative(configuration.startingCwd, absolutePath);
 
   const absolutelyMustUseYarnPath = !isTaggedYarnVersion;
   let probablyShouldUseYarnPath = absolutelyMustUseYarnPath || !!yarnPath || !!useYarnPath;
