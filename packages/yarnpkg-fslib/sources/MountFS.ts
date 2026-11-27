@@ -1008,7 +1008,22 @@ export class MountFS<MountedFS extends MountableFS> extends BasePortableFakeFS {
 
       filePath = this.pathUtils.join(filePath, mountPoint);
 
-      if (!this.isMount.has(filePath)) {
+      if (this.isMount.has(filePath)) {
+        try {
+          if (this.typeCheck !== null && (this.baseFs.statSync(filePath).mode & constants.S_IFMT) !== this.typeCheck) {
+            this.isMount.delete(filePath);
+            this.mountInstances?.get(filePath)?.childFs.discardAndClose?.();
+            this.mountInstances?.delete(filePath);
+            this.notMount.add(filePath);
+            continue;
+          }
+        } catch {
+          this.isMount.delete(filePath);
+          this.mountInstances?.get(filePath)?.childFs.discardAndClose?.();
+          this.mountInstances?.delete(filePath);
+          return null;
+        }
+      } else {
         if (this.notMount.has(filePath))
           continue;
 
