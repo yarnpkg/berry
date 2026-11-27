@@ -20,7 +20,9 @@ export interface Hooks {
 }
 
 const DEPENDENCY_TYPES = [`dependencies`, `devDependencies`, `peerDependencies`];
+const PUBLISHED_DEPENDENCY_TYPES = [`dependencies`, `peerDependencies`];
 const WORKSPACE_PROTOCOL = `workspace:`;
+const PATCH_PROTOCOL = `patch:`;
 
 const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   if (rawManifest.publishConfig) {
@@ -48,6 +50,16 @@ const beforeWorkspacePacking = (workspace: Workspace, rawManifest: any) => {
   }
 
   const project = workspace.project;
+
+  if (!workspace.manifest.private) {
+    for (const dependencyType of PUBLISHED_DEPENDENCY_TYPES) {
+      for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
+        if (descriptor.range.startsWith(PATCH_PROTOCOL)) {
+          throw new ReportError(MessageName.UNPUBLISHABLE_DEPENDENCY, `${structUtils.prettyDescriptor(project.configuration, descriptor)}: The patch: protocol can't be used in the dependencies of a published package, since consumers won't have access to the patch file; apply it through the resolutions field of the project root instead`);
+        }
+      }
+    }
+  }
 
   for (const dependencyType of DEPENDENCY_TYPES) {
     for (const descriptor of workspace.manifest.getForScope(dependencyType).values()) {
