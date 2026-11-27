@@ -1,6 +1,6 @@
-import {Filename, npath, ppath, xfs}                                                                                            from '@yarnpkg/fslib';
-import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
-import {pathToFileURL}                                                                                                          from 'url';
+import {Filename, npath, ppath, xfs}                                                                                                                              from '@yarnpkg/fslib';
+import {ALLOWS_EXTENSIONLESS_FILES, HAS_LOADERS_AFFECTING_LOADERS, SUPPORTS_IMPORT_ATTRIBUTES, SUPPORTS_IMPORT_ATTRIBUTES_ONLY, SUPPORTS_MODULE_SYNTAX_DETECTION} from '@yarnpkg/pnp/sources/esm-loader/loaderFlags';
+import {pathToFileURL}                                                                                                                                            from 'url';
 
 // Node.js 28 removed the off-thread hooks (`--experimental-loader` and
 // `module.register`); custom hooks are registered from preloaded modules there.
@@ -356,6 +356,46 @@ describe(`Plug'n'Play - ESM`, () => {
         await expect(run(`node`, `./index.foo`)).rejects.toMatchObject({
           code: 1,
           stderr: expect.stringContaining(`Unknown file extension ".foo"`),
+        });
+      },
+    ),
+  );
+
+  (SUPPORTS_MODULE_SYNTAX_DETECTION ? it : it.skip)(
+    `it should detect the module syntax of files without a type`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.js`), `import {platform} from 'node:os';\nconsole.log(typeof platform);`);
+
+        await run(`install`);
+
+        await expect(run(`node`, `./index.js`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `function\n`,
+        });
+      },
+    ),
+  );
+
+  ((process.features as {typescript?: string | false}).typescript ? it : it.skip)(
+    `it should let Node.js load TypeScript entrypoints without a type`,
+    makeTemporaryEnv(
+      { },
+      {
+        pnpEnableEsmLoader: true,
+      },
+      async ({path, run, source}) => {
+        await xfs.writeFilePromise(ppath.join(path, `index.ts`), `import {platform} from 'node:os';\nconst value: string = typeof platform;\nconsole.log(value);`);
+
+        await run(`install`);
+
+        await expect(run(`node`, `./index.ts`)).resolves.toMatchObject({
+          code: 0,
+          stdout: `function\n`,
         });
       },
     ),
