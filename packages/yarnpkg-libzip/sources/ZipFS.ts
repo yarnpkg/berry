@@ -1280,7 +1280,7 @@ export class ZipFS extends BasePortableFakeFS {
       // @ts-expect-error - reason TBS
       encoding = encoding ? encoding.encoding : undefined;
 
-    const data = await this.readFileBuffer(p, {asyncDecompress: true});
+    const data = this.readFileFromDescriptor(p, await this.readFileBuffer(p, {asyncDecompress: true}));
     return encoding ? data.toString(encoding) : data;
   }
 
@@ -1293,8 +1293,21 @@ export class ZipFS extends BasePortableFakeFS {
       // @ts-expect-error - reason TBS
       encoding = encoding ? encoding.encoding : undefined;
 
-    const data = this.readFileBuffer(p);
+    const data = this.readFileFromDescriptor(p, this.readFileBuffer(p));
     return encoding ? data.toString(encoding) : data;
+  }
+
+  private readFileFromDescriptor(p: FSPath<PortablePath>, data: Buffer): Buffer {
+    if (typeof p !== `number`)
+      return data;
+
+    const entry = this.fds.get(p);
+    if (typeof entry === `undefined`)
+      throw errors.EBADF(`read`);
+
+    const remaining = data.subarray(entry.cursor);
+    entry.cursor += remaining.length;
+    return remaining;
   }
 
   private readFileBuffer(p: FSPath<PortablePath>): Buffer;
