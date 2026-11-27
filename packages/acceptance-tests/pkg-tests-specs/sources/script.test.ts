@@ -542,6 +542,32 @@ describe(`Scripts tests`, () => {
       );
 
       test(
+        `it shouldn't add node-gyp rebuild script if gypfile is set to false`,
+        makeTemporaryEnv(
+          {
+            dependencies: {[`binding-gyp-scripts-gypfile-false`]: `1.0.0`},
+          },
+          {
+            ...config,
+            enableScripts: true,
+          },
+          async ({path, run, source}) => {
+            await run(`install`);
+
+            await expect(source(`require('binding-gyp-scripts-gypfile-false')`)).resolves.toMatchObject({
+              name: `binding-gyp-scripts-gypfile-false`,
+            });
+
+            await expect(source(`require.resolve('binding-gyp-scripts-gypfile-false/build.node')`)).rejects.toMatchObject({
+              externalException: {
+                code: `MODULE_NOT_FOUND`,
+              },
+            });
+          },
+        ),
+      );
+
+      test(
         `it shouldn't call the postinstall on every install`,
         makeTemporaryEnv({
           dependencies: {

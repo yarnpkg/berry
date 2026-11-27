@@ -23,7 +23,7 @@ export class PnpLinker implements Linker {
   getCustomDataKey() {
     return JSON.stringify({
       name: `PnpLinker`,
-      version: 2,
+      version: 3,
     });
   }
 
@@ -508,6 +508,7 @@ async function extractCustomPackageData(fetchResult: FetchResult) {
       scripts: manifest.scripts,
       preferUnplugged: manifest.preferUnplugged,
       type: manifest.type,
+      gypfile: manifest.gypfile,
     },
     misc: {
       extractHint: jsInstallUtils.getExtractHint(fetchResult),
