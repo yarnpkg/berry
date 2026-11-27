@@ -1,0 +1,56 @@
+on:
+  schedule:
+  - cron: '0 */4 * * *'
+  push:
+    branches:
+    - master
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-nm-react-native-workflow.yml
+    - scripts/e2e-setup-ci.sh
+    - packages/yarnpkg-nm/sources/hoist.ts
+    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
+    - packages/plugin-nm/sources/NodeModulesLinker.ts
+  pull_request:
+    paths:
+    - .github/actions/prepare/action.yml
+    - .github/workflows/e2e-nm-react-native-workflow.yml
+    - scripts/e2e-setup-ci.sh
+    - packages/yarnpkg-nm/sources/hoist.ts
+    - packages/yarnpkg-nm/sources/buildNodeModulesTree.ts
+    - packages/plugin-nm/sources/NodeModulesLinker.ts
+
+name: 'E2E NM React Native'
+jobs:
+  chore:
+    strategy:
+      matrix:
+        platform:
+        - ubuntu-latest
+        - windows-latest
+
+    name: 'Validating React Native install via node-modules linker on ${{matrix.platform}}'
+    runs-on: ${{matrix.platform}}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - uses: ./.github/actions/prepare
+
+    - name: 'Running the integration test'
+      run: |
+        source scripts/e2e-setup-ci.sh nm
+
+        yarn dlx @react-native-community/cli init MyProject
+        cd MyProject
+        yarn react-native build-android
+
+      shell: bash
+      env:
+        YARN_ENABLE_GLOBAL_CACHE: true
+        YARN_COMPRESSION_LEVEL: 0
