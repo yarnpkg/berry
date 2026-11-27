@@ -5,7 +5,7 @@ import mm                                                                     fr
 import tar                                                                    from 'tar-stream';
 import {createGzip}                                                           from 'zlib';
 
-import {Hooks}                                                                from './';
+import {Hooks, WorkspacePackingOptions}                                       from './';
 
 const NEVER_IGNORE = [
   `/package.json`,
@@ -67,7 +67,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
   }
 }
 
-export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>) {
+export async function genPackStream(workspace: Workspace, files?: Array<PortablePath>, options: WorkspacePackingOptions = {}) {
   if (typeof files === `undefined`)
     files = await genPackList(workspace);
 
@@ -118,7 +118,7 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
 
         // The root package.json supports replacement fields in publishConfig
         if (file === `package.json`)
-          content = Buffer.from(JSON.stringify(await genPackageManifest(workspace), null, 2));
+          content = Buffer.from(JSON.stringify(await genPackageManifest(workspace, options), null, 2));
         else
           content = await xfs.readFilePromise(source);
 
@@ -141,13 +141,14 @@ export async function genPackStream(workspace: Workspace, files?: Array<Portable
   return tgz;
 }
 
-export async function genPackageManifest(workspace: Workspace): Promise<object> {
+export async function genPackageManifest(workspace: Workspace, options: WorkspacePackingOptions = {}): Promise<object> {
   const data = JSON.parse(JSON.stringify(workspace.manifest.raw));
 
   await workspace.project.configuration.triggerHook(
     (hooks: Hooks) => hooks.beforeWorkspacePacking,
     workspace,
     data,
+    options,
   );
 
   return data;
