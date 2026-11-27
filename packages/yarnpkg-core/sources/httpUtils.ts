@@ -1,17 +1,18 @@
-import {PortablePath, xfs}                        from '@yarnpkg/fslib';
-import type {ExtendOptions, RequestError}         from 'got';
-import {HttpProxyAgent, HttpsProxyAgent}          from 'hpagent';
-import {Agent as HttpsAgent, type RequestOptions} from 'https';
-import {Agent as HttpAgent, IncomingHttpHeaders}  from 'http';
-import micromatch                                 from 'micromatch';
+import {PortablePath, xfs}                       from '@yarnpkg/fslib';
+import type {ExtendOptions, RequestError}        from 'got';
+import {HttpsProxyAgent}                         from 'hpagent';
+import {HttpProxyAgent}                          from 'http-proxy-agent';
+import {Agent as HttpsAgent}                     from 'https';
+import {Agent as HttpAgent, IncomingHttpHeaders} from 'http';
+import micromatch                                from 'micromatch';
 
-import {ConfigurationValueMap, Configuration}     from './Configuration';
-import {MessageName}                              from './MessageName';
-import {WrapNetworkRequestInfo}                   from './Plugin';
-import {ReportError}                              from './Report';
-import * as formatUtils                           from './formatUtils';
-import {MapValue, MapValueToObjectValue}          from './miscUtils';
-import * as miscUtils                             from './miscUtils';
+import {ConfigurationValueMap, Configuration}    from './Configuration';
+import {MessageName}                             from './MessageName';
+import {WrapNetworkRequestInfo}                  from './Plugin';
+import {ReportError}                             from './Report';
+import * as formatUtils                          from './formatUtils';
+import {MapValue, MapValueToObjectValue}         from './miscUtils';
+import * as miscUtils                            from './miscUtils';
 
 export type {RequestError}                       from 'got';
 
@@ -271,20 +272,18 @@ async function requestImpl(target: string | URL, body: Body, {configuration, hea
     ? await getCachedFile(httpsKeyFilePath)
     : undefined;
 
-  const proxyRequestOptions: RequestOptions = {
+  const proxyRequestOptions = {
     rejectUnauthorized,
     ca: certificateAuthority,
     cert: certificate,
     key,
   };
 
+  const httpProxy = networkConfig.httpProxy ? new URL(networkConfig.httpProxy) : null;
+
   const agent = {
-    http: networkConfig.httpProxy
-      ? new HttpProxyAgent({
-        proxy: networkConfig.httpProxy,
-        // @ts-expect-error: hpagent actually supports all RequestOptions, but the types don't reflect that
-        proxyRequestOptions,
-      })
+    http: httpProxy
+      ? new HttpProxyAgent(httpProxy, {...proxyRequestOptions, servername: httpProxy.hostname})
       : globalHttpAgent,
     https: networkConfig.httpsProxy
       ? new HttpsProxyAgent({
