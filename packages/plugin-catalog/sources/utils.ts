@@ -63,3 +63,33 @@ export const resolveDescriptorFromCatalog = (project: Project, dependency: Descr
 
   return boundDescriptor;
 };
+
+export const resolvePeerDescriptorFromCatalog = (project: Project, dependency: Descriptor) => {
+  const catalogName = getCatalogName(dependency);
+  let catalog: Map<string, string> | undefined;
+
+  if (catalogName === null) {
+    catalog = project.configuration.get(`catalog`);
+  } else {
+    try {
+      const catalogs = project.configuration.get(`catalogs`);
+      if (catalogs) {
+        catalog = catalogs.get(catalogName);
+      }
+    } catch {
+      catalog = undefined;
+    }
+  }
+
+  if (!catalog || catalog.size === 0)
+    throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: ${getCatalogErrorDisplayName(catalogName)} not found or empty`);
+
+  const catalogEntryName = getCatalogEntryName(dependency);
+  const resolvedRange = catalog.get(catalogEntryName);
+  if (!resolvedRange)
+    throw new ReportError(MessageName.RESOLUTION_FAILED, `${structUtils.prettyDescriptor(project.configuration, dependency)}: entry not found in ${getCatalogErrorDisplayName(catalogName)}`);
+
+  // For peer dependencies, return the descriptor with the raw resolved range
+  // No normalization or binding is needed - peer deps just need the semver range for satisfaction checking
+  return structUtils.makeDescriptor(dependency, resolvedRange);
+};
