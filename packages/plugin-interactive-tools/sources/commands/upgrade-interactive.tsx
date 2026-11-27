@@ -1,13 +1,13 @@
-import {BaseCommand, WorkspaceRequiredError}                                                                                           from '@yarnpkg/cli';
-import {Cache, Configuration, Project, HardDependencies, InstallMode, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash} from '@yarnpkg/core';
-import * as libuiUtils                                                                                                                 from '@yarnpkg/libui/sources/libuiUtils';
-import type {SubmitInjectedComponent}                                                                                                  from '@yarnpkg/libui/sources/misc/renderForm';
-import {suggestUtils}                                                                                                                  from '@yarnpkg/plugin-essentials';
-import {Command, Option, Usage}                                                                                                        from 'clipanion';
-import {diffWords}                                                                                                                     from 'diff';
-import semver                                                                                                                          from 'semver';
-import {WriteStream}                                                                                                                   from 'tty';
-import * as t                                                                                                                          from 'typanion';
+import {BaseCommand, WorkspaceRequiredError}                                                                                                    from '@yarnpkg/cli';
+import {Cache, Configuration, Project, HardDependencies, InstallMode, formatUtils, miscUtils, structUtils, Descriptor, DescriptorHash, Locator} from '@yarnpkg/core';
+import * as libuiUtils                                                                                                                          from '@yarnpkg/libui/sources/libuiUtils';
+import type {SubmitInjectedComponent}                                                                                                           from '@yarnpkg/libui/sources/misc/renderForm';
+import {suggestUtils}                                                                                                                           from '@yarnpkg/plugin-essentials';
+import {Command, Option, Usage}                                                                                                                 from 'clipanion';
+import {diffWords}                                                                                                                              from 'diff';
+import semver                                                                                                                                   from 'semver';
+import {WriteStream}                                                                                                                            from 'tty';
+import * as t                                                                                                                                   from 'typanion';
 
 const SIMPLE_SEMVER = /^((?:[\^~]|>=?)?)([0-9]+)(\.[0-9]+)(\.[0-9]+)((?:-\S+)?)$/;
 
@@ -31,6 +31,8 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
     description: `open the upgrade interface`,
     details: `
       This command opens a fullscreen terminal interface where you can see any out of date packages used by your application, their status compared to the latest versions available on the remote registry, and select packages to upgrade.
+
+      An upgrade is omitted if the same \`resolutions\` override applies before and after the upgrade in every workspace that uses the dependency range.
 
       If the \`--mode=<mode>\` option is set, Yarn will change which artifacts are generated. The modes currently supported are:
 
@@ -70,6 +72,28 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     await project.restoreInstallState({
       restoreResolutions: false,
+    });
+
+    const allDependencies = new Map<DescriptorHash, {descriptor: Descriptor, locators: Array<Locator>}>();
+
+    for (const workspace of project.workspaces) {
+      for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>) {
+        for (const descriptor of workspace.manifest[dependencyType].values()) {
+          if (project.tryWorkspaceByDescriptor(descriptor) !== null || descriptor.range.startsWith(`link:`))
+            continue;
+
+          const entry = miscUtils.getFactoryWithDefault(allDependencies, descriptor.descriptorHash, () => ({
+            descriptor,
+            locators: [],
+          }));
+
+          entry.locators.push(workspace.anchoredLocator);
+        }
+      }
+    }
+
+    const sortedDependencies = miscUtils.sortMap([...allDependencies.values()].map(({descriptor}) => descriptor), descriptor => {
+      return structUtils.stringifyDescriptor(descriptor);
     });
 
     // 8 = 1-line command written by the user
@@ -144,6 +168,21 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
       }
     };
 
+    const canApplyUpgrade = (descriptor: Descriptor, range: string) => {
+      if (project.topLevelWorkspace.manifest.resolutions.length === 0)
+        return true;
+
+      const current = configuration.normalizeDependency(descriptor);
+      const candidate = configuration.normalizeDependency(structUtils.makeDescriptor(descriptor, range));
+
+      // One entry updates every workspace with this descriptor. An override
+      // may pin it in only some of those workspaces.
+      return allDependencies.get(descriptor.descriptorHash)!.locators.some(locator => {
+        const override = project.getResolutionOverride(current, locator);
+        return override === null || project.getResolutionOverride(candidate, locator)?.descriptorHash !== override.descriptorHash;
+      });
+    };
+
     const fetchSuggestions = async (descriptor: Descriptor): Promise<UpgradeSuggestions> => {
       const referenceRange = semver.valid(descriptor.range)
         ? `^${descriptor.range}`
@@ -159,7 +198,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         label: descriptor.range,
       }];
 
-      if (resolution && resolution !== descriptor.range) {
+      if (resolution && resolution !== descriptor.range && canApplyUpgrade(descriptor, resolution)) {
         suggestions.push({
           value: resolution,
           label: colorizeVersionDiff(descriptor.range, resolution),
@@ -168,7 +207,7 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
         suggestions.push({value: null, label: ``});
       }
 
-      if (latest && latest !== resolution && latest !== descriptor.range) {
+      if (latest && latest !== resolution && latest !== descriptor.range && canApplyUpgrade(descriptor, latest)) {
         suggestions.push({
           value: latest,
           label: colorizeVersionDiff(descriptor.range, latest),
@@ -363,19 +402,6 @@ export default class UpgradeInteractiveCommand extends BaseCommand {
 
     const GlobalListApp: SubmitInjectedComponent<Map<string, string | null>> = ({useSubmit}) => {
       useSubmit(useMinistore());
-
-      const allDependencies = new Map<DescriptorHash, Descriptor>();
-
-      for (const workspace of project.workspaces)
-        for (const dependencyType of [`dependencies`, `devDependencies`] as Array<HardDependencies>)
-          for (const descriptor of workspace.manifest[dependencyType].values())
-            if (project.tryWorkspaceByDescriptor(descriptor) === null)
-              if (!descriptor.range.startsWith(`link:`))
-                allDependencies.set(descriptor.descriptorHash, descriptor);
-
-      const sortedDependencies = miscUtils.sortMap(allDependencies.values(), descriptor => {
-        return structUtils.stringifyDescriptor(descriptor);
-      });
 
       return <Box flexDirection={`column`}>
         <Prompt/>
