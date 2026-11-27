@@ -216,6 +216,33 @@ describe(`Features`, () => {
     );
 
     test(
+      `it should preserve npm aliases from catalogs during pack`,
+      makeTemporaryEnv(
+        {
+          name: `my-package`,
+          version: `1.0.0`,
+          dependencies: {
+            [`@typescript/native`]: `catalog:`,
+          },
+        },
+        async ({path, run}) => {
+          await yarn.writeConfiguration(path, {
+            catalog: {
+              [`@typescript/native`]: `npm:typescript@^7.0.2`,
+            },
+          });
+
+          await run(`pack`);
+          await fsUtils.unpackToDirectory(path, `${path}/package.tgz` as PortablePath);
+
+          const packedManifest = await xfs.readJsonPromise(`${path}/package/package.json` as PortablePath);
+
+          expect(packedManifest.dependencies[`@typescript/native`]).toBe(`npm:typescript@^7.0.2`);
+        },
+      ),
+    );
+
+    test(
       `it should handle complex version ranges in catalogs`,
       makeTemporaryEnv(
         {

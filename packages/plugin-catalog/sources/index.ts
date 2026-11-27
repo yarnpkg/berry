@@ -86,7 +86,9 @@ const plugin: Plugin<CoreHooks & PackHooks> = {
           const resolvedDescriptor = resolveDescriptorFromCatalog(project, descriptor, resolver, resolveOptions);
 
           let {protocol, source, params, selector} = structUtils.parseRange(structUtils.convertToManifestRange(resolvedDescriptor.range));
-          if (protocol === workspace.project.configuration.get(`defaultProtocol`))
+          // npm aliases encode the target package in the selector and require the npm: protocol.
+          const isNpmAlias = protocol === `npm:` && structUtils.tryParseDescriptor(selector, true) !== null;
+          if (protocol === workspace.project.configuration.get(`defaultProtocol`) && !isNpmAlias)
             protocol = null;
 
           // Replace the catalog reference with the resolved range
