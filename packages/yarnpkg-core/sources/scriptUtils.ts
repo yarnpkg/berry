@@ -453,11 +453,13 @@ type ExecutePackageScriptOptions = {
   stdin: Readable | null;
   stdout: Writable;
   stderr: Writable;
+  extraEnv?: Record<string, string>;
 };
 
-export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr}: ExecutePackageScriptOptions): Promise<number> {
+export async function executePackageScript(locator: Locator, scriptName: string, args: Array<string>, {cwd, project, stdin, stdout, stderr, extraEnv}: ExecutePackageScriptOptions): Promise<number> {
   return await xfs.mktempPromise(async binFolder => {
     const {manifest, env, cwd: realCwd} = await initializePackageEnvironment(locator, {project, binFolder, cwd, lifecycleScript: scriptName});
+    Object.assign(env, extraEnv);
 
     const script = manifest.scripts.get(scriptName);
     if (typeof script === `undefined`)
@@ -553,10 +555,11 @@ type ExecuteWorkspaceScriptOptions = {
   stdin: Readable | null;
   stdout: Writable;
   stderr: Writable;
+  extraEnv?: Record<string, string>;
 };
 
-export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr}: ExecuteWorkspaceScriptOptions) {
-  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr});
+export async function executeWorkspaceScript(workspace: Workspace, scriptName: string, args: Array<string>, {cwd, stdin, stdout, stderr, extraEnv}: ExecuteWorkspaceScriptOptions) {
+  return await executePackageScript(workspace.anchoredLocator, scriptName, args, {cwd, project: workspace.project, stdin, stdout, stderr, extraEnv});
 }
 
 export function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
@@ -566,9 +569,10 @@ export function hasWorkspaceScript(workspace: Workspace, scriptName: string) {
 type ExecuteWorkspaceLifecycleScriptOptions = {
   cwd?: PortablePath | undefined;
   report: Report;
+  extraEnv?: Record<string, string>;
 };
 
-export async function executeWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, {cwd, report}: ExecuteWorkspaceLifecycleScriptOptions) {
+export async function executeWorkspaceLifecycleScript(workspace: Workspace, lifecycleScriptName: string, {cwd, report, extraEnv}: ExecuteWorkspaceLifecycleScriptOptions) {
   const {configuration} = workspace.project;
   const stdin = null;
 
@@ -585,7 +589,7 @@ export async function executeWorkspaceLifecycleScript(workspace: Workspace, life
 
     report.reportInfo(MessageName.LIFECYCLE_SCRIPT, `Calling the "${lifecycleScriptName}" lifecycle script`);
 
-    const exitCode = await executeWorkspaceScript(workspace, lifecycleScriptName, [], {cwd, stdin, stdout, stderr});
+    const exitCode = await executeWorkspaceScript(workspace, lifecycleScriptName, [], {cwd, stdin, stdout, stderr, extraEnv});
 
     stdout.end();
     stderr.end();

@@ -53,8 +53,13 @@ export async function hasPackScripts(workspace: Workspace) {
   return false;
 }
 
-export async function prepareForPack(workspace: Workspace, {report}: {report: Report}, cb: () => Promise<void>) {
-  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report});
+export async function prepareForPack(workspace: Workspace, {report, dryRun = false}: {report: Report, dryRun?: boolean}, cb: () => Promise<void>) {
+  // Same variable as npm, so that lifecycle scripts can avoid side effects during dry runs
+  const extraEnv: Record<string, string> = dryRun
+    ? {npm_config_dry_run: `true`}
+    : {};
+
+  await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `prepack`, {report, extraEnv});
 
   try {
     const manifestPath = ppath.join(workspace.cwd, Manifest.fileName);
@@ -63,7 +68,7 @@ export async function prepareForPack(workspace: Workspace, {report}: {report: Re
 
     await cb();
   } finally {
-    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report});
+    await scriptUtils.maybeExecuteWorkspaceLifecycleScript(workspace, `postpack`, {report, extraEnv});
   }
 }
 
