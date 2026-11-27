@@ -9,9 +9,9 @@ export enum VSCodeConfiguration {
   extensions = `extensions.json`,
 }
 
-export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any) => {
+export const addVSCodeWorkspaceConfiguration = async (pnpApi: PnpApi, type: VSCodeConfiguration, patch: any, keysToRemove: Array<string> = []) => {
   const relativeFilePath = `.vscode/${type}` as PortablePath;
-  await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch);
+  await sdkUtils.addSettingWorkspaceConfiguration(pnpApi, relativeFilePath, patch, keysToRemove);
 };
 
 export const generateDefaultWrapper: GenerateDefaultWrapper = async (pnpApi: PnpApi) => {
@@ -95,15 +95,20 @@ export const generateRelayCompilerWrapper: GenerateIntegrationWrapper = async (p
 
 export const generateTypescriptWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {
   await addVSCodeWorkspaceConfiguration(pnpApi, VSCodeConfiguration.settings, {
-    [`typescript.tsdk`]: npath.fromPortablePath(
+    [`js/ts.tsdk.path`]: npath.fromPortablePath(
       ppath.dirname(
         wrapper.getProjectPathTo(
           `lib/tsserver.js` as PortablePath,
         ),
       ),
     ),
-    [`typescript.enablePromptUseWorkspaceTsdk`]: true,
-  });
+    [`js/ts.tsdk.promptToUseWorkspaceVersion`]: true,
+  },
+  [
+    `typescript.tsdk`,
+    `typescript.enablePromptUseWorkspaceTsdk`,
+  ],
+  );
 };
 
 export const generateSvelteLanguageServerWrapper: GenerateIntegrationWrapper = async (pnpApi: PnpApi, target: PortablePath, wrapper: Wrapper) => {

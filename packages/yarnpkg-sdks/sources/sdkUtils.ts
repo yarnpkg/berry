@@ -3,7 +3,7 @@ import {PortablePath, npath, ppath, xfs} from '@yarnpkg/fslib';
 import {PnpApi}                          from '@yarnpkg/pnp';
 import CJSON                             from 'comment-json';
 
-export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeFileName: PortablePath, patch: any) => {
+export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeFileName: PortablePath, patch: any, keysToRemove: Array<string> = []) => {
   const topLevelInformation = pnpApi.getPackageInformation(pnpApi.topLevel)!;
   const projectRoot = npath.toPortablePath(topLevelInformation.packageLocation);
 
@@ -14,6 +14,10 @@ export const addSettingWorkspaceConfiguration = async (pnpApi: PnpApi, relativeF
     : `{}`;
 
   const data = CJSON.parse(content);
+
+  for (const key of keysToRemove)
+    delete data[key];
+
   const patched = `${CJSON.stringify(miscUtils.mergeIntoTarget(data, patch), null, 2)}\n`;
 
   await xfs.mkdirPromise(ppath.dirname(filePath), {recursive: true});
