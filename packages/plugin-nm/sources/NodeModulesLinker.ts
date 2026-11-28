@@ -1054,8 +1054,8 @@ function isLinkLocator(locatorKey: LocatorKey): boolean {
   return descriptor.range.startsWith(`link:`);
 }
 
-async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, projectRoot: PortablePath, {loadManifest}: {loadManifest: LoadManifest}) {
-  const locatorScriptMap = new Map<LocatorKey, Map<string, string>>();
+async function createBinSymlinkMap(installState: NodeModulesLocatorMap, locationTree: LocationTree, project: Project, {loadManifest}: {loadManifest: LoadManifest}) {
+  const locatorScriptMap = new Map<LocatorKey, Map<Filename, string>>();
   for (const [locatorKey, {locations}] of installState) {
     const manifest = !isLinkLocator(locatorKey)
       ? await loadManifest(locatorKey, locations[0])
@@ -1076,9 +1076,42 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
 
   const binSymlinks: BinSymlinkMap = new Map();
 
+  const getOwnerDependencies = (ownerLocation: PortablePath): Package[`dependencies`] | undefined => {
+    const workspace = project.tryWorkspaceByCwd(ownerLocation);
+    if (workspace)
+      return workspace.anchoredPackage.dependencies;
+
+    let ownerNode = locationTree.get(ownerLocation);
+    if (!ownerNode && ownerLocation.split(ppath.sep).includes(NODE_MODULES)) {
+      const {locationRoot, segments} = parseLocation(ownerLocation, {skipPrefix: project.cwd});
+      ownerNode = locationTree.get(locationRoot);
+      for (const segment of segments) {
+        ownerNode = ownerNode?.children.get(segment);
+      }
+    }
+
+    return ownerNode?.locator
+      ? project.storedPackages.get(structUtils.parseLocator(ownerNode.locator).locatorHash)?.dependencies
+      : undefined;
+  };
+
+  const isDirectDependency = (target: PortablePath, ownerLocation: PortablePath, dependencies: Package[`dependencies`]): boolean => {
+    const relativeTarget = ppath.contains(ppath.join(ownerLocation, NODE_MODULES), target);
+    if (relativeTarget === null)
+      return false;
+
+    const parts = relativeTarget.split(ppath.sep);
+    const identName = parts[0].startsWith(`@`) && parts.length >= 2
+      ? `${parts[0]}/${parts[1]}`
+      : parts[0];
+
+    const ident = structUtils.tryParseIdent(identName);
+    return ident !== null && dependencies.has(ident.identHash);
+  };
+
   const getBinSymlinks = (location: PortablePath, parentLocatorLocation: PortablePath, node: LocationNode): Map<Filename, PortablePath> => {
-    const symlinks = new Map();
-    const internalPath = ppath.contains(projectRoot, location);
+    const symlinks = new Map<Filename, PortablePath>();
+    const internalPath = ppath.contains(project.cwd, location);
     if (node.locator && internalPath !== null) {
       const binScripts = locatorScriptMap.get(node.locator)!;
       for (const [filename, scriptPath] of binScripts) {
@@ -1087,17 +1120,26 @@ async function createBinSymlinkMap(installState: NodeModulesLocatorMap, location
       }
       for (const [childLocation, childNode] of node.children) {
         const absChildLocation = ppath.join(location, childLocation);
-        const childSymlinks = getBinSymlinks(absChildLocation, absChildLocation, childNode);
+        const childSymlinks = getBinSymlinks(absChildLocation, location, childNode);
         if (childSymlinks.size > 0) {
           binSymlinks.set(location, new Map([...(binSymlinks.get(location) || new Map()), ...childSymlinks]));
         }
       }
     } else {
+      let parentDependencies: Package[`dependencies`] | null | undefined;
       for (const [childLocation, childNode] of node.children) {
         const childSymlinks = getBinSymlinks(ppath.join(location, childLocation), parentLocatorLocation, childNode);
         for (const [name, symlinkTarget] of childSymlinks) {
-          if (!symlinks.has(name)) {
+          const existingTarget = symlinks.get(name);
+          if (!existingTarget) {
             symlinks.set(name, symlinkTarget);
+          } else {
+            if (typeof parentDependencies === `undefined`)
+              parentDependencies = getOwnerDependencies(parentLocatorLocation) ?? null;
+
+            if (parentDependencies && !isDirectDependency(existingTarget, parentLocatorLocation, parentDependencies) && isDirectDependency(symlinkTarget, parentLocatorLocation, parentDependencies)) {
+              symlinks.set(name, symlinkTarget);
+            }
           }
         }
       }
@@ -1444,7 +1486,7 @@ async function persistNodeModules(preinstallState: InstallState, installState: N
     });
 
     invalidateBinSymlinks(prevBinSymlinks, new Set(addList.map(l => l.dstDir)));
-    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project.cwd, {loadManifest});
+    const binSymlinks = await createBinSymlinkMap(installState, locationTree, project, {loadManifest});
     await persistBinSymlinks(prevBinSymlinks, binSymlinks, project.cwd, windowsLinkType);
 
     await writeInstallState(project, installState, binSymlinks, nmMode, {installChangedByUser});
